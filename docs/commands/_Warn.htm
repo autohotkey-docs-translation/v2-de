@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>#Warn</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>#Warn</h1>
+
+<p>Aktiviert oder deaktiviert Warnungen bei bestimmten Zuständen, die ein Fehler sein könnten, wie Schreibfehler oder fehlende "globale" Deklarationen.</p>
+
+<pre class="Syntax">#Warn [, Warnungstyp, Warnungsmodus]</pre>
+
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Warnungstyp</dt>
+  <dd>
+      <p>Die Art der Warnung, die aktiviert oder deaktiviert werden soll. Ist dieser Parameter nicht vorhanden, gilt standardmäßig <i>All</i>.</p>
+      <p><strong>UseUnsetLocal</strong> oder <strong>UseUnsetGlobal</strong>: Warnen, wenn das Script eine Variable liest, die keinen zugewiesenen Wert hat oder per <a href="VarSetCapacity.htm">VarSetCapacity</a> initialisiert wurde. Wenn die Variable absichtlich leer sein soll, muss ihr ein leerer String zugewiesen werden, um diese Warnung zu unterdrücken.</p>
+      <p>Warum ist dieser Warnungstyp in Lokal und Global aufgeteilt? Aufgrund der persistenten und scriptweiten Art von globalen Variablen ist es unüblich, diese vorher mit einem Wert zu initialisieren. Deshalb gibt es die Möglichkeit, diesen Warnungstyp für lokale Variablen zu aktivieren, und für globale Variablen zu deaktivieren.</p>
+      <pre>#Warn
+<em>;y := ""  ; Das hier würde die Warnung unterdrücken.</em>
+x := y    <em>; y enthält keinen zugewiesenen Wert.</em></pre>
+      <p><strong>LocalSameAsGlobal</strong>: Bevor das Script anfängt zu laufen, wird bei jeder <em>undeklarierten</em> lokalen Variable eine Warnung angezeigt, die den gleichen Namen hat wie eine globale Variable. Diese Warnung soll darauf hinweisen, dass eine globale Variable innerhalb einer Funktion deklariert werden sollte, bevor sie verwendet wird, um Fehler zu vermeiden. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden.</p>
+      <pre>#Warn
+g := 1
+ShowG() {       <em>; Die Warnung wird auch angezeigt, wenn die Funktion nicht aufgerufen wird.</em>
+    <em>;global g   ; &lt;-- Notwendig, um die globale Variable zu verwenden.</em>
+    MsgBox % g  <em>; Ohne Deklaration ist "g" eine leere lokale Variable.</em>
+}</pre>
+      <p><strong>All</strong>: Wendet den angegebenen <em>Warnungsmodus</em> auf alle unterstützten Warnungstypen an.</p>
+    </dd>
+
+  <dt>Warnungsmodus</dt>
+  <dd>
+      <p>Ein Wert, der angibt, wie Warnungen übermittelt werden sollen. Ist dieser Parameter nicht vorhanden, gilt standardmäßig <em>MsgBox</em>.</p>
+      <p><strong>MsgBox</strong>: Zeigt ein Hinweisfenster an, das die Warnung beschreibt. Beachte, dass, sobald das Fenster geschlossen wird, das Script wie gewohnt weiterläuft.</p>
+      <p><strong>StdOut</strong>: Send a description of the warning to <em>stdout</em> (the program's standard output stream), along with the filename and line number. Dadurch können originelle Editoren wie SciTE die Warnungen abfangen, ohne das Script zu unterbrechen - der Benutzer kann später über den Editor-Bereich "Ausgabe" zu allen fehlerhaften Zeilen springen.</p>
+      <p><strong>OutputDebug</strong>: Sendet eine Beschreibung der Warnung zum Debugger. Ist kein Debugger aktiv, wird nichts passieren. Für weitere Details, siehe <a href="OutputDebug.htm">OutputDebug</a>.</p>
+      <p><strong>Off</strong>: Deaktiviert alle Warnungen für den angegebenen <em>Warnungstyp</em>.</p>
+    </dd>
+
+</dl>
+<h3>Bemerkungen</h3>
+	<p>Standardmäßig sind alle Warnungen deaktiviert.</p>
+	<p>Warnungen können weder aktiviert noch deaktiviert werden, während das Script läuft; die Einstellungen werden beim Laden des Scripts festgelegt. Folglich ist die Position der Direktive innerhalb des Scripts ohne Bedeutung (und kann, wie bei anderen Direktiven auch, nicht bedingt ausgeführt werden).</p>
+	<p>Die Anordnung der #Warn-Direktiven ist allerdings entscheidend: die letzte Direktive, die eine bestimmte Warnung setzt, bestimmt den Modus dieser Warnung. So, for example, the two statements below have the combined effect of enabling all warnings except UseUnsetGlobal:</p>
+<pre>#Warn All
+#Warn UseUnsetGlobal, Off
+</pre>
+<h3>Siehe auch</h3>
+<p><a href="../Functions.htm#Locals">Lokale und globale Variablen</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">
+#Warn All, Off                    <em>; Deaktiviert alle Warnungen.  Das ist der voreingestellte Zustand.</em>
+#Warn                             <em>; Aktiviert jeden Warnungstyp; zeigt jede Warnung als Hinweisfenster.</em>
+#Warn UseUnsetLocal, OutputDebug  <em>; Warnt bei einer leeren lokalen Variable; Sendet Warnung zum OutputDebug.</em>
+</pre>
+
+</body>
+</html>

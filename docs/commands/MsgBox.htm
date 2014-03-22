@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>MsgBox</title>
+<meta name="description" content="Zeigt auf einfache Weise ein Hinweisfenster in dieser freien Script-Sprache an. Außerdem kann man benutzerdefinierte Dateneingabefenster, Benutzeroberflächen und Menüleisten erstellen.">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>MsgBox</h1>
+
+<p>Zeigt den angegebenen Text in einem kleinen Fenster an, das eine oder mehrere Schaltflächen enthält (z. B. Ja und Nein).</p>
+
+<pre class="Syntax">MsgBox, Text
+MsgBox [, Optionen, Titel, Text, Zeitüberschreitung]</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Text</dt>
+  <dd><p>If all the parameters are omitted, the MsgBox will display the text "Press OK to continue." Otherwise, this parameter is the text displayed inside the message box to instruct the user what to do, or to present information.</p>
+    <p><a href="../misc/EscapeChar.htm">Escapesequenzen</a> können verwendet werden, um besondere Zeichen zu kennzeichnen. Zum Beispiel kennzeichnet `n ein Zeilenumbruchszeichen, das die aktuelle Zeile beendet und eine neue beginnt. Folglich würde mit Text1`n`nText2 eine leere Zeile zwischen Text1 und Text2 erzeugt.</p>
+    <p>Falls der <em>Text</em> zu lang ist, kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), um ihn besser lesbar und verwaltbar zu machen.</p></dd>
+
+  <dt>Optionen</dt>
+  <dd><p>Indicates the type of message box and the possible button combinations.&nbsp; If blank or omitted, it defaults to 0. Siehe untere Tabelle für zulässige Werte.</p>
+    <p>When command syntax is used, this parameter must be either a literal number or a forced expression such as <em>% Options</em>. Andere nicht-leere Werte werden nicht als diesen Parameter erkannt, sondern als <em>Text</em> im Einzelparametermodus.</p></dd>
+
+  <dt>Titel</dt>
+  <dd><p>Der Titel der MsgBox. Ist dieser Parameter leer oder nicht vorhanden, wird standardmäßig der aktuelle Name des Scripts verwendet (ohne Pfad). </p></dd>
+
+  <dt>Zeitüberschreitung</dt>
+  <dd><p><a name="Timeout"></a>(optional) Timeout in seconds (can contain a decimal point).&nbsp; If this value exceeds 2147483 (24.8 days), it will be set to 2147483.&nbsp; After the timeout has 
+      elapsed the message box will be automatically closed and <a href="#Result">A_MsgBoxResult</a> will contain the value "Timeout".</p>
+      <p>Bekannte Einschränkung: If the MsgBox contains only an OK button, <a href="#Result">A_MsgBoxResult</a> will indicate that the OK button was pressed if the MsgBox times out while its own <a href="../misc/Threads.htm">thread</a> is interrupted by another.</p></dd>
+
+</dl>
+
+<p>The <em>Options<strong> </strong></em>parameter can be a combination (sum) of one or more of the following 
+values.</p>
+<table class="info" style="width:55%">
+  <tr> 
+    <th width="287">Funktion</th>
+    <th>Dezimal-Wert</th>
+    <th>Hex-Wert</th>
+  </tr>
+  <tr> 
+    <td>OK</td>
+    <td align="center">0</td>
+    <td align="center">0x0</td>
+  </tr>
+  <tr> 
+    <td>OK/Abbrechen</td>
+    <td align="center">1</td>
+    <td align="center">0x1</td>
+  </tr>
+  <tr> 
+    <td>Abbrechen / Wiederholen / Ignorieren</td>
+    <td align="center">2</td>
+    <td align="center">0x2</td>
+  </tr>
+  <tr> 
+    <td>Ja / Nein / Abbrechen</td>
+    <td align="center">3</td>
+    <td align="center">0x3</td>
+  </tr>
+  <tr> 
+    <td>Ja / Nein</td>
+    <td align="center">4</td>
+    <td align="center">0x4</td>
+  </tr>
+  <tr> 
+    <td>Wiederholen / Abbrechen</td>
+    <td align="center">5</td>
+    <td align="center">0x5</td>
+  </tr>
+  <tr>
+    <td>Abbrechen / Wiederholen / Weiter</td>
+    <td align="center">6</td>
+    <td align="center">0x6</td>
+  </tr>
+  <tr> 
+    <td>Hilfe-Schaltfläche hinzufügen (siehe Bemerkungen)</td>
+    <td align="center">16384</td>
+    <td align="center">0x4000</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>Icon Hand (Stopp / Fehler)</td>
+    <td align="center">16</td>
+    <td align="center">0x10</td>
+  </tr>
+  <tr> 
+    <td>Icon Fragezeichen </td>
+    <td align="center">32</td>
+    <td align="center">0x20</td>
+  </tr>
+  <tr> 
+    <td>Icon Ausrufezeichen</td>
+    <td align="center">48</td>
+    <td align="center">0x30</td>
+  </tr>
+  <tr> 
+    <td>Icon Sternchen (Info)</td>
+    <td align="center">64</td>
+    <td align="center">0x40</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Zweite Schaltfläche zur Standard-Schaltfläche machen </td>
+    <td align="center">256</td>
+    <td align="center">0x100</td>
+  </tr>
+  <tr> 
+    <td>Dritte Schaltfläche zur Standard-Schaltfläche machen </td>
+    <td align="center">512</td>
+    <td align="center">0x200</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>System Modal (immer im Vordergrund)</td>
+    <td align="center">4096</td>
+    <td align="center">0x1000</td>
+  </tr>
+  <tr> 
+    <td>Task Modal</td>
+    <td align="center">8192</td>
+    <td align="center">0x2000</td>
+  </tr>
+  <tr>
+    <td>Immer im Vordergrund (WS_EX_TOPMOST-Style)<br>
+      (Wie System Modal, aber ohne Icon in der Titelleiste)</td>
+    <td align="center">262144</td>
+    <td align="center">0x40000</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Text rechtsbündig machen</td>
+    <td align="center">524288</td>
+    <td align="center">0x80000</td>
+  </tr>
+  <tr>
+    <td>Leserichtung von links nach rechts (für Hebräisch / Arabisch)</td>
+    <td align="center">1048576</td>
+    <td align="center">0x100000</td>
+  </tr>
+</table>
+
+<h3 id="Result">Ergebnis</h3>
+<p>The built-in variable <em>A_MsgBoxResult</em> returns one of the following strings to represent which button the user pressed in the most recent MsgBox command:</p>
+<p>OK<br>
+Cancel (Abbrechen)<br>
+Ja<br>
+No (Nein)<br>
+Abort (Abbrechen)<br>
+Retry (Wiederholen)<br>
+Ignore (Ignorieren)<br>
+
+TryAgain<br>
+
+Continue<br>
+
+Timeout (that is, the word "timeout" is present if the MsgBox timed out)</p>
+
+<h3>Bemerkungen</h3>
+<p>Die Werte in der oberen Tabelle können addiert werden, um mehrere Eigenschaften zu kombinieren. Zum Beispiel bewirkt die Angabe von 260 (256 + 4) in den <em>Optionen</em>, dass die Schaltflächen Ja und Nein in der MsgBox angezeigt werden und Nein zur Standard-Schaltfläche gemacht wird. In Hexadezimal wäre das 0x104 (0x100 + 0x4).</p>
+<p>MsgBox hat eine intelligente Komma-Handhabung, daher müssen Kommas im <em>Text</em>-Parameter nicht mit einem <a href="../misc/EscapeChar.htm">Escapezeichen</a> versehen werden.</p>
+<p>To determine which button the user pressed in the most recent MsgBox, use the <a href="#Result">A_MsgBoxResult</a> variable. Zum Beispiel:</p>
+<pre>MsgBox, 4,, Möchten Sie fortfahren? (press Yes or No)
+if A_MsgBoxResult = "Yes"
+    MsgBox You pressed Yes.
+else
+    MsgBox You pressed No.</pre>
+<p>Die Namen der Schaltflächen können mit <a href="../scripts/MsgBoxButtonNames.htm">diesem Beispiel</a> geändert werden.</p>
+<p><strong>Tipp</strong>: Der Text einer aktiven MsgBox kann mit STRG+C in die Zwischenablage kopiert werden. Das gilt für alle Fenster dieser Art, nicht nur für solche, die von AutoHotkey erstellt wurden.</p>
+<p><strong>MsgBox mit einem GUI-Fenster verwenden</strong>: Ein GUI-Fenster kann eine <em>modale</em> MsgBox mithilfe von <a href="Gui.htm#OwnDialogs">Gui, +OwnDialogs</a> darstellen. A <em>modal </em>MsgBox prevents the user from interacting with the GUI window until the MsgBox is dismissed. In einem solchen Fall ist es nicht notwendig, System Modal oder Task Modal in den Optionen anzugeben.</p>
+<p>Wenn <a href="Gui.htm#OwnDialogs">Gui +OwnDialogs</a> <em>nicht</em> aktiv ist, kann die Option Task Modal (8192) dazu verwendet werden, alle Fenster des Scripts zu deaktivieren, solange die MsgBox offen ist.</p>
+<p><strong>Die Schaltfläche Hilfe</strong>: Sobald die entsprechende Option (83) in den <em>Optionen</em> vorhanden ist, wird eine Hilfe-Schaltfläche angezeigt, die aber nur funktioniert, wenn die beiden folgenden Bedingungen erfüllt sind:</p>
+<ol>
+  <li>Die MsgBox wurde einem GUI-Fenster mittels <a href="Gui.htm#OwnDialogs">Gui +OwnDialogs</a> untergeordnet.</li>
+  <li>Das Script überwacht die WM_HELP-Nachricht (0x53). Zum Beispiel: <code><a href="OnMessage.htm">OnMessage(0x53, "WM_HELP")</a></code>. Beim Aufrufen der Funktion WM_HELP() kann zum Beispiel ein weiteres Fenster angezeigt werden, um den Benutzer zusätzliche Hinweise mitzuteilen.</li>
+</ol>
+<p><strong>Der Schließen-Button (in der Titelleiste der MsgBox)</strong>: Since the MsgBox window is a built-in feature of the operating system, its <strong>X </strong>button is enabled only when certain buttons are present. Gibt es nur einen OK-Button, ist das Anklicken von <strong>X</strong> das gleiche wie, als würde man OK drücken. Ansonsten ist der X-Button nur verfügbar, wenn ein Abbrechen-Button vorhanden ist. In diesem Fall ist das Anklicken von <strong>X</strong> das gleiche wie, als würde man Abbrechen drücken.</p>
+<h3>Siehe auch</h3>
+<p><a href="InputBox.htm">InputBox</a>, <a href="FileSelect.htm">FileSelect</a>, <a href="DirSelect.htm">DirSelect</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="Gui.htm">GUI</a></p>
+<h3>Beispiel</h3>
+<h4>Function Syntax</h4><pre class="NoIndent">MsgBox("This is the 1-parameter method. If only one parameter is passed, the first parameter becomes the message.")
+
+MsgBox(64, "3-parameter method", "The first parameter determins the type of message box.`n" 
+	. "The second parameter becomes the window title.`n"
+	. "The third parameter is displayed as the message.")
+
+MsgBox(4, "", "Do you want to continue? (Press YES or NO)")
+if A_MsgBoxResult = "No"
+    return
+	
+MsgBox(4, "4-parameter method", "this MsgBox will time out in 5 seconds.  Continue?", 5)
+if A_MsgBoxResult = "Timeout"
+    MsgBox("You didn't press YES or NO within the 5-second period.")
+else if A_MsgBoxResult = "No"
+    return</pre><pre class="NoIndent"><em>; Include a variable and perform a math calculation in the message.</em>
+var := 10
+Msgbox("The initial value is: " var)
+MsgBox("The result is: " var * 2)</pre>
+<h4>Command Syntax</h4><pre class="NoIndent">MsgBox Das ist die 1-Parameter-Methode. Commas (,) do not need to be escaped.
+
+MsgBox, 64
+	, 3-parameter method
+	, This is the 3-parameter method. Commas (,) do not need to be escaped.
+	
+MsgBox, 4, , Do you want to continue? (Press YES or NO)
+if A_MsgBoxResult = "No"
+    return
+	
+MsgBox, 4,,  4-parameter method: Diese MsgBox wird in 5 Sekunden automatisch geschlossen.  Continue?, 5
+if A_MsgBoxResult = "Timeout"
+    MsgBox You didn't press YES or NO within the 5-second period.
+else if A_MsgBoxResult = "No"
+    return</pre><pre class="NoIndent"><em>;Include a variable in the message.</em>
+var := 10
+MsgBox The initial value is: %var	<em>;The preciding % enables to yield the contents of the variable.</em>
+MsgBox % "The result is: " var * 2	<em>;By preceding any parameter with "% ", it becomes an expression.</em></pre>
+</body>
+</html>

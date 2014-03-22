@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>AutoHotkey-Tutorial: Makro- und Hotkey-Erstellung</title>
+<link href="css/default.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: 133%; font-weight: bold}
+-->
+</style>
+</head>
+<body>
+
+<h1>Tutorial und Übersicht</h1>
+
+
+<p>Diese kurze Einführung hilft dir dabei, eigene Makros und Hotkeys auf Anhieb zu programmieren.</p>
+<h2>Inhaltsverzeichnis</h2>
+<ul>
+  <li class="style1"><a href="#Create">Erstellen eines Scripts</a></li>
+  <li class="style1"><a href="#Launch">Ausführen eines Programms oder Dokuments</a></li>
+  <li class="style1"><a href="#Send">Senden von Tastatureingaben und Mausklicks</a></li>
+  <li class="style1"><a href="#Activate">Aktivieren und Bearbeiten von Fenstern</a></li>
+  <li class="style1"><a href="#Dialogs">Abrufen von Benutzereingaben mit MsgBox, InputBox, usw.</a></li>
+  <li class="style1"><a href="#Variables">Verwenden von Variablen und der Zwischenablage</a></li>
+  <li class="style1"><a href="#Loop">Wiederholen von mehreren Aktionen</a></li>
+  <li class="style1"><a href="#Files">Bearbeiten von Dateien und Ordnern</a></li>
+  <li class="style1"><a href="#Overview">Übersicht über weitere Features</a></li>
+</ul>
+<h2 id="Create">Erstellen eines Scripts</h2>
+<p>Jedes Script ist eine reine Textdatei mit Befehlen, die vom Programm (AutoHotkey.exe) ausgeführt werden. Ein Script kann auch <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten, oder sogar nur aus diesen bestehen. Allerdings wird ein Script ohne Hotkeys und Hotstrings seine Befehle von oben nach unten nacheinander ausführen, sobald es gestartet wird.</p>
+<p>Ein neues Script kann wie folgt erstellt werden:</p>
+<ol>
+  <li><a href="http://ahkscript.org/">Lade AutoHotkey herunter</a> und installiere es.</li>
+  <li>Klicke mit der rechten Maustaste auf eine leere Stelle im Desktop oder in einem beliebigen Ordner.</li>
+  <li>Wähle im dabei entstandenen Menü "<em>Neu -&gt; AutoHotkey Script</em>" aus.</li>
+  <li>Gebe einen Namen für diese Datei ein und stell sicher, dass sie mit <strong>.ahk</strong> endet. Zum Beispiel: <code>Test.ahk</code>.</li>
+  <li>Klicke mit der rechten Maustaste auf die Datei und wähle "Edit Script" aus.</li>
+  <li>Schreibe auf eine neue Zeile: <code>#space::Run www.google.com</code>.</li>
+</ol>
+<p>In der oberen Zeile ist das erste Zeichen "#" die WIN-Taste; das heißt, dass die WIN-Taste gedrückt gehalten und danach die LEERTASTE gedrückt werden muss, um den Hotkey zu aktivieren. Das Doppelpunkt-Paar (::) kennzeichnet, dass der nachfolgende Befehl ausgeführt werden soll, sobald dieser Hotkey gedrückt wird. In diesem Fall wird die Webseite von Google geöffnet. Um dieses Script zu testen, mache wie folgt weiter:</p>
+<ol>
+  <li>Speichere und schließe die Datei.</li>
+  <li>Klicke zweimal auf die Datei, um sie auszuführen. Es erscheint ein neues Icon im Benachrichtigungsfeld der Taskleiste.</li>
+  <li> Halte die WIN-Taste gedrückt und drücke die LEERTASTE. Es öffnet sich eine Webseite im Standard-Browser.</li>
+  <li>Um das Script zu beenden oder zu bearbeiten, klicke mit der rechten Maustaste auf das grüne "H" im Benachrichtigungsfeld der Taskleiste.</li>
+</ol>
+<p> Hinweise:</p>
+<ul>
+  <li>Es können mehrere Scripts gleichzeitig laufen, jedes davon mit einem eigenen Icon im Benachrichtigungsfeld der Taskleiste.</li>
+  <li>Jedes Script kann mehrere <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten.</li>
+  <li>Damit ein Script automatisch beim Start des Computers ausgeführt wird, <a href="FAQ.htm#Startup">erstelle eine Verknüpfung im Autostart-Ordner des Startmenüs</a>.</li>
+</ul>
+<h2 id="Launch">Ausführen eines Programms oder Dokuments</h2>
+<p>Der <a href="commands/Run.htm">Run</a>-Befehl dient dazu, bestimmte Programme, Dokumente, URLs, oder Verknüpfungen zu starten. Hier ein paar weitere Beispiele:</p>
+<pre>Run Notepad
+Run C:\Eigene Dokumente\Adressliste.doc
+Run C:\Eigene Dokumente\Eigene Verknüpfung.lnk
+Run www.yahoo.de
+Run mailto:someone@somedomain.com</pre>
+<p>Es ist möglich, den oben genannten Beispielen ein Hotkey zuzuweisen, indem ein <a href="Hotkeys.htm">Hotkey-Label</a> zugeordnet wird. Im ersten unteren Beispiel wird der Hotkey WIN+N zugewiesen, im zweiten STRG+ALT+C:</p>
+<pre>#n::Run Notepad
+^!c::Run calc.exe</pre>
+<p>Die oben genannten Beispiele werden auch als einzeilige Hotkeys bezeichnet, da sie jeweils nur aus einem Befehl bestehen. Um ein Hotkey dazu zu bringen, mehr als einen Befehl auszuführen, muss die erste Zeile <u>unter</u> der Hotkeydefinition gesetzt werden und die letzte Zeile ein <code><a href="commands/Return.htm">Return</a></code> sein. Zum Beispiel:</p>
+<pre>#n::
+Run http://www.google.de
+Run Notepad.exe
+Return</pre>
+<p>Falls das zu startende Programm oder Dokument nicht mit dem System verknüpft ist, muss dessen vollständiger Pfad angegeben werden, um es ausführen zu können:</p>
+<pre>Run %A_ProgramFiles%\Winamp\Winamp.exe</pre>
+<p>Im oben genannten Beispiel ist %A_ProgramFiles% eine <a href="Variables.htm#BuiltIn">interne Variable</a>. Durch Verwenden dieser Variable, anstatt z. B. <em>C:\Programme</em>, ist das Script ortsunabhängiger, das heißt, dass das Script wahrscheinlich auch auf anderen Computern laufen wird. Hinweis: Die Namen der Befehle und Variablen unterscheiden nicht zwischen Groß- und Kleinschreibung. Zum Beispiel ist "Run" das gleiche wie "run" und "A_ProgramFiles" das gleiche wie "a_programfiles".</p>
+<p>Verwende <a href="commands/Run.htm">RunWait</a> anstelle von Run, um ein Script dazu zu bringen, auf das Schließen des Programms oder Dokuments zu warten, bevor es fortfährt. Im folgenden Beispiel wird der <a href="commands/MsgBox.htm">MsgBox</a>-Befehl erst ausgeführt, sobald der Benutzer den Editor schließt:</p>
+<pre>RunWait Notepad
+MsgBox Der Benutzer ist fertig (Editor wurde geschlossen).</pre>
+<p>Um mehr über das Starten von Programmen zu erfahren (z. B. Parameter übergeben, Arbeitsverzeichnis bestimmen und den Exitcode des Programms ermitteln), siehe <a href="TutorialLaunch.htm">hier</a>.</p>
+<h2 id="Send">Senden von Tastatureingaben und Mausklicks</h2>
+<p>Mithilfe des <a href="commands/Send.htm">Send</a>-Befehls können Tastatureingaben an das aktive (vorderste) Fenster gesendet werden. Im folgenden Beispiel wird STRG+ALT+S zu einem Hotkey, der eine Signatur schreibt (stell sicher, dass ein Fenster wie der Editor oder E-Mail-Entwurf aktiv ist, bevor dieser Hotkey gedrückt wird):</p>
+<pre>^!s::
+Send Mit freundlichen Grüßen,{Enter}John Smith
+return</pre>
+<p>Im oben genannten Beispiel werden alle Zeichen direkt gesendet, außer {Enter}, das ein ENTER-Tastendruck simuliert. Das nächste Beispiel zeigt weitere Sonderzeichen, die häufig verwendet werden:</p>
+
+<pre>Send ^c!{tab}eingefügt:^v</pre>
+<p>Diese Zeile sendet STRG+C, danach ALT+TAB, danach den String "eingefügt:" und zum Schluss STRG+V. Siehe <a href="commands/Send.htm">Send</a> für eine komplette Liste von Sonderzeichen und Tasten.</p>
+<p>Tastatureingaben können auch gesendet werden, wenn man bestimmte Abkürzungen schreibt - auch bekannt als <a href="Hotstrings.htm">Hotstrings</a>. Das folgende Beispiel bewirkt, dass "bzw" automatisch mit "beziehungsweise" ersetzt wird, sobald man "bzw" mit einem Leerzeichen oder Komma danach eingibt:</p>
+<pre>::bzw::beziehungsweise</pre>
+<p><u><strong><br>
+Mouse Clicks</strong></u><strong>:</strong> To send a mouse click to a window it is first necessary to determine the X and Y coordinates where the click should occur. Mithilfe von "Window Spy", das in AutoHotkey enthalten ist, können diese abgerufen werden Die folgenden Schritte gelten für "Window Spy":</p>
+<ol>
+  <li>Starte "Window Spy" über das Tray-Icon-Menü eines Scripts oder Startmenü.</li>
+  <li>Aktiviere das gewünschte Fenster entweder durch Klicken auf die Titelleiste, mit Alt-Tab oder anderweitig ("Window Spy" selbst bleibt "immer im Vordergrund").</li>
+  <li>Bewege den Mauszeiger auf die gewünschte Position im Zielfenster und notiere dir die Mauskoordinaten, die vom "Window Spy" angezeigt werden (oder drücke in Windows XP und niedriger UMSCHALT+ALT+TAB, um "Window Spy" zu aktivieren, so dass die "eingefrorenen" Koordinaten kopiert und später eingefügt werden können).</li>
+  <li>Übertrage die ermittelten Koordinaten auf den <a href="commands/Click.htm">Click</a>-Befehl. Das folgende Beispiel klickt die linke Maustaste: <code>Click 112, 223</code>.</li>
+</ol>
+<p>Mit <a href="commands/MouseMove.htm">MouseMove</a> kann die Maus ohne Klicken verschoben werden. Mit <a href="commands/MouseClickDrag.htm">MouseClickDrag</a> kann die Maus gezogen werden. </p>
+<h2 id="Activate">Aktivieren und Bearbeiten von Fenstern</h2>
+<p>Mit <a href="commands/WinActivate.htm">WinActivate</a> kann das Fenster aktiviert werden (in den Vordergrund setzen). To detect whether a window exists, use <a href="commands/WinExist.htm">WinExist</a> or <a href="commands/WinWait.htm">WinWait</a>. Das folgende Beispiel verdeutlicht diese Befehle:</p>
+<pre>If WinExist("Untitled - Notepad")
+{
+    WinActivate
+}
+else
+{
+    Run Notepad
+    WinWait Untitled - Notepad
+    WinActivate
+}</pre>
+<p>Das obere Beispiel sucht zuerst nach vorhandenen Fenstern, deren Titel mit "Unbenannt - Editor" beginnen (abhängig von Groß- und Kleinschreibung). Sobald so ein Fenster gefunden wird, wird es aktiviert. Ansonsten wird der Editor gestartet und darauf gewartet, bis das Fenster "Unbenannt - Editor" erscheint, um es dann zu aktivieren. Das obere Beispiel nutzt auch das <a href="misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>, um zu verhindern, dass bei WinActivate jedesmal der Fenstertitel angegeben werden muss.</p>
+<p>Weitere häufig verwendete Fensterbefehle:</p>
+<ul>
+  <li>  <a href="commands/WinActive.htm">WinActive</a>: Überprüft, ob das angegebene Fenster zurzeit aktiv ist.</li>
+  <li><a href="commands/WinWaitActive.htm">WinWaitActive</a>: Wartet, bis das angegebene Fenster aktiv ist (üblicherweise nach dem Senden einer fensteraktivierenden Tastatureingabe wie STRG+F für "Suchen").</li>
+  <li><a href="commands/WinClose.htm">WinClose</a>: Schließt das angegebene Fenster.</li>
+  <li><a href="commands/WinMove.htm">WinMove</a>: Verschiebt das angegebene Fenster und/oder ändert dessen Größe.</li>
+  <li><a href="commands/WinMinimize.htm">WinMinimize</a>, <a href="commands/WinMaximize.htm">WinMaximize</a>, <a href="commands/WinRestore.htm">WinRestore</a>: Minimiert, maximiert oder stellt das angegebene Fenster wieder her.</li>
+</ul>
+<h2 id="Dialogs">Abrufen von Benutzereingaben mit MsgBox, InputBox, usw.</h2>
+<p>Das folgende Beispiel zeigt ein Dialogfenster mit zwei Schaltflächen an (JA und NEIN):</p>
+<pre><a href="commands/MsgBox.htm">MsgBox</a>, 4, , Would you like to continue?
+if <a href="Variables.htm#MsgBoxResult">A_MsgBoxResult</a> = "No"
+    return
+<em>; Otherwise, the user picked yes.</em>
+MsgBox You pressed YES.</pre>
+<p>Mit dem <a href="commands/InputBox.htm">InputBox</a>-Befehl kann der Benutzer dazu aufgefordert werden, einen String einzugeben. Use <a href="commands/FileSelect.htm">FileSelect</a> or <a href="commands/DirSelect.htm">DirSelect</a> to have the user select a file or folder. Für komplexere Aufgaben kann der <a href="commands/Gui.htm">Gui</a>-Befehl verwendet werden, um benutzerdefinierte Dateneingabeformulare und Benutzeroberflächen zu erstellen.</p>
+<p>Tipp: Wahrscheinlich ist dir bereits in den anderen Beispielen aufgefallen, dass bei jedem Befehl das erste Komma weggelassen werden kann (außer wenn der erste Parameter leer ist oder mit := oder = beginnt, oder der Befehl einzeln am Anfang eines <a href="Scripts.htm#continuation">Fortsetzungsbereichs</a> vorkommt). Zum Beispiel:</p>
+<pre>MsgBox Das ist ok.
+MsgBox<strong>,</strong> Das ist auch ok (es hat ein direktes Komma).</pre>
+<h2 id="Variables">Verwenden von Variablen und der Zwischenablage</h2>
+<p>Eine <em>Variable</em> ist ein Speicherbereich, in der Text oder Zahlen vom Script gespeichert werden. Eine Variable, die nur Ziffern enthält (optional mit einem Dezimalpunkt), wird bei einer mathematischen Operation oder bei einem Vergleich automatisch als Zahl interpretiert.</p>
+<p>Mit Ausnahme von lokalen Variablen in <a href="Functions.htm#Locals">Funktionen</a> sind alle Variablen global; das heißt, dass deren Inhalte jederzeit vom Script gelesen oder geändert werden können. Darüber hinaus müssen Variablen nicht deklariert werden; sie stehen zur Verfügung, sobald sie verwendet werden (außerdem ist jede Variable anfangs leer).</p>
+<p>Die folgenden Beispiele zeigen, wie ein String in eine Variable gespeichert wird:</p>
+<pre>EigeneVar1 = 123
+EigeneVar2 = Eigener String</pre>
+Der Inhalt einer Variable kann wie folgt mit einer Variable verglichen werden:
+<pre>If EigeneVar2 = Eigener String
+{
+    MsgBox EigeneVar2 enthält den String "Eigener String".
+}
+If EigeneVar1 &gt;= 100
+{
+    MsgBox EigeneVar1 enthält %EigeneVar1%, das eine Zahl größer gleich 100 ist.
+}</pre>
+<p>  Beachte bei der obigen MsgBox-Zeile, dass das zweite Vorkommen von <em>EigeneVar1</em> in Prozentzeichen gesetzt ist. Das bewirkt, dass der Inhalt von <em>EigeneVar1</em> an dieser Position angezeigt wird. Mit der gleichen Technik ist es möglich, den Inhalt einer Variable in eine andere Variable zu kopieren. Zum Beispiel:</p>
+<pre>EigeneVarVerkettung = %EigeneVar1% %EigeneVar2%</pre>
+<p>Die obere Zeile speichert den String "123 Eigener String" (ohne Anführungszeichen) in EigeneVarVerkettung.</p>
+<p>Das folgende Beispiel zeigt, wie der Inhalt einer Variable mit dem Inhalt einer anderen Variable verglichen werden kann:</p>
+<pre>If (Elementzählung &gt; Elementmaximum)
+{
+    MsgBox Der Wert von Elementzählung (%Elementzählung%) ist größer als %Elementmaximum%.
+}</pre>
+<p>Beachte, dass die erste Zeile im obigen Beispiel Klammern enthält. Diese Klammern verdeutlichen, dass die If-Anweisung ein <a href="Variables.htm#Expressions">Ausdruck</a> enthält. Sollten sie nicht vorhanden sein, würde diese Zeile als "If-Anweisung ohne Ausdruck" angesehen werden, wodurch Elementmaximum in Prozentzeichen gesetzt werden müsste (solche If-Anweisungen sind auf einen Vergleichsoperator beschränkt; das heißt, dass sie weder mathematische Operatoren noch Bindewörter wie "AND" und "OR" enthalten können).</p>
+<p><u><strong><br>
+Math</strong></u>: Mathematische Operationen können durchgeführt werden, indem der Doppelpunkt-Gleich-Operator (:=) dazu verwendet wird, das Ergebnis eines <a href="Variables.htm#Expressions">Ausdrucks</a> in einer Variable zu speichern.</p>
+<pre>Nettopreis := Preis * (1 - Rabatt/100)</pre>
+<p>Siehe <a href="Variables.htm#Expressions">Ausdrücke</a> für eine komplette Liste von mathematischen Operatoren.</p>
+<p><br>
+<u><strong>Zwischenablage</strong></u>: Die Variable namens <em>Clipboard</em> hat eine besondere Bedeutung, da sie den aktuellen Text der Windows-Zwischenablage enthält. Trotzdem kann sie so verwendet werden, als wäre sie eine normale Variable. Das folgende Beispiel zeigt den aktuellen Inhalt der Zwischenablage an:</p>
+<pre>MsgBox %Clipboard%</pre>
+<p>Das nächste Beispiel verdeutlicht, wie der aktuelle Inhalt der Zwischenablage mit neuem Text ersetzt werden kann:</p>
+<pre>Clipboard = Erste Textzeile.`r`nZweite Textzeile.`r`n</pre>
+<p>In der oberen Zeile werden `r und `n (Akzent, gefolgt vom Buchstaben "r" oder "n") dazu verwendet, zwei Sonderzeichen zu kennzeichnen: CR und LF. Diese zwei Zeichen beginnen eine neue Textzeile, als hätte der Benutzer die ENTER-Taste gedrückt.</p>
+<p>Im nächsten Beispiel wird gezeigt, wie ein beliebiger Text an die Zwischenablage angefügt wird (oder an einer anderen Variable):</p>
+<pre>Clipboard = %Clipboard% und der angefügte Text.</pre>
+<p>Siehe <a href="misc/Clipboard.htm">Clipboard</a> und <a href="Variables.htm">Variablen</a> für weitere Details.</p>
+<h2 id="Loop">Wiederholen von mehreren Aktionen </h2>
+<p>Mit einer <a href="commands/Loop.htm">Schleife</a> kann irgendetwas mehr als einmal nacheinander ausgeführt werden. Das folgende Beispiel zeigt eine <a href="commands/MsgBox.htm">MsgBox</a> dreimal an:</p>
+<pre>Loop 3
+{
+    MsgBox Dieses Fenster wird dreimal angezeigt.
+}</pre>
+<p>Man kann nach dem Wort Loop auch eine Variable angeben, wenn die Anzahl der Durchläufe irgendwo anders im Script festgelegt wurde:</p>
+<pre>Loop %Ausführungsanzahl%
+{
+    Run C:\Serverstatusüberprüfung.exe
+    Sleep 60000  <em>; Wartet 60 Sekunden.</em>
+}</pre>
+<p> Im oberen Beispiel wird die Schleife je nach Anzahl mehrfach durchgeführt, sofern Ausführungsanzahl keine 0 enthält, wodurch in diesem Fall die Schleife komplett übersprungen werden würde.</p>
+<p>Es ist auch möglich, dass sich eine Schleife selbst beenden kann, sobald sich eine oder mehrere Bedingungen ändern. Das folgende Beispiel klickt mehrmals mit der linken Maustaste, während der Benutzer die F1-Taste gedrückt hält:</p>
+<pre>$F1::  <em>; Macht die F1-Taste zu einem Hotkey (das $-Symbol unterstützt den "P"-Modus von GetKeyState unten).</em>
+Loop  <em>; Da hier keine Anzahl angegeben ist, erfolgt solange eine Endlosschleife, bis ein "break" oder "return" vorkommt.</em>
+{
+    If not GetKeyState("F1", "P")  <em>; Ist diese Anweisung wahr, hat der Benutzer die F1-Taste physisch losgelassen.</em>
+        break  <em>; Schleife unterbrechen.</em>
+    <em>; Ansonsten wird die Maustaste gedrückt gehalten (da oben kein "break" erfolgte).</em>
+    Click  <em>; Klickt einmal mit der linken Maustaste auf die aktuelle Position des Mauszeigers.</em>
+}
+Return</pre>
+<p>Sobald der Benutzer beim oberen Beispiel die F1-Taste loslässt, wird das die Schleife erkennen und sich mithilfe des <a href="commands/Break.htm">Break</a>-Befehls selbst stoppen. <em>Break</em> bewirkt, dass die Ausführung auf die Zeile nach der schließenden Klammer der Schleife springt.</p>
+<p>Das gleiche kann auch mit einer <a href="commands/While.htm">"While"-Schleife</a> erreicht werden:</p>
+<pre>$F1::
+While GetKeyState("F1", "P")  <em>; Während die F1-Taste physisch gedrückt gehalten wird.</em>
+{
+    Click
+}
+return</pre>
+<p>Die oben genannten Beispiele sind Schleifen, die den allgemeinen Zweck dienen. Für speziellere Anforderungen können folgende Schleifen in Betracht gezogen werden:</p>
+<p><a href="commands/LoopReadFile.htm">Dateilesende/-schreibende Schleife</a>: Ermittelt nacheinander die Zeilen einer Textdatei. Diese Schleife kann dazu verwendet werden, eine Datei zeilenweise in ein anderes Format umzuwandeln. Sie kann auch dazu verwendet werden, nach Zeilen zu suchen, die deinen Kriterien entsprechen.</p>
+<p><a href="commands/LoopFile.htm">Schleife für Dateien und Ordnern</a>: Ermittelt nacheinander die angegebenen Dateien oder Ordner. Dadurch können Operationen auf Dateien oder Ordner durchgeführt werden, die deine Kriterien erfüllen.</p>
+<p><a href="commands/LoopParse.htm">Parsing-Schleife</a>: Ermittelt nacheinander Teilstrings aus einem String. Dadurch kann ein String wie "Rot,Grün,Blau" einfach in drei Felder aufgeteilt werden.</p>
+<p><a href="commands/LoopReg.htm">Registrierung-Schleife</a>: Ermittelt nacheinander den Inhalt des angegebenen Unterschlüssels.</p>
+<h2 id="Files">Bearbeiten von Dateien und Ordnern</h2>
+<p>Um Text ans Ende einer Datei anzufügen (oder eine neue Datei zu erstellen), verwende <a href="commands/FileAppend.htm">FileAppend</a> wie folgt. Beachte, dass `n (LF) verwendet wird, um danach eine neue Textzeile zu beginnen:</p>
+<pre>FileAppend, Eine anfügende Textzeile.`n, C:\Eigene Dokumente\Eigene Textdatei.txt</pre>
+<p>Um eine vorhandene Datei zu überschreiben, verwende <a href="commands/FileDelete.htm">FileDelete</a> vor FileAppend. Zum Beispiel:</p>
+<pre>FileDelete, C:\Eigene Dokumente\Eigene Textdatei.txt</pre>
+<p>Weitere Datei- oder Ordnerbefehle, die häufig verwendet werden:</p>
+<ul><li><a href="commands/FileRead.htm">FileRead</a>: Liest den Inhalt einer Datei in eine Variable.</li>
+  <li><a href="commands/LoopReadFile.htm">Dateilesende Schleife</a>: Ermittelt nacheinander die Zeilen einer Textdatei.</li>
+  <li><a href="Functions.htm#FileExist">FileExist</a>: Überprüft, ob eine Datei oder ein Ordner vorhanden ist.</li>
+  <li><a href="commands/FileSelect.htm">FileSelect</a> and <a href="commands/DirSelect.htm">DirSelect</a>: Zeigt ein Standard-Dialogfenster an, womit der Benutzer einen Ordner auswählen kann.</li>
+  <li><a href="commands/FileDelete.htm">FileDelete</a> / <a href="commands/FileRecycle.htm">FileRecycle</a>: Löscht / Recycelt eine oder mehrere Dateien. Use <a href="commands/DirDelete.htm">DirDelete</a> to delete an entire folder.</li>
+  <li><a href="commands/FileCopy.htm">FileCopy</a> / <a href="commands/FileMove.htm">FileMove</a>: Kopiert / Verschiebt eine oder mehrere Dateien. Use <a href="commands/DirCopy.htm">DirCopy</a>/<a href="commands/DirMove.htm">DirMove</a> to copy/move an entire folder. </li>
+  <li><a href="commands/LoopFile.htm">Schleife für Dateien und Ordnern</a>: Ermittelt nacheinander die angegebenen Dateien oder Ordner. </li>
+  <li><a href="commands/FileSetAttrib.htm">FileSetAttrib</a> und <a href="commands/FileSetTime.htm">FileSetTime</a>: Ändert die Attribute oder Zeitstempel von einer oder mehreren Dateien.</li>
+  <li><a href="commands/IniRead.htm">IniRead</a>, <a href="commands/IniWrite.htm">IniWrite</a> und <a href="commands/IniDelete.htm">IniDelete</a>: Erstellt, Ermittelt und Verwaltet INI-Dateien im Standardformat.</li>
+  <li><a href="commands/RegRead.htm">RegRead</a>, <a href="commands/RegWrite.htm">RegWrite</a>, <a href="commands/RegDelete.htm">RegDelete</a> und <a href="commands/LoopReg.htm">Registrierung-Schleife</a>: Bearbeitet die Windows-Registrierung.</li>
+</ul>
+<h2 id="Overview">Übersicht über weitere Features</h2>
+<p>Siehe <a href="commands/index.htm">Befehlsliste</a> für eine Übersicht aller Befehle.</p>
+<p>&nbsp;</p>
+</body>
+</html>

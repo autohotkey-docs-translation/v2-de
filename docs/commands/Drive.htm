@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Drive</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Drive</h1>
+
+<p>Öffnet/Schließt einen CD- oder DVD-Laufwerk oder ändert die Laufwerksbezeichnung. </p>
+
+<pre class="Syntax">Drive, Unterbefehl [, Laufwerk, Wert]</pre>
+<p>Die Parameter Unterbefehl, Laufwerk und Wert sind voneinander abhängig und können wie folgt verwendet werden.</p>
+<p><strong>Label, Laufwerk [, NeueBezeichnung]</strong>: Ändert <em>Laufwerk</em>'s Datenträgerbezeichnung zu <em>NeueBezeichnung</em> (wenn <em>NeueBezeichnung</em> fehlt, wird das Laufwerk keine Bezeichnung haben). <em>Laufwerk</em> ist der Laufwerksbuchstabe, gefolgt von einem Doppelpunkt und einem optionalen Backslash (Netzwerkpfade im UNC-Format und zugeordnete Laufwerke könnten auch möglich sein). Zum Beispiel: <code>Drive, Label, C:, Seagate200</code>.</p>
+<p>Die aktuelle Bezeichnung eines Laufwerks kann wie folgt abgerufen werden: <code><a href="DriveGet.htm">DriveGet</a>, AusgabeVar, Label, C:</code>.</p>
+<p><strong><br>
+Lock, Drive</strong>: Verhindert, dass das angegebene Laufwerk ausgefahren werden kann. Zum Beispiel: <code>Drive, Lock, D:</code>. Die meisten Laufwerke können nicht im offenen Zustand gesperrt werden. Allerdings könnte die Sperrung immernoch erfolgen, nachdem das Laufwerk geschlossen wurde. Dieser Befehl hat keine Auswirkung auf Laufwerke, die keine Sperrung zulassen (trifft auf die meisten schreibgeschützten Laufwerke zu). Die Sperrung eines Laufwerks bleibt auch nach Beendigung des verantwortlichen Scripts bestehen. Andere Scripts, Programme oder ein Neustart des Systems können die Sperrung wieder aufheben. Wenn das angegebene Laufwerk nicht vorhanden ist oder die Sperrfunktion nicht unterstützt, wird ErrorLevel auf 1 gesetzt. Ansonsten wird es auf 0 gesetzt.</p>
+<p><br>
+<strong>Unlock, Laufwerk</strong>: Kehrt das Obengenannte um. <em>Unlock</em> muss mehrmals ausgeführt werden, falls das Laufwerk mehrmals gesperrt wurde (zumindest bei einigen Laufwerken). Wenn man beispielsweise <code>Drive, Lock, D:</code> dreimal ausführen würde, wäre wiederrum dreimal <code>Drive, Unlock, D:</code> notwendig, um die Sperrung wieder aufzuheben. Genau aus diesem Grund und der Tatsache, dass der gesperrte Zustand eines Laufwerks nicht ermittelt werden kann, wäre es ratsam, diesen Zustand in eine <a href="../Variables.htm">Variable</a> zu speichern, um die Übersicht zu  behalten.</p>
+<p><strong><br>
+Eject [, Drive, 1]</strong>: Bewirkt, dass ein CD- oder DVD-Laufwerk aus- oder eingefahren wird (um andere Medien- oder Gerätetypen auszufahren, siehe das DllCall-Beispiel ganz unten).</p>
+<p>if <em>Drive</em> is omitted, the default CD/DVD drive will be used). Wenn der letzte Parameter fehlt, wird das Laufwerk standardmäßig ausgefahren/geöffnet. Wenn das Laufwerk eingefahren/geschlossen werden soll, muss im letzten Parameter eine 1 angegeben werden; zum Beispiel: <code>Drive, Eject, D:, 1</code>.</p>
+<p><em>Drive Eject </em>waits for the ejection or retraction to complete before allowing the script to continue. Befindet sich das Laufwerk bereits in richtiger Position (offen oder geschlossen), wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt (also "kein Fehler").</p>
+<p><em>Drive Eject </em> will probably not work on a network drive or non-CD/DVD drive. In solchen oder sonstigen Fällen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
+<p>Es ist möglich, den vorherigen Zustand des Laufwerks zu ermitteln. Man lässt das Script einfach die Zeit messen, die der Befehl zum Ausführen benötigt. Zum Beispiel würde der folgende Hotkey das Laufwerk jeweils in den entgegengesetzten Zustand (offen oder geschlossen) schalten:</p>
+<pre>#c::
+Drive, Eject
+<em>; Wenn der Befehl schnell durchgeführt wurde, war das Laufwerk wahrscheinlich bereits offen.
+; In diesem Fall wird es eingefahren:</em>
+If A_TimeSinceThisHotkey &lt; 1000  <em>; Passe diese Zeit an, falls notwendig.</em>
+    Drive, Eject,, 1
+Return</pre>
+<p>Mit <a href="DriveGet.htm">DriveGet</a> kann der Medienstatus eines CD- oder DVD-Laufwerks (läuft, angehalten, offen, usw.) ermittelt werden. </p>
+<h3>ErrorLevel</h3>
+<p>This command is able to throw an exception on failure. For more information, see <a href="Catch.htm#RuntimeErrors">Runtime Errors</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+<h3>Bemerkungen</h3>
+<p>Das folgende Beispiel zeigt, wie außer CD/DVD noch andere Medien-/Gerätetypen ausgefahren werden können:</p>
+<pre><em>; Schreibe in die erste Zeile den gewünschten Laufwerksbuchstaben ein (alle anderen Zeilen können ignoriert werden).</em>
+Laufwerksbuchstabe = I:  <em>; Trage hier das Laufwerk ein, das ausgefahren werden soll.</em>
+
+hVolume := DllCall("CreateFile"
+    , Str, "\\.\" . Laufwerksbuchstabe
+    , UInt, 0x80000000 | 0x40000000  <em>; GENERIC_READ | GENERIC_WRITE</em>
+    , UInt, 0x1 | 0x2  <em>; FILE_SHARE_READ | FILE_SHARE_WRITE</em>
+    , UInt, 0
+    , UInt, 0x3  <em>; OPEN_EXISTING</em>
+    , UInt, 0, UInt, 0)
+If hVolume &lt;&gt; -1
+{
+    DllCall("DeviceIoControl"
+        , UInt, hVolume
+        , UInt, 0x2D4808   <em>; IOCTL_STORAGE_EJECT_MEDIA</em>
+        , UInt, 0, UInt, 0, UInt, 0, UInt, 0
+        , UIntP, dwBytesReturned  <em>; Unbenutzt.</em>
+        , UInt, 0)
+    DllCall("CloseHandle", UInt, hVolume)
+}</pre>
+<h3>Siehe auch</h3>
+<p><a href="DriveGet.htm">DriveGet</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">Drive, Label, D:, Backup-Laufwerk
+Drive, Eject,, 1 <em>; Schließt das Standard-CD/DVD-Laufwerk.</em></pre>
+
+</body>
+</html>

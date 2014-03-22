@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>RegWrite</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>RegWrite</h1>
+
+<p>Schreibt einen Wert in die Registrierung.</p>
+
+<pre class="Syntax">RegWrite, ValueType, RootKey\SubKey [, ValueName, Value]</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Werttyp</dt>
+  <dd><p>Muss entweder REG_SZ, REG_EXPAND_SZ REG_MULTI_SZ, REG_DWORD oder REG_BINARY sein. </p></dd>
+
+  <dt>Hauptschlüssel</dt>
+  <dd><p>Entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC). To access a remote registry, prepend the computer name and a slash, as in this example: \\workstation01\HKEY_LOCAL_MACHINE</p></dd>
+
+  <dt>Unterschlüssel</dt>
+  <dd><p>Der Name des Unterschlüssels (z. B. Software\BeliebigeAnwendung). If <em>SubKey </em>does not exist, it is created (along with its ancestors, if necessary). Ist der <em>Unterschlüssel</em> leer, wird der Wert direkt in den <em>Hauptschlüssel</em> geschrieben (obwohl einige Betriebssysteme sich weigern könnten, in die oberste Ebene von HKEY_CURRENT_USER zu schreiben).</p></dd>
+
+  <dt>Wertname</dt>
+  <dd><p>Der Name des zu schreibenden Wertes. Ist dieser Parameter nicht vorhanden, wird der Standardwert von <em>Unterschlüssel</em> verwendet. Dieser wird in RegEdit als "(Standard)" angezeigt. </p></dd>
+
+  <dt>Wert</dt>
+  <dd><p>Der zu schreibende Wert. Ist dieser Parameter nicht vorhanden, wird je nach <em>Werttyp</em> standardmäßig ein leerer String oder eine 0 verwendet. Falls der Text zu lang ist, kann er in mehreren kurzen Zeilen aufgeteilt werden (<a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>), um ihn besser lesbar und verwaltbar zu machen.</p></dd>
+
+</dl>
+<h3>ErrorLevel</h3>
+<p>This command is able to throw an exception on failure. For more information, see <a href="Catch.htm#RuntimeErrors">Runtime Errors</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+<p>Die interne Variable <a href="../Variables.htm#LastError">A_LastError</a> enthält den Rückgabewert der Systemfunktion GetLastError().</p>
+<h3>Bemerkungen</h3>
+<p>Wenn der <em>Werttyp</em> REG_DWORD enthält, sollte der <em>Wert</em> zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen.</p>
+<p>Der zu schreibende Wert eines REG_BINARY-Schlüssels muss ein String mit Hex-Zeichen sein. Zum Beispiel ist es mithilfe des Strings 01A9FF77 möglich, einen REG_BINARY-Wert von 01,a9,ff,77 zu schreiben.</p>
+<p> Der zu schreibende Wert eines REG_MULTI_SZ-Schlüssels muss aus mehreren Komponenten bestehen, die jeweils mit einen Zeilenumbruchzeichen (`n) enden. Optional kann die letzte Komponente auch mit Zeilenumbruchzeichen enden. Leere Komponenten sind nicht erlaubt. Das heißt, dass zwei Zeilenumbruchzeichen nicht hintereinander erfolgen dürfen (`n`n), denn das würde bedeuten, dass ein Wert in die Registrierung geschrieben wird, der kürzer als erwartet ist.</p>
+<p>Mit der <a href="LoopReg.htm">Registrierungs-Schleife</a> können mehrere Registrierungsschlüssel und -werte abgerufen und bearbeitet werden.</p>
+<p>Bei den Bemerkungen zur <a href="LoopReg.htm">Registrierungs-Schleife</a> wird näher gebracht, wie man auf die Registrierung eines Remotecomputers zugreifen kann.</p>
+<p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registrierung in einem 32-Bit-Script oder umgekehrt gelesen und geschrieben werden.</p>
+
+<h3>Siehe auch</h3>
+<p><a href="RegDelete.htm">RegDelete</a>, <a href="RegRead.htm">RegRead</a>, <a href="LoopReg.htm">Registrierungs-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniWrite.htm">IniWrite</a> </p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SOFTWARE\TestKey, MyValueName, Test Value
+RegWrite, REG_BINARY, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, 01A9FF77
+RegWrite, REG_MULTI_SZ, HKEY_CURRENT_USER\Software\TEST_APP, TEST_NAME, Line1`nLine2</pre>
+
+</body>
+</html>

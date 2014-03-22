@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ClipWait</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>ClipWait</h1>
+
+<p>Wartet, bis die <a href="../misc/Clipboard.htm">Zwischenablage</a> Text oder Dateien enthält.</p>
+
+<pre class="Syntax">ClipWait [, Wartezeit, 1]</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Wartezeit</dt>
+  <dd><p>Ist dieser Parameter nicht vorhanden, wartet der Befehl unendlich lang. Otherwise, it will wait no longer than this many seconds (can contain a decimal point). Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p></dd>
+
+  <dt>1<br>    </dt>
+  <dd><p>Ist dieser Parameter nicht vorhanden, wartet der Befehl gezielt auf Texte oder Dateien, die in der Zwischenablage erscheinen. If this parameter is 1, the command waits for data of any kind to appear on the clipboard.</p></dd>
+
+</dl>
+
+<h3>ErrorLevel</h3>
+<p>Sobald die Wartezeit abgelaufen ist, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Ansonsten wird ErrorLevel auf 0 gesetzt, wenn die Zwischenablage Daten enthält. </p>
+<h3>Bemerkungen</h3>
+<p>Es ist besser, diesen Befehl zu verwenden, anstatt mit einer selbstgemachten Schleife zu überprüfen, ob die Zwischenablage leer ist. Der Grund ist, dass die Zwischenablage nie durch diesen Befehl geöffnet wird, wodurch eine höhere Performance erzielt und jede mögliche Störung bei anderen Anwendungen, die auch die Zwischenablage verwenden, verhindert wird.</p>
+<p>Dieser Befehl berücksichtigt alle Daten, die in Text umgewandelt werden können (z. B. HTML). Es werden auch Dateien berücksichtigt, die per STRG+C in einem Explorer-Fenster kopiert wurden. Solche Dateien werden automatisch in ihre Dateinamen umgewandelt (mit vollständigem Pfad), sobald die Clipboard-Variable (%clipboard%) im Script verwendet wird. Siehe <a href="../misc/Clipboard.htm">Clipboard</a> für weitere Details.</p>
+<p>Enthält der letzte Parameter eine 1, akzeptiert der Befehl alle möglichen Daten, die in der Zwischenablage erscheinen. Diese Option kann in Verbindung mit <a href="../misc/Clipboard.htm#ClipboardAll">ClipboardAll</a> benutzt werden, um Nicht-Text-Elemente wie Bilder zu speichern.</p>
+<p>Während der Befehl in einem Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> mittels <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Menüeinträge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
+<h3>Siehe auch</h3>
+<p><a href="../misc/Clipboard.htm">Clipboard</a>, <a href="WinWait.htm">WinWait</a>, <a href="KeyWait.htm">KeyWait</a> </p>
+<h3>Beispiel</h3>
+<pre class="NoIndent">clipboard = <em>; Zwischenablage leeren</em>
+Send, ^c
+ClipWait, 2
+If ErrorLevel
+{
+    MsgBox, Kopieren des Textes in die Zwischenablage fehlgeschlagen.
+    Return
+}
+MsgBox, clipboard = %clipboard%
+Return</pre>
+
+</body>
+</html>

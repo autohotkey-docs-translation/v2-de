@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>StrSplit</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>StrSplit</h1>
+
+<p>Separates a string into an <a href="../Objects.htm#Usage_Simple_Arrays">array</a> of substrings using the specified delimiters.</p>
+
+<pre class="Syntax">Array := StrSplit(String [, Delimiters, OmitChars])</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>String</dt>
+  <dd><p>Ein String, der aufgeteilt werden soll.</p></dd>
+
+  <dt>Trennzeichen</dt>
+  <dd><p>Ist dieser Parameter leer oder nicht vorhanden, wird jedes Zeichen des Eingabestrings als einzelner Teilstring behandelt.</p>
+      <p>Ansonsten kann <em>Trennzeichen</em> entweder ein einzelner String oder ein Array mit Strings sein, die als Abgrenzungen zwischen den Teilstrings dienen sollen. Da die Trennzeichen nicht zu den Teilstrings gehören, sind sie nie im Rückgabewert enthalten. Befindet sich außerdem nichts zwischen einem Paar von Trennzeichen innerhalb des Eingabestrings, wird das entsprechende Array-Element leer sein.</p>      
+      <p>Zum Beispiel: <code>"`,"</code> würde den String jeweils bei einem Komma teilen. Ebenso würde <code>[A_Tab, A_Space]</code> jedesmal ein neues Array-Element erstellen, wenn ein Leer- oder Tabulatorzeichen im Eingabestring vorkommt.</p>
+      </dd>
+
+  <dt>ZeichenAuslassen</dt>
+  <dd><p>Eine optionale Liste von Zeichen (Unterscheidung zwischen Groß- und Kleinschreibung), die jeweils am Anfang und Ende eines Array-Elements weggelassen werden sollen. For example, if <em>OmitChars</em> is <code>" `t"</code>, spaces and tabs will be removed from the beginning and end (but not the middle) of every element.</p>
+    <p>Falls <em>Trennzeichen</em> leer ist, kennzeichnet <em>ZeichenAuslassen</em>, welche Zeichen im Array weggelassen werden sollen.</p>
+    </dd>
+
+</dl>
+
+<h3>Bemerkungen</h3>
+<p>Whitespace characters such as spaces and tabs will be preserved unless those characters are included in the <em>Delimiters</em> or <em>OmitChars</em> parameters. Tabs and spaces can be trimmed from both ends of any variable by using <a href="Trim.htm">Trim</a>. Zum Beispiel: var := Trim(var)</p>
+<p>Um einen String mit kommagetrennten Werten (CSV-Format) aufzuteilen, ist es sinnvoll, stattdessen eine <a href="LoopParse.htm">Parsing-Schleife</a> zu verwenden, da sie über eine interne CSV-Handhabung verfügt.</p>
+<p>Bevor die Felder aufgeteilt werden, können sie mit dem <a href="Sort.htm">Sort</a>-Befehl neu angeordnet werden.</p>
+<p>If you do not need the substrings to be permanently stored in memory, consider using a <a href="LoopParse.htm">parsing loop</a> -- especially if the input string is very large, in which case a large amount of memory would be saved. Zum Beispiel:</p>
+<pre>Farben = rot,grün,blau
+Loop, parse, Farben, `,
+    MsgBox Farbnummer %A_Index% ist %A_LoopField%.</pre>
+<h3>Siehe auch</h3>
+<p><a href="LoopParse.htm">Parsing loop</a>, <a href="../misc/Arrays.htm">Arrays</a>, <a href="Sort.htm">Sort</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="../Functions.htm#InStr">InStr</a>, <a href="../Functions.htm#SubStr">SubStr</a>, <a href="../Functions.htm#StrLen">StrLen</a>, <a href="StrLower.htm">StrLower</a>, <a href="StrLower.htm">StrUpper</a>, <a href="StrReplace.htm">StrReplace</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">TestString := "This is a test."
+word_array := StrSplit(TestString, A_Space, ".")  <em>; Omits periods.</em>
+MsgBox("The 4th word is " word_array[4])
+
+Colors := "red,green,blue"
+ColorArray := StrSplit(Colors, ",")
+Loop ColorArray.MaxIndex()
+{
+    this_color := ColorArray[a_index]
+    MsgBox, Color number %a_index% is %this_color%.
+}</pre>
+
+</body>
+</html>

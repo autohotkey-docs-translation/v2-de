@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Input</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Input</h1>
+
+<p>Wartet auf die Tastatureingabe des Benutzers.</p>
+
+<pre class="Syntax">Input [, AusgabeVar, Optionen, Endtasten, Übereinstimmungsliste]</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt><p>AusgabeVar</p>    </dt>
+  <dd><p>Name der Variable, in der die Benutzereingabe gespeichert werden soll (standardmäßig werden künstliche Eingaben auch erfasst).</p>
+      <p>Sobald dieser und die nachfolgenden Parameter weggelassen werden, wird jeder aktive Input-Befehl in anderen <a href="../misc/Threads.htm">Threads</a> beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort NewInput gesetzt. Der <a href="../misc/ErrorLevel.htm">ErrorLevel</a> des aktuellen Befehls wird hingegen auf 0 gesetzt, wenn ein vorheriger Input-Befehl beendet wurde, oder auf 1, wenn kein vorheriger Input-Befehl vorhanden war.</p>
+      <p> <em>AusgabeVar</em> speichert an sich keine Tastenanschläge. Stattdessen werden Zeichen gespeichert, die gemäß der Tastaturbelegung/Sprache des aktiven Fensters durch Tastatureingaben erzeugt wurden. Folglich werden Tastenschläge, die keine Zeichen erzeugen (z. B. PageUp und Escape), nicht gespeichert (obwohl sie mit dem unten genannten Parameter <em>Endtasten</em> erkannt werden können).</p>
+      <p>Unsichtbare Zeichen wie TAB (`t) werden direkt gespeichert. ENTER als Zeilenvorschub (`n).</p></dd>
+
+  <dt>Optionen</dt>
+  <dd><p><u>Ein String mit beliebig vielen Buchstaben (in beliebiger Reihenfolge, optional mit Leerzeichen getrennt):</u></p>
+      <p><strong>B</strong>: Rücktaste (Backspace) wird ignoriert. Normalerweise wird durch Drücken der Rücktaste bei einem Input-Befehl das zuletzt gedrückte Zeichen vom String entfernt. Hinweis: Falls bei einem sichtbaren Eingabetext (wie in einem Editor) Pfeiltasten oder ähnliches zur Navigation verwendet werden, wird durch die Rücktaste weiterhin das letzte Zeichen entfernt, anstatt das Zeichen hinter dem Textcursor (Einfügestrich).</p>
+      <p><strong>C</strong>: Zeichengenauigkeit. Normally, <em>MatchList</em> is not case sensitive.</p>
+      <p><strong>I</strong>: Ignoriert Eingaben, die vom AutoHotkey-Script erzeugt werden, wie z. B. der <a href="Send.htm#SendEvent">SendEvent</a>-Befehl. <a href="Send.htm#SendInput">SendInput</a> und <a href="Send.htm#SendPlay">SendPlay</a> werden allerdings immer ignoriert, unabhängig dieser Einstellung.</p>      
+      <p><strong>L</strong>: Länge begrenzen (z. B. <code>L5</code>). Die maximal erlaubte Eingabelänge. Sobald der Text diese Länge erreicht, wird Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt. Kommt der Text jedoch in der <em>Übereinstimmungsliste</em> vor, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Durch Weglassen der Zahl wird die Länge automatisch auf 16383 Zeichen begrenzt (der höchste zulässige Wert).</p>
+      <p><strong>M</strong>: Tastenkombinationen wie STRG+A bis STRG+Z werden erkannt und in reale ASCII-Zeichen umgewandelt, falls vorhanden. Das folgende Beispiel zeigt, wie STRG+C erkannt werden kann:</p>
+      <pre>CtrlC := Chr(3) <em>; Store the character for Ctrl-C in the CtrlC var. </em>
+Input, OutputVar, L1 M
+if (OutputVar = CtrlC)
+    MsgBox, You pressed Control-C.
+ExitApp</pre>
+      <p>Hinweis: STRG+A bis STRG+Z sind die Zeichen von <a href="../Functions.htm#Chr">Chr(1)</a> bis <a href="../Functions.htm#Chr">Chr(26)</a>. Also, the <strong>M </strong>option might cause some keyboard shortcuts such as Ctrl-LeftArrow to misbehave while an Input is in progress.</p>
+      <p><strong>T</strong>: Zeitüberschreitung (z. B. <code>T3</code>). Die Wartezeit in Sekunden, bevor der Input-Befehl beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Timeout gesetzt wird. Sobald die Zeit abgelaufen ist, enthält <em>AusgabeVar</em> den bis dahin eingegebenen Text des Benutzers. Dieser Wert kann eine Fließkommazahl wie 2.5 sein.</p>      
+      <p><strong><a name="vis"></a>V</strong>: Sichtbar. Normalerweise wird die Benutzereingabe blockiert (kann nicht vom Betriebssystem erkannt werden). Mit dieser Option werden die Benutzereingaben direkt an das aktive Fenster gesendet.</p>
+      <p><strong><a name="asterisk"></a>*</strong>: Platzhalter (überall finden). Normalerweise muss die Benutzereingabe exakt mit einem Element aus der <em>Übereinstimmungsliste</em> übereinstimmen. Mit dieser Option kann eine Übereinstimmung öfters gefunden werden, da die gesamte Länge des Eingabetextes durchsucht wird.</p></dd>
+
+  <dt>Endtasten</dt>
+  <dd><p>Eine Liste mit beliebig vielen Tasten, die den Input-Befehl beenden, sobald eine von denen gedrückt wird (die <em>Endtaste</em> selbst wird nicht in <em>AusgabeVar</em> geschrieben). Falls ein Input-Befehl auf diese Weise beendet wird, enthält <a href="../misc/ErrorLevel.htm">ErrorLevel</a> das Wort EndKey, gefolgt von einem Doppelpunkt und den Namen der <em>Endtaste</em>. Beispiele: <code>EndKey:.</code>, <code>EndKey:Escape</code>.</p>
+      <p>Die Liste im Parameter <em>Endtaste</em> verwendet ein ähnliches Format wie das vom <a href="Send.htm">Send</a>-Befehl. Zum Beispiel würde <code>{Enter}.{Esc}</code> bewirken, dass der Input-Befehl durch Drücken der ENTER-, PUNKT- oder ESC-Taste beendet werden kann. Damit die geschweiften Klammern selbst als Endtasten verwendet werden können, muss <code>{{}</code> und/oder <code>{}}</code> angegeben werden.</p>
+      <p>Um die STRG-, ALT- oder UMSCHALT-Taste als Endtaste zu verwenden, muss anstelle der neutralen die linke und/oder rechte Version der Taste angegeben werden. Zum Beispiel muss <code>{LControl}{RControl}</code> anstelle von <code>{Control}</code> angegeben werden.</p>
+      <p>Although modified keys such as Control-C (^c) are not supported, certain keys that require the shift key to be held down -- namely punctuation marks such as ?!:@&amp;{} -- are supported.</p>
+      <p>Alternativ kann ein eindeutiger virtueller Tastencode wie <code>{vkFF}</code> angegeben werden. Das ist vorallem dann nützlich, wenn die Taste weder einen Namen hat, noch beim Drücken ein sichtbares Zeichen erzeugt. Der virtuelle Tastencode kann ermittelt werden, wenn die Schritte im unteren Abschnitt der <a href="../KeyList.htm#SpecialKeys">Tastenliste</a> befolgt werden.</p>
+    </dd>
+
+  <dt>Übereinstimmungsliste</dt>
+  <dd><p>Eine kommagetrennte Liste mit Schlüsselwörtern, die den Input-Befehl beenden werden (dabei wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt). Die Benutzereingabe muss exakt mit einem Element aus der Liste übereinstimmen (sofern die <a href="#asterisk">*-Option</a> nicht vorhanden ist). <strong>Alle Leer- und Tabulatorzeichen an den Trennkommas sind von Bedeutung</strong> - das heißt, sie gehören zum übereinstimmenden String. Wenn die <em>Übereinstimmungsliste</em> beispielsweise "ABC , XYZ" enthält, dann muss Var entweder ABC mit einem Leerzeichen danach oder XYZ mit einem Leerzeichen davor enthalten, damit eine Übereinstimmung erfolgen kann.</p>
+      <p>Zwei aufeinanderfolgende Kommas stellen ein direkt vorhandenes Komma dar. Im folgenden Beispiel wird ein direkt vorhandenes Komma nach dem Wort string1 erzeugt: "string1,,,string2". Ebenso enthält die folgende Liste nur ein einzelnes Element, in dem sich ein direkt vorhandenes Komma befindet: "einzelnes,,Element".</p>
+    <p>Da die Elemente in <em>Übereinstimmungsliste</em> nicht als einzelne Parameter behandelt werden, kann sich die komplette Liste in einer Variable befinden. Tatsächlich muss sich alles oder ein Teil davon in der Variable befinden, wenn eine Länge von 16383 Zeichen überschritten wird (die maximale Länge einer Script-Zeile). Zum Beispiel könnte <em>Übereinstimmungsliste</em> aus <code>%Liste1%,%Liste2%,%Liste3%</code> bestehen, von der jede Unterliste eine lange Liste mit Elementen enthält.</p>
+    </dd>
+
+</dl>
+
+<h3>ErrorLevel</h3>
+<p>This command is able to throw an exception if called with no parameters and there is no Input in progress. For more information, see <a href="Catch.htm#RuntimeErrors">Runtime Errors</a>.</p>
+<table class="info">
+  <tr>
+    <td width="15%"><p>1 oder 0 </p></td>
+    <td width="85%"><p>Sobald der Befehl ohne Parameter verwendet wird, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt, wenn er erfolgreich ein vorheriges Input beendet, oder auf 1, falls kein Input aktiv ist.</p></td>
+  </tr>
+  <tr>
+    <td>NewInput</td>
+    <td>Die Benutzereingabe wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, der den Input-Befehl benutzte. </td>
+  </tr>
+  <tr>
+    <td>Max</td>
+    <td>Die Benutzereingabe hat die maximal erlaubte Länge erreicht und stimmt nicht mit den Elementen in der <em>Übereinstimmungsliste</em> überein.</td>
+  </tr>
+  <tr>
+    <td>Zeitüberschreitung</td>
+    <td>Die Benutzereingabe hat die Zeit überschritten. </td>
+  </tr>
+  <tr>
+    <td>Match</td>
+    <td>Die Benutzereingabe stimmt mit einem Element aus der <em>Übereinstimmungsliste</em> überein. </td>
+  </tr>
+  <tr>
+    <td>EndKey:name</td>
+    <td>Eine <em>Endtaste</em> wurde gedrückt, um den Input-Befehl zu beenden. In diesem Fall beinhaltet <a href="../misc/ErrorLevel.htm">ErrorLevel</a> das Wort EndKey, gefolgt von einem Doppelpunkt und den Namen der Taste ohne Klammern, z. B. "EndKey:Enter", "EndKey:Escape", etc.</td>
+  </tr>
+</table>
+<h3>Bemerkungen</h3>
+<p>Wenn dieser Befehl verwendet wird, während ein Input-Befehl in einem anderen <a href="../misc/Threads.htm">Thread</a> bereits aktiv ist, wird dieser beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort NewInput gesetzt. Danach wird der neue Input-Befehl eingeleitet (wenn Parameter angegeben sind).</p>
+<p>Wenn ein Input-Befehl aktiv ist, können weiterhin neue <a href="../misc/Threads.htm">Threads</a> wie <a href="Menu.htm">benutzerdefinierte Menüelemente</a> oder <a href="SetTimer.htm">zeitlich festgelegte Subroutinen</a> erstellt werden. Ebenso sind Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> auch dann aktiv, wenn Input <a href="#vis">sichtbar</a> ist. Falls Input nicht sichtbar ist, können nur <a href="_UseHook.htm">Hook-Hotkeys</a> ausgelöst werden.</p>
+<p>Sobald ein Script diesen Befehl erstmalig verwendet, wird der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> installiert (wenn es nicht bereits geschehen ist). The keyboard hook will stay installed until the next use of the <a href="Suspend.htm">Suspend</a> or <a href="Hotkey.htm">Hotkey</a> command, at which time it is removed if not required by any hotkeys or hotstrings.</p>
+<p>Falls mehrere Sprachen oder Tastaturbelegungen vorhanden sind, greift der Input-Befehl auf die Tastaturbelegung des aktiven Fensters zurück, anstatt auf die des Scripts (unabhängig davon, ob Input <a href="#vis">sichtbar</a> ist).</p>
+<p>Obwohl <a href="../Hotstrings.htm">Hotstrings</a> im Gegensatz zu einem Input-Befehl nicht so flexibel sind, sind sie dennoch einfacher zu handhaben.</p>
+<h3>Siehe auch</h3>
+<p><a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; Wartet darauf, dass der Benutzer eine Taste drückt.  Tasten, die keine sichtbaren Zeichen
+; wie Modifikatoren, Funktionstasten und Pfeiltasten erzeugen, sind als Endtasten aufgelistet,
+; damit auch diese erkannt werden.</em>
+Input, Einzeltaste, L1, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{Capslock}{Numlock}{PrintScreen}{Pause}</pre>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; Ein Hotkey-Beispiel.  Da der Hotkey den Tilde-Präfix (~) hat,
+; wird seine Tastatureingabe selbst an das aktive Fenster übergeben.
+; Schreibt man daher [btw (oder einen anderen
+; Begriff) in einem Editor, kann das Script eine beliebige Aktion
+; durchführen (z. B. das Ersetzen des Eingabetextes):</em>
+
+~[::
+Input, Benutzereingabe, V T5 L4 C, {enter}.{esc}{tab}, btw,otoh,fl,ahk,ca
+if (ErrorLevel = "Max")
+{
+    MsgBox, Ihre Eingabe "%Benutzereingabe%" hat die maximale Textlänge erreicht.
+    return
+}
+if (ErrorLevel = "Timeout")
+{
+    MsgBox, Sie haben "%Benutzereingabe%" innerhalb der verfügbaren Zeit eingegeben.
+    return
+}
+if (ErrorLevel = "NewInput")
+    return
+If InStr(ErrorLevel, "EndKey:")
+{
+    MsgBox, Sie haben "%Benutzereingabe%" eingegeben und Eingabe mit %ErrorLevel% beendet.
+    return
+}
+<em>; Ansonsten wurde eine Übereinstimmung gefunden.</em>
+if (Benutzereingabe = "btw")
+    Send, {backspace 4}by the way
+else if (Benutzereingabe = "otoh")
+    Send, {backspace 5}on the other hand
+else if (Benutzereingabe = "fl")
+    Send, {backspace 3}Florida
+else if (Benutzereingabe = "ca")
+    Send, {backspace 3}California
+else if (Benutzereingabe = "ahk")
+    Run, http://ahkscript.org
+return</pre>
+
+</body>
+</html>

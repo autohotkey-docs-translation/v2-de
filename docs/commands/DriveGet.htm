@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>DriveGet</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>DriveGet</h1>
+
+<p>Ermittelt unterschiedliche Informationen über die Laufwerke eines Computers. </p>
+
+<pre class="Syntax">DriveGet, AusgabeVar, Befehl [, Wert]</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>AusgabeVar</dt>
+  <dd><p>Name der Variable, in der der Rückgabewert von <em>Befehl</em> gespeichert werden soll.</p></dd>
+
+  <dt>Befehl, Wert</dt>
+  <dd>Siehe untere Liste.
+    </dd>
+
+</dl>
+
+<h3>Befehl, Wert</h3>
+<p>Die Parameter <em>Befehl</em> und <em>Wert</em> sind voneinander abhängig und können wie folgt verwendet werden. Bei Misserfolg wird <em>AusgabeVar</em> leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
+<p><strong>List [, Type] </strong>: Speichert in <em>AusgabeVar</em> ein Zeichenfolge bestehend aus Laufwerksbuchstaben. Zum Beispiel: ACDEZ. Wenn <em>Typ</em> fehlt, werden alle Laufwerksarten abgerufen. Ansonsten kann bei <em>Typ</em> eines der folgenden Wörter angegeben werden, um nur einen bestimmten Laufwerkstypen abzurufen: CDROM, REMOVABLE, FIXED, NETWORK, RAMDISK, UNKNOWN.</p>
+<p><strong>Capacity (oder Cap), Pfad</strong>: Ermittelt die Gesamtkapazität von <em>Pfad</em> (z. B. C:\) in Megabyte. See below for additional details.</p>
+<p id="SpaceFree"><strong>SpaceFree, Path</strong>: Retrieves the free disk space of the drive which contains <em>Path</em>, in megabytes (rounded down to the nearest megabyte). Da NTFS bereitgestellte Volumes (mounted volumes) und Verzeichnisverbindungen (directory junctions) unterstützt, ist es in einigen Fällen möglich, dass bei verschiedenen Ordnern, die auf das gleiche "Laufwerk" verweisen, unterschiedliche Mengen an freiem Speicher zur Verfügung stehen.</p>
+<p><strong>Filesystem (or FS), Drive </strong>: Ermittelt den Typ des Dateisystems von <em>Laufwerk</em>. <em>Laufwerk</em> ist der Laufwerksbuchstabe, gefolgt von einem Doppelpunkt und einem Backslash, oder einem Netzwerkpfad im UNC-Format wie \server1\share1. <em>AusgabeVar</em> wird auf eines der folgenden Wörter gesetzt: FAT, FAT32, NTFS, CDFS (typisch für CDs), UDF (typisch für DVDs). <em>AusgabeVar</em> wird leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt, wenn das Laufwerk kein formatiertes Medium enthält.</p>
+<p><strong>Label, Laufwerk</strong>: Ermittelt die Datenträgerbezeichnung von <em>Laufwerk</em>. <em>Laufwerk</em> ist der Laufwerksbuchstabe, gefolgt von einem Doppelpunkt und einem Backslash, oder einem Netzwerkpfad im UNC-Format wie \server1\share1. Die Bezeichnung kann wie folgt geändert werden: <code><a href="Drive.htm">Drive</a>, Label, C:, MeineBezeichnung</code>.</p>
+<p><strong>Serial, Laufwerk</strong>: Ermittelt die Datenträgerseriennummer von <em>Laufwerk</em> im dezimalen Integer-Format. <em>Laufwerk</em> ist der Laufwerksbuchstabe, gefolgt von einem Doppelpunkt und einem Backslash, oder einem Netzwerkpfad im UNC-Format wie \server1\share1.</p>
+<p><strong>Type, Pfad</strong>: Ermittelt den Laufwerkstypen von <em>Pfad</em>, und setzt dabei AusgabeVar auf eines der folgenden Wörter: Unknown, Removable, Fixed, Network, CDROM, RAMDisk.</p>
+<p><strong>Status, Pfad</strong>: Ermittelt den Status von <em>Pfad</em>, und setzt dabei AusgabeVar auf eines der folgenden Wörter: Unknown (könnte auf unformatiert/RAW hindeuten), Ready, NotReady (typisch für Wechseldatenträger ohne Inhalt), Invalid (<em>Pfad</em> existiert nicht oder ist ein Netzlaufwerk, das gerade nicht zugänglich ist, usw.)</p>
+<p><strong>StatusCD [, Laufwerk]</strong>: Ermittelt den Medienstatus eines CD- oder DVD-Laufwerks. <em>Laufwerk</em> ist der Laufwerksbuchstabe, gefolgt von einem Doppelpunkt (wenn <em>Laufwerk</em> fehlt, wird das Standard-CD/DVD-Laufwerk verwendet). <em>AusgabeVar</em> wird leer gemacht, wenn der Status nicht ermittelt werden kann. Ansonsten wird es auf einen der folgenden Strings gesetzt:</p>
+<table class="info">
+  <tr>
+    <td width="15%">not ready</td>
+    <td width="85%">Das Laufwerk ist gerade beschäftigt, weil es vermutlich an einer Schreiboperation beteiligt ist. Bekannte Einschränkung: "not ready" tritt auch auf, wenn das Laufwerk eine DVD enthält.</td>
+  </tr>
+  <tr>
+    <td>open</td>
+    <td>Das Laufwerk enthält keine Disc, oder ist offen.</td>
+  </tr>
+  <tr>
+    <td>playing</td>
+    <td>Das Laufwerk spielt gerade eine Disc ab.</td>
+  </tr>
+  <tr>
+    <td>paused</td>
+    <td>Das zuvor abgespielte Audio oder Video ist nun pausiert. </td>
+  </tr>
+  <tr>
+    <td>seeking</td>
+    <td>Das Laufwerk ist am Suchen. </td>
+  </tr>
+  <tr>
+    <td>stopped</td>
+    <td>Das Laufwerk enthält eine CD, auf der gerade nicht zugegriffen werden kann.</td>
+  </tr>
+</table>
+<p>Es kann sein, dass dieser Befehl nicht funktionieren wird, wenn das Laufwerk über das Netzwerk zugreifbar ist, oder kein CD/DVD-Laufwerk ist; schlägt es in solchen oder sonstigen Fällen fehl, wird <em>AusgabeVar</em> leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
+<p>Wenn das Laufwerk gerade geschlossen wurde, könnte eine Verzögerung auftreten, bevor der Befehl beendet wird.</p>
+<p>Mit dem <a href="Drive.htm">Drive</a>-Befehl kann ein Laufwerk ein- oder ausgefahren werden.</p>
+<h3>ErrorLevel</h3>
+<p>This command is able to throw an exception on failure. For more information, see <a href="Catch.htm#RuntimeErrors">Runtime Errors</a>.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+<h3>Bemerkungen</h3>
+<p>Einige dieser Befehl akzeptieren als <em>Pfad</em> auch Netzwerkfreigabenamen wie \\MeinServer\MeinFreigabe\</p>
+<h3>Siehe auch</h3>
+<p><a href="Drive.htm">Drive</a></p>
+<h3>Beispiel</h3>
+<pre class="NoIndent"><em>; This is a working example script.</em>
+DirSelect, folder, , 3, Pick a drive to analyze:
+if folder =
+    return
+DriveGet, list, list
+DriveGet, cap, capacity, %folder%
+DrivespaceFree, free, %folder%
+DriveGet, fs, fs, %folder%
+DriveGet, label, label, %folder%
+DriveGet, serial, serial, %folder%
+DriveGet, type, type, %folder%
+DriveGet, status, status, %folder%
+MsgBox All Drives: %Liste%`nAusgewähltes Laufwerk: %Ordner%`nTyp: %Typ%`nStatus: %Status%`nKapazität: %Max% M`nFreier Speicher: %Frei% M`nDateisystem: %DS%`nBezeichnung: %Name%`nSeriennummer: %Nummer%</pre>
+
+</body>
+</html>

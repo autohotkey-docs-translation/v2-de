@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>FileMove</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>FileMove</h1>
+
+<p>Verschiebt oder benennt eine oder mehrere Dateien um.</p>
+
+<pre class="Syntax">FileMove, Quellmuster, Zielmuster [, Flag]</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Quellmuster</dt>
+  <dd><p>Name einer Datei oder eine musterbasierte Suche wie C:\Temp\*.tmp. <em>SourcePattern </em>is assumed to be in <a href="../Variables.htm#WorkingDir">%A_WorkingDir%</a> if an absolute path isn't specified.</p></dd>
+
+  <dt>Zielmuster</dt>
+  <dd>Name oder Muster des Ziels, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befinden, solange kein absoluter Pfad angegeben ist. Um eine einfache Verschiebung durchzuführen (vorhandene Dateinamen beibehalten), sollte nur der Ordnername angegeben werden. Siehe dazu folgende Beispiele, die funktional identisch sind:</p>
+<pre>FileMove, C:\*.txt, C:\Eigener Ordner</pre>
+<pre>FileMove, C:\*.txt, C:\Eigener Ordner\*.*</pre>
+    </dd>
+
+  <dt>Flag</dt>
+  <dd><p>(Optional) Dieser Parameter bestimmt, ob bereits vorhandene Dateien überschrieben werden dürfen:</p>
+      <p>0 = (Standard) vorhandene Dateien nicht überschreiben<br>
+        1 = vorhandene Dateien überschreiben</p></dd>
+
+</dl>
+
+<h3>ErrorLevel</h3>
+<p>This command is able to throw an exception on failure. For more information, see <a href="Catch.htm#RuntimeErrors">Runtime Errors</a>.</p>
+<p>Bei Problemen enthält <a href="../misc/ErrorLevel.htm">ErrorLevel</a> die Anzahl an Dateien, die nicht verschoben werden konnten, ansonsten wird ErrorLevel auf 0 gesetzt. Allerdings wird ErrorLevel auch auf 0 gesetzt, wenn die Quelldatei eine einzelne Datei (ohne Platzhalter) ist und nicht existiert. To detect this condition, use <a href="../Functions.htm#FileExist">FileExist()</a> on the source file prior to moving it.</p>
+<p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg angesehen, selbst wenn der Überschreibmodus nicht aktiv ist.</p>
+<p>Falls Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf den aktuellsten Rückgabewert der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der darauf hinweist, warum keine Dateien gefunden wurden.</p>
+
+<h3>Bemerkungen</h3>
+<p> FileMove verschiebt nur Dateien. Um stattdessen den Inhalt eines Ordners zu verschieben (alle Dateien und Unterordner), sieht die Beispiele weiter unten. To move or rename a single folder, use <a href="DirMove.htm">DirMove</a>.</p>
+<p>Die Operation wird auch dann fortgesetzt, wenn Fehler auftreten.</p>
+<p>Dieser Befehl in der Lage ist, Dateien auf andere Datenträger zu verschieben Beachte jedoch, dass das Verschieben auf gleichen Datenträgern schneller ist, als auf unterschiedlichen Datenträgern, weil die Dateien hierbei nur umbenannt werden.</p>
+<h3>Siehe auch</h3>
+<p><a href="FileCopy.htm">FileCopy</a>, <a href="DirCopy.htm">DirCopy</a>, <a href="DirMove.htm">DirMove</a>, <a href="FileDelete.htm">FileDelete</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent">FileMove, C:\Eigene Dokumente\Liste1.txt, D:\Backup\  <em>; Verschiebt die Datei, ohne sie umzubenennen.</em>
+FileMove, C:\Datei vorher.txt, C:\Datei nachher.txt  <em>; Benennt eine Datei um.</em>
+FileMove, C:\Ordner1\*.txt, D:\Neuer Ordner\*.bkp  <em>; Verschiebt und benennt die Erweiterung der Dateien um.</em></pre>
+<p>&nbsp;</p>
+<pre class="NoIndent"><em>; The following example moves all files and folders inside a folder to a different folder:</em>
+ErrorCount := MoveFilesAndFolders("C:\My Folder\*.*", "D:\Folder to receive all files &amp; folders")
+if ErrorCount &lt;&gt; 0
+    MsgBox %ErrorCount% files/folders could not be moved.
+
+MoveFilesAndFolders(SourcePattern, DestinationFolder, DoOverwrite = false)
+<em>; Moves all files and folders matching SourcePattern into the folder named DestinationFolder and
+; returns the number of files/folders that could not be moved.</em>
+{
+    if DoOverwrite = 1
+        DoOverwrite = 2  <em>; See <a href="DirMove.htm">DirMove</a> for description of mode 2 vs. 1.</em>
+    <em>; First move all the files (but not the folders):</em>
+    FileMove, %SourcePattern%, %DestinationFolder%, %DoOverwrite%
+    ErrorCount := ErrorLevel
+    <em>; Now move all the folders:</em>
+    Loop, %SourcePattern%, 2  <em>; 2 means "retrieve folders only".</em>
+    {
+        DirMove, %A_LoopFilePath%, %DestinationFolder%\%A_LoopFileName%, %DoOverwrite%
+        ErrorCount += ErrorLevel
+        if ErrorLevel  <em>; Report each problem folder by name.</em>
+            MsgBox Could not move %A_LoopFilePath% into %DestinationFolder%.
+    }
+    return ErrorCount
+}</pre>
+
+</body>
+</html>

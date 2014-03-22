@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>GroupAdd</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>GroupAdd</h1>
+
+<p>Fügt eine Fensterspezifikation zu einer Fenstergruppe hinzu, und erstellt die Gruppe, falls erforderlich.</p>
+
+<pre class="Syntax">GroupAdd, GroupName [, WinTitle, WinText, ExcludeTitle, ExcludeText]</pre>
+<h3>Parameter</h3>
+<dl>
+
+  <dt>Gruppenname</dt>
+  <dd><p>Name der Gruppe, die die Fensterspezifikation erhalten soll. Falls die Gruppe nicht existiert, wird sie erstellt. Gruppennamen unterscheiden nicht zwischen Groß- und Kleinschreibung. </p></dd>
+
+  <dt>Fenstertitel</dt>
+  <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
+
+  <dt>Fenstertext</dt>
+  <dd><p>In diesem Parameter kann ein Teilstring angegeben werden, der in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist, während <a href="GroupActivate.htm">GroupActivate</a>, <a href="GroupDeactivate.htm">GroupDeactivate</a> und <a href="GroupClose.htm">GroupClose</a> verwendet wird.</p></dd>
+
+  <dt>Titelausnahme</dt>
+  <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
+
+  <dt>Textausnahme</dt>
+  <dd><p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p></dd>
+
+</dl>
+
+<h3>Bemerkungen</h3>
+<p>Jedes Mal, wenn dieser Befehl benutzt wird, wird eine neue Regel hinzugefügt. Das heißt, dass eine Gruppe aus einer Reihe von Kriterien besteht, anstatt einer feste Liste von Fenstern. Wenn eine Gruppe später von Befehlen wie <a href="GroupActivate.htm">GroupActivate</a> verwendet wird, wird jedes Fenster auf dem Desktop mit diesen Kriterien verglichen. Stimmt ein Fenster mit einem der Kriterien aus der Gruppe überein, ist die Übereinstimmung erfolgreich.</p>
+<p><a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> haben keinen direkten Einfluss darauf, wie sich dieser Befehl verhalten soll. Allerdings beeinflussen sie die anderen Gruppenbefehle wie <a href="GroupActivate.htm">GroupActivate</a> und <a href="GroupClose.htm">GroupClose</a>, und auch ahk_group, das in <a href="../misc/WinTitle.htm">Fenstertitel</a>-Parametern von anderen Befehlen verwendet wird.</p>
+<p>Eine Fenstergruppe wird üblicherweise dazu verwendet, mehrere verwandte Fenster zu verbinden. Das ist besonders bei Aufgaben nützlich ist, die viele verwandte Fenster umfassen, oder bei einer Anwendung, die mehrere Unterfenster besitzt. Arbeitet man beispielsweise sehr oft mit mehreren Instanzen von Grafikprogrammen oder Texteditoren, könnte man <a href="GroupActivate.htm">GroupActivate</a> in Verbindung mit einem Hotkey verwenden, um jede Instanz solcher Programme einzeln durchzugehen, ohne Alt+Tab oder die Taskleiste benutzen zu müssen.</p>
+<p>Da die Einträge in jeder Gruppe nur einmal hinzugefügt werden müssen, wird dieser Befehl in der Regel im automatischen Ausführungsbereich verwendet (oberster Bereich des Scripts). Doppelt vorkommende Einträge werden ignoriert.</p>
+<p>Um <u>alle</u> Fenster in einer Gruppe einzufügen (außer Programm-Manager), verwende dieses Beispiel:</p>
+<pre>GroupAdd, AllWindows</pre>
+<p>Alle Fensterbefehle können eine Fenstergruppe bearbeiten, wenn <code>ahk_group EigenerGruppenname</code> im <em>Fenstertitel</em>-Parameter verwendet wird. Die Befehle <a href="WinMinimize.htm">WinMinimize</a>, <a href="WinMaximize.htm">WinMaximize</a>, <a href="WinRestore.htm">WinRestore</a>, <a href="WinHide.htm">WinHide</a>, <a href="WinShow.htm">WinShow</a>, <a href="WinClose.htm">WinClose</a> und <a href="WinKill.htm">WinKill</a> beeinflussen <strong>alle</strong> Fenster einer Gruppe. Um stattdessen nur das oberste Fenster zu beeinflussen, befolge dieses Beispiel:</p>
+<pre>WinHide % "ahk_id " . WinExist("ahk_group <strong>EigeneGruppe</strong>")</pre>
+<p>By contrast, the other window commands such as <a href="WinActivate.htm">WinActivate</a> and <a href="WinExist.htm">WinExist</a> will operate only upon the topmost window of the group.</p>
+<h3>Siehe auch</h3>
+<p><a href="GroupActivate.htm">GroupActivate</a>, <a href="GroupDeactivate.htm">GroupDeactivate</a>, <a href="GroupClose.htm">GroupClose</a></p>
+<h3>Beispiele</h3>
+<pre class="NoIndent"><em>; In the autoexecute section at the top of the script: </em>
+GroupAdd, MSIE, ahk_class IEFrame <em>; Add only Internet Explorer windows to this group.</em>
+return <em>; End of autoexecute section.</em>
+
+<em>; Assign a hotkey to activate this group, which traverses
+; through all open MSIE windows, one at a time (i.e. each
+; press of the hotkey).</em>
+Numpad1::GroupActivate, MSIE, r
+
+<em>; Here's a more complex group for MS Outlook 2002.
+; In the autoexecute section at the top of the script: </em>
+SetTitleMatchMode, 2 
+GroupAdd, mail, Message - Microsoft Word <em>; This is for mails currently being composed </em>
+GroupAdd, mail, - Message ( <em>; This is for already opened items 
+; Need extra text to avoid activation of a phantom window:</em>
+GroupAdd, mail, Advanced Find, Sear&amp;ch for the word(s)
+GroupAdd, mail, , Recurrence: 
+GroupAdd, mail, Erinnerungsfenster
+GroupAdd, mail, - Microsoft Outlook
+Return  <em>; Ende des automatischen Ausführungsbereichs.</em>
+
+
+Numpad5::GroupActivate, mail <em>; Ein Hotkey, um hintereinander zwischen jedes Outlook-Fenster zu schalten.</em></pre>
+
+</body>
+</html>
