@@ -1,11 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>Sort</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -13,7 +17,7 @@
 
 <p>Ordnet den Inhalt einer Variable in alphabetischer, numerischer oder zufälliger Reihenfolge (entfernt optional Duplikate).</p>
 
-<pre class="Syntax">Sort, OutputVar, String [, Options]</pre>
+<pre class="Syntax">Sort, AusgabeVar, String [, Optionen]</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -21,7 +25,7 @@
   <dd><p>Name der Variable, in der das Ergebnis gespeichert werden soll.</p></dd>
 
   <dt>String</dt>
-  <dd><p>The string to sort.</p></dd>
+  <dd><p>Der String, der sortiert werden soll.</p></dd>
 
   <dt>Optionen</dt>
   <dd><p>Siehe untere Liste.</p></dd>
@@ -31,9 +35,9 @@
 <h3>Optionen</h3>
 <p><u>Ein String mit beliebig vielen Buchstaben (in beliebiger Reihenfolge, optional mit Leerzeichen getrennt):</u></p>
 <p><strong>C</strong>: Nach Groß- und Kleinschreibung sortieren (wird ignoriert, sobald die <strong>N</strong>-Option vorhanden ist). Sobald <strong>C</strong> bzw. <strong>CL</strong> weggelassen wird, werden die Großbuchstaben von A bis Z beim Sortieren mit deren Kleinbuchstaben als gleichwertig betrachtet.</p>
-<p><strong>CL</strong>: Case insensitive sort based on the current user's locale. Bei den meisten englischen und westeuropäischen Gebietsschemen werden die Großbuchstaben A-Z und ANSI-Zeichen wie Ä und Ü wie ihre Kleinbuchstaben behandelt. Diese Methode verwendet zudem eine "Wortsortierung", dabei werden Wörter wie "coop" und "co-op" gleichwertig behandelt (Bindestriche und Apostrophe). Je nach Inhalt der zu sortierenden Elemente ist die Performance ein- bis achtmal schlechter als die Standardsortierung.</p>
-<p><strong>Dx</strong>: Specifies <strong>x</strong> as the delimiter character, which determines where each item begins and ends. If this option is not present, <strong>x</strong> defaults to linefeed (`n), which correctly sorts the string if its lines end in either LF (`n) or CR+LF (`r`n).</p>
-<p><strong><a name="callback"></a>F MyFunction</strong>: Uses custom sorting according to the criteria in <em>MyFunction</em> (though sorting takes much longer). Specify the letter "F" followed by optional spaces/tabs followed by the name of a <a href="../Functions.htm">function</a> to be used for comparing any two items in the list. Die Funktion muss zwei oder drei Parameter akzeptieren. Geht die Funktion davon aus, dass der erste Parameter größer als der zweite ist, sollte sie einen positiven Integer zurückgeben. Geht die Funktion davon aus, dass die zwei Parameter gleich groß sind, sollte sie eine 0, "" oder nichts zurückgeben. Ansonsten sollte sie einen negativen Integer zurückgeben. Falls ein Dezimalpunkt im Rückgabewert vorhanden ist, wird dieser Teil ignoriert (z. B. ist 0.8 das gleiche wie 0). Sobald der dritte Parameter vorhanden ist, empfängt dieser den Offset (in Zeichen) vom ersten zum zweiten Element aus der originalen/unsortierten Liste (siehe Beispiele). Finally, the function uses the same global settings (e.g. <a href="StringCaseSense.htm">StringCaseSense</a>) as the Sort command that called it.</p>
+<p><strong>CL</strong>: Sortierung basiert auf dem aktuellen Gebietsschema des Benutzers, ohne Unterscheidung zwischen Groß- und Kleinschreibung. Bei den meisten englischen und westeuropäischen Gebietsschemen werden die Großbuchstaben A-Z und ANSI-Zeichen wie Ä und Ü wie ihre Kleinbuchstaben behandelt. Diese Methode verwendet zudem eine "Wortsortierung", dabei werden Wörter wie "coop" und "co-op" gleichwertig behandelt (Bindestriche und Apostrophe). Je nach Inhalt der zu sortierenden Elemente ist die Performance ein- bis achtmal schlechter als die Standardsortierung.</p>
+<p><strong>Dx</strong>: Ersetze <strong>x</strong> mit einem Trennzeichen, das bestimmen soll, wo jedes Element beginnt oder endet. Ist diese Option nicht vorhanden, gilt für <strong>x</strong> standardmäßig ein LF-Zeichen (`n), um den String korrekt zu sortieren, wenn dessen Zeilen entweder mit LF (`n) oder CR+LF (`r`n) enden.</p>
+<p><strong><a name="callback"></a>F EigeneFunktion</strong>: Ermöglicht benutzerdefinierte Sortierung in Bezug auf die Kriterien in <em>EigeneFunktion</em> (allerdings dauert diese Sortierung viel länger). Mit dem Buchstaben F, gefolgt von optionalen Leer-/Tabulatorzeichen und den Namen einer <a href="../Functions.htm">Funktion</a>, können jeweils zwei Elemente in der Liste verglichen werden. Die Funktion muss zwei oder drei Parameter akzeptieren. Geht die Funktion davon aus, dass der erste Parameter größer als der zweite ist, sollte sie einen positiven Integer zurückgeben. Geht die Funktion davon aus, dass die zwei Parameter gleich groß sind, sollte sie eine 0, "" oder nichts zurückgeben. Ansonsten sollte sie einen negativen Integer zurückgeben. Falls ein Dezimalpunkt im Rückgabewert vorhanden ist, wird dieser Teil ignoriert (z. B. ist 0.8 das gleiche wie 0). Sobald der dritte Parameter vorhanden ist, empfängt dieser den Offset (in Zeichen) vom ersten zum zweiten Element aus der originalen/unsortierten Liste (siehe Beispiele). Schließlich verwendet die Funktion die gleichen globalen Einstellungen (z. B. <a href="StringCaseSense.htm">StringCaseSense</a>) wie der Sort-Befehl, der sie aufgerufen hat.</p>
 <p>Hinweis: die <strong>F</strong>-Option bewirkt, dass alle anderen Optionen außer <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> ignoriert werden (allerdings haben <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch Einfluss darauf, wie <a href="#unique">Duplikate</a> erkannt werden). Zudem erfolgt keine Sortierung, wenn die angegebene Funktion: 1) nicht existiert; 2) weniger als zwei Parameter akzeptiert; oder 3) im ersten oder zweiten Parameter <a href="../Functions.htm#ByRef">ByRef</a> hat.</p>
 <p><strong>N</strong>: Numerische Sortierung: Jedes Element wird als Zahl anstatt als String angesehen (ist diese Option zum Beispiel nicht vorhanden, wird String 233 nach alphabetischer Reihenfolge kleiner als String 40 angesehen). Sowohl dezimale als auch hexadezimale Strings (z. B. 0xF1) gelten als numerisch. Strings, die nicht mit einer Zahl beginnen, werden beim Sortieren als 0 angesehen. Zahlen werden als 64-Bit-Fließkommawerte behandelt, damit die Nachkommastelle jeder Zahl (falls vorhanden) berücksichtigt wird.</p>
 <p><strong>Pn</strong>: Sortiert Elemente, basierend auf die Zeichenposition <strong>n</strong> (<strong>n</strong> muss ein Integer sein). Ist diese Option nicht vorhanden, gilt für <strong>n</strong> standardmäßig eine 1, das die Position des ersten Zeichens ist. Die Sortierung vergleicht jeden String mit anderen Strings, beginnend beim <strong>n</strong>-ten Zeichen. Wenn <strong>n</strong> größer als die Länge des Strings ist, wird dieser beim Sortieren als leer angesehen. In Verbindung mit der <strong>N</strong>-Option (numerische Sortierung) wird die Zeichenposition des Strings verwendet, das nicht unbedingt das gleiche wie die Ziffernposition der Zahl ist.</p>
@@ -41,8 +45,8 @@
 <p><strong>Random</strong>: Sortiert in zufälliger Reihenfolge. Diese Option bewirkt, dass alle anderen Optionen außer <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> ignoriert werden (allerdings haben <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch Einfluss darauf, wie Duplikate erkannt werden). Beispiele:</p>
 <pre>Sort, EigeneVar, Random
 Sort, EigeneVar, Random Z D|</pre>
-<p><strong><a name="unique"></a>U</strong>: Entfernt doppelte Elemente von der Liste, sodass jedes Element einzigartig ist. <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf die Anzahl der entfernten Elemente gesetzt (0, falls keine entfernt wurden). Ist die <strong>C</strong>-Option aktiv, müssen auch die Groß- und Kleinschreibungen der Elemente gleich sein, damit diese als identisch angesehen werden. Ist die <strong>N</strong>-Option aktiv, wird ein Element wie z.B. 2 als Duplikat von 2.0 angesehen. If either the <strong>Pn </strong>or <strong>\</strong> (backslash) option is in effect, the entire item must be a duplicate, not just the substring that is used for sorting. Wenn die <strong>Random</strong>- oder <strong>F/Funktion</strong>-Option aktiv ist, werden Duplikate nur entfernt, wenn sie nach dem Sortieren direkt aneinander angrenzen. Zum Beispiel könnte das Ergebnis beim zufälligen Sortieren von "A|B|A" entweder ein oder zwei A's enthalten.</p>
-<p><strong>Z</strong>: Um diese Option zu verstehen, wird eine Variable in Erwägung gezogen, die den String ROT`nGRÜN`nBLAU`n enthält. Ist die <strong>Z</strong>-Option nicht vorhanden, wird das letzte LF-Zeichen (`n) als Teil des letzten Elements angesehen (somit sind es nur 3 Elemente). But by specifying <strong> Z</strong>, the last `n (if present) will be considered to delimit a blank item at the end of the list, and thus there are 4 items (the last being blank).</p>
+<p><strong><a name="unique"></a>U</strong>: Entfernt doppelte Elemente von der Liste, sodass jedes Element einzigartig ist. <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf die Anzahl der entfernten Elemente gesetzt (0, falls keine entfernt wurden). Ist die <strong>C</strong>-Option aktiv, müssen auch die Groß- und Kleinschreibungen der Elemente gleich sein, damit diese als identisch angesehen werden. Ist die <strong>N</strong>-Option aktiv, wird ein Element wie z.B. 2 als Duplikat von 2.0 angesehen. Wenn entweder die <strong>Pn</strong>- oder <strong>\</strong>-Option aktiv ist, muss das ganze Element ein Duplikat sein, nicht nur der Teilstring, der für die Sortierung verwendet wird. Wenn die <strong>Random</strong>- oder <strong>F/Funktion</strong>-Option aktiv ist, werden Duplikate nur entfernt, wenn sie nach dem Sortieren direkt aneinander angrenzen. Zum Beispiel könnte das Ergebnis beim zufälligen Sortieren von "A|B|A" entweder ein oder zwei A's enthalten.</p>
+<p><strong>Z</strong>: Um diese Option zu verstehen, wird eine Variable in Erwägung gezogen, die den String ROT`nGRÜN`nBLAU`n enthält. Ist die <strong>Z</strong>-Option nicht vorhanden, wird das letzte LF-Zeichen (`n) als Teil des letzten Elements angesehen (somit sind es nur 3 Elemente). Ist <strong>Z</strong> vorhanden, dient das letzte LF-Zeichen (falls vorhanden) dazu, ein leeres Element am Ende der Liste abzugrenzen (somit sind es 4 Elemente).</p>
 <p><strong>\</strong>: Sortiert Elemente, basierend auf dem Teilstring, der jeweils nach dem letzten Backslash erfolgt. Wenn das Element keinen Backslash hat, wird das ganze Element als Teilstring angesehen. Diese Option ist nützlich, um Dateinamen ohne Rücksicht auf deren Pfad zu sortieren, wie im folgenden Beispiel, in dem AAA.txt über BBB.txt gesetzt wird, weil deren Verzeichnisse beim Sortieren ignoriert werden:</p>
 <pre>C:\BBB\AAA.txt
 C:\AAA\BBB.txt</pre>
@@ -51,10 +55,10 @@ C:\AAA\BBB.txt</pre>
 <h3>Bemerkungen</h3>
 <p>Dieser Befehl wird normalerweise dazu verwendet, eine Variable mit mehreren Zeilen zu sortieren, bei der jede Zeile mit einem Zeilenumbruchszeichen (`n) endet. Eine Möglichkeit, mehrere Zeilen in eine Variable zu bekommen, ist das Laden einer ganzen Datei via <a href="FileRead.htm">FileRead</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird nur durch diesen Befehl geändert, wenn die <strong>U</strong>-Option aktiv ist.</p>
-<p>If a large variable was sorted and later its contents are no longer needed, you can free its memory by making it blank, e.g. <code>MyVar = </code>.</p>
+<p>Wenn eine große Variable sortiert wurde und dessen Inhalt später nicht mehr benötigt wird, kann deren Speicher freigegeben werden, indem sie leer gemacht wird (z. B. <code>EigeneVar =</code>).</p>
 
 <h3>Siehe auch</h3>
-<p><a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">file-reading loop</a>, <a href="LoopParse.htm">parsing loop</a>, <a href="StrSplit.htm">StrSplit</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="../misc/Clipboard.htm">Clipboard</a></p>
+<p><a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">Datei-lesende Schleife</a>, <a href="LoopParse.htm">Parsing-Schleife</a>, <a href="StrSplit.htm">StrSplit</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="../misc/Clipboard.htm">Clipboard</a></p>
 
 <h3>Beispiele</h3>
 <pre class="NoIndent">EigeneVar = 5,3,7,9,1,13,999,-4

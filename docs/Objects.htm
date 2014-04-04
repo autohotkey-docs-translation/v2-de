@@ -1,11 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>Objekte</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="static/theme.css" rel="stylesheet" type="text/css" />
+<script src="static/jquery.js" type="text/javascript"></script>
+<script src="static/tree.jquery.js" type="text/javascript"></script>
+<script src="static/ga.js" type="text/javascript"></script>
+<script src="static/content.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -139,13 +143,13 @@ obj.item[x] := y</pre>
 <p>Einige Einschränkungen gelten beim Zuweisen von Werten an Schlüssel des Objekts, das mit <code>[]</code>, <code>{}</code> oder dem <code>new</code>-Operator erstellt wurde:</p>
 <ul>
   <li>Integer-Schlüssel werden im ursprünglichen signed Integer-Typ gespeichert. AutoHotkey 32-Bit unterstützt Integer-Schlüssel im Bereich von -2147483648 bis 2147483647. AutoHotkey unterstützt 64-Bit-Integer, aber nur AutoHotkey 64-Bit unterstützt den vollen Umfang für Schlüssel in einem Objekt.</li>
-  <li>Strings which form valid integers are treated the same as pure integers. For example, <code>x["0x10"]</code>, <code>x["16"]</code> and <code>x["00016"]</code> are equivalent.</li>
+  <li>Strings, die nur aus Integern bestehen, werden wie reine Integer behandelt. Zum Beispiel sind <code>x["0x10"]</code>, <code>x["16"]</code> und <code>x["00016"]</code> gleichwertig.</li>
   <li>Fließkommazahlen werden nicht als Schlüssel unterstützt - stattdessen werden sie in Strings umgewandelt. Aus Gründen der Konsistenz und Klarheit sollten Scripts vermeiden, Fließkomma-Literale als Schlüssel zu verwenden.</li>
   <li>Der String-Schlüssel <a href="#Custom_Objects">"base"</a> hat eine besondere Bedeutung, außer es wird mit <a href="objects/Object.htm#Insert">Insert</a> verwendet.</li>
 </ul>
 
 <h2 id="Extended_Usage">Erweiterte Grundlagen</h2>
-<h3 id="Function_References">Function References</h3>
+<h3 id="Function_References">Funktionsverweise</h3>
 <p>Wenn die Variable <i>Funktion</i> einen Funktionsnamen enthält, kann die Funktion wie folgt aufgerufen werden: <code>%Funktion%()</code> oder <code>Funktion.()</code>. Allerdings muss die Funktion dabei jedesmal aufgelöst werden, was ineffizient ist, falls die Funktion mehr als einmal aufgerufen wird. Um die Performance zu verbessern, kann das Script einen Verweis auf die Funktion abrufen und sie für später speichern:</p>
 <pre>Funktion := Func("EigeneFunktion")</pre>
 <p>Um eine Funktion mit einem Verweis aufzurufen, muss die folgende Syntax verwendet werden:</p>
@@ -225,7 +229,7 @@ Anderes.test()</pre>
 <p>In diesem Fall erbt <i>Anderes</i> <i>foo</i> und <i>Test</i> von <i>Ding</i>. Diese Vererbung ist dynamisch, das heißt, sobald <code>Ding.foo</code> geändert wird, spiegelt sich die Änderung durch <code>Anderes.foo</code> wider. Wenn das Script auf <code>Anderes.foo</code> verweist, wird der Wert in <i>Anderes</i> gespeichert und alle weiteren Änderungen an <code>Ding.foo</code> beeinflussen nicht <code>Anderes.foo</code>. Sobald <code>Anderes.test()</code> aufgerufen wird, enthält der <i>this</i>-Parameter einen Verweis auf <i>Anderes</i>, anstatt auf <i>Ding</i>.
 </p>
 
-<h3 id="Custom_Classes">Classes</h3>
+<h3 id="Custom_Classes">Klassen</h3>
 <p>Der Einfachheit und Vertrautheit halber kann das "class"-Schlüsselwort verwendet werden, um ein base-Objekt zu konstruieren. Eine grundlegende Klassendefinition könnte wie folgt aussehen:</p>
 <pre>class Klassenname extends BaseKlassenname
 {
@@ -244,17 +248,17 @@ Anderes.test()</pre>
 }
 
 </pre>
-<p>When the script is loaded, this constructs an object and stores it in the <a href="Functions.htm#SuperGlobal">super-global</a> variable <i>ClassName</i>. If <code>extends BaseClassName</code> is present, <i>BaseClassName</i> must be the full name of another class, but the order that they are defined in does not matter. The full name of each class is stored in <code><i>object</i>.__Class</code>.</p>
+<p>Sobald das Script geladen wird, wird ein Objekt konstruiert und in die <a href="Functions.htm#SuperGlobal">superglobale</a> Variable <i>Klassenname</i> gespeichert. Wenn <code>extends BaseKlassenname</code> vorhanden ist, muss der <i>BaseKlassenname</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>Objekt</i>.__Class</code> gespeichert.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und verschachtelte Klassendefinitionen enthalten.</p>
 <pre id="Custom_Classes_var">
     Instanzvariable := Ausdruck
 </pre>
-<p><b>Instance variable</b> declarations are evaluated each time a new instance of the class is created with the <a href="#Custom_NewDelete">new</a> keyword. The <a href="#Custom_NewDelete">__New()</a> method is called after all such declarations have been evaluated, including those defined in base classes. <i>Expression</i> can access other instance variables and methods via <code>this</code>, but all other variable references are assumed to be global. To access an instance variable, always specify the target object; for example, <code><b>this</b>.InstanceVar</code>.</p>
-<p>Unlike values set by the <a href="#Custom_NewDelete">__New()</a> method, instance and class variables initialized this way do not trigger the __Set <a href="#Meta_Functions">meta-function</a>.</p>
+<p>Deklarationen von <b>Instanzvariablen</b> werden jedesmal beim Erstellen einer Klasseninstanz mit dem <a href="#Custom_NewDelete">new</a>-Schlüsselwort ausgewertet. Die <a href="#Custom_NewDelete">__New()</a>-Methode wird nach der Auswertung solcher Deklarationen aufgerufen, einschließlich derjenigen, die in base-Klassen definiert wurden. Der <i>Ausdruck</i> kann mithilfe von <code>this</code> auf andere Instanzvariablen und Methoden zugreifen, alle anderen Variablenverweise werden jedoch als global angesehen. Um auf eine Instanzvariable zuzugreifen, gebt immer das Zielobjekt an; zum Beispiel <code><b>this</b>.Instanzvariable</code>.</p>
+<p>Im Gegensatz zu den gesetzten Werten von der <a href="#Custom_NewDelete">__New()</a>-Methode, lösen Instanz- und Klassenvariablen, die auf diese Weise initialisiert werden,nicht die __Set-<a href="#Meta_Functions">Meta-Function</a> aus.</p>
 <pre id="Custom_Classes_staticvar">
     static Klassenvariable := Ausdruck
 </pre>
-<p><b>Class variable</b> declarations are evaluated only once, before the <a href="Scripts.htm#auto">auto-execute section</a>, in the order they appear in the script. Jede Deklaration speichert einen Wert im Klassenobjekt. Wie mit allen Werten oder Methoden vom Klassenobjekt kann dieser Wert durch abgeleitete Objekte geerbt werden. Any variable references in <i>Expression</i> are assumed to be global. To access a class variable, always specify the class or derived object; for example, <code><b>ClassName</b>.ClassVar</code>.</p>
+<p>Deklarationen von <b>Klassenvariablen</b> werden in der aktuellen Reihenfolge und vor dem <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> nur einmal ausgewertet. Jede Deklaration speichert einen Wert im Klassenobjekt. Wie mit allen Werten oder Methoden vom Klassenobjekt kann dieser Wert durch abgeleitete Objekte geerbt werden. Jeder Variablenverweis im <i>Ausdruck</i> wird als global angesehen. Um auf eine Klassenvariable zuzugreifen, gebt immer die Klasse oder das abgeleitete Objekt an; zum Beispiel <code><b>Klassenname</b>.Klassenvariable</code>.</p>
 <pre id="Custom_Classes_class">
     class Unterklasse
     {
@@ -278,7 +282,7 @@ Anderes.test()</pre>
 <p><code>base</code> hat nur eine besondere Bedeutung, wenn ein Punkt <code>.</code> oder eine eckige Klammer <code>[]</code> danach erfolgt, daher funktioniert so etwas wie <code>obj := base, obj.Methode()</code> nicht. Scripts können das Sonderverhalten von <i>base</i> deaktivieren, indem ein nicht-leerer Wert zugewiesen wird; allerdings ist das nicht empfohlen.</p>
 
 <h3 id="Custom_NewDelete">Konstruktion und Destruktion</h3>
-<p>Whenever a derived object is created with the <code>new</code> keyword, the <code>__New</code> method defined by its base object is called. This method can accept parameters, initialize the object and override the result of the <code>new</code> operator by returning a value. When an object is destroyed, <code>__Delete</code> is called. Zum Beispiel:</p>
+<p>Sobald ein abgeleitetes Objekt mit dem <code>new</code>-Schlüsselwort erstellt wird, wird die definierte <code>__New</code>-Methode über ihr base-Objekt aufgerufen. Diese Methode kann Parameter akzeptieren, das Objekt initialisieren und das Ergebnis des <code>new</code>-Operators durch Zurückgeben eines Wertes überschreiben. Beim Zerstören eines Objekts wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
 <pre>m1 := new GMem(0, 20)
 m2 := {base: GMem}.__New(0, 30)
 
@@ -321,10 +325,9 @@ class <i>Klassenname</i> {
 <ul>
   <li>Falls dieses base-Objekt die geeignete Meta-Funktion definiert, wird es aufgerufen. Wenn die Meta-Funktion einen Wert direkt mit <code>Return</code> zurückgibt, wird der Rückgabewert als Ergebnis der Operation verwendet und keine weitere Verarbeitung durchgeführt.
     <p><i>Set</i>: Falls die Operation erfolgreich war, sollte <i>__Set</i> den neuen Wert des Feldes zurückgeben, der möglicherweise vom originalen Rückgabewert abweicht. Dadurch können Zuweisungen wie in <code>a.x := b.y := z</code> verkettet werden. Falls die Zuweisung nicht erfolgreich war, sollte ein leerer String zurückgegeben werden, damit das Script den Fehler erkennen kann.</p></li>
-  <li>Search for a matching key in the base object's own fields.
-    
+  <li>Suche nach einem passenden Schlüssel in den Feldern des base-Objekts.
     <p><i>Get</i>: Wenn er gefunden wird, wird dieser Feldwert zurückgegeben.<br>
-    <i>Set</i>: If found, processing continues as if the object had no base.<br>
+    <i>Set</i>: Wenn er gefunden wird, wird die Verarbeitung forgesetzt, als hätte das Objekt kein base.<br>
     <i>Call</i>: Wenn er gefunden wird, wird die gespeicherte Funktion im Feld aufgerufen (mittels Name oder <a href="#Function_References">Verweis</a>), indem das originale Zielobjekt als <i>this</i>-Parameter übergeben wird.</p></li>
   <li>Eigenes base-Objekt rekursiv aufrufen. Dadurch wird ermöglicht, dass die Eigenschaften eines Objekts von ihrer base, von der base ihrer base und so weiter "geerbt" werden.</li>
 </ul>

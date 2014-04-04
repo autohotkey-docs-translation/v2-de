@@ -1,18 +1,16 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>TreeView (GUI)</title>
 <meta name="description" content="Erstelle auf einfache Weise TreeView-Steuerelemente mit dieser freien Script-Sprache. Umfasst Kontextmenüs und Icons.">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../css/default.css" rel="stylesheet" type="text/css">
-<style type="text/css">
-<!--
-h1 {font-size: 200%;}
-hr {margin-bottom: 0em;}
--->
-</style>
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -55,7 +53,7 @@ ExitApp</pre>
 <p><strong>Background</strong>: Nach dem Wort Background erfolgt der Name einer Farbe (siehe <a href="../misc/Colors.htm">Farbtabelle</a>) oder ein RGB-Wert (der 0x-Präfix ist optional). Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Wenn diese Option nicht vorhanden ist, dann wird zunächst die Hintergrundfarbe von <a href="Gui.htm#Color">Gui, Color</a> verwendet (wenn nicht verwendet, dann die Standard-Hintergrundfarbe vom Betriebssystem). Mit <code>BackgroundDefault</code> wird die Standard-Hintergrundfarbe des Betriebssystems erzwungen (in der Regel weiß). Mit <code>GuiControl, +BackgroundDefault, MeinTreeView</code> wird beispielsweise die Standardfarbe wiederhergestellt.</p>
 <p><strong>Buttons</strong>: Mit <code>-Buttons</code> werden die Plus- oder Minus-Schaltflächen links neben den Elementen mit Unterelementen nicht angezeigt.</p>
 <p><strong>C</strong>: Textfarbe. Nach dem Buchstaben C erfolgt der Name einer Farbe (siehe <a href="../misc/Colors.htm">Farbtabelle</a>) oder ein RGB-Wert (das 0x-Präfix ist optional). Beispiele: <code>cRed</code>, <code>cFF2211</code>, <code>c0xFF2211</code>, <code>cDefault</code>.</p>
-<p><strong><a name="Checked"></a>Checked</strong>: Ermöglicht eine CheckBox auf der linken Seite jeden Elements. Beim <a href="#TV_Add">Hinzufügen</a> eines Elements wird mit dem Wort <em>Check</em> in den Optionen die CheckBox markiert. Der Benutzer kann das Element aktivieren oder deaktivieren, wenn er auf die CheckBox klickt oder die Leertaste drückt. Um herauszufinden, welches Element zurzeit im TreeView aktiviert ist, verwendet <a href="#TV_GetNext">TV_GetNext()</a> oder <a href="#TV_Get">TV_Get()</a>. </p>
+<p><strong><a name="Checked"></a>Checked</strong>: Ermöglicht eine CheckBox auf der linken Seite jeden Elements. Beim <a href="#TV_Add">Hinzufügen</a> eines Elements wird mit dem Wort <em>Check</em> in den Optionen die CheckBox markiert. Der Benutzer kann das Element aktivieren oder deaktivieren, wenn er auf die CheckBox klickt oder die Leertaste drückt. Um herauszufinden, welches Element zurzeit im TreeView aktiviert ist, verwendet <a href="#TV_GetNext">TV_GetNext()</a> oder <a href="#TV_Get">TV_Get()</a>.</p>
 <p><strong>HScroll</strong>: Mit <code>-HScroll</code> wird der horizontale Bildlauf im Steuerelement deaktiviert (zusätzlich wird keine horizontale Bildlaufleiste im Steuerelement angezeigt).</p>
 <p><strong><a name="ImageList"></a>ImageList</strong>: Bedeutet, welche Icons zur ListView hinzufügen werden. Verwendet das Wort <em>ImageList</em> unmittelbar gefolgt von der BildlisteID, die durch den vorherigen Aufruf von <a href="ListView.htm#IL_Create">IL_Create()</a> zurückgegeben wird. Diese Option funktioniert nur, wenn ein TreeView erstellt wird (allerdings hat <a href="#TV_SetImageList">TV_SetImageList()</a> nicht diese Einschränkung). Hier ist ein funktionierendes Beispiel:</p>
 <pre>BildlisteID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine Bildliste, die 10 Icons umfasst.</em>
@@ -73,12 +71,12 @@ If (A_GuiEvent == "e")  <em>; Der Benutzer hat die Bearbeitung des Elements been
     TV_Modify(TV_GetParent(A_EventInfo), "Sort")  <em>; Funktioniert auch, wenn das Element kein Oberelement hat.</em>
 Return</pre>
 <p><strong>R</strong>: Reihen-Höhe (bei der Erstellung). Mit dem Buchstaben R, unmittelbar gefolgt von der Anzahl der Zeilen, wird Platz innerhalb des Steuerelements geschaffen. Mit <code>R10</code> beispielsweise ist das Steuerelement 10 Elemente hoch.</p>
-<p><strong><a name="WantF2"></a>WantF2</strong>: Specify <code>-WantF2</code> (minus WantF2) to prevent an F2 keystroke from <a href="#ReadOnly">editing </a>the currently selected item. Diese Einstellung wird ignoriert, es sei denn, <a href="#ReadOnly">-ReadOnly</a> ist aktiv. Unabhängig dieser Einstellung erhält g-Label weiterhin <a href="#NotifyK">F2-Meldungen</a>.</p>
+<p><strong><a name="WantF2"></a>WantF2</strong>: Mit <code>-WantF2</code> wird verhindert, dass die F2-Taste gedrückt werden kann, um das aktuell ausgewählte Element zu <a href="#ReadOnly">bearbeiten</a>. Diese Einstellung wird ignoriert, es sei denn, <a href="#ReadOnly">-ReadOnly</a> ist aktiv. Unabhängig dieser Einstellung erhält g-Label weiterhin <a href="#NotifyK">F2-Meldungen</a>.</p>
 <p><strong>(Unbenannte numerische Styles)</strong>: Selten verwendete Styles haben keine Namen. Siehe <a href="../misc/Styles.htm#TreeView">Style-Tabelle von TreeView</a>.</p>
 <h2 id="BuiltIn">Interne Funktionen</h2>
 <p>Alle TreeView-Funktionen laufen im <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> des aktuellen Threads (kann mit <code><a href="Gui.htm#Default">Gui, 2:Default</a></code> geändert werden). Wenn das Standard-Fenster weder vorhanden ist noch TreeView-Steuerelemente hat, dann geben alle Funktionen eine 0 zurück, um auf ein Problem hinzuweisen.</p>
-<p><a name="GuiTV"></a>Wenn das Fenster mehr als ein TreeView-Steuerelement hat, dann arbeiten die Funktionen standardmäßig mit dem zuletzt hinzugefügten Steuerelement. To change this, specify <code>Gui, TreeView, TreeViewName</code>, where <em>TreeViewName</em> is the name of the TreeView's <a href="Gui.htm#var">associated variable</a>, its ClassNN as shown by Window Spy or its HWND. Einmal verändert verwenden alle bestehenden und zukünftigen <a href="../misc/Threads.htm">Threads</a> das angezeigte TreeView.</p>
-<h3 id="TV_SetImageList">TV_SetImageList(ImageListID [, 0|2])</h3>
+<p><a name="GuiTV"></a>Wenn das Fenster mehr als ein TreeView-Steuerelement hat, dann arbeiten die Funktionen standardmäßig mit dem zuletzt hinzugefügten Steuerelement. Um dies zu verändern, verwendet <code>Gui, TreeView, TreeViewName</code>, wobei <em>TreeViewName</em> der Name der <a href="Gui.htm#var">zugewiesenen Variable</a>, ClassNN (wie von Windows Spy gezeigt) oder HWND ist. Einmal verändert verwenden alle bestehenden und zukünftigen <a href="../misc/Threads.htm">Threads</a> das angezeigte TreeView.</p>
+<h3 id="TV_SetImageList">TV_SetImageList(BildlisteID [, 0|2])</h3>
 <p>Setzt oder ersetzt die <a href="#ImageList">Bildliste</a> von TreeView. Die BildlisteID ist die zurückgegebene Zahl vom vorherigen Aufruf von <a href="ListView.htm#IL_Create">IL_Create()</a>. Der zweite Parameter wird normalerweise weggelassen, dabei wird standardmäßig eine 0 verwendet. Ansonsten kann eine 2 für Status-Icons angegeben werden (die zurzeit nicht direkt unterstützt werden, aber mithilfe von <a href="PostMessage.htm">SendMessage</a> benutzt werden können). Bei Erfolg gibt TV_SetImageList() die BildlisteID zurück, welche vorher dem TreeView zugewiesen wurde (oder 0 bei Misserfolg). So eine alleinstehende Bildliste sollte normalerweise mittels <a href="ListView.htm#IL_Destroy">IL_Destroy(BildlisteID)</a> zerstört werden.</p>
 <h2 id="bifAddModifyDelete">Hinzufügen, Ändern und Löschen von Elementen</h2>
 <h3><a name="TV_Add"></a>TV_Add(Name, [OberelementID, Optionen])</h3>
@@ -88,7 +86,7 @@ Return</pre>
 <p><strong><a name="Bold"></a>Bold</strong>: Zeigt den Namen des Elements in fetter Schrift an. Um die Schrift später wieder zu normalisieren, verwendet <code>TV_Modify(ElementID, "-Bold")</code>.</p>
 <p><strong><a name="Check"></a>Check</strong>: Zeigt ein Häkchen an der linken Seite des Elements an (wenn das TreeView <a href="#Checked">Kontrollkästchen</a> hat). Um das Häkchen später zu entfernen, verwendet <code>TV_Modify(ElementID, "-Check")</code>. Nach dem Wort <em>Check</em> kann auch eine 0 oder 1 für den Anfangsstatus erfolgen: Das heißt, dass sowohl <code>"Check"</code> als auch <code>"Check" <strong>.</strong> VarEnhältEins</code> identisch sind (der verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>).</p>
 <p><strong><a name="Expand"></a>Expand</strong>: Klappt das Element auf, um die Unterelemente zu enthüllen (falls vorhanden). Um das Element später wieder zu zuklappen, verwendet <code>TV_Modify(ElementID, "-Expand")</code>. Wenn keine Unterelemente vorhanden sind, dann gibt <a href="#TV_Modify">TV_Modify()</a> eine 0 anstelle der ID des Elements zurück. <a href="#TV_Add">TV_Add()</a> markiert das Element hingegen als aufgeklappt, wenn Unterelemente später hinzugefügt werden. Im Gegensatz zu "Select" (unten) wird ein Unterelement nicht automatisch aufgeklappt, wenn das Oberelement aufgeklappt wird. Nach dem Wort <em>Expand</em> kann auch eine 0 oder 1 für den Anfangsstatus erfolgen. Das heißt, dass sowohl <code>"Expand"</code> als auch <code>"Expand" <strong>.</strong> VarEnhältEins</code> identisch sind.</p>
-<p><strong>First | Sort | N</strong>: Diese Optionen gelten nur für <a href="#TV_Add">TV_Add()</a>. Sie bestimmen die neue Position des Elements relativ zu den anderen Elementen <em>der gleichen Ebene</em>. Wenn keine dieser Optionen vorhanden ist, dann wird das Element als letztes/unterstes Element hinzugefügt. Otherwise, specify <em>First</em> to add the item as the first/top sibling, or specify <em>Sort </em>to insert it among its siblings in alphabetical order. Wenn ein reiner Integer (<strong>N</strong>) angegeben wird, dann ist das die ID-Nummer des Elements, dem das neue Element angefügt wird (falls nur die N-Option vorhanden ist, dann muss der Integer nicht von Anführungszeichen umschlossen werden).</p>
+<p><strong>First | Sort | N</strong>: Diese Optionen gelten nur für <a href="#TV_Add">TV_Add()</a>. Sie bestimmen die neue Position des Elements relativ zu den anderen Elementen <em>der gleichen Ebene</em>. Wenn keine dieser Optionen vorhanden ist, dann wird das Element als letztes/unterstes Element hinzugefügt. Andernfalls verwendet <em>First</em>, um das Element als erstes/oberstes Element hinzuzufügen, oder <em>Sort</em>, um das Element relativ zu den Elementen auf der gleichen Ebene einzufügen, abhängig von der alphabetischen Reihenfolge. Wenn ein reiner Integer (<strong>N</strong>) angegeben wird, dann ist das die ID-Nummer des Elements, dem das neue Element angefügt wird (falls nur die N-Option vorhanden ist, dann muss der Integer nicht von Anführungszeichen umschlossen werden).</p>
 <p><strong>Icon</strong>: Mit dem Wort <em>Icon</em>, unmittelbar gefolgt von der Nummer des Icons, wird das Icon auf der linken Seite des Elementnamens angezeigt. Wenn diese Option fehlt, dann wird das erste Icon in der <a href="#ImageList">Bildliste</a> verwendet. Um ein leeres Icon darzustellen, kann eine Nummer angegeben werden, die größer ist als die Anzahl der Icons in der Bildliste. Wenn dem Steuerelement eine Bildliste mit Icons fehlt, dann wird kein Icon angezeigt, sowie kein Speicher dafür reserviert.</p>
 <p><strong><a name="Select"></a>Select</strong>: Wählt das Element aus. Da nur ein Element zur gleichen Zeit ausgewählt werden kann, wird jedes vorher ausgewählte Element automatisch abgewählt. Darüber hinaus wird das neu ausgewählte Element enthüllt, indem das Oberelement aufgeklappt wird, falls erforderlich. Um die aktuelle Auswahl herauszufinden, verwendet <a href="#TV_GetSelection">TV_GetSelection()</a>.</p>
 <p><strong>Sort</strong>: Mit <a href="#TV_Modify">TV_Modify()</a> sortiert diese Option die Unterelemente des angegebenen Elements in alphabetischer Reihenfolge. Um stattdessen alle Elemente auf höchster Ebene zu sortieren, verwendet <code>TV_Modify(0, "Sort")</code>. Wenn keine Unterelemente vorhanden sind, dann wird eine 0 anstelle der ID des bearbeiteten Elements zurückgegeben.</p>
@@ -136,7 +134,7 @@ Loop
   <li><code>If TV_Get(ElementID, "Checked") = ElementID</code></li>
   <li><code>If TV_Get(ElementID, "Checked")</code></li>
 </ol>
-<h2 id="notify">g-Label-Meldungen (Primär) </h2>
+<h2 id="notify">g-Label-Meldungen (Primär)</h2>
 <p>Es ist möglich, ein <a href="Gui.htm#label">g-Label</a> wie <code><strong>g</strong>MeineSubroutine</code> in den Optionen des Steuerelements aufzulisten. Dies würde bewirken, dass das Label <em>MeineSubroutine</em> automatisch gestartet, wann immer der Benutzer eine Aktion im Steuerelement durchführt. Diese Subroutine kann auf die internen Variablen <a href="../Variables.htm#Gui">A_Gui</a> und <a href="../Variables.htm#GuiControl">A_GuiControl</a> zurückgreifen, um herauszufinden, welches Fenster oder TreeView das Ereignis erzeugt hat. Noch wichtiger ist, dass sie auf <strong>A_GuiEvent</strong> zurückgreifen kann, die einen der folgenden Strings enthalten kann (für die Kompatibilität mit zukünftigen Versionen sollte ein Script nicht davon ausgehen, dass das die einzigen möglichen Werte sind):</p>
 <p><strong>DoubleClick</strong>: Der Benutzer hat auf einem Element doppelt geklickt. Die interne Variable A_EventInfo enthält die ID des Elements.</p>
 <p><strong>D</strong>: Der Benutzer hat angefangen, ein Element zu verschieben (es gibt derzeit keine interne Unterstützung für das Verschieben von Elementen). Die interne Variable A_EventInfo enthält die ID des Elements.</p>
@@ -177,7 +175,7 @@ Return</pre>
 <p><a name="ILremarks"></a>Im Gegensatz zu <a href="ListView.htm">ListView</a> wird eine Bildliste vom TreeView nicht automatisch zerstört, wenn das TreeView zerstört wird. Daher sollte ein Script <a href="ListView.htm#IL_Destroy">IL_Destroy(BildlisteID)</a> nach der Zerstörung eines TreeView-Fensters aufrufen, wenn die Bildliste nicht weiter verwendet wird. Ist allerdings nicht erforderlich, wenn das Script in Kürze beendet wird, da alle Bildlisten automatisch bei diesem Ereignis automatisch zerstört werden.</p>
 <p>Ein Script kann mehr als ein TreeView pro Fenster erstellen. Um mit einem TreeView zu arbeiten, dass nicht das Standard-TreeView ist, siehe <a href="#BuiltIn">interne Funktionen</a>.</p>
 <p>Um Aktionen (z. B. Größe anpassen, verstecken oder Schrift des TreeViews verändern) durchzuführen, verwendet <a href="GuiControl.htm">GuiControl</a>.</p>
-<p> Tree View eXtension (TVX) unterstützt TreeViews zusätzlich mit Verschieben, Einfügen und Löschen. Es ist wird auf <a href="http://www.autohotkey.com/forum/topic19021.html">www.autohotkey.com/forum/topic19021.html</a> demonstriert.</p>
+<p>Tree View eXtension (TVX) unterstützt TreeViews zusätzlich mit Verschieben, Einfügen und Löschen. Es ist wird auf <a href="http://www.autohotkey.com/forum/topic19021.html">www.autohotkey.com/forum/topic19021.html</a> demonstriert.</p>
 <h2>Siehe auch</h2>
 <p><a href="ListView.htm">ListView</a>, <a href="GuiControls.htm">Andere Steuerelementarten</a>, <a href="Gui.htm">Gui</a>, <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="GuiControl.htm">GuiControl</a>, <a href="GuiControlGet.htm">GuiControlGet</a>, <a href="../misc/Styles.htm#TreeView">Style-Tabelle von TreeView</a></p>
 <h2 id="Examples">Beispiel</h2>
@@ -218,16 +216,16 @@ SplashTextOn, 200, 25, TreeView- und StatusBar-Beispiel, Baum wird geladen ...
 AddSubFoldersToTree(Stammordner)
 SplashTextOff
 
-<em>; Zeigt das Fenster an und kehrt zurück. The OS will notify the script whenever the user performs an eligible action:</em>
-Gui, Show,, %TreeRoot%  <em>; Display the source directory (TreeRoot) in the title bar.</em>
-return
+<em>; Zeigt das Fenster an und kehrt zurück. Das Betriebssystem benachrichtigt das Script, wenn der Benutzer eine berechtigte Aktion ausführt:</em>
+Gui, Show,, %Stammordner%  <em>; Zeigt das Quellverzeichnis (Stammordner) in der Titelleiste an.</em>
+Return
 
-AddSubFoldersToTree(Folder, ParentItemID = 0)
+AddSubFoldersToTree(Ordner, OberelementID = 0)
 {
-    <em>; This function adds to the TreeView all subfolders in the specified folder.</em>
-    <em>; It also calls itself recursively to gather nested folders to any depth.</em>
-    Loop %Folder%\*.*, 2  <em>; Retrieve all of Folder's sub-folders.</em>
-        AddSubFoldersToTree(A_LoopFilePath, <a href="#TV_Add">TV_Add</a>(A_LoopFileName, ParentItemID, "Icon4"))
+    <em>; Diese Funktion fügt alle Unterordner des angegeben Ordners zum TreeView hinzu.</em>
+    <em>; Es ruft sich auch selbst rekursiv auf, um tief verschachtelte Ordner zu sammeln.</em>
+    Loop %Ordner%\*.*, 2  <em>; Ermittelt alle Unterordner des Ordners.</em>
+        AddSubFoldersToTree(A_LoopFilePath, <a href="#TV_Add">TV_Add</a>(A_LoopFileName, OberelementID, "Icon4"))
 }
 
 MyTreeView:  <em>; Diese Subroutine behandelt Benutzeraktionen (beispielsweise durch Klicken).</em>

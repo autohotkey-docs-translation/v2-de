@@ -1,11 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>Loop (Dateiinhalt)</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -18,7 +22,7 @@
 <dl>
 
   <dt>Read</dt>
-  <dd><p>This parameter must be the word READ, and cannot be an expression or variable reference.</p></dd>
+  <dd><p>Dieser Parameter muss das Wort READ sein, und darf kein Ausdruck oder Variablenverweis sein.</p></dd>
 
   <dt>Eingabedatei</dt>
   <dd><p>Name der Textdatei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist. Windows- und Unix-Formate werden unterstützt. Das heißt, dass die Zeilen einer Datei sowohl mit CR-LF-Paaren (`r`n) als auch mit LF-Zeichen (`n) enden können.</p></dd>
@@ -34,10 +38,10 @@
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Eine dateilesende Schleife ist nützlich, wenn jede Zeile in einer Textdatei nacheinander bearbeitet werden soll. The file is kept open for the entire operation to avoid having to re-scan each time to find the next line.</p>
+<p>Eine dateilesende Schleife ist nützlich, wenn jede Zeile in einer Textdatei nacheinander bearbeitet werden soll. Die Datei bleibt für die Operation die ganze Zeit offen, um zu verhindern, dass sie jedes Mal neu gelesen wird, wenn die nächste Zeile gefunden werden soll.</p>
 <p><a name="LoopReadLine"></a>Die interne Variable <strong>A_LoopReadLine</strong> existiert in jeder dateilesenden Schleife. Sie enthält den Inhalt der aktuellen Zeile ohne CR-LF-Paar (`r`n), das das Zeilenende markiert. Wenn eine innere dateilesende Schleife von einer äußeren dateilesenden Schleife umschlossen ist, wird die Zeile von der innersten Schleife Vorrang haben.</p>
 <p>Es können Zeilen gelesen werden, die bis zu 65.534 Zeichen lang sind. Falls diese Länge überschritten wird, werden die restlichen Zeichen beim nächsten Schleifendurchlauf eingelesen.</p>
-<p><a href="StrSplit.htm">StrSplit</a> or a <a href="LoopParse.htm">parsing loop</a> is often used inside a file-reading loop to parse the contents of each line retrieved from <em>InputFile</em>. Wenn zum Beispiel jede Zeile von der <em>Eingabedatei</em> aus mehreren tab-getrennten Feldern besteht, dann können diese Felder wie im folgenden Beispiel einzeln abgerufen werden:</p>
+<p><a href="StrSplit.htm">StrSplit</a> oder <a href="LoopParse.htm">Parsing-Schleife</a> wird häufig in einer dateilesenden Schleife verwendet, um den Inhalt jeder Zeile von der <em>Eingabedatei</em> zu parsen. Wenn zum Beispiel jede Zeile von der <em>Eingabedatei</em> aus mehreren tab-getrennten Feldern besteht, dann können diese Felder wie im folgenden Beispiel einzeln abgerufen werden:</p>
 <pre>Loop, read, C:\Datenbank-Export.txt
 {
     Loop, parse, A_LoopReadLine, %A_Tab%
@@ -51,7 +55,7 @@
 <p>Um die Kodierung einer Datei ohne Bytereihenfolge-Markierung zu bestimmen, sollte <a href="FileEncoding.htm">FileEncoding</a> verwendet werden.</p>
 
 <h3>Siehe auch</h3>
-<p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File Object</a>, <a href="FileRead.htm">FileRead</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="Sort.htm">Sort</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blocks, </a><a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
+<p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="Sort.htm">Sort</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel #1: Es werden nur die Zeilen der ersten Datei, die das Wort FAMILY enthalten,
@@ -69,85 +73,85 @@ Loop, read, C:\Dokumente\Adressliste.txt, C:\Dokumente\Familienadressen.txt
 Loop, read, C:\Logdatei.txt
     letzteZeile := A_LoopReadLine  <em>; Sobald die Schleife endet, wird diese Variable die letzte Zeile beinhalten.</em></pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Beispiel #3: A working script that attempts to extract all FTP and HTTP
-; URLs from a text or HTML file:</em>
-FileSelect, SourceFile, 3,, Pick a text or HTML file to analyze.
-if SourceFile =
-    return  <em>; This will exit in this case.</em>
+<pre class="NoIndent"><em>; Beispiel #3: Ein funktionierendes Script, das versucht, alle FTP- und HTTP-URLs
+; aus einer Text- oder HTML-Datei zu extrahieren:</em>
+FileSelect, Quelldatei, 3,, Text- oder HTML-Datei zur Analyse auswählen:
+If Quelldatei =
+    Return  <em>; In diesem Fall beenden.</em>
 
-SplitPath, SourceFile,, SourceFilePath,, SourceFileNoExt
-DestFile = %SourceFilePath%\%SourceFileNoExt% Extracted Links.txt
+SplitPath, Quelldatei,, Quelldateipfad,, Quelldateiname
+Zieldatei = %Quelldateipfad%\%Quelldateiname% Extrahierte Links.txt
 
-IfExist, %DestFile%
+IfExist, %Zieldatei%
 {
-    MsgBox, 4,, Overwrite the existing links file? Drücke Nein, um die Links anzufügen.`n`nDATEI: %DestFile%
+    MsgBox, 4,, Vorhandene Datei überschreiben? Drücke Nein, um die Links anzufügen.`n`nDATEI: %Zieldatei%
     if A_MsgBoxResult = "Yes"
-        FileDelete, %DestFile%
+        FileDelete, %Zieldatei%
 }
 
-LinkCount = 0
-Loop, read, %SourceFile%, %DestFile%
+Linkanzahl = 0
+Loop, read, %Quelldatei%, %Zieldatei%
 {
-    URLSearchString = %A_LoopReadLine%
-    Gosub, URLSearch
+    URLSuchstring = %A_LoopReadLine%
+    Gosub, URLSuche
 }
-MsgBox %LinkCount% links were found and written to "%DestFile%".
-return
+MsgBox %Linkanzahl% Links wurden gefunden und in "%Zieldatei%" geschrieben.
+Return
 
 
-URLSearch:
-<em>; It's done this particular way because some URLs have other URLs embedded inside them:</em>
-StringGetPos, URLStart1, URLSearchString, http://
-StringGetPos, URLStart2, URLSearchString, ftp://
-StringGetPos, URLStart3, URLSearchString, www.
+URLSuche:
+<em>; Das wird auf diese Weise gemacht, weil einige URLs andere URLs eingebettet haben:</em>
+StringGetPos, URLStart1, URLSuchstring, http://
+StringGetPos, URLStart2, URLSuchstring, ftp://
+StringGetPos, URLStart3, URLSuchstring, www.
 
-<em>; Find the left-most starting position:</em>
-URLStart = %URLStart1%  <em>; Set starting default.</em>
+<em>; Findet die Startposition ganz links:</em>
+URLStart = %URLStart1%  <em>; Standardwert setzen.</em>
 Loop
 {
-    <em>; It helps performance (at least in a script with many variables) to resolve</em>
-    <em>; "URLStart%A_Index%" only once:</em>
+    <em>; Es hilft der Performance (zumindest in einem Script mit vielen Variablen), wenn</em>
+    <em>; "URLStart%A_Index%" nur einmal aufgelöst wird:</em>
     ArrayElement := URLStart%A_Index%
-    if ArrayElement =  <em>; End of the <a href="../misc/Arrays.htm#pseudo">pseudo-array</a> has been reached.</em>
+    If ArrayElement =  <em>; Ende des <a href="../misc/Arrays.htm#pseudo">Pseudo-Arrays</a> erreicht.</em>
         break
-    if ArrayElement = -1  <em>; This element is disqualified.</em>
+    If ArrayElement = -1  <em>; Dieses Element fällt weg.</em>
         continue
-    if URLStart = -1
+    If URLStart = -1
         URLStart = %ArrayElement%
-    else <em>; URLStart has a valid position in it, so compare it with ArrayElement.</em>
+    Else <em>; URLStart beinhaltet eine gültige Position, also mit ArrayElement vergleichen.</em>
     {
-        if ArrayElement &lt;&gt; -1
-            if ArrayElement &lt; %URLStart%
+        If ArrayElement &lt;&gt; -1
+            If ArrayElement &lt; %URLStart%
                 URLStart = %ArrayElement%
     }
 }
 
-if URLStart = -1  <em>; No URLs exist in URLSearchString.</em>
-    return
+If URLStart = -1  <em>; Keine URLs im URLSuchstring.</em>
+    Return
 
-<em>; Otherwise, extract this URL:</em>
-StringTrimLeft, URL, URLSearchString, %URLStart%  <em>; Omit the beginning/irrelevant part.</em>
-Loop, parse, URL, %A_Tab%%A_Space%&lt;&gt;  <em>; Find the first space, tab, or angle (if any).</em>
+<em>; Ansonsten diese URL extrahieren:</em>
+StringTrimLeft, URL, URLSuchstring, %URLStart%  <em>; Beginnenden/irrelevanten Teil auslassen.</em>
+Loop, parse, URL, %A_Tab%%A_Space%&lt;&gt;  <em>; Erstes Leer-, Tab- oder Winkelzeichen finden (falls vorhanden).</em>
 {
     URL = %A_LoopField%
-    break  <em>; i.e. perform only one loop iteration to fetch the first "field".</em>
+    break  <em>; Nur einen Schleifendurchlauf ausführen, um das erste "Feld" zu holen.</em>
 }
-<em>; If the above loop had zero iterations because there were no ending characters found,
-; leave the contents of the URL var untouched.</em>
+<em>; Wenn die obige Schleife keine Iteration hat, weil keine Endzeichen gefunden wurden,
+; bleibt der Inhalt der URL-Variable unberührt.</em>
 
-<em>; If the URL ends in a double quote, remove it.  For now, StrReplace is used, but
-; note that it seems that double quotes can legitimately exist inside URLs, so this
-; might damage them:</em>
-StrReplace, URLCleansed, URL, ",, All
-FileAppend, %URLCleansed%`n
-LinkCount += 1
+<em>; Wenn die URL mit einem Anführungszeichen endet, wird sie entfernt.  Fürs Erste wird StrReplace verwendet, aber
+; beachtet, dass Anführungszeichen durchaus innerhalb der URLs gültig sind, folglich 
+; könnte die URL dadurch unbrauchbar gemacht werden:</em>
+StrReplace, SaubereURL, URL, ",, All
+FileAppend, %SaubereURL%`n
+Linkanzahl += 1
 
-<em>; See if there are any other URLs in this line:</em>
-StringLen, CharactersToOmit, URL
-CharactersToOmit += %URLStart%
-StringTrimLeft, URLSearchString, URLSearchString, %CharactersToOmit%
-Gosub, URLSearch  <em>; Recursive call to self.</em>
-return</pre>
+<em>; Nachschauen, ob noch andere URLs in dieser Zeile vorhanden sind:</em>
+StringLen, ZeichenAuslassen, URL
+ZeichenAuslassen += %URLStart%
+StringTrimLeft, URLSuchstring, URLSuchstring, %ZeichenAuslassen%
+Gosub, URLSuche  <em>; Rekursiver Aufruf auf sich selbst.</em>
+Return</pre>
 
 </body>
 </html>

@@ -1,11 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>Script-Kompatibilität</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="static/theme.css" rel="stylesheet" type="text/css" />
+<script src="static/jquery.js" type="text/javascript"></script>
+<script src="static/tree.jquery.js" type="text/javascript"></script>
+<script src="static/ga.js" type="text/javascript"></script>
+<script src="static/content.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -166,7 +170,7 @@ MsgBox,, Titel
 <p><a href="Variables.htm#IsCompiled">A_IsCompiled</a> ist als leerer String definiert, sofern das Script noch nicht kompiliert wurde. Vorher blieb es undefiniert, wodurch Zuweisungen wie <code>A_IsCompiled := 1</code> möglich waren, sofern das Script noch nicht kompiliert wurde. Absofort wird sie überall als schreibgeschützte interne Variable behandelt.</p>
 
 <h3 id="Escaped_Whitespace">Unsichtbare Zeichen mit einem Escapezeichen</h3>
-<p>Escaped whitespace characters such as <code>`t</code> and <code>` </code>&nbsp;are no longer trimmed from the beginning and end of each arg. Zum Beispiel ist <code>StringReplace s, s, `t</code> nun eine gültige Anweisung, die alle Tabulatorzeichen in <em>s</em> entfernt.</p>
+<p>Unsichtbare Zeichen mit einem Escapezeichen wie <code>`t</code> und <code>` </code> werden nicht länger am Anfang oder am Ende eines Arguments verworfen. Zum Beispiel ist <code>StringReplace s, s, `t</code> nun eine gültige Anweisung, die alle Tabulatorzeichen in <em>s</em> entfernt.</p>
 
 
 <h2 id="Format">Unicode vs ANSI</h2>
@@ -199,12 +203,11 @@ VarSetCapacity(Native_Var,  t_size(Zeichenkapazität))  <em>; siehe <a href="#Nu
 <h3 id="DllCall">DllCall</h3>
 <p>Der "Str"-Typ, falls vorhanden, kennzeichnet einen String im nativen Format des aktuellen Builds. Da einige Funktionen möglicherweise Strings in einem bestimmten Format benötigen oder zurückgeben müssen, stehen folgende Stringtypen zur Verfügung:</p>
 <table class="info">
-  <tr><th></th><th>Zeichengröße</th><th>C / Win32-Typen</th><th>Kodierung</th></tr>
+  <tr><th>&nbsp;</th><th>Zeichengröße</th><th>C / Win32-Typen</th><th>Kodierung</th></tr>
   <tr><td class="Syntax" style="text-align:center">WStr</td><td style="text-align:center">16-Bit</td><td>wchar_t*, WCHAR*, LPWSTR, LPCWSTR</td><td>UTF-16</td></tr>
   <tr><td class="Syntax" style="text-align:center">AStr</td><td style="text-align:center">8-Bit</td><td>char*, CHAR*, LPSTR, LPCSTR</td><td>ANSI (der Standard-ANSI-Zeichensatz des Systems)</td></tr>
   <tr><td class="Syntax" style="text-align:center">Str</td><td style="text-align:center">--</td><td>TCHAR*, LPTSTR, LPCTSTR</td><td>Entspricht <b>WStr</b> in Unicode-Versionen und <b>AStr</b> in ANSI-Versionen.</td></tr>
 </table>
-<br>
 <p>Verwendet man "Str" oder das Gegenstück des aktuellen Builds als Parameter, wird die Adresse des Strings oder der Variable an die Funktion übergeben. Ansonsten wird eine temporäre Kopie des Strings im gewünschten Format erstellt und diese stattdessen übergeben. In der Regel sollten "AStr" und "WStr" nicht verwendet werden, wenn die Funktion einen Wert in diesen Parameter schreibt.</p>
 <p><b>Hinweis</b>: "AStr" und "WStr" sind sowohl bei Parametern als auch beim Rückgabewert einer Funktion gültig.</p>
 <p>Wenn ein Script eine Funktion per DllCall aufruft, die einen String als Parameter akzeptiert, muss eine der folgenden Methoden durchgeführt werden:</p>
@@ -212,7 +215,7 @@ VarSetCapacity(Native_Var,  t_size(Zeichenkapazität))  <em>; siehe <a href="#Nu
   <li>Je nach aktuellem Build sollte man die Unicode- (W) oder ANSI-Version (A) der Funktion aufrufen, falls beide zur Verfügung stehen. Im folgenden Beispiel ist "DeleteFile" intern als "DeleteFileA" oder "DeleteFileW" bekannt. Da "DeleteFile" selbst nicht wirklich existiert, wird DllCall automatisch "A" oder "W" je nach aktuellem Build anfügen:
   <pre>DllCall("DeleteFile", "Ptr", &amp;Dateiname)
 DllCall("DeleteFile", "Str", Dateiname)</pre>
-  <p>In diesem Beispiel wird <code>&amp;Dateiname</code> die Adresse des Strings exakt in dieser Form übergeben, so dass die Funktion einen String im gleichen Format wie der "Str"-Typ erwarten muss. Beachte, dass in AutoHotkey Basic "UInt" statt "Ptr" verwendet werden muss, aber es kann sein, dass der resultierende Code nicht 64-Bit-kompatibel ist.
+  <p>In diesem Beispiel wird <code>&amp;Dateiname</code> die Adresse des Strings exakt in dieser Form übergeben, so dass die Funktion einen String im gleichen Format wie der "Str"-Typ erwarten muss. Beachte, dass in AutoHotkey Basic "UInt" statt "Ptr" verwendet werden muss, aber es kann sein, dass der resultierende Code nicht 64-Bit-kompatibel ist.</p>
   <p><b>Hinweis</b>: Wenn die Funktion mit exakt diesem Namen nicht auffindbar ist, fügt AutoHotkey_L das Suffix "A" oder "W" an, egal welche DLL-Datei angegeben ist. AutoHotkey Basic hingegen wird den Suffix "A" nur bei Funktionen anfügen, die in User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll vorkommen.</p></li>
   <li>Wenn die Funktion nur einen bestimmten Stringtyp als Eingabevariable akzeptiert, könnte das Script jeweils den passenden Stringtyp verwenden:
   <pre>DllCall("DeleteFileA", "AStr", Dateiname)
@@ -227,15 +230,15 @@ DllCall("DeleteFileW", "WStr", Dateiname)</pre></li>
 <i>n</i>te_Zeichen := NumGet(var, (<i>n</i>-1)*<i>Zeichengröße</i>, <i>Zeichentyp</i>)
 NumPut(<i>n</i>te_Zeichen, var, (<i>n</i>-1)*<i>Zeichengröße</i>, <i>Zeichentyp</i>)</pre>
 <p>Wenn <code>var</code> einen String im nativen Format enthält, können die passenden Werte auf Basis von <code>A_IsUnicode</code> bestimmt werden:</p>
-<pre><i>n</i>th_char := NumGet(var, t_size(<i>n</i>-1), t_char())
-NumPut(<i>n</i>th_char, var, t_size(<i>n</i>-1), t_char())
+<pre><i>n</i>te_Zeichen := NumGet(var, t_size(<i>n</i>-1), t_char())
+NumPut(<i>n</i>te_Zeichen, var, t_size(<i>n</i>-1), t_char())
 
-<em>; Define functions for convenience and clarity:</em>
+<em>; Definiere Funktionen für Komfort und Übersichtlichkeit:</em>
 t_char() {
-    return A_IsUnicode ? "UShort" : "Char"
+    Return A_IsUnicode ? "UShort" : "Char"
 }
 t_size(char_count:=1) {
-    return A_IsUnicode ? char_count*2 : char_count
+    Return A_IsUnicode ? char_count*2 : char_count
 }</pre>
 
 <h2 id="ptr">Pointer-Größe</h2>
@@ -251,14 +254,14 @@ t_size(char_count:=1) {
   typedef struct _PROCESS_INFORMATION {
     HANDLE hProcess;    // Ptr
     HANDLE hThread;
-    DWORD  dwProcessId; // UInt (4 bytes)
+    DWORD  dwProcessId; // UInt (4 Bytes)
     DWORD  dwThreadId;
   } <a href="http://msdn.microsoft.com/en-us/library/ms684873.aspx">PROCESS_INFORMATION</a>, *LPPROCESS_INFORMATION;
 */</em>
 VarSetCapacity(pi, A_PtrSize*2 + 8) <em>; Ptr + Ptr + UInt + UInt</em>
-DllCall("<a href="http://msdn.microsoft.com/en-us/library/ms682425.aspx">CreateProcess</a>", <span class="dull">&lt;omitted for brevity&gt;</span>, "Ptr", &amp;pi, <span class="dull">&lt;omitted&gt;</span>)
-hProcess    := NumGet(pi, 0)         <em>; Defaults to "Ptr".</em>
-hThread     := NumGet(pi, A_PtrSize) <em>; </em>
+DllCall("<a href="http://msdn.microsoft.com/en-us/library/ms682425.aspx">CreateProcess</a>", <span class="dull">&lt;gekürzt&gt;</span>, "Ptr", &amp;pi, <span class="dull">&lt;gekürzt&gt;</span>)
+hProcess    := NumGet(pi, 0)         <em>; Standardmäßig "Ptr".</em>
+hThread     := NumGet(pi, A_PtrSize) <em>;</em>
 dwProcessId := NumGet(pi, A_PtrSize*2,     "UInt")
 dwProcessId := NumGet(pi, A_PtrSize*2 + 4, "UInt")
 </pre>

@@ -1,33 +1,37 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>ComObject()</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
 
 <h1>ComObject()</h1>
 
-<p>Wraps a value, SafeArray or COM object for use by the script or for passing to a COM method.</p>
-<pre class="Syntax">ComObject := ComObject(VarType, Value [, Flags])</pre>
+<p>Wrappt ein Wert, SafeArray oder COM-Objekt, so dass es vom Script verwendet oder an eine COM-Methode übergeben werden kann.</p>
+<pre class="Syntax">ComObject := ComObject(VarTyp, Wert [, Flags])</pre>
 
-<p><strong>Advanced:</strong> Wraps or unwraps a raw <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a> pointer for use by the script.</p>
+<p><strong>Erweitert:</strong> Wrappt oder entwrappt einen unbearbeiteten <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>-Pointer, so dass es vom Script verwendet werden kann.</p>
 <pre class="Syntax">ComObject := ComObject(DispPtr)</pre>
 
 <h3>Parameter</h3>
 <dl>
 
   <dt>VarTyp</dt>
-  <dd><p>Ein Integer-Wert, der den Typ des Wertes kennzeichnet. See <a href="ComObjType.htm#vt">ComObjType</a> for a list of types.</p></dd>
+  <dd><p>Ein Integer-Wert, der den Typ des Wertes kennzeichnet. Siehe <a href="ComObjType.htm#vt">ComObjType</a> für eine Liste von Typen.</p></dd>
 
   <dt>Wert</dt>
   <dd><p>Der Wert, der gewrappt werden soll. Zurzeit werden nur Integer- oder Pointer-Werte unterstützt.</p></dd>
 
   <dt>Flags</dt>
-  <dd><p>Flags affecting the behaviour of the wrapper object; see <a href="ComObjFlags.htm">ComObjFlags</a> for details.</p></dd>
+  <dd><p>Flags haben Einfluss auf das Verhalten des Wrapper-Objekts; siehe <a href="ComObjFlags.htm">ComObjFlags</a>, um mehr darüber zu erfahren.</p></dd>
 
   <dt>DispPtr</dt>
   <dd><p>Unbearbeiteter IDispatch-Pointer.</p></dd>
@@ -35,17 +39,17 @@
 </dl>
 
 <h3 id="Returns">Rückgabewert</h3>
-<p>Returns a wrapper object containing a <a href="ComObjType.htm">variant type</a> and value or pointer.</p>
-<p>This object has two uses:</p>
+<p>Gibt einen Wrapper-Objekt zurück, das einen <a href="ComObjType.htm">Variantentyp</a> und Wert, oder einen Pointer enthält.</p>
+<p>Dieses Objekt hat zwei Nutzen:</p>
 <ol>
-  <li>Some COM methods may require specific types of values which have no direct equivalent within AutoHotkey. This function allows the type of a value to be specified when passing it to a COM method. For example, <code>ComObject(0xB, -1)</code> creates an object which represents the COM boolean value <em>true</em>.</li>
-  <li>Wrapping a COM object or SafeArray enables the script to interact with it more naturally, using <a href="../Objects.htm#Usage_Objects">object syntax</a>. However, the majority of scripts do not need to do this manually since a wrapper object is created automatically by <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjArray.htm">ComObjArray</a> and any COM methods which returns an object.</li>
+  <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComObject(0xB, -1)</code> ein Objekt, das den logischen COM-Wert <em>True</em> repräsentieren würde.</li>
+  <li>Das Script kann unter Verwendung der <a href="../Objects.htm#Usage_Objects">Objektsyntax</a> mit einem gewrappten COM-Objekt oder SafeArray viel besser umgehen. Bei den meisten Scripts muss dies jedoch nicht manuell getan werden, weil ein Wrapper-Objekt automatisch durch <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjArray.htm">ComObjArray</a> und anderen COM-Methoden, die ein Objekt zurückgeben, erstellt wird.</li>
 </ol>
 
 <h3 id="Remarks">Allgemeine Bemerkungen</h3>
-<p>When this function is used to wrap an <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a> or IUnknown interface pointer, the wrapper object assumes responsibility for automatically releasing the pointer when appropriate. If <em>VarType</em> was omitted, the object is <a href="ComObjQuery.htm">queried</a> for its IDispatch interface; if one is returned, <em>DispPtr</em> is immediately released. Therefore, if the script intends to use the pointer after calling this function, it must call <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> first.</p>
-<p>The <em>VarType</em> of a wrapper object can be retrieved using <a href="ComObjType.htm">ComObjType</a>.</p>
-<p>The <em>Value</em> of a wrapper object can be retrieved using <a href="ComObjValue.htm">ComObjValue</a>.</p>
+<p>Wenn mit dieser Funktion ein <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointer gewrappt wurde, übernimmt das Wrapper-Objekt die Verantwortung, den Pointer bei Bedarf automatisch freizugeben. Wenn <em>VarTyp</em> weggelassen wurde, wird das Objekt nach einem IDispatch-Interface <a href="ComObjQuery.htm">suchen</a>; ist eins auffindbar, wird <em>DispPtr</em> sofort freigegeben.  Sollte das Script beabsichtigen, den Pointer nach Aufrufen dieser Funktion zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
+<p>Der <em>VarTyp</em> eines Wrapper-Objekts kann mit <a href="ComObjType.htm">ComObjType</a> abgerufen werden.</p>
+<p>Der <em>Wert</em> eines Wrapper-Objekts kann mit <a href="ComObjValue.htm">ComObjValue</a> abgerufen werden.</p>
 <p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte einzigartig, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
 
 <h3 id="Related">Siehe auch</h3>
@@ -68,10 +72,10 @@ var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox % var[]
 
-<em>; ComVar: Creates an object which can be used to pass a value ByRef.
-;   ComVar[] retrieves the value.
-;   ComVar[] := Val sets the value.
-;   ComVar.ref retrieves a ByRef object for passing to a COM function.</em>
+<em>; ComVar: Erstellt ein Objekt, mit dem ein Wert per Verweis übergeben werden kann.
+;   ComVar[] ermittelt den Wert.
+;   ComVar[] := Wert bestimmt den Wert.
+;   ComVar.ref empfängt ein ByRef-Objekt für die Übergabe an eine COM-Funktion.</em>
 ComVar(Type:=0xC)
 {
     static <a href="../Objects.htm#Custom_Objects">base</a> := { __Get: "ComVarGet", __Set: "ComVarSet", __Delete: "ComVarDel" }

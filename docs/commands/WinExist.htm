@@ -1,11 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>WinExist</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -13,7 +17,7 @@
 
 <p>Überprüft, ob ein übereinstimmendes Fenster vorhanden ist. <em>WinExist()</em> gibt die <a href="WinGet.htm">eindeutige ID (HWND)</a> des ersten übereinstimmenden Fensters zurück.</p>
 
-<pre class="Syntax"><a href="WinGet.htm">UniqueID</a> := WinExist("WinTitle", "WinText", "ExcludeTitle", "ExcludeText")</pre>
+<pre class="Syntax"><a href="WinGet.htm">EindeutigeID</a> := WinExist("Fenstertitel", "Fenstertext", "Titelausnahme", "Textausnahme")</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -35,44 +39,44 @@
 </dl>
 
 <h3>Rückgabewert</h3>
-<p>Returns the <a href="WinGet.htm">Unique ID (HWND)</a> of the first matching window (or 0 if none).</p>
-<p>Since all non-zero numbers are seen as "true", the statement <em>if WinExist("WinTitle")</em> is true whenever <em>WinTitle</em> exists.</p>
+<p>Gibt die <a href="WinGet.htm">Eindeutige ID (HWND)</a> des ersten übereinstimmenden Fensters zurück (oder 0 falls nicht).</p>
+<p>Da alle Zahlen außer 0 als "wahr" angesehen werden, ist die Anweisung <em>If WinExist("Fenstertitel")</em> wahr, wann immer der <em>Fenstertitel</em> vorhanden ist.</p>
 
 <h3>Bemerkungen</h3>
-<p>If all parameters are omitted, the <a href="../LastFoundWindow.htm">Last Found Window</a> will be checked to see if it still exists.</p>
-<p>If a qualified window exists, the <a href="../LastFoundWindow.htm">Last Found Window</a> will be updated to be that window.</p>
+<p>Sobald alle Parameter weggelassen werden, wird das <a href="../LastFoundWindow.htm">zuletzt gefundene Fenster</a> überprüft, ob es noch vorhanden ist.</p>
+<p>Wenn ein geeignetes Fenster vorhanden ist, wird das <a href="../LastFoundWindow.htm">zuletzt gefundene Fenster</a> auf dieses Fenster aktualisiert.</p>
 <p>Um das HWND eines Steuerelements abzurufen (zur Verwendung mit <a href="PostMessage.htm">Post/SendMessage</a> oder <a href="DllCall.htm">DllCall</a>), benutzt <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a> oder <a href="MouseGetPos.htm">MouseGetPos</a>.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 
 <h3>Siehe auch</h3>
-<p><a href="WinActive.htm">WinActive</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="../misc/WinTitle.htm#LastFoundWindow">Last Found Window</a>, <a href="Process.htm">Process</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="WinWaitActive.htm">WinWaitActive</a>, <a href="WinWait.htm">WinWait</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="_IfWinActive.htm">#IfWinActive/Exist</a></p>
+<p><a href="WinActive.htm">WinActive</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundenes Fenster</a>, <a href="Process.htm">Process</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="WinWaitActive.htm">WinWaitActive</a>, <a href="WinWait.htm">WinWait</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="_IfWinActive.htm">#IfWinActive/Exist</a></p>
 <h3>Beispiele</h3>
-<pre class="NoIndent"><em>; Example 1</em>
-if WinExist("Untitled - Notepad")
+<pre class="NoIndent"><em>; Beispiel 1</em>
+If WinExist("Unbenannt - Editor")
 {
-    WinActivate  <em>; Automatically uses the window found above.</em>
-    WinMaximize  <em>; same</em>
-    Send, Some text.{Enter}
-    return
+    WinActivate  <em>; Verwendet das oben gefundene Fenster.</em>
+    WinMaximize  <em>; wie oben</em>
+    Send, Das ist ein Text.{Enter}
+    Return
 }
 
-<em>; Example 2</em>
-if !WinExist("Calculator")
-    return
-else
+<em>; Beispiel 2</em>
+If !WinExist("Rechner")
+    Return
+Else
 {
-    WinActivate  <em>; The above "IfWinNotExist" also set the "last found" window for us.</em>
-    WinMove, 40, 40  <em>; Move it to a new position.</em>
-    return
+    WinActivate  <em>; Das obere "IfWinNotExist" setzt das zuletzt gefundene Fenster für uns.</em>
+    WinMove, 40, 40  <em>; Zur neuen Position verschieben.</em>
+    Return
 }
 
-<em>; Example 3</em>
-if WinExist("ahk_class Notepad") or WinExist("ahk_class" . ClassName)
-    WinActivate  <em>; Uses the <a href="../misc/WinTitle.htm#LastFoundWindow">last found window</a>.</em>
+<em>; Beispiel 3</em>
+If WinExist("ahk_class Notepad") or WinExist("ahk_class" . ClassName)
+    WinActivate  <em>; Verwendet das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>.</em>
 
-MsgBox % "The active window's ID is " . WinExist("A")
+MsgBox % "Die ID des aktiven Fensters ist " . WinExist("A")
 
-<em>; Example 4: Das gleiche wie IfWinNotExist, Rechner</em>
+<em>; Beispiel 4: Das gleiche wie IfWinNotExist, Rechner</em>
 If !WinExist("Rechner")
     return</pre>
 	

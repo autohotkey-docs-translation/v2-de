@@ -1,11 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>FormatTime</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
 <style type="text/css">
 <!--
 .red {color: #FF0000}
@@ -148,7 +152,7 @@
   </tr>
   <tr>
     <td>YearMonth</td>
-    <td>Jahr und Monat, abhängig von der Systemeinstellung in Windows (z. B. April 2010) </td>
+    <td>Jahr und Monat, abhängig von der Systemeinstellung in Windows (z. B. April 2010)</td>
   </tr>
   <tr>
     <td>YDay</td>
@@ -191,17 +195,17 @@
   12: Kombination aus 4 und 8.<br>
   0x80000000: Ignoriert die Benutzereinstellung des Standard-Zeitformats im Betriebssystem. <br>
   0x40000000: Verwendet den ANSI-Zeichensatz, anstatt den lokalen Zeichensatz.</p>
-<p><strong>Hinweis</strong>: Dn und Tn können wie folgt mehrmals angegeben werden, um mehr als eine Option zu aktivieren: FormatTime, OutputVar, 20040228 D2 D4 T1 T8</p>
+<p><strong>Hinweis</strong>: Dn und Tn können wie folgt mehrmals angegeben werden, um mehr als eine Option zu aktivieren: <code>FormatTime, AusgabeVar, 20040228 D2 D4 T1 T8</code></p>
 <h3 id="Remarks">Bemerkungen</h3>
 <p>Um Buchstaben und Zahlen von <em>Format</em> direkt in <em>AusgabeVar</em> zu übertragen, sollten sie wie folgt mit Hochkommas umschlossen werden: <code>'Datum:' MM/dd/yy 'Zeit:' hh:mm:ss tt</code>.</p>
 <p>Nicht-alphanumerische Zeichen wie Leerzeichen, Tabulatoren, LF-Zeichen (`n), Schrägstriche, Doppelpunkte, Kommas und andere Satzzeichen müssen nicht von Hochkommas umschlossen werden. Die Ausnahme ist das Hochkomma selbst: Zur Darstellung dieses Zeichens müssen vier aufeinanderfolgende Hochkommas ('''') verwendet werden, oder nur zwei, wenn das Hochkomma sich bereits innerhalb von zwei äußeren Hochkommas befindet.</p>
 <p>Enthält <em>Format</em> Datum- und Zeitelemente, dürfen diese nicht vermischt werden. Das heißt, dass der String in zwei Hälften aufgeteilt werden sollte: Zeit in die eine Hälfte und Datum in die andere Hälfte. Der Formatstring "hh yyyy mm" beispielsweise liefert nicht das erwartete Ergebnis, weil sich ein Datumselement zwischen zwei Zeitelementen befindet.</p>
-<p> Enthält <em>Format</em> einen numerischen Monatstag (d oder dd) gefolgt von einem vollständigen Monatsnamen (MMMM), wird der Genitiv des Monatsnamens verwendet (wenn die Sprache einen Genitiv besitzt).</p>
+<p>Enthält <em>Format</em> einen numerischen Monatstag (d oder dd) gefolgt von einem vollständigen Monatsnamen (MMMM), wird der Genitiv des Monatsnamens verwendet (wenn die Sprache einen Genitiv besitzt).</p>
 <p>Enthält <em>Format</em> mehr als 2000 Zeichen, wird <em>AusgabeVar</em> leer gemacht.</p>
-<p>On a related note, addition and subtraction of dates and times can be performed with <a href="DateAdd.htm">DateAdd</a> and <a href="DateDiff.htm">DateDiff</a>.</p>
+<p>Beachte zudem, dass Addition und Subtraktion von Datum und Zeit mit <a href="DateAdd.htm">DateAdd</a> und <a href="DateDiff.htm">DateDiff</a> durchgeführt werden kann.</p>
 <h3>Siehe auch</h3>
 <p>Um einen <em>formatierten</em> Datum/Zeit-String <em>ins</em> <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Format umzuwandeln, siehe <a href="http://www.autohotkey.com/forum/topic20405.html">Forumsbeitrag: "Date Parser"</a></p>
-<p>Siehe auch: <a href="GuiControls.htm#DateTime">Gui DateTime control</a>, <a href="../Variables.htm#date">built-in date and time variables</a>, <a href="FileGetTime.htm">FileGetTime</a> </p>
+<p>Siehe auch: <a href="GuiControls.htm#DateTime">DateTime-Steuerelement</a>, <a href="../Variables.htm#date">interne Datums- und Zeitvariablen</a>, <a href="FileGetTime.htm">FileGetTime</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent">FormatTime, Zeitstring
 MsgBox Die aktuelle Zeit und das aktuelle Datum ist %Zeitstring%.
@@ -226,15 +230,15 @@ MsgBox %Zeitstring%
 
 FormatTime, Jahreswoche, 20050101, YWeek
 MsgBox Der 1. Januar 2005 hat das folgende Jahr und die Wochennummer nach ISO: %Jahreswoche%</pre>
-<p>&nbsp;</p>
-<pre class="NoIndent"><em>; Change the date-time stamp of a file:</em>
-FileSelect, FileName, 3,, Pick a file
-if FileName =  <em>; The user didn't pick a file.</em>
-    return
-FileGetTime, FileTime, %FileName%
-FormatTime, FileTime, %FileTime%   <em>; Since the last parameter is omitted, the long date and time are retrieved.</em>
-MsgBox The selected file was last modified at %FileTime%.</pre>
-<p>&nbsp;</p>
+
+<pre class="NoIndent"><em>; Ändert den Zeitstempel einer Datei:</em>
+FileSelect, Dateiname, 3,, Datei auswählen,
+wenn Dateiname =  <em>; Der Benutzer hat keine Datei ausgewählt.</em>
+    Return
+FileGetTime, Dateizeitstempel, %Dateiname%
+FormatTime, Dateizeitstempel, %Dateizeitstempel%   <em>; Da der letzte Parameter entfällt, wird das lange Datumsformat und Zeit angezeigt.</em>
+MsgBox die ausgewählte Datei wurde zuletzt am %Dateizeitstempel% modifiziert.</pre>
+
 <pre class="NoIndent"><em>; Die folgende Funktion wandelt Sekunden in
 ; Stunden, Minuten und Sekunden um (hh:mm:ss-Format).</em>
 

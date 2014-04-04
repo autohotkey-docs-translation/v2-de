@@ -1,11 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title>FileOpen</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link href="../css/default.css" rel="stylesheet" type="text/css">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/jquery.js" type="text/javascript"></script>
+<script src="../static/tree.jquery.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+<script src="../static/content.js" type="text/javascript"></script>
 <style type="text/css">.fopt{width:4em;text-align:center}.fnum{width:4em;text-align:right}</style>
 </head>
 <body>
@@ -22,37 +26,36 @@
   <dd><p>Name der zu öffnenden Datei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p></dd>
 
   <dt>Flags</dt>
-  <dd><p>Either a string of characters indicating the desired access mode followed by other options (with optional spaces or tabs in between); or a combination (sum) of numeric flags. Unterstützte Werte werden in der folgenden Tabelle beschrieben.</p></dd>
+  <dd><p>Entweder ein String mit Zeichen für den gewünschten Zugriffsmodus, gefolgt von anderen Optionen (optional getrennt durch Leerzeichen und Tabulatoren); oder eine Kombination (Summe) von numerischen Flags. Unterstützte Werte werden in der folgenden Tabelle beschrieben.</p></dd>
 
   <dt>Kodierung</dt>
-  <dd><p>Der Zeichensatz, der zur Textverarbeitung verwendet werden soll, falls die Datei keine UTF-8- oder UTF-16-<a href="http://en.wikipedia.org/wiki/Byte_order_mark">Bytereihenfolge-Markierung</a> enthält.<br> Ist dieser Parameter nicht vorhanden, wird der aktuelle Wert von <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet.</p></dd>
+  <dd><p>Der Zeichensatz, der zur Textverarbeitung verwendet werden soll, falls die Datei keine UTF-8- oder UTF-16-<a href="http://en.wikipedia.org/wiki/Byte_order_mark">Bytereihenfolge-Markierung</a> enthält.<br>Ist dieser Parameter nicht vorhanden, wird der aktuelle Wert von <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet.</p></dd>
 
 </dl>
 <h3>Flags</h3>
-<p></p>
 <table class="info">
-  <tr><th style="width:4em"></th><th style="width:4em"></th><th style="text-align:left">Zugriffsmodi (schließen sich gegenseitig aus)</th></tr>
+  <tr><th style="width:4em">&nbsp;</th><th style="width:4em">&nbsp;</th><th style="text-align:left">Zugriffsmodi (schließen sich gegenseitig aus)</th></tr>
   <tr><td class="fopt">r</td><td class="fnum">0</td><td><i>Lesen</i>: Schlägt fehl, falls die Datei noch nicht vorhanden ist.</td></tr>
-  <tr><td class="fopt">w</td><td class="fnum">1</td><td><i>Write:</i> Creates a new file, <b style="color:red">overwriting any existing file.</b></td></tr>
+  <tr><td class="fopt">w</td><td class="fnum">1</td><td><i>Schreiben</i>: Erstellt eine neue Datei oder <b style="color:red">überschreibt die vorhandene Datei</b>.</td></tr>
   <tr><td class="fopt">a</td><td class="fnum">2</td><td><i>Anfügen</i>: Erstellt eine neue Datei, falls diese noch nicht vorhanden ist, ansonsten wird der Datei-Pointer ans Ende der Datei gesetzt.</td></tr>
   <tr><td class="fopt">rw</td><td class="fnum">3</td><td><i>Lesen/Schreiben</i>: Erstellt eine neue Datei, falls diese noch nicht vorhanden ist.</td></tr>
-  <tr><td class="fopt">h</td><td></td><td>Kennzeichnet, dass <i>Dateiname</i> ein Datei-Handle ist, der in ein Objekt eingebunden werden kann. Freigabemodus-Flags werden ignoriert. Das Datei-Handle wird <b>nicht</b> automatisch geschlossen, wenn das File-Objekt gelöscht wird oder das Aufrufen von <a href="../objects/File.htm#Close">Close</a> keine Wirkung hat. Beachte, dass <a href="../objects/File.htm#Seek">Seek</a>, <a href="../objects/File.htm#Tell">Tell</a> und <a href="../objects/File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>Dateiname</i> ein Handle für ein nicht-suchendes Device wie Pipe- oder Kommunikation-Device ist.</td></tr>
-  <tr><th></th><th></th><th style="text-align:left">Freigabemodus-Flags</th></tr>
-  <tr><td class="fopt" style="white-space:nowrap">-rwd</td><td></td><td>Sperrt die Datei für Lese-, Schreib- und/oder Löschzugriff. Es sind beliebige Kombinationen mit <code>r</code>, <code>w</code> und <code>d</code> möglich. Die Angabe von <code>-</code> ist das gleiche wie, als würde man <code>-rwd</code> angeben. Falls weggelassen, wird jeder Zugriff freigegeben.</td></tr>
-  <tr><td></td><td class="fnum">0</td><td>Ist <i>Flags</i> numerisch, bewirkt das Fehlen von Freigabemodus-Flags, dass die Datei gesperrt wird.</td></tr>
-  <tr><td></td><td class="fnum">0x100</td><td><i>Lesezugriff</i> freigeben.</td></tr>
-  <tr><td></td><td class="fnum">0x200</td><td><i>Schreibzugriff</i> freigeben.</td></tr>
-  <tr><td></td><td class="fnum">0x400</td><td><i>Löschzugriff</i> freigeben.</td></tr>
-  <tr><th></th><th></th><th style="text-align:left">Zeilenumbruchsoptionen (EOL)</th></tr>
-  <tr><td class="fopt">*</td><td class="fnum"></td><td>Disable end of line translations, which are enabled by default if <em>Flags</em> is non-numeric.</td></tr>
+  <tr><td class="fopt">h</td><td>&nbsp;</td><td>Kennzeichnet, dass <i>Dateiname</i> ein Datei-Handle ist, der in ein Objekt eingebunden werden kann. Freigabemodus-Flags werden ignoriert. Das Datei-Handle wird <b>nicht</b> automatisch geschlossen, wenn das File-Objekt gelöscht wird oder das Aufrufen von <a href="../objects/File.htm#Close">Close</a> keine Wirkung hat. Beachte, dass <a href="../objects/File.htm#Seek">Seek</a>, <a href="../objects/File.htm#Tell">Tell</a> und <a href="../objects/File.htm#Length">Length</a> nicht verwendet werden sollten, wenn <i>Dateiname</i> ein Handle für ein nicht-suchendes Device wie Pipe- oder Kommunikation-Device ist.</td></tr>
+  <tr><th>&nbsp;</th><th>&nbsp;</th><th style="text-align:left">Freigabemodus-Flags</th></tr>
+  <tr><td class="fopt" style="white-space:nowrap">-rwd</td><td>&nbsp;</td><td>Sperrt die Datei für Lese-, Schreib- und/oder Löschzugriff. Es sind beliebige Kombinationen mit <code>r</code>, <code>w</code> und <code>d</code> möglich. Die Angabe von <code>-</code> ist das gleiche wie, als würde man <code>-rwd</code> angeben. Falls weggelassen, wird jeder Zugriff freigegeben.</td></tr>
+  <tr><td>&nbsp;</td><td class="fnum">0</td><td>Ist <i>Flags</i> numerisch, bewirkt das Fehlen von Freigabemodus-Flags, dass die Datei gesperrt wird.</td></tr>
+  <tr><td>&nbsp;</td><td class="fnum">0x100</td><td><i>Lesezugriff</i> freigeben.</td></tr>
+  <tr><td>&nbsp;</td><td class="fnum">0x200</td><td><i>Schreibzugriff</i> freigeben.</td></tr>
+  <tr><td>&nbsp;</td><td class="fnum">0x400</td><td><i>Löschzugriff</i> freigeben.</td></tr>
+  <tr><th>&nbsp;</th><th>&nbsp;</th><th style="text-align:left">Zeilenumbruchsoptionen (EOL)</th></tr>
+  <tr><td class="fopt">*</td><td class="fnum"></td><td>Deaktiviert EOL-Übersetzungen (End Of Line), die standardmäßig aktiviert sind, wenn <em>Flags</em> nicht-numerisch ist.</td></tr>
   <tr><td></td><td class="fnum">4</td><td>Ersetzt beim Schreiben <code>`r`n</code> mit <code>`n</code>  und beim Lesen <code>`n</code> mit <code>`r`n</code>.</td></tr>
   <tr><td></td><td class="fnum">8</td><td>Ersetzt beim Schreiben das alleinstehende <code>`r</code> mit <code>`n</code>.</td></tr>
 </table>
 
 <h3>Rückgabewert</h3>
 <p>Wurde die Datei erfolgreich geöffnet, wird der Rückgabewert ein <a href="../objects/File.htm">File-Objekt</a> sein.</p>
-<p>If the function fails, the return value is 0 and <a href="../Variables.htm#LastError">A_LastError</a> contains an error code.</p>
-<p>Mit <code>If File</code> oder <code>IsObject(File)</code> kann man überprüfen, ob die Funktion erfolgreich war.
+<p>Schlägt die Funktion fehl, wird der Rückgabewert eine 0 sein und <a href="../Variables.htm#LastError">A_LastError</a> einen Fehlercode enthalten.</p>
+<p>Mit <code>If File</code> oder <code>IsObject(File)</code> kann man überprüfen, ob die Funktion erfolgreich war.</p>
 
 <h3>Bemerkungen</h3>
 <p>Beim Erstellen einer UTF-8- oder UTF-16-Datei wird eine Bytereihenfolge-Markierung (BOM) in die Datei geschrieben, <b>es sei denn</b>, <i>Kodierung</i> (oder <a href="FileEncoding.htm">A_FileEncoding</a>, falls <i>Kodierung</i> weggelassen wird) enthält "UTF-8-RAW" oder "UTF-16-RAW".</p>
@@ -62,33 +65,33 @@
 <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a></p>
 
 <h3>Beispiele</h3>
-<pre class="NoIndent"><a name="writeread"></a><em>; Beispiel: This is a working script that writes some text to a file then reads it back into memory.
-; It provides the same functionality as <a href="DllCall.htm#file">this DllCall-example</a>.</em>
+<pre class="NoIndent"><a name="writeread"></a><em>; Beispiel: Dieses Script schreibt etwas Text in eine Datei und liest diesen zurück in den Speicher.
+; Es stellt die gleiche Funktionalität wie dieses <a href="DllCall.htm#file">DllCall-Beispiel</a> bereit.</em>
 
-FileSelect, FileName, S16,, Create a new file:
-if (FileName = "")
+FileSelect, Dateiname, S16,, Neue Datei erstellen:
+if (Dateiname = "")
 	return
-file := FileOpen(FileName, "w")
-if !IsObject(file)
+File := FileOpen(Dateiname, "w")
+if !IsObject(File)
 {
-	MsgBox Can't open "%FileName%" for writing.
+	MsgBox Kann "%Dateiname%" nicht zum Schreiben öffnen.
 	return
 }
-TestString := "This is a test string.`r`n"  <em>; When writing a file this way, use `r`n rather than `n to start a new line.</em>
-file.Write(TestString)
-file.Close()
+TestString := "Das ist ein Teststring.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
+File.Write(TestString)
+File.Close()
 
-<em>; Now that the file was written, read its contents back into memory.</em>
-file := FileOpen(FileName, "r-d") <em>; read the file ("r"), share all access except for delete ("-d")</em>
-if !IsObject(file)
+<em>; Nachdem die Datei geschrieben wurde, soll deren Inhalt zurück in den Speicher gelesen werden.</em>
+File := FileOpen(Dateiname, "r-d") <em>; Datei lesen ("r"), Alle Zugriffe außer Löschen freigeben ("-d")</em>
+if !IsObject(File)
 {
-	MsgBox Can't open "%FileName%" for reading.
+	MsgBox Kann "%Dateiname%" nicht zum Lesen öffnen.
 	return
 }
-CharsToRead := StrLen(TestString)
-TestString := file.Read(CharsToRead)
-file.Close()
-MsgBox The following string was read from the file: %TestString%</pre>
+ZuLesendeZeichen := StrLen(TestString)
+TestString := File.Read(ZuLesendeZeichen)
+File.Close()
+MsgBox Der folgende String wurde aus der Datei gelesen: %TestString%</pre>
 
 <pre class="NoIndent"><em>; Öffnet das Script im Schreibschutzmodus und ließt die erste Zeile:</em>
 File := FileOpen(A_ScriptFullPath, "r")
