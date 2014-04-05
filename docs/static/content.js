@@ -11,7 +11,7 @@ $(document).ready(function() {
   // Build website structure
   //
 
-  var virtualDir = "";
+  var virtualDir = "/v2";
 
   var urlroot  = location.protocol + "//" + location.host + virtualDir;
 
