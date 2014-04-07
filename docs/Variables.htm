@@ -20,7 +20,7 @@
   <li><a href="#Variables">Variablen</a></li>
   <li><a href="#Expressions">Ausdrücke</a></li>
   <li><a href="#Operators">Operatoren in Ausdrücken</a></li>
-  <li><a href="#BuiltIn">Interne Variablen</a></li>
+  <li><a href="#BuiltIn">Integrierte Variablen</a></li>
   <li><a href="#env">Umgebungsvariablen vs. normale Variablen</a></li>
   <li><a href="#cap">Kapazität und Speicher einer Variable</a></li>
 </ul>
@@ -28,7 +28,7 @@
 <p id="Variable_types"><strong>Variablentypen</strong>: AutoHotkey besitzt keine direkt definierten Variablentypen. Stattdessen kann jede Variable einen String, Integer, Objektverweis oder eine Fließkommazahl enthalten. Darüber hinaus werden Zahlen automatisch in oder von Strings umgewandelt, falls notwendig. Mit der <a href="commands/Type.htm">Type</a>-Funktion kann der aktuelle Typ eines Wertes festgestellt werden.</p>
 <p id="Variable_scope"><strong>Gültigkeitsbereiche und Deklarationen von Variablen</strong>: Mit Ausnahme von <a href="Functions.htm#Locals">lokalen Variablen</a> in Funktionen sind alle Variablen global; das heißt, dass deren Inhalte jederzeit vom Script gelesen oder geändert werden können. Außer den genannten Ausnahmen auf der <a href="Functions.htm#Global">Funktionsseite</a> müssen Variablen nicht deklariert werden; sie stehen zur Verfügung, sobald sie verwendet werden (zudem ist jede Variable anfangs leer).</p>
 <p id="Variable_names"><strong>Variablennamen</strong>: Variablennamen unterscheiden nicht zwischen Groß- und Kleinschreibung (zum Beispiel ist <em>AktuellesDatum</em> das gleiche wie <em>aktuellesdatum</em>). Variablennamen können bis zu 253 Zeichen lang sein und aus Buchstaben, Zahlen, Unterstriche und Nicht-ASCII-Zeichen bestehen. Variablennamen dürfen nicht mit einer Zahl beginnen.</p>
-<p id="Reserved_words"><strong>Reservierte Wörter:</strong> <code>or</code>, <code>and</code>, <code>not</code>, <code>is</code>, <code>in</code> und <code>contains</code>. Diese Wörter dienen als <a href="#Operators">Operatoren</a> und sind daher als Variablennamen nicht zu gebrauchen, wenn sie direkt in einem Ausdruck angegeben werden.</p>
+<p id="Reserved_words"><strong>Reservierte Wörter:</strong> <code>or</code>, <code>and</code>, <code>not</code>, <code>is</code>, <code>in</code> und <code>contains</code>. Diese Wörter dienen als <a href="#Operators">Operatoren</a> und sind daher als Variablennamen nicht zu gebrauchen, wenn sie literal in einem Ausdruck angegeben werden.</p>
 <p><strong>Werte in Variablen speichern</strong>: Um einen String oder eine Zahl in eine Variable zu speichern, verwende den <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, gefolgt von einer Zahl, einem String in Anführungszeichen oder ein beliebig anderer <a href="#Expressions">Ausdruck</a>. Zum Beispiel:</p>
 <pre>MeineZahl := 123
 MeinString := "Dies ist ein literaler String."
@@ -46,17 +46,17 @@ MsgBox("Der Wert in der Variable namens Var ist %Var%.")
 </pre>
 <p><strong>Vergleich von Variablen</strong>: Im Abschnitt "Ausdrücke" weiter unten findest du wichtige Hinweise über die unterschiedlichen Vergleichsarten.</p>
 <h2 id="Expressions">Ausdrücke</h2>
-<p>Ausdrücke werden verwendet, um eine oder mehrere Operationen an Variablen, direkte Strings und/oder direkte Zahlen durchzuführen.</p>
-<p>Variablennamen werden in einem Ausdruck nicht in Prozentzeichen gesetzt (außer bei <a href="#ref">Pseudo-Arrays</a> und anderen <a href="misc/Arrays.htm#pseudo">Doppelverweisen</a>). Folglich müssen Strings in Anführungszeichen gesetzt werden, um sie von Variablen zu unterscheiden. Zum Beispiel:</p>
+<p>Ausdrücke werden verwendet, um eine oder mehrere Operationen an Variablen, literale Strings und/oder literale Zahlen durchzuführen.</p>
+<p>Variablennamen werden in einem Ausdruck nicht in Prozentzeichen gesetzt (außer bei <a href="#ref">Pseudo-Arrays</a> und anderen <a href="misc/Arrays.htm#pseudo">Doppelverweisen</a>). Folglich müssen literale Strings in Anführungszeichen gesetzt werden, um sie von Variablen zu unterscheiden. Zum Beispiel:</p>
 <pre>if (AktuelleEinstellung &gt; 100 or Fundfarbe &lt;&gt; "Blau")
     MsgBox Die Einstellung ist zu hoch oder falsche Farbe vorhanden.</pre>
-<p>Im obigen Beispiel ist "Blau" in Anführungszeichen gesetzt, weil es ein direkter String ist. Einfache Anführungszeichen (') und doppelte Anführungszeichen (") sind funktionsgemäß identisch, außer dass ein String, der von einfachen Anführungszeichen umschlossen ist, literale doppelte Anführungszeichen enthalten kann, und umgekehrt. Um ein <em>tatsächliches</em> Anführungszeichen innerhalb eines Strings einzufügen, muss das Anführungszeichen entweder mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden oder der String von gegenteiligen Anführungszeichen umschlossen werden. Zum Beispiel:</p>
+<p>Im obigen Beispiel ist "Blau" in Anführungszeichen gesetzt, weil es ein literaler String ist. Einfache Anführungszeichen (') und doppelte Anführungszeichen (") sind funktionsgemäß identisch, außer dass ein String, der von einfachen Anführungszeichen umschlossen ist, literale doppelte Anführungszeichen enthalten kann, und umgekehrt. Um ein <em>tatsächliches</em> Anführungszeichen innerhalb eines literalen Strings einzufügen, muss das Anführungszeichen entweder mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden oder der String von gegenteiligen Anführungszeichen umschlossen werden. Zum Beispiel:</p>
 <pre>MsgBox % "Sie sagte: <span class="red">`"</span>Ein Apfel pro Tag.<span class="red">`"</span>"
 MsgBox % <span class="red">'</span>Sie sagte: "Ein Apfel pro Tag."<span class="red">'</span></pre>
 <p><strong>Leere Strings</strong>: Mithilfe von zwei aufeinanderfolgenden Anführungszeichen kann ein leerer String in einem Ausdruck angegeben werden. Zum Beispiel wird die Anweisung <code>if (MeineVar &lt;&gt; "")</code> als wahr gewertet, wenn <em>MeineVar</em> nicht leer ist.</p>
 <p><strong>Das Ergebnis eines Ausdrucks speichern</strong>: Mit dem <a href="commands/SetExpression.htm">Operator ":="</a> kann ein Ausdrucksergebnis in eine Variable gespeichert werden. Zum Beispiel:</p>
 <pre>Nettopreis := Preis * (1 - Rabatt/100)</pre>
-<p id="Boolean"><strong>Boolesche Werte</strong>: Bei einem Ausdruck, das als wahr oder falsch gewertet werden muss (wie z. B. eine IF-Anweisung), wird ein Ergebnis, das leer oder 0 ist, als falsch angesehen, alle anderen Ergebnisse als wahr. Zum Beispiel ist die Anweisung <code>if Elementzählung</code> nur dann falsch, wenn Elementzählung leer oder 0 ist. Im Vergleich dazu würde der Ausdruck <code>if not Elementzählung</code> das gegenteilige Ergebnis zurückgeben.</p>
+<p id="Boolean"><strong>Logische Werte</strong>: Bei einem Ausdruck, das als wahr oder falsch gewertet werden muss (wie z. B. eine IF-Anweisung), wird ein Ergebnis, das leer oder 0 ist, als falsch angesehen, alle anderen Ergebnisse als wahr. Zum Beispiel ist die Anweisung <code>if Elementzählung</code> nur dann falsch, wenn Elementzählung leer oder 0 ist. Im Vergleich dazu würde der Ausdruck <code>if not Elementzählung</code> das gegenteilige Ergebnis zurückgeben.</p>
 <p>Operatoren wie NOT/&gt;/=/&lt; erzeugen automatisch einen True- oder False-Wert: sie geben eine 1 für True und 0 für False zurück. Die Operatoren AND/OR geben immer einen der Eingabewerte zurück. Zum Beispiel wird im folgenden Ausdruck der <em>Fertig</em>-Variable eine 1 zugewiesen, wenn A_Index größer als 5 ist, oder der Wert von <em>Gefunden</em>, wenn dies nicht der Fall ist:</p>
 <pre>Fertig := A_Index &gt; 5 or Gefunden</pre>
 <p>Wie oben angedeutet kann eine Variable dazu verwendet werden, einen falschen Wert zu beinhalten, indem sie einfach leer gemacht oder ihr eine 0 zugewiesen wird. Das bringt den Vorteil, dass mit der Kurzanweisung <code>if Fertig</code> überprüft werden kann, ob die Fertig-Variable wahr oder falsch ist.</p>
@@ -90,7 +90,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
   </tr>
   <tr>
     <td align="center"><strong>x.y</strong></td>
-    <td><strong>Objektzugriff</strong>. Abrufen oder Setzen eines Werts, oder Aufrufen einer Methode von Objekt <i>x</i>, wobei <i>y</i> ein direkter Wert ist. Siehe <a href="Objects.htm#Usage_Objects">Objekt-Syntax</a>.</td>
+    <td><strong>Objektzugriff</strong>. Abrufen oder Setzen eines Werts, oder Aufrufen einer Methode von Objekt <i>x</i>, wobei <i>y</i> ein literaler Wert ist. Siehe <a href="Objects.htm#Usage_Objects">Objekt-Syntax</a>.</td>
   </tr>
   <tr id="new">
     <td align="center"><strong>new</strong></td>
@@ -104,7 +104,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
   </tr>
   <tr id="pow">
     <td align="center"><strong>**</strong></td>
-    <td><strong>Potenz</strong>. Sowohl die Basis als auch der Exponent können einen Dezimalpunkt enthalten. Ist der Exponent negativ, wird das Ergebnis in eine Fließkommazahl umgewandelt, auch dann, wenn die Basis und der Exponent Integer sind. Da ** eine höhere Priorität als ein einstelliges Minuszeichen hat, wird <code>-2**2</code> wie <code>-(2**2)</code> ausgewertet und daher -4 zurückgeben. Um eine direkte negative Zahl folglich zu potenzieren, muss sie in Klammern wie <code>(-2)**2</code> gesetzt werden. Hinweis: Eine negative Basis, kombiniert mit einem gebrochenen Exponenten wie <code>(-2)**0.5</code>, wird nicht unterstützt; das Ergebnis ist ein leerer String. Allerdings wird sowohl <code>(-2)**2</code> als auch <code>(-2)**2.0<code> unterstützt.</td>
+    <td><strong>Potenz</strong>. Sowohl die Basis als auch der Exponent können einen Dezimalpunkt enthalten. Ist der Exponent negativ, wird das Ergebnis in eine Fließkommazahl umgewandelt, auch dann, wenn die Basis und der Exponent Integer sind. Da ** eine höhere Priorität als ein einstelliges Minuszeichen hat, wird <code>-2**2</code> wie <code>-(2**2)</code> ausgewertet und daher -4 zurückgeben. Um eine literale negative Zahl folglich zu potenzieren, muss sie in Klammern wie <code>(-2)**2</code> gesetzt werden. Hinweis: Eine negative Basis, kombiniert mit einem gebrochenen Exponenten wie <code>(-2)**0.5</code>, wird nicht unterstützt; das Ergebnis ist ein leerer String. Allerdings wird sowohl <code>(-2)**2</code> als auch <code>(-2)**2.0<code> unterstützt.</td>
   </tr>
   <tr id="unary">
     <td align="center"><strong>-<br>
@@ -159,7 +159,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
   </tr>
   <tr id="concat">
     <td align="center"><strong>.</strong></td>
-    <td><p><strong>Verkettung</strong>. Der Punkt-Operator wird dazu verwendet, zwei Elemente zu einem String zu kombinieren (auf beiden Seiten des Punkts muss mindestens ein Leerzeichen vorkommen). Man kann den Punkt auch weglassen, um das gleiche zu erreichen (außer bei Zweideutigkeiten wie <code>x <strong>-</strong>y</code>, oder wenn das Element auf der rechten Seite ++ oder -- davor hat). Falls der Punkt weggelassen wird, sollte mindestens ein Leerzeichen zwischen den Elementen vorhanden sein.<br>
+    <td><p><strong>Verkettung</strong>. Mit dem Punkt-Operator können zwei Elemente zu einem String kombiniert werden (auf beiden Seiten des Punkts muss mindestens ein Leerzeichen vorkommen). Man kann den Punkt auch weglassen, um das gleiche zu erreichen (außer bei Zweideutigkeiten wie <code>x <strong>-</strong>y</code>, oder wenn das Element auf der rechten Seite ++ oder -- davor hat). Falls der Punkt weggelassen wird, sollte mindestens ein Leerzeichen zwischen den Elementen vorhanden sein.<br>
       Beispiel (Ausdrucksmethode): <code>Var := "Die Farbe ist " <strong>.</strong> Fundfarbe</code><br>
       Beispiel (traditionelle Methode): <code>Var = Die Farbe ist %Fundfarbe%</code></p>
         <p>Teilausdrücke können auch verkettet werden. Zum Beispiel: <code>Var := "Der Nettopreis ist " <strong>.</strong> Preis * (1 - Rabatt/100)</code>.</p>
@@ -257,7 +257,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
         round()<br>
     
     abs()</strong></p></td>
-    <td>Diese und weitere interne mathematische Funktionen werden <a href="Functions.htm#Math">hier</a> beschrieben.</td>
+    <td>Diese und weitere integrierte mathematische Funktionen werden <a href="Functions.htm#Math">hier</a> beschrieben.</td>
   </tr>
   <tr>
     <td align="center"><strong>F(<i>p</i>*)</strong></td>
@@ -271,7 +271,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
 <br>
 <p><strong>Performance</strong>: <a name="CommaPerf" id="CommaPerf"></a>Der Komma-Operator ist üblicherweise schneller, als die Ausdrücke getrennt aufzuschreiben, besonders beim Zuweisen einer Variable in eine andere (z. B. <code>x := y, a := b</code>). Die Performance wird weiter verbessert, wenn mehr und mehr Ausdrücke zu einem einzigen Ausdruck verbunden werden; zum Beispiel kann ein Geschwindigkeitszuwachs von 35 % erreicht werden, wenn fünf oder zehn einfache Ausdrücke zu einem Ausdruck kombiniert werden.</p>
 
-<h2 id="BuiltIn">Interne Variablen</h2>
+<h2 id="BuiltIn">Integrierte Variablen</h2>
 <p>Die folgenden Variablen sind im Programm integriert und können von jedem Script abgerufen werden. Außer <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="#CommandLine">Befehlszeilenparametern</a> sind diese Variablen schreibgeschützt; das heißt, dass deren Inhalt nicht direkt vom Script geändert werden kann.</p>
 <h3>Inhaltsverzeichnis</h3>
 <ul>
@@ -305,7 +305,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
   </tr>
   <tr id="WorkingDir">
     <td>A_WorkingDir</td>
-    <td>Mit dieser Variable kann das aktuelle Arbeitsverzeichnis des Scripts abgerufen oder gesetzt werden, von wo aus die Dateien standardmäßig zugreifbar sind. Der letzte Backslash ist nicht enthalten, sofern es nicht das Hauptverzeichnis ist. Zwei Beispiele: C:\ und C:\Meine Dokumente. Verwende <a href="commands/SetWorkingDir.htm">SetWorkingDir</a> oder speichere ein Pfad in A_WorkingDir, um das Arbeitsverzeichnis zu ändern. A_WorkingDir verwendet standardmäßig A_ScriptDir, unabhängig davon, wie das Script gestartet wurde.</td>
+    <td>Mit dieser Variable kann das aktuelle Arbeitsverzeichnis des Scripts abgerufen oder gesetzt werden, von wo aus die Dateien standardmäßig zugreifbar sind. Der letzte umgekehrte Schrägstrich ist nicht enthalten, sofern es nicht das Hauptverzeichnis ist. Zwei Beispiele: C:\ und C:\Meine Dokumente. Verwende <a href="commands/SetWorkingDir.htm">SetWorkingDir</a> oder speichere ein Pfad in A_WorkingDir, um das Arbeitsverzeichnis zu ändern. A_WorkingDir verwendet standardmäßig A_ScriptDir, unabhängig davon, wie das Script gestartet wurde.</td>
   </tr>
   <tr id="InitialWorkingDir">
     <td>A_InitialWorkingDir</td>
@@ -313,7 +313,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
   </tr>
   <tr id="ScriptDir">
     <td>A_ScriptDir</td>
-    <td>Der vollständige Pfad des Verzeichnisses, auf dem sich das aktuelle Script befindet. Der letzte Backslash wird weggelassen (auch bei Hauptverzeichnissen).</td>
+    <td>Der vollständige Pfad des Verzeichnisses, auf dem sich das aktuelle Script befindet. Der letzte umgekehrte Schrägstrich wird weggelassen (auch bei Hauptverzeichnissen).</td>
   </tr>
   <tr id="ScriptName">
     <td>A_ScriptName</td>
@@ -547,7 +547,7 @@ MsgBox,  %Ablaufzeit% Millisekunden sind verstrichen.</pre>
   </tr>
   <tr id="GuiControl">
     <td>A_GuiControl</td>
-    <td>Der zugewiesene Variablenname des GUI-Steuerelements, das den <a href="misc/Threads.htm">aktuellen Thread</a> gestartet hat. Fehlt dem Steuerelement eine <a href="commands/Gui.htm#Events">zugewiesene Variable</a>, enthält A_GuiControl stattdessen die ersten 63 Zeichen des Textes/der Bezeichnung (wird häufiger benutzt, damit nicht für jede Schaltfläche ein Variablennamen zugewiesen werden muss). A_GuiControl ist leer, sobald: 1) A_Gui leer ist; 2) ein GUI-Menüleistenpunkt oder Ereignis wie GuiClose/GuiEscape den aktuellen Thread gestartet hat; 3) dem Steuerelement eine zugewiesene Variable sowie eine Bezeichnung fehlt; oder 4) das Steuerelement nicht länger vorhanden ist, welches den aktuellen Thread ursprünglich gestartet hat (z. B. durch <a href="commands/Gui.htm#Destroy">Gui Destroy</a>).</td>
+    <td>Der zugeordnete Variablenname des GUI-Steuerelements, das den <a href="misc/Threads.htm">aktuellen Thread</a> gestartet hat. Fehlt dem Steuerelement eine <a href="commands/Gui.htm#Events">zugeordnete Variable</a>, enthält A_GuiControl stattdessen die ersten 63 Zeichen des Textes/der Bezeichnung (wenn man verhindern möchte, jedem Button einen Variablennamen zuzuweisen). A_GuiControl ist leer, sobald: 1) A_Gui leer ist; 2) ein GUI-Menüleistenpunkt oder Ereignis wie GuiClose/GuiEscape den aktuellen Thread gestartet hat; 3) dem Steuerelement eine zugeordnete Variable sowie eine Bezeichnung fehlt; oder 4) das Steuerelement nicht länger vorhanden ist, welches den aktuellen Thread ursprünglich gestartet hat (z. B. durch <a href="commands/Gui.htm#Destroy">Gui Destroy</a>).</td>
   </tr>
   <tr id="GuiWidth">
     <td>A_GuiWidth<br>
@@ -707,7 +707,7 @@ MsgBox,  %Ablaufzeit% Millisekunden sind verstrichen.</pre>
   </tr>
   <tr id="MyDocuments">
     <td>A_MyDocuments</td>
-    <td>Der vollständige Pfad und Name von "Eigene Dokumente" des aktuellen Benutzers. In Gegensatz zu den meisten anderen Variablen ist der letzte Backslash nicht vorhanden, falls der Ordner das Hauptverzeichnis ist. Zum Beispiel ist M: anstelle von M:\ enthalten.</td>
+    <td>Der vollständige Pfad und Name von "Eigene Dokumente" des aktuellen Benutzers. In Gegensatz zu den meisten anderen Variablen ist der letzte umgekehrte Schrägstrich nicht vorhanden, falls der Ordner das Hauptverzeichnis ist. Zum Beispiel ist M: anstelle von M:\ enthalten.</td>
   </tr>
   <tr id="IsAdmin">
     <td>A_IsAdmin</td>
@@ -751,7 +751,7 @@ MsgBox,  %Ablaufzeit% Millisekunden sind verstrichen.</pre>
     <td>A_CaretX<br>
     
     A_CaretY</td>
-    <td><p>Die aktuellen Koordinaten X und Y des Text-Cursors (Einfügemarke). Die Koordinaten beziehen sich auf das aktive Fenster, sofern nicht <a href="commands/CoordMode.htm">CoordMode</a> verwendet wird, um diese relativ zum ganzen Bildschirm zu machen. Wenn kein aktives Fenster vorhanden ist oder die Cursor-Position nicht ermittelt werden kann, sind diese Variablen leer.</p>
+    <td><p>Die aktuellen Koordinaten X und Y des Text-Cursors (Einfügemarke). Die Koordinaten beziehen sich auf das aktive Fenster, sofern sie nicht mit <a href="commands/CoordMode.htm">CoordMode</a> relativ zum ganzen Bildschirm gemacht wurden. Wenn kein aktives Fenster vorhanden ist oder die Cursor-Position nicht ermittelt werden kann, sind diese Variablen leer.</p>
       <p>Mit dem folgenden Script ist es möglich, beim Bewegen des Text-Cursors dessen aktuelle Position in einem ToolTip anzuzeigen. Beachte, dass einige Fenster (z. B. bestimmte Versionen von MS Word) immer die gleiche Cursor-Position melden, unabhängig von ihrer aktuellen Position.</p>
 <pre>
 #Persistent
