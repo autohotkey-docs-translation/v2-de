@@ -32,7 +32,7 @@
   <li><a href="#BuiltIn">Integrierte Funktionen</a></li>
 </ul>
 <h2><a name="intro" id="intro"></a>Einführung und einfache Beispiele</h2>
-<p><a name="define"></a>Eine Funktion ist mit einer Subroutine (<a href="commands/Gosub.htm">GoSub</a>) vergleichbar, die zusätzlich noch Parameter (Eingaben) von ihrem Aufrufer entgegennehmen kann. Bei Bedarf kann eine Funktion dem Aufrufer einen Wert zurückgeben. Betrachte die folgende einfache Funktion, die zwei Zahlen akzeptiert und deren Summe zurückgibt:</p>
+<p><a name="define"></a>Eine Funktion ist mit einer Subroutine (<a href="commands/Gosub.htm">GoSub</a>) vergleichbar, die zusätzlich noch Parameter (Eingabewerte) von ihrem Aufrufer entgegennehmen kann. Bei Bedarf kann eine Funktion dem Aufrufer einen Wert zurückgeben. Betrachte die folgende einfache Funktion, die zwei Zahlen akzeptiert und deren Summe zurückgibt:</p>
 <pre>Addieren(x, y)
 {
     Return x + y   <em>; "<a href="commands/Return.htm">Return</a>" erwartet einen <a href="Variables.htm#Expressions">Ausdruck</a>.</em>
@@ -173,14 +173,14 @@ MsgBox % Verbinden("`n", <b class="blue">substrings*</b>)</pre>
     <strong>global</strong> LogDateiname  <em>; Dieser globalen Variable wurde bereits ein Wert außerhalb dieser Funktion zugewiesen.</em>
     FileAppend, %TextZuLog%`n, %LogDateiname%
 }</pre>
-<p><a name="AssumeGlobal"></a><strong>Modus für die globale Ansicht</strong>: Muss eine Funktion viele globale Variablen erstellen oder auf sie zugreifen, kann die Funktion so definiert werden, dass sie all ihr Variablen (außer ihre Parameter) als global ansieht. Dazu muss in der ersten Zeile das Wort "global" stehen. Zum Beispiel:</p>
+<p><a name="AssumeGlobal"></a><strong>Global-behandelnder Modus</strong>: Muss eine Funktion viele globale Variablen erstellen oder auf sie zugreifen, kann die Funktion so definiert werden, dass sie all ihr Variablen (außer ihre Parameter) als global ansieht. Dazu muss in der ersten Zeile das Wort "global" stehen. Zum Beispiel:</p>
 <pre>StandardwerteSetzen()
 {
     <strong>global</strong>
     MeineGlobal := 33  <em>; Speichert 33 in eine globale Variable, die vorher erstellt wird, falls notwendig.</em>
     local x, y:=0, z  <em>; Lokale Variablen müssen in diesem Modus deklariert werden, weil sie sonst als global angesehen werden.</em>
 }</pre>
-<p>Dieser Modus für die globale Ansicht kann auch von einer Funktion verwendet werden, um ein globales <a href="misc/Arrays.htm">Pseudo-Array</a> zu erstellen - wie bei einer Schleife, die Werte per <code>Array%A_Index%</code> zuweist.</p>
+<p>Dieser global-behandelnde Modus kann auch von einer Funktion verwendet werden, um ein globales <a href="misc/Arrays.htm">Pseudo-Array</a> zu erstellen - wie bei einer Schleife, die Werte per <code>Array%A_Index%</code> zuweist.</p>
 <p id="SuperGlobal"><strong>Superglobale Variablen</strong>: Geschieht eine globale Deklaration außerhalb einer Funktion, gilt sie standardmäßig für alle Funktionen. Dadurch wird verhindert, dass die Variablen jedesmal in einer Funktion neu deklariert werden müssen. Hat die Funktion allerdings bereits einen Parameter oder eine lokale Variable mit dem gleichen Namen, wird diese Vorrang vor der globalen Variable haben. Variablen, die mit dem Schlüsselwort <a href="Objects.htm#Custom_Classes">class</a> erzeugt wurden, sind auch superglobal.</p>
 <h3 id="static">Statische Variablen</h3>
 <p>Statische Variablen sind immer indirekt lokal. Der Unterschied ist aber, dass ihre Werte zwischen den Funktionsaufrufen erhalten bleiben. Zum Beispiel:</p>
@@ -192,7 +192,7 @@ MsgBox % Verbinden("`n", <b class="blue">substrings*</b>)</pre>
     FileAppend, %Zeilenanzahl%: %TextZuLog%`n, %LogDateiname%
 }</pre>
 <p><a name="InitStatic"></a>Eine statische Variable kann direkt bei ihrer Deklaration initialisiert werden - durch Anfügen von <code>:=</code>, gefolgt von einem beliebigen <a href="Variables.htm#Expressions">Ausdruck</a>. Zum Beispiel: <code>static X:=0, Y:="Fuchs"</code>. Jede statische Variable wird nur einmal initialisiert. Statische Variablen werden in der Reihenfolge initialisiert, wie sie in der Script-Datei angezeigt werden, aber bevor der automatische Ausführungsbereich des Scripts erfolgt.</p>
-<p><a name="AssumeStatic"></a><strong>Modus für statische Ansicht</strong>: Eine Funktion kann so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) als statisch ansieht. Dazu muss in der ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
+<p><a name="AssumeStatic"></a><strong>Statisch-behandelnder Modus</strong>: Eine Funktion kann so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) als statisch ansieht. Dazu muss in der ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
 <pre>StatischesArrayAbrufen(Elementnummer)
 {
     <strong>static</strong>
@@ -205,7 +205,7 @@ MsgBox % Verbinden("`n", <b class="blue">substrings*</b>)</pre>
     }
     Return StatischesArray%Elementnummer%
 }</pre>
-<p>Im Modus für die statische Ansicht muss jede Variable, die nicht statisch sein soll, als lokal oder global deklariert werden.</p>
+<p>Im statisch-behandelnden Modus muss jede Variable, die nicht statisch sein soll, als lokal oder global deklariert werden.</p>
 <h3>Mehr über lokale und globale Variablen</h3>
 <p>Es können mehrere Variablen in einer Zeile deklariert werden, indem sie wie im folgenden Beispiel durch Kommas getrennt werden:</p>
 <pre>global LogDateiname, MaxWiederholungen := 5
@@ -250,7 +250,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Eine Funktion kann den Wert von <a href="misc/ErrorLevel.htm">ErrorLevel</a> ändern, um einen zusätzlichen Wert zurückzugeben, der sich leicht merken lässt.</p>
 <p>Um eine Funktion mit einem oder mehreren leeren Strings aufzurufen, verwende zwei Anführungszeichen wie folgt: <code>FindeFarbe(FarbName, "")</code>.</p>
 <p>Da ein Funktionsaufruf keinen neuen <a href="misc/Threads.htm">Thread</a> startet, gelten alle von der Funktion durchgeführten Änderungen an den Einstellungen wie <a href="commands/SendMode.htm">SendMode</a> oder <a href="commands/SetTitleMatchMode.htm">SetTitleMatchMode</a> auch für den Aufrufer.</p>
-<p>Der Aufrufer kann der Funktion nicht vorhandene Variablen oder <a href="misc/Arrays.htm">Array</a>-Elemente übergeben. Das ist besonders nützlich, wenn die Funktion vom entsprechenden Parameter erwartet, ein <a href="#ByRef">ByRef</a> zu sein. Zum Beispiel würde <code>GetNextLine(LeeresArray%i%)</code> die Variable <code>LeeresArray%i%</code> automatisch als <a href="#Locals">lokale</a> oder globale Variable erstellen (abhängig davon, ob der Aufrufer sich in einer Funktion befindet und ob der <a href="#AssumeGlobal">Modus für die globale Ansicht</a> wirksam ist).</p>
+<p>Der Aufrufer kann der Funktion nicht vorhandene Variablen oder <a href="misc/Arrays.htm">Array</a>-Elemente übergeben. Das ist besonders nützlich, wenn die Funktion vom entsprechenden Parameter erwartet, ein <a href="#ByRef">ByRef</a> zu sein. Zum Beispiel würde <code>GetNextLine(LeeresArray%i%)</code> die Variable <code>LeeresArray%i%</code> automatisch als <a href="#Locals">lokale</a> oder globale Variable erstellen (abhängig davon, ob der Aufrufer sich in einer Funktion befindet und ob der <a href="#AssumeGlobal">global-behandelnder Modus</a> wirksam ist).</p>
 <p>Innerhalb einer Funktion zeigt <a href="commands/ListVars.htm">ListVars</a> deren <a href="#Locals">lokalen Variablen</a> mit Inhalt an. Das kann dabei helfen, ein Script zu debuggen.</p>
 <h2>Stil und Namenskonventionen</h2>
 <p>Komplexe Funktionen können besser lesbar und verwaltbar gemacht werden, wenn deren Variablen eindeutige Präfixe angefügt werden. Durch Hinzufügen von beispielsweise "p" oder "p_" am Anfang jeden Parameters ist seine besondere Art besser erkennbar, besonders wenn eine Funktion sehr viele <a href="#Locals">lokale Variablen</a> hat. Ebenso kann das Präfix "r" oder "r_" für <a href="#ByRef">ByRef-Parameter</a> und "s" oder "s_" für <a href="#static">statische Variablen</a> verwendet werden.</p>
@@ -305,7 +305,7 @@ Pfad-der-laufenden-AutoHotkey.exe\Lib\  <em>; Standardbibliothek.</em></pre>
 <p><strong>OnMessage(Nachrichtennummer [, "Funktionsname"])</strong>: Überwacht eine Nachricht/ein Ereignis. Siehe <a href="commands/OnMessage.htm">OnMessage()</a> für weitere Details.</p>
 <p><strong>StrGet(Adresse [, Länge] [, Codierung = Keine ] )</strong>: Kopiert einen String aus einer Speicheradresse unter Beachtung des angegebenen Zeichensatzes. Siehe <a href="commands/StrPutGet.htm">StrGet()</a> für Details.</p>
 <p><strong>StrPut(String, Adresse [, Länge] [, Codierung = Keine ] )</strong>: Kopiert einen String in eine Speicheradresse unter Beachtung des angegebenen Zeichensatzes. Siehe <a href="commands/StrPutGet.htm">StrPut()</a> für Details.</p>
-<p><strong>RegisterCallback()</strong>: Erstellt eine Maschinencode-Adresse, die beim Aufrufen den Aufruf zu einer Funktion im Script umleitet. Siehe <a href="commands/RegisterCallback.htm">RegisterCallback()</a> für Details.</p>
+<p><strong>RegisterCallback()</strong>: Erstellt eine Maschinencode-Adresse, die, wenn sie aufgerufen wird, den Aufruf an eine Funktion im Script weiterleitet. Siehe <a href="commands/RegisterCallback.htm">RegisterCallback()</a> für Details.</p>
 <p><strong>Trim()</strong>: Entfernt Zeichen vom Anfang und/oder Ende eines Strings. Siehe <a href="commands/Trim.htm">Trim()</a> für Details.</p>
 <p><strong>VarSetCapacity(VarName [, BenötigteKapazität, Füllbyte])</strong>: Vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Siehe <a href="commands/VarSetCapacity.htm">VarSetCapacity()</a> für Details.</p>
 <h3 id="Math">Allgemeine Mathematik</h3>
