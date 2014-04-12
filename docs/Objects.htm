@@ -173,7 +173,7 @@ Tabelle.base.__Set(Tabelle, x, y, Inhalt)     <em>; B</em></pre>
 <ul>
   <li>Falls nur ein Schlüssel übrig ist, wird die Zuweisung durchgeführt und zurückgegeben. Ansonsten:</li>
   <li>Suche im Objekt den ersten Schlüssel in der Liste.</li>
-  <li>Wenn ein Nicht-Objekt gefunden wird, schlage fehl.</li>
+  <li>Wenn ein Nicht-Objekt gefunden wird, schlage fehl (löse eine Ausnahme aus).</li>
   <li>Wenn kein Objekt gefunden wird, erstelle eins und speichere es.</li>
   <li>Rufe das Unterobjekt rekursiv auf, die restlichen Schlüssel und Werte werden übergeben - wiederholend von oben.</li>
 </ul>
@@ -524,7 +524,7 @@ Default_is(nonobj, type)
 MsgBox % A_AhkPath.length() " == " StrLen(A_AhkPath)</pre>
 
 <h4 id="Default__Warn">Debuggen</h4>
-<p>Falls ein Wert nicht als Objekt behandelt werden soll, kann eine Warnmeldung angezeigt werden, wann immer ein Nicht-Objekt-Wert aufgerufen wird:</p>
+<p>Standardmäßig wird durch den Aufruf eines Nicht-Objekt-Wertes eine Ausnahme ausgelöst. Das folgende Beispiel ändert das Verhalten, so dass eine Warnung angezeigt und das Script fortgesetzt wird:</p>
 <pre>"".base.__Get := "".base.__Set := "".base.__Call := Func("Default__Warn")
 
 empty_var.foo := "bar"
@@ -534,6 +534,7 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 {
     ListLines
     MsgBox Ein Nicht-Objekt-Wert wurde unsachgemäß aufgerufen.`n`nSpeziell: %nonobj%
+    return "" <em>; Überschreibt das Standardverhalten durch die Rückgabe eines Wertes.</em>
 }</pre>
 
 <h2 id="Implementation">Implementierung</h2>
