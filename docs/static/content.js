@@ -89,7 +89,7 @@ function AddContent()
         var query = $(".header #q").val();
         document.location = 'https://www.google.com/search?sitesearch=' + location.host + '&q=' + query;
     });
-    
+
     //
     // Hide logo
     //
@@ -137,9 +137,9 @@ function AddContent()
     // language button
     //
 
-    var en = 'http://lexikos.github.io/v2/';
-    var de = 'http://ragnar-f.github.io/v2/';
-    var cn = '';
+    var en = 'http://ahkscript.org/';
+    var de = 'http://ragnar-f.github.io/';
+    var cn = 'http://ahkcn.sourceforge.net/';
 
     $('#lng-btn-en').on('click', function() { document.location = en + urlpath; } );
     $('#lng-btn-de').on('click', function() { document.location = de + urlpath; } );

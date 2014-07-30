@@ -15,7 +15,7 @@
 
 <h1>Objekte</h1>
 
-<p>Ein <i>Objekt</i> ist in AutoHotkey eine abstrakte Datenstruktur, das drei Grundfunktionen bereitstellt:</p>
+<p>Ein <i>Objekt</i> ist in AutoHotkey ein abstrakter Datentyp, das drei Grundfunktionen bereitstellt:</p>
 <ul>
   <li>GET - Abrufen eines Wertes.</li>
   <li>SET - Setzen eines Wertes.</li>
@@ -54,16 +54,19 @@ Array := Array(Element1, Element2, ..., ElementN)</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>Array[Index] := Wert</pre>
 <p>Anfügen eines Elements:</p>
-<pre>Array.<a href="objects/Object.htm#Insert">Insert</a>(Wert)</pre>
+<pre>Array.<a href="objects/Object.htm#Push">Push</a>(Wert)</pre>
 <p>Einfügen beliebig vieler Elemente ab einem bestimmten Index:</p>
-<pre>Array.<a href="objects/Object.htm#Insert">Insert</a>(Index, Wert, Wert2, ...)</pre>
-<p>Entfernen eines Elements:</p>
-<pre>EntfernterWert := Array.<a href="objects/Object.htm#Remove">Remove</a>(Index)</pre>
-<p>Sofern Array nicht leer ist, können <a href="objects/Object.htm#MinMaxIndex">MinIndex</a> und <a href="objects/Object.htm#MinMaxIndex">MaxIndex</a> den niedrigsten und höchsten Index vom Array zurückgeben. Während der niedrigste Index fast immer 1 ist, wird MaxIndex üblicherweise die Anzahl der Elemente zurückgeben. Um die Inhalte des Arrays zu durchlaufen, benutzt man enweder den Index oder eine For-Schleife. Zum Beispiel:</p>
+<pre>Array.<a href="objects/Object.htm#InsertAt">InsertAt</a>(Index, Wert, Wert2, ...)</pre>
+<p>Entfernen eines Elements oder Elementbereichs:</p>
+<pre>EntfernterWert := Array.<a href="objects/Object.htm#Remove">RemoveAt</a>(Index)
+Anzahl := Array.<a href="objects/Object.htm#Remove">RemoveAt</a>(Index, Länge)</pre>
+<p>Entfernen des allerletzten Elements:</p>
+<pre>EntfernterWert := Array.<a href="objects/Object.htm#Pop">Pop</a>()</pre>
+<p>Sofern das Array nicht leer ist, gibt <code>Array.<a href="objects/Object.htm#Length">Length</a></code> den gerade verwendeten höchsten Index vom Array zurück. Wenn man die Werte jedem fortlaufenden Index zuweist, beginnend bei 1 (so wie es üblich ist), entspricht Length die Anzahl der Elemente. Um die Inhalte des Arrays zu durchlaufen, benutzt man entweder den Index oder eine For-Schleife. Zum Beispiel:</p>
 <pre>array := ["eins", "zwei", "drei"]
 
 <em>; Iteriert von 1 bis Anzahl der Elemente:</em>
-<a href="commands/Loop.htm">Loop</a> % array.MaxIndex()
+<a href="commands/Loop.htm">Loop</a> % array.Length()
     MsgBox % array[A_Index]
 
 <em>; Enumeriert die Inhalte des Arrays:</em>
@@ -80,8 +83,9 @@ Array := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <pre>Value := Array[Key]</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>Array[Key] := Value</pre>
-<p>Entfernen eines Elements:</p>
-<pre>RemovedValue := Array.<a href="objects/Object.htm#Remove">Remove</a>(Key)</pre>
+<p>Entfernen eines Elements oder Elementbereichs:</p>
+<pre>EntfernterWert := Array.<a href="objects/Object.htm#Remove">Remove</a>(Key)
+Anzahl := Array.<a href="objects/Object.htm#Remove">Remove</a>(ErsterKey, LetzterKey)</pre>
 <p>Enumerieren von Elementen:</p>
 <pre>array := {zehn: 10, zwanzig: 20, dreißig: 30}
 <a href="commands/For.htm">For</a> key, value in array
@@ -112,7 +116,7 @@ obj := ""  <em>; Gibt den letzten Verweis frei, wodurch das Objekt freigegeben w
 <p>In diesem Zusammenhang wird ein Verweis, der in einem Feld eines anderen Objekts gespeichert ist, freigegeben, wenn dieses Feld irgendeinen anderen Wert zugewiesen bekommt oder vom Objekt entfernt wird. Dies gilt auch für Arrays, weil sie eigentlich Objekte sind.</p>
 <pre>arr := [{}]  <em>; Erstellt ein Array, das ein Objekt enthält.</em>
 arr[1] := {}  <em>; Erstellt ein zweites Objekt, wodurch das erste Objekt indirekt freigegeben wird.</em>
-arr.Remove(1)  <em>; Entfernt und gibt das zweite Objekt frei.</em></pre>
+arr.RemoveAt(1)  <em>; Entfernt und gibt das zweite Objekt frei.</em></pre>
 <p id="Circular_References">Da alle Verweise auf ein Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch einen Verweis auf das Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, muss der Zirkelbezug entfernt werden.</p>
 <pre>
 x := {}, y := {}             <em>; Erstellt zwei Objekte.</em>
@@ -199,13 +203,19 @@ ZweiteFunk(Parameter) {
 }</pre>
 
 <h2 id="Custom_Objects">Benutzerdefinierte Objekte</h2>
-<p>Objekte in AutoHotkey basieren nicht auf Klassen, sondern auf Prototypen. Das heißt, dass ein Objekt die Eigenschaften und Methoden von seinem Prototyp oder <code>base</code>-Objekt erben kann, aber keine vordefinierte Struktur haben muss. Es ist jederzeit möglich, bei einem Objekt oder bei jedem Objekt, das davon abgeleitet wurde, Eigenschaften und Methoden hinzuzufügen oder zu entfernen. Allerdings wird AutoHotkey Klassen nachbilden, indem es <a href="#Custom_Classes">Klassendefinitionen</a> in gewöhnliche Objekte umwandelt. Bei komplexeren oder spezielleren Situationen kann das base-Objekt das Standardverhalten überschreiben, indem es <a href="#Meta_Functions"><i>Meta-Funktionen</i></a> definiert.</p>
-<p>Um ein abgeleitetes Objekt von einem anderen Objekt zu erstellen, können Scripts ein <code>base</code> zuweisen oder das <code>new</code>-Schlüsselwort verwenden:</p>
-<pre>baseObjekt := {foo: "bar"}
-obj1 := Object(), obj1.base := baseObjekt
+<p>Objekte, die vom Script erstellt wurden, müssen nicht zwingend eine vordefinierte Struktur haben. Stattdessen kann jedes Objekt Eigenschaften und Methoden von seinem <code>base</code>-Objekt (auch bekannt als "Prototyp" oder "Klasse") erben. Bei einem Objekt kann man jederzeit Eigenschaften und Methoden hinzufügen oder entfernen. Solche Änderungen haben auch Auswirkung auf alle abgeleiteten Objekte. Bei komplexeren oder spezielleren Situationen kann das base-Objekt das Standardverhalten überschreiben, indem es <a href="#Meta_Functions"><i>Meta-Funktionen</i></a> definiert.</p>
+<p><em>Base</em>-Objekte sind ganz normale Objekte, die mit den folgenden zwei Möglichkeiten erstellt werden können:</p>
+<pre>class baseObject {
+    static foo := "bar"
+}
+<em>; OR</em>
+baseObject := {foo: "bar"}</pre>
+<p>Um ein Objekt zu erstellen, das von einem anderen Objekt abgeleitet wurde, können Scripts die <code>base</code>-Eigenschaft zuweisen oder das <a href="#Custom_NewDelete"><code>new</code>-Schlüsselwort</a> verwenden:</p>
+<pre>obj1 := Object(), obj1.base := baseObject
 obj2 := {base: baseObjekt}
 obj3 := new baseObjekt
 MsgBox % obj1.foo " " obj2.foo " " obj3.foo</pre>
+<p>Es ist jederzeit möglich, einem Objekt ein neues <code>base</code> zuzuweisen, das alle Eigenschaften und Methoden ersetzen würde, die das Objekt geerbt hat.</p>
 
 <h3 id="Custom_Prototypes">Prototypen</h3>
 <p>Prototypen oder <code>base</code>-Objekte können konstruiert und manipuliert werden, wie jedes andere Objekt auch. Zum Beispiel könnte ein gewöhnliches Objekt mit einer Eigenschaft und einer Methode wie folgt konstruiert werden:</p>
@@ -401,7 +411,7 @@ obj.func("foo", "bar")
 FuncType_Call(func, obj, params*)
 {
     <em>; Ruft eine Liste mit Funktionen auf.</em>
-    Loop % ObjMaxIndex(func)
+    Loop % ObjLength(func)
         func[A_Index](params*)
 }
 

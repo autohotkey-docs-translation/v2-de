@@ -58,13 +58,13 @@
 <h3>Beispiele</h3>
 <pre class="NoIndent" id="ByRefEx"><em>; Beispiel: Übergibt ein VARIANT per Verweis an eine COM-Funktion.</em>
 
-code =
+code := "
 (
 Sub Beispiel(Var)
     MsgBox Var
     Var = "Ausgabewert!"
 End Sub
-)
+)"
 sc := <a href="ComObjCreate.htm">ComObjCreate</a>("ScriptControl"), sc.Language := "VBScript", sc.AddCode(code)
 
 var := ComVar()
@@ -88,11 +88,11 @@ ComVar(Type:=0xC)
     return { ref: ComObject(0x4000|Type, arr_data), _: arr, base: base }
 }
 ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Script auf ein unbekanntes Feld zugreift.</em>
-    if p.MaxIndex() = "" <em>; Keine Namen/Parameter, also cv[]</em>
+    if !p.Length <em>; Keine Namen/Parameter, also cv[]</em>
         return cv._[0]
 }
 ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Script ein unbekanntes Feld setzt.</em>
-    if p.MaxIndex() = "" <em>; Keine Namen/Parameter, also cv[]:=v</em>
+    if !p.Length <em>; Keine Namen/Parameter, also cv[]:=v</em>
         return cv._[0] := v
 }
 ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.

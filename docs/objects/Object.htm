@@ -15,62 +15,111 @@
 
 <h1>Object</h1>
 
-<p>Alle integrierten Methoden von Objekten, die mit <a href="../Objects.htm#Arrays">Object()</a> oder <code>{}</code> erstellt wurden, können entweder als reguläre Funktionen oder als Methoden aufgerufen werden:</p>
-<pre>Ergebnis := Object.Methode(Parameter)</pre>
-<p>Wenn die Methode auf diese Weise aufgerufen wird, kann jedes Objekt sein eigenes Verhalten für diese Methode umsetzen. Wenn ein Objekt allerdings eine integrierte Methode überschreibt, muss das Objekt irgendwie auf die ursprüngliche Funktionalität zurückgreifen können. Das erreicht man mit der folgenden Funktionsform:</p>
-<pre>Ergebnis := ObjMethod(Objekt, Parameter)</pre>
-<p>Das direkte Aufrufen der Funktion ist zwar etwas schneller, weil der Name bereits beim Laden des Scripts aufgelöst wird, allerdings macht das die Syntax generell weniger gut verständlich. Jedes benutzerdefinierte Verhalten, das vom Objekt implementiert wurde, wird umgangen, so dass diese Funktionen in der Regel nur vom Objekt selbst verwendet werden sollte.</p>
+<p>In AutoHotkey ist der grundlegende Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. Standardmäßig unterstützen alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, folgende Methoden und Funktionen:</p>
+<ul>
+	<li><a href="#Clone">Clone</a></li>
+	<li><a href="#GetCapacity">GetCapacity</a></li>
+	<li><a href="#GetAddress">GetAddress</a></li>
+	<li><a href="#HasKey">HasKey</a></li>
+	<li><a href="#InsertAt">InsertAt</a></li>
+	<li><a href="#Length">Länge</a></li>
+	<li><a href="#NewEnum">_NewEnum</a></li>
+	<li><a href="#Pop">Pop</a></li>
+	<li><a href="#Push">Push</a></li>
+	<li><a href="#Remove">Remove</a></li>
+	<li><a href="#RemoveAt">RemoveAt</a></li>
+	<li><a href="#SetCapacity">SetCapacity</a></li>
+	<li><a href="#RawSet">ObjRawSet</a> (function)</li>
+</ul>
+<p>Jede Methode hat außerdem eine äquivalente Funktion, mit der jedes <a href="../Objects.htm#Custom_Objects">benutzerdefinierte Verhalten</a>, das vom Objekt implementiert wurde, umgangen werden kann. Diese Funktionen sollten nur für diesen Zweck verwendet werden. Um so eine Funktion aufzurufen, muss vor dem Methodennamen "Obj" angefügt (lasse bei _NewNum den Unterstrich weg) und das Zielobjekt als erster Parameter übergeben werden. Zum Beispiel:</p>
+<pre>array := [1, 2, 3]
+MsgBox % ObjLength(array) " = " array.Length()</pre>
 
-<div class="methodShort" id="Insert"><h2>EINFG-Taste</h2>
-<p>Fügt Key-Value-Paare in das Objekt ein und passt bei Bedarf vorhandene Keys automatisch an.</p>
-<pre class="Syntax">Object.Insert(Index, Value1 [, Value2, ... Value<i>N</i> ])
-Object.Insert(Key, Value)</pre>
-<table class="info">
-  <tr><td width="15%">Index</td><td width="85%">Ein Integer-Key, bei dem Value1 eingefügt werden soll. Nachfolgende Values werden bei Index+1, Index+2 und so weiter eingefügt.<br>
-  Fehlt dieser Parameter, gilt standardmäßig <code>MaxIndex()="" ? 1 : MaxIndex() + 1</code>.</td></tr>
-  <tr><td>Key</td><td>Ein String oder Objekt-Key. Wenn der Key bereits vorhanden ist, wird sein Value überschrieben.</td></tr>
-  <tr><td>Value</td><td>Ein String, eine Zahl oder ein Objekt.</td></tr>
-  <tr><td><b>Rückgabe</b></td><td>Die Anzahl der eingefügten Werte oder ein leerer String, wenn das Script nicht genug Arbeitsspeicher hat.</td></tr>
-</table>
-<pre class="Syntax" style="margin-top:15px">Object.Insert(Wert)</pre>
-<table class="info">
-  <tr><td width="15%">Value</td><td>Ein String, eine Zahl oder ein Objekt, das an das Objekt angefügt werden soll.</td></tr>
-  <tr><td><b>Rückgabe</b></td><td>Der Index des neu angefügten Wertes, der typischerweise <code>Object.MaxIndex()</code> nach dem Einfügen ist.</td></tr>
-</table>
-<h3>Bemerkungen</h3>
-<p>Beachte, dass diese Methode den <a href="../Objects.htm#Meta_Functions">__Set</a>-Mechanismus und das Sonderverhalten des <a href="../Objects.htm#Custom_Objects">base</a>-Keys umgeht. Zum Beispiel würde <code>Object.Insert("base","")</code> bewirken, dass <code>Object.base</code> nicht das echte base-Objekt sondern einen leeren String  zurückgibt, aber es verhindert nicht, dass andere Operationen die Meta-Funktionen des Objekts auslösen können.</p>
-</div>
+&nbsp;
 
 <div class="methodShort" id="Remove"><h2>Remove</h2>
 <p>Entfernt Key-Value-Paare von einem Objekt.</p>
-<pre class="Syntax">Object.Remove(ErsterKey, LetzterKey)</pre>
+<pre class="Syntax" style="margin-top:15px">Object.Remove(Key)</pre>
 <table class="info">
-  <tr><td width="15%">ErsterKey, LetzterKey</td><td width="85%">Eine Reihe von Integer- oder String-Keys, die entfernt werden sollen. Enthalten beide Keys Integer-Werte, wird jeder Integer-Key größer als <i>LetzterKey</i> um <code>(LetzterKey - ErsterKey + 1)</code> verringert, um einen typischen numerisch indizierten Array zu emulieren. Beide Keys müssen vom gleichen Typ sein (Integer oder String).</td></tr>
-  <tr><td><b>Rückgabe</b></td><td>Bei Erfolg die tatsächliche Anzahl von entfernten Key-Value-Paaren; eine 0, wenn keine Keys auffindbar sind; oder bei Fehlschlag ein leerer String.</td></tr>
-</table>
-<pre class="Syntax" style="margin-top:15px">Object.Remove(Key := <i>MaxIndex()</i>)</pre>
-<table class="info">
-  <tr><td width="15%">Key</td><td width="85%">Beliebiger gültiger Key. Fehlt dieser Parameter, gilt standardmäßig der höchste vorhandene Integer-Key; existiert überhaupt kein Key, wird nichts entfernt. Vorhandene Keys werden angepasst, als ob <code>Remove(Key, Key)</code> verwendet wurde.</td></tr>
+  <tr><td width="15%">Key</td><td width="85%">Beliebiger gültiger Key.</td></tr>
   <tr><td><b>Rückgabe</b></td><td>Der entfernte Value, falls vorhanden; ansonsten ein leerer String.</td></tr>
 </table>
-<pre class="Syntax" style="margin-top:15px">Object.Remove(IntKey, "")</pre>
-<p>Entfernt einen Integer-Key und gibt seinen Wert zurück, aber andere Integer-Keys sind davon nicht betroffen.</p>
+<pre class="Syntax">Object.Remove(ErsterKey, LetzterKey)</pre>
+<table class="info">
+  <tr><td width="15%">ErsterKey, LetzterKey</td><td width="85%">Eine Reihe von Integer- oder String-Keys, die entfernt werden sollen. Beide Keys müssen vom gleichen Typ sein (Integer oder String).</td></tr>
+  <tr><td><b>Rückgabe</b></td><td>Die aktuelle Anzahl von Key-Value-Paaren, die entfernt worden sind.</td></tr>
+</table>
 </div>
 
-<div class="methodShort" id="MinMaxIndex"><h2>MinIndex / MaxIndex</h2>
-<pre class="Syntax">MinIndex := Object.MinIndex()
-MaxIndex := Object.MaxIndex()</pre>
-<p>Sofern Integer-Keys vorhanden sind, gibt MinIndex den niedrigsten und MaxIndex den höchsten Key zurück. Ansonsten wird ein leerer String zurückgegeben.</p></div>
+<div class="methodShort" id="InsertAt"><h2>InsertAt</h2>
+<p>Fügt Werte in ein Array ein.</p>
+<pre class="Syntax">Object.InsertAt(Index, Value [, Value2, ... Value<i>N</i> ])</pre>
+<table class="info">
+  <tr><td width="15%">Index</td><td width="85%">Der Index, bei dem der erste Value eingefügt werden soll. Nachfolgende Values werden bei Index+1, Index+2 und so weiter eingefügt. Dieser Parameter muss ein Integer sein.</td></tr>
+  <tr><td>Value</td><td>Ein String, eine Zahl oder ein Objekt.</td></tr>
+</table>
+<h3>Bemerkungen</h3>
+<p>Diese Methode sollte nur verwendet werden, wenn jeder Integer-Key innerhalb des Objekts eine Position mit einem Array repräsentiert. Bei Elementen, die zuvor im Array gespeichert waren, werden deren Keys bei Bedarf angepasst, um deren neuen Positionen innerhalb des Arrays darzustellen.</p>
+<p>Man kann einen Parameter weglassen, um das entsprechende Element unverändert zu lassen. Zum Beispiel:</p>
+<pre>x := [3]
+x.InsertAt(1,,2)
+MsgBox % x[1] "," x[2] "," x[3]  <em>; ,2,3</em></pre>
+<p>Es gibt keinen Rückgabewert. Schlägt die Methode aus irgendwelchen Gründen fehl, wird eine Ausnahme ausgelöst.</p>
+</div>
+
+<div class="methodShort" id="RemoveAt"><h2>RemoveAt</h2>
+<p>Entfernt Elemente aus einem Array.</p>
+<pre class="Syntax" style="margin-top:15px">Object.RemoveAt(Index)</pre>
+<table class="info">
+  <tr><td width="15%">Index</td><td width="85%">Der Index (Integer-Key) des Elements, das entfernt werden soll.</td></tr>
+  <tr><td><b>Rückgabe</b></td><td>Der entfernte Value, falls vorhanden; ansonsten ein leerer String.</td></tr>
+</table>
+<pre class="Syntax">Object.RemoveAt(Index, VirtuelleAnzahl)</pre>
+<table class="info">
+  <tr><td width="15%">Index</td><td width="85%">Der Index (Integer-Key) des ersten Elements, das entfernt werden soll.</td></tr>
+  <tr><td>VirtuelleAnzahl</td><td>Die Anzahl der Elemente, die entfernt werden sollen. Der Index des letzten Elements, das entfernt werden soll, ist immer <code>Index + VirtuelleAnzahl - 1</code>, selbst bei Sparse-Arrays (wo einige Elemente unverändert bleiben).</td></tr>
+  <tr><td><b>Rückgabe</b></td><td>Die aktuelle Anzahl von Key-Value-Paaren, die entfernt worden sind.</td></tr>
+</table>
+<h3>Bemerkungen</h3>
+<p>Diese Methode sollte nur verwendet werden, wenn jeder Integer-Key innerhalb des Objekts eine Position mit einem Array repräsentiert. Bei den restlichen Elementen werden deren Keys bei Bedarf angepasst, um deren neuen Positionen innerhalb des Arrays darzustellen.</p>
+</div>
+
+<div class="methodShort" id="Push"><h2>Push</h2>
+<p>Fügt Values an das Ende eines Arrays an.</p>
+<pre class="Syntax">Object.Push([ Value, Value2, ..., Value<i>N</i> ])</pre>
+<table class="info">
+  <tr><td width="15%">Value</td><td width="85%">Ein String, eine Zahl oder ein Objekt.</td></tr>
+  <tr><td><b>Rückgabe</b></td><td>Die neue <a href="#Length">Länge des Arrays</a>. Kann negativ sein, wenn das Array nur Elemente bei negativen Indexen enthält.</td></tr>
+</table>
+<h3>Bemerkungen</h3>
+<p>Der erste Value wird bei Index <code>Object.Length() + 1</code> eingefügt, daher wird Index 1 sein, wenn das Array leer ist.</p>
+<p>Man kann einen Parameter weglassen, um das entsprechende Element unverändert zu lassen. Zum Beispiel:</p>
+<pre>x := []
+x.Push(1,, 3)
+MsgBox % x[1] "," x[2] "," x[3]  <em>; 1,,3</em></pre>
+</div>
+
+<div class="methodShort" id="Pop"><h2>Pop</h2>
+<p>Entfernt und gibt das letzte Array-Element zurück.</p>
+<pre class="Syntax">Value := Object.Pop()</pre>
+<p>Wenn es keine Array-Elemente gibt, ist der Rückgabewert ein leerer String. Ansonsten ist es das gleiche wie:</p>
+<pre>Value := Object.RemoveAt(Object.Length())</pre>
+</div>
+
+<div class="methodShort" id="Length"><h2>Length</h2>
+<pre class="Syntax">Länge := Object.Length()
+Länge := Object.Length</pre>
+<p>Gibt die Länge des Arrays zurück; also entweder der höchste Integer-Key innerhalb des Objekts, oder 0, wenn keine vorhanden sind.</p></div>
 
 <div class="methodShort" id="SetCapacity"><h2>SetCapacity</h2>
 <p>Passt die Kapazität eines Objekts oder eines seiner Felder an.</p>
 <pre class="Syntax">Object.SetCapacity(MaxElemente)
 Object.SetCapacity(Key, Bytegröße)</pre>
 <table class="info">
-  <tr><td width="15%">MaxElemente</td><td width="85%">Die maximale Anzahl an Key-Value-Paaren, die das Objekt beinhalten soll, bevor es automatisch erweitert werden muss. Ist dieser Parameter kleiner als die aktuelle Anzahl an Key-Value-Paaren, wird das Objekt passend verkleinert.</td></tr>
+  <tr><td width="15%">MaxElemente</td><td width="85%">Die maximale Anzahl an Key-Value-Paaren, die das Objekt beinhalten soll, bevor es automatisch erweitert werden muss. Ist dieser Parameter kleiner als die aktuelle Anzahl an Key-Value-Paaren, wird stattdessen dieser Wert verwendet und ungenutzter Speicher freigegeben.</td></tr>
   <tr><td>Key</td><td>Beliebiger gültiger Key.</td></tr>
   <tr><td>Bytegröße</td><td>Die neue Größe in Bytes für den String-Zwischenspeicher des Feldes, ohne den 0-Terminator. Wenn das Feld nicht vorhanden ist, wird es erstellt. Ist <i>Bytegröße</i> eine 0, wird der Zwischenspeicher freigegeben, aber das leere Feld nicht entfernt. Ist <i>Bytegröße</i> kleiner als die aktuelle Größe, werden überschüssige Daten gekürzt; ansonsten werden alle vorhandenen Daten beibehalten.</td></tr>
-  <tr><td><b>Rückgabe</b></td><td>Bei Erfolg die neue Kapazität, ansonsten ein leerer String.</td></tr>
+  <tr><td><b>Rückgabe</b></td><td>Die neue Kapazität. Ein leerer Rückgabewert kennzeichnet einen Misserfolg; in diesem Fall wird eine Ausnahme ausgelöst.</td></tr>
 </table></div>
 
 <div class="methodShort" id="GetCapacity"><h2>GetCapacity</h2>
@@ -82,7 +131,7 @@ Bytegröße := Object.GetCapacity(Key)</pre>
 <pre class="Syntax">Ptr := Object.GetAddress(Key)</pre>
 <p>Gibt die aktuelle Adresse vom String-Zwischenspeicher des Feldes zurück, wenn es einen hat.</p></div>
 
-<div class="methodShort" id="NewEnum"><h2>NewEnum</h2>
+<div class="methodShort" id="NewEnum"><h2>_NewEnum</h2>
 <pre class="Syntax">Enum := Object._NewEnum()</pre>
 <p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um Key-Value-Paare des Objekts zu enumerieren.</p></div>
 
@@ -93,6 +142,12 @@ Bytegröße := Object.GetCapacity(Key)</pre>
 <div class="methodShort" id="Clone"><h2>Clone</h2>
 <pre class="Syntax">Klon := Object.Clone()</pre>
 <p>Gibt eine flache Kopie des Objekts zurück.</p></div>
+
+<div class="methodShort" id="RawSet"><h2>ObjRawSet</h2>
+<p>Speichert oder überschreibt einen Key-Value-Paar im Objekt.</p>
+<pre class="Syntax">ObjRawSet(Object, Key, Value)</pre>
+<p>Diese Funktion wurde bereitgestellt, um Scripts die Möglichkeit zu bieten, die __Set-<a href="../Objects.htm#Meta_Functions">Meta-Funktion</a> zu umgehen. Falls dies nicht notwendig ist, sollte stattdessen eine normale Zuweisung verwendet werden. Zum Beispiel: <code>Object[Key] := Value</code></p>
+<p>Da der Zweck darin besteht, Meta-Funktionen zu umgehen, ist dies nur eine Funktion, keine Methode. Das Aufrufen einer integrierten Methode ruft generell auch die __Call-Meta-Funktion auf.</p></div>
 
 </body>
 </html>
