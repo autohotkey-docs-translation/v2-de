@@ -63,22 +63,37 @@ ClipSicherung =   <em>; Speicher freigeben, falls die Zwischenablage sehr groß 
   <li>ClipStep: Kontrolliert mehrere Zwischenablagen nur mithilfe von STRG+X/C/V. <a href="http://www.autohotkey.com/forum/topic4836.html">www.autohotkey.com/forum/topic4836.html</a></li>
 </ul>
 <h2 id="OnClipboardChange">OnClipboardChange</h2>
-<p>Ein Label namens OnClipboardChange wird automatisch gestartet (falls vorhanden), sobald eine beliebige Anwendung (auch das Script selbst) den Inhalt der Zwischenablage geändert hat. Das Label wird zudem beim Starten des Scripts einmal ausgeführt.</p>
-<p>Die integrierte Variable A_EventInfo enthält:<br>
+<p>Bestimme eine <a href="../Functions.htm">Funktion</a>, die aufgerufen werden soll, wann immer eine Anwendung (auch das Script selbst) den Inhalt der Zwischenablage ändert.</p>
+<pre class="Syntax">OnClipboardChange([CallbackFunk])</pre>
+<h3>Parameter</h3>
+<dl>
+  <dt>CallbackFunk</dt>
+  <dd><p>Der Name oder Verweis einer <a href="../Functions.htm">Funktion</a>.</p>
+  <p>Gebe einen leeren String an, um die aktuelle Funktion zu entfernen. Fehlt dieser Parameter komplett, wird sich nichts ändern.</p></dd>
+</dl>
+<h3>CallbackFunk(Typ)</h3>
+<p>Die Funktion akzeptiert optional einen der folgenden Werte als Parameter:<br>
   0, falls die Zwischenablage leer ist;<br>
 1, falls etwas enthalten ist, das in Textform ist (einschließlich <a href="#CopiedFiles">kopierte Dateien</a>);<br>
 2, falls etwas enthalten ist, das kein Text ist, wie z. B. ein Bild.</p>
-<p>Das folgende Beispiel ist ein funktionierendes Script. Sobald es ausgeführt wird, wird bei jeder Änderung der Zwischenablage kurz ein ToolTip angezeigt.</p>
-<pre>#Persistent
-return
 
-OnClipboardChange:
-ToolTip Datentyp der Zwischenablage: %A_EventInfo%
-Sleep 1000
-ToolTip  <em>; ToolTip deaktivieren.</em>
-return</pre>
-<p>Wenn die Zwischenablage geändert wird, während das Label OnClipboardChange läuft, geht das Benachrichtigungsereignis verloren. Falls das unerwünscht ist, verwendet <a href="../commands/Critical.htm">Critical</a> in der ersten Zeile des Labels. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> zwischengespeichert/aufgeschoben (z. B. das Drücken eines Hotkeys), während der OnClipboardChange-Thread läuft.</p>
-<p>Sobald das Script selbst die Zwischenablage ändert, wird das OnClipboardChange-Label normalerweise nicht sofort ausgeführt. Das heißt, dass Befehle unterhalb des Befehls, der die Zwischenablage geändert hat, wahrscheinlich vorher ausgeführt werden. Um die sofortige Ausführung des Labels zu erzwingen, verwendet eine kurze Verzögerung wie beispielsweise <code><a href="../commands/Sleep.htm">Sleep 20</a></code>, nachdem die Zwischenablage geändert wurde.</p>
-<p>Siehe auch: <a href="../commands/OnExit.htm">OnExit</a>, <a href="../commands/OnMessage.htm">OnMessage()</a>, <a href="../commands/RegisterCallback.htm">RegisterCallback()</a></p>
+<h3>Bemerkungen</h3>
+<p>Wenn die Zwischenablage geändert wird, während die Callback-Funktion läuft, geht das Benachrichtigungsereignis verloren. Wenn das unerwünscht ist, verwende <a href="../commands/Critical.htm">Critical</a> auf der ersten Zeile der Funktion. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> zwischengespeichert/aufgeschoben (z. B. das Drücken eines Hotkeys), während der OnClipboardChange-Thread läuft.</p>
+<p>Sobald das Script selbst die Zwischenablage ändert, wird die Callback-Funktion normalerweise nicht sofort aufgerufen. Das heißt, dass Befehle unterhalb des Befehls, der die Zwischenablage geändert hat, wahrscheinlich vorher ausgeführt werden. Um die sofortige Ausführung der Callback-Funktion zu erzwingen, verwende eine kurze Verzögerung wie beispielsweise <code><a href="../commands/Sleep.htm">Sleep 20</a></code>, nachdem die Zwischenablage geändert wurde.</p>
+
+<h3>Siehe auch</h3>
+<p><a href="../commands/OnExit.htm">OnExit</a>, <a href="../commands/OnMessage.htm">OnMessage()</a>, <a href="../commands/RegisterCallback.htm">RegisterCallback()</a></p>
+
+<h3>Beispiel</h3>
+<p>Das folgende Beispiel ist ein funktionierendes Script. Sobald es ausgeführt wird, wird bei jeder Änderung der Zwischenablage kurz ein ToolTip angezeigt.</p>
+<pre>OnClipboardChange("ZeigeOnClipboardChange")
+
+ZeigeOnClipboardChange(Typ)
+{
+    ToolTip Datentyp der Zwischenablage: %Typ%
+    Sleep 1000
+    ToolTip  <em>; Versteckt das ToolTip.</em>
+}</pre>
+
 </body>
 </html>

@@ -117,7 +117,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
     <td><p><strong>Einstelliges Minuszeichen (-)</strong>: Auch wenn hier das gleiche Symbol vom Subtraktionsoperator verwendet wird, gilt ein einstelliges Minuszeichen nur für ein einzelnes Element oder Teilausdruck wie in diesem Beispiel zweimal gezeigt: <code><strong>-</strong>(3 / <strong>-</strong>x)</code>. Im Zusammenhang dazu wird jedes einstellige Pluszeichen (+) innerhalb eines Ausdrucks ignoriert.</p>
       <p><strong>Logisches NICHT (!)</strong>: Ist der Operand leer oder 0, wird das Ergebnis bei einem logischen NICHT eine 1 sein, also "wahr". Ansonsten ist das Ergebnis eine 0 (falsch). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, außer dass <strong>!</strong> eine höhere Priorität hat. Aufeinanderfolgende einstellige Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
       <p><strong>Bitweises NICHT (~)</strong>: Invertiert jedes Bit des Operanden. Ist der Operand eine Fließkommazahl, wird er vor der Berechnung auf einen Integer gekürzt. Liegt der Operand zwischen 0 und 4294967295 (0xffffffff), wird er als <u>vorzeichenloser</u> 32-Bit-Wert behandelt. Ansonsten wird er als <u>vorzeichenbehafteter</u> 64-Bit-Wert behandelt. Zum Beispiel wird <code>~0xf0f</code> zu 0xfffff0f0 (4294963440) ausgewertet.</p>
-      <p><a name="amp"></a><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ermittelt die Adresse des Speicherinhalts von <em>MeineVar</em>, die typischerweise bei <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> verwendet wird. <code>&amp;MeineVar</code> deaktiviert außerdem das Caching von Binärzahlen in dieser Variable, das ihre Performance verringern kann, falls sie jemals bei mathematischen oder numerischen Vergleichen verwendet wird. Caching einer Variable wird wieder aktiviert, sobald sich ihre Adresse ändert (z. B. per <a href="commands/VarSetCapacity.htm">VarSetCapacity()</a>).</p>
+      <p><a name="amp"></a><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ermittelt die Adresse des Speicherinhalts von <em>MeineVar</em>, die typischerweise bei <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> verwendet wird. Der Inhalt von <em>MeineVar</em> kann ein String, ein 64-Bit-Integer, eine 64-Bit-Fließkommazahl, oder ein Objekt sein.</p>
       <p><strong>Dereferenzierung (*)</strong>: Bei <code>*Ausdruck</code> wird angenommen, dass <code>Ausdruck</code> in eine numerische Speicheradresse aufgelöst wird; dabei wird das Byte auf dieser Adresse als eine Zahl zwischen 0 und 255 ermittelt (0 wird immer abgerufen, sobald die Adresse 0 ist; jede andere ungültige Adresse sollte vermieden werden, weil das Script ansonsten abstürzen kann). Allerdings ist <a href="Functions.htm#NumGet">NumGet()</a> zum Abrufen von binären Zahlen besser geeignet.</p></td>
   </tr>
   <tr>
@@ -173,7 +173,10 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
     <td align="center"><strong>&gt;&nbsp;&nbsp;&nbsp;&lt;<br>
     
     &gt;= &lt;=</strong></td>
-    <td><strong>Größer (&gt;)</strong>, <strong>kleiner (&lt;)</strong>, <strong>größer gleich (&gt;=)</strong> und <strong>kleiner gleich (&lt;=)</strong>. Ist einer der beiden Eingabewerte nicht numerisch (oder sind beide Strings), werden sie alphabetisch verglichen. Zum Beispiel wird 2 &lt; "10" als <em>wahr</em> gewertet, während "2" &lt; "10" als <em>falsch</em> gewertet wird. Der Vergleich unterscheidet nur zwischen Groß- und Kleinschreibung, wenn <a href="commands/StringCaseSense.htm">StringCaseSense</a> aktiviert ist. Siehe auch: <a href="commands/Sort.htm">Sort</a></td>
+    <td>
+      <p><strong>Größer (&gt;)</strong>, <strong>kleiner (&lt;)</strong>, <strong>größer gleich (&gt;=)</strong> und <strong>kleiner gleich (&lt;=)</strong>. Ist einer der beiden Eingabewerte nicht numerisch (oder sind beide Strings), werden sie alphabetisch verglichen. Zum Beispiel wird 2 &lt; "10" als <em>wahr</em> gewertet, während "2" &lt; "10" als <em>falsch</em> gewertet wird. Der Vergleich unterscheidet nur zwischen Groß- und Kleinschreibung, wenn <a href="commands/StringCaseSense.htm">StringCaseSense</a> aktiviert ist. Siehe auch: <a href="commands/Sort.htm">Sort</a></p>
+      <p>Beim Vergleichen von Strings werden diese Operatoren nur bis zur ersten binärischen Null vergleichen.</p>
+    </td>
   </tr>
   <tr id="equal">
     <td align="center"><strong>=<br>
@@ -181,7 +184,10 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
       ==<br>
     
     &lt;&gt; !=</strong></td>
-    <td><strong>Gleich (=)</strong>, <strong>zeichengenau gleich (==)</strong> und <strong>ungleich (&lt;&gt; oder !=)</strong>. Die Operatoren <strong>!=</strong> und <strong>&lt;&gt;</strong> sind funktionsgemäß identisch. Der Operator <strong>==</strong> verhält sich genauso wie <strong>=</strong>. Wenn aber einer der beiden Eingabewerte nicht numerisch ist (oder beide Strings sind), erfolgt bei <strong>==</strong> immer eine Unterscheidung zwischen Groß- und Kleinschreibung und bei <strong>=</strong> nicht (die Nichtunterscheidungsmethode ist abhängig von <a href="commands/StringCaseSense.htm">StringCaseSense</a>). Im Gegensatz dazu wird <a href="commands/StringCaseSense.htm">StringCaseSense</a> von <strong>&lt;&gt;</strong> und <strong>!=</strong> berücksichtigt.</td>
+    <td>
+      <p><strong>Gleich (=)</strong>, <strong>zeichengenau gleich (==)</strong> und <strong>ungleich (&lt;&gt; oder !=)</strong>. Die Operatoren <strong>!=</strong> und <strong>&lt;&gt;</strong> sind funktionsgemäß identisch. Der Operator <strong>==</strong> verhält sich genauso wie <strong>=</strong>. Wenn aber einer der beiden Eingabewerte nicht numerisch ist (oder beide Strings sind), erfolgt bei <strong>==</strong> immer eine Unterscheidung zwischen Groß- und Kleinschreibung und bei <strong>=</strong> nicht (die Nichtunterscheidungsmethode ist abhängig von <a href="commands/StringCaseSense.htm">StringCaseSense</a>). Im Gegensatz dazu wird <a href="commands/StringCaseSense.htm">StringCaseSense</a> von <strong>&lt;&gt;</strong> und <strong>!=</strong> berücksichtigt.</p>
+      <p>Mit dem Operator <strong>==</strong> können Strings verglichen werden, die eine binärische Null enthalten. Alle anderen Vergleichsoperatoren, außer <strong>~=</strong>, vergleichen nur bis zur ersten binärischen Null.</p>
+    </td>
   </tr>
   <tr>
     <td align="center"><strong>IS</strong><br><strong>IN</strong><br><strong>CONTAINS</strong></td>
@@ -342,7 +348,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
   </tr>
   <tr id="ThisLabel">
     <td>A_ThisLabel</td>
-    <td>Der Name des <a href="misc/Labels.htm">Labels</a> (Subroutine), das gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeinLabel. Diese Variable wird aktualisiert, sobald das Script <a href="commands/Gosub.htm">Gosub</a>/<a href="commands/Return.htm">Return</a> oder <a href="commands/Goto.htm">Goto</a> ausführt. Sie wird auch bei automatisch aufgerufenen Labels wie <a href="commands/SetTimer.htm">Timers</a>, <a href="commands/Gui.htm#DefaultWin">GUI-Threads</a>, <a href="commands/Menu.htm">Menüpunkte</a>, <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="misc/Clipboard.htm#OnClipboardChange">OnClipboardChange</a> und <a href="commands/OnExit.htm">OnExit</a> aktualisiert. Allerdings wird A_ThisLabel nicht aktualisiert, wenn die Ausführung in so einem Label "hineinfällt"; falls das passiert, wird A_ThisLabel den vorherigen Wert beibehalten. Siehe auch: <a href="#ThisHotkey">A_ThisHotkey</a> und <a href="Functions.htm#IsLabel">IsLabel()</a></td>
+    <td>Der Name des <a href="misc/Labels.htm">Labels</a> (Subroutine), das gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeinLabel. Diese Variable wird aktualisiert, sobald das Script <a href="commands/Gosub.htm">Gosub</a>/<a href="commands/Return.htm">Return</a> oder <a href="commands/Goto.htm">Goto</a> ausführt. Sie wird auch bei automatisch aufgerufenen Labels wie <a href="commands/SetTimer.htm">Timers</a>, <a href="commands/Gui.htm#DefaultWin">GUI-Threads</a>, <a href="commands/Menu.htm">Menüpunkte</a>, <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> aktualisiert. Allerdings wird A_ThisLabel nicht aktualisiert, wenn die Ausführung in so einem Label "hineinfällt"; falls das passiert, wird A_ThisLabel den vorherigen Wert beibehalten. Siehe auch: <a href="#ThisHotkey">A_ThisHotkey</a> und <a href="Functions.htm#IsLabel">IsLabel()</a></td>
   </tr>
   <tr id="AhkVersion">
     <td>A_AhkVersion</td>
@@ -360,10 +366,6 @@ MsgBox(1.00)  <em>; Zeigt 1.0 an</em></pre>
   <tr id="IsCompiled">
     <td>A_IsCompiled</td>
     <td>Enthält eine 1, wenn das Script als <a href="Scripts.htm#ahk2exe">kompilierte EXE-Datei</a> ausgeführt wird, oder einen leeren String (das als <a href="#Boolean">falsch</a> angesehen wird), wenn das nicht der Fall ist.</td>
-  </tr>
-  <tr id="ExitReason">
-    <td>A_ExitReason</td>
-    <td>Der aktuellste Grund, wodurch das Script beendet wurde. Diese Variable ist leer, es sei denn, das Script hat eine <a href="commands/OnExit.htm">OnExit</a>-Subroutine, die zurzeit ausgeführt wird oder mindestens einmal durch einen Exit-Versuch aufgerufen wurde. Siehe <a href="commands/OnExit.htm">OnExit</a> für weitere Details.</td>
   </tr>
 </table>
 <h3 id="date">Datum und Zeit</h3>
