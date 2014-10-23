@@ -15,9 +15,9 @@
 
 <h1>Loop (String parsen)</h1>
 
-<p>Ermittelt nacheinander Teilstrings (Felder) aus einem String.</p>
+<p>Ruft Teilstrings (Felder) von einem String einzeln ab.</p>
 
-<pre class="Syntax">Loop, Parse, String [, Trennzeichen, ZeichenAuslassen]</pre>
+<pre class="Syntax">Loop, Parse, String [, Trennzeichen, ZuEntfernendeZeichen]</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -28,32 +28,32 @@
   <dd><p>Der String, der analysiert werden soll.</p></dd>
 
   <dt>Trennzeichen</dt>
-  <dd><p>Ist dieser Parameter leer oder nicht vorhanden, wird jedes Zeichen des Eingabestrings als einzelner Teilstring behandelt.</p>
-      <p>Wenn dieser Parameter <strong>CSV</strong> ist (Comma-Separated Values), wird der String behandelt, als wären komma-getrennte Werte enthalten. Hier ist ein Beispiel für eine CSV-Zeile, die von MS-Excel erzeugt wurde: "Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in literalen Anführungszeichen",,"Letztes Feld, mit literalem Komma"</p>
-      <p>Ansonsten kann <em>Trennzeichen</em> ein oder mehr Zeichen enthalten (Unterscheidung zwischen Groß- und Kleinschreibung), die als Abgrenzungen zwischen den Teilstrings dienen sollen.</p>
-      <p>Trennzeichen selbst werden nicht als Teil des Teilstrings angesehen. Befindet sich darüber hinaus nichts zwischen einem Paar von Trennzeichen innerhalb des Eingabestrings, wird der entsprechende Teilstring leer sein.</p>
-      <p>Zum Beispiel: `, (ein Escapezeichen-versehenes Komma) würde den String jeweils bei einem Komma teilen. Mit %A_Tab%%A_Space% wird jeweils ein neuer Teilstring erstellt, wenn ein Leer- oder Tabulatorzeichen im Eingabestring vorkommt.</p>
-      <p>Um anstelle eines Zeichens ein String als Trennung zu verwenden, sollte zuerst <a href="StrReplace.htm">StrReplace</a> verwendet werden, um alle Vorkommen des Strings mit einem einzelnen Zeichen zu ersetzen, das nie literal im Text benötigt wird, zum Beispiel: ¢¤¥¦§©ª«®µ¶. Im folgenden Beispiel wird der String &lt;br&gt; als Trennung verwendet:</p>
+  <dd><p>Fehlt dieser Parameter oder ist er leer, wird jedes Zeichen des Eingabestrings als einzelner Teilstring behandelt.</p>
+      <p>Wenn dieser Parameter <strong>CSV</strong> ist (Comma-Separated Values), wird der String behandelt, als wären komma-getrennte Werte enthalten. Das folgende Beispiel ist eine CSV-Zeile, die mit MS-Excel erstellt wurde: "Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in literalen Anführungszeichen",,"Letztes Feld, das ein literales Komma hat"</p>
+      <p>Ansonsten kann <em>Trennzeichen</em> ein oder mehrere Zeichen enthalten (zeichengenau), um zu bestimmen, wo die Abgrenzungen zwischen den Teilstrings erfolgen sollen.</p>
+      <p>Die Trennzeichen selbst werden nicht als Teil des Teilstrings angesehen. Wenn zwischen zwei Trennzeichen innerhalb des Eingabestrings nichts vorhanden ist, wird der entsprechende Teilstring leer sein.</p>
+      <p>Zum Beispiel: `, (ein Escapezeichen-versehenes Komma) würde den String jeweils bei einem Komma teilen. Im Vergleich dazu würde %A_Tab%%A_Space% einen neuen Teilstring erstellen, wann immer ein Leer- oder Tabulatorzeichen im Eingabestring gefunden wird.</p>
+      <p>Wenn du einen String anstelle eines Zeichens als Trennung verwenden willst, solltest du zuvor mit <a href="StrReplace.htm">StrReplace</a> alle Vorkommen des Strings mit einem einzelnen Zeichen ersetzen, das im Text ansonsten nie vorkommt, wie beispielsweise eines der folgenden Sonderzeichen: ¢¤¥¦§©ª«®µ¶. Das folgende Beispiel zeigt, wie der String &lt;br&gt; als Trennung verwendet werden kann:</p>
       <pre>StrReplace, NeueHTML, HTMLString, &lt;br&gt;, ¢, All
-Loop, parse, NeueHTML, ¢ <em>; Den String mit dem Cent-Symbol parsen.</em>
+Loop, parse, NeueHTML, ¢ <em>; Parst den String basierend auf das Cent-Symbol.</em>
 {
 ...
 }</pre></dd>
 
-  <dt>ZeichenAuslassen</dt>
-  <dd><p>Eine optionale Liste von Zeichen (abhängig von Groß- und Kleinschreibung), die am Anfang und Ende jeden Teilstrings ausgeschlossen werden. Wenn <em>ZeichenAuslassen</em> zum Beispiel %A_Space%%A_Tab% enthält, werden Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) jeden Teilstrings entfernt.</p>
-    <p>Wenn <em>Trennzeichen</em> leer ist, wird mit <em>ZeichenAuslassen</em> gekennzeichnet, welche Zeichen ausgelassen werden (die Schleife sieht sie nicht).</p>
-    <p>Im Gegensatz zum letzten Parameter der meisten anderen Befehle müssen Kommas in <em>ZeichenAuslassen</em> mit einem Escapezeichen versehen werden (`,).</p></dd>
+  <dt>ZuEntfernendeZeichen</dt>
+  <dd><p>Eine optionale Liste mit Zeichen (zeichengenau), die bei jedem Teilstring am Anfang und Ende entfernt werden sollen. Wenn <em>ZuEntfernendeZeichen</em> beispielsweise %A_Space%%A_Tab% wäre, wird bei jedem abgerufenen Teilstring Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
+    <p>Wenn <em>Trennzeichen</em> leer ist, wird <em>ZuEntfernendeZeichen</em> kennzeichnen, welche Zeichen nicht geparst werden sollen (die Schleife wird sie nicht sehen).</p>
+    <p>Im Gegensatz zum letzten Parameter der meisten anderen Befehle müssen Kommas in <em>ZuEntfernendeZeichen</em> mit einem Escapezeichen versehen werden (`,).</p></dd>
 
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Eine string-parsende Schleife ist nützlich, um jedes Feld in einem String nacheinander abzuarbeiten. Parsende Schleifen verwenden weniger Speicher als <a href="StrSplit.htm">StrSplit</a> (obwohl in beiden Fällen die Speichernutzung temporär ist) und sind in den meisten Fällen einfacher zu benutzen.</p>
-<p><a name="LoopField"></a>Die integrierte Variable <strong>A_LoopField</strong> existiert in jeder Parsenden Schleife. Sie enthält den Inhalt des aktuellen Teilstrings (Feld). Wenn eine innere Parsende Schleife von einer äußeren Parsenden Schleife umschlossen ist, wird das Feld von der innersten Schleife Vorrang haben.</p>
-<p>Obwohl die integrierte Variable "A_LoopDelimiter" nicht verfügbar ist, wird im untersten Beispiel gezeigt, wie man die verwendete Trennung bei jedem Feld ermitteln kann.</p>
-<p>Die Größe des Eingabestrings oder dessen Felder ist unbegrenzt.</p>
-<p>Vor dem Parsen können die Felder mit dem <a href="Sort.htm">Sort</a>-Befehl neu angeordnet werden.</p>
-<p>Auf der <a href="Loop.htm">Loop</a>-Seite können Informationen zu <a href="Block.htm">Blöcke</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index gefunden werden (weil diese in jeder Schleifenvariante vorkommen).</p>
+<p>Eine string-parsende Schleife ist nützlich, wenn du alle Felder in einem String einzeln abarbeiten willst. Eine parsende Schleife verbraucht weniger Speicher als <a href="StrSplit.htm">StrSplit</a> (obwohl in beiden Fällen die Speichernutzung temporär ist) und sind in den meisten Fällen leichter zu verwenden.</p>
+<p><a name="LoopField"></a>Die integrierte Variable <strong>A_LoopField</strong> ist nur in einer parsenden Schleife von Bedeutung. Sie enthält den Inhalt des aktuellen Teilstrings (Feld). Wenn eine innere parsende Schleife von einer äußeren parsenden Schleife umschlossen ist, wird das Feld von der innersten Schleife Vorrang haben.</p>
+<p>Zwar gibt es nicht die integrierte Variable "A_LoopDelimiter", allerdings zeigt das Beispiel ganz unten, wie man ermitteln kann, welche Trennung bei jedem Feld verwendet wurde.</p>
+<p>Der Eingabestring oder seine Felder können eine unbegrenzte Größe haben.</p>
+<p>Mit dem <a href="Sort.htm">Sort</a>-Befehl können die Felder vor dem Parsen neu angeordnet werden.</p>
+<p>Auf der <a href="Loop.htm">Loop</a>-Seite findest du Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 <h3>Siehe auch</h3>
 <p><a href="StrSplit.htm">StrSplit</a>, <a href="LoopReadFile.htm">Datei-lesende Schleife</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="Sort.htm">Sort</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 <h3>Beispiele</h3>
@@ -64,16 +64,16 @@ Loop, parse, Farben, `,
     MsgBox, Farbnummer %A_Index% ist %A_LoopField%.
 }</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Beispiel #2: Liest nacheinander die Zeilen innerhalb einer Variable (vergleichbar mit einer <a href="LoopReadFile.htm">Datei-lesenden Schleife</a>).
-; Eine Datei kann mit <a href="FileRead.htm">FileRead</a> in eine Variable geladen werden:</em>
-Loop, parse, Dateiinhalt, `n, `r  <em>; Durch die Angabe von `n vor `r können sowohl Dateien von Windows als auch von Unix geparst werden.</em>
+<pre class="NoIndent"><em>; Beispiel #2: Liest den Inhalt einer Variable zeilenweise aus (so ähnlich wie eine <a href="LoopReadFile.htm">Datei-lesende Schleife</a>).
+; Mit <a href="FileRead.htm">FileRead</a> kann eine Datei in eine Variable geladen werden:</em>
+Loop, parse, Dateiinhalt, `n, `r  <em>; Durch die Angabe von `n vor `r können sowohl Windows- als auch Unix-Dateien geparst werden.</em>
 {
     MsgBox, 4, , Zeilennummer %A_Index% ist %A_LoopField%.`n`nWeiter?
     if A_MsgBoxResult = "No", break
 }</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Beispiel #3: Das gleiche Beispiel wie oben, jedoch für die Zwischenablage.
-; Ist nützlich, sobald die Zwischenablage Dateien enthält, die z. B. von einem offenen Explorer-Fenster
+<pre class="NoIndent"><em>; Beispiel #3: Dieses Beispiel ist das gleiche wie oben, außer dass es für die Zwischenablage ist.
+; Es ist nützlich, wann immer die Zwischenablage Dateien enthält, wie z. B. solche, die von einem offenen Explorer-Fenster
 ; kopiert wurden (das Programm wandelt solche Dateien automatisch in ihre Dateinamen um):</em>
 Loop, parse, clipboard, `n, `r
 {
@@ -93,18 +93,18 @@ Loop, read, C:\Datenbank-Export.csv
     }
 }</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Beispiel #5: Erkennt, welche Trennung verwendet wurde.</em>
+<pre class="NoIndent"><em>; Beispiel #5: Dieses Beispiel stellt fest, welche Trennung verwendet wurde.</em>
 
-<em>; String initialisieren, der durchsucht wird.</em>
+<em>; Initialisiert den zu durchsuchenden String.</em>
 Farben = Rot,Grün|Blau;Gelb|Cyan,Magenta
-<em>; Zähler initialisieren, um die aktuelle Position im String festzuhalten.</em>
+<em>; Initialisiert einen Zähler, um unsere aktuelle Stringposition im Auge zu behalten.</em>
 Position := 0
 
 Loop, Parse, Farben, `,|;
 {
     <em>; Berechnet die Position der Trennung am Ende dieses Feldes.</em>
     Position += StrLen(A_LoopField) + 1
-    <em>; Ermittelt die Trennung, die von der Parsende Schleife gefunden wurde.</em>
+    <em>; Ermittelt die Trennung, die von der parsenden Schleife gefunden wurde.</em>
     Trennung := SubStr(Farben, Position, 1)
 
     MsgBox Feld: %A_LoopField%`Trennung: %Trennung%
