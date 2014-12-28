@@ -44,11 +44,11 @@
   </tr>
   <tr>
     <td>Close</td>
-    <td>Das Script hat eine WM_CLOSE- oder WM_QUIT-Nachricht empfangen, hatte einen kritischen Fehler, oder wurde auf andere Weise geschlossen. Obwohl alle von denen ungewöhnlich sind, könnte <a href="WinClose.htm">WinClose</a> die Ursache für WM_CLOSE sein, falls dieser Befehl auf das Hauptfenster des Scripts angewendet wird. Um das zu verhindern, sollte das Hauptfenster mit <code>Send, !{F4}</code> geschlossen werden.</td>
+    <td>Das Script hat eine WM_CLOSE- oder WM_QUIT-Nachricht empfangen, hatte einen kritischen Fehler, oder wurde auf andere Weise geschlossen. Zwar sind sie alle ungewöhnlich, allerdings kann es sein, dass WM_CLOSE aufgrund von <a href="WinClose.htm">WinClose</a> erzeugt wird, wenn man diesen Befehl auf das Hauptfenster des Scripts anwendet. Um das zu verhindern, muss das Hauptfenster mit <code>Send, !{F4}</code> geschlossen werden.</td>
   </tr>
   <tr>
     <td>Error</td>
-    <td>Es ist ein Laufzeitfehler in einem Script entstanden, das nicht <a href="../Scripts.htm#persistent">persistent</a> ist. Ein Laufzeitfehler tritt zum Beispiel auf, wenn <a href="Run.htm">Run/RunWait</a> nicht in der Lage ist, das angegebene Programm oder Dokument zu öffnen.</td>
+    <td>Es ist ein Laufzeitfehler in einem Script entstanden, das nicht <a href="../Scripts.htm#persistent">persistent</a> ist. Ein Laufzeitfehler ist beispielsweise ein <a href="Run.htm">Run/RunWait</a>, der das angegebene Programm oder Dokument nicht öffnen kann.</td>
   </tr>
   <tr>
     <td>Menu</td>
@@ -56,26 +56,26 @@
   </tr>
   <tr>
     <td>Reload</td>
-    <td>Das Script wird über den <a href="Reload.htm">Reload</a>-Befehl oder -Menüpunkt neu geladen.</td>
+    <td>Das Script wird via <a href="Reload.htm">Reload</a>-Befehl oder -Menüpunkt neu geladen.</td>
   </tr>
   <tr>
     <td>Single</td>
-    <td>Aufgrund von <a href="_SingleInstance.htm">#SingleInstance</a> wird das Script mit einer neuen Instanz von sich selbst ersetzt.</td>
+    <td>Das Script wird aufgrund von <a href="_SingleInstance.htm">#SingleInstance</a> mit einer neuen Instanz von sich selbst ersetzt.</td>
   </tr>
 </table>
 
 <h3>Bemerkungen</h3>
-<p>Die Callback-Funktion wird aufgerufen, sobald das Script in irgendeiner Form beendet wird (es sei denn, das Script wird mit einer gewaltsamen Methode beendet, wie z. B. "Task beenden"). Diese Subroutine wird auch aufgerufen, sobald die Befehle <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz auffordern, sich zu beenden.</p>
+<p>Die Callback-Funktion wird aufgerufen, sobald das Script in irgendeiner Form beendet wird (es sei denn, das Script wird mit einer gewaltsamen Methode beendet, wie z. B. "Task beenden"). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Beenden auffordert.</p>
 <p>Mit <code><a href="OnMessage.htm#shutdown">OnMessage(0x11, "WM_QUERYENDSESSION")</a></code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden.</p>
-<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> ignoriert <a href="_MaxThreads.htm">#MaxThreads</a> (er wird immer gestartet, wenn nötig). Darüber hinaus kann dieser bei der Ausführung nicht von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird der Thread unterbrochen (und das Script beendet), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Script aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> beendet wird. Deshalb sollte die Callback-Funktion schnell zum Ende kommen, solange dem Benutzer nicht bewusst ist, was er tut.</p>
-<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen Fehler wie z. B. Laufzeitfehler stößt, wird das Script beendet. Dadurch wird verhindert, dass das Script aufgrund einer fehlerhaften Callback-Funktion nicht mehr beendet werden kann.</p>
-<p>Sobald die Callback-Funktion von einem Exitversuch aufgerufen wird, beginnt sie mit den Standardwerten in Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
+<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> nimmt keine Rücksicht auf <a href="_MaxThreads.htm">#MaxThreads</a> (er wird bei Bedarf immer gestartet). Darüber hinaus kann dieser Thread, während er läuft, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Script beendet), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Script aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> zum Beenden aufgefordert wird. Deshalb sollte die Callback-Funktion schnell zum Ende kommen, solange dem Benutzer nicht bewusst ist, was er tut.</p>
+<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen fehlerhaften Zustand wie z. B. Laufzeitfehler stößt, wird das Script beendet. Dadurch wird verhindert, dass das Script aufgrund einer fehlerhaften Callback-Funktion nicht mehr beendet werden kann.</p>
+<p>Sobald die Callback-Funktion von einem Exitversuch aufgerufen wird, beginnt sie mit den Standardwerten in Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardeinstellungen können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="OnMessage.htm">OnMessage()</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="../misc/Clipboard.htm#OnClipboardChange">OnClipboardChange</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="Shutdown.htm">Shutdown</a>, <a href="_Persistent.htm">#Persistent</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="Menu.htm">Menu</a></p>
 
 <h3>Beispiel</h3>
-<pre class="NoIndent">#Persistent  <em>; Zum Zwecke der Demonstration wird das Script aufrecht erhalten, wenn der Benutzer "Nein" auswählt.</em>
+<pre class="NoIndent">#Persistent  <em>; Um das Ergebnis beim Drücken von "Nein" zu sehen, wird das Script aufrecht erhalten.</em>
 OnExit("ExitFunk")
 return
 

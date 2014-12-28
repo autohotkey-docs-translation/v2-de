@@ -25,22 +25,22 @@
   <dd><p>RegExMatch() gibt die Position von <em>NadelRegEx</em> zurück, das ganz links im <em>Heuhaufen</em>-String vorkommt. Position 1 ist das erste Zeichen. Eine 0 wird zurückgegeben, wenn der Ausdruck nicht gefunden wird. Falls ein Fehler bei der PCRE-Ausführung auftritt, wird ein leerer String zurückgegeben und ErrorLevel auf einen der <a href="#ErrorLevel">unteren Werte</a> gesetzt, anstatt auf 0.</p></dd>
 
   <dt>Heuhaufen</dt>
-  <dd><p>Der String, dessen Inhalt durchsucht wird.</p></dd>
+  <dd><p>Ein String, dessen Inhalt durchsucht werden soll.</p></dd>
 
   <dt>NadelRegEx</dt>
-  <dd><p>Das zu suchende Muster, welches ein Perl-kompatibler regulärer Ausdruck (PCRE) ist. Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Ausdrucks (falls vorhanden) müssen am Anfang des Strings stehen, gefolgt von einer schließenden Klammer. Zum Beispiel wird mit dem Ausdruck "<span class="red">i)</span>abc.*123" die Unterscheidung von Groß- und Kleinschreibung deaktiviert und "abc" gesucht, gefolgt von null oder mehr beliebige Zeichen, gefolgt von "123". Wenn keine Optionen vorhanden sind, ist das ")" optional; zum Beispiel ist ")abc" das gleiche wie "abc".</p></dd>
+  <dd><p>Ein Muster im PCRE-Format (Perl-kompatibler regulärer Ausdruck), das gesucht werden soll. Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Musters (falls vorhanden) müssen am Anfang des Strings eingefügt werden, gefolgt von einer schließenden Klammer. Zum Beispiel würde das Muster "<span class="red">i)</span>abc.*123" die Option "zeichenungenau" einschalten und nach "abc" suchen, gefolgt von 0 oder mehreren Vorkommen eines beliebigen Zeichens, gefolgt von "123". Wenn es keine Optionen gibt, ist das ")" optional; zum Beispiel wäre ")abc" das gleiche wie "abc".</p></dd>
 
   <dt>AusgabeVar</dt>
   <dd>
-      <p><em>AusgabeVar</em> ist der Name einer Variable ohne Anführungszeichen, in der ein <a href="#MatchObject">Match-Objekt</a> gespeichert wird. Mit diesem Objekt kann Position, Länge und Wert der gesamten Übereinstimmung sowie von jedem <a href="../misc/RegEx-QuickRef.htm#subpat">Teilausdruck</a> abgerufen werden, falls vorhanden.</p>
-      <p>Falls das Muster nicht gefunden wird (also wenn die Funktion 0 zurückgibt), wird diese Variable leer gemacht.</p>
+      <p><em>AusgabeVar</em> ist der Name einer Variable ohne Anführungszeichen, in der ein <a href="#MatchObject">Match-Objekt</a> gespeichert wird. Mit diesem Objekt kann Position, Länge und Wert der gesamten Übereinstimmung sowie von jedem <a href="../misc/RegEx-QuickRef.htm#subpat">erfassenden Teilmuster</a> abgerufen werden, sofern vorhanden.</p>
+      <p>Wenn das Muster nicht gefunden werden kann (also wenn die Funktion 0 zurückgibt), wird diese Variable leer gemacht.</p>
       
     </dd>
 
   <dt>Startposition</dt>
-  <dd><p>Ist <em>Startposition</em> nicht vorhanden, wird standardmäßig eine 1 verwendet (der Anfang von <em>Heuhaufen</em>). Ansonsten beginnt die Suche mit einer 2 beim zweiten Zeichen, mit einer 3 beim dritten Zeichen und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einem leeren String am Ende des <em>Heuhaufens</em> (das natürlich zur Folge hat, dass keine Übereinstimmung gefunden wird).</p>
-      <p>Sobald <em>Startposition</em> negativ ist, wird dieser Parameter als Offset vom Ende des <em>Heuhaufens</em> angesehen. Zum Beispiel beginnt die Suche mit einer -1 beim letzten Zeichen und mit -2 beim vorletzten Zeichen. Wenn <em>Startposition</em> das linke Ende des <em>Heuhaufens</em> überschreitet, wird alles vom <em>Heuhaufen</em> durchsucht.</p>
-      <p>Unabhängig von <em>Startposition</em> bezieht sich der Rückgabewert immer auf das erste Zeichen des <em>Heuhaufens</em>. Zum Beispiel wäre die Position von "abc" in "123abc789" immer 4.</p></dd>
+  <dd><p>Fehlt <em>Startposition</em>, gilt standardmäßig 1 (das erste Zeichen von <em>Heuhaufen</em>). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einem leeren String am <em>Heuhaufen</em>-Ende (wodurch keine Übereinstimmung gefunden werden kann).</p>
+      <p>Wenn <em>Startposition</em> negativ ist, gilt sie als Offset vom <em>Heuhaufen</em>-Ende. Zum Beispiel würde -1 beim letzten Zeichen und -2 beim vorletzten Zeichen beginnen. Wenn <em>Startposition</em> das linke <em>Heuhaufen</em>-Ende überschreiten will, wird der gesamte <em>Heuhaufen</em> durchsucht.</p>
+      <p>Egal welchen Wert man als <em>Startposition</em> verwendet - der Rückgabewert ist immer relativ zum ersten <em>Heuhaufen</em>-Zeichen. Zum Beispiel wäre die Position von "abc" in "123abc789" immer 4.</p></dd>
 
 </dl>
 
@@ -49,39 +49,39 @@
 <p>Ansonsten wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf eines der folgenden Werte gesetzt:</p>
 <ul>
   <li>Eine 0 - das heißt, dass keine Fehler aufgetreten sind.</li>
-  <li>Eine negative Zahl - das heißt, dass ein Fehler beim <em>Ausführen</em> des regulären Ausdrucks aufgetreten ist. Obwohl solche Fehler selten sind, sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Strings" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). In so einem Fall sollte das Muster restriktiver gemacht werden. Zum Beispiel kann je nach Möglichkeit das Sternchen (*) mit einem Fragezeichen (?), Pluszeichen (+) oder einer Begrenzung wie {0,3} ersetzen werden.</li>
+  <li>Eine negative Zahl - das heißt, dass ein Fehler beim <em>Ausführen</em> des regulären Ausdrucks aufgetreten ist. Zwar kommen solche Fehler selten vor, allerdings sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Strings" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). Wenn dies geschieht, solltest du versuchen, das Muster restriktiver zu machen - ersetze zum Beispiel jedes * mit einem ?, + oder einem Limit wie {0,3}, sofern es möglich ist.</li>
 </ul>
 
 <h3>Optionen</h3>
-<p>Siehe <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> für Modifikatoren wie "<span class="red">i)</span>abc", die die Unterscheidung von Groß- und Kleinschreibung im Muster "abc" deaktiviert.</p>
+<p>Unter den <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> findest du Modifikatoren wie z. B. "<span class="red">i)</span>abc", der die Zeichengenauigkeit im Muster "abc" ausschalten würde.</p>
 
 <h3 id="MatchObject">Match-Objekt</h3>
-<p>Wenn eine Übereinstimmung gefunden wird, wird ein Objekt mit Informationen über die Übereinstimmung in <em>AusgabeVar</em>gespeichert. Dieses Objekt hat folgende Eigenschaften:</p>
-<p><strong>Match.Pos(N)</strong>: Gibt die Position der gesamten Übereinstimmung oder eines Teilausdrucks zurück.</p>
-<p><strong>Match.Len(N)</strong>: Gibt die Länge der gesamten Übereinstimmung oder eines Teilausdrucks zurück.</p>
-<p><strong>Match.Value(N)</strong>: Gibt die gesamte Übereinstimmung oder ein Teilausdruck zurück.</p>
-<p><strong>Match.Name(N)</strong>: Gibt den Namen eines benannten Teilausdrucks zurück, falls vorhanden.</p>
-<p><strong>Match.Count()</strong>: Gibt die Gesamtanzahl an Teilausdrücken zurück.</p>
-<p><strong>Match.Mark()</strong>: Gibt <em>NAME</em> des zuletzt gefundenen Teilausdrucks <code>(*MARK:NAME)</code> zurück, falls vorhanden.</p>
-<p><strong>Match[N]</strong>: Wenn <em>N</em> eine 0 oder Nummer/Name eines gültigen Teilausdrucks ist, dann ist diese Schreibweise mit <code>Match.Value(N)</code> vergleichbar. Ansonsten kann <em>N</em> der Name einer der oben genannten Eigenschaften sein. Zum Beispiel sind <code>Match["Pos"]</code> und <code>Match.Pos</code> das gleiche wie <code>Match.Pos()</code>. Gibt es aber einen Teilausdruck mit dem Namen "Pos", sind sie das gleiche wie <code>Match.Value("Pos")</code>.</p>
-<p><strong>Match.N</strong>: Das Gleiche wie oben, nur dass <em>N</em> eine Zahl oder ein Name ohne Anführungszeichen ist.</p>
-<p>Bei allen oben genannten Eigenschaften kann <em>N</em> Folgendes sein:</p>
+<p>Wenn eine Übereinstimmung gefunden wird, wird ein Objekt mit Informationen über die Übereinstimmung in <em>AusgabeVar</em>gespeichert. Dieses Objekt hat die folgenden Eigenschaften:</p>
+<p><strong>Match.Pos(N)</strong>: Gibt die Position der gesamten Übereinstimmung oder eines erfassenden Teilmusters zurück.</p>
+<p><strong>Match.Len(N)</strong>: Gibt die Länge der gesamten Übereinstimmung oder eines erfassenden Teilmusters zurück.</p>
+<p><strong>Match.Value(N)</strong>: Gibt die gesamte Übereinstimmung oder einen erfassenden Teilmuster zurück.</p>
+<p><strong>Match.Name(N)</strong>: Gibt den Namen eines Teilmusters zurück, sofern es einen hat.</p>
+<p><strong>Match.Count()</strong>: Gibt die Anzahl von allen Teilmustern zurück.</p>
+<p><strong>Match.Mark()</strong>: Gibt den <em>NAMEN</em> des zuletzt gefundenen <code>(*MARK:NAMEN)</code> zurück, sofern zutreffend.</p>
+<p><strong>Match[N]</strong>: Wenn <em>N</em> eine 0 oder Nummer/Name eines gültigen Teilmusters ist, dann ist dies das gleiche wie <code>Match.Value(N)</code>. Ansonsten kann <em>N</em> der Name von einer der oben genannten Eigenschaften sein. Zum Beispiel wären <code>Match["Pos"]</code> und <code>Match.Pos</code> das gleiche wie <code>Match.Pos()</code>; existiert aber ein Teilmuster namens "Pos", wären sie das gleiche wie <code>Match.Value("Pos")</code>.</p>
+<p><strong>Match.N</strong>: Das gleiche wie oben, außer dass <em>N</em> ein Name ohne Anführungszeichen oder eine Zahl ist.</p>
+<p>Bei allen oben genannten Eigenschaften kann <em>N</em> folgendes sein:</p>
 <ul>
   <li>0 für die gesamte Übereinstimmung.</li>
-  <li>Die Nummer eines Teilausdrucks, auch einen mit Namen.</li>
-  <li>Der Name eines Teilausdrucks.</li>
+  <li>Die Nummer eines Teilmusters, sowie auch von einem, das einen Namen hat.</li>
+  <li>Der Name eines Teilmusters.</li>
 </ul>
-<p>Es können eckige Klammern anstelle von runden Klammern verwendet werden, wenn <em>N</em> angegeben wurde.</p>
+<p>Eckige Klammern können anstelle von runden Klammern verwendet werden, wenn <em>N</em> angegeben wurde.</p>
 <p>Das Objekt unterstützt keine Enumeration; das heißt, die <a href="For.htm">For-Schleife</a> wird nicht unterstützt. Verwende stattdessen <code><a href="Loop.htm">Loop</a> Match.Count()</code>.</p>
 
 <h3>Performance</h3>
-<p>Um einen einfachen Teilstring innerhalb eines größeren Strings zu suchen, ist es besser, <a href="../Functions.htm#InStr">InStr()</a> zu benutzen, weil es schneller als RegExMatch() ist.</p>
-<p>Zur Verbesserung der Performance werden die 100 aktuellsten regulären Ausdrücke im Speicher zwischengespeichert (in kompilierter Form).</p>
-<p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann mitunter dabei helfen, die Performance eines häufig benutzten regulären Ausdrucks zu verbessern (z. B. in einer Schleife).</p>
+<p>Um einen einfachen Teilstring innerhalb eines größeren Strings zu suchen, solltest du <a href="../Functions.htm#InStr">InStr()</a> benutzen, weil es schneller als RegExMatch() ist.</p>
+<p>Um die Performance zu verbessern, werden die 100 zuletzt verwendeten regulären Ausdrücke zwischengespeichert (in kompilierter Form).</p>
+<p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann manchmal die Performance eines regulären Ausdrucks verbessern, der häufig verwendet wird (z. B. in einer Schleife).</p>
 
 <h3>Bemerkungen</h3>
-<p><a name="NamedSubPat"></a>Es ist möglich, einen Teilausdruck zu benennen, wie z. B. das Wort <em>Jahr</em> im Ausdruck "(?P&lt;Jahr&gt;\d{4})". Solche Namen können maximal 32 Zeichen lang sein. Zudem sind nur alphanumerische Zeichen und Unterstriche erlaubt. Beachte, dass benannte Teilausdrücke auch nummeriert sind. Wenn ein <a href="../misc/RegEx-QuickRef.htm#subpat">unbenannter Teilausdruck</a> beispielsweise nach "Jahr" vorkommt, würde er in nicht in <code>AusgabeVar[1]</code>, sondern in <code>AusgabeVar[2]</code> gespeichert werden.</p>
-<p>Innerhalb eines regulären Ausdrucks können bei bestimmten Sonderzeichen wie Tabulatorzeichen und Zeilenumbrüche sowohl umgekehrte Häkchen (`) als auch umgekehrte Schrägstriche (\) als Escapezeichen verwendet werden. Zum Beispiel ist `t das gleiche wie \t, sofern die <b>x</b>-Option nicht verwendet wird.</p>
+<p><a name="NamedSubPat"></a>Man kann einem Teilmuster einen Namen geben, wie z. B. das Wort <em>Jahr</em> in dem Muster "(?P&lt;Jahr&gt;\d{4})". Solche Namen können maximal aus 32 alphanumerischen Zeichen und Unterstriche bestehen. Beachte, dass benannte Teilmuster auch nummeriert sind. Wenn ein <a href="../misc/RegEx-QuickRef.htm#subpat">unbenanntes Teilmuster</a> beispielsweise nach "Jahr" vorkommt, würde es nicht in <code>AusgabeVar[1]</code>, sondern in <code>AusgabeVar[2]</code> gespeichert werden.</p>
+<p>Innerhalb eines regulären Ausdrucks kann bei bestimmten Sonderzeichen wie Tab und Newline das verwendete Escapezeichen sowohl ein umgekehrtes Häkchen (`) als auch ein umgekehrter Schrägstrich (\) sein. Zum Beispiel wäre `t das gleiche wie \t, sofern die <b>x</b>-Option nicht verwendet wird.</p>
 <p>Um die Grundlagen von regulären Ausdrücken kennenzulernen (oder das Gedächtnis ein wenig aufzufrischen), siehe <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.</p>
 <p>AutoHotkey's reguläre Ausdrücke wurden mittels Perl-kompatible reguläre Ausdrücke (PCRE) von <a href="http://www.pcre.org/">www.pcre.org</a> implementiert.</p>
 
@@ -90,11 +90,11 @@
 <p>Häufige Quellen von Textdaten: <a href="FileRead.htm">FileRead</a>, <a href="Download.htm">Download</a>, <a href="../misc/Clipboard.htm">Clipboard</a>, <a href="GuiControls.htm#Edit">GUI-Edit-Steuerelemente</a></p>
 
 <h3>Beispiele</h3>
-<pre class="NoIndent">Fundposition := RegExMatch("xxxabc123xyz", "abc.*xyz")  <em>; Gibt 4 zurück - die Position, auf der die Übereinstimmung gefunden wurde.</em>
-Fundposition := RegExMatch("abc123123", "123$")  <em>; Gibt 7 zurück, weil das $ die Übereinstimmung dazu zwingt, am Ende vorzukommen.</em>
-Fundposition := RegExMatch("abc123", "i)^ABC")  <em>; Gibt 1 zurück, da eine Übereinstimmung durch i-Option (keine Unterscheidung zwischen Groß- und Kleinschreibung) gefunden wurde.</em>
-Fundposition := RegExMatch("abcXYZ123", "abc(.*)123", SubPat)  <em>; Gibt 1 zurück und speichert "XYZ" in SubPat[1].</em>
-Fundposition := RegExMatch("abc123abc456", "abc\d+", "", 2)  <em>; Gibt 7 anstelle von 1 zurück, wegen der 2 in der Startposition.</em>
+<pre class="NoIndent">Fundposition := RegExMatch("xxxabc123xyz", "abc.*xyz")  <em>; Gibt 4 zurück, weil das die Position ist, auf der die Übereinstimmung gefunden wurde.</em>
+Fundposition := RegExMatch("abc123123", "123$")  <em>; Gibt 7 zurück, weil durch $ die Übereinstimmung am Ende vorkommen muss.</em>
+Fundposition := RegExMatch("abc123", "i)^ABC")  <em>; Gibt 1 zurück, weil eine Übereinstimmung aufgrund der Zeichenungenauigkeits-Option möglich gemacht wurde.</em>
+Fundposition := RegExMatch("abcXYZ123", "abc(.*)123", Teilmuster)  <em>; Gibt 1 zurück und speichert "XYZ" in Teilmuster[1].</em>
+Fundposition := RegExMatch("abc123abc456", "abc\d+", "", 2)  <em>; Gibt 7 statt 1 zurück, wegen einer 2 als Startposition.</em>
 
 <em>; Allgemeine RegEx-Beispiele können in der <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a> gefunden werden.</em></pre>
 
