@@ -1,3 +1,7 @@
+#NoEnv
+SetBatchLines, -1
+SetWorkingDir, % A_ScriptDir
+
 if (A_PtrSize = 8) {
     try
         RunWait "%A_AhkPath%\..\AutoHotkeyU32.exe" "%A_ScriptFullPath%"
@@ -21,16 +25,34 @@ for i, env_var in ["ProgramFiles", "ProgramFiles(x86)", "ProgramW6432"]
     }
 }
 
-SetWorkingDir %A_ScriptDir%\docs\static
+; Convert files to ISO-8859-1 because chm doesn't support UTF-8
+TempDir := A_Temp "\compile_chm\"
+
+FileCreateDir, % TempDir
+Loop, Files, *.*, DR
+    if !(A_LoopFileFullPath ~= ".git")
+        FileCreateDir, % TempDir A_LoopFileFullPath
+
+FileEncoding, UTF-8
+Loop, Files, *.*, FR
+{
+    if (A_LoopFileExt = "htm")
+    {
+        FileRead, filecontent, % A_LoopFileLongPath
+        StringReplace, filecontent, filecontent, "text/html; charset=UTF-8", "text/html; charset=ISO-8859-1"
+        FileAppend, % filecontent, % TempDir A_LoopFileFullPath, CP28591
+    }
+    else
+        FileCopy, % A_LoopFileLongPath, % TempDir A_LoopFileFullPath
+}
 
 ; Rebuild Index.hhk and Table of Contents.hhc.
-RunWait "%A_AhkPath%" source\CreateFiles4Help.ahk
-FileMove content.js, content.temp.js, 1
-FileMove content.chm.js, content.js
+RunWait "%A_AhkPath%" "%TempDir%static\source\CreateFiles4Help.ahk"
+RunWait "%A_AhkPath%" "static\source\CreateFiles4Help.ahk"
 
 ; Compile AutoHotkey.chm.
-RunWait %hhc% "%A_ScriptDir%\Project.hhp"
+RunWait %hhc% "%TempDir%\Project.hhp"
 
-; Put it back so that local viewing works.
-FileMove content.js, content.chm.js
-FileMove content.temp.js, content.js
+FileMove, %TempDir%\AutoHotkey.chm, %A_ScriptDir%\AutoHotkey.chm, 1
+
+FileRemoveDir, % TempDir, 1
