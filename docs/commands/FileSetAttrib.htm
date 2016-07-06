@@ -6,8 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -17,7 +15,7 @@
 
 <p>Ändert die Attribute von einer oder mehreren Dateien (auch Ordner). Platzhalter werden unterstützt.</p>
 
-<pre class="Syntax">FileSetAttrib, Attribute [, Dateimuster, OrdnerEinbeziehen?, Rekursiv?]</pre>
+<pre class="Syntax">FileSetAttrib, Attribute [, Dateimuster, Modus]</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -26,17 +24,15 @@
 
   <dt>Dateimuster</dt>
   <dd>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie <code>C:\Temp\*.tmp</code>. <em>Dateimuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.
-    <p>Ist dieser Parameter nicht vorhanden, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
+    <p>Fehlt dieser Parameter, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
 
-  <dt>OrdnerEinbeziehen?</dt>
-  <dd><p>0 (Standard) Ordner werden nicht mit einbezogen (nur Dateien). <br>
-1 Alle Dateien und Ordner, die dem Platzhaltermuster entsprechen, werden mit einbezogen.<br>
-2 Nur Ordner werden mit einbezogen (keine Dateien).</p>
-      <p>Hinweis: Wenn Dateimuster ein einzelner Ordner statt ein Platzhaltermuster ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p></dd>
-
-  <dt>Rekursiv?</dt>
-  <dd><p>0 (Standard) Unterordner werden nicht durchsucht.<br>
-      1 Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Allerdings werden Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, übersprungen, als würde sie nicht existieren. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p></dd>
+  <dt>Modus</dt>
+  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
+    <p><code>D</code>: Verzeichnisse (Ordner) einbeziehen.<br>
+    <code>F</code>: Dateien einbeziehen. Fehlt sowohl F als auch D, werden nur Dateien einbezogen, aber nicht Ordner.<br>
+    <code>R</code>: Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Wenn R fehlt, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</p>
+    <p>Hinweis: Wenn <em>Dateimuster</em> ein einzelner Ordner statt ein Platzhaltermuster ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
+  </dd>
 
 </dl>
 
@@ -46,12 +42,13 @@
 <p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf das aktuellste Ergebnis der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der kenntlich machen soll, warum keine Dateien gefunden wurden.</p>
 
 <h3>Bemerkungen</h3>
+<p><strong>Bekannte Einschränkung:</strong> Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, werden übersprungen und je nach Umstand in ErrorLevel gezählt. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p>
 <p>Der <em>Attribute</em>-Parameter besteht aus mehreren Operatoren und Attributsbuchstaben.</p>
 <p><em>Operatoren</em>:</p>
-<table class="info" style="width:574px">
+<table class="info">
   <tr>
-    <td width="23">+</td>
-    <td width="535">Aktiviert das Attribut</td>
+    <td>+</td>
+    <td>Aktiviert das Attribut</td>
   </tr>
   <tr>
     <td>-</td>

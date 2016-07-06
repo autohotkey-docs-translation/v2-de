@@ -1,229 +1,1101 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>AutoHotkey-Tutorial: Makro- und Hotkey-Erstellung</title>
-<meta name="robots" content="noindex, nofollow">
+<!DOCTYPE html>
+<html lang="de">
+	<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"><!--Tutorial by tidbit, from http://ahkscript.github.io/AHK_Tutorial/
+				Modified to fit with the AutoHotkey documentation.-->
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		<meta name="author" content="tidbit" />
+		<meta name="description" content="Ein AutoHotkey-Tutorial, geschrieben von tidbit"/>
+		<meta name="keywords" content="ahk, autohotkey, tutorial, anfänger guide"/>
+		<title>AutoHotkey Anfänger-Tutorial</title>
+		<meta name="robots" content="noindex, nofollow">
 <link href="static/theme.css" rel="stylesheet" type="text/css" />
-<script src="static/jquery.js" type="text/javascript"></script>
-<script src="static/tree.jquery.js" type="text/javascript"></script>
-<script src="static/ga.js" type="text/javascript"></script>
+		<script src="static/ga.js" type="text/javascript"></script>
 <script src="static/content.js" type="text/javascript"></script>
-<style type="text/css">
-<!--
-.style1 {font-size: 133%; font-weight: bold}
--->
-</style>
-</head>
-<body>
+		<style type="text/css">
+		.key
+		{
+			background-color: #f7f7f7;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
+			color: #333;
+			display: inline-block;
+			font-size: 90%;
+			line-height: 1.4;
+			margin: 0 0.1em;
+			padding: 0.1em 0.5em;
+			text-shadow: 0 1px 0 #fff;
+			white-space: nowrap;
+		}
+		.indented {
+			text-indent: 1.5em;
+			margin-bottom: 1em;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="page">
+			<h1>AutoHotkey Anfänger-Tutorial <span style="opacity:0.4">von tidbit</span></h1>
+			<div id="toc" class="section">
+				<h3>Inhaltsverzeichnis</h3>
+				<ol>
+					<li><a href="#s1" class="toci">Die Grundlagen</a>
+						<ol>
+							<li><a href="#s11" class="toci">AutoHotkey herunterladen</a></li>
+							<li><a href="#s12" class="toci">Wie erstellt man ein Skript</a></li>
+							<li><a href="#s13" class="toci">Befehle kann man nicht zusammenführen</a></li>
+							<li><a href="#s14" class="toci">Sonstige grundlegende Informationen</a></li>
+						</ol>
+					</li>
+					<li><a href="#s2" class="toci">Hotkeys &amp; Hotstrings</a>
+						<ol>
+							<li><a href="#s21" class="toci">Tasten und Symbole</a></li>
+							<li><a href="#s22" class="toci">Fenster-spezifisch</a></li>
+							<li><a href="#s23" class="toci">Mehrere Hotkeys pro Datei</a></li>
+							<li><a href="#s24" class="toci">Beispiele</a></li>
+						</ol>
+					</li>
+					<li><a href="#s3" class="toci">Senden von Tastatureingaben</a>
+						<ol>
+							<li><a href="#s31" class="toci">Spiele</a></li>
+						</ol>
+					</li>
+					<li><a href="#s4" class="toci">Starten von Programmen &amp; Webseiten</a></li>
+					<li><a href="#s5" class="toci">Befehle vs. Funktionen()</a>
+						<ol>
+							<li><a href="#s51" class="toci">Code-Blöcke</a></li>
+						</ol>
+					</li>
+					<li><a href="#s6" class="toci">Variablen</a>
+						<ol>
+							<li><a href="#s61" class="toci">Wann und wo Prozentzeichen verwendet werden</a></li>
+							<li><a href="#s62" class="toci">Abrufen von Benutzereingaben</a></li>
+							<li><a href="#s63" class="toci">Weitere Beispiele</a></li>
+						</ol>
+					</li>
+					<li><a href="#s7" class="toci">Objekte</a>
+						<ol>
+							<li><a href="#s71" class="toci">Erstellen von Objekten</a></li>
+							<li><a href="#s72" class="toci">Verwenden von Objekten</a></li>
+						</ol>
+					</li>
+					<li><a href="#s8" class="toci">Andere hilfreiche Goodies</a>
+						<ol>
+							<li><a href="#s81" class="toci">Die mysteriösen eckigen Klammern</a></li>
+							<li><a href="#s82" class="toci">Herausfinden deiner AHK-Version</a></li>
+							<li><a href="#s83" class="toci">Trial-and-Error-Prinzip</a></li>
+							<li><a href="#s84" class="toci">Einrückung</a></li>
+							<li><a href="#s85" class="toci">Um Hilfe bitten</a></li>
+							<li><a href="#s86" class="toci">Andere Links</a></li>
+						</ol>
+					</li>
+				</ol>
+			</div>
+			<div id="bodyContent">
+				<div id="basics" class="section">
+					<h2 id="s1">1 - Die Grundlagen</h2>
+					<p class="note">
+						Bevor wir unsere Reise beginnen, solltest du folgendes beachten. Über das ganze Tutorial hinweg wirst du auf viel Text und Code treffen. Für das optimale Lernen ist es ratsam, den Text zu lesen, bevor du den Code <b>ausprobierst</b>. Analysiere danach den Code.
+						<br />Die meisten Beispiele auf dieser Seite kannst du kopieren und einfügen.
+						<br />Wenn du durcheinander kommst, kannst du versuchen, den Abschnitt nochmals durchzulesen.
+					</p>
 
-<h1>Tutorial und Übersicht</h1>
+					<h3 id="s11">a. AutoHotkey herunterladen und installieren</h3>
+
+					<script type="text/javascript">
+					if ('file:mk:ms-its:'.indexOf(location.protocol) != -1)
+						document.write('<p class="note">' + translate.tutLocalMessage + '</p>');
+					</script>
+					<p>
+						Bevor du AutoHotkey (AHK) kennenlernen kannst, musst du es herunterladen. Nach dem Herunterladen musst du AHK installieren. Aber das ist abhängig davon, welche Version du willst. In diesem Guide verwenden wir den Installer, da er am einfachsten einzurichten ist.
+					</p>
 
 
-<p>Diese kurze Einführung hilft dir dabei, eigene Makros und Hotkeys auf Anhieb zu programmieren.</p>
-<h2>Inhaltsverzeichnis</h2>
-<ul>
-  <li class="style1"><a href="#Create">Erstellen eines Scripts</a></li>
-  <li class="style1"><a href="#Launch">Ausführen eines Programms oder Dokuments</a></li>
-  <li class="style1"><a href="#Send">Senden von Tastatureingaben und Mausklicks</a></li>
-  <li class="style1"><a href="#Activate">Aktivieren und Bearbeiten von Fenstern</a></li>
-  <li class="style1"><a href="#Dialogs">Abrufen von Benutzereingaben mit MsgBox, InputBox, usw.</a></li>
-  <li class="style1"><a href="#Variables">Verwenden von Variablen und der Zwischenablage</a></li>
-  <li class="style1"><a href="#Loop">Wiederholen von mehreren Aktionen</a></li>
-  <li class="style1"><a href="#Files">Bearbeiten von Dateien und Ordnern</a></li>
-  <li class="style1"><a href="#Overview">Übersicht über weitere Features</a></li>
-</ul>
-<h2 id="Create">Erstellen eines Scripts</h2>
-<p>Jedes Script ist eine reine Textdatei mit Befehlen, die vom Programm (AutoHotkey.exe) ausgeführt werden. Ein Script kann auch <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten, oder sogar nur aus diesen bestehen. Allerdings wird ein Script ohne Hotkeys und Hotstrings seine Befehle von oben nach unten nacheinander ausführen, sobald es gestartet wird.</p>
-<p>Ein neues Script kann wie folgt erstellt werden:</p>
-<ol>
-  <li><a href="http://ahkscript.org/">Lade AutoHotkey herunter</a> und installiere es.</li>
-  <li>Klicke mit der rechten Maustaste auf eine leere Stelle im Desktop oder in einem beliebigen Ordner.</li>
-  <li>Wähle im dabei entstandenen Menü "<em>Neu -&gt; AutoHotkey Script</em>" aus.</li>
-  <li>Gebe einen Namen für diese Datei ein und stell sicher, dass sie mit <strong>.ahk</strong> endet. Zum Beispiel: <code>Test.ahk</code>.</li>
-  <li>Klicke mit der rechten Maustaste auf die Datei und wähle "Edit Script" aus.</li>
-  <li>Schreibe auf eine neue Zeile: <code>#space::Run www.google.com</code>.</li>
-</ol>
-<p>In der oberen Zeile ist das erste Zeichen "#" die WIN-Taste; das heißt, dass die WIN-Taste gedrückt gehalten und danach die LEERTASTE gedrückt werden muss, um den Hotkey zu aktivieren. Das Doppelpunkt-Paar (::) kennzeichnet, dass der nachfolgende Befehl ausgeführt werden soll, sobald dieser Hotkey gedrückt wird. In diesem Fall wird die Webseite von Google geöffnet. Um dieses Script zu testen, mache wie folgt weiter:</p>
-<ol>
-  <li>Speichere und schließe die Datei.</li>
-  <li>Klicke zweimal auf die Datei, um sie auszuführen. Es erscheint ein neues Icon im Benachrichtigungsfeld der Taskleiste.</li>
-  <li>Halte die WIN-Taste gedrückt und drücke die LEERTASTE. Es öffnet sich eine Webseite im Standard-Browser.</li>
-  <li>Um das Script zu beenden oder zu bearbeiten, klicke mit der rechten Maustaste auf das grüne "H" im Benachrichtigungsfeld der Taskleiste.</li>
-</ol>
-<p>Hinweise:</p>
-<ul>
-  <li>Es können mehrere Scripts gleichzeitig laufen, jedes davon mit einem eigenen Icon im Benachrichtigungsfeld der Taskleiste.</li>
-  <li>Jedes Script kann mehrere <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten.</li>
-  <li>Damit ein Script automatisch beim Start des Computers ausgeführt wird, <a href="FAQ.htm#Startup">erstelle eine Verknüpfung im Autostart-Ordner des Startmenüs</a>.</li>
-</ul>
-<h2 id="Launch">Ausführen eines Programms oder Dokuments</h2>
-<p>Mit dem <a href="commands/Run.htm">Run</a>-Befehl können bestimmte Programme, Dokumente, URLs oder Verknüpfungen gestartet werden. Hier ein paar weitere Beispiele:</p>
-<pre>Run Notepad
-Run C:\Meine Dokumente\Adressliste.doc
-Run C:\Meine Dokumente\Meine Verknüpfung.lnk
-Run www.yahoo.de
-Run mailto:someone@somedomain.com</pre>
-<p>Es ist möglich, den oben genannten Beispielen ein Hotkey zuzuweisen, indem ein <a href="Hotkeys.htm">Hotkey-Label</a> zugeordnet wird. Im ersten unteren Beispiel wird der Hotkey WIN+N zugewiesen, im zweiten STRG+ALT+C:</p>
-<pre>#n::Run Notepad
-^!c::Run calc.exe</pre>
-<p>Die oben genannten Beispiele werden auch als einzeilige Hotkeys bezeichnet, da sie jeweils nur aus einem Befehl bestehen. Um ein Hotkey dazu zu bringen, mehr als einen Befehl auszuführen, muss die erste Zeile <u>unter</u> der Hotkeydefinition gesetzt werden und die letzte Zeile ein <code><a href="commands/Return.htm">Return</a></code> sein. Zum Beispiel:</p>
-<pre>#n::
-Run http://www.google.de
-Run Notepad.exe
-return</pre>
-<p>Falls das zu startende Programm oder Dokument nicht mit dem System verknüpft ist, muss dessen vollständiger Pfad angegeben werden, um es ausführen zu können:</p>
-<pre>Run %A_ProgramFiles%\Winamp\Winamp.exe</pre>
-<p>Im oben genannten Beispiel ist %A_ProgramFiles% eine <a href="Variables.htm#BuiltIn">integrierte Variable</a>. Durch Verwenden dieser Variable, anstatt z. B. <em>C:\Programme</em>, ist das Script ortsunabhängiger, das heißt, dass das Script wahrscheinlich auch auf anderen Computern laufen wird. Hinweis: Die Namen der Befehle und Variablen unterscheiden nicht zwischen Groß- und Kleinschreibung. Zum Beispiel ist "Run" das gleiche wie "run" und "A_ProgramFiles" das gleiche wie "a_programfiles".</p>
-<p>Verwende <a href="commands/Run.htm">RunWait</a> anstelle von Run, um ein Script dazu zu bringen, auf das Schließen des Programms oder Dokuments zu warten, bevor es fortfährt. Im folgenden Beispiel wird der <a href="commands/MsgBox.htm">MsgBox</a>-Befehl erst ausgeführt, sobald der Benutzer den Editor schließt:</p>
-<pre>RunWait Notepad
-MsgBox Der Benutzer ist fertig (Editor wurde geschlossen).</pre>
-<p>Um mehr über das Starten von Programmen zu erfahren (z. B. Parameter übergeben, Arbeitsverzeichnis bestimmen und den Exitcode des Programms ermitteln), siehe <a href="TutorialLaunch.htm">hier</a>.</p>
-<h2 id="Send">Senden von Tastatureingaben und Mausklicks</h2>
-<p>Mithilfe des <a href="commands/Send.htm">Send</a>-Befehls können Tastatureingaben an das aktive (vorderste) Fenster gesendet werden. Im folgenden Beispiel wird STRG+ALT+S zu einem Hotkey, der eine Signatur schreibt (stell sicher, dass ein Fenster wie der Editor oder E-Mail-Entwurf aktiv ist, bevor dieser Hotkey gedrückt wird):</p>
-<pre>^!s::
-Send Mit freundlichen Grüßen,{Enter}John Smith
-return</pre>
-<p>Im oben genannten Beispiel werden alle Zeichen literal gesendet, außer {Enter}, das ein ENTER-Tastendruck simuliert. Das nächste Beispiel zeigt weitere Sonderzeichen, die häufig verwendet werden:</p>
+					<h3>Anleitung:</h3>
+					<ol>
+						<li>Öffne die Hauptseite von AutoHotkey. <a href="https://autohotkey.com/">https://autohotkey.com/</a>
+						</li>
+						<li>Klicke auf Download. <a href="https://autohotkey.com/download/ahk-install.exe">https://autohotkey.com/download/ahk-install.exe</a>
+						</li>
+						<li>
+							Während der Installation von AutoHotkey wirst du gefragt, ob UNICODE oder ANSI installiert werden soll. Empfohlen ist UNICODE. Es unterstützt nicht-englische Buchstaben und Zahlen (Zeichen). Mache weiter, bis du den Install-Button siehst.
+						</li>
+						<li>Sobald das erledigt ist, großartig! Weiter geht's in Abschnitt b.</li>
+					</ol>
+					<p class="note">Video-Anleitung (englisch):<br />
+						
+						Frankie's "Install and Hello World"<br />
+						<a href="http://www.autohotkey.com/forum/viewtopic.php?t=77674">http://www.autohotkey.com/forum/viewtopic.php?t=77674</a>
+					</p>
 
-<pre>Send ^c!{tab}eingefügt:^v</pre>
-<p>Diese Zeile sendet STRG+C, danach ALT+TAB, danach den String "eingefügt:" und zum Schluss STRG+V. Siehe <a href="commands/Send.htm">Send</a> für eine komplette Liste von Sonderzeichen und Tasten.</p>
-<p>Tastatureingaben können auch gesendet werden, wenn man bestimmte Abkürzungen schreibt - auch bekannt als <a href="Hotstrings.htm">Hotstrings</a>. Das folgende Beispiel bewirkt, dass "bzw" automatisch mit "beziehungsweise" ersetzt wird, sobald man "bzw" mit einem Leerzeichen oder Komma danach eingibt:</p>
-<pre>::bzw::beziehungsweise</pre>
-<br>
-<p><u><strong>Mausklicks</strong></u>: Bevor ein Mausklick an ein Fenster gesendet werden kann, müssen die Koordinaten X und Y ermittelt werden, auf denen das Klicken erfolgen soll. Mithilfe von "Window Spy", das in AutoHotkey enthalten ist, können diese abgerufen werden Die folgenden Schritte gelten für "Window Spy":</p>
-<ol>
-  <li>Starte "Window Spy" über das Tray-Icon-Menü eines Scripts oder Startmenü.</li>
-  <li>Aktiviere das gewünschte Fenster entweder durch Klicken auf die Titelleiste, mit Alt-Tab oder anderweitig ("Window Spy" selbst bleibt "immer im Vordergrund").</li>
-  <li>Bewege den Mauszeiger auf die gewünschte Position im Zielfenster und notiere dir die Mauskoordinaten, die vom "Window Spy" angezeigt werden (oder drücke in Windows XP und niedriger UMSCHALT+ALT+TAB, um "Window Spy" zu aktivieren, so dass die "eingefrorenen" Koordinaten kopiert und später eingefügt werden können).</li>
-  <li>Übertrage die ermittelten Koordinaten auf den <a href="commands/Click.htm">Click</a>-Befehl. Das folgende Beispiel klickt die linke Maustaste: <code>Click 112, 223</code>.</li>
-</ol>
-<p>Mit <a href="commands/MouseMove.htm">MouseMove</a> kann die Maus ohne Klicken verschoben werden. Mit <a href="commands/MouseClickDrag.htm">MouseClickDrag</a> kann die Maus gezogen werden.</p>
-<h2 id="Activate">Aktivieren und Bearbeiten von Fenstern</h2>
-<p>Mit <a href="commands/WinActivate.htm">WinActivate</a> kann das Fenster aktiviert werden (in den Vordergrund setzen). Mit <a href="commands/WinExist.htm">WinExist</a> oder <a href="commands/WinWait.htm">WinWait</a> kann überprüft werden, ob das Fenster vorhanden ist. Das folgende Beispiel verdeutlicht diese Befehle:</p>
-<pre>If WinExist("Unbenannt - Editor")
+					<h3 id="s12">b. Wie erstellt man ein Skript</h3>
+					<p>
+						Die folgende Anleitung zeigt, wie man AutoHotkey dazu bringen kann, etwas zu tun. AutoHotkey ist keine Zauberei - wir alle wünschten, es wäre so, ist es aber nicht. Also müssen wir AutoHotkey sagen, was zu tun ist. Diesen Vorgang nennt man "Scripting".
+					</p>
+
+					<h3>Anleitung:</h3>
+					<ul>
+						<li>1. Mache einen Rechtsklick auf deinem Desktop.</li>
+						<li>2. Finde "Neu" im Menü.</li>
+						<li>3. Klicke auf "AutoHotkey Script" innerhalb des "Neu"-Menüs.</li>
+						<li>4. Gebe dem Skript einen neuen Namen. Hinweis: Der Name muss mit .ahk enden. Zum Beispiel: MeinSkript.ahk</li>
+						<li>5. Finde die neu erstellte Datei auf deinem Desktop und mache einen Rechtsklick darauf.</li>
+						<li>6. Klicke auf "Edit Script".</li>
+						<li>7. Es müsste ein Fenster erscheinen, wahrscheinlich der Texteditor. Wenn ja, ERFOLG!
+						<hr />
+						<p>
+							Nun, da du ein Skript erstellt hast, müssen wir also Dinge in die Datei einfügen. Eine Liste aller Built-in-Befehlen, -Funktionen und -Variablen findest du im <a href="#s5">Abschnitt 5</a>.<br />
+						</p>
+						<p>
+							Hier ein sehr einfaches Skript, das Text mithilfe des <a href="commands/Send.htm">Send</a>-Befehls schreibt, sobald man den Hotkey drückt.
+						</p>
+
+<pre>
+^j::
+   Send, Mein erstes Skript
+Return
+</pre>
+						<p>
+							Später werden wir tiefer in die Materie einsteigen. Bis dahin erkläre ich dir, was der obige Code macht.<br />
+
+							- Die erste Zeile. <code>^j::</code> ist der Hotkey. <code>^</code> bedeutet <span class="key">STRG</span>, <code>j</code> ist die Taste <span class="key">j</span>. Alles was sich auf der <b>linken</b> Seite von <code>::</code> befindet, sind Tasten, die du drücken musst.<br />
+
+							- Die zweite Zeile. <code>Send, Mein erstes Skript</code> ist der Vorgang zum SENDEN von Tastatureingaben. <code>SEND</code> ist der Befehl. Alles nach dem Komma (,) wird geschrieben.<br />
+
+							- Die dritte Zeile. <code>Return</code>. Return wird dein bester Freund werden. Einfach gesagt, ein Return STOPPT dein Code an dieser Stelle, nachfolgende Zeilen werden schlichtweg ignoriert. Dadurch können viele Probleme in einem langen Skript verhindert werden.
+						</p>
+						<hr />
+						</li><li>8. Speichere die Datei.</li>
+						<li>9. Mache einen Doppelklick auf die Datei bzw. auf das Symbol im Desktop, um das Skript zu starten. Öffne den Texteditor (oder wo auch immer du etwas schreiben kannst) und drücke <span class="key">STRG</span> und <span class="key">J</span>.</li>
+						<li>10. Hip Hip Hurra! Dein erstes Skript ist fertig. Hole dir ein paar Snacks als Belohnung und komme dann zurück, um den Rest dieses Tutorials zu lesen.</li>
+					</ul>
+
+					<p class="note">
+						Video-Anleitung (englisch):<br />
+						
+						Frankie's "Install and Hello World"<br /><a href="http://www.autohotkey.com/forum/viewtopic.php?t=77674">http://www.autohotkey.com/forum/viewtopic.php?t=77674</a>
+
+					</p>
+					<h3 id="s13">c. Befehle kann man nicht zusammenführen</h3>
+					<p>
+						Beim Erstellen deines Codes hast du vielleicht schon den Drang gehabt, mehrere Befehle auf einer Zeile oder sogar ineinander zu setzen - lasse es. Im <a href="#s5">Abschnitt 5</a> reden wir darüber, warum das so nicht wie erwartet funktioniert und was man stattdessen tun könnte.
+					</p>
+
+					<h3 id="s14">d. Sonstige grundlegende Informationen</h3>
+					<div>
+						So findest du die englische Hilfe-Datei auf deinem Computer:<br />
+						Es gibt dafür mehrere Möglichkeiten, sofern AutoHotkey in den voreingestellten Standorten installiert wurde.<br /><br />
+						Methode 1:
+						<ol>
+							<li>Finde das Startmenü oder Windows-Symbol auf deinem Bildschirm, üblicherweise unten links.</li>
+							<li>Klicke auf <b>Programme</b> oder <b>Alle Programme</b>.</li>
+							<li>Finde <b>AutoHotkey</b> in der Liste.</li>
+							<li>Nun müsstest du <b>AutoHotkey Help File</b> sehen. Klicke darauf.</li>
+							<li>Fertig!</li>
+						</ol>
+						Methode 2:
+						<ol>
+							<li>Schaue auf deinem Desktop.</li>
+							<li>Finde <b>Arbeitsplatz</b> oder <b>Computer</b>. Öffne es.</li>
+							<li>Navigiere zu deiner Festplatte, die <b>AutoHotkey</b> enthält. Meistens das Laufwerk <b>C:\</b>.</li>
+							<li>Suche in allen "<b>Program Files</b>"-Ordnern nach <b>AutoHotkey</b>.</li>
+							<li>Suche nach <b>AutoHotkey.chm</b> oder einer Datei, die AutoHotkey heißt und ein gelbes Fragezeichen hat.</li>
+							<li>Fertig!</li>
+						</ol>
+					</div>
+					<p class="note">
+						Online-Links:<br />
+						<a href="https://ragnar-f.github.io/docs/">Dokumentation</a><br />
+						<a href="https://ragnar-f.github.io/docs/commands/">Befehlsliste</a><br />
+						<a href="https://ragnar-f.github.io/docs/Functions.htm#BuiltIn">Funktionen</a><br />
+						<a href="https://ragnar-f.github.io/docs/Variables.htm">Variablen</a>
+					</p>
+				</div>
+				<div id="hotkeys_and_hotstrings" class="section">
+					<h2 id="s2">2 - Hotkeys &amp; Hotstrings</h2>
+
+					<p>
+						Was ist ein Hotkey? Ein Hotkey ist eine Taste, die sich heiß anfühlt. ... kleiner Scherz. Ein Hotkey ist eine Taste oder Tastenkombination, die der Benutzer auf der Tastatur drücken kann, um einige Aktionen auszulösen.<br />
+						Was ist ein Hotstring? Hotstrings werden hauptsächlich verwendet, um Abkürzungen bei Eingabe zu erweitern (Auto-Ersetzen); sie können auch verwendet werden, um eine geskriptete Aktion zu starten.
+					</p>
+
+					<p>Hier ein Hotkey:</p>
+
+<pre>
+^j::
+   Send, Mein erstes Skript
+Return
+</pre>
+
+					<p>Hier ein Hotstring:</p>
+
+<pre>
+::ftw::Free the whales
+</pre>
+
+					<p>Der Unterschied zwischen den beiden Beispielen ist, dass der Hotkey ausgelöst wird, wenn du <span class="key">STRG+J</span> drückst, während der Hotstring dein geschriebenes "ftw" in "Free the whales" umwandelt.</p>
+					<p>
+						<i>"Also, wie genau kann man einen Hotkey erstellen?"</i> Gute Frage. Ein Hotkey erstellt man mithilfe von zwei Doppelpunkten. Die Taste oder Tastenkombination kommt auf die <b>linke</b> Seite von <code>::</code>. Der Inhalt muss darunter stehen, gefolgt von einem <code>Return</code>.<br />
+					</p>
+					<p class="note">Hinweis: Es gibt Ausnahmen, allerdings führen sie oft zu Verwechslungen. Daher werden sie erst einmal im Tutorial nicht erwähnt.</p>
+<pre>
+esc::
+   MsgBox Escape!!!!
+Return
+</pre>
+					<p>Ein Hotstring hat auf jeder Seite des Textes, der ersetzt werden soll, jeweils zwei Doppelpunkte. Während der Text, der dein geschriebenen Text ersetzen soll, auf der <b>rechten</b> Seite des zweiten Doppelpunktpaares erfolgt.</p>
+					<p>Hotstrings können, wie bereits erwähnt, auch geskriptete Aktionen starten. Eine ausgefallene Bezeichnung für <i>"tue so ziemlich alles"</i>. Das gleiche gilt für Hotkeys.</p>
+<pre>
+::bzw::
+MsgBox Du hast "bzw" eingegeben.
+Return
+</pre>
+
+					<p>
+						Außerdem solltest du wissen, dass jeder Hotkey, Hotstring, Label und andere Dinge, über die wir noch nicht geredet haben, viele Codezeilen enthalten kann.
+					</p>
+
+<pre>
+^j::
+   MsgBox Wow!
+   MsgBox Das sind
+   Run, Notepad.exe
+   winactivate, Unbenannt - Editor
+   WinWaitActive, Unbenannt - Editor
+   send, 7 Zeilen{!}{enter}
+   sendinput, innerhalb des STRG{+}J-Hotkeys
+Return
+</pre>
+
+					<h3 id="s21">a. Tasten und ihre mysteriösen Symbole</h3>
+
+					<div>
+						Vielleicht hast du dich schon gefragt: <i>"Woher zum Teufel soll ich wissen, dass das Zirkumflex (^) die STRG-Taste ist?!"</i>. Nun, gute Frage. Um dir beizubringen, was ^ und andere Symbole bedeuten, solltest du einen Blick auf diese Tabelle werfen:<br />
+						<table class="info">
+							<tr><th>Symbol</th><th>Beschreibung</th></tr>
+							<tr><td><strong>#</strong></td><td>Win (Windows-Logo-Taste)</td></tr>
+							<tr><td><strong>!</strong></td><td>Alt</td></tr>
+							<tr><td><strong>^</strong></td><td>Steuerung</td></tr>
+							<tr><td><strong>+</strong></td><td>Umschalt</td></tr>
+							<tr>
+								<td>
+									<strong>&amp;</strong>
+								</td>
+								<td>
+									Ein Und-Zeichen kann zwischen zwei beliebigen Tasten oder Maustasten verwendet werden, um diese zu einem benutzerdefinierten Hotkey zu verbinden.
+								</td>
+							</tr>
+						</table>
+						<p>
+							<strong>
+								(Die vollständige Liste der Symbole findest du auf der <a href="Hotkeys.htm">Hotkey</a> -Seite)
+							</strong>
+						</p>
+					</div>
+					<p>
+						Desweiteren findest du hier eine Liste von allen / der meisten Hotkey-Namen, die auf der <b>linken</b> Seite des Doppelpunktpaares verwendet werden können:<br /><a href="KeyList.htm">KeyList.htm</a>
+					</p>
+					<p>
+						Mithilfe von <b>&amp;</b> kann eine benutzerdefinierte Kombination von zwei (und nur zwei) Tasten (außer Joystick-Tasten) definiert werden. Im folgenden Beispiel würde der Hotkey ausgelöst werden, wenn man <span class="key">Numpad0</span> gedrückt hält und danach die zweite Taste drückt:
+					</p>
+
+<pre>
+Numpad0 &amp; Numpad1::
+   MsgBox, Sie haben Numpad1 gedrückt, während Numpad0 gedrückt wurde.
+Return
+
+Numpad0 &amp; Numpad2::
+	Run Notepad
+Return
+</pre>
+
+					<p>
+						Aber du wirst dich bestimmt jetzt fragen, ob Hotstrings irgendwelche coolen Modifikatoren haben, so wie Hotkeys auch. Ja, das tun sie!<br />
+						Hotstring-Modifikatoren werden in den ersten Satz von ::'s eingefügt. Zum Beispiel:
+					</p>
+
+<pre>
+:*:ftw::Free the whales
+</pre>
+
+					<p class="note">
+						Weitere Hotkey- und Hotstring-Modifikatoren, Informationen und Beispiele findest du auf:<br />
+						<a href="Hotkeys.htm">Hotkeys</a><br />
+						<a href="Hotstrings.htm">Hotstrings</a>
+					</p>
+					<h3 id="s22">b. Fenster-spezifische Hotkeys/Hotstrings</h3>
+
+					<p>Manchmal könntest du wollen, dass ein Hotkey oder Hotstring nur in einem bestimmten Fenster funktioniert (oder deaktiviert ist). Dazu brauchst du einen dieser ausgefallenen Befehle, die ein #-Zeichen davor haben.</p>
+					<p>#IfWinActive<br />
+					
+					#IfWinExist</p>
+					<p>
+						Diese speziellen Befehle (auch "Direktiven" genannt) erstellen kontextabhängige Hotkeys und Hotstrings. Gebe einfach einen Fenstertitel an. Aber in einigen Fällen möchtest du vielleicht ein HWND, eine Gruppe oder eine Klasse angeben. Solche erfordern fortgeschrittenes Wissen und werden hier ausführlicher behandelt: <a href="commands/_IfWinActive.htm">#IfWinActive</a>.
+					</p>
+<pre>
+#IfWinActive Unbenannt - Editor
+#space::
+   MsgBox Du hast WIN+LEERTASTE im Texteditor gedrückt.
+Return
+#IfWinActive
+</pre>
+					<p>Um die Kontextabhängigkeit zu deaktivieren, muss eine #IfWin-Direktive ohne Parameter angegeben werden. Zum Beispiel:</p>
+<pre>
+<em>; Texteditor</em>
+#IfWinActive unbenannt - Editor
+!q::
+   MsgBox, Du hast ALT+Q im Texteditor gedrückt.
+Return
+#IfWinActive
+
+<em>; Jedes andere Fenster, das nicht "Unbenannt - Editor" ist</em>
+!q::
+   MsgBox, Du hast ALT+Q in einem beliebigen Fenster gedrückt.
+Return
+</pre>
+					<p>Wenn #IfWin-Befehle deaktiviert (oder nie in einem Skript verwendet) wurden, gelten Hotkeys und Hotstrings für alle Fenster.</p><br />
+					<p>Die #IfWin-Befehle sind von der Position abhängig: sie beeinflussen nur Hotkeys und Hotstrings, die sich im Skript physisch darunter befinden.</p>
+
+<pre>
+<em>; Texteditor</em>
+#IfWinActive ahk_class Notepad
+#space::
+   MsgBox, Du hast WIN+LEERTASTE im Texteditor gedrückt.
+Return
+::msg::Du hast msg in den Texteditor geschrieben
+#IfWinActive
+
+<em>; MSPaint</em>
+#IfWinActive unbenannt - Paint
+#space::
+   MsgBox, Du hast WIN+LEERTASTE in MSPaint gedrückt!
+Return
+::msg::Du hast msg in MSPaint eingegeben!
+#IfWinActive
+</pre>
+					<p class="note">Auf der folgenden Seite findest du ausführlichere Informationen und weitere ähnliche Befehle:<br />
+					<a href="commands/_IfWinActive.htm">#IfWinActive</a></p>
+					<h3 id="s23">c. Mehrere Hotkeys/Hotstrings pro Datei</h3>			   
+					<p>Aus irgendeinem Grund bereitet dies bei einigen Leuten Kopfzerbrechen. Also werde ich es klarstellen: AutoHotkey bietet dir die Möglichkeit, <i>so viele</i> Hotkeys und Hotstrings in einer Datei zu haben, wie du willst. Ob es nun 1 oder 3253 sind (oder mehr).</p>
+<pre>
+#i::
+   run, http://www.google.com/
+Return
+
+^p::
+   run, notepad.exe
+Return
+
+~j::
+   send, ack
+Return
+
+:*:acheiv::achiev
+::achievment::achievement
+::acquaintence::acquaintance
+:*:adquir::acquir
+::aquisition::acquisition
+:*:agravat::aggravat
+:*:allign::align
+::ameria::America
+</pre>
+
+					<p>Der obige Code ist durchaus akzeptabel. Mehrere Hotkeys, mehrere Hotstrings. Alle in einer großen glücklichen Skript-Datei.</p>
+
+
+					<h3 id="s24">d. Beispiele</h3>
+<pre>::bzw::beziehungsweise                          <em>; Ersetzt "bzw" mit "beziehungsweise", sobald du ein <a href="commands/_Hotstring.htm">Endungszeichen</a> drückst.</em>
+:*:bzw::beziehungsweise                         <em>; Ersetzt "bzw" mit "beziehungsweise", ohne dass ein Endungszeichen notwendig ist.</em>
+
+^n::                                       <em>; STRG+N-Hotkey</em>
+   run, notepad.exe                        <em>; Startet das Programm notepad.exe, sobald du STRG+N drückst.</em>
+Return                                     <em>; Dies endet den Hotkey. Der Code darunter wird nicht ausgelöst.</em>
+
+^b::                                       <em>; STRG+B-Hotkey</em>
+   send, {ctrl down}c{ctrl up}             <em>; Kopiert den markierten Text. ^c könnte man auch verwenden, allerdings ist diese Methode sicherer.</em>
+   SendInput, [b]{ctrl down}v{ctrl up}[/b] <em>; Umschließt den markierten Text mit BBCode-Bold-Tags (Forum).</em>
+Return                                     <em>; Dies endet den Hotkey. Der Code darunter wird nicht ausgelöst.</em>
+</pre><!-- PAGE 2 --><!-- PAGE 2 --><!-- PAGE 2 -->
+
+					
+					
+					
+				</div>
+				<div id="sending_keystrokes" class="section">
+					<h2 id="s3">3 - Senden von Tastatureingaben</h2>
+					<p>
+						Also hast du dich jetzt entschieden, Tasten an einem Programm zu senden (schreiben). Das können wir tun. Verwende den <a href="commands/Send.htm">Send</a>-Befehl. Dieser Befehl sendet Tastatureingaben, um das Schreiben oder Drücken von Tasten zu simulieren.<br /><br />
+						Bevor wir in die Materie einsteigen, solltest du wissen, dass einige Leute häufig auf die folgendenen Probleme stoßen:<br />
+						So wie Hotkeys auch, hat Send spezielle Tasten. <a href="commands/Send.htm">Sehr, sehr viele davon.</a><br />
+						Hier die 4 bekanntesten Symbole:
+					</p>
+					<div>
+						<hr />
+						<p><span class="red">!</span>: Sendet die ALT-Taste. Zum Beispiel würde <em>Send Das ist ein Text!a</em> die Tasten "Das ist ein Text" senden und dann ALT+A drücken. <strong>Hinweis</strong>: !A hat in einigen Programmen einen anderen Effekt als !a. Das liegt daran, dass !A die Tastenkombination ALT+UMSCHALT+A und !a die Tastenkombination ALT+A drücken würde. Im Zweifelsfall sollte man immer Kleinbuchstaben verwenden.</p><p><span class="red">+</span>: Sendet die UMSCHALT-Taste. Zum Beispiel würde <em>Send +abC</em> den Text "AbC" senden, und <em>Send !+a</em> würde ALT+UMSCHALT+A drücken.</p><p><span class="red">^</span>: Sendet die STRG-Taste. Zum Beispiel würde <em>Send ^!a</em> die Tastenkombination STRG+ALT+A drücken, und <em>Send ^{Home}</em> würde STRG+POS1 senden. <strong>Hinweis</strong>: ^A hat in einigen Programmen einen anderen Effekt als ^a. Das liegt daran, dass ^A die Tastenkombination STRG+UMSCHALT+A und ^a die Tastenkombination STRG+A drücken würde. Im Zweifelsfall sollte man immer Kleinbuchstaben verwenden.</p><p><span class="red">#</span>: Sendet die WIN-Taste (die Taste mit dem Windows-Logo), demzufolge würde <em>Send #e</em> die WIN-Taste gedrückt halten und dann den Buchstaben "e" drücken.</p>
+					</div>
+					<p><i><strong>Die nächsten Absätze beziehen sich auf die <a href="commands/Send.htm">Tabelle der Send-Seite</a>.</strong><br /></i></p>
+					<p class="note">
+						Hinweis:<br />Diese Tabelle gilt <b>nicht</b> für <a href="Hotkeys.htm">Hotkeys</a>. Das heißt, dass du <span class="key">CTRL</span> oder <span class="key">ENTER</span> (oder jede andere Taste) nicht mit geschweiften Klammern umschließen sollst, während du ein Hotkey erstellst.
+					</p><br />
+
+					<div>
+						Das folgende Beispiel zeigt, wie ein Hotkey aussehen soll:
+<pre>
+<em>; Beim Erstellen eines Hotkeys...
+; FALSCH</em>
+{LCtrl}::
+   send, AutoHotkey
+Return
+
+<em>; RICHTIG</em>
+LCtrl::
+   send, AutoHotkey
+Return
+</pre>
+					</div>
+					<hr />
+					<div>
+						<p>Die oben verlinkte gigantische Tabelle zeigt, welche speziellen Tasten in AHK integriert sind. Zum Beispiel: <code>{enter}</code> und <code>{space}</code>.<br />
+						Viele Leute denken, dass die geschweiften Klammern auf den Dokumentations-Seiten nur zum Spaß gesetzt sind. Aber tatsächlich <b>sind sie notwendig</b>. Nur so kann AHK wissen, dass <code>{!}</code> ein "Ausrufezeichen" ist, und nicht "drücke die <span class="key">ALT</span>-Taste". Wie gesagt, schau dir die Tabelle auf der <a href="commands/Send.htm">Send</a>-Seite an, um zu überprüfen, ob alle Klammern richtig gesetzt sind.</p>
+<pre>
+<em>; Siehst du das Ausrufezeichen in den geschweiften Klammern? Wenn es nicht so wäre, würde AHK
+; die ALT-Taste drücken.</em>
+send, Dieser Text wurde geschrieben{!}
+</pre>
+
+<pre>
+<em>; Das gleiche wie oben, aber mit der ENTER-Taste. AHK würde "enter" schreiben, wenn ...
+; ... es nicht mit geschweiften Klammern umschlossen wäre.</em>
+send, Mehrere enter Zeilen wurden enter gesendet. <em>; FALSCH</em>
+send, Mehrere{enter}Zeilen wurden{enter}gesendet. <em>; RICHTIG</em>
+</pre>
+						<div>
+							Viele Leute denken auch, dass <b>jedes einzelne Zeichen</b> in geschweiften Klammern gesetzt werden muss. Das ist FALSCH. Wenn das Zeichen in der Tabelle nicht vorkommt, muss es nicht in Klammern gesetzt werden. Normale Buchstaben, Zahlen oder sogar einige Symbole (wie z. B. der Punkt) müssen <b>nicht</b> mit geschweiften Klammern umschlossen werden.<br /> 
+							Außerdem kannst du mit Send-Befehlen mehr als einen Buchstaben, eine Zahl oder einen Symbol senden. Massenhaft Send-Befehle mit jeweils nur einem Buchstaben sind daher nicht notwendig.
+
+<pre>
+<em>; Umschließe nur Wörter oder einzelne Buchstaben, die in der oben erwähnten Tabelle vorkommen.</em>
+send, {a}       <em>; FALSCH</em>
+send, {b}       <em>; FALSCH</em>
+send, {c}       <em>; FALSCH</em>
+send, {a}{b}{c} <em>; FALSCH</em>
+send, {abc}     <em>; FALSCH</em>
+send, abc       <em>; RICHTIG</em>
+</pre>
+						</div>
+						<div>
+							Um eine Taste gedrückt zu halten oder loszulassen, muss der Tastenname mit Klammern umschlossen und dann das Wort UP oder DOWN verwendet werden.
+
+<pre>
+<em>; Hier wird gezeigt, wie du eine Taste gedrückt hältst und eine weitere Taste (oder mehrere) drückst.
+; Sollte eine Methode nicht funktionieren, kannst du eine andere ausprobieren.</em>
+send, ^s                     <em>; Beide Zeilen senden STRG+S</em>
+send, {ctrl down}s{ctrl up}  <em>; Beide Zeilen senden STRG+S</em>
+Send, {ctrl down}c{ctrl up}
+Send, {b down}{b up}
+Send, {TAB down}{TAB up}
+Send, {Up down}  <em>; Drückt die NACH-OBEN-Taste nach unten.</em>
+Sleep, 1000      <em>; Hält sie eine Sekunde lang gedrückt.</em>
+Send, {Up up}    <em>; Lässt die NACH-OBEN-Taste los.</em>
+</pre>
+						</div>
+					</div>
+					<div>
+							Aber nun fragst du dich vielleicht <i>"Wie kann ich meine wirklich langen Send-Befehle besser lesbar machen?"</i>. Einfach. Dazu gibt es den sogenannten Fortsetzungsbereich. Schreibe einfach auf einer neuen Zeile eine öffnende Klammer, dann deinen Inhalt, und zum Schluss ein schließende Klammer. Um mehr darüber zu erfahren, siehe <a href="Scripts.htm#continuation">Fortsetzungsbereiche</a>.
+<pre>
+send,
+(
+Zeile 1
+Zeile 2
+Äpfel sind Früchte.
+)
+</pre>
+
+					</div>
+					<p class="note">
+						Hinweis: Es gibt verschiedene Formen von Send. Jede hat ihre eigenen Besonderheiten. Wenn eine Form von Send nicht wie gewollt funktioniert, kannst du einen anderen Typ von Send ausprobieren. Ersetze einfach den Befehlsnamen "Send" mit "SendPlay" oder was auch immer du möchtest.<br />
+						Hier die üblichen Wege zum Senden von Text:<br />
+						
+						Send<br />
+						
+						SendRaw<br />
+						
+						SendInput<br />
+						
+						SendPlay<br />
+						
+						SendEvent<br />
+						Um mehr über die verschiedenen Methoden zu erfahren, <a href="commands/Send.htm">siehe hier</a>.
+					</p>
+					<h3 id="s31">a. Spiele </h3>
+					<p>
+						<b><span style="color:red;">Das ist wichtig!</span></b><br />
+						Viele Spiele, vorallem die modernen, haben Software zur Abwehr von Cheats. Dinge wie GameGuard, Hackshield, PunkBuster und einige andere. Bei einigen Spielen mit Cheat-Abwehr wirst du feststellen, dass deine Hotkeys, Hotstrings und Send-Befehle nicht funktionieren werden.<br />
+						Das Umgehen solcher Systeme verletzt die Richtlinien des Spiels und kann dazu führen, dass du gebannt wirst. Außerdem ist es ziemlich schwierig, solche Systeme zu umgehen. Es gibt Methoden, um die Erfolgschance in einigen Spielen zu erhöhen, aber es gibt keinen magischen <i>"Funktioniere sofort!!!"</i> Button. Probiere also <b>JEDE</b> Methode aus, bevor du aufgibst.<br />
+					</p>
+
+					<p>
+						Es gibt auch bekannte Probleme mit DirectX. Wenn du bei einem DirectX-Spiel auf Probleme stößt, kannst du folgendes ausprobieren. Du solltest auch versuchen, dass Spiel im Fenstermodus auszuführen, sofern es möglich ist. Dies behebt einige DirectX-Probleme.<br />
+						Weitere DirectX-Probleme können auftreten, wenn Pixel- oder Image-Befehle verwendet werden. Farben werden als schwarz (0x000000) erkannt, egal welche Farbe du versuchst abzurufen. Eine weitere heikle Sache, die man beheben muss. Versuche, das Spiel im Fenstermodus auszuführen, wenn du kannst.
+					</p>
+					<p>
+						Es gibt keine einheitliche Lösung, um AutoHotkey für alle Programme lauffähig zu machen. Wenn alle Versuche fehlschlagen, ist es sehr wahrscheinlich, dass AutoHotkey für deine Anforderung nicht geeignet ist.
+					</p>
+					<div>
+						<hr />
+						Aus der <a href="FAQ.htm#games">FAQ</a>-Seite:<br />
+						Einige Spiele verwenden ausschließlich DirectInput. Der Nebeneffekt davon ist, dass sie möglicherweise alle künstlichen Tastatureingaben und Mausklicks ignorieren. Man könnte das umgehen, wenn man eine der folgenden Möglichkeiten (oder in Kombination) ausprobiert:
+						<ul>
+							<li>Verwende <a href="commands/Send.htm#SendPlayDetail">SendPlay</a> via: 1) SendPlay-Befehl; 2) <a href="commands/SendMode.htm">SendMode</a> Play; und/oder 3) <a href="Hotstrings.htm#SendMode">Hotstring</a>-Option SP.</li>
+							<li>Erhöhe <a href="commands/SetKeyDelay.htm">SetKeyDelay</a>. Zum Beispiel:</li>
+							<li><code>SetKeyDelay, 0, 50</code></li>
+							<li><code>SetKeyDelay, 150, 150, Play</code></li>
+							<li>Versuche <a href="commands/ControlSend.htm">ControlSend</a>, das dort funktionieren könnte, wo andere Sendemethoden versagen.</li>
+						</ul>
+					</div><!-- PAGE 3 --><!-- PAGE 3 --><!-- PAGE 3 -->
+					
+					
+					
+				</div>
+				<div id="running_programs_and_websites" class="section">
+					<h2 id="s4">4 - Öffnen von Programmen &amp; Webseiten</h2>
+					<div>
+						Um ein Programm wie <i>Mspaint.exe, Calc.exe, script.ahk</i> oder sogar einen Ordner zu starten, kannst du den <a href="commands/Run.htm">Run</a>-Befehl verwenden. Mit diesen Befehl kann man auch URLs wie <a href="https://autohotkey.com/">https://autohotkey.com/</a> öffnen. Wenn dein Computer deinen gewünschten Typ eines Programms starten kann, ist das sehr einfach:
+
+<pre>
+<em>; Startet ein Programm. Hinweis: Die meisten Programme benötigen einen VOLLSTÄNDIGEN Dateipfad.</em>
+Run, %A_ProgramFiles%\Beliebiges_Programm\Programm.exe
+
+<em>; Öffnet eine Webseite</em>
+Run, https://autohotkey.com
+</pre>
+					</div>
+					<div>
+						Es gibt noch ein paar weitere Features, wie z. B. Befehlszeilenparameter und CLSID.<br />
+						Wenn du mehr darüber erfahren willst, besuche die <a href="commands/Run.htm">Run-Seite</a>.
+						<br />
+						Hier ein paar weitere Beispiele:
+<pre>
+<em>; Einige Programme benötigen keinen vollständigen Pfad, wie z. B. die Standardprogramme von Windows.</em>
+Run, Notepad.exe
+Run, MsPaint.exe
+
+<em>; Öffnet den Ordner "Eigene Dokumente" mithilfe der built-internen <a href="Variables.htm#BuiltIn">AHK-Variable</a></em>
+Run, %A_MyDocuments%
+
+<em>; Öffnet einige Webseiten</em>
+Run, https://autohotkey.com
+Run, http://www.google.com
+</pre>
+						<br />
+						<p class="note">Auf der folgenden Seite findest du ausführlichere Informationen:<br /><a href="commands/Run.htm">commands/Run.htm</a>.</p>
+					</div><!-- PAGE 4 --><!-- PAGE 4 --><!-- PAGE 4 -->
+
+
+					
+					
+					
+				</div>
+				<div id="commands_vs_functions" class="section">
+					<h2 id="s5">5 - Befehle vs. Funktionen()</h2>
+					<div>
+						AutoHotkey hat zwei Typen von Dingen, die der Scripter zum Erstellen des Codes verwenden kann:<br />
+						Befehle und Funktionen()<br />
+						<p class="note">Hilfreiche Links:<br />
+							Eine Liste aller Befehle: <a href="commands/index.htm">commands/index.htm</a><br />
+							Eine Liste aller Built-in-Funktionen: <a href="Functions.htm#BuiltIn">Functions.htm#BuiltIn</a></p>
+					</div>
+					<h3>Befehle</h3>
+					<p>
+						Du kannst einen Befehl anhand seiner Syntax (Struktur) erkennen. Befehle verwenden, im Gegensatz zu Funktionen, keine Klammern um ihre Parametern. Ein Befehl würde also wie folgt aussehen:<br />
+						<code>Befehl, Parameter1, Parameter2, Parameter3</code><br />
+
+						<br />Es ist nicht möglich, mehrere Befehle auf einer Zeile zu setzen (Ausnahme: <a href="commands/IfEqual.htm">ifEqual</a>).<br />
+						Du kannst keine Befehle in den Parametern anderer Befehle setzen.
+					</p>
+
+<pre>
+Msgbox, Hello Run, Notepad.exe   <em>; Falsch</em>
+Msgbox, Hello, Run, Notepad.exe  <em>; Falsch</em>
+
+Msgbox, Hello      <em>; Richtig</em>
+Run, Notepad.exe
+</pre>
+
+					Der Unterschied zwischen Befehle und Funktionen ist, dass die Befehle die "traditionelle Syntax" verwenden. Das bedeutet: Wenn du eine <code>Variable</code> verwendest, MUSST du sie mit Prozentzeichen umschließen. <code>%Variable%</code>. Text und Zahlen müssen nicht in "Anführungszeichen" gesetzt werden. <code>Das ist ein Text</code>. Desweiteren kannst du, im Gegensatz zu Funktionen(), keine Berechnungen in den Parametern durchführen.
+					<p class="note">
+						Allerdings gibt es die Möglichkeit, mit einem einzelnen <code>%</code> einen Ausdruck zu erzwingen, um trotzdem Berechnungen in Parametern durchführen zu können.
+					</p>
+					<h3>Funktionen</h3>
+					<div>
+						Wie bereits erwähnt, sind Funktionen etwas anders, weil sie Klammern verwenden. Eine typische Funktion sieht wie folgt aus:<br />
+						<code>Funktion(Parameter1, Parameter2, Parameter3)</code><br /><br />
+						Die Hauptunterschiede der Funktionen sind:
+						<ol>
+							<li>
+								Du kannst Berechnungen in ihnen durchführen.<br />
+								
+								-- <code>SubStr(37*12, 1, 2)</code><br />
+								
+								-- <code>SubStr(A_Hour-12, 2)</code>
+							</li>
+							<li>
+								Variablen müssen nicht in Prozentzeichen gesetzt werden.<br />
+								
+								-- <code>SubStr(A_Now, 7, 2)</code>
+							</li>
+							<li>
+								Funktionen können innerhalb von anderen Funktionen erfolgen.<br />
+								
+								-- <code>SubStr(A_AHKPath, inStr(A_AHKPath, "AutoHotkey"))</code>
+							</li>
+							<li>
+								Text muss in Anführungszeichen gesetzt werden.<br />
+								-- <code>SubStr("Ich programmiere, genial!", 16)</code>
+							</li>
+						</ol>
+
+						Funktionen geben üblicherweise einen anderen Wert zurück, als es Befehle tun. Befehle benötigen den <i>AusgabeVar</i>-Parameter, Funktionen nicht. Die gängigste Methode, den Wert einer Funktion in eine Variable zu speichern, sieht wie folgt aus:<br />
+						<code><span style="color:#ff4400"><b>MeineVariable</b></span>:=Funktion(Parameter)</code>
+
+<pre>
+<span style="color:#ff4400"><b>MeineVariable</b></span>:=SubStr("Ich programmiere, genial!", 16)
+</pre>
+					<p class="note">Dies ist nicht der einzige Weg, aber der häufigste. Man speichert den Wert der Funktion (in diesem Fall <code>SubStr(...)</code>) in <code>MeineVariable</code>, das auf der rechten Seite von := erfolgt.<br />
+					<a href="Functions.htm">Mehr zu Funktionen</a></p>
+					</div>
+					<div>
+						Kurz gesagt:
+
+<pre>
+<em>; Das sind Befehle</em>
+Msgbox, Dies ist etwas Text.
+StringReplace, Ausgabe, Eingabe, AutoHotKey, AutoHotkey, ALL
+SendInput, Das ist genial{!}{!}{!}
+
+<em>; Das sind Funktionen</em>
+SubStr("Ich programmiere, genial!", 16)
+FileExist(VariableMitPfad)
+Output:=SubStr("Ich programmiere, genial!", 16)
+</pre>
+
+					</div>
+					<h3 id="s51">a. Code-Blöcke</h3>
+					<p>
+						<a href="commands/Block.htm">Code-Blöcke</a> sind kleine geschweifte Klammern (<b>{</b> und <b>}</b>), die einen Abschnitt des Codes zusammenfassen, damit AutoHotkey sie als eine große Familie sieht, die zusammenbleiben müssen. Sie stehen oft in Verbindung mit <i>If</i> und <i>Loop</i>s. Lässt man die Klammern weg, wird nur die erste Zeile im Block aufgerufen.<br /><br />
+					</p>
+					<div>
+						Im folgenden Code werden die beiden Zeilen nur ausgeführt, wenn Var gleich 5 ist.
+<pre>
+if (var=5)
 {
-    WinActivate
+   MsgBox, Var ist gleich %var%!!
+   Exitapp
+}
+</pre><br />
+
+						Im folgenden Code wird die Message Box nur angezeigt, wenn Var gleich 5 ist. Das Skript wird immer beendet, selbst wenn Var <b>nicht</b> 5 ist.
+
+<pre>
+if (var=5)
+   MsgBox, Var ist gleich %var%!!
+   Exitapp
+</pre><br />
+
+						Diese Vorgehensweise ist völlig in Ordnung, da dem If nur eine Codezeile zugeordnet ist. Dieses Beispiel ist genau das gleiche wie oben, allerdings habe ich die zweite Zeile ausgerückt, um zu zeigen, dass sie vom if getrennt ist.
+
+<pre>
+if (var=5)
+   MsgBox, Var ist gleich %var%!!
+MsgBox, Wir sind nun 'außerhalb' von if. Geschweifte Klammern waren nicht notwendig, weil sich nur eine Zeile darunter befindet.
+</pre>
+					</div><!-- PAGE 5 --><!-- PAGE 5 --><!-- PAGE 5 -->
+					
+					
+					
+				</div>
+				<div id="variables" class="section">
+					<h2 id="s6">6 - Variablen</h2>
+					<p>
+						<a href="Variables.htm">Variablen</a> sind wie die kleinen Klebezettel, die einige Informationen enthalten. Sie können zum Speichern von Text, Zahlen, Daten von Funktionen und Befehlen oder mathematischen Gleichungen verwendet werden. Ohne sie wäre das Programmieren &amp; Scripting sehr viel anstrengender.
+					</p>
+					<hr />
+					<div>
+						Es gibt mehrere Wege, wie Variablen gefüllt werden kann; wir befassen uns mit den bekanntesten Formen. Bitte achte auf das Gleichheitszeichen (=).
+						<ol>
+							<li><code>variable=text</code><br />
+								<div class="indented">Dies ist die einfachste Form für eine Variable - die traditionelle Zuweisung. Gebe einfach deinen Text ein und fertig.</div>
+							</li>
+							<li><code>variable=%variable2%</code><br />
+								<div class="indented">Das gleiche wie oben, aber der Wert einer Variable wird in eine andere Variable gespeichert.</div>
+							</li>
+							<li><code>variable:="text"</code><br />
+								<div class="indented">Dies ist eine Ausdruckszuweisung, wegen dem : vor dem =. Jeder Text muss in "Anführungszeichen" gesetzt werden.</div>
+							</li>
+							<li><code>variable:=variable2</code><br />
+								<div class="indented">Im Ausdrucksmodus brauchen Variablen keine Prozentzeichen.</div>
+							</li>
+							<li><code>variable:=6+8/3*2-sqrt(9)</code><br />
+								<div class="indented">Dank des Ausdrucks kannst du Berechnungen durchführen!</div>
+							</li>
+						</ol>
+						Nummer 1 &amp; 2 können kombiniert werden. <code>var=%var2% etwas Text %var3%.</code><br />
+						3, 4 &amp; 5 können auch kombiniert werden. <code>var:="Das Ergebnis von 5+ " Variable " ist: " 5+Variable</code>
+					</div>
+					<hr />
+
+					<p class="note">
+						Jedes Gleichheitszeichen (<b>=</b>) mit einem Symbol davor nennt man einen <b>Zuweisungsoperator</b> - sie sind immer ein Ausdruck. Das heißt also, dass <code>:=</code> <code>+=</code> <code>-=</code> <code>.=</code> usw. immer Ausdrücke verwenden.
+					</p>
+					<h3 id="s61">a. Wann und wo Prozentzeichen verwendet werden</h3>
+					<p>
+						Häufig treten Probleme auf, wenn es um Variablen und Prozentzeichen (<b>%</b>) geht. Hoffentlich wird folgendes die Unklarheiten beseitigen.
+					</p>
+					<div>
+						Wann und wo %'s verwendet werden:
+						<ol>
+							<li>Bei Befehlen (siehe oben).<br />
+							-- Außer wenn der Parameter AusgabeVar oder EingabeVar ist.</li>
+							<li>Beim Speichern eines Wertes in eine Variable via traditionellem Modus (ein Gleichheitszeichen ohne Symbol davor).</li>
+						</ol>
+
+						Wann und wo %'s <b>nicht</b> verwendet werden:
+						<ol>
+							<li>In Parametern, die Eingabe- oder Ausgabevariablen sind, zum Beispiel: <code>StringLen, <span style="color:red">OutputVar</span>, <span style="color:red">InputVar</span></code></li>
+							<li>Auf der linken Seite einer Zuweisung: <code><span style="color:red">Var</span> = 123abc</code></li>
+							<li>Auf der linken Seite von traditionellen (Nicht-Ausdrucks-) if-Anweisungen: <code>If <span style="color:red">Var1</span> &lt; %Var2%</code></li>
+							<li>Überall in Ausdrücken. Zum Beispiel:
+<pre>
+If (<span style="color:red">Var1</span> != <span style="color:red">Var2</span>)
+   <span style="color:red">Var1</span> := <span style="color:red">Var2</span> + 100
+</pre>
+							</li>
+						</ol>
+					</div>
+
+
+
+					<h3 id="s62">b. Abrufen von Benutzereingaben</h3>
+					<div>
+						Manchmal möchtest du den Benutzer den Wert von Etwas auswählen lassen. Dafür gibt es mehrere Möglichkeiten, die einfachste davon ist die <a href="commands/InputBox.htm">InputBox</a>. Hier ein einfaches Beispiel, wie man dem Benutzer ein paar Fragen stellen und die eingegebenen Dinge verarbeiten kann.
+
+<pre>
+InputBox, AusgabeVar, Frage 1, Wie heißt du mit Vornamen?
+if (AusgabeVar="Bill")
+   MsgBox, Du hast einen tollen Namen, %AusgabeVar%.
+
+InputBox, AusgabeVar2, Frage 2, Magst du AutoHotkey?
+if (AusgabeVar2="ja")
+   MsgBox, Danke`, dass du mit %AusgabeVar2% geantwortet hast`, %AusgabeVar%! Wir werden gute Freunde.
+else
+   MsgBox, %AusgabeVar%`, das macht mich traurig.
+</pre>
+					</div>
+
+					<h3 id="s63">c. Weitere Beispiele</h3>
+					<div>
+<pre>
+<a href="commands/MsgBox.htm">MsgBox</a>, 4, , Möchtest du fortfahren?
+<a href="commands/IfMsgBox.htm">IfMsgBox</a>, No
+    Return                <em>; Bei Nein wird der Code genau hier gestoppt.</em>
+MsgBox Du hast JA gedrückt.  <em>; Ansonsten hat der Benutzer Ja ausgewählt.</em>
+</pre>
+<pre>
+<em>; Einige Beispiele, die zeigen, wo Prozentzeichen möglich sind und wo nicht</em>
+Variable=text                      <em>; Speichert etwas Text in eine Variable via traditioneller Zuweisung.</em>
+VariableZahl:=6                  <em>; Speichert eine Zahl in eine Variable via Ausdruckszuweisung.</em>
+Variable2=%Variable%               <em>; Speichert eine Variable in eine andere Variable via traditioneller Zuweisung.</em>
+Variable3:=Variable                <em>; Speichert eine Variable in eine andere Variable via Ausdruckszuweisung.</em>
+Variable4.=Variable                <em>; Fügt eine Variable an das Ende einer anderen Variable an, via Ausdruckszuweisung.</em>
+Variable5+=VariableZahl          <em>; Addiert den Wert einer Variable mit einer anderen Variable via Ausdruckszuweisung.</em>
+Variable5-=VariableZahl          <em>; Subtrahiert den Wert einer Variable mit einer anderen Variable via Ausdruckszuweisung.</em>
+Variable6:=SubStr(Variable, 2, 2)  <em>; Variable innerhalb einer Funktion. Dies ist immer ein Ausdruck.</em>
+Variable7=%Variable% Text          <em>; Speichert eine Variable plus etwas Text in eine andere Variable via traditioneller Zuweisung.</em>
+Variable8:=Variable " Text"        <em>; Speichert eine Variable plus etwas Text in eine andere Variable via Ausdruckszuweisung.</em>
+MsgBox, %Variable%                 <em>; Variable innerhalb eines Befehls. </em>
+StringSplit, Variable, Variable, x <em>; Variable innerhalb eines Befehls, der EingabeVar und AusgabeVar verwendet.</em>
+if (VariableZahl=6)              <em>; Immer wenn ein IF Klammern hat, wird es ein Ausdruck sein. Also keine %'s.</em>
+If (Variable != VariableZahl)    <em>; Immer wenn ein IF Klammern hat, wird es ein Ausdruck sein. Also keine %'s.</em>
+if VariableZahl=6                <em>; Ohne Klammern ist das if traditionell. Allerdings benötigen nur die Variablen auf der 'rechten Seite' %'s. </em>
+If Var1 &lt; %Var2%                   <em>; Ohne Klammern ist das if traditionell. Allerdings benötigen nur die Variablen auf der 'rechten Seite' %'s. </em>
+</pre>
+					</div><!-- PAGE 6 --><!-- PAGE 6 --><!-- PAGE 6 -->
+				
+				
+				
+				</div>
+				<div id="objects" class="section">
+					<h2 id="s7">7 - Objekte</h2>
+					<p>
+						<a href="Objects.htm">Objekte</a> sind eine Möglichkeit, deine Daten auf eine effizientere Weise zu organisieren. Manchmal werden Objekte auch als Arrays bezeichnet, aber es ist wichtig zu wissen, dass alle Arrays eigentlich nur Objekte sind. Wir geben den Objekten unterschiedliche Namen, abhängig davon, wo sie verwendet werden, aber prinzipiell sind alle Objekte gleich.
+					</p>
+					<hr />
+					Ein Objekt ist im Grunde eine Sammlung von Variablen. Die Variablennamen sind bekannt als "Keys" (Schlüssel), und die Inhalte der Variablen sind "Values" (Werte).<br />
+					<br />
+					Wenn Leute ein Objekt als <i>Array</i> oder <i>indexiertes Array</i> bezeichnen, dann meinen sie damit, dass alle Keys fortlaufende Nummern sind, beginnend bei 1.<br />
+					Wenn Leute ein Objekt als <i>assoziatives Array</i> bezeichnen, dann meinen sie damit, dass die Keys entweder Zeichenketten (Text) oder nicht-fortlaufende Nummern sind. Manchmal ist es eine Mischung aus beidem, auch fortlaufende Nummern!<br />
+					<br />
+					Es gibt keine Einschränkungen, was ein Key oder Wert sein kann - sie können sogar andere Arrays sein!
+					<br />
+					Wenn die Werte auch Arrays sind, wird das Objekt als <i>Mehrdimensionales Array</i> bezeichnet, aber dazu später mehr.
+					<hr />
+					<div>
+						Es gibt eine Reihe von Gründen, ein Objekt für etwas zu nutzen. Einige Beispiele:<br />
+						<ol>
+							<li>Du willst eine nummerierte Liste von Dingen, z. B. eine Einkaufsliste (dies würde man als indexiertes Array bezeichnen)</li>
+							<li>Du möchtest etwas gitterförmig darstellen, z. B. für ein Brettspiel (dies würde mit mehrdimensionalen Objekten erfolgen)</li>
+							<li>Du hast eine Liste von Dingen, in der jedes Ding eine Bezeichnung hat, wie z. B. die Merkmale einer Frucht (dies würde man als assoziatives Array bezeichnen)</li>
+						</ol>
+					</div>
+					<h3 id="s71">a. Erstellen von Objekten</h3>
+					<div>
+						Es gibt mehrere Möglichkeiten, ein Objekt zu erstellen, die gängigsten davon sind unten aufgelistet<br />
+						<ol>
+							<li><code>MeinObjekt := ["eins", "zwei", "drei", 17]</code><br />
+								<div class="indented" >
+									Syntax mit eckigen Klammern. Auch als "indexiertes Array" bekannt. Ein indexiertes Array ist ein Objekt, das eine Liste von Elementen repräsentiert, nummeriert mit 1 und höher. In diesem Beispiel wird der Wert <code>"eins"</code> in den Objekt-Key <code>1</code> gespeichert (aka Index 1), und der Wert <code>17</code> in den Objekt-Key <code>4</code>  (aka Index 4).
+								</div>
+							</li>
+							<li><code>Banane := {"Form": "Länglich", "Farbe": "Gelb", "Geschmack": "Köstlich", "Preis": 3}</code><br />
+								<div class="indented" >
+									Syntax mit geschweiften Klammern. Auch als "assoziatives Array" bekannt. Ein assoziatives Array ist eine Sammlung von Daten, wo jedes Element einen Namen hat. In diesem Beispiel wird der Wert <code>"Gelb"</code> in den Objekt-Key <code>"Farbe"</code> gespeichert. Außerdem wird der Wert <code>3</code> in den Objekt-Key <code>"Preis"</code> gespeichert.
+								</div>
+							</li>
+							<li><code>MeinObjekt := Array("eins", "zwei", "drei", 17)</code><br />
+								<div class="indented" >
+									Die array-erstellende Funktion. Identisch zur Syntax mit eckigen Klammern, aber in in einer Funktion verpackt.
+								</div>
+							</li>
+							<li><code>Banane := Object("Form", "Länglich", "Farbe", "Gelb", "Geschmack", "Köstlich", "Preis", 3)</code><br />
+								<div class="indented" >
+									Die objekt-erstellende Funktion. Identisch zur Syntax mit geschweiften Klammern, aber in einer Funktion verpackt.
+								</div>
+							</li>
+						</ol>
+
+						Vergiss nicht, dass all diese Definitionen das gleiche erstellen (Objekte), nur mit unterschiedlichen Keys.
+
+					</div>
+
+					<h3 id="s72">b. Verwenden von Objekten</h3>
+					Es gibt viele Möglichkeiten, Objekte zu verwenden, wie das Abrufen von Werten, das Setzen von Werten, Hinzufügen von Werten, und mehr.
+					<div>
+						<br />
+						<strong>Setzen von Werten:</strong>
+						<div class="indented">
+							Das Setzen von Werten in ein Objekt ist genauso einfach wie das Setzen eines Wertes in eine Variable.<br />
+							Alles was du tun musst ist, deine eckigen Klammern oder Punktschreibweise (wie im Abrufen-Abschnitt gezeigt) auf die linke Seite eines Ausdruckszuweisungssymbols <code>:=</code> zu setzen.<br />
+							<br />
+							Zum Beispiel:<br />
+							<code>Banane.Konsistenz := "Matschig"</code><br />
+							<code>Banane["Verfault"] := True <em>; Diese Banane ist verfault. Bäh.</em></code>
+						</div>
+						<br />
+						<strong>Abrufen von Werten:</strong>
+						<ol>
+							<li><code>Wert := Banane["Farbe"]</code><br />
+								<div class="indented" >Schreibweise mit eckigen Klammern. Mit dieser Schreibweise kann ein Ausdruck als Key verwendet werden, um an den Wert deines Objekts zu kommen. In diesem Fall habe ich den einfachen Ausdruck <code>"Farbe"</code> verwendet, das (wenig überraschend) der Key <code>Farbe</code> ist. Du wirst eine Message Box mit dem Wort "Gelb" erhalten, weil wir diesen Wert dem Key <code>Farbe</code> im <a href="#s71">vorherigen Abschnitt</a> zugewiesen haben.
+								</div>
+							</li>
+							<li><code>Wert := Banane.Farbe</code><br />
+								<div class="indented" >
+									Punktschreibweise. Diese Schreibweise lässt dich nur literale Zeichenketten als Keys verwenden. Variablen als Keys sind hier nicht möglich..
+								</div>
+							</li>
+						</ol>
+						<br />
+						<strong>Hinzufügen neuer Keys und Werte:</strong>
+						<ol>
+							<li>Direktes Hinzufügen von Werten
+								<div class="indented" >
+									Um einen Wert oder Key direkt hinzuzufügen, solltest du einfach einen Key anlegen, der noch nicht existiert. Zum Beispiel:<br />
+									<code>MeinObjekt.NeuerKey := "Glänzend"</code><br />
+									<code>MeinObjekt["NeuerKey"] := 3.1415</code>
+								</div>
+							</li>
+							<li>Einfügen von Werten
+								<div class="indented" >
+									Keys und Werte können auch in ein Objekt eingefügt werden, wenn man folgende Methoden verwendet.<br />
+									<br />
+									<code>MeinObjekt.InsertAt(Index, Wert1, Wert2, Wert3...)</code><br />
+									<i>Index</i> ist ein beliebiger Integer-Key. Diese Methode wird ALLE höheren Integer-Keys um die Anzahl der eingefügten Werte nach oben verschieben, selbst wenn Lücken vorhanden sind (fügst du beispielsweise zwischen den Keys 1 und 100 einen Wert in Key 50 ein, wird der Key 100 auf 101 verschoben).<br />
+									<br />
+									<code>MeinObjekt.Push(Wert1, Wert2, Wert3...)</code><br />
+									Diese Methode bewirkt, dass die Werte an das Ende des Arrays <i>MeinObjekt</i>  "angefügt" werden. Das heißt, dass die Werte bei dem höchsten Integer-Key plus eins eingefügt werden.<br />
+								</div>
+							</li>
+						</ol>
+						<br />
+						<strong>Entfernen von Keys und Werte:</strong>
+						<ol>
+							<li>Leermachen des Wertes.<br />
+								<div class="indented" >
+									Die einfachste Möglichkeit zum Entfernen eines Wertes ist es, ihn einfach leer zu machen. Dazu musst man "" setzen, auch bekannt als <i>leere Zeichenkette</i>. Zwar wird dadurch der Key nicht entfernt, aber es lässt den Wert so erscheinen, als wäre er ein ungesetzter Wert.<br />
+									Der Key wird weiterhin als vorhanden angezeigt, wenn man die <code>HasKey</code>-Methode verwendet, und taucht weiterhin in einer <code>For</code>-Schleife auf. (For-Schleifen werden später erklärt)
+								</div>
+							</li>
+							<li>Entfernen des Keys<br />
+								<div class="indented" >
+									Es gibt mehrere Wege, wie der Key <i>und gleichzeitig auch</i> sein Wert entfernt werden kann. Da gibt es:
+								</div>
+								<ol>
+									<li><code>EntfernterWert := MeinObjekt.Delete(BeliebigerKey)</code>
+										<div class="indented">
+											Der vorherige Wert von <code>MeinObjekt[BeliebigerKey]</code> wird in <i>EntfernterWert</i> gespeichert.
+										</div>
+									</li>
+									<li><code>AnzahlEntfernterKeys := MeinObjekt.Delete(ErsterKey, LetzterKey)</code>
+										<div class="indented">
+											Die auf diese Weise verwendete Delete-Methode erlaubt es dir, einen Bereich von Integer- (nummerierten) oder Zeichenketten-Keys zwischen ErsterKey und LetzterKey zu entfernen.<br />
+											<br />
+											Der zurückgegebene Wert ist die Anzahl der Keys, die entfernt wurden - er kann nützlich sein, wenn du eine Lücke zwischen deinen Keys hast (wenn du z. B. die Keys 1, 3 und 4 angegeben hast, wird AnzahlEntfernterKeys eine 3 sein, weil nur 3 Keys entfernt werden konnten)
+										</div>
+									</li>
+									<li><code>MeinObjekt.Pop()</code>
+										<div class="indented">
+											Entfernt den höchsten Integer-Key, und gibt den Wert zurück. Höhere Keys als diesen gibt es nicht.
+										</div>
+									</li>
+									<li><code>EntfernterWert := MeinObjekt.RemoveAt(Index)</code><br />
+									<code>AnzahlEntfernterKeys := MeinObjekt.RemoveAt(Index, Länge)</code>
+										<div class="indented">
+											Diese Methode entfernt alle Keys von <i>Index</i> bis <i>Index + Länge - 1</i>. Wenn <i>Länge</i> fehlt, gilt standardmäßig 1. Nach dem Entfernen der Keys werden alle höheren Integer-Keys (nummerierten) nach unten verschoben, um die Lücke zu füllen, so dass der Wert bei <i>Index + Länge</i>, sofern vorhanden, nun bei <i>Index</i> sein wird. Dieser Sachverhalt entpricht der Funktionsweise der InsertAt-Methode mit mehreren angegebenen Werten.
+										</div>
+									</li>
+								</ol>
+							</li>
+						</ol>
+					</div><!-- PAGE 7 --><!-- PAGE 7 --><!-- PAGE 7 -->
+
+					
+					
+					
+				</div>
+				<div id="helpful_goodies" class="section">
+					<h2 id="s8">8 - Andere hilfreiche Goodies</h2>
+					<p>
+						Wir haben das Ende unserer Reise erreicht, werter Freund. Ich hoffe, du hast etwas gelernt. Aber bevor wir gehen, solltest du dir noch ein paar wissenswerte Dinge anschauen. Viel Spaß!
+					</p>
+					<h3 id="s81">a. Die mysteriösen eckigen Klammern</h3>
+					<div>
+						Auf nahezu jeder Seite in der Dokumentation wirst du auf diese beiden Symbole (<b>[</b> und <b>]</b>) treffen, die den Code in der gelben Syntax-Box umschließen. Alles, was sich innerhalb dieser eckigen Klammern befindet, ist <b><i>OPTIONAL</i></b>. Das bedeutet, dass das Zeug darin weggelassen werden kann, wenn du es nicht benötigst. Beim Schreiben deines Codes ist es sehr wichtig, <b>NICHT</b> die eckigen Klammern in deinem Code zu verwenden.<br /><br />
+						Auf der <a href="commands/ControlGetText.htm">ControlGetText</a>-Seite kannst du folgendes sehen (ohne Farben):<br />
+						<code>ControlGetText, AusgabeVar <span style="color:red"><b>[</b></span><span style="color:navy">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span><span style="color:red"><b>]</b></span></code><br /><br />
+						Also könntest du folgendes tun:<br />
+						<code>ControlGetText, AusgabeVar</code><br /><br />
+
+						Oder weitere Details einfügen:<br />
+						<code>ControlGetText, AusgabeVar, Steuerelement, Fenstertitel</code><br /><br />
+
+						Was ist, wenn du nur Titelausnahme verwenden willst, aber nicht Fenstertext oder Fenstertitel? Einfach!<br />
+						<code>ControlGetText, AusgabeVar, Steuerelement,,, Titelausnahme</code><br /><br />
+						<p class="Note">
+							Bitte beachte, dass du Parameter nicht IGNORIEREN aber leer lassen kannst.<br />
+							Wenn du "Fenstertitel, Fenstertext" ignorierst, würde es wie folgt aussehen und Probleme verursachen:<br />
+							<code>ControlGetText, AusgabeVar, Steuerelement, Titelausnahme</code><br />
+							Dies wäre gültig.<br />
+							<code>ControlGetText, AusgabeVar, Steuerelement,,, Titelausnahme</code>
+						</p>
+					</div>
+					<h3 id="s82">b. Herausfinden deiner AHK-Version</h3>
+					<div>
+						Führe den folgenden Code aus, um deine aktuelle AHK-Version anzeigen zu lassen:
+<pre>
+MsgBox, %A_AHKVersion%
+</pre>
+
+						Oder suche nach "AutoHotkey Help File" oder "AutoHotkey.chm" im Startmenü oder Installationsverzeichnis.
+					</div>
+
+					<h3 id="s83">c. Trial-and-Error-Prinzip</h3>
+					<p>
+						Trial-and-Error (Versuch und Irrtum) ist eine sehr häufige und effektive Möglichkeit des Lernens. Statt bei jeder Kleinigkeit nachzufragen, ist es sinnvoller, manchmal etwas Zeit alleine zu verbringen (manchmal Stunden oder Tage) und dabei etwas selbst auf die Reihe zu bekommen - dies wird dir helfen, schneller zu lernen.
+					</p>
+					<p>
+						Wenn du etwas ausprobierst und auf einen Fehler stößt, solltest du diesen Fehler analysieren. Versuche dann, deinen Code zu korrigieren. Führe ihn nochmals aus. Bekommst du immer noch einen Fehler, modifiziere deinen Code etwas mehr. Setze dieses Verfahren fort, bis dein Code funktioniert. Du erfährst viel auf diese Weise, während du die Dokumentation liest und kennenlernst, was funktioniert und was nicht. <span class="InlineCode">Versuch, Fehlschlag, Versuch, Fehlschlag, Versuch, Versuch, Versuch, Fehlschlag, Fehlschlag, <b>Erfolg!</b></span>
+					</p>
+					<p>
+						Dies ist der Weg, den viele "Profis" gegangen sind. Aber frage ruhig, wir beißen nicht. Der Lernprozess benötigt Zeit; Die "Profis" haben AutoHotkey auch nicht in einem Tag gemeistert.
+					</p>
+					<p class="Note">"Wenn es beim ersten Mal nicht klappt, versuchen, versuchen Sie es erneut." - William E. Hickson</p>
+					<h3 id="s84">d. Einrückung</h3>
+					<div>
+						Dieses Einrücken ist sehr wichtig! Zwar läuft dein Code auch ohne ganz gut, allerdings könnte es dir und anderen beim Lesen Kopfschmerzen bereiten. Ein kleines Skript (25 Zeilen oder weniger) ohne Einrückung wird wahrscheinlich keine Probleme beim Lesen verursachen, aber man wird schnell nachlässig. Am besten versuchst du baldmöglichst zu lernen, wie man einrückt.<br />
+						Einrückung hat keinen festgelegten Stil, aber es empfiehlt sich, alles konsistent zu halten.<br />
+						"<b>Was ist Einrückung?</b>", fragst du dich? Man erschafft einfach Leerräume im Code, um sehen zu können, was zu was gehört. Die meisten Leute verwenden 3 oder 4 Leerzeichen oder einen Tabulatorzeichen pro "Stufe".<br /><br />
+						Ohne Einrückung:
+
+<pre>
+if (Auto="alt")
+{
+msgbox, Das Auto ist wirklich alt.
+if (Räder="platt")
+{
+msgbox, Das Auto ist nicht zum Fahren geeignet.
+Return
 }
 else
 {
-    Run Notepad
-    WinWait Unbenannt - Editor
-    WinActivate
-}</pre>
-<p>Das obere Beispiel sucht zuerst nach vorhandenen Fenstern, deren Titel mit "Unbenannt - Editor" beginnen (abhängig von Groß- und Kleinschreibung). Sobald so ein Fenster gefunden wird, wird es aktiviert. Ansonsten wird der Editor gestartet und darauf gewartet, bis das Fenster "Unbenannt - Editor" erscheint, um es dann zu aktivieren. Das obere Beispiel nutzt auch das <a href="misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>, um zu verhindern, dass bei WinActivate jedesmal der Fenstertitel angegeben werden muss.</p>
-<p>Weitere häufig verwendete Fensterbefehle:</p>
-<ul>
-  <li><a href="commands/WinActive.htm">WinActive</a>: Überprüft, ob das angegebene Fenster zurzeit aktiv ist.</li>
-  <li><a href="commands/WinWaitActive.htm">WinWaitActive</a>: Wartet, bis das angegebene Fenster aktiv ist (üblicherweise nach dem Senden einer fensteraktivierenden Tastatureingabe wie STRG+F für "Suchen").</li>
-  <li><a href="commands/WinClose.htm">WinClose</a>: Schließt das angegebene Fenster.</li>
-  <li><a href="commands/WinMove.htm">WinMove</a>: Verschiebt das angegebene Fenster und/oder ändert dessen Größe.</li>
-  <li><a href="commands/WinMinimize.htm">WinMinimize</a>, <a href="commands/WinMaximize.htm">WinMaximize</a>, <a href="commands/WinRestore.htm">WinRestore</a>: Minimiert, maximiert oder stellt das angegebene Fenster wieder her.</li>
-</ul>
-<h2 id="Dialogs">Abrufen von Benutzereingaben mit MsgBox, InputBox, usw.</h2>
-<p>Das folgende Beispiel zeigt ein Dialogfenster mit zwei Buttons an (JA und NEIN):</p>
-<pre><a href="commands/MsgBox.htm">MsgBox</a>, 4, , Möchten Sie fortfahren?
-if <a href="Variables.htm#MsgBoxResult">A_MsgBoxResult</a> = "No"
-    return
-<em>; Ansonsten hat der Benutzer JA gedrückt.</em>
-MsgBox Es wurde JA gedrückt.</pre>
-<p>Mit dem <a href="commands/InputBox.htm">InputBox</a>-Befehl kann der Benutzer dazu aufgefordert werden, einen String einzugeben. Mit <a href="commands/FileSelect.htm">FileSelect</a> oder <a href="commands/DirSelect.htm">DirSelect</a> wird der Benutzer dazu gebracht, eine Datei oder einen Ordner auszuwählen. Für komplexere Aufgaben kann der <a href="commands/Gui.htm">Gui</a>-Befehl verwendet werden, um benutzerdefinierte Dateneingabeformulare und Benutzeroberflächen zu erstellen.</p>
-<p>Tipp: Wahrscheinlich ist dir bereits in den anderen Beispielen aufgefallen, dass bei jedem Befehl das erste Komma weggelassen werden kann (außer wenn der erste Parameter leer ist oder mit := oder = beginnt, oder der Befehl einzeln am Anfang eines <a href="Scripts.htm#continuation">Fortsetzungsbereichs</a> vorkommt). Zum Beispiel:</p>
-<pre>MsgBox Das ist ok.
-MsgBox<strong>,</strong> Das ist auch ok (es hat ein direktes Komma).</pre>
-<h2 id="Variables">Verwenden von Variablen und der Zwischenablage</h2>
-<p>Eine <em>Variable</em> ist ein Speicherbereich, in der Text oder Zahlen vom Script gespeichert werden. Eine Variable, die nur Ziffern enthält (optional mit einem Dezimalpunkt), wird bei einer mathematischen Operation oder bei einem Vergleich automatisch als Zahl interpretiert.</p>
-<p>Mit Ausnahme von lokalen Variablen in <a href="Functions.htm#Locals">Funktionen</a> sind alle Variablen global; das heißt, dass deren Inhalte jederzeit vom Script gelesen oder geändert werden können. Darüber hinaus müssen Variablen nicht deklariert werden; sie stehen zur Verfügung, sobald sie verwendet werden (außerdem ist jede Variable anfangs leer).</p>
-<p>Die folgenden Beispiele zeigen, wie ein String in eine Variable gespeichert wird:</p>
-<pre>MeineVar1 = 123
-MeineVar2 = Mein String</pre>
-Der Inhalt einer Variable kann wie folgt mit einer Variable verglichen werden:
-<pre>if MeineVar2 = Mein String
-{
-    MsgBox MeineVar2 enthält den String "Mein String".
+msgbox, Sei vorsichtig! Dieses alte Auto ist zu gefährlich`, um es zu fahren.
 }
-if MeineVar1 &gt;= 100
-{
-    MsgBox MeineVar1 enthält %MeineVar1%, das eine Zahl größer gleich 100 ist.
-}</pre>
-<p>Beachte bei der obigen MsgBox-Zeile, dass das zweite Vorkommen von <em>MeineVar1</em> in Prozentzeichen gesetzt ist. Das bewirkt, dass der Inhalt von <em>MeineVar1</em> an dieser Position angezeigt wird. Mit der gleichen Technik ist es möglich, den Inhalt einer Variable in eine andere Variable zu kopieren. Zum Beispiel:</p>
-<pre>MeineVarVerkettung = %MeineVar1% %MeineVar2%</pre>
-<p>Die obere Zeile speichert den String "123 Mein String" (ohne Anführungszeichen) in MeineVarVerkettung.</p>
-<p>Das folgende Beispiel zeigt, wie der Inhalt einer Variable mit dem Inhalt einer anderen Variable verglichen werden kann:</p>
-<pre>if (Elementzählung &gt; Elementmaximum)
-{
-    MsgBox Der Wert von Elementzählung (%Elementzählung%) ist größer als %Elementmaximum%.
-}</pre>
-<p>Beachte, dass die erste Zeile im obigen Beispiel Klammern enthält. Diese Klammern verdeutlichen, dass die if-Anweisung ein <a href="Variables.htm#Expressions">Ausdruck</a> enthält. Sollten sie nicht vorhanden sein, würde diese Zeile als "if-Anweisung ohne Ausdruck" angesehen werden, wodurch Elementmaximum in Prozentzeichen gesetzt werden müsste (solche if-Anweisungen sind auf einen Vergleichsoperator beschränkt; das heißt, dass sie weder mathematische Operatoren noch Bindewörter wie "AND" und "OR" enthalten können).</p>
-<br>
-<p><u><strong>Berechnung</strong></u>: Mathematische Operationen können durchgeführt werden, indem der Doppelpunkt-Gleich-Operator (:=) dazu verwendet wird, das Ergebnis eines <a href="Variables.htm#Expressions">Ausdrucks</a> in einer Variable zu speichern.</p>
-<pre>Nettopreis := Preis * (1 - Rabatt/100)</pre>
-<p>Siehe <a href="Variables.htm#Expressions">Ausdrücke</a> für eine komplette Liste von mathematischen Operatoren.</p>
-<p><br>
-<u><strong>Zwischenablage</strong></u>: Die Variable namens <em>Clipboard</em> hat eine besondere Bedeutung, da sie den aktuellen Text der Windows-Zwischenablage enthält. Trotzdem kann sie so verwendet werden, als wäre sie eine normale Variable. Das folgende Beispiel zeigt den aktuellen Inhalt der Zwischenablage an:</p>
-<pre>MsgBox %Clipboard%</pre>
-<p>Das nächste Beispiel verdeutlicht, wie der aktuelle Inhalt der Zwischenablage mit neuem Text ersetzt werden kann:</p>
-<pre>Clipboard = Erste Textzeile.`r`nZweite Textzeile.`r`n</pre>
-<p>In der oberen Zeile werden `r und `n (umgekehrtes Häkchen, gefolgt vom Buchstaben "r" oder "n") dazu verwendet, zwei Sonderzeichen zu kennzeichnen: CR und LF. Diese zwei Zeichen beginnen eine neue Textzeile, als hätte der Benutzer die ENTER-Taste gedrückt.</p>
-<p>Im nächsten Beispiel wird gezeigt, wie ein beliebiger Text an die Zwischenablage angefügt wird (oder an einer anderen Variable):</p>
-<pre>Clipboard = %Clipboard% und der angefügte Text.</pre>
-<p>Siehe <a href="misc/Clipboard.htm">Clipboard</a> und <a href="Variables.htm">Variablen</a> für weitere Details.</p>
-<h2 id="Loop">Wiederholen von mehreren Aktionen</h2>
-<p>Mit einer <a href="commands/Loop.htm">Schleife</a> kann irgendetwas mehr als einmal nacheinander ausgeführt werden. Das folgende Beispiel zeigt eine <a href="commands/MsgBox.htm">MsgBox</a> dreimal an:</p>
-<pre>Loop 3
-{
-    MsgBox Dieses Fenster wird dreimal angezeigt.
-}</pre>
-<p>Man kann nach dem Wort Loop auch eine Variable angeben, wenn die Anzahl der Durchläufe irgendwo anders im Script festgelegt wurde:</p>
-<pre>Loop %Ausführungsanzahl%
-{
-    Run C:\Serverstatusüberprüfung.exe
-    Sleep 60000  <em>; Wartet 60 Sekunden.</em>
-}</pre>
-<p>Im oberen Beispiel wird die Schleife je nach Anzahl mehrfach durchgeführt. Enthält Ausführungsanzahl allerdings eine 0, wird die Schleife komplett übersprungen.</p>
-<p>Es ist auch möglich, dass sich eine Schleife selbst beenden kann, sobald sich eine oder mehrere Bedingungen ändern. Das folgende Beispiel klickt mehrmals mit der linken Maustaste, während der Benutzer die F1-Taste gedrückt hält:</p>
-<pre>$F1::  <em>; Macht die F1-Taste zu einem Hotkey (das $-Symbol unterstützt den "P"-Modus von GetKeyState unten).</em>
-Loop  <em>; Da hier keine Anzahl angegeben ist, erfolgt solange eine Endlosschleife, bis ein "break" oder "return" vorkommt.</em>
-{
-    if not GetKeyState("F1", "P")  <em>; Ist diese Anweisung wahr, hat der Benutzer die F1-Taste physisch losgelassen.</em>
-        break  <em>; Schleife unterbrechen.</em>
-    <em>; Ansonsten wird die Maustaste gedrückt gehalten (da oben kein "break" erfolgte).</em>
-    Click  <em>; Klickt einmal mit der linken Maustaste auf die aktuelle Position des Mauszeigers.</em>
 }
-return</pre>
-<p>Sobald der Benutzer beim oberen Beispiel die F1-Taste loslässt, wird das die Schleife erkennen und sich mithilfe des <a href="commands/Break.htm">Break</a>-Befehls selbst stoppen. <em>Break</em> bewirkt, dass die Ausführung auf die Zeile nach der schließenden Klammer der Schleife springt.</p>
-<p>Das gleiche kann auch mit einer <a href="commands/While.htm">"While"-Schleife</a> erreicht werden:</p>
-<pre>$F1::
-While GetKeyState("F1", "P")  <em>; Während die F1-Taste physisch gedrückt gehalten wird.</em>
+else
 {
-    Click
+msgbox, Meine Güte`, wie dein neues Fahrzeug glänzt.
 }
-return</pre>
-<p>Die oben genannten Beispiele sind Schleifen, die den allgemeinen Zweck dienen. Für speziellere Anforderungen können folgende Schleifen in Betracht gezogen werden:</p>
-<p><a href="commands/LoopReadFile.htm">Datei-lesende/-schreibende Schleife</a>: Ruft die Zeilen einer Textdatei einzeln ab. Diese Schleife kann dazu verwendet werden, eine Datei zeilenweise in ein anderes Format umzuwandeln. Sie kann auch dazu verwendet werden, nach Zeilen zu suchen, die deinen Kriterien entsprechen.</p>
-<p><a href="commands/LoopFile.htm">Dateimuster-Schleife</a>: Ruft die angegebenen Dateien oder Ordner einzeln ab. Auf diese Weise können Operationen auf Dateien oder Ordner durchgeführt werden, die deine Kriterien erfüllen.</p>
-<p><a href="commands/LoopParse.htm">Parsende Schleife</a>: Ermittelt nacheinander Teilstrings aus einem String. Auf diese Weise kann ein String wie "Rot,Grün,Blau" einfach in drei Felder aufgeteilt werden.</p>
-<p><a href="commands/LoopReg.htm">Registry-Schleife</a>: Ruft die Inhalte des angegebenen Registry-Subkeys einzeln ab.</p>
-<h2 id="Files">Bearbeiten von Dateien und Ordnern</h2>
-<p>Um Text ans Ende einer Datei anzufügen (oder eine neue Datei zu erstellen), verwende <a href="commands/FileAppend.htm">FileAppend</a> wie folgt. Beachte, dass `n (LF) verwendet wird, um danach eine neue Textzeile zu beginnen:</p>
-<pre>FileAppend, Eine anfügende Textzeile.`n, C:\Meine Dokumente\Meine Textdatei.txt</pre>
-<p>Um eine vorhandene Datei zu überschreiben, verwende <a href="commands/FileDelete.htm">FileDelete</a> vor FileAppend. Zum Beispiel:</p>
-<pre>FileDelete, C:\Meine Dokumente\Meine Textdatei.txt</pre>
-<p>Weitere Datei- oder Ordnerbefehle, die häufig verwendet werden:</p>
-<ul><li><a href="commands/FileRead.htm">FileRead</a>: Liest den Inhalt einer Datei in eine Variable.</li>
-  <li><a href="commands/LoopReadFile.htm">Datei-lesende Schleife</a>: Ermittelt nacheinander die Zeilen einer Textdatei.</li>
-  <li><a href="Functions.htm#FileExist">FileExist</a>: Überprüft, ob eine Datei oder ein Ordner vorhanden ist.</li>
-  <li><a href="commands/FileSelect.htm">FileSelect</a> und <a href="commands/DirSelect.htm">DirSelect</a>: Zeigt ein Standard-Dialogfenster an, womit der Benutzer einen Ordner auswählen kann.</li>
-  <li><a href="commands/FileDelete.htm">FileDelete</a> / <a href="commands/FileRecycle.htm">FileRecycle</a>: Löscht / Recycelt eine oder mehrere Dateien. Mit <a href="commands/DirDelete.htm">DirDelete</a> kann ein ganzer Ordner gelöscht werden.</li>
-  <li><a href="commands/FileCopy.htm">FileCopy</a> / <a href="commands/FileMove.htm">FileMove</a>: Kopiert / Verschiebt eine oder mehrere Dateien. Mit <a href="commands/DirCopy.htm">DirCopy</a> / <a href="commands/DirMove.htm">DirMove</a> kann ein ganzer Ordner kopiert/verschoben werden.</li>
-  <li><a href="commands/LoopFile.htm">Dateimuster-Schleife</a>: Ermittelt nacheinander die angegebenen Dateien oder Ordner.</li>
-  <li><a href="commands/FileSetAttrib.htm">FileSetAttrib</a> und <a href="commands/FileSetTime.htm">FileSetTime</a>: Ändert die Attribute oder Zeitstempel von einer oder mehreren Dateien.</li>
-  <li><a href="commands/IniRead.htm">IniRead</a>, <a href="commands/IniWrite.htm">IniWrite</a> und <a href="commands/IniDelete.htm">IniDelete</a>: Erstellt, Ermittelt und Verwaltet INI-Dateien im Standardformat.</li>
-  <li><a href="commands/RegRead.htm">RegRead</a>, <a href="commands/RegWrite.htm">RegWrite</a>, <a href="commands/RegDelete.htm">RegDelete</a> und <a href="commands/LoopReg.htm">Registry-Schleife</a>: Bearbeitet die Windows-Registry.</li>
-</ul>
-<h2 id="Overview">Übersicht über weitere Features</h2>
-<p>Siehe <a href="commands/index.htm">Befehlsliste</a> für eine Übersicht aller Befehle.</p>
-<p>&nbsp;</p>
-</body>
+</pre>
+
+						Eingerückt:
+
+<pre>
+if (Auto="alt")
+{
+   msgbox, Das Auto ist wirklich alt.
+   if (Räder="platt")
+   {
+      msgbox, Das Auto ist nicht zum Fahren geeignet.
+      Return
+   }
+   else
+   {
+      msgbox, Sei vorsichtig! Dieses alte Auto ist zu gefährlich`, um es zu fahren.
+   }
+}
+else
+{
+   msgbox, Meine Güte`, wie dein neues Fahrzeug glänzt.
+}
+</pre>
+						Wiki zeigt verschiedene Styles und Beispiele. Entscheide selber, wie du etwas einrücken willst, um es besser lesbar zu machen.<br />
+						<a href="http://en.wikipedia.org/wiki/Indent_style">http://en.wikipedia.org/wiki/Indent_style</a>
+					</div>
+
+					<h3 id="s85">e. Um Hilfe bitten</h3>
+					Bevor du fragst, solltest du selbst versuchen Nachforschungen zu betreiben oder den Code zu testen. Wenn die Ergebnisse nicht zufriedenstellend sind, lies unten weiter.
+					<ul>
+						<li>Frage ruhig, selbst die intelligentesten Leute tun das.</li>
+						<li>Zeige deine Versuche, selbst wenn du denkst, dass sie blöd sind.</li>
+						<li>Poste all deine Versuche.</li>
+						<li>Setze einfach voraus, dass <i>jeder außer du selbst</i> ein Vollidiot ist und nichts weiß. Gebe so viele Informationen wie möglich an, um uns Vollidioten mitzuteilen, was du vorhast. Hilf uns, dir zu helfen.</li>
+						<li>Sei geduldig.</li>
+						<li>Sei höflich.</li>
+						<li>Sei offen.</li>
+						<li>Sei nett.</li>
+						<li>Viel Spaß</li>
+					</ul>
+
+					Wenn du nicht sofort eine Antwort bekommst, warte wenigstens 1 Tag (24 Stunden), bevor du weiter um Hilfe bittest. Wir helfen gerne, aber wir tun dies auch kostenlos und in unserer Zeit. Wir könnten gerade arbeiten, schlafen, spielen, mit der Familie zusammen sein, oder zu beschäftigt sein, um zu helfen.<br />
+					Und während du auf Hilfe wartest, könntest du es auch weiter selbst versuchen. Es ist ein tolles Gefühl, etwas ohne Hilfe geschafft zu haben.
+
+					<h3 id="s86">f. Andere Links</h3>
+					<p>
+						<a href="FAQ.htm">Häufig gestellte Fragen (FAQ)</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

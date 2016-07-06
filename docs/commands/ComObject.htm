@@ -6,8 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -15,17 +13,17 @@
 
 <h1>ComObject()</h1>
 
-<p>Wrappt ein Wert, SafeArray oder COM-Objekt, so dass es vom Script verwendet oder an eine COM-Methode übergeben werden kann.</p>
+<p>Wrappt ein Wert, SafeArray oder COM-Objekt, um es für das Skript oder für eine COM-Methode nutzbar zu machen.</p>
 <pre class="Syntax">ComObject := ComObject(VarTyp, Wert [, Flags])</pre>
 
-<p><strong>Erweitert:</strong> Wrappt oder entwrappt einen unbearbeiteten <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>-Pointer, so dass es vom Script verwendet werden kann.</p>
+<p><strong>Erweitert:</strong> Wrappt oder entwrappt einen unbearbeiteten <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>-Pointer, um ihn für das Skript nutzbar zu machen.</p>
 <pre class="Syntax">ComObject := ComObject(DispPtr)</pre>
 
 <h3>Parameter</h3>
 <dl>
 
   <dt>VarTyp</dt>
-  <dd><p>Ein Integer-Wert, der den Typ des Wertes kennzeichnet. Siehe <a href="ComObjType.htm#vt">ComObjType</a> für eine Liste von Typen.</p></dd>
+  <dd><p>Ein Integer-Wert, der den Typ des Wertes kennzeichnet. Auf der <a href="ComObjType.htm#vt">ComObjType</a>-Seite findest du eine Liste mit allen möglichen Typen.</p></dd>
 
   <dt>Wert</dt>
   <dd><p>Der Wert, der gewrappt werden soll. Zurzeit werden nur Integer- oder Pointer-Werte unterstützt.</p></dd>
@@ -43,21 +41,31 @@
 <p>Dieses Objekt hat zwei Nutzen:</p>
 <ol>
   <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComObject(0xB, -1)</code> ein Objekt, das den logischen COM-Wert <em>True</em> repräsentieren würde.</li>
-  <li>Das Script kann unter Verwendung der <a href="../Objects.htm#Usage_Objects">Objektsyntax</a> mit einem gewrappten COM-Objekt oder SafeArray viel besser umgehen. Bei den meisten Scripts muss dies jedoch nicht manuell getan werden, weil ein Wrapper-Objekt automatisch durch <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjArray.htm">ComObjArray</a> und anderen COM-Methoden, die ein Objekt zurückgeben, erstellt wird.</li>
+  <li>Ein Skript kann deutlich besser mit einem COM-Objekt oder SafeArray interagieren (via <a href="../Objects.htm#Usage_Objects">Objektsyntax</a>), wenn es gewrappt wurde. Die meisten Skripte müssen dies nicht manuell tun, weil <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjArray.htm">ComObjArray</a> und andere COM-Methoden, die ein Objekt zurückgeben, automatisch ein Wrapper-Objekt erstellen.</li>
 </ol>
 
+<h3 id="ByRef">ByRef</h3>
+<p>Wenn der <a href="ComObjType.htm"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, kann mit leeren Klammern <code>[]</code> der verwiesene Wert gelesen oder geschrieben werden.</p>
+<p>Beim Erstellen eines Verweises muss <em>Wert</em> die Speicheradresse einer Variable oder Puffer mit ausreichender Kapazität sein, um einen Wert des angegebenen Typs enthalten zu können. Zum Beispiel könnte man wie folgt eine Variable erstellen, in der eine VBScript-Funktion etwas schreiben kann:</p>
+<pre>VarSetCapacity(var, 24, 0)
+vref := ComObject(0x400C, &amp;var)  <em>; 0x400C ist eine Kombination von VT_BYREF und VT_VARIANT.</em>
+
+vref[] := "Eingabewert"
+sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ByRefEx">unteren Beispiel</a> initialisiert werden.</em>
+MsgBox % vref[]</pre>
+
 <h3 id="Remarks">Allgemeine Bemerkungen</h3>
-<p>Wenn mit dieser Funktion ein <a href="http://msdn.microsoft.com/en-us/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointer gewrappt wurde, übernimmt das Wrapper-Objekt die Verantwortung, den Pointer bei Bedarf automatisch freizugeben. Wenn <em>VarTyp</em> weggelassen wurde, wird das Objekt nach einem IDispatch-Interface <a href="ComObjQuery.htm">suchen</a>; ist eins auffindbar, wird <em>DispPtr</em> sofort freigegeben.  Sollte das Script beabsichtigen, den Pointer nach Aufrufen dieser Funktion zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
-<p>Der <em>VarTyp</em> eines Wrapper-Objekts kann mit <a href="ComObjType.htm">ComObjType</a> abgerufen werden.</p>
-<p>Der <em>Wert</em> eines Wrapper-Objekts kann mit <a href="ComObjValue.htm">ComObjValue</a> abgerufen werden.</p>
-<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte einzigartig, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
+<p>Wenn mit dieser Funktion ein <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointer gewrappt wurde, wird das Wrapper-Objekt absofort dafür verantwortlich sein, den Pointer bei Bedarf automatisch freizugeben. Wenn man <em>VarTyp</em> weglässt, wird das Objekt <a href="ComObjQuery.htm">aufgefordert</a>, sein IDispatch-Interface zurückzugeben, sofern verfügbar; wenn es das macht, wird <em>DispPtr</em> sofort freigegeben. Wenn das Skript daraufhin beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiterzuverwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
+<p>Den aktuellen <em>VarTyp</em> eines Wrapper-Objekts kann man mithilfe von <a href="ComObjType.htm">ComObjType</a> ermitteln.</p>
+<p>Den aktuellen <em>Wert</em> eines Wrapper-Objekts kann man mithilfe von <a href="ComObjValue.htm">ComObjValue</a> ermitteln.</p>
+<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte getrennt voneinander, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
 
 <h3 id="Related">Siehe auch</h3>
-<p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="http://msdn.microsoft.com/en-us/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
+<p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
 
 <h3>Beispiele</h3>
-<pre class="NoIndent" id="ByRefEx"><em>; Beispiel: Übergibt ein VARIANT per Verweis an eine COM-Funktion.</em>
-
+<pre class="NoIndent" id="ByRefEx">
+<em>; Einleitung - ScriptControl benötigt eine 32-Bit-Version von AutoHotkey.</em>
 code := "
 (
 Sub Beispiel(Var)
@@ -67,36 +75,41 @@ End Sub
 )"
 sc := <a href="ComObjCreate.htm">ComObjCreate</a>("ScriptControl"), sc.Language := "VBScript", sc.AddCode(code)
 
+
+<em>; Beispiel: VARIANT-ByRef an eine COM-Funktion übergeben.</em>
 var := ComVar()
 var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox % var[]
 
-<em>; ComVar: Erstellt ein Objekt, mit dem ein Wert per Verweis übergeben werden kann.
-;   ComVar[] ermittelt den Wert.
-;   ComVar[] := Wert bestimmt den Wert.
-;   ComVar.ref empfängt ein ByRef-Objekt für die Übergabe an eine COM-Funktion.</em>
+<em>; ComVar: Erstellt ein Objekt, mit dem man ein Wert via ByRef übergeben kann.
+;   ComVar[] bekommt den Wert.
+;   ComVar[] := Val setzt den Wert.
+;   ComVar.ref bekommt ein ByRef-Objekt, das eine COM-Funktion nutzen kann.</em>
 ComVar(Type:=0xC)
 {
     static <a href="../Objects.htm#Custom_Objects">base</a> := { __Get: "ComVarGet", __Set: "ComVarSet", __Delete: "ComVarDel" }
-    <em>; Erstellt ein Array von 1 VARIANT.  Diese Methode erlaubt es, dass sich integrierter Code
-    ; um alle Konvertierungen zwischen VARIANT und ahk-interne Typen kümmern darf.</em>
+    <em>; Erstellt ein Array mit 1 VARIANT.  Durch diese Methode kann der Built-In-Code sich um
+    ; alle Umwandlungen zwischen VARIANT und AutoHotkey's interne Typen kümmern.</em>
     arr := <a href="ComObjArray.htm">ComObjArray</a>(Type, 1)
-    <em>; Sperrt das Array und ermittelt einen Pointer, der auf das VARIANT verweist.</em>
+    <em>; Sperrt das Array und bekommt einen Pointer, der auf das VARIANT verweist.</em>
     DllCall("oleaut32\SafeArrayAccessData", "ptr", <a href="ComObjValue.htm">ComObjValue</a>(arr), "ptr*", arr_data)
-    <em>; Speichert das Array und ein Objekt, mit dem VARIANT per Verweis übergeben werden kann.</em>
+    <em>; Speichert das Array und ein Objekt, mit dem das VARIANT-ByRef übergeben werden kann.</em>
     return { ref: ComObject(0x4000|Type, arr_data), _: arr, base: base }
 }
-ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Script auf ein unbekanntes Feld zugreift.</em>
-    if !p.Length <em>; Keine Namen/Parameter, also cv[]</em>
+
+ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Skript auf ein unbekanntes Feld zugreift.</em>
+    if !p.Length  <em>; Keine Namen/Parameter, also cv[]</em>
         return cv._[0]
 }
-ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Script ein unbekanntes Feld setzt.</em>
-    if !p.Length <em>; Keine Namen/Parameter, also cv[]:=v</em>
+
+ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Skript ein unbekanntes Feld setzt.</em>
+    if !p.Length  <em>; Keine Namen/Parameter, also cv[]:=v</em>
         return cv._[0] := v
 }
+
 ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
-    ; Das muss gemacht werden, damit das interne Array freigegeben werden kann.</em>
+    ; Notwendig, damit das interne Array freigegeben werden kann.</em>
     DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))
 }
 

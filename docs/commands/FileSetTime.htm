@@ -6,8 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -17,16 +15,16 @@
 
 <p>Ändert den Zeitstempel von einer oder mehreren Dateien (auch Ordner). Platzhalter werden unterstützt.</p>
 
-<pre class="Syntax">FileSetTime [, YYYYMMDDHH24MISS, Dateimuster, Zeitstempeltyp, OrdnerEinbeziehen?, Rekursiv?]</pre>
+<pre class="Syntax">FileSetTime [, YYYYMMDDHH24MISS, Dateimuster, Zeitstempeltyp, Modus]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>YYYYMMDDHH24MISS</dt>
-  <dd><p>Ist dieser Parameter leer oder nicht vorhanden, gilt standardmäßig die aktuelle Zeit. Ansonsten kann eine Zeit angegeben werden, die für diese Operation verwendet werden soll (siehe Bemerkungen zum Format). Jahre vor 1601 werden nicht unterstützt.</p></dd>
+  <dd><p>Fehlt dieser Parameter oder ist er leer, gilt standardmäßig die aktuelle Zeit. Ansonsten kann eine Zeit angegeben werden, die für diese Operation verwendet werden soll (siehe Bemerkungen zum Format). Jahre älter als 1601 werden nicht unterstützt.</p></dd>
 
   <dt>Dateimuster</dt>
   <dd><p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie C:\Temp\*.tmp. <em>Dateimuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.</p>
-    <p>Ist dieser Parameter nicht vorhanden, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
+    <p>Fehlt dieser Parameter, wird die aktuelle Datei von der innersten <a href="LoopFile.htm">Dateimuster-Schleife</a> verwendet.</p></dd>
 
   <dt>Zeitstempeltyp</dt>
   <dd>Welcher Zeitstempel gesetzt werden soll:<br>
@@ -34,15 +32,13 @@
       C = Erstellungsdatum<br>
       A = Zugriffsdatum</dd>
 
-  <dt>OrdnerEinbeziehen?</dt>
-  <dd><p>0 (Standard) Ordner werden nicht mit einbezogen (nur Dateien). <br>
-1 Alle Dateien und Ordner, die dem Platzhaltermuster entsprechen, werden mit einbezogen.<br>
-2 Nur Ordner werden mit einbezogen (keine Dateien).</p>
-      <p>Hinweis: Wenn Dateimuster ein einzelner Ordner statt ein Platzhaltermuster ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p></dd>
-
-  <dt>Rekursiv?</dt>
-  <dd><p>0 (Standard) Unterordner werden nicht durchsucht.<br>
-  1 Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Allerdings werden Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, übersprungen, als würde sie nicht existieren. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p></dd>
+  <dt>Modus</dt>
+  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
+    <p><code>D</code>: Verzeichnisse (Ordner) einbeziehen.<br>
+    <code>F</code>: Dateien einbeziehen. Fehlt sowohl F als auch D, werden nur Dateien einbezogen, aber nicht Ordner.<br>
+    <code>R</code>: Unterordner werden rekursiv behandelt, so dass die darin enthaltenen Dateien und Unterordner mit einbezogen werden, wenn sie mit <em>Dateimuster</em> übereinstimmen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Wenn R fehlt, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</p>
+    <p>Hinweis: Wenn <em>Dateimuster</em> ein einzelner Ordner statt ein Platzhaltermuster ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
+  </dd>
 
 </dl>
 
@@ -52,12 +48,13 @@
 <p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> auf 0 gesetzt, oder auf das aktuellste Ergebnis der Systemfunktion GetLastError(). Ansonsten enthält A_LastError einen Fehlercode, der kenntlich machen soll, warum keine Dateien gefunden wurden.</p>
 
 <h3>Bemerkungen</h3>
+<p><strong>Bekannte Einschränkung:</strong> Dateien und Ordner, deren kompletter Pfadname länger als 259 Zeichen ist, werden übersprungen und je nach Umstand in ErrorLevel gezählt. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p>
 <p>Das Zugriffsdatum einer Datei ist auf FAT16- &amp; FAT32-Datenträgern ungenauer als auf NTFS-Datenträgern.</p>
-<p><a name="YYYYMMDD"></a>YYYYMMDDHH24MISS besteht aus folgenden Elementen:</p>
+<p id="YYYYMMDD">YYYYMMDDHH24MISS besteht aus folgenden Elementen:</p>
 <table class="info">
   <tr>
-    <td width="46">YYYY</td>
-    <td width="538">4-stelliges Jahr</td>
+    <td>YYYY</td>
+    <td>4-stelliges Jahr</td>
   </tr>
   <tr>
     <td>MM</td>
@@ -80,17 +77,17 @@
     <td>2-stellige Sekunde (00-59)</td>
   </tr>
 </table>
-<p>Falls der YYYYMMDDHH24MISS-String nur teilweise angegeben ist (z. B. 200403), werden die restlichen fehlenden Elemente mit folgenden Standardwerten ersetzt:</p>
+<p>Falls die YYYYMMDDHH24MISS-Zeichenkette nur teilweise angegeben ist (z. B. 200403), werden die restlichen fehlenden Elemente mit folgenden Standardwerten ersetzt:</p>
 <p>MM: Monat 01<br>
   DD: Tag 01<br>
   HH24: Stunde 00<br>
   
   MI: Minute 00<br>
 SS: Sekunde 00</p>
-<p>Die integrierte Variable <a href="../Variables.htm#Now">A_Now</a> enthält die aktuelle Ortszeit im YYYYMMDDHH24MISS-Format. Ebenso enthält <a href="../Variables.htm#NowUTC">A_NowUTC</a> die aktuelle koordinierte Weltzeit.</p>
-<p><strong>Hinweis</strong>: Datum-Zeit-Werte können per <a href="DateAdd.htm">DateAdd</a> und <a href="DateDiff.htm">DateDiff</a> verglichen, addiert oder subtrahiert werden. Haben die Zeitwerte beim Vergleichen unterschiedliche Stringlängen, sollten diese nicht mit "größer als" oder "kleiner als" verglichen werden, weil sie in diesem Fall als Zahlen behandelt werden. Zum Beispiel ist 20040201 aus numerischer Sicht immer kleiner (aber chronologisch größer) als 200401010533. Verwende stattdessen <a href="DateDiff.htm">DateDiff</a>, um herauszufinden, ob die Differenz zwischen denen positiv oder negativ ist.</p>
+<p>Die Built-in-Variable <a href="../Variables.htm#Now">A_Now</a> enthält die aktuelle Ortszeit im YYYYMMDDHH24MISS-Format. Ebenso enthält <a href="../Variables.htm#NowUTC">A_NowUTC</a> die aktuelle koordinierte Weltzeit.</p>
+<p><strong>Hinweis</strong>: Datum-Zeit-Werte können per <a href="DateAdd.htm">DateAdd</a> und <a href="DateDiff.htm">DateDiff</a> verglichen, addiert oder subtrahiert werden. Haben die Zeitwerte beim Vergleichen unterschiedliche Zeichenlängen, sollten diese nicht mit "größer als" oder "kleiner als" verglichen werden, weil sie in diesem Fall als Zahlen behandelt werden. Zum Beispiel ist 20040201 aus numerischer Sicht immer kleiner (aber chronologisch größer) als 200401010533. Verwende stattdessen <a href="DateDiff.htm">DateDiff</a>, um herauszufinden, ob die Differenz zwischen denen positiv oder negativ ist.</p>
 <h3>Siehe auch</h3>
-<p><a href="FileGetTime.htm">FileGetTime</a>, <a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="FormatTime.htm">FormatTime</a>, <a href="LoopFile.htm">File-Loop</a>, <a href="DateAdd.htm">DateAdd</a>, <a href="DateDiff.htm">DateDiff</a></p>
+<p><a href="FileGetTime.htm">FileGetTime</a>, <a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="FormatTime.htm">FormatTime</a>, <a href="LoopFile.htm">Dateimuster-Schleife</a>, <a href="DateAdd.htm">DateAdd</a>, <a href="DateDiff.htm">DateDiff</a></p>
 <h3>Beispiel</h3>
 <pre class="NoIndent"><em>; Stellt das Änderungsdatum aller übereinstimmenden Dateien auf das aktuelle Datum um:</em>
 FileSetTime, , C:\temp\*.txt

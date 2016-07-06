@@ -6,8 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -28,13 +26,14 @@
 
   <dt>Dateiname</dt>
   <dd><p>Der Name der Datei, die sich im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis befindet, solange kein absoluter Pfad angegeben ist.</p>
-    <p><strong>Binärmodus</strong>: Um den Text im binären statt textuellen Modus anzufügen, muss an dem Dateinamen ein Sternchen vorangestellt werden. Dieser Modus bewirkt, dass jedes Zeilenumbruchszeichen (`n) als einzelnes LF-Zeichen (LF) geschrieben wird, anstatt standardmäßig CR+LF. Zum Beispiel: <code>*C:\Meine Unix-Datei.txt</code>.</p>
-    <p>Falls die Datei noch nicht offen ist (z. B. wegen einer <a href="LoopReadFile.htm">Datei-lesenden Schleife</a>), wird die Datei automatisch im Binärmodus geöffnet, wenn der <em>Text</em>-Parameter CR-LF-Paare (`r`n) enthält. Das heißt, dass die oben genannte Sternchenoption automatisch in Kraft tritt. Ein Sternchen bei einem <em>Text</em> mit `r`n verbessert die Performance, weil das Programm nicht nach diesen Zeichen in <em>Text</em> suchen muss.</p>
-    <p><strong><a name="stdout"></a>Standardausgabe (stdout)</strong>: Ein Sternchen (*) im Parameter <em>Dateiname</em> bewirkt, dass der <em>Text</em> zur Standardausgabe (stdout) gesendet wird. Solcher Text kann auf eine Datei umgeleitet, an eine EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">originellen Texteditoren</a> abgefangen werden. Zum Beispiel wäre die folgende Zeile als Eingabeaufforderung gültig:</p>
-      <pre>"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Script.ahk" &gt;"Fehlerprotokoll.txt"</pre>
-    <p>Allerdings wird ein zur Standardausgabe gesendeter Text nicht in der Eingabeaufforderung angezeigt, von wo aus die Zeile gestartet wurde. Dies kann umgangen werden, indem man die Ausgabe des Scripts an einen anderen Befehl oder Programm weiterleitet. Zum Beispiel:</p>
-      <pre>"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Script.ahk" |more</pre>
-      <pre>For /F "tokens=*" %L in ('""%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Script.ahk""') do @Echo %L</pre>
+    <p><strong>End-of-Line-Übersetzung (EOL)</strong>: Um die EOL-Übersetzung zu deaktivieren, musst du ein Sternchen vor dem Dateinamen setzen. Dieser Modus schreibt jedes Zeilenumbruchszeichen (`n) als einzelnes LF-Zeichen (LF), anstatt üblicherweise als CR+LF. Zum Beispiel: <code>*C:\Meine Unix-Datei.txt</code>.</p>
+    <p>Falls die Datei noch nicht offen ist (z. B. wegen einer <a href="LoopReadFile.htm">Datei-lesenden Schleife</a>), wird die EOL-Übersetzung automatisch deaktiviert, wenn der <em>Text</em>-Parameter CR-LF-Paare (`r`n) enthält. Das heißt, dass die oben genannte Sternchenoption automatisch in Kraft tritt. Ein Sternchen bei einem <em>Text</em> mit `r`n verbessert die Performance, weil das Programm nicht nach diesen Zeichen in <em>Text</em> suchen muss.</p>
+    <p id="stdout"><strong>Standardausgabe (stdout)</strong>: Ein Sternchen (*) im Parameter <em>Dateiname</em> bewirkt, dass der <em>Text</em> zur Standardausgabe (stdout) gesendet wird. Diese Art von Text kann auf eine Datei umgeleitet, an eine EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">originellen Texteditoren</a> abgefangen werden. Zum Beispiel wäre die folgende Zeile als Eingabeaufforderung gültig:</p>
+      <pre>"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Skript.ahk" &gt;"Fehlerprotokoll.txt"</pre>
+    <p>Allerdings wird ein zur Standardausgabe gesendeter Text nicht in der Eingabeaufforderung angezeigt, von wo aus die Zeile gestartet wurde. Diese Problematik kann umgangen werden, indem man die Ausgabe des Skripts an einen anderen Befehl oder Programm weiterleitet. Zum Beispiel:</p>
+      <pre>"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Skript.ahk" |more</pre>
+      <pre>For /F "tokens=*" %L in ('""%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Skript.ahk""') do @Echo %L</pre>
+    <p>Zwei Sternchen (**) in <em>Dateiname</em> bewirken, dass <em>Text</em> zum stderr-Stream gesendet wird.</p>
     </dd>
   <dt>Codierung</dt>
   <dd><p>Überschreibt die Standardcodierung von <a href="FileEncoding.htm">FileEncoding</a> mit einer benutzerdefinierten <em>Codierung</em>.</p></dd>
@@ -49,7 +48,7 @@
 <h3>Bemerkungen</h3>
 <p>Wenn eine vorhandene Datei überschrieben werden soll, muss man sie mit <a href="FileDelete.htm">FileDelete</a> löschen, bevor man FileAppend verwendet.</p>
 <p>Die Zieldatei wird nach Anfügen des Textes automatisch geschlossen (außer wenn FileAppend in seinem Einzelparameter-Modus innerhalb einer <a href="LoopReadFile.htm">Datei-lesenden/-schreibenden Schleife</a> ist).</p>
-<p><a href="FileOpen.htm">FileOpen()</a> im Anfügemodus bietet mehr Kontrolle als FileAppend und lässt die Datei geöffnet, anstatt sie jedesmal neu zu öffnen und zu schließen. Sobald eine Datei im Anfügemodus geöffnet ist, kann der String mit <code>File.<a href="../objects/File.htm#Write">Write</a>(String)</code> angefügt werden. File-Objekte unterstützen auch binäre Verarbeitung mit <a href="../objects/File.htm#RawWrite">RawWrite</a>/<a href="../objects/File.htm#RawRead">RawRead</a> oder <a href="../objects/File.htm#WriteNum">Write<i>Num</i></a>/<a href="../objects/File.htm#ReadNum">Read<i>Num</i></a>, während FileAppend nur Text unterstützt.</p>
+<p><a href="FileOpen.htm">FileOpen()</a> im Anfügemodus bietet mehr Kontrolle als FileAppend und lässt die Datei geöffnet, anstatt sie jedesmal neu zu öffnen und zu schließen. Sobald eine Datei im Anfügemodus geöffnet ist, kann die Zeichenkette mit <code>File.<a href="../objects/File.htm#Write">Write</a>(Zeichenkette)</code> angefügt werden. File-Objekte unterstützen auch binäre Verarbeitung mit <a href="../objects/File.htm#RawWrite">RawWrite</a>/<a href="../objects/File.htm#RawRead">RawRead</a> oder <a href="../objects/File.htm#WriteNum">Write<i>Num</i></a>/<a href="../objects/File.htm#ReadNum">Read<i>Num</i></a>, während FileAppend nur Text unterstützt.</p>
 <h3>Siehe auch</h3>
 <p><a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">Datei-lesende Schleife</a>, <a href="IniWrite.htm">IniWrite</a>, <a href="FileDelete.htm">FileDelete</a>, <a href="OutputDebug.htm">OutputDebug</a>, <a href="../Scripts.htm#continuation">Fortsetzungsbereiche</a></p>
 <h3>Beispiel</h3>
@@ -64,8 +63,8 @@ Standardmäßig befindet sich das CR-Zeichen (Enter) zwischen der vorherigen und
 Variablenverweise wie %Var% werden standardmäßig mit dem Variableninhalt ersetzt.
 ), C:\Meine Datei.txt</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><a name="FTP"></a><em>; Das folgende Beispiel zeigt, wie das FTP-Hochladen mithilfe des systeminternen FTP-Befehls
-; automatisiert werden kann. Dieses Script wurde auf Windows XP getestet.</em>
+<pre class="NoIndent" id="FTP"><em>; Das folgende Beispiel zeigt, wie das FTP-Hochladen mithilfe des systeminternen FTP-Befehls
+; automatisiert werden kann. Dieses Skript wurde auf Windows XP getestet.</em>
 
 FTPBefehlDatei = %A_ScriptDir%\FTPBefehle.txt
 FTPLogDatei = %A_ScriptDir%\FTPLog.txt

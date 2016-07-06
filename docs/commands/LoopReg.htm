@@ -6,8 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -17,31 +15,30 @@
 
 <p>Ruft die Inhalte des angegebenen Registry-Subkeys einzeln ab.</p>
 
-<pre class="Syntax">Loop, Reg, Rootkey\Key [, Modus]</pre>
+<pre class="Syntax">Loop, Reg, KeyName [, Modus]</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Reg</dt>
-  <dd><p>Dieser Parameter muss das Wort REG sein, und darf kein Ausdruck oder Variablenverweis sein.</p></dd>
+  <dd><p>Das literale Wort <code>Reg</code> (ungenaue Groß- und Kleinschreibung). Dieser Parameter kann weder eine Variable noch ein Ausdruck sein.</p></dd>
 
-  <dt>Rootkey</dt>
-  <dd><p>Muss entweder HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC) sein.</p>
-      <p>Um den Zugriff auf eine Remote-Registry zu ermöglichen, muss der Computername und ein Schrägstrich wie folgt vorangestellt werden:<br>  \\workstation01\HKEY_LOCAL_MACHINE</p></dd>
-
-  <dt>Key</dt>
-  <dd><p>Name des Keys (z. B. Software\BeliebigeAnwendung). Fehlt dieser Parameter oder ist er leer, werden die Inhalte von <em>Rootkey</em> abgerufen.</p></dd>
-
+  <dt>KeyName</dt>
+  <dd><p>Der vollständige Name des Registry-Keys.</p>
+  <p>Dieser Parameter muss mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um den Zugriff auf eine <a href="#remote">Remote-Registry</a> zu ermöglichen, muss der Computername und ein Doppelpunkt wie folgt vorangestellt werden: \\workstation01\HKEY_LOCAL_MACHINE</p></dd>
+  
   <dt>Modus</dt>
-  <dd><p>Ein oder mehrere der folgenden Zeichen (keine Unterscheidung zwischen Groß- und Kleinschreibung), optional durch Leer- oder Tabulatorzeichen getrennt:</p>
-      <p><strong>V</strong>: Ruft Werte ab, die dem Muster entsprechen. Dies ist die Standardeinstellung, wenn "D" nicht angegeben ist.<br>
-      <strong>K</strong>: Ruft Subkeys ab, die dem Muster entsprechen.<br>
-      <strong>R</strong>: Durchsucht die Subkeys - die darin enthaltenen Werte und Subkeys werden abgerufen.</p></dd>
+  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
+    <p><code>K</code>: Keys einbeziehen.<br>
+    <code>V</code>: Werte einbeziehen. Werte werden auch einbezogen, wenn K und V fehlen.<br>
+    <code>R</code>: Subkeys werden einbezogen. Wenn R fehlt, werden Keys und Werte innerhalb der Subkeys von <em>Key</em> nicht mit einbezogen.</p>
+  </dd>
+
 
 </dl>
 
 <h3>Bemerkungen</h3>
 <p>Eine Registry-Schleife ist nützlich, wenn du mehrere Werte und Subkeys einzeln abarbeiten willst. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> innerhalb der Schleife verwendet werden kann, ohne sie unterbrechen zu müssen.</p>
-<p>Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben.</p>
+<p id="vars">Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben.</p>
 <table class="info">
   <tr>
     <td>A_LoopRegName</td>
@@ -57,7 +54,7 @@
   </tr>
   <tr>
     <td>A_LoopRegSubKey</td>
-    <td>Name des aktuellen Subkeys. Dies wird das gleiche sein wie der <em>Key</em>-Parameter, sofern man nicht den <em>Rekursiv</em>-Parameter zum Durchsuchen anderer Subkeys verwendet. In diesem Fall wird es der vollständige Pfad des aktuell abgerufenen Eintrags sein, ohne Rootkey. Zum Beispiel: Software\BeliebigeAnwendung\MeinSubkey</td>
+    <td>Name des aktuellen Subkeys. Der Inhalt dieser Variable ist identisch zum <em>Key</em>-Parameter, es sei denn, der <em>Rekursiv</em>-Parameter wird benutzt, um andere Subkeys durchzugehen. In diesem Fall wird es der vollständige Pfad des aktuell abgerufenen Eintrags sein, ohne Rootkey. Zum Beispiel: Software\BeliebigeAnwendung\MeinSubkey</td>
   </tr>
   <tr>
     <td>A_LoopRegTimeModified</td>
@@ -67,8 +64,8 @@
 <p>Innerhalb einer Registry-Schleife können bei folgenden Befehlen die Parameter weggelassen werden, um zu kennzeichnen, dass der aktuell ermittelte Eintrag abgearbeitet werden soll:</p>
 <table class="info">
   <tr>
-    <td width="21%"><a href="RegRead.htm">RegRead</a>, AusgabeVar</td>
-    <td width="79%">Liest den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird Errorlevel auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht.</td>
+    <td style="width:21%"><a href="RegRead.htm">RegRead</a>, AusgabeVar</td>
+    <td>Liest den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird Errorlevel auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht.</td>
   </tr>
   <tr>
     <td><a href="RegWrite.htm">RegWrite</a> [, Wert]</td>
@@ -79,7 +76,7 @@
     <td>Löscht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird er gelöscht, zusammen mit seinen Subkeys und Werten.</td>
   </tr>
 </table>
-<p>Beim Zugriff auf eine Remote-Registry (über den <em>Rootkey</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
+<p id="remote">Beim Zugriff auf eine Remote-Registry (über den <em>KeyName</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
 <ul>
   <li>Auf dem Zielrechner muss der Dienst "Remote Registry" laufen.</li>
   <li>Der Zugriff auf eine Remote-Registry kann fehlschlagen, wenn der Zielcomputer nicht zur Domäne des Benutzers gehört oder der Benutzername nicht genügend Berechtigungen hat (siehe unten für mögliche Übergangslösungen).</li>
@@ -97,8 +94,8 @@
 Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\TypedURLs
     RegDelete</pre>
 <p>&nbsp;</p>
-<pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testscript:</em>
-Loop, Reg, HKCU\Software\Microsoft\Windows, R KV  <em>; Ermittelt rekursiv Key und Werte.</em>
+<pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testskript:</em>
+Loop, Reg, HKCU\Software\Microsoft\Windows, R KV  <em>; Ermittelt rekursiv Keys und Werte.</em>
 {
     if a_LoopRegType = "key"
         Wert := ""
@@ -114,7 +111,7 @@ Loop, Reg, HKCU\Software\Microsoft\Windows, R KV  <em>; Ermittelt rekursiv Key u
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Dieses Beispiel sucht in der gesamten Registry
 ; nach einem oder mehreren bestimmten Werten.</em>
-RegSuche("Notepad")
+RegSearch("Notepad")
 return
 
 RegSuche(Ziel)
@@ -123,37 +120,37 @@ RegSuche(Ziel)
     Loop, Reg, HKEY_LOCAL_MACHINE, KVR
     {
         Gosub, RegEintragUntersuchen
-        if !RegSucheFortfahren  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+        if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
     Loop, Reg, HKEY_USERS, KVR
     {
         Gosub, RegEintragUntersuchen
-        if !RegSucheFortfahren  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+        if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
     Loop, Reg, HKEY_CURRENT_CONFIG, KVR
     {
         Gosub, RegEintragUntersuchen
-        if !RegSucheFortfahren  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+        if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
-    <em>; Hinweis: Ich glaube, dass HKEY_CURRENT_USER nicht durchsucht werden muss,
-; wenn HKEY_USERS durchsucht wird.  Außerdem ist HKEY_CLASSES_ROOT die Kombination von
-    ; HKEY_LOCAL_MACHINE und HKEY_CURRENT_USER, daher müssen nicht alle drei durchsucht werden.</em>
+    <em>; Hinweis: Ich glaube nicht, dass man zusätzlich noch HKEY_CURRENT_USER durchsuchen muss,
+    ; wenn man HKEY_USERS durchsucht.  Desweiteren ist HKEY_CLASSES_ROOT eine Kombination aus
+    ; HKEY_LOCAL_MACHINE und HKEY_CURRENT_USER, daher ist es unnötig, alle drei zu durchsuchen.</em>
     return
 
 RegEintragUntersuchen:
-    if A_LoopRegType = "KEY"  <em>; Entferne diese zwei Zeilen, wenn du die Key-Namen auch überprüfen lassen willst.</em>
+    if A_LoopRegType = "KEY"  <em>; Entferne diese zwei Zeilen, wenn die Key-Namen auch überprüft werden sollen.</em>
         return
     RegRead, RegWert
     if ErrorLevel
         return
     if InStr(RegWert, Ziel)
     {
-        MsgBox, 4, , Der folgende Treffer wurde gefunden:`n%A_LoopRegKey%\%A_LoopRegSubKey%\%A_LoopRegName%`nWert = %RegWert%`n`nWeiter?
+        MsgBox, 4, , Der folgende Treffer wurde gefunden:`n%A_LoopRegKey%\%A_LoopRegSubKey%\%A_LoopRegName%`nWert = %RegWert%`n`Weiter?
         if A_MsgBoxResult = "No"
-            RegSucheFortfahren := false  <em>; Teilt unserem Aufrufer mit, die Suche zu stoppen.</em>
+            RegSucheFortfahren := false  <em>; Suche stoppen</em>
     }
     return
 }

@@ -6,8 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -36,7 +34,7 @@
   <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
 
   <dt>Fenstertext</dt>
-  <dd><p>In diesem Parameter kann ein Teilstring angegeben werden, der in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
+  <dd><p>In diesem Parameter kann eine Zeichenkette angegeben werden, die in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
 
   <dt>Titelausnahme</dt>
   <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
@@ -48,14 +46,14 @@
 
 <h3 id="Subcommands">Befehl, Wert</h3>
 <p>Die Parameter <em>Befehl</em> und <em>Wert</em> sind voneinander abhängig und können wie folgt verwendet werden.</p>
-<p><strong><a name="List"></a>List</strong>: Ermittelt eine Liste mit Einträgen von ListView, ListBox, ComboBox oder DropDownList.</p>
+<p id="List"><strong>List</strong>: Ermittelt eine Liste mit Einträgen von ListView, ListBox, ComboBox oder DropDownList.</p>
 <p><u>ListView</u>: Die Syntax für eine ListView-Abfrage ist:</p>
 <pre>ControlGet, AusgabeVar, List, <strong>Optionen</strong>, SysListView321, Fenstertitel, Fenstertext</pre>
 <p>Ist der <em>Optionen</em>-Parameter leer oder nicht vorhanden, wird der ganze Text vom Steuerelement abgerufen. Jede Reihe, außer die letzte, endet mit einem Zeilenumbruch (`n). Innerhalb jeder Reihe endet jedes Feld (Spalte), außer das letzte, mit einem Tabulatorzeichen (`t).</p>
 <p>Die <em>Optionen</em> können entweder leer sein oder mehrere folgende Wörter enthalten, die mit Leer- oder Tabulatorzeichen getrennt sind:</p>
 <p><em>Selected</em>: Ermittelt nur die markierten (hervorgehobenen) Reihen. Sind keine vorhanden, wird <em>AusgabeVar</em> leer gemacht.<br>
   <em>Focused</em>: Ermittelt nur die fokussierte Reihe. Sind keine vorhanden, wird <em>AusgabeVar</em> leer gemacht.<br>
-  <em><a name="ColN"></a>ColN</em>: Ermittelt nur die N-te Spalte (Feld), anstatt alle Spalten.  <br>
+  <em id="ColN">Col4</em>: Ermittelt nur die N-te Spalte (Feld), anstatt alle Spalten.  <br>
   <em>Count</em>: Ermittelt die Gesamtanzahl der Reihen im Steuerelement.<br>
   <em>Count Selected</em>: Ermittelt die Gesamtanzahl der markierten (hervorgehobenen) Reihen.<br>
   <em>Count Focused</em>: Ermittelt die Reihennummer (Position) der fokussierten Reihe (0, wenn keine vorhanden).<br>
@@ -85,7 +83,7 @@ Loop, Parse, Liste, `n
 <p><strong>Tab</strong>: Setzt <em>AusgabeVar</em> auf die Tab-Nummer eines SysTabControl32-Steuerelements. Der erste Tab ist 1, der zweite ist 2 und so weiter. Um stattdessen die Gesamtanzahl der Tabs (Seiten) eines Tab-Steuerelements zu ermitteln, befolge dieses Beispiel:</p>
 <pre><a href="PostMessage.htm">SendMessage</a>, 0x1304,,, SysTabControl321, Fenstertitel  <em>; 0x1304 ist TCM_GETITEMCOUNT.</em>
 Tabanzahl = %ErrorLevel%</pre>
-<p><strong>FindString, String</strong>: Setzt <em>AusgabeVar</em> auf die Eintragsnummer eines ListBox- oder ComboBox-Steuerelements, die zu einem Eintrag gehört, der genau mit <em>String</em> übereinstimmt. Der erste Eintrag im Steuerelement ist 1, der zweite ist 2 und so weiter. Erfolgt keine Übereinstimmung, wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p>
+<p><strong>FindString, Zeichenkette</strong>: Setzt <em>AusgabeVar</em> auf die Eintragsnummer eines ListBox- oder ComboBox-Steuerelements, die zu einem Eintrag gehört, der genau mit der <em>Zeichenkette</em> übereinstimmt. Der erste Eintrag im Steuerelement ist 1, der zweite ist 2 und so weiter. Erfolgt keine Übereinstimmung, wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p>
 <p><strong>Choice</strong>: Setzt <em>AusgabeVar</em> auf den Namen des derzeit ausgewählten Eintrags in einem ListBox- oder ComboBox-Steuerelement. Um stattdessen die Positionsnummer des ausgewählten Eintrags zu ermitteln, befolge dieses Beispiel (verwendet aber nur eine der beiden Zeilen):</p>
 <pre><a href="PostMessage.htm">SendMessage</a>, 0x188, 0, 0, ListBox1, Fenstertitel  <em>; 0x188 ist LB_GETCURSEL (bei einer ListBox).</em>
 <a href="PostMessage.htm">SendMessage</a>, 0x147, 0, 0, ComboBox1, Fenstertitel  <em>; 0x147 ist CB_GETCURSEL (bei einer DropDownList oder ComboBox).</em>
@@ -98,7 +96,7 @@ ChoicePos += 1  <em>; Wandelt 0-basiert in 1-basiert um, so dass der erste Eintr
 <p><strong>Selected</strong>: Setzt <em>AusgabeVar</em> auf den markierten Text eines Eingabefeldes. Falls kein Text markiert ist, wird AusgabeVar leer gemacht und ErrorLevel auf 0 gesetzt (signalisiert Erfolg). Es ist möglich, dass bestimmte Steuerelementarten wie RichEdit20A den Text nicht richtig darstellen (z. B. Metapad).</p>
 <p><strong>Style</strong>: Ermittelt den Style des Steuerelements als 8-stellige Hexadezimalzahl. Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles.</p>
 <p><strong>ExStyle</strong>: Ermittelt den erweiterten Style als 8-stellige Hexadezimalzahl.</p>
-<p><strong><a name="Hwnd"></a>Hwnd</strong>: Ermittelt das HWND (Window Handle) des angegebenen Steuerelements. Zum Beispiel: <code>ControlGet, AusgabeVar, Hwnd,, Edit1, Fenstertitel</code>. Das HWND eines Steuerelements wird oft in Verbindung mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a> verwendet. Beachte zudem, dass das HWND eines Steuerelements auch mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden kann. Dieses HWND kann im Fenstertitel-Parameter direkt mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden (das auch bei versteckten Steuerelementen funktioniert, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist).</p>
+<p id="Hwnd"><strong>Hwnd</strong>: Ermittelt das HWND (Window Handle) des angegebenen Steuerelements. Zum Beispiel: <code>ControlGet, AusgabeVar, Hwnd,, Edit1, Fenstertitel</code>. Das HWND eines Steuerelements wird oft in Verbindung mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a> verwendet. Beachte zudem, dass das HWND eines Steuerelements auch mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden kann. Dieses HWND kann im Fenstertitel-Parameter direkt mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden (das auch bei versteckten Steuerelementen funktioniert, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist).</p>
 <h3>ErrorLevel</h3>
 <p>Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>Bei Erfolg wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt. Bei Misserfolg (z. B. ein nicht-existierendes Fenster oder Steuerelement), wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht.</p>

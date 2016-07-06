@@ -6,8 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
-<script src="../static/jquery.js" type="text/javascript"></script>
-<script src="../static/tree.jquery.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 <script src="../static/content.js" type="text/javascript"></script>
 </head>
@@ -15,48 +13,47 @@
 
 <h1>RegExMatch()</h1>
 
-<p>Überprüft, ob ein Muster (regulärer Ausdruck) im String vorkommt.</p>
+<p>Überprüft, ob ein Muster (regulärer Ausdruck) in einer Zeichenkette vorkommt.</p>
 
 <pre class="Syntax">Fundposition := RegExMatch(Heuhaufen, NadelRegEx [, AusgabeVar, Startposition = 1])</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Fundposition</dt>
-  <dd><p>RegExMatch() gibt die Position von <em>NadelRegEx</em> zurück, das ganz links im <em>Heuhaufen</em>-String vorkommt. Position 1 ist das erste Zeichen. Eine 0 wird zurückgegeben, wenn der Ausdruck nicht gefunden wird. Falls ein Fehler bei der PCRE-Ausführung auftritt, wird ein leerer String zurückgegeben und ErrorLevel auf einen der <a href="#ErrorLevel">unteren Werte</a> gesetzt, anstatt auf 0.</p></dd>
+  <dd><p>RegExMatch() gibt die Position von <em>NadelRegEx</em> zurück, das ganz links in der <em>Heuhaufen</em>-Zeichenkette vorkommt. Position 1 ist das erste Zeichen. Eine 0 wird zurückgegeben, wenn der Ausdruck nicht gefunden wird.</p></dd>
 
   <dt>Heuhaufen</dt>
-  <dd><p>Ein String, dessen Inhalt durchsucht werden soll.</p></dd>
+  <dd><p>Eine Zeichenkette, deren Inhalt durchsucht werden soll. Sie kann eine binäre Null enthalten.</p></dd>
 
   <dt>NadelRegEx</dt>
-  <dd><p>Ein Muster im PCRE-Format (Perl-kompatibler regulärer Ausdruck), das gesucht werden soll. Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Musters (falls vorhanden) müssen am Anfang des Strings eingefügt werden, gefolgt von einer schließenden Klammer. Zum Beispiel würde das Muster "<span class="red">i)</span>abc.*123" die Option "zeichenungenau" einschalten und nach "abc" suchen, gefolgt von 0 oder mehreren Vorkommen eines beliebigen Zeichens, gefolgt von "123". Wenn es keine Optionen gibt, ist das ")" optional; zum Beispiel wäre ")abc" das gleiche wie "abc".</p></dd>
+  <dd>
+    <p>Ein Muster im PCRE-Format (Perl-kompatibler regulärer Ausdruck), das gesucht werden soll. Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Musters (falls vorhanden) müssen am Anfang der Zeichenkette eingefügt werden, gefolgt von einer schließenden Klammer. Zum Beispiel würde das Muster "<span class="red">i)</span>abc.*123" die Option "zeichenungenau" einschalten und nach "abc" suchen, gefolgt von 0 oder mehreren Vorkommen eines beliebigen Zeichens, gefolgt von "123". Wenn es keine Optionen gibt, ist das ")" optional; zum Beispiel wäre ")abc" das gleiche wie "abc".</p>
+    <p><em>NadelRegEx</em> kann keine binären Nullen enthalten, allerdings kann man <code>\x00</code> als Platzhalter für eine binäre Null innerhalb von <em>Heuhaufen</em> verwenden.</p>
+  </dd>
 
   <dt>AusgabeVar</dt>
   <dd>
-      <p><em>AusgabeVar</em> ist der Name einer Variable ohne Anführungszeichen, in der ein <a href="#MatchObject">Match-Objekt</a> gespeichert wird. Mit diesem Objekt kann Position, Länge und Wert der gesamten Übereinstimmung sowie von jedem <a href="../misc/RegEx-QuickRef.htm#subpat">erfassenden Teilmuster</a> abgerufen werden, sofern vorhanden.</p>
+      <p><em>AusgabeVar</em> muss der Name einer Variable ohne Anführungszeichen sein, in der das <a href="#MatchObject">Match-Objekt</a> gespeichert werden soll. Dieses Objekt kann verwendet werden, um die Position, die Länge und den Wert der gesamten Übereinstimmung sowie von jedem <a href="../misc/RegEx-QuickRef.htm#subpat">erfassten Teilsuchmuster</a>, sofern vorhanden, zu ermitteln.</p>
       <p>Wenn das Muster nicht gefunden werden kann (also wenn die Funktion 0 zurückgibt), wird diese Variable leer gemacht.</p>
       
     </dd>
 
   <dt>Startposition</dt>
-  <dd><p>Fehlt <em>Startposition</em>, gilt standardmäßig 1 (das erste Zeichen von <em>Heuhaufen</em>). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einem leeren String am <em>Heuhaufen</em>-Ende (wodurch keine Übereinstimmung gefunden werden kann).</p>
-      <p>Wenn <em>Startposition</em> negativ ist, gilt sie als Offset vom <em>Heuhaufen</em>-Ende. Zum Beispiel würde -1 beim letzten Zeichen und -2 beim vorletzten Zeichen beginnen. Wenn <em>Startposition</em> das linke <em>Heuhaufen</em>-Ende überschreiten will, wird der gesamte <em>Heuhaufen</em> durchsucht.</p>
+  <dd><p>Fehlt <em>Startposition</em>, gilt standardmäßig 1 (das erste Zeichen von <em>Heuhaufen</em>). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einer leeren Zeichenkette am <em>Heuhaufen</em>-Ende (wodurch keine Übereinstimmung gefunden werden kann).</p>
+  <p>Eine negative <em>Startposition</em> lässt die Suche auf der rechten Seite beginnen. Zum Beispiel würde -1 beim letzten Zeichen und -2 beim vorletzten Zeichen beginnen. Wenn <em>Startposition</em> das linke <em>Heuhaufen</em>-Ende überschreitet, wird der gesamte <em>Heuhaufen</em> durchsucht.</p>
       <p>Egal welchen Wert man als <em>Startposition</em> verwendet - der Rückgabewert ist immer relativ zum ersten <em>Heuhaufen</em>-Zeichen. Zum Beispiel wäre die Position von "abc" in "123abc789" immer 4.</p></dd>
 
 </dl>
 
-<h3 id="ErrorLevel">Fehler</h3>
-<p>Enthält das Muster einen Syntaxfehler, wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, mit einer Nachricht in folgender Form: <em>Compile error N at offset M: Beschreibung</em>. In diesem String ist <em>N</em> die PCRE-Fehlernummer, <em>M</em> die Position des betroffenen Zeichens innerhalb des regulären Ausdrucks und <em>Beschreibung</em> ein Text, der den Fehler beschreibt.</p>
-<p>Ansonsten wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf eines der folgenden Werte gesetzt:</p>
-<ul>
-  <li>Eine 0 - das heißt, dass keine Fehler aufgetreten sind.</li>
-  <li>Eine negative Zahl - das heißt, dass ein Fehler beim <em>Ausführen</em> des regulären Ausdrucks aufgetreten ist. Zwar kommen solche Fehler selten vor, allerdings sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Strings" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). Wenn dies geschieht, solltest du versuchen, das Muster restriktiver zu machen - ersetze zum Beispiel jedes * mit einem ?, + oder einem Limit wie {0,3}, sofern es möglich ist.</li>
-</ul>
+<h3 id="Errors">Fehlerbehandlung</h3>
+<p><strong>Syntaxfehler:</strong> Wenn das Suchmuster einen Syntaxfehler enthält, wird eine <a href="Throw.htm#Exception">Ausnahme</a> in folgender Form ausgelöst: <em>Compile error N at offset M: Beschreibung</em>. In dieser Zeichenkette ist <em>N</em> die PCRE-Fehlernummer, <em>M</em> die Position des betroffenen Zeichens innerhalb des regulären Ausdrucks und <em>Beschreibung</em> ein Text, der den Fehler beschreibt.</p>
+<p><strong>Ausführungsfehler:</strong> Wenn ein Fehler während der <em>Ausführung</em> des regulären Ausdrucks auftritt, wird eine <a href="Throw.htm#Exception">Ausnahme</a> ausgelöst. Die <em>Extra</em>-Eigenschaft des Ausnahme-Objekts enthält die PCRE-Fehlernummer. Zwar kommen solche Fehler selten vor, allerdings sind die am häufigsten auftretenden Fehler "zu viele mögliche Übereinstimmungen mit leeren Zeichenketten" (-22), "Rekursion zu tief" (-21) und "Limit der Übereinstimmung erreicht" (-8). Wenn dies geschieht, solltest du versuchen, das Muster restriktiver zu machen - ersetze zum Beispiel jedes * mit einem ?, + oder einem Limit wie {0,3}, sofern es möglich ist.</p>
 
 <h3>Optionen</h3>
 <p>Unter den <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> findest du Modifikatoren wie z. B. "<span class="red">i)</span>abc", der die Zeichengenauigkeit im Muster "abc" ausschalten würde.</p>
 
 <h3 id="MatchObject">Match-Objekt</h3>
-<p>Wenn eine Übereinstimmung gefunden wird, wird ein Objekt mit Informationen über die Übereinstimmung in <em>AusgabeVar</em>gespeichert. Dieses Objekt hat die folgenden Eigenschaften:</p>
+<p>Wenn eine Übereinstimmung gefunden wurde, wird ein Objekt mit Informationen über die Übereinstimmung in <em>AusgabeVar</em> gespeichert. Dieses Objekt hat die folgenden Eigenschaften:</p>
 <p><strong>Match.Pos(N)</strong>: Gibt die Position der gesamten Übereinstimmung oder eines erfassenden Teilmusters zurück.</p>
 <p><strong>Match.Len(N)</strong>: Gibt die Länge der gesamten Übereinstimmung oder eines erfassenden Teilmusters zurück.</p>
 <p><strong>Match.Value(N)</strong>: Gibt die gesamte Übereinstimmung oder einen erfassenden Teilmuster zurück.</p>
@@ -72,22 +69,23 @@
   <li>Der Name eines Teilmusters.</li>
 </ul>
 <p>Eckige Klammern können anstelle von runden Klammern verwendet werden, wenn <em>N</em> angegeben wurde.</p>
-<p>Das Objekt unterstützt keine Enumeration; das heißt, die <a href="For.htm">For-Schleife</a> wird nicht unterstützt. Verwende stattdessen <code><a href="Loop.htm">Loop</a> Match.Count()</code>.</p>
+<p>Das Objekt kann nicht enumeriert werden; das heißt, dass die <a href="For.htm">For-Schleife</a> bei ihr nicht funktionieren wird. Benutze stattdessen <code><a href="Loop.htm">Loop</a> Match.Count()</code>.</p>
 
 <h3>Performance</h3>
-<p>Um einen einfachen Teilstring innerhalb eines größeren Strings zu suchen, solltest du <a href="../Functions.htm#InStr">InStr()</a> benutzen, weil es schneller als RegExMatch() ist.</p>
+<p>Um eine einfache Teilzeichenkette innerhalb einer größeren Zeichenkette zu suchen, solltest du <a href="InStr.htm">InStr()</a> benutzen, weil es schneller als RegExMatch() ist.</p>
 <p>Um die Performance zu verbessern, werden die 100 zuletzt verwendeten regulären Ausdrücke zwischengespeichert (in kompilierter Form).</p>
 <p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann manchmal die Performance eines regulären Ausdrucks verbessern, der häufig verwendet wird (z. B. in einer Schleife).</p>
 
 <h3>Bemerkungen</h3>
-<p><a name="NamedSubPat"></a>Man kann einem Teilmuster einen Namen geben, wie z. B. das Wort <em>Jahr</em> in dem Muster "(?P&lt;Jahr&gt;\d{4})". Solche Namen können maximal aus 32 alphanumerischen Zeichen und Unterstriche bestehen. Beachte, dass benannte Teilmuster auch nummeriert sind. Wenn ein <a href="../misc/RegEx-QuickRef.htm#subpat">unbenanntes Teilmuster</a> beispielsweise nach "Jahr" vorkommt, würde es nicht in <code>AusgabeVar[1]</code>, sondern in <code>AusgabeVar[2]</code> gespeichert werden.</p>
+<p id="NamedSubPat">Man kann einem Teilmuster einen Namen geben, wie z. B. das Wort <em>Jahr</em> in dem Muster "(?P&lt;Jahr&gt;\d{4})". Solche Namen können maximal aus 32 alphanumerischen Zeichen und Unterstriche bestehen. Beachte, dass benannte Teilsuchmuster auch nummeriert sind. Ein <a href="../misc/RegEx-QuickRef.htm#subpat">unbenanntes Teilsuchmuster</a> nach "Jahr" beispielsweise würde nicht in <code>AusgabeVar[1]</code>, sondern in <code>AusgabeVar[2]</code> gespeichert werden.</p>
+<p>Die meisten Zeichen wie abc123 können direkt in einem regulären Ausdruck verwendet werden. Bei den Zeichen <strong>\.*?+[{|()^$</strong> muss man allerdings einen umgekehrten Schrägstrich davorsetzen, um sie literal zu behandeln. Zum Beispiel wäre <strong>\.</strong> ein literaler Punkt und <strong>\\</strong> ein literaler umgekehrter Schrägstrich. Mithilfe von \Q...\E kann eine komplette Zeichenkette angegeben werden, ohne darin ein Zeichen mit einem umgekehrten Schrägstrich versehen zu müssen. Zum Beispiel: <code>\QLiteraler Text\E</code>.</p>
 <p>Innerhalb eines regulären Ausdrucks kann bei bestimmten Sonderzeichen wie Tab und Newline das verwendete Escapezeichen sowohl ein umgekehrtes Häkchen (`) als auch ein umgekehrter Schrägstrich (\) sein. Zum Beispiel wäre `t das gleiche wie \t, sofern die <b>x</b>-Option nicht verwendet wird.</p>
 <p>Um die Grundlagen von regulären Ausdrücken kennenzulernen (oder das Gedächtnis ein wenig aufzufrischen), siehe <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.</p>
 <p>AutoHotkey's reguläre Ausdrücke wurden mittels Perl-kompatible reguläre Ausdrücke (PCRE) von <a href="http://www.pcre.org/">www.pcre.org</a> implementiert.</p>
 
 <h3>Siehe auch</h3>
-<p><a href="RegExReplace.htm">RegExReplace()</a>, <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>, <a href="../misc/RegExCallout.htm">Callouts in regulären Ausdrücken</a>, <a href="../Functions.htm#InStr">InStr()</a>, <a href="../Functions.htm#SubStr">SubStr()</a>, <a href="SetTitleMatchMode.htm#RegEx">SetTitleMatchMode RegEx</a>, <a href="http://www.autohotkey.com/forum/topic16164.html">Global matching and Grep (Forum-Link)</a></p>
-<p>Häufige Quellen von Textdaten: <a href="FileRead.htm">FileRead</a>, <a href="Download.htm">Download</a>, <a href="../misc/Clipboard.htm">Clipboard</a>, <a href="GuiControls.htm#Edit">GUI-Edit-Steuerelemente</a></p>
+<p><a href="RegExReplace.htm">RegExReplace()</a>, <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>, <a href="../misc/RegExCallout.htm">Callouts in regulären Ausdrücken</a>, <a href="InStr.htm">InStr()</a>, <a href="../Functions.htm#SubStr">SubStr()</a>, <a href="SetTitleMatchMode.htm#RegEx">SetTitleMatchMode RegEx</a>, <a href="http://www.autohotkey.com/forum/topic16164.html">Global matching and Grep (Forum-Link)</a></p>
+<p>Häufige Quellen von Textdaten: <a href="FileRead.htm">FileRead</a>, <a href="Download.htm">Download</a>, <a href="../misc/Clipboard.htm">Clipboard</a>, <a href="GuiControls.htm#Edit">GUI-Eingabefelder</a></p>
 
 <h3>Beispiele</h3>
 <pre class="NoIndent">Fundposition := RegExMatch("xxxabc123xyz", "abc.*xyz")  <em>; Gibt 4 zurück, weil das die Position ist, auf der die Übereinstimmung gefunden wurde.</em>
