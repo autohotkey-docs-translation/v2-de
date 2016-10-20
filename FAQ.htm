@@ -72,16 +72,22 @@
 <h3 id="quotes">Wann werden im Zusammenhang mit Befehlen und Parametern Anführungszeichen verwendet?</h3>
 <p>Anführungszeichen (") haben nur innerhalb von <a href="Variables.htm#Expressions">Ausdrücken</a> eine besondere Bedeutung. Überall woanders werden sie literal behandelt, als wären sie ganz normale Zeichen. Führt ein Skript ein Programm oder ein Dokument aus, benötigt das Betriebssystem allerdings Anführungszeichen bei Befehlszeilenparameter, die Leerzeichen enthalten. Zum Beispiel: <code>Run, Notepad.exe "C:\Meine Dateien\Adressenliste.txt"</code>.</p>
 <h3 id="percent">Wann genau werden Variablen mit Prozentzeichen umschlossen (%)?</h3>
-<p>Variablennamen werden immer mit Prozentzeichen umschlossen, außer in den unteren Fällen, die <strong>fett</strong> hervorgehoben sind:</p>
-<p>1) Bei Parametern, die Eingabe- oder Ausgabevariablen sind: <code><a href="commands/StringLen.htm">StringLen</a>, <strong>AusgabeVar</strong>, <strong>EingabeVar</strong></code><br>
-  2) Auf der linken Seite einer Zuweisung: <code><strong>Var</strong> = 123abc</code><br>
-  3) Auf der linken Seite einer <a href="commands/IfEqual.htm">traditionellen if-Anweisung (kein Ausdruck)</a>: <code>If <strong>Var1</strong> &lt; %Var2%</code><br>
-4) Überall in <a href="Variables.htm#Expressions">Ausdrücken</a>. Zum Beispiel:</p>
+<p>1) Variablennamen und andere Ausdrücke innerhalb von Zeichenketten (Text) werden immer mit Prozentzeichen umschlossen. Zum Beispiel:</p>
+<pre>MsgBox, Hallo`, <strong>%A_UserName%</strong>!
+MsgBox("Schönen Tag, <strong>%A_UserName%</strong>!")</pre></li>
+<p>2) Variablennamen können auch mit Prozentzeichen umschlossen werden, um eine <a href="Variables.htm#ref">Doppeldereferenzierung</a> zu erzielen. In solchen Fällen muss die Variable den Namen einer anderen Variable enthalten.</p>
+<p>Abgesehen von Doppeldereferenzierungen und Zeichenketten gibt es Fälle, wo Prozentzeichen nicht benutzt werden (<strong>fett</strong> hervorgehoben):</p>
+<p>1) Bei Parametern, die Ausgabevariablen sind: <code><a href="Functions.htm#StrLen">StrLen</a>, <strong>AusgabeVar</strong>, %EingabeVar%</code><br>
+2) Überall in <a href="Variables.htm#Expressions">Ausdrücken</a>. Zum Beispiel:</p>
 <pre>If (<strong>Var1</strong> &lt;&gt; <strong>Var2</strong>)
-    <strong>Var1 <a href="commands/SetExpression.htm">:=</a> Var2</strong> + 100</pre>
+    <strong>Var1 <a href="commands/SetExpression.htm">:=</a> Var2</strong> + 100
+MsgBox("Der Wert ist " <strong>Var1</strong>)</pre>
 <h3 id="esc">Wann sollten Prozentzeichen und Kommas mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden?</h3>
-<p>Literale Prozentzeichen müssen mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden, durch Voranstellen eines Akzents / umgekehrten Häkchens. Zum Beispiel: <code>MsgBox Der aktuelle Prozentwert liegt bei 25`%</code>. Literale Kommas müssen auch mit einem Escapezeichen versehen werden (<code>`,</code>), es sei denn, sie werden in einer <a href="commands/MsgBox.htm">MsgBox</a> oder im letzten Parameter eines Befehls verwendet (in diesem Fall ist das umgekehrte Häkchen zulässig, aber nicht notwendig).</p>
-<p> Sind Kommas oder Prozentzeichen innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> in Anführungszeichen gesetzt, ist das umgekehrte Häkchen zulässig, aber nicht notwendig. Zum Beispiel: <code>Var := "15%"</code>.</p>
+<p>Literale Prozentzeichen müssen mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden, durch Voranstellen eines Akzents / umgekehrten Häkchens. Zum Beispiel:</p>
+<pre>MsgBox Der aktuelle Prozentsatz ist 25`%.
+MsgBox("Der aktuelle Prozentsatz ist 25`%.")</pre>
+<p>Literale Kommas müssen auch mit einem Escapezeichen versehen werden (<code>`,</code>), außer bei einer <a href="commands/MsgBox.htm">MsgBox</a> (in diesem Fall ist das umgekehrte Häkchen optional).</p>
+<p>Sind Kommas innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> in Anführungszeichen gesetzt, ist das umgekehrte Häkchen optional. Zum Beispiel: <code>MsgBox("Hallo, Welt!")</code>.</p>
 
 <h2>Allgemeine Problembehandlung</h2>
 <h3 id="install">Was kann ich tun, wenn AutoHotkey nicht installiert wird?</h3>
@@ -181,7 +187,7 @@ Send {TASTE Up}</pre>
 </ul>
 <h3 id="perf">Wie kann die Performance für Spiele oder zu einem anderen Zeitpunkt verbessert werden, wenn die CPU stark belastet wird?</h3>
 <p>Sind <a href="Hotkeys.htm">Hotkeys</a>, <a href="commands/Click.htm">Clicks</a> oder <a href="commands/Send.htm">Sends</a> im Skript bei starker CPU-Belastung spürbar langsamer als normal, könnte es hilfreich sein, die Priorität des Skript-Prozesses zu erhöhen. Füge dafür die folgende Zeile ganz oben im Skript ein:</p>
-<pre><a href="commands/Process.htm">Process</a>, Priority, , High</pre>
+<pre><a href="commands/Process.htm#Priority">ProcessSetPriority</a>, High</pre>
 <h3 id="Virus">Mein Antivirus-Programm hat AutoHotkey oder ein kompiliertes Skript als Malware erkannt. Ist das wirklich ein Virus?</h3>
 <p>Zwar kann nie ausgeschlossen werden, ob die Datei infiziert wurde, aber in den meisten Fällen sind solche Warnungen <em>False-Positives</em> (Falschmeldungen); das heißt, dass das Antivirus-Programm falsch liegt. Häufig wird vorgeschlagen, die Datei bei einem Online-Service wie <a href="https://www.virustotal.com/">virustotal</a> oder <a href="https://virusscan.jotti.org/">Jotti</a> hochzuladen und zu überprüfen, was andere Antivirus-Programme zu sagen haben. Im Zweifelsfall kannst du die Datei zum Hersteller deines Antivirus-Programms schicken und bestätigen lassen. Das würde auch uns und anderen AutoHotkey-Benutzern helfen, wenn der  Hersteller die Datei als False-Positive anerkennt und ihr Produkt entsprechend anpassen.</p>
 <p>False-Positives können häufiger auftreten, wenn kompilierte Skripte mit UPX (Standard in AutoHotkey 1.0, aber nicht in 1.1) oder MPRESS (optional in AutoHotkey 1.1) komprimiert sind. Da die Standardinstallation von AutoHotkey einen Kompressor nicht beinhaltet, werden kompilierte Skripte standardmäßig nicht komprimiert.</p>

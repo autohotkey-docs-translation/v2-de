@@ -21,7 +21,7 @@
 ;
 ;  Programm : Seek
 ;  Coder   : Phi
-;  Aktualisiert : Mon Jan 31 10:08:37 2005
+;  Aktualisiert : Mon Jul 18 17:57:37 2016
 ;
 ;  Wonach suchst du, mein Freund?
 ;
@@ -114,7 +114,7 @@
 ;    dass du ein Schlüsselwort einträgst. Nachdem du eine
 ;    Abfragezeichenkette eingetragen hast, wird eine Liste mit
 ;    Übereinstimmungen angezeigt. Als nächstes muss ein Eintrag ausgewählt
-;    und &lt;Enter&gt; oder der Button 'Öffnen' gedrückt
+;    und ENTER oder der Button 'Öffnen' gedrückt
 ;    werden, um das ausgewählte Programm auszuführen
 ;    oder das ausgewählte Verzeichnis zu öffnen.
 ;
@@ -122,9 +122,8 @@
 ;
 ; TECHNISCHE HINWEISE:
 ;
-; - 'Seek' benötigt Chris Mallett's AutoHotkey v1.0.25
-;   oder höher (http://www.autohotkey.com).
-;   Danke an Chris für seine großartige Arbeit mit AutoHotkey. :)
+; - 'Seek' benötigt AutoHotkey v2 (http://www.autohotkey.com).
+;   Danke an Lexikos für seine großartige Arbeit mit AutoHotkey. :)
 ;
 ; - Die folgenden Umgebungsvariablen müssen gültig sein:
 ;   a. TMP
@@ -140,7 +139,7 @@
 ; UMGESETZTE VORSCHLÄGE:
 ;
 ; - Erste Übereinstimmung standardmäßig markieren, sodass
-;   der Benutzer nur &lt;Enter&gt; zu drücken braucht, um sie auszuführen.
+;   der Benutzer nur ENTER zu drücken braucht, um sie auszuführen.
 ;   (Vorgeschlagen von Yih Yeong)
 ;
 ; - Doppelklick für die Auflistung der Suchergebnisse
@@ -204,7 +203,7 @@
 ; - Button 'Startmenü überprüfen'  hinzugefügt.
 ; - Inkrementelle Suche in Echtzeit hinzugefügt, die Übereinstimmungen
 ;   bei der Benutzereingabe automatisch filtert, ohne darauf zu warten,
-;   dass du &lt;Enter&gt; drückst.
+;   dass du ENTER drückst.
 ; - Internen Schalter hinzugefügt (TrackKeyPhrase), um die Suchzeichenkette zu merken.
 ; - Internen Schalter hinzugefügt (ToolTipFilename), um den Dateinamen
 ;   mithilfe des Tooltips anzuzeigen.
@@ -249,7 +248,7 @@
 ;   beim Testen der anderen Methode, bevor diese neuen Variablen
 ;   verfügbar waren.)
 ; - Vorauswahl der zuletzt ausgeführten Übereinstimmung hinzugefügt,
-;   sodass sie beim zweimaligen Drücken von &lt;ENTER&gt; ausgeführt werden kann.
+;   sodass sie beim zweimaligen Drücken von ENTER ausgeführt werden kann.
 ;
 ;*****************************************************************</em>
 
@@ -263,23 +262,23 @@
 ; Wenn das Programm nicht gefunden werden kann oder nicht angegeben ist
 ; (z. B. ist die Variable leer oder enthält einen Null-Wert),
 ; dann wird standardmäßig der Explorer verwendet.</em>
-dirExplorer = E:\utl\xplorer2_lite\xplorer2.exe
+dirExplorer := "E:\utl\xplorer2_lite\xplorer2.exe"
 
 <em>; Eine benutzerdefinierte Liste von zusätzlichen Verzeichnissen,
 ; die beim Überprüfen mit einbezogen wird. Der vollständige Pfad darf nicht in
 ; einfachen oder doppelten Anführungszeichen gesetzt werden. Wenn diese Datei nicht
 ; vorhanden ist, dann werden nur die Standardverzeichnisse überprüft.</em>
-SeekMyDir = %A_ScriptDir%\Seek.dir
+SeekMyDir := "%A_ScriptDir%\Seek.dir"
 
 <em>; Gebt den Dateinamen und den Standort des Verzeichnisses an,
 ; um die zwischengespeicherte Verzeichnis-/Programmauflistung zu speichern. Es ist nicht notwendig,
 ; das hier zu ändern, solange es nicht der Wunsch ist.</em>
-dirListing = %A_Temp%\_Seek.list
+dirListing := "%A_Temp%\_Seek.list"
 
 <em>; Gebt den Dateinamen und den Standort des Verzeichnisses an,
 ; um das zwischengespeicherte Schlüsselwort der letzten Suche zu speichern. Es ist nicht notwendig,
 ; das hier zu ändern, solange es nicht der Wunsch ist.</em>
-keyPhrase = %A_Temp%\_Seek.key
+keyPhrase := "%A_Temp%\_Seek.key"
 
 <em>; Suchzeichenkette merken (ON/OFF)
 ; Wenn ON, dann wird die zuletzt benutzte Abfragezeichenkette als
@@ -287,23 +286,21 @@ keyPhrase = %A_Temp%\_Seek.key
 ; Wenn OFF, dann wird die zuletzt benutzte Abfragezeichenkette nicht gespeichert,
 ; außerdem ist beim nächsten Ausführen von Seek keine
 ; Standardabfragezeichenkette vorhanden.</em>
-TrackKeyPhrase = ON
+TrackKeyPhrase := "ON"
 
 <em>; Gebt an, was bei der Überprüfung mit einbezogen werden soll.
-; 0: Verzeichnisse werden ignoriert (nur Dateien).
-; 1: Es werden alle Dateien und Verzeichnisse mit einbezogen.
-; 2: Nur Verzeichnisse einbeziehen (keine Dateien).</em>
-ScanMode = 1
+; F: Dateien werden mit einbezogen.
+; D: Verzeichnisse werden mit einbezogen.</em>
+ScanMode := "FD"
 
 <em>;...........................................................</em>
 
 <em>; INIT
 ;#NoTrayIcon</em>
-StringCaseSense, Off
-version = Seek v2.0.3
+version := "Seek v2.0.3"
 
 <em>; HILFE ANZEIGEN</em>
-If 1 in --help,-help,/h,-h,/?,-?
+if A_Args[1] ~= "^(--help|-help|/h|-h|/\?|-\?)$"
 {
     MsgBox,, %version%, Die Navigation im Startmenü kann umständlich sein, besonders wenn viele Programme im Laufe der Zeit installiert wurden. Mit "Seek" kann ein Schlüsselwort unabhängig von der Groß- und Kleinschreibung angegeben werden, um übereinstimmende Programme und Verzeichnisse im Startmenü herauszufiltern, damit das gewünschte Programm aus der Liste einfach geöffnet werden kann. Dadurch entfällt das unnötige Durchsuchen des Startmenüs.`n`nIch hatte viel Spaß dabei, das hier zu programmieren, und hoffe, dass es dir auch gefallen wird. Du kannst mir jederzeit eine E-Mail mit Kommentaren und Feedbacks schreiben: phi1618 (*a.t*) gmail :D0T: com.`n`nOptionen:`n  -cache`tDie zwischengespeicherte Verzeichnisauflistung verwenden, falls verfügbar (Standardmodus, wenn keine Optionen angegeben werden)`n  -scan`tEine Verzeichnisüberprüfung erzwingen, um die aktuellste Verzeichnisauflistung zu erhalten`n  -scex`tÜberprüfen &amp; Beenden (nützlich, um die möglicherweise zeitraubende Verzeichnisüberprüfung im Hintergrund durchzuführen)`n  -help`tDiese Hilfe anzeigen
     Goto QuitNoSave
@@ -311,24 +308,27 @@ If 1 in --help,-help,/h,-h,/?,-?
 
 <em>; ÜBERPRÜFEN, OB DIE WICHTIGEN UMGEBUNGSVARIABLEN VORHANDEN UND GÜLTIG SIND
 ; *TMP*</em>
-IfNotExist, %A_Temp% <em>; PFAD IST NICHT VORHANDEN</em>
+if !FileExist(A_Temp) <em>; PFAD IST NICHT VORHANDEN</em>
 {
     MsgBox Diese wichtige Umgebungsvariable ist entweder nicht definiert oder ungültig:`n`n    TMP = %A_Temp%`n`nBitte behebt dieses Problem, damit Seek ausgeführt werden kann.
     Goto QuitNoSave
 }
 
 <em>; WENN NICHT ÜBERPFÜFEN-UND-BEENDEN</em>
-IfNotEqual 1, -scex
+if A_Args[1] != "-scex"
 {
     <em>; DAS ZULETZT VERWENDETE SCHLÜSSELWORT VON DER CACHE-DATEI ABRUFEN,</em>
     <em>; DAS ALS STANDARDABFRAGESTRING BENUTZT WIRD</em>
-    If TrackKeyPhrase = ON
+    If TrackKeyPhrase = "ON"
     {
-        FileReadLine, PrevKeyPhrase, %keyPhrase%, 1
-        FileReadLine, PrevOpenTarget, %keyPhrase%, 2
+        Loop, Read, %keyPhrase%
+        {
+            if A_Index = 1, PrevKeyPhrase := A_LoopReadLine
+            if A_Index = 2, PrevOpenTarget := A_LoopReadLine, break
+        }
     }
-    NewKeyPhrase = %PrevKeyPhrase%
-    NewOpenTarget = %PrevOpenTarget%
+    NewKeyPhrase := PrevKeyPhrase
+    NewOpenTarget := PrevOpenTarget
 
     <em>; TEXTBOX FÜR DEN BENUTZER HINZUFÜGEN, DAMIT DER ABFRAGESTRING EINGEGEBEN WERDEN KANN</em>
     Gui, 1:Add, Edit, vFilename W600, %NewKeyPhrase%
@@ -355,23 +355,24 @@ IfNotEqual 1, -scex
 }
 
 <em>; NOCHMALIGE ÜBERPRÜFUNG DER LETZTEN VERZEICHNISAUFLISTUNG AKTIVIEREN</em>
-If 1 in -scan,-scex
-    rescan = Y
+if A_Args[1] ~= "^(-scan|-scex)$"
+    rescan := true
 <em>; ÜBERPRÜFEN, OB DIE CACHE-DATEI FÜR DIE VERZEICHNISAUFLISTUNG BEREITS EXISTIERT. WENN NICHT, DANN NOCHMALS ÜBERPRÜFEN.</em>
-Else IfNotExist, %dirListing%
-    rescan = Y
+else if !FileExist(dirListing)
+    rescan := true
 
-If rescan = Y <em>; NOCHMALS ÜBERPRÜFEN</em>
+if rescan = true <em>; NOCHMALS ÜBERPRÜFEN</em>
 {
     <em>; STATUS ANZEIGEN, ES SEI DENN, DIE OPTION ÜBERPRÜFEN-UND-BEENDEN IST AKTIV</em>
-    IfNotEqual 1, -scex
+    if  A_Args[1] != "-scex"
         GuiControl,, StatusBar, Verzeichnisauflistung wird überprüft ...
 
     <em>; STARTMENÜ ÜBERPRÜFEN UND VERZEICHNIS-/PROGRAMMAUFLISTUNG IN DIE CACHE-DATEI SPEICHERN</em>
     Gosub ScanStartMenu
 
     <em>; BEENDEN, WENN DIE OPTION ÜBERPRÜFEN-UND-BEENDEN AKTIV IST</em>
-    IfEqual 1, -scex, Goto, QuitNoSave
+    if A_Args[1] = "-scex"
+        Goto, QuitNoSave
 }
 
 GuiControl,, StatusBar, Letztes Abfrageergebnis abrufen ...
@@ -422,7 +423,7 @@ GuiControl, 1:Disable, ButtonSCANSTARTMENU
 Gosub ScanStartMenu
 
 <em>; BENUTZER BENACHRICHTIGEN, DASS DIE ÜBERPRÜFUNG ABGESCHLOSSEN IST</em>
-If Filename =
+If Filename = ""
 {
     <em>; WENN ABFRAGESTRING LEER IST...</em>
     GuiControl, 1:Enable, ButtonEXIT
@@ -435,7 +436,7 @@ Else
 {
     <em>; WENN ABFRAGESTRING VORHANDEN IST...</em>
     <em>; MIT SUCHSTRING DIE NEUE AUFLISTUNG FILTERN</em>
-    NewKeyPhrase =
+    NewKeyPhrase := ""
     Gosub FindMatches
 }
 Return
@@ -448,22 +449,22 @@ Return
 ; IN DIE CACHE-DATEI SPEICHERN</em>
 ScanStartMenu:
 
-<em>; VERZEICHNISPFADE DEFINIEREN, DIE ABGERUFEN WERDEN.
+<em>; VERZEICHNISPFADE DEFINIEREN, DIE ABGERUFEN WERDEN.</em>
 ; DER PFAD DARF NICHT IN EINFACHEN ODER DOPPELTEN ANFÜHRUNGSZEICHEN GESETZT WERDEN.
 ;
 ; FÜR DIE ENGLISCHE VERSION VON WINDOWS</em>
-scanPath = %A_StartMenu%|%A_StartMenuCommon%
+scanPath := A_StartMenu "|" A_StartMenuCommon
 
 <em>; ZUSÄTZLICHE BENUTZERDEFINIERTE PFADE BEIM ÜBERPRÜFEN MIT EINBEZIEHEN</em>
-IfExist, %SeekMyDir%
+if FileExist(SeekMyDir)
 {
     Loop, read, %SeekMyDir%
     {
-        IfNotExist, %A_LoopReadLine%
+        if !FileExist(A_LoopReadLine)
             MsgBox, 8192, %version%, Benutzerdefinierte Verzeichnisliste wird bearbeitet ...`n`n"%A_LoopReadLine%" ist weder vorhanden noch beim Überprüfen mit einbezogen.`nAktualisiert bitte [ %SeekMyDir% ].
-        Else
-            scanPath = %scanPath%|%A_LoopReadLine%
-    }
+        else
+            scanPath .= "|" A_LoopReadLine
+    } 
 }
 
 <em>; VORHANDENE DATEIEN LÖSCHEN, BEVOR EINE NEUE VERSION ERSTELLT WIRD</em>
@@ -472,12 +473,12 @@ FileDelete, %dirListing%
 <em>; VERZEICHNISAUFLISTUNG ÜBERPRÜFEN (TRENNZEICHEN = |), WOBEI AUCH JEDES
 ; UNTERVERZEICHNIS MIT EINBEZOGEN WIRD. VERSTECKTE DATEIEN
 ; WERDEN IGNORIERT.</em>
-Loop, parse, scanPath, |
+Loop, parse, %scanPath%, |
 {
-    Loop, %A_LoopField%\*, %ScanMode%, 1
+    Loop, Files, %A_LoopField%\*, %ScanMode%R
     {
         FileGetAttrib, fileAttrib, %A_LoopFileFullPath%
-        IfNotInString, fileAttrib, H <em>; VERSTECKTE DATEIEN IGNORIEREN</em>
+        if !InStr(fileAttrib, "H") <em>; VERSTECKTE DATEIEN IGNORIEREN</em>
             FileAppend, %A_LoopFileFullPath%`n, %dirListing%
     }
 }
@@ -492,26 +493,26 @@ Return
 FindMatches:
 
 Gui, 1:Submit, NoHide
-CurFilename = %Filename%
-GuiControl,, StatusBar,
+CurFilename := Filename
+GuiControl,, StatusBar, 
 
 <em>; WENN ABFRAGESTRING LEER IST ...</em>
-If CurFilename =
+If CurFilename = ""
 {
     MsgBox, 8192, %version%, Bitte ein Schlüsselwort eingeben, mit dem gesucht wird.
     Goto EnterQuery
 }
 
 <em>; tIncrementalSearch WURDE UNTERBROCHEN. BEENDEN LASSEN.</em>
-If NewKeyPhrase &lt;&gt; %CurFilename%
+If NewKeyPhrase &lt;&gt; CurFilename
 {
     <em>; BENUTZER INFORMIEREN, DASS GEDULD EINE TUGEND IST</em>
     GuiControl,, StatusBar, Suche ...
-    ResumeFindMatches = TRUE
+    ResumeFindMatches := TRUE
     Return
 }
 
-If List = |
+If List = "|"
 {
     <em>; KEINE EINZIGE ÜBEREINSTIMMUNG GEFUNDEN.</em>
     <em>; LASS DEN BENUTZER DEN ABFRAGESTRING BEARBEITEN UND ERNEUT VERSUCHEN.</em>
@@ -529,7 +530,7 @@ Else
     GuiControl, 1:Enable, ButtonOPENDIR
     GuiControl, 1:Enable, ButtonSCANSTARTMENU
     GuiControl, Focus, OpenTarget
-    If OpenTarget =
+    If OpenTarget = ""
         GuiControl, 1:Choose, OpenTarget, |1
 }
 
@@ -538,7 +539,7 @@ Gui, 1:Show, Center, %version%
 
 Return
 
-<em>;... ENDE DER FindMatches-SUBROUTINE ..........................</em>
+<em>;... ENDE DER FindMatches-SUBROUTINE ............................</em>
 
 
 <em>;=== BEGINN DER SilentFindMatches-SUBROUTINE ====================</em>
@@ -546,17 +547,17 @@ Return
 SilentFindMatches:
 
 Gui, 1:Submit, NoHide
-sfmFilename = %Filename%
+sfmFilename := Filename
 
 <em>; ÜBEREINSTIMMUNGEN FILTERN, BASIEREND AUF DEM ABFRAGESTRING</em>
-List = |
-If sfmFilename &lt;&gt;
+List := "|"
+If sfmFilename &lt;&gt; ""
 {
     Loop, read, %dirListing%
     {
         Gui, 1:Submit, NoHide
-        tFilename = %Filename%
-        If sfmFilename &lt;&gt; %tFilename%
+        tFilename := Filename
+        If sfmFilename &lt;&gt; tFilename
         {
             <em>; BENUTZER HAT DEN SUCHSTRING GEÄNDERT. ES MACHT KEINEN SINN,</em>
             <em>; DIE SUCHE MIT DEM ALTEN STRING FORTZUSETZEN, ALSO ABBRECHEN.</em>
@@ -565,24 +566,24 @@ If sfmFilename &lt;&gt;
         Else
         {
             <em>; ÜBEREINSTIMMUNGEN AN DIE LISTE ANFÜGEN</em>
-            SplitPath, A_LoopReadLine, name, dir, ext, name_no_ext, drive
-            MatchFound = Y
-            Loop, parse, sfmFilename, %A_Space%
+            SplitPath, %A_LoopReadLine%, name, dir, ext, name_no_ext, drive
+            MatchFound := true
+            Loop, parse, %sfmFilename%, %A_Space%
             {
-                IfNotInString, name, %A_LoopField%
+                if !InStr(name, A_LoopField)
                 {
-                    MatchFound = N
+                    MatchFound := false
                     Break
                 }
             }
-            IfEqual, MatchFound, Y
+            if MatchFound = true
             {
                 <em>; ÜBEREINSTIMMUNG ZUR LISTE HINZUFÜGEN</em>
-                List = %List%%A_LoopReadLine%|
+                List .= A_LoopReadLine "|"
 
                 <em>; VORAUSWÄHLEN, WENN DIESE ÜBEREINSTIMMUNG DAS ZULETZT AUSGEFÜHRTE PROGRAMM ENTSPRICHT</em>
                 If (A_LoopReadLine = PrevOpenTarget &amp;&amp; sfmFilename = PrevKeyPhrase)
-                    List = %List%|
+                    List .= "|"
             }
         }
     }
@@ -591,7 +592,7 @@ If sfmFilename &lt;&gt;
 <em>; LISTE MIT SUCHERGEBNISSEN AKTUALISIEREN</em>
 GuiControl, 1:, OpenTarget, %List%
 
-If List = |
+If List = "|"
 {
     <em>; KEINE ÜBEREINSTIMMUNG GEFUNDEN</em>
     <em>; LISTBOX DEAKTIVIEREN</em>
@@ -611,7 +612,7 @@ Gui, 1:Show, Center, %version%
 
 Return
 
-<em>;... ENDE DER SilentFindMatches-SUBROUTINE ..........................</em>
+<em>;... ENDE DER SilentFindMatches-SUBROUTINE ......................</em>
 
 
 <em>;=== BEGINN DER EnterQuery-SUBROUTINE ===========================
@@ -621,7 +622,7 @@ GuiControl, Focus, Filename
 GuiControl, 1:Enable, ButtonOPEN
 Gui, 1:Show, Center, %version%
 Return
-<em>;... ENDE DER EnterQuery-SUBROUTINE ..........................</em>
+<em>;... ENDE DER EnterQuery-SUBROUTINE .............................</em>
 
 
 <em>;=== BEGINN DES TargetSelection-EREIGNISSES ===========================</em>
@@ -630,14 +631,14 @@ TargetSelection:
 Gui, 1:Submit, NoHide
 
 <em>; DOPPELKLICKERKENNUNG, UM PROGRAMM ZU STARTEN</em>
-If A_GuiControlEvent = DoubleClick
+If A_GuiControlEvent = "DoubleClick"
 {
     Gosub ButtonOPEN
 }
 Else
 {
     <em>; PLATZHALTER - FÜR ZUKÜNFTIGE VERWENDUNG</em>
-    If A_GuiControlEvent = Normal
+    If A_GuiControlEvent = "Normal"
     {
         <em>; ERSTMAL NICHTS TUN</em>
     }
@@ -645,12 +646,12 @@ Else
 
 Return
 
-<em>;... ENDE DES TargetSelection-EREIGNISSES .........................</em>
+<em>;... ENDE DES TargetSelection-EREIGNISSES .............................</em>
 
 
 <em>;=== BEGINN DES ButtonOPEN-EREIGNISSES ================================</em>
 
-<em>; BENUTZER HAT DEN BUTTON 'ÖFFNEN' ODER &lt;ENTER&gt; GEDRÜCKT</em>
+<em>; BENUTZER HAT DEN BUTTON 'ÖFFNEN' ODER ENTER GEDRÜCKT</em>
 ButtonOPEN:
 Gui, 1:Submit, NoHide
 
@@ -658,7 +659,7 @@ Gui, 1:Submit, NoHide
 ; TEXTFELD IST, ABFRAGE AUSFÜHREN, UM ÜBEREINSTIMMUNGEN ZU FINDEN. ANSONSTEN IST ER
 ; BEI DER LISTBOX.</em>
 GuiControlGet, focusControl, 1:Focus
-If focusControl = Edit1
+If focusControl = "Edit1"
 {
     GuiControl, Focus, OpenTarget
     GuiControl, 1:Disable, OpenTarget
@@ -668,14 +669,14 @@ If focusControl = Edit1
 }
 
 <em>; KEINE ÜBEREINSTIMMUNG AUF DER LISTBOX AUSGEWÄHLT</em>
-If OpenTarget =
+If OpenTarget = ""
 {
-    MsgBox, 8192, %version%, Bitte eine Auswahl treffen`, bevor &lt;Enter&gt; gedrückt wird.`nDrücke &lt;Esc&gt;`, um zu beenden.
+    MsgBox, 8192, %version%, Bitte eine Auswahl treffen`, bevor &lt;Enter&gt; gedrückt wird.`nDrücke ESC`, um zu beenden.
     Goto EnterQuery
 }
 
 <em>; AUSGEWÄHLTE ÜBEREINSTIMMUNG NICHT VORHANDEN  (DATEI ODER VERZEICHNIS NICHT GEFUNDEN)</em>
-IfNotExist, %OpenTarget%
+if !FileExist(OpenTarget)
 {
     MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das heißt`, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst den Button "Startmenü überprüfen" drücken`, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
     Goto EnterQuery
@@ -683,11 +684,11 @@ IfNotExist, %OpenTarget%
 
 <em>; ÜBERPRÜFEN, OB DIE AUSGEWÄHLTE ÜBEREINSTIMMUNG EINE DATEI ODER EIN VERZEICHNIS IST</em>
 FileGetAttrib, fileAttrib, %OpenTarget%
-IfInString, fileAttrib, D <em>; IST EIN VERZEICHNIS</em>
+if InStr(fileAttrib, "D") <em>; IST EIN VERZEICHNIS</em>
 {
     Gosub sOpenDir
 }
-Else If fileAttrib &lt;&gt; <em>; IST EINE DATEI</em>
+Else If fileAttrib &lt;&gt; "" <em>; IST EINE DATEI</em>
 {
     Run, %OpenTarget%
 }
@@ -698,7 +699,7 @@ Else
 
 Goto Quit
 
-<em>;... ENDE DES ButtonOPEN-EREIGNISSES .........................</em>
+<em>;... ENDE DES ButtonOPEN-EREIGNISSES ..................................</em>
 
 
 <em>;=== BEGINN DES ButtonOPENDIR-EREIGNISSES =============================</em>
@@ -708,7 +709,7 @@ ButtonOPENDIR:
 Gui, 1:Submit, NoHide
 
 <em>; ÜBERPRÜFEN, OB DER BENUTZER BEREITS EINE ÜBEREINSTIMMUNG AUSGEWÄHLT HAT</em>
-If OpenTarget =
+If OpenTarget = ""
 {
     MsgBox, 8192, %version%, Bitte zuerst eine Auswahl treffen.
     Goto EnterQuery
@@ -719,7 +720,7 @@ Gosub sOpenDir
 
 Goto Quit
 
-<em>;... ENDE DES ButtonOPENDIR-EREIGNISSES .........................</em>
+<em>;... ENDE DES ButtonOPENDIR-EREIGNISSES ...............................</em>
 
 
 <em>;=== BEGINN DER sOpenDir-SUBROUTINE =============================</em>
@@ -731,21 +732,21 @@ sOpenDir:
 ; FileGetAttrib, UM DAS SZENARIO ZU ERMÖGLICHEN, WO OpenTarget
 ; UNGÜLTIG IST, ABER DAS VERZEICHNIS VON OpenTarget GÜLTIG IST.</em>
 DriveGet, status, status, %OpenTarget%
-If status &lt;&gt; Ready <em>; KEIN VERZEICHNIS</em>
+If status &lt;&gt; "Ready" <em>; KEIN VERZEICHNIS</em>
 {
-    SplitPath, OpenTarget, name, dir, ext, name_no_ext, drive
-    OpenTarget = %dir%
+    SplitPath, %OpenTarget%, name, dir, ext, name_no_ext, drive
+    OpenTarget := dir
 }
 
 <em>; ÜBERPRÜFEN, OB VERZEICHNIS VORHANDEN IST</em>
-IfNotExist, %OpenTarget%
+if !FileExist(OpenTarget)
 {
     MsgBox, 8192, %version%, %OpenTarget% nicht vorhanden. Das heißt`, dass der Verzeichnis-Cache nicht mehr aktuell ist. Du kannst den Button "Startmenü überprüfen" drücken`, um den Verzeichnis-Cache mit deiner neuesten Verzeichnisliste zu aktualisieren.
     Goto EnterQuery
 }
 
 <em>; DAS VERZEICHNIS ÖFFNEN</em>
-IfExist, %dirExplorer%
+if FileExist(dirExplorer)
 {
     Run, "%dirExplorer%" "%OpenTarget%", , Max <em>; MIT BENUTZERDEFINIERTEN DATEI-EXPLORER ÖFFNEN</em>
 }
@@ -755,25 +756,25 @@ Else
 }
 Return
 
-<em>;... ENDE DER sOpenDir-SUBROUTINE ..........................</em>
+<em>;... ENDE DER sOpenDir-SUBROUTINE ...............................</em>
 
 
 <em>;=== BEGINN DES tIncrementalSearch-EREIGNISSES ========================
 ; AUTOMATISCH EINE INKREMENTELLE SUCHE IN ECHTZEIT DURCHFÜHREN,
 ; UM ÜBEREINSTIMMUNGEN ZU FINDEN, OHNE DABEI AUF DIE BENUTZEREINGABE
-; &lt;ENTER&gt; ZU WARTEN</em>
+; ENTER ZU WARTEN</em>
 tIncrementalSearch:
 
 Loop
 <em>; SUCHE WIEDERHOLEN, BIS DER ABFRAGESTRING NICHT MEHR GEÄNDERT WIRD</em>
 {
     Gui, 1:Submit, NoHide
-    CurFilename = %Filename%
-    If NewKeyPhrase &lt;&gt; %CurFilename%
+    CurFilename := Filename
+    If NewKeyPhrase &lt;&gt; CurFilename
     {
-        OpenTarget =
+        OpenTarget := ""
         Gosub SilentFindMatches
-        NewKeyPhrase = %CurFilename%
+        NewKeyPhrase := CurFilename
         Sleep, 100 <em>; NICHT DIE CPU ÜBERLASTEN!</em>
     }
     Else
@@ -787,7 +788,7 @@ Loop
 ; JETZT FindMatches AUSFÜHREN.</em>
 If ResumeFindMatches = TRUE
 {
-    ResumeFindMatches = FALSE
+    ResumeFindMatches := FALSE
     Gosub FindMatches
 }
 
@@ -796,7 +797,7 @@ SetTimer, tIncrementalSearch, 500
 
 Return
 
-<em>;... ENDE DES tIncrementalSearch-EREIGNISSES .........................</em>
+<em>;... ENDE DES tIncrementalSearch-EREIGNISSES ..........................</em>
 
 
 <em>;=== BEGINN DER Quit-SUBROUTINE =================================</em>
@@ -809,7 +810,7 @@ GuiEscape:
 Gui, 1:Submit, NoHide
 
 <em>; SCHLÜSSELWORT FÜR DIE NÄCHSTE AUSFÜHRUNG SPEICHERN, FALLS ES GEÄNDERT WURDE</em>
-If TrackKeyPhrase = ON
+If TrackKeyPhrase = "ON"
 {
     If (PrevKeyPhrase &lt;&gt; Filename || PrevOpenTarget &lt;&gt; OpenTarget)
     {
@@ -822,7 +823,7 @@ If TrackKeyPhrase = ON
 QuitNoSave:
 ExitApp <em>; AUFGABE ERLEDIGT. GUTEN TAG!</em>
 
-<em>;... ENDE DER Quit-SUBROUTINE ..........................</em>
+<em>;... ENDE DER Quit-SUBROUTINE ...................................</em>
 
 
 <em>;************************

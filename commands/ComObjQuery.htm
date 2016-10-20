@@ -87,14 +87,14 @@ GetWebBrowser()
 {
     <em>; Ermittelt einen unbearbeiteten Pointer, der auf das Document-Objekt des obersten IE-Fensters verweist.</em>
     static msg := DllCall("RegisterWindowMessage", "str", "WM_HTML_GETOBJECT")
-    SendMessage msg, 0, 0, Internet Explorer_Server1, ahk_class IEFrame
-    if ErrorLevel = FAIL
+    SendMessage, %msg%, 0, 0, Internet Explorer_Server1, ahk_class IEFrame
+    if ErrorLevel = "ERROR"
         return  <em>; IE nicht gefunden.</em>
     lResult := ErrorLevel
     DllCall("oleacc\ObjectFromLresult", "ptr", lResult
         , "ptr", GUID(IID_IHTMLDocument2,"{332C4425-26CB-11D0-B483-00C04FD90119}")
         , "ptr", 0, "ptr*", pdoc)
-
+    
     <em>; Fordert den WebBrowserApp-Service an. In diesem bestimmten Fall sind
     ; SID und IID das gleiche, das aber nicht immer so ist.</em>
     static IID_IWebBrowserApp := "{0002DF05-0000-0000-C000-000000000046}"

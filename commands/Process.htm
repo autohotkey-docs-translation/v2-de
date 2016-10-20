@@ -73,8 +73,8 @@ if NeuePID = 0
 }
 <em>; Ansonsten:</em>
 MsgBox Es wurde ein passender Prozess gefunden (Prozess-ID ist %NeuePID%).
-ProcessSetPriority, %NeuePID%, Low
-ProcessSetPriority, , High  <em>; Lässt das Skript sich selbst auf hohe Priorität setzen.</em>
+ProcessSetPriority, Low, %NeuePID%
+ProcessSetPriority, High  <em>; Lässt das Skript sich selbst auf hohe Priorität setzen.</em>
 WinClose Unbenannt - Editor
 ProcessWaitClose, ErrorLevel, %NeuePID%, 5
 if ErrorLevel <em>; Die PID ist noch vorhanden.</em>
@@ -97,13 +97,13 @@ Gui, Destroy
 return
 
 MeineListBox:
-if A_GuiEvent &lt;&gt; DoubleClick
+if A_GuiEvent &lt;&gt; "DoubleClick"
     return
 <em>; springe ansonsten zum nächsten Label:</em>
 5ButtonOK:
 GuiControlGet, MeineListBox
 Gui, Destroy
-if ProcessSetPriority(aktive_pid, MeineListBox)
+if ProcessSetPriority(MeineListBox, aktive_pid)
     MsgBox Erfolg: Die Priorität wurde auf "%MeineListBox%" gesetzt.
 else
     MsgBox Fehler: Die Priorität konnte nicht auf "%MeineListBox%" gesetzt werden.
@@ -145,7 +145,7 @@ Loop, % r // 4  <em>; Parst das Array in IDs als DWORDs (32 Bit):</em>
    e := DllCall("Psapi.dll\GetModuleBaseName", "Ptr", h, "Ptr", 0, "Str", n, "UInt", s//2)
    if !e    <em>; Fallback-Methode für 64-Bit-Prozesse, wenn sie im 32-Bit-Modus sind:</em>
       if e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Str", n, "UInt", s//2)
-         SplitPath n, n
+         SplitPath %n%, n
    DllCall("CloseHandle", "Ptr", h)  <em>; Schließt diesen Prozess-Handle, um Speicher freizugeben.</em>
    if (n &amp;&amp; e)  <em>; Wenn Image nicht null ist, füge es zur Liste hinzu:</em>
       l .= n . d, c++

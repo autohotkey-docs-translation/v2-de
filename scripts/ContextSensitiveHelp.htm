@@ -28,48 +28,44 @@ $^2::
 ; weil das automatisch geschieht, sobald der Thread endet:</em>
 SetWinDelay 10
 SetKeyDelay 0
-AutoTrim, On
 
-if A_OSType = WIN32_WINDOWS  <em>; Windows 9x</em>
-    Sleep, 500  <em>; Damit der Benutzer Zeit hat, die Taste loszulassen.</em>
-
-C_ClipboardPrev = %clipboard%
-clipboard =
+C_ClipboardPrev := clipboard
+clipboard := ""
 <em>; Verwendet das hervorgehobene Wort, falls vorhanden (da der Benutzer
 ; manchmal etwas absichtlich hervorhebt, das kein Befehl ist):</em>
 Send, ^c
 ClipWait, 0.1
 if ErrorLevel &lt;&gt; 0
 {
-   <em> ; Die gesamte Zeile abrufen, weil Editoren die Cursor-Navigationstasten
+    <em>; Die gesamte Zeile abrufen, weil Editoren die Cursor-Navigationstasten
     ; unterschiedlich behandeln:</em>
     Send, {home}+{end}^c
     ClipWait, 0.2
-    if ErrorLevel &lt;&gt; 0  <em>; Selten, daher kein Fehler melden.</em>
+    if ErrorLevel &lt;&gt; 0  ; Selten, daher kein Fehler melden.
     {
-        clipboard = %C_ClipboardPrev%
+        clipboard := C_ClipboardPrev
         return
     }
 }
-C_Cmd = %clipboard%  <em>; Tabulator- &amp; Leerzeichen davor oder danach entfernen.</em>
-clipboard = %C_ClipboardPrev%  <em>; Die vorherige Zwischenablage wiederherstellen.</em>
-Loop, parse, C_Cmd, %A_Space%`,  <em>; Das erste Leerzeichen oder Komma kennzeichnet das Ende des Befehls.</em>
+C_Cmd := Trim(clipboard)  <em>; Tabulator- &amp; Leerzeichen davor oder danach entfernen.</em>
+clipboard := C_ClipboardPrev  <em>; Die vorherige Zwischenablage wiederherstellen.</em>
+Loop, parse, %C_Cmd%, %A_Space%`,  <em>; Das erste Leerzeichen oder Komma kennzeichnet das Ende des Befehls.</em>
 {
-    C_Cmd = %A_LoopField%
-    break <em>; d.h. wir benötigen nur einen Durchlauf.</em>
+    C_Cmd := A_LoopField
+    break <em> d.h. wir benötigen nur einen Durchlauf.</em>
 }
-IfWinNotExist, Hilfe für AutoHotkey
+if !WinExist("Hilfe für AutoHotkey")
 {
     <em>; Den Standort von AutoHotkey ermitteln:</em>
-    RegRead, ahk_dir, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir
+    RegRead, ahk_dir, HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey, InstallDir
     if ErrorLevel  <em>; Nichts gefunden, so in anderen häufigen Standorten nachschauen.</em>
     {
         if A_AhkPath
-            SplitPath, A_AhkPath,, ahk_dir
-        else IfExist ..\..\AutoHotkey.chm
-            ahk_dir = ..\..
-        else IfExist %A_ProgramFiles%\AutoHotkey\AutoHotkey.chm
-            ahk_dir = %A_ProgramFiles%\AutoHotkey
+            SplitPath, %A_AhkPath%,, ahk_dir
+        else if FileExist("..\..\AutoHotkey.chm")
+            ahk_dir := "..\.."
+        else if FileExist("%A_ProgramFiles%\AutoHotkey\AutoHotkey.chm")
+            ahk_dir := "%A_ProgramFiles%\AutoHotkey"
         else
         {
             MsgBox AutoHotkey-Ordner konnte nicht gefunden werden.
@@ -82,7 +78,7 @@ IfWinNotExist, Hilfe für AutoHotkey
 <em>; Der obere Befehl bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:</em>
 WinActivate
 WinWaitActive
-StringReplace, C_Cmd, C_Cmd, #, {#}
+StrReplace, C_Cmd, %C_Cmd%, #, {#}
 send, !n{home}+{end}%C_Cmd%{enter}
 return
 </pre>

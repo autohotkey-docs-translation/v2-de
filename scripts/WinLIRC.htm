@@ -28,8 +28,9 @@
 ; 5) Konfiguriert die Tasten, damit sie Tastatureingaben und Mausklicks an
 ;    Fenstern wie Winamp, Media Player und so weiter senden. Siehe untere Beispiele.</em>
 
-<em>; Dieses Skript benötigt AutoHotkey 1.0.38.04 oder höher.
-; ÄNDERUNGEN
+<em>; ÄNDERUNGEN
+; 19. Juli 2016:
+; - Code für Kompatibilität mit AHK v2 überarbeitet
 ; 2. März 2007:
 ; - Zuverlässigkeit mithilfe von "Critical" in ReceiveData() verbessert.
 ; 5. Oktober 2005:
@@ -44,14 +45,14 @@
 ; nur ein Signal zu senden. Die folgende Einstellung löst dieses Problem, indem wiederholende Signale
 ; ignoriert werden, bis die angegebene Zeit erreicht ist. 200 ist meistens gut genug.  Setzt sie
 ; auf 0, um diese Funktion zu deaktivieren.</em>
-DelayBetweenButtonRepeats = 200
+DelayBetweenButtonRepeats := 200
 
 <em>; Gebt den Pfad zu WinLIRC an, wie z. B. C:\WinLIRC\winlirc.exe</em>
-WinLIRC_Path = %A_ProgramFiles%\WinLIRC\winlirc.exe
+WinLIRC_Path := "%A_ProgramFiles%\WinLIRC\winlirc.exe"
 
 <em>; Bestimmt die Adresse und den Port von WinLIRC. Häufig wird 127.0.0.1 (localhost) und 8765 verwendet.</em>
-WinLIRC_Address = 127.0.0.1
-WinLIRC_Port = 8765
+WinLIRC_Address := "127.0.0.1"
+WinLIRC_Port := "8765"
 
 <em>; Ändert nicht die folgenden zwei Zeilen. Überspringt sie einfach.</em>
 Gosub WinLIRC_Init
@@ -78,7 +79,7 @@ return
 
 ChUp:
 WinGetClass, ActiveClass, A
-if ActiveClass in Winamp v1.x,Winamp PE  <em>; Winamp ist aktiv.</em>
+if ActiveClass ~= "^(Winamp v1\.x|Winamp PE)$"  <em>; Winamp ist aktiv.</em>
     Send {right}  <em>; Die rechte Pfeiltaste senden.</em>
 else  <em>; Irgendein anderes Fenster ist aktiv.</em>
     Send {WheelUp}  <em>; Das Mausrad eine Rasterung nach oben drehen.</em>
@@ -86,14 +87,14 @@ return
 
 ChDown:
 WinGetClass, ActiveClass, A
-if ActiveClass in Winamp v1.x,Winamp PE  <em>; Winamp ist aktiv.</em>
+if ActiveClass ~= "^(Winamp v1\.x|Winamp PE)$"  <em>; Winamp ist aktiv.</em>
     Send {left}  <em>; Die linke Pfeiltaste senden.</em>
 else  <em>; Irgendein anderes Fenster ist aktiv.</em>
     Send {WheelDown}  <em>; Das Mausrad eine Rasterung nach unten drehen.</em>
 return
 
 Menu:
-IfWinExist, Unbenannt - Editor
+if WinExist("Unbenannt - Editor")
 {
     WinActivate
 }
@@ -116,13 +117,13 @@ return
 ; die allgemeine Funktionalität des Skripts soll geändert werden.</em>
 
 WinLIRC_Init:
-OnExit, ExitSub  <em>; Um die Verbindung zu beenden.</em>
+OnExit("ExitSub")  <em>; Um die Verbindung zu beenden.</em>
 
 <em>; WinLIRC starten, falls noch nicht getan:</em>
-Process, Exist, winlirc.exe
+ProcessExist, ErrorLevel, winlirc.exe
 if not ErrorLevel  <em>; Keine PID für WinLIRC gefunden.</em>
 {
-    IfNotExist, %WinLIRC_Path%
+    if !FileExist(WinLIRC_Path)
     {
         MsgBox Die Datei "%WinLIRC_Path%" ist nicht vorhanden. Bitte diesen Skript bearbeiten, um den Standort festzulegen.
         ExitApp
@@ -137,20 +138,20 @@ if socket = -1  <em>; Verbindung fehlgeschlagen (der Grund wird bereits angezeig
     ExitApp
 
 <em>; Das Hauptfenster vom Skript finden:</em>
-Process, Exist  <em>; Dadurch enthält ErrorLevel die PID des Skripts (wird auf diese Weise durchgeführt, um kompilierte Skripte zu unterstützen).</em>
+ProcessExist, ErrorLevel  <em>; Dadurch enthält ErrorLevel die PID des Skripts (wird auf diese Weise durchgeführt, um kompilierte Skripte zu unterstützen).</em>
 DetectHiddenWindows On
 ScriptMainWindowId := WinExist("ahk_class AutoHotkey ahk_pid " . ErrorLevel)
 DetectHiddenWindows Off
 
 <em>; Sobald das Betriebssystem dem Skript meldet, dass eingehende Daten darauf warten,
 ; empfangen zu werden, wird eine Funktion ausgeführt, um die Daten zu lesen:</em>
-NotificationMsg = 0x5555  <em>; Eine beliebige Nachrichtenzahl, aber größer als 0x1000.</em>
+NotificationMsg := 0x5555  <em>; Eine beliebige Nachrichtenzahl, aber größer als 0x1000.</em>
 OnMessage(NotificationMsg, "ReceiveData")
 
 <em>; Die Verbindung einstellen, um das Skript zu benachrichtigen, sobald neue Daten eingetroffen sind.
 ; Dadurch wird verhindert, dass die Verbindung abgefragt werden muss, daher verringert sich der Ressourcenverbrauch.</em>
-FD_READ = 1     <em>; Wird empfangen, falls lesbare Daten verfügbar sind.</em>
-FD_CLOSE = 32   <em>; Wird empfangen, falls die Verbindung unterbrochen wurde.</em>
+FD_READ := 1     <em>; Wird empfangen, falls lesbare Daten verfügbar sind.</em>
+FD_CLOSE := 32   <em>; Wird empfangen, falls die Verbindung unterbrochen wurde.</em>
 if DllCall("Ws2_32\WSAAsyncSelect", "UInt", socket, "UInt", ScriptMainWindowId, "UInt", NotificationMsg, "Int", FD_READ|FD_CLOSE)
 {
     MsgBox % "WSAAsyncSelect() indicated Winsock error " . DllCall("Ws2_32\WSAGetLastError")
@@ -179,9 +180,9 @@ ConnectToAddress(IPAddress, Port)
         return -1
     }
 
-    AF_INET = 2
-    SOCK_STREAM = 1
-    IPPROTO_TCP = 6
+    AF_INET := 2
+    SOCK_STREAM := 1
+    IPPROTO_TCP := 6
     socket := DllCall("Ws2_32\socket", "Int", AF_INET, "Int", SOCK_STREAM, "Int", IPPROTO_TCP)
     if socket = -1
     {
@@ -190,7 +191,7 @@ ConnectToAddress(IPAddress, Port)
     }
 
     <em>; Für die Verbindung vorbereiten:</em>
-    SizeOfSocketAddress = 16
+    SizeOfSocketAddress := 16
     VarSetCapacity(SocketAddress, SizeOfSocketAddress)
     InsertInteger(2, SocketAddress, 0, AF_INET)   <em>; sin_family</em>
     InsertInteger(DllCall("Ws2_32\htons", "UShort", Port), SocketAddress, 2, 2)   <em>; sin_port</em>
@@ -214,7 +215,7 @@ ReceiveData(wParam, lParam)
 {
     Critical  <em>; Verhindert, dass die Nachricht von einer anderen Nachricht verworfen wird, da der Thread bereits ausgeführt wird.</em>
     socket := wParam
-    ReceivedDataSize = 4096  <em>; Hoher Wert, falls viele Daten zwischengespeichert werden, weil eine Verzögerung beim Verarbeiten der vorherigen Daten auftreten kann.</em>
+    ReceivedDataSize := 4096  <em>; Hoher Wert, falls viele Daten zwischengespeichert werden, weil eine Verzögerung beim Verarbeiten der vorherigen Daten auftreten kann.</em>
 
     VarSetCapacity(ReceivedData, ReceivedDataSize, 0)  <em>; Mit einer 0 im letzten Parameter wird die Zeichenkette terminiert, damit sie für recv() verwendet werden kann.</em>
     ReceivedDataLength := DllCall("Ws2_32\recv", "UInt", socket, "Str", ReceivedData, "Int", ReceivedDataSize, "Int", 0)
@@ -234,12 +235,12 @@ ReceiveData(wParam, lParam)
     <em>; (selbst beim expliziten Senden eines IR-Signals), wodurch die folgende Mehthode richtig behandelt wird.</em>
     <em>; Empfangene Daten von WinLIRC sehen z. B. wie folgt aus (siehe Dokumentation zu WinLIRC für Details):</em>
     <em>; 0000000000eab154 00 Tastenname Fernbedienungsname</em>
-    Loop, parse, ReceivedData, `n, `r
+    Loop, parse, %ReceivedData%, `n, `r
     {
-        if A_LoopField in ,BEGIN,SIGHUP,END  <em>; Leere Zeilen und Startnachricht von WinLIRC ignorieren.</em>
+        if A_LoopField ~= "^(|BEGIN|SIGHUP|END)$"  <em>; Leere Zeilen und Startnachricht von WinLIRC ignorieren.</em>
             continue
-        ButtonName =  <em>; Leer machen, falls weniger als 3 Felder unten gefunden werden.</em>
-        Loop, parse, A_LoopField, %A_Space%  <em>; Tastenname extrahieren, der sich im dritten Feld befindet.</em>
+        ButtonName := ""  <em>; Leer machen, falls weniger als 3 Felder unten gefunden werden.</em>
+        Loop, parse, %A_LoopField%, %A_Space%  <em>; Tastenname extrahieren, der sich im dritten Feld befindet.</em>
             if A_Index = 3
                 ButtonName := A_LoopField
         global DelayBetweenButtonRepeats  <em>; Globale Variablen deklarieren, damit sie für diese Funktion verfügbar sind.</em>
@@ -253,9 +254,9 @@ ReceiveData(wParam, lParam)
                 if (ButtonName == PrevButtonName)
                     RepeatCount += 1
                 else
-                    RepeatCount = 1
-                SplashTextOn, 150, 20, Taste von WinLIRC, %ButtonName% (%RepeatCount%)
-                SetTimer, SplashOff, 3000  <em>; Dadurch können mehr Signale beim Anzeigen des Fensters verarbeitet werden.</em>
+                    RepeatCount := 1
+                ToolTip, Button from WinLIRC, %ButtonName% (%RepeatCount%)
+                SetTimer, SplashOff, -3000  <em>; Dadurch können mehr Signale beim Anzeigen des Fensters verarbeitet werden.</em>
             }
             PrevButtonName := ButtonName
             PrevButtonTime := A_TickCount
@@ -267,27 +268,28 @@ ReceiveData(wParam, lParam)
 
 
 SplashOff:
-SplashTextOff
-SetTimer, SplashOff, Off
+ToolTip
 return
 
 
 
-InsertInteger(pInteger, ByRef pDest, pOffset = 0, pSize = 4)
+InsertInteger(pInteger, ByRef pDest, pOffset := 0, pSize := 4)
 <em>; Der Aufrufer muss sicherstellen, das pDest ausreichend Kapazität hat.  Um vorhandene Inhalte in pDest zu erhalten,
 ; wird nur die Anzahl an Bytes in pSize beginnend bei pOffset geändert.</em>
 {
-    Loop %pSize%  <em>; Jeden Byte im Integer als unbearbeitete Binärdaten in die Struktur kopieren.</em>
+    Loop pSize  <em>; Jeden Byte im Integer als unbearbeitete Binärdaten in die Struktur kopieren.</em>
         DllCall("RtlFillMemory", "UInt", &amp;pDest + pOffset + A_Index-1, "UInt", 1, "UChar", pInteger &gt;&gt; 8*(A_Index-1) &amp; 0xFF)
 }
 
 
 
-ExitSub:  <em>; Diese Subroutine wird automatisch aufgerufen, falls das Skript aus irgendeinem Grund beendet wird.
-; MSDN: "Jeder offene Sockel wird mit WSACleanup zurückgesetzt und automatisch
+ExitSub()  <em>; Diese Subroutine wird automatisch aufgerufen, falls das Skript aus irgendeinem Grund beendet wird.
+{
+    ; MSDN: "Jeder offene Sockel wird mit WSACleanup zurückgesetzt und automatisch
 ; freigegeben, als wurde closesocket aufgerufen."</em>
-DllCall("Ws2_32\WSACleanup")
-ExitApp
+    DllCall("Ws2_32\WSACleanup")
+    ExitApp
+}
 </pre>
 </body>
 </html>

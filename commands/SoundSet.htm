@@ -72,36 +72,35 @@ if ErrorLevel
     MsgBox, Die BASS-Einstellung wird nicht für MASTER unterstützt.</pre>
 <h4 id="Ex">Soundkartenanalyse</h4>
 <p>Das folgende Skript kann verwendet werden, um die Fähigkeiten deiner Soundkarte zu ermitteln (Komponententypen und Kontrolltypen). Es zeigt die Ergebnisse in einer einfachen ListView an. Alternativ kann man ein Skript für Windows Vista oder höher, das mehr Details bereitstellt (z. B. die Anzeigenamen der Geräte), im folgenden Forumsbeitrag herunterladen: <a href="http://www.autohotkey.com/board/topic/90877-/">http://www.autohotkey.com/board/topic/90877-/</a></p>
-<pre class="NoIndent">SetBatchLines -1
-SplashTextOn,,, Informationen der Soundkarte ermitteln ...
-
-<em>; Die meisten unten genannten reinen Zahlen gibt es wahrscheinlich nicht in jedem Mixer, allerdings werden sie der Vollständigkeit halber abgefragt.
+<pre class="NoIndent"><em>; Die meisten unten genannten reinen Zahlen gibt es wahrscheinlich nicht in jedem Mixer, allerdings werden sie der Vollständigkeit halber abgefragt.
 ; Die Zahlen beziehen sich auf folgende Elemente (in Reihenfolge): CUSTOM, BOOLEANMETER, SIGNEDMETER, PEAKMETER,
 ; UNSIGNEDMETER, BOOLEAN, BUTTON, DECIBELS, SIGNED, UNSIGNED, PERCENT, SLIDER, FADER, SINGLESELECT, MUX,
 ; MULTIPLESELECT, MIXER, MICROTIME, MILLITIME</em>
-Kontrolltypen = VOLUME,ONOFF,MUTE,MONO,LOUDNESS,STEREOENH,BASSBOOST,PAN,QSOUNDPAN,BASS,TREBLE,EQUALIZER,0x00000000, 0x10010000,0x10020000,0x10020001,0x10030000,0x20010000,0x21010000,0x30040000,0x30020000,0x30030000,0x30050000,0x40020000,0x50030000,0x70010000,0x70010001,0x71010000,0x71010001,0x60030000,0x61030000
+Kontrolltypen := "VOLUME,ONOFF,MUTE,MONO,LOUDNESS,STEREOENH,BASSBOOST,PAN,QSOUNDPAN,BASS,TREBLE,EQUALIZER,0x00000000, 0x10010000,0x10020000,0x10020001,0x10030000,0x20010000,0x21010000,0x30040000,0x30020000,0x30030000,0x30050000,0x40020000,0x50030000,0x70010000,0x70010001,0x71010000,0x71010001,0x60030000,0x61030000"
 
-Komponententypen = MASTER,HEADPHONES,DIGITAL,LINE,MICROPHONE,SYNTH,CD,TELEPHONE,PCSPEAKER,WAVE,AUX,ANALOG,N/A
+Komponententypen := "MASTER,HEADPHONES,DIGITAL,LINE,MICROPHONE,SYNTH,CD,TELEPHONE,PCSPEAKER,WAVE,AUX,ANALOG,N/A"
 
 <em>; Erstellt eine ListView und bereitet diese auf die Hauptschleife vor:</em>
+Gui, Add, Text, w400 h400 vSplashText, Soundkarteninfos werden ermittelt...
 Gui, Add, Listview, w400 h400 vMeineListView, Komponententyp|Kontrolltyp|Einstellung|Mixer
+Gui, Show
+GuiControl, Hide, MeineListView
 LV_ModifyCol(4, "Integer")
-SetFormat, Float, 0.2  <em>; Begrenzt die maximale Dezimalstellenanzahl eines Prozentwertes auf 2.</em>
 
 Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab.</em>
 {
     Mixer := A_Index
     SoundGet, Einstellung,,, %Mixer%
-    if ErrorLevel = Can't Open Specified Mixer  <em>; Jeder anderer Fehler kennzeichnet, dass der Mixer vorhanden ist.</em>
+    if ErrorLevel = "Can't Open Specified Mixer"  <em>; Jeder anderer Fehler kennzeichnet, dass der Mixer vorhanden ist.</em>
         break
 
     <em>; Ruft von jedem Komponententyp, der in diesem Mixer vorkommt, dessen Instanzen und Kontrolltypen ab:</em>
-    Loop, parse, Komponententypen, `,
+    Loop, parse, %Komponententypen%, `,
     {
         Komponente := A_LoopField
         <em>; Zuerst überprüfen, ob dieser Komponententyp auch im Mixer vorkommt:</em>
         SoundGet, Einstellung, %Komponente%,, %Mixer%
-        if ErrorLevel = Mixer Doesn't Support This Component Type
+        if ErrorLevel = "Mixer Doesn't Support This Component Type"
             continue  <em>; Startet für den nächsten Komponententyp eine neue Iteration.</em>
         Loop  <em>; Ruft von jeder Instanz diesen Komponententyps dessen Kontrolltypen ab.</em>
         {
@@ -109,21 +108,23 @@ Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab
             <em>; Zuerst überprüfen, ob diese Instanz dieser Instanz auch im Mixer vorkommt:</em>
             SoundGet, Einstellung, %Komponente%:%Instanz%,, %Mixer%
             <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
-            if ErrorLevel in Mixer Doesn't Have That Many of That Component Type,Invalid Control Type or Component Type
+            if ErrorLevel ~= "Mixer Doesn't Have That Many of That Component Type|Invalid Control Type or Component Type"
                 break  <em>; Keine weiteren Instanzen von diesem Komponententyp.</em>
             <em>; Ermittelt die aktuelle Einstellung von jedem Kontrolltyp, der in dieser Instanz von dieser Komponente vorkommt:</em>
-            Loop, parse, Kontrolltypen, `,
+            Loop, parse, %Kontrolltypen%, `,
             {
                 Kontrolle := A_LoopField
                 SoundGet, Einstellung, %Komponente%:%Instanz%, %Kontrolle%, %Mixer%
                 <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
-                if ErrorLevel in Component Doesn't Support This Control Type,Invalid Control Type or Component Type
+                if ErrorLevel ~= "Component Doesn't Support This Control Type|Invalid Control Type or Component Type"
                     continue
                 if ErrorLevel  <em>; Irgendein unerwarteter Fehler, der demzufolge in den Ergebnissen angezeigt wird.</em>
                     Einstellung := ErrorLevel
                 KomponentenZeichenkette := Komponente
                 if Instanz &gt; 1
-                    KomponentenZeichenkette = %KomponentenZeichenkette%:%Instanz%
+                    KomponentenZeichenkette .= ":" Instanz
+                if Einstellung is "float"
+                    Einstellung := Format("{:0.2f}", Einstellung)  <em>; Begrenzt die maximale Dezimalstellenanzahl eines Prozentwertes auf 2.</em>
                 LV_Add("", KomponentenZeichenkette, Kontrolle, Einstellung, Mixer)
             }  <em>; Für jeden Kontrolltyp.</em>
         }  <em>; Für jede Komponenteninstanz.</em>
@@ -133,12 +134,9 @@ Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab
 Loop % LV_GetCount("Col")  <em>; Passt die Größe jeder Spalte automatisch am Inhalt an.</em>
     LV_ModifyCol(A_Index, "AutoHdr")
 
-SplashTextOff
-Gui, Show
-return
-
-GuiClose:
-ExitApp</pre>
+GuiControl, Hide, SplashText
+GuiControl, Show, MeineListView
+return</pre>
 
 </body>
 </html>

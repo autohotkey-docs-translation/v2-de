@@ -41,8 +41,8 @@
 <p><strong>Pn</strong>: Sortiert Elemente, basierend auf die Zeichenposition <strong>n</strong> (<strong>n</strong> muss ein Integer sein). Fehlt diese Option, ist <strong>n</strong> standardmäßig 1 - also die Position des ersten Zeichens. Die Sortierung vergleicht jede Zeichenkette mit anderen Zeichenketten, beginnend beim <strong>n</strong>-ten Zeichen. Wenn <strong>n</strong> größer als die Länge der Zeichenkette ist, wird er beim Sortieren als leer angesehen. In Verbindung mit der <strong>N</strong>-Option (numerische Sortierung) wird die Zeichenposition der Zeichenkette verwendet, das nicht unbedingt das gleiche ist wie die Ziffernposition der Zahl.</p>
 <p><strong>R</strong>: Sortiert in umgekehrter Reihenfolge (alphabetisch oder numerisch, abhängig von den anderen Optionen).</p>
 <p><strong>Random</strong>: Sortiert in zufälliger Reihenfolge. Diese Option bewirkt, dass alle anderen Optionen außer <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> ignoriert werden (allerdings haben <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch Einfluss darauf, wie Duplikate erkannt werden). Beispiele:</p>
-<pre>Sort, MeineVar, Random
-Sort, MeineVar, Random Z D|</pre>
+<pre>Sort, MeineVar, %MeineVar%, Random
+Sort, MeineVar, %MeineVar%, Random Z D|</pre>
 <p id="unique"><strong>U</strong>: Entfernt doppelte Elemente von der Liste, sodass jedes Element einzigartig ist. <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf die Anzahl der entfernten Elemente gesetzt (0, falls keine entfernt wurden). Ist die <strong>C</strong>-Option aktiv, müssen auch die Groß- und Kleinschreibungen der Elemente gleich sein, damit diese als identisch angesehen werden. Ist die <strong>N</strong>-Option aktiv, wird ein Element wie z.B. 2 als Duplikat von 2.0 angesehen. Wenn entweder die <strong>Pn</strong>- oder <strong>\</strong>-Option aktiv ist, muss das ganze Element ein Duplikat sein, nicht nur die Teilzeichenkette, die für die Sortierung verwendet wird. Wenn die <strong>Random</strong>- oder <strong>F/Funktion</strong>-Option aktiv ist, werden Duplikate nur entfernt, wenn sie nach dem Sortieren direkt aneinander angrenzen. Zum Beispiel könnte das Ergebnis beim zufälligen Sortieren von "A|B|A" entweder ein oder zwei A's enthalten.</p>
 <p><strong>Z</strong>: Um diese Option zu verstehen, wird eine Variable in Erwägung gezogen, die die Zeichenkette ROT`nGRÜN`nBLAU`n enthält. Fehlt die <strong>Z</strong>-Option, wird das letzte LF-Zeichen (`n) als Teil des letzten Elements angesehen (somit sind es nur 3 Elemente). Ist <strong>Z</strong> vorhanden, dient das letzte LF-Zeichen (falls vorhanden) dazu, ein leeres Element am Ende der Liste abzugrenzen (somit sind es 4 Elemente).</p>
 <p><strong>\</strong>: Sortiert Elemente, basierend auf die Teilzeichenkette, die jeweils nach dem letzten umgekehrten Schrägstrich erfolgt. Wenn das Element keinen umgekehrten Schrägstrich hat, wird das ganze Element als Teilzeichenkette angesehen. Diese Option ist nützlich, um Dateinamen ohne Rücksicht auf ihre Pfade zu sortieren. Im folgenden Beispiel steht AAA.txt über BBB.txt, weil ihre Verzeichnisse beim Sortieren ignoriert wurden:</p>
@@ -53,55 +53,55 @@ C:\AAA\BBB.txt</pre>
 <h3>Bemerkungen</h3>
 <p>Mit diesem Befehl wird üblicherweise eine Variable sortiert, die eine Liste mit Zeilen enthält, bei der jede Zeile mit einem Zeilenumbruchszeichen (`n) endet. Eine Möglichkeit, mehrere Zeilen in eine Variable zu bekommen, ist das Laden einer ganzen Datei via <a href="FileRead.htm">FileRead</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird nur durch diesen Befehl geändert, wenn die <strong>U</strong>-Option aktiv ist.</p>
-<p>Wenn eine große Variable sortiert wurde und ihr Inhalt später nicht mehr benötigt wird, kann ihr Speicher freigegeben werden, indem man sie leer macht (z. B. <code>MeineVar =</code>).</p>
+<p>Wenn eine große Variable sortiert wurde und ihr Inhalt später nicht mehr benötigt wird, kann ihr Speicher freigegeben werden, indem man sie leer macht (z. B. <code>MeineVar := ""</code>).</p>
 
 <h3>Siehe auch</h3>
 <p><a href="FileRead.htm">FileRead</a>, <a href="LoopReadFile.htm">Datei-lesende Schleife</a>, <a href="LoopParse.htm">Parsende Schleife</a>, <a href="StrSplit.htm">StringSplit</a>, <a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="../misc/Clipboard.htm">Clipboard</a></p>
 
 <h3>Beispiele</h3>
-<pre class="NoIndent">MeineVar = 5,3,7,9,1,13,999,-4
-<strong>Sort</strong> MeineVar, N D,  <em>; Numerisch sortieren und Komma als Trennzeichen verwenden.</em>
+<pre class="NoIndent">MeineVar := "5,3,7,9,1,13,999,-4"
+<strong>Sort</strong> MeineVar, %MeineVar%, N D,  <em>; Numerisch sortieren und Komma als Trennzeichen verwenden.</em>
 MsgBox %MeineVar%   <em>; Das Ergebnis ist -4,1,3,5,7,9,13,999</em>
 
 <em>; Das folgende Beispiel sortiert den Inhalt einer Datei:</em>
 <a href="FileRead.htm">FileRead</a>, Inhalt, C:\Adressliste.txt
 if not ErrorLevel  <em>; Erfolgreich geladen.</em>
 {
-    <strong>Sort</strong>, Inhalt
+    <strong>Sort</strong>, Inhalt, %Inhalt%
     FileDelete, C:\Adressliste (alphabetisch).txt
     FileAppend, %Inhalt%, C:\Adressliste (alphabetisch).txt
-    Inhalt =  <em>; Speicher freigeben.</em>
+    Inhalt := "" <em>; Speicher freigeben.</em>
 }
 
 <em>; Das folgende Beispiel macht WIN+C zu einem Hotkey, um Dateien von einem
 ; Explorer-Fenster zu kopieren und die sortierten Dateinamen in die Zwischenablage einzufügen:</em>
 #c::
-Clipboard = <em>; Muss leer sein, damit die Erkennung funktioniert.</em>
+Clipboard := "" <em>; Muss leer sein, damit die Erkennung funktioniert.</em>
 Send ^c
 ClipWait 2
 if ErrorLevel
     return
-<strong>Sort</strong> Clipboard
+<strong>Sort</strong> Clipboard, %Clipboard%
 MsgBox Bereit zum Einfügen:`n%Clipboard%
 return
 
 <em>; Die folgenden Beispiele demonstrieren die benutzerdefinierte Sortierung mit einer Callback-Funktion.</em>
-MeineVar = def`nabc`nmno`nFGH`nco-op`ncoop`ncop`ncon`n
-<strong>Sort</strong>, MeineVar, F StringSort
+MeineVar := "def`nabc`nmno`nFGH`nco-op`ncoop`ncop`ncon`n"
+<strong>Sort</strong>, MeineVar, %MeineVar%, F StringSort
 StringSort(a1, a2)
 {
     return a1 &gt; a2 ? 1 : a1 &lt; a2 ? -1 : 0  <em>; Sortiert alphabetisch, basierend auf die Einstellung von <a href="StringCaseSense.htm">StringCaseSense</a>.</em>
 }
 
-MeineVar = 5,3,7,9,1,13,999,-4
-<strong>Sort</strong>, MeineVar, F IntegerSort D,
+MeineVar := "5,3,7,9,1,13,999,-4"
+<strong>Sort</strong>, MeineVar, %MeineVar%, F IntegerSort D,
 IntegerSort(a1, a2)
 {
     return a1 - a2  <em>; Sortiert in aufsteigender numerischer Reihenfolge.  Diese Methode funktioniert nur, wenn die Differenz einen vorzeichenbehafteten 64-Bit-Integer nicht überschreiten kann.</em>
 }
 
-MeineVar = 1,2,3,4
-<strong>Sort</strong>, MeineVar, F UmgekehrteRichtung D,  <em>; Kehrt die Liste um, so dass sie 4,3,2,1 enthält.</em>
+MeineVar := "1,2,3,4"
+<strong>Sort</strong>, MeineVar, %MeineVar%, F UmgekehrteRichtung D,  <em>; Kehrt die Liste um, so dass sie 4,3,2,1 enthält.</em>
 UmgekehrteRichtung(a1, a2, offset)
 {
     return offset  <em>; Offset ist positiv, wenn in der originalen Liste a2 nach a1 kommt; ansonsten negativ.</em>

@@ -15,7 +15,8 @@
 
 <p>Ruft die Zeilen einer Textdatei einzeln ab.</p>
 
-<pre class="Syntax">Loop, Read, Eingabedatei [, Ausgabedatei]</pre>
+<pre class="Syntax">Loop, Read, Eingabedatei [, Ausgabedatei]
+LoopRead(Eingabedatei [, Ausgabedatei])</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -42,7 +43,7 @@
 <p>In einer Datei-lesenden Schleife wird oft der <a href="StrSplit.htm">StrSplit</a>-Befehl oder eine <a href="LoopParse.htm">parsende Schleife</a> verwendet, um den Inhalt von jeder Zeile zu parsen, die in <em>Eingabedatei</em> gefunden wurde. Wenn jede Zeile in <em>Eingabedatei</em> beispielsweise aus mehreren tab-getrennten Feldern besteht, können solche Felder wie folgt einzeln abgerufen werden:</p>
 <pre>Loop, read, C:\Datenbank-Export.txt
 {
-    Loop, parse, A_LoopReadLine, %A_Tab%
+    Loop, parse, %A_LoopReadLine%, %A_Tab%
     {
         MsgBox, Feldnummer %A_Index% ist %A_LoopField%.
     }
@@ -63,7 +64,7 @@
 
 Loop, read, C:\Dokumente\Adressliste.txt, C:\Dokumente\Familie-Adressen.txt
 {
-    IfInString, A_LoopReadLine, Familie, FileAppend, %A_LoopReadLine%`n
+    if InStr(A_LoopReadLine, "Familie"), FileAppend("%A_LoopReadLine%`n")
 }</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #2: Ruft die letzte Zeile einer Textdatei ab.</em>
@@ -73,23 +74,23 @@ Loop, read, C:\Logdatei.txt
 <pre class="NoIndent"><em>; Beispiel #3: Das folgende Beispiel zeigt, wie alle FTP- und HTTP-URLs
 ; aus einer Text- oder HTML-Datei extrahiert werden können:</em>
 FileSelect, Quelldatei, 3,, Wähle eine Text- oder HTML-Datei zum Analysieren aus:
-if Quelldatei =
+if Quelldatei = ""
     return  <em>; In diesem Fall beenden.</em>
 
-SplitPath, Quelldatei,, Quelldateipfad,, QuelldateiOhneEndung
-Zieldatei = %Quelldateipfad%\%QuelldateiOhneEndung% Extrahierte Links.txt
+SplitPath, %Quelldatei%,, Quelldateipfad,, QuelldateiOhneEndung
+Zieldatei := "%Quelldateipfad%\%QuelldateiOhneEndung% Extrahierte Links.txt"
 
-IfExist, %Zieldatei%
+if FileExist(Zieldatei)
 {
     MsgBox, 4,, Vorhandene Datei überschreiben? Drücke Nein, um die Links nur anzufügen.`n`nDATEI: %Zieldatei%
     if A_MsgBoxResult = "Yes"
         FileDelete, %Zieldatei%
 }
 
-Linkanzahl = 0
+Linkanzahl := 0
 Loop, read, %Quelldatei%, %Zieldatei%
 {
-    URLSuchZeichenkette = %A_LoopReadLine%
+    URLSuchZeichenkette := A_LoopReadLine
     Gosub, URLSuche
 }
 MsgBox %Linkanzahl% Links wurden gefunden und in "%Zieldatei%" geschrieben.
@@ -98,39 +99,39 @@ return
 
 URLSuche:
 <em>; Das wird auf diese Weise gemacht, weil einige URLs andere URLs eingebettet haben:</em>
-StringGetPos, URLStart1, URLSuchZeichenkette, http://
-StringGetPos, URLStart2, URLSuchZeichenkette, ftp://
-StringGetPos, URLStart3, URLSuchZeichenkette, www.
+URLStart1 := InStr(URLSuchZeichenkette, "http://")
+URLStart2 := InStr(URLSuchZeichenkette, "ftp://")
+URLStart3 := InStr(URLSuchZeichenkette, "www.")
 
 <em>; Findet die Startposition ganz links:</em>
-URLStart = %URLStart1%  <em>; Setzt den Standardwert.</em>
+URLStart := URLStart1  <em>; Setzt den Standardwert.</em>
 Loop
 {
     <em>; Es hilft der Performance (zumindest in einem Skript mit vielen Variablen), wenn</em>
     <em>; "URLStart%A_Index%" nur einmal aufgelöst wird:</em>
     ArrayElement := URLStart%A_Index%
-    if ArrayElement =  <em>; Ende des <a href="../misc/Arrays.htm#pseudo">Pseudo-Arrays</a> erreicht.</em>
+    if ArrayElement = ""  <em>; Ende des <a href="../misc/Arrays.htm#pseudo">Pseudo-Arrays</a> erreicht.</em>
         break
-    if ArrayElement = -1  <em>; Dieses Element ist disqualifiziert.</em>
+    if !ArrayElement  <em>; Dieses Element ist disqualifiziert.</em>
         continue
-    if URLStart = -1
-        URLStart = %ArrayElement%
+    if !URLStart
+        URLStart := ArrayElement
     else <em>; URLStart beinhaltet eine gültige Position, also mit ArrayElement vergleichen.</em>
     {
-        if ArrayElement &lt;&gt; -1
-            if ArrayElement &lt; %URLStart%
-                URLStart = %ArrayElement%
+        if ArrayElement
+            if ArrayElement &lt; URLStart
+                URLStart := ArrayElement
     }
 }
 
-if URLStart = -1  <em>; Keine URLs in der URLSuchZeichenkette.</em>
+if !URLStart  <em>; Keine URLs in der URLSuchZeichenkette.</em>
     return
 
 <em>; Extrahiert ansonsten diese URL:</em>
-StringTrimLeft, URL, URLSuchZeichenkette, %URLStart%  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
-Loop, parse, URL, %A_Tab%%A_Space%&lt;&gt;  <em>; Findet das erstes Leer-, Tab- oder Winkelzeichen (falls vorhanden).</em>
+URL := SubStr(URLSuchZeichenkette, URLStart)  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
+Loop, parse, %URL%, %A_Tab%%A_Space%&lt;&gt;  <em>; Findet das erstes Leer-, Tab- oder Winkelzeichen (falls vorhanden).</em>
 {
-    URL = %A_LoopField%
+    URL := A_LoopField
     break  <em>; Führt nur eine Schleifeniteration durch, um das erste "Feld" zu holen.</em>
 }
 <em>; Wenn die obige Schleife aufgrund eines nicht-vorhandenen Endungszeichen keine Iteration hat,
@@ -139,14 +140,14 @@ Loop, parse, URL, %A_Tab%%A_Space%&lt;&gt;  <em>; Findet das erstes Leer-, Tab- 
 <em>; Wenn die URL mit einem Anführungszeichen endet, wird sie entfernt.  Vorerst wird StrReplace verwendet, aber
 ; beachte, dass Anführungszeichen in URLs legitim sind, so dass sie dadurch
 ; beschädigt werden könnten:</em>
-StrReplace, SaubereURL, URL, ",, All
+StrReplace, SaubereURL, %URL%, `"
 FileAppend, %SaubereURL%`n
 Linkanzahl += 1
 
 <em>; Schaut nach, ob noch andere URLs in dieser Zeile vorkommen:</em>
 StringLen, ZuEntfernendeZeichen, URL
-ZuEntfernendeZeichen += %URLStart%
-StringTrimLeft, URLSuchZeichenkette, URLSuchZeichenkette, %ZuEntfernendeZeichen%
+ZuEntfernendeZeichen += URLStart
+URLSuchZeichenkette := SubStr(URLSuchZeichenkette, ZuEntfernendeZeichen)
 Gosub, URLSuche  <em>; Ruft sich nochmals selbst auf.</em>
 return</pre>
 

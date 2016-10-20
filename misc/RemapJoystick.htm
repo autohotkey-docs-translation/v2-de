@@ -62,7 +62,7 @@ if <a href="../commands/GetKeyState.htm">GetKeyState</a>("Joy3")  <em>; Die Tast
     return
 <em>; Ansonsten wurde die Taste losgelassen.</em>
 Send {LButton up}   <em>; Lässt die linke Maustaste los.</em>
-SetTimer, AufDritteTasteWarten, off
+SetTimer,, off
 return
 
 </pre>
@@ -77,7 +77,7 @@ AufJoy2Warten:
 if not GetKeyState("Joy2")  <em>; Die Taste wurde losgelassen.</em>
 {
     Send {Space up}  <em>; Lässt die Leertaste los.</em>
-    SetTimer, AufJoy2Warten, off  <em>; Stoppt die Überwachung der Taste.</em>
+    SetTimer,, off  <em>; Stoppt die Überwachung der Taste.</em>
     return
 }
 <em>; Da oben kein "Return" erfolgt ist, wird die Taste noch gedrückt gehalten.</em>
@@ -87,27 +87,26 @@ return</pre>
 <p><strong>Joystick als Maus verwenden</strong>: Das <a href="../scripts/JoystickMouse.htm">Joystick-zu-Maus-Skript</a> wandelt ein Joystick durch Neubelegung der Tasten und Achsen-Steuerung in eine Maus um.</p>
 <h2 id="axis">Eine Joystick-Achse oder Rundblickschalter zum Senden von Tastatureingaben oder Mausklicks bringen</h2>
 <p>Soll ein Skript auf die Bewegung einer Joystick-Achse oder des Rundblickschalters reagieren, verwende <a href="../commands/SetTimer.htm">SetTimer</a> und <a href="../commands/GetKeyState.htm">GetKeyState</a>. Das folgende Beispiel bringt die X- und Y-Achsen des Joysticks dazu, sich wie die Pfeiltasten auf einer Tastatur zu verhalten (links, rechts, oben und unten):</p>
-<pre>#Persistent  <em>; Hält das Skript aufrecht, bis der Benutzer es explizit beendet.</em>
-<a href="../commands/SetTimer.htm">SetTimer</a>, Achsenüberwachung, 5
+<pre><a href="../commands/SetTimer.htm">SetTimer</a>, Achsenüberwachung, 5
 return
 
 Achsenüberwachung:
 <a href="../commands/GetKeyState.htm">GetKeyState</a>, JoyX, JoyX  <em>; Ermittelt die Position der X-Achse.</em>
 GetKeyState, JoyY, JoyY  <em>; Ermittelt die Position der Y-Achse.</em>
-VorherGedrückteTaste = %GedrückteTaste%  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
+VorherGedrückteTaste := GedrückteTaste  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
 
 if JoyX &gt; 70
-    GedrückteTaste = Right
+    GedrückteTaste := "Right"
 else if JoyX &lt; 30
-    GedrückteTaste = Left
+    GedrückteTaste := "Left"
 else if JoyY &gt; 70
-    GedrückteTaste = Down
+    GedrückteTaste := "Down"
 else if JoyY &lt; 30
-    GedrückteTaste = Up
+    GedrückteTaste := "Up"
 else
-    GedrückteTaste =
+    GedrückteTaste := ""
 
-if GedrückteTaste = %VorherGedrückteTaste%  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
+if GedrückteTaste = VorherGedrückteTaste  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
     return  <em>; Nichts tun.</em>
 
 <em>; Ansonsten vorherige Taste loslassen und neue Taste drücken:</em>
@@ -119,30 +118,29 @@ if GedrückteTaste   <em>; Es gibt eine Taste zum nach unten Drücken.</em>
 return</pre>
 <p>&nbsp;</p>
 <p>Das folgende Beispiel bringt den Rundblickschalter des Joysticks dazu, sich wie die Pfeiltasten auf der Tastatur zu verhalten; das heißt, dass der Rundblickschalter Pfeiltasteneingaben senden wird (links, rechts, oben und unten):</p>
-<pre>#Persistent  <em>; Hält das Skript aufrecht, bis der Benutzer es explizit beendet.</em>
-SetTimer, POVÜberwachung, 5
+<pre>SetTimer, POVÜberwachung, 5
 return
 
 POVÜberwachung:
 GetKeyState, POV, JoyPOV  <em>; Ermittelt die Position des Rundblickschalters.</em>
-VorherGedrückteTaste = %GedrückteTaste%  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
+VorherGedrückteTaste := GedrückteTaste  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
 
 <em>; Einige Joysticks könnten einen stufenlosen Rundblickschalter haben, anstatt einen mit voreingestellten Richtungen.
 ; Um sie alle zu unterstützen, verwende einen Bereich:</em>
 if POV &lt; 0   <em>; Kein Winkel zu melden</em>
-    GedrückteTaste =
+    GedrückteTaste := ""
 else if POV &gt; 31500                 <em>; 315 bis 360 Grad: Nach vorne gerichtet</em>
-    GedrückteTaste = Up
-else if POV between 0 and 4500      <em>; 0 bis 45 Grad: Nach vorne gerichtet</em>
-    GedrückteTaste = Up
-else if POV between 4501 and 13500  <em>; 45 bis 135 Grad: Nach rechts gerichtet</em>
-    GedrückteTaste = Right
-else if POV between 13501 and 22500 <em>; 135 bis 225 Grad: Nach hinten gerichtet</em>
-    GedrückteTaste = Down
-else                                <em>; 225 bis 315 Grad: Nach links gerichtet</em>
-    GedrückteTaste = Left
+    GedrückteTaste := "Up"
+else if POV &gt;= 0 and POV &lt;= 4500      <em>; 0 bis 45 Grad: Nach vorne gerichtet</em>
+    GedrückteTaste := "Up"
+else if POV &gt;= 4501 and POV &lt;= 13500  <em>; 45 bis 135 Grad: Nach rechts gerichtet</em>
+    GedrückteTaste := "Right"
+else if POV &gt;= 13501 and POV &lt;= 22500 <em>; 135 bis 225 Grad: Nach hinten gerichtet</em>
+    GedrückteTaste := "Down"
+else                                  <em>; 225 bis 315 Grad: Nach links gerichtet</em>
+    GedrückteTaste := "Left"
 
-if GedrückteTaste = %VorherGedrückteTaste%  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
+if GedrückteTaste = VorherGedrückteTaste  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
     return  <em>; Nichts tun.</em>
 
 <em>; Ansonsten vorherige Taste loslassen und neue Taste drücken:</em>

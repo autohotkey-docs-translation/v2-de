@@ -23,27 +23,26 @@ $Numpad0::
 <em>; Oben: Mit einem $ wird der Hook erzwungen, wodurch eine
 ; Endlosschleife verhindert wird, da diese Subroutine selbst Numpad0 sendet,
 ; ansonsten würde sie sich selbst rekursiv aufrufen.</em>
-SetBatchLines, 100 <em>; Damit wird das Skript ein wenig schneller ausgeführt.</em>
-DelayBetweenKeys = 30 <em>; Diesen Wert anpassen, falls es nicht funktionieren sollte.</em>
-if A_PriorHotkey = %A_ThisHotkey%
+DelayBetweenKeys := 30 <em>; Diesen Wert anpassen, falls es nicht funktionieren sollte.</em>
+if A_PriorHotkey = A_ThisHotkey
 {
-    if A_TimeSincePriorHotkey &lt; %DelayBetweenKeys%
+    if A_TimeSincePriorHotkey &lt; DelayBetweenKeys
     {
-        if Numpad0Count =
-            Numpad0Count = 2 <em>; d.h. dieser Tastendruck plus vorherigen Tastendruck.</em>
+        if Numpad0Count = ""
+            Numpad0Count := 2 <em>; d.h. dieser Tastendruck plus vorherigen Tastendruck.</em>
         else if Numpad0Count = 0
-            Numpad0Count = 2
+            Numpad0Count := 2
         else
         {
             <em>; Da wir hier sind, muss Numpad0Count wie bei</em>
             <em>; vorherigen Aufrufen eine 2 sein, das heißt, dass das hier</em>
             <em>; der dritte Tastendruck ist. Daher sollte die Hotkey-Sequenz</em>
             <em>; ausgeführt werden:</em>
-            Numpad0Count = 0
+            Numpad0Count := 0
             Send, = <em>; ******* Die Aktion für die 000-Taste</em>
         }
         <em>; In allen obigen Fällen kehren wir ohne weitere Aktion zurück:</em>
-        CalledReentrantly = y
+        CalledReentrantly := true
         return
     }
 }
@@ -54,17 +53,17 @@ if A_PriorHotkey = %A_ThisHotkey%
 ; anderes Numpad0-Hotkey-Ereignis diese Subroutine
 ; wiederholend aufruft), die Taste senden, falls kein weiterer Aufruf
 ; erfolgt:</em>
-Numpad0Count = 0
-CalledReentrantly = n
+Numpad0Count := 0
+CalledReentrantly := false
 <em>; Während dieser Ruhephase kann diese Subroutine wiederholend
 ; aufgerufen werden (d. h. ein simultaner "Thread", der parallel zum jetzigen
 ; Aufruf ausgeführt wird):</em>
 Sleep, %DelayBetweenKeys%
-if CalledReentrantly = y <em>; Ein anderer "Thread" hat diesen Wert geändert.</em>
+if CalledReentrantly = true <em>; Ein anderer "Thread" hat diesen Wert geändert.</em>
 {
     <em>; Da es wiederholend aufgerufen wurde, war dieses Tastenereignis das</em>
     <em>; erste in der Sequenz, daher sollte es unterdrückt werden (im System versteckt werden):</em>
-    CalledReentrantly = n
+    CalledReentrantly := false
     return
 }
 <em>; Ansonsten gehört es nicht zur Sequenz, daher werden wir es normal senden.

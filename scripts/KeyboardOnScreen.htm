@@ -22,18 +22,18 @@
 
 <em>; Beim Verändern der Schriftgröße wird die gesamte Bildschirmtastatur
 ; größer oder kleiner:</em>
-k_FontSize = 10
-k_FontName = Verdana  <em>; Kann leer sein, um die Standardschriftart des Systems zu verwenden.</em>
-k_FontStyle = Bold    <em>; Alternatives Beispiel: Italic Underline</em>
+k_FontSize := 10
+k_FontName := "Verdana"  <em>; Kann leer sein, um die Standardschriftart des Systems zu verwenden.</em>
+k_FontStyle := "Bold"    <em>; Alternatives Beispiel: Italic Underline</em>
 
 <em>; Namen der Infobereichsmenüpunkte:</em>
-k_MenuItemHide = &amp;Bildschirmtastatur verstecken
-k_MenuItemShow = &amp;Bildschirmtastatur anzeigen
+k_MenuItemHide := "&amp;Bildschirmtastatur verstecken"
+k_MenuItemShow := "&amp;Bildschirmtastatur anzeigen"
 
 <em>; Damit die Tastatur nicht nur auf den primären Monitor angezeigt wird, verwendet
 ; eine Zahl wie 2 für die folgende Variable.  Lasst sie leer, um den
 ; primären Monitor zu verwenden:</em>
-k_Monitor =
+k_Monitor := ""
 
 <em>;---- Ende des Konfigurationsbereichs.  Hier danach keine Änderungen durchführen,
 ; es sei denn, die allgemeine Funktionalität des Skripts soll geändert werden.</em>
@@ -46,24 +46,19 @@ Menu, Tray, Default, %k_MenuItemHide%
 Menu, Tray, NoStandard
 
 <em>;---- Abmessungen der Objekte berechnen, basierend auf der ausgewählten Schriftgröße:</em>
-k_KeyWidth = %k_FontSize%
-k_KeyWidth *= 3
-k_KeyHeight = %k_FontSize%
-k_KeyHeight *= 3
-k_KeyMargin = %k_FontSize%
-k_KeyMargin /= 6
-k_SpacebarWidth = %k_FontSize%
-k_SpacebarWidth *= 25
-k_KeyWidthHalf = %k_KeyWidth%
-k_KeyWidthHalf /= 2
+k_KeyWidth := k_FontSize * 3
+k_KeyHeight := k_FontSize * 3
+k_KeyMargin := k_FontSize / 6
+k_SpacebarWidth := k_FontSize * 25
+k_KeyWidthHalf := k_KeyWidth / 2
 
-k_KeySize = w%k_KeyWidth% h%k_KeyHeight%
-k_Position = x+%k_KeyMargin% %k_KeySize%
+k_KeySize := w%k_KeyWidth% h%k_KeyHeight%
+k_Position := x+%k_KeyMargin% %k_KeySize%
 
 <em>;---- Ein GUI-Fenster für die Bildschirmtastatur erstellen:</em>
 Gui, Font, s%k_FontSize% %k_FontStyle%, %k_FontName%
 Gui, -Caption +E0x200 +ToolWindow
-TransColor = F1ECED
+TransColor := "F1ECED"
 Gui, Color, %TransColor%  <em>; Diese Farbe wird später transparent gemacht.</em>
 
 <em>;---- Für jede Taste einen Button hinzufügen. Der erste Button wird mit absoluten
@@ -132,27 +127,26 @@ Gui, Add, Button, h%k_KeyHeight% x+%k_KeyMargin% w%k_SpacebarWidth%, Space
 
 <em>;---- Fenster anzeigen:</em>
 Gui, Show
-k_IsVisible = y
+k_IsVisible := true
 
-WinGet, k_ID, ID, A   <em>; Fenster-ID abrufen.</em>
+WinGetID, k_ID, A   ; Fenster-ID abrufen.
 WinGetPos,,, k_WindowWidth, k_WindowHeight, A
 
 <em>;---- Tastatur am unteren Rand des Bildschirms positionieren (unter Berücksichtigung
 ; der Position der Taskleiste):</em>
-SysGet, k_WorkArea, MonitorWorkArea, %k_Monitor%
+MonitorGetWorkArea, %k_Monitor%, k_WorkAreaLeft,, k_WorkAreaRight, k_WorkAreaBottom
 
 <em>; X-Position des Fensters berechnen:</em>
-k_WindowX = %k_WorkAreaRight%
-k_WindowX -= %k_WorkAreaLeft%  <em>; Nun enthält k_WindowX die Breite des Monitors.</em>
-k_WindowX -= %k_WindowWidth%
+k_WindowX := k_WorkAreaRight
+k_WindowX -= k_WorkAreaLeft  <em>; Nun enthält k_WindowX die Breite des Monitors.</em>
+k_WindowX -= k_WindowWidth
 k_WindowX /= 2  <em>; Position berechnen, um sie horizontal zu zentrieren.
 ; Das Folgende wird durchgeführt, falls sich das Fenster nicht auf den primären Monitor befindet
 ; oder wenn die Taskleiste auf der linken Seite des Bildschirms verankert ist:</em>
-k_WindowX += %k_WorkAreaLeft%
+k_WindowX += k_WorkAreaLeft
 
 <em>; Y-Position des Fensters berechnen:</em>
-k_WindowY = %k_WorkAreaBottom%
-k_WindowY -= %k_WindowHeight%
+k_WindowY := k_WorkAreaBottom - k_WindowHeight
 
 WinMove, A,, %k_WindowX%, %k_WindowY%
 WinSetAlwaysOnTop, On, ahk_id %k_ID%
@@ -160,17 +154,16 @@ WinSetTransColor, %TransColor% 220, ahk_id %k_ID%
 
 
 <em>;---- Alle Tasten als Hotkeys bestimmen. Siehe www.asciitable.com</em>
-k_n = 1
-k_ASCII = 45
+k_n := 1
+k_ASCII := 45
 
 Loop
 {
-    Transform, k_char, Chr, %k_ASCII%
-    StringUpper, k_char, k_char
-    if k_char not in &lt;,&gt;,^,~,,`,
+    k_char := StrUpper(Chr(k_ASCII))
+    if !InStr("&lt;&gt;^~?,", k_char)
         Hotkey, ~*%k_char%, k_KeyPress
-        <em>; Mit dem oberen Sternchenpräfix wird die Taste erkannt, unabhängig davon,</em>
-        <em>; ob der Benutzer die Modifikatortasten wie STRG und UMSCHALT gedrückt hält.</em>
+        <em>; Mit dem oberen Sternchenpräfix wird die Taste erkannt, unabhängig davon,
+        ; ob der Benutzer die Modifikatortasten wie STRG und UMSCHALT gedrückt hält.</em>
     if k_ASCII = 93
         break
     k_ASCII++
@@ -198,7 +191,7 @@ return
 ~*RAlt::
 ~*LWin::
 ~*RWin::
-StringTrimLeft, k_ThisHotkey, A_ThisHotkey, 3
+k_ThisHotkey := SubStr(A_ThisHotkey, 3)
 ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, D
 KeyWait, %k_ThisHotkey%
 ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, U
@@ -211,8 +204,8 @@ return
 ~*Enter::
 ~*Tab::
 k_KeyPress:
-StringReplace, k_ThisHotkey, A_ThisHotkey, ~
-StringReplace, k_ThisHotkey, k_ThisHotkey, *
+StrReplace, k_ThisHotkey, %A_ThisHotkey%, ~
+StrReplace, k_ThisHotkey, %k_ThisHotkey%, *
 SetTitleMatchMode, 3  <em>; Verhindert, dass die Tasten T und B nicht mit Tabulator und Rücktaste (Backspace) verwechselt werden.</em>
 ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, D
 KeyWait, %k_ThisHotkey%
@@ -221,17 +214,17 @@ Return
 
 
 k_ShowHide:
-if k_IsVisible = y
+if k_IsVisible = true
 {
     Gui, Cancel
     Menu, Tray, Rename, %k_MenuItemHide%, %k_MenuItemShow%
-    k_IsVisible = n
+    k_IsVisible := false
 }
 else
 {
     Gui, Show
     Menu, Tray, Rename, %k_MenuItemShow%, %k_MenuItemHide%
-    k_IsVisible = y
+    k_IsVisible := true
 }
 return
 

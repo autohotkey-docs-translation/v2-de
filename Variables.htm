@@ -27,7 +27,7 @@
 <p id="Variable_scope"><strong>Gültigkeitsbereiche und Deklarationen von Variablen</strong>: Mit Ausnahme von <a href="Functions.htm#Locals">lokalen Variablen</a> in Funktionen sind alle Variablen global; das heißt, dass deren Inhalte jederzeit vom Skript gelesen oder geändert werden können. Im Normalfall müssen Variablen nicht deklariert werden (in <a href="Functions.htm#Global">Funktionen</a> gibt es Ausnahmen); Variablen stehen zur Verfügung, sobald sie verwendet werden (zudem sind sie anfangs leer).</p>
 <p id="Variable_names"><strong>Variablennamen</strong>: Bei Variablennamen ist die Groß- und Kleinschreibung egal (zum Beispiel wäre <em>AktuellesDatum</em> das gleiche wie <em>aktuellesdatum</em>). Variablennamen können bis zu 253 Zeichen lang sein und dürfen nur aus Buchstaben, Zahlen, Unterstrichen und Nicht-ASCII-Zeichen bestehen. Variablennamen dürfen nicht mit einer Zahl beginnen.</p>
 <p id="Reserved_words"><strong>Reservierte Wörter:</strong> <code>or</code>, <code>and</code>, <code>not</code>, <code>is</code>, <code>in</code> und <code>contains</code>. Diese Wörter dienen als <a href="#Operators">Operatoren</a> und sind daher als Variablennamen nicht zu gebrauchen, wenn sie literal in einem Ausdruck angegeben werden.</p>
-<p><strong>Speichern von Variablenwerten</strong>: Um einen String oder eine Zahl in eine Variable zu speichern, verwende den <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, gefolgt von einer Zahl, einem String in Anführungszeichen oder ein beliebig anderer <a href="#Expressions">Ausdruck</a>. Zum Beispiel:</p>
+<p id="assigning"><strong>Speichern von Variablenwerten</strong>: Um einen String oder eine Zahl in eine Variable zu speichern, verwende den <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, gefolgt von einer Zahl, einem String in Anführungszeichen oder ein beliebig anderer <a href="#Expressions">Ausdruck</a>. Zum Beispiel:</p>
 <pre>MeineZahl := 123
 MeineZeichenkette := "Das ist eine literale Zeichenkette."
 KopieVonVar := Var</pre>
@@ -35,7 +35,7 @@ KopieVonVar := Var</pre>
 <pre>MeineVar := ""</pre>
 <p>Es ist außerdem möglich, der Variable indirekt einen Wert zuzuweisen, wenn sie als <em>Ausgabevariable</em> eines Befehls verwendet wird. Zum Beispiel:</p>
 <pre><a href="commands/WinGetTitle.htm">WinGetTitle</a> <strong>Titel</strong>, A</pre>
-<p><strong>Abrufen von Variablenwerten</strong>: Um den Inhalt einer Variable in eine Zeichenkette einzufügen, umschließe den Variablennamen mit Prozentzeichen. Zum Beispiel:</p>
+<p id="retrieving"><strong>Abrufen von Variablenwerten</strong>: Um den Inhalt einer Variable in eine Zeichenkette einzufügen, umschließe den Variablennamen mit Prozentzeichen. Zum Beispiel:</p>
 <pre><a href="commands/MsgBox.htm">MsgBox</a> Der Wert in der Variable namens Var ist %Var%.
 MsgBox("Der Wert in der Variable namens Var ist %Var%.")
 </pre>
@@ -69,14 +69,14 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
 <p id="percent-space"><strong>Erzwingen eines Ausdrucks</strong>: Im Normalfall unterstützen Befehlsparameter keine Ausdrücke (außer AusgabeVar-Parameter). Durch Voranstellen eines Prozentzeichens und Leer- oder Tabulatorzeichens kann man die Auswertung eines Ausdrucks erzwingen. Zum Beispiel:</p>
 <pre><a href="commands/FileAppend.htm">FileAppend</a>, <strong>%</strong> MeinArray[i], Meine Datei.txt
 <a href="commands/MsgBox.htm">MsgBox</a> <strong>%</strong> "Die MeineVar-Variable enthält " . MeineVar . "."
-<a href="commands/WinSet.htm">WinSet</a>, Transparent, <strong>%</strong> X + 100
+<a href="commands/WinSet.htm#Transparent">WinSetTransparent</a>, <strong>%</strong> X + 100
 <a href="commands/WinSet.htm">Control</a>, Choose, <strong>%</strong> AktuelleAuswahl - 1</pre>
 <p>Außerdem ist es jederzeit möglich, einen Ausdruck in eine Zeichenkette einzufügen, wenn man sie wie folgt mit Prozentzeichen umschließt:</p>
 <pre>MsgBox, Die aktuelle Uhrzeit ist %FormatTime(A_Now, "Time")%.</pre>
 <p>AusgabeVar-Parameter lassen das auch zu, aber das Ergebnis des Ausdrucks sollte der Name (vollständig oder teilweise) einer Variable in Form einer Zeichenkette sein.</p>
 
 <h2 id="Operators">Operatoren innerhalb von Ausdrücken</h2>
-<p>Operatoren mit gleichwertiger Priorität, wie z. B. Multiplizieren (*) und Dividieren, (/), werden von links nach rechts ausgewertet, sofern nicht anders unten angegeben. Ein Operator mit niedrigerer Priorität, wie z. B. Addieren (+), wird <em>erst</em> ausgewertet, wenn ein höherer Operator, wie z. B. Multiplizieren (*), ausgewertet wurde. Zum Beispiel würde 3 + 2 * 2 wie 3 + (2 * 2) ausgewertet werden. Mit runden Klammern können die Prioritäten wie folgt überschrieben werden: (3 + 2) * 2</p>
+<p>Operatoren mit gleichwertiger Priorität, wie z. B. Multiplizieren (*) und Dividieren, (/), werden von links nach rechts ausgewertet, sofern nicht anders unten angegeben. Ein Operator mit niedrigerer Priorität, wie z. B. Addieren (+), wird erst ausgewertet, wenn ein höherer Operator, wie z. B. Multiplizieren (*), ausgewertet wurde. Zum Beispiel würde 3 + 2 * 2 wie 3 + (2 * 2) ausgewertet werden. Mit runden Klammern können die Prioritäten wie folgt überschrieben werden: (3 + 2) * 2</p>
 <p>In der Regel werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte bei einer mathematischen Operation <strong>nicht</strong> als Null angesehen. Stattdessen werden sie als Fehler behandelt - der Fehler bewirkt, dass dieser Teil des Ausdrucks eine leere Zeichenkette zurückgibt. Wenn beispielsweise eine Variable namens X leer wäre, würde der Ausdruck X+1 einen leeren Wert statt eine 1 zurückgeben.</p>
 
 <h3>Ausdrucksoperatoren (in absteigender Priorität)</h3>
@@ -85,7 +85,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     <td style="text-align:center; white-space:nowrap"><strong>%Ausdr%</strong></td>
     <td>
       <p>Bettet einen Ausdruck (<em>Ausdr</em>) in eine Zeichenkette mit Anführungszeichen ein, oder ruft dynamisch eine Variable via Name ab. Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von Zeichenketten mit Anführungszeichen und Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
-      <p><strong>Innerhalb einer Zeichenkette mit Anführungszeichen</strong> wird <em>Ausdr</em> ausgewertet und das Ergebnis dieser Position innerhalb der Zeichenkette eingefügt. Zum Beispiel wären die folgenden Zeilen ein und dasselbe:</p>
+      <p><strong>Innerhalb einer Zeichenkette mit Anführungszeichen</strong> wird <em>Ausdr</em> ausgewertet und das Ergebnis dieser Position innerhalb der Zeichenkette eingefügt. Zum Beispiel bewirken beide Zeilen dasselbe:</p>
       <pre>MsgBox("Hallo, %A_UserName%!")
 MsgBox, Hallo`, %A_Username%!
 MsgBox("Hallo, " A_UserName "!")</pre>
@@ -144,7 +144,7 @@ MsgBox("Hallo, " A_UserName "!")</pre>
     </strong></td>
     <td><p><strong>Multiplizieren (*)</strong>: Das Ergebnis ist ein Integer, wenn beide Eingabewerte Integer sind, ansonsten ist es eine Gleitkommazahl.</p>
       <p id="divide"><strong>Echtes Dividieren (/)</strong>: Die echte Division wird immer eine Gleitkommazahl zurückgeben, sogar wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>3/2</code> gleich 1.5 statt 1, und <code>4/2</code> gleich 2.0 statt 2.</p>
-      <p id="FloorDivide"><strong>Floor-Dividieren (//)</strong>: Der Doppel-Schrägstrich-Operator verwendet die leistungsstarke Integer-Division, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der beiden Eingabewerte eine Gleitkommazahl ist, wird die Gleitkomma-Division erfolgen und das Ergebnis auf den nächstmöglichen linksbefindlichen Integer gekürzt. Zum Beispiel wäre <code>5//3.0</code> gleich 1.0 und <code>5.0//-3</code> gleich -2.0. Das Ergebnis wird im Gleitkommaformat gespeichert, selbst wenn das Ergebnis dieser Gleitkomma-Division ein Integer ist. Für Modulo, siehe <a href="Functions.htm#Mod">Mod()</a>.</p>
+      <p id="FloorDivide"><strong>Floor-Dividieren (//)</strong>: Der Doppel-Schrägstrich-Operator verwendet die leistungsstarke Integer-Division, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der beiden Eingabewerte eine Gleitkommazahl ist, wird die Gleitkomma-Division erfolgen und das Ergebnis auf den nächstmöglichen linksbefindlichen Integer gekürzt. Zum Beispiel wäre <code>5//3.0</code> gleich 1.0 und <code>5.0//-3</code> gleich -2.0. Das Ergebnis wird im Gleitkommaformat gespeichert, selbst wenn das Ergebnis dieser Gleitkomma-Division ein Integer ist. Für Modulo, siehe <a href="commands/Math.htm#Mod">Mod()</a>.</p>
     <p>Die Operatoren <a href="#AssignOp">*=</a> und <a href="#AssignOp">/=</a> sind eine Kurzschreibweise, um den Wert in einer Variable mit einem anderen Wert zu multiplizieren oder dividieren. Zum Beispiel würde <code>Var *= 2</code> das gleiche Ergebnis wie <code>Var := Var * 2</code> erzeugen (die erste Methode ist performanter).</p>
     <p>Eine Division durch 0 erzeugt ein leeres Ergebnis (leere Zeichenkette).</p></td>
   </tr>
@@ -264,7 +264,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
         &lt;&lt;=</strong>
     </td>
     <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable. Der einfachste Zuweisungsoperator ist das <a href="commands/SetExpression.htm">Doppelpunkt-Gleich (:=)</a> - dieser Operator kann das Ergebnis eines Ausdrucks in eine Variable speichern. Da sie eine Kurzschreibweise eines Operators sind, findest du ihre Beschreibung jeweils beim dazugehörigen Operator in dieser Tabelle. Beispiel 1: <code>Var //= 2</code> führt eine <a href="#FloorDivide">Floor-Division</a> durch, um <em>Var</em> mit 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Beispiel 2: <code>Var <strong>.=</strong> "abc"</code> ist die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code>.</p>
-      <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Demzufolge würde eine Zeile wie <code>Var1 := Var2 := 0</code> eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>      
+      <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Demzufolge würde eine Zeile wie <code>Var1 := Var2 := 0</code> eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
     <p>Verwendet man eine Zuweisung als Eingabewert eines anderen Operators, wird ihr Wert die Variable selbst sein. Zum Beispiel wäre der Ausdruck <code>(Var += 2) &gt; 50</code> wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Mit diesem Verfahren könnte man auch eine Zuweisung via <a href="Functions.htm#ByRef">ByRef</a> übergeben oder ihre <a href="#amp">Adresse</a> verwenden; zum Beispiel: <code>&amp;(x:="abc")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: Die Auswertung von <code>not x := y</code> entspräche <code>not (x := y)</code>, <code>++Var := X</code> entspräche <code>++(Var := X)</code>; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> entspräche <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code>.</p>
     <p>Wenn die Zielvariable leer ist, wird sie von den Operatoren <strong>+=</strong> und <strong>-=</strong> als Null behandelt. Dadurch kann eine Zeile wie <code>Var += 1</code> in einem Hotkey benutzt werden, ohne zuerst <em>Var</em> im <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> initialisieren zu müssen.</p>
@@ -282,7 +282,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
         round()<br>
     
     abs()</strong></p></td>
-    <td>Diese und andere built-interne mathematischen Funktionen findest du <a href="Functions.htm#Math">hier</a>.</td>
+    <td>Diese und andere built-interne mathematischen Funktionen findest du <a href="commands/Math.htm">hier</a>.</td>
   </tr>
   <tr>
     <td style="text-align:center; white-space:nowrap"><p><strong>%func%()</strong></p></td>
@@ -369,11 +369,11 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
   </tr>
   <tr id="ThisFunc">
     <td>A_ThisFunc</td>
-    <td>Der Name der <a href="Functions.htm">benutzerdefinierten Funktion</a>, die gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeineFunktion. Siehe auch: <a href="Functions.htm#IsFunc">IsFunc()</a></td>
+    <td>Der Name der <a href="Functions.htm">benutzerdefinierten Funktion</a>, die gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeineFunktion. Siehe auch: <a href="commands/IsFunc.htm">IsFunc()</a></td>
   </tr>
   <tr id="ThisLabel">
     <td>A_ThisLabel</td>
-    <td>Der Name des <a href="misc/Labels.htm">Labels</a> (Subroutine), das gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeinLabel. A_ThisLabel wird aktualisiert, wann immer das Skript <a href="commands/Gosub.htm">Gosub</a>/<a href="commands/Return.htm">Return</a> oder <a href="commands/Goto.htm">Goto</a> ausführt. A_ThisLabel wird auch aktualisiert, wenn automatisch-aufgerufene Labels wie <a href="commands/SetTimer.htm">Timer</a>, <a href="commands/Gui.htm#DefaultWin">GUI-Threads</a>, <a href="commands/Menu.htm">Menüpunkte</a>, <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> erfolgen. A_ThisLabel wird nicht aktualisiert, wenn die Skriptausführung in eines der oben genannten Label "gelangt"; in diesem Fall behält A_ThisLabel seinen vorherigen Wert. Siehe auch: <a href="#ThisHotkey">A_ThisHotkey</a> und <a href="Functions.htm#IsLabel">IsLabel()</a></td>
+    <td>Der Name des <a href="misc/Labels.htm">Labels</a> (Subroutine), das gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeinLabel. A_ThisLabel wird aktualisiert, wann immer das Skript <a href="commands/Gosub.htm">Gosub</a>/<a href="commands/Return.htm">Return</a> oder <a href="commands/Goto.htm">Goto</a> ausführt. A_ThisLabel wird auch aktualisiert, wenn automatisch-aufgerufene Labels wie <a href="commands/SetTimer.htm">Timer</a>, <a href="commands/Gui.htm#DefaultWin">GUI-Threads</a>, <a href="commands/Menu.htm">Menüpunkte</a>, <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> erfolgen. A_ThisLabel wird nicht aktualisiert, wenn die Skriptausführung in eines der oben genannten Label "gelangt"; in diesem Fall behält A_ThisLabel seinen vorherigen Wert. Siehe auch: <a href="#ThisHotkey">A_ThisHotkey</a> und <a href="commands/IsLabel.htm">IsLabel()</a></td>
   </tr>
   <tr id="AhkVersion">
     <td>A_AhkVersion</td>
@@ -635,7 +635,7 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
     <td>Diese Variablen enthalten die X- und Y-Koordinaten bei <a href="commands/Gui.htm#GuiContextMenu">GuiContextMenu</a>- und <a href="commands/Gui.htm#GuiDropFiles">GuiDropFiles</a>-Ereignissen. Die Koordinaten sind relativ zur linken oberen Ecke des Fensters. Diese Werte sind von der <a href="commands/Gui.htm#DPIScale">DPI-Skalierung</a> abhängig.</td>
   </tr>
   <tr>
-    <td><span id="GuiEvent"></span><span id="GuiControlEvent">A_GuiEvent<br><span class="small80">oder A_GuiControlEvent</span></span></td>
+    <td><span id="GuiEvent"></span><span id="GuiControlEvent"></span>A_GuiEvent<br><span class="small80">oder A_GuiControlEvent</span></td>
     <td><p>Das Ereignis, welches den <a href="misc/Threads.htm">aktuellen Thread</a> gestartet hat. Wenn dieser Thread von etwas gestartet wurde, das keine <a href="commands/Gui.htm">GUI-Aktion</a> ist, dann ist diese Variable leer. Ansonsten enthält sie eine der folgenden Zeichenketten:</p>
       <p><strong>Normal</strong>: Das Ereignis wurde durch einen Linksklick oder durch Tastatureingaben ausgelöst (Pfeiltasten, Tabulatortaste, Leertaste, unterstrichene Tastenkürzel und so weiter). Dieser Wert wird auch bei Menüleistenelementen und Sonderereignissen wie GuiClose und GuiEscape verwendet.</p>
       <p><strong>DoubleClick</strong>: Das Ereignis wurde durch einen Doppelklick ausgelöst. Hinweis: Der erste Klick des Doppelklicks löst weiterhin ein <em>Normal</em>-Ereignis aus. Das heißt, dass die Subroutine zweimal gestartet wird: einmal beim ersten Klick und nochmals beim zweiten Klick.</p>
@@ -809,18 +809,18 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
     <td><p>A_ScreenWidth<br>
     
     A_ScreenHeight</p></td>
-    <td><p>Die Breite und Höhe des primären Monitors in Pixel (z. B. 1024 und 768).</p>
-      <p>Mit <a href="commands/SysGet.htm">SysGet</a> können die Abmessungen von anderen Monitoren abgerufen werden.</p>
-      <p>Das folgende Beispiel zeigt, wie die Breite und Höhe des gesamten Desktops ermittelt werden kann (selbst wenn er sich über mehrere Monitore erstrecken sollte):</p>
+    <td><p>Die Breite und Höhe des primären Anzeigegeräts in Pixel (z. B. 1024 und 768).</p>
+      <p>Mit <a href="commands/SysGet.htm">SysGet</a> können die Abmessungen von anderen Anzeigegeräten abgerufen werden.</p>
+      <p>Das folgende Beispiel zeigt, wie die Breite und Höhe des gesamten Desktops ermittelt werden kann (selbst wenn er sich über mehrere Anzeigegeräte erstrecken sollte):</p>
 <pre>
 <a href="commands/SysGet.htm">SysGet</a>, VirtuelleBreite, 78
 <a href="commands/SysGet.htm">SysGet</a>, VirtuelleHöhe, 79
 </pre>
-    <p>Mit <a href="commands/SysGet.htm">SysGet</a> kann man auch den Arbeitsbereich eines Monitors ermitteln. Dieser Bereich kann kleiner sein als der Gesamtbereich des Monitors, weil die Abmessungen von der Taskleiste und anderen registrierten Desktopsymbolleisten abgezogen werden.</p></td>
+    <p>Mit <a href="commands/SysGet.htm">SysGet</a> kann man auch den Arbeitsbereich eines Anzeigegeräts ermitteln. Dieser Bereich kann kleiner sein als der Gesamtbereich des Anzeigegeräts, weil die Abmessungen von der Taskleiste und anderen registrierten Desktopsymbolleisten abgezogen werden.</p></td>
   </tr>
   <tr id="ScreenDPI">
     <td>A_ScreenDPI</td>
-    <td>Die Anzahl der Pixel pro logischem Inch entlang der Bildschirmbreite. Bei einem Multi-Monitor-System gilt dieser Wert für alle Monitore. Bei vielen Systemen ist das 96; abhängig von der Textgrößeneinstellung (DPI) des Systems. Siehe auch <a href="commands/Gui.htm#DPIScale">Gui -DPIScale</a>.</td>
+    <td>Die Anzahl der Pixel pro logischem Inch entlang der Bildschirmbreite. Bei einem Multi-Anzeigegerät-System gilt dieser Wert für alle Anzeigegeräte. Bei vielen Systemen ist das 96; abhängig von der Textgrößeneinstellung (DPI) des Systems. Siehe auch <a href="commands/Gui.htm#DPIScale">Gui -DPIScale</a>.</td>
   </tr>
   <tr id="IPAddress">
     <td>A_IPAddress1 bis 4</td>
@@ -840,12 +840,11 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
     <td><p>Die aktuellen X- und Y-Koordinaten der Texteinfügemarke. Die Koordinaten beziehen sich auf das aktive Fenster. <a href="commands/CoordMode.htm">CoordMode</a> kann verwendet werden, um den ganzen Bildschirm einzubeziehen. Wenn es kein aktives Fenster gibt oder wenn die Position der Einfügemarke nicht ermittelt werden kann, sind diese Variablen leer.</p>
       <p>Das folgende Skript zeigt dir in einem sich selbst aktualisierenden ToolTip die Position der Einfügemarke an, während du die Einfügemarke verschiebst. Beachte, dass einige Fenster (z. B. bestimmte Versionen von MS Word) immer die gleiche Position der Einfügemarke melden, egal auf welcher Position sie wirklich ist.</p>
 <pre>
-#Persistent
 SetTimer, BeobachteEinfügemarke, 100
 return
 
 BeobachteEinfügemarke:
-ToolTip, X%A_CaretX% Y%A_CaretY%, A_CaretX, A_CaretY - 20
+  ToolTip, X%A_CaretX% Y%A_CaretY%, A_CaretX, A_CaretY - 20
 return
 </pre>
     </td>

@@ -73,10 +73,9 @@
 <p>Die <a href="KeyHistory.htm">KeyHistory</a>-Funktion zeigt, wie viele Timer vorhanden und wie viele zurzeit aktiviert sind.</p>
 
 <h3>Siehe auch</h3>
-<p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Befehl)</a>, <a href="Critical.htm">Critical</a>, <a href="../Functions.htm#IsLabel">IsLabel()</a>, <a href="Menu.htm">Menu</a></p>
+<p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Befehl)</a>, <a href="Critical.htm">Critical</a>, <a href="IsLabel.htm">IsLabel()</a>, <a href="Menu.htm">Menu</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent" id="ExampleClose"><em>; Beispiel #1: Schließt unerwünschte Fenster, sobald sie auftauchen:</em>
-#Persistent
 SetTimer, MailWarnungenSchließen, 250
 return
 
@@ -86,18 +85,15 @@ WinClose, Microsoft Outlook, Es konnte keine Verbindung aufgebaut werden
 return</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ExampleWait"><em>; Beispiel #2: Wartet auf ein bestimmtes Fenster und alarmiert danach den Benutzer:</em>
-#Persistent
 SetTimer, Alarm1, 500
 return
 
 Alarm1:
-IfWinNotExist, Video-Konvertierung, Prozess abgeschlossen
+if !WinExist("Video-Konvertierung", "Prozess abgeschlossen")
     return
 <em>; Ansonsten:</em>
-SetTimer, Alarm1, Off  <em>; d. h. der Timer deaktiviert sich selbst.</em>
-SplashTextOn, , , Die Video-Konvertierung wurde abgeschlossen.
-Sleep, 3000
-SplashTextOff
+SetTimer,, Off  <em>; d. h. der Timer deaktiviert sich selbst.</em>
+MsgBox, Die Video-Konvertierung wurde abgeschlossen.
 return</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ExampleCount"><em>; Beispiel #3: Erkennt, ob ein Hotkey einmal, zweimal oder dreimal gedrückt wurde. Dadurch
@@ -111,7 +107,7 @@ if winc_anzahl &gt; 0 <em>; Da SetTimer bereits gestartet wurde, wird stattdesse
 }
 <em>; Ansonsten ist das der erste Tastendruck einer neuen Serie. Zählung wird
 ; auf 1 gesetzt und der Timer gestartet:</em>
-winc_anzahl = 1
+winc_anzahl := 1
 SetTimer, TasteWinC, -400 <em>; Wartet bis zu 400 Millisekunden, dass der Hotkey nochmal gedrückt wird.</em>
 return
 
@@ -130,7 +126,7 @@ else if winc_anzahl &gt; 2
 }
 <em>; Unabhängig von der zuvor ausgelösten Aktion wird die Zählung zurückgesetzt,
 ; um die nächste Serie von Tastendrücken vorzubereiten:</em>
-winc_anzahl = 0
+winc_anzahl := 0
 return</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ExampleClass"><em>; Beispiel #4: Eine <a href="../Objects.htm#Custom_Classes_method">Methode</a> als Timer-Subroutine verwenden.</em>

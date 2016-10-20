@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<h1>Scripts</h1>
+<h1>Skripte</h1>
 
 <h2>Inhaltsverzeichnis</h2>
 <ul>
@@ -70,11 +70,11 @@ MsgBox, Diese auch.
 <p>Die Einrückungen in den oberen Beispielen sind optional. Sie machen deutlich, welche Zeilen zusammengehören. Außerdem ist es unnötig, zusätzliche Leerzeichen bei Zeilen einzufügen, die mit den Wörtern "AND" und "OR" beginnen; das Programm macht das automatisch. In den oberen Beispielen könnte man zwischen oder nach den Zeilen auch leere Zeilen oder <a href="#Comments">Kommentare</a> einfügen.</p>
 <p><strong>Methode #2</strong>: Diese Methode sollte verwendet werden, um eine große Anzahl an Zeilen zusammenzuführen oder wenn die Zeilen nicht für Methode #1 geeignet sind. Obwohl diese Methode besonders für <a href="Hotstrings.htm">automatisch-ersetzende Hotstrings</a> nützlich ist, kann sie auch bei jedem Befehl oder <a href="Variables.htm#Expressions">Ausdruck</a> verwendet werden. Zum Beispiel:</p>
 <pre><em>; BEISPIEL #1:</em>
-Var =
+Var := "
 (
 Zeile 1 vom Text.
 Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) zwischen den Zeilen.
-)
+)"
 
 <em>; BEISPIEL #2:</em>
 FileAppend<strong>,</strong>  <em>; Das Komma ist in diesem Fall erforderlich.</em>
@@ -107,14 +107,14 @@ Eine Textzeile.
 ), C:\Datei.txt   <em>; Kommentar.</em></pre>
 <p>Daraus folgt, dass Semikolons innerhalb eines Fortsetzungsbereichs nie mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden müssen.</p>
 <p>Ein Fortsetzungsbereich kann keine Zeile erzeugen, deren Länge 16.383 Zeichen überschreitet (Bei dem Versuch warnt dich das Programm, bevor es startet). Man kann das umgehen, wenn mehrere Verkettungen bei einer Variable durchgeführt werden. Zum Beispiel:</p>
-<pre>Var =
+<pre>Var := "
 (
 ...
-)
-Var = %Var%`n  <em>; Fügt mithilfe eines weiteren Fortsetzungsbereichs mehr Text hinzu.</em>
+)"
+Var .= "`n  <em>; Fügt mithilfe eines weiteren Fortsetzungsbereichs mehr Text hinzu.</em>
 (
 ...
-)
+)"
 FileAppend, %Var%, C:\Meine Datei.txt</pre>
 <p>Soll eine Zeile mit einer literalen schließenden Klammer beginnen, obwohl sie normalerweise das Ende eines Fortsetzungsbereichs kennzeichnet, muss man ein Akzent / umgekehrtes Häkchen davor setzen: <code>`)</code>.</p>
 <p>Nach einem Fortsetzungsbereich kann eine Zeile erfolgen, die die öffnenden Klammer eines weiteren Fortsetzungsbereichs enthält. Auf diese Weise können die oben genannten Optionen beim Erstellen einer einzelnen Zeile variieren.</p>
@@ -165,7 +165,7 @@ Verwendung:
   <tr><th>Option</th><th>Bedeutung</th></tr>
   <tr id="SlashF">
     <td>/f oder /force</td>
-    <td>Skript bedingungslos starten und Warnmeldungen überspringen.</td>
+    <td>Skript bedingungslos starten und Warnmeldungen überspringen. Diese Option hat den gleichen Effekt wie <a href="commands/_SingleInstance.htm">#SingleInstance Off</a>.</td>
   </tr>
   <tr id="SlashR">
     <td>/r oder /restart</td>
@@ -203,7 +203,7 @@ Verwendung:
 </ul>
 <p>Der Dateiname <code><i>AutoHotkey</i>.ahk</code> ist abhängig vom Namen der ausführbaren Datei, die zum Starten des Skripts verwendet wurde. Wenn du beispielsweise AutoHotkey.exe in MeinSkript.exe umbenennst, versucht das Programm <code>MeinSkript.ahk</code> zu finden. Startest du AutoHotkeyU32.exe ohne Parameter, sucht das Programm nach AutoHotkeyU32.ahk.</p>
 <p>Verwende ein Sternchen (*) als Dateiname, um den Skript-Text aus der Standardeingabe (stdin) zu lesen. Siehe als Beispiel <a href="commands/Run.htm#ExecScript">ExecScript()</a>.</p>
-<p><strong>Skript-Parameter</strong>: Eine oder mehrere Zeichenketten, getrennt durch Leerzeichen, die an das Skript übergeben werden sollen. Jeder Parameter, der Leerzeichen enthält, sollte in Anführungszeichen gesetzt werden. Soll ein Anführungszeichen übergeben werden, muss ein literaler umgekehrter Schrägstrich davor gesetzt werden (\"). Daraus folgt, dass jeder nachfolgende Schrägstrich in einem zitierten Parameter (wie "C:\Meine Dokumente<span class="red">\"</span>) als literales Anführungszeichen behandelt wird (das heißt, dass das Skript die Zeichenkette C:\Meine Dokumente<span class="red">"</span> erhalten wird). Um solche Anführungszeichen zu entfernen, verwende <code><a href="commands/StrReplace.htm">StrReplace, 1, 1, <span class="red">"</span>,, All</a></code>.</p>
+<p><strong>Skript-Parameter</strong>: Eine oder mehrere Zeichenketten, getrennt durch Leerzeichen, die an das Skript übergeben werden sollen. Jeder Parameter, der Leerzeichen enthält, sollte in Anführungszeichen gesetzt werden. Soll ein Anführungszeichen übergeben werden, muss ein literaler umgekehrter Schrägstrich davor gesetzt werden (\"). Daraus folgt, dass jeder nachfolgende Schrägstrich in einem zitierten Parameter (wie "C:\Meine Dokumente<span class="red">\"</span>) als literales Anführungszeichen behandelt wird (das heißt, dass das Skript die Zeichenkette C:\Meine Dokumente<span class="red">"</span> erhalten wird). Um solche Anführungszeichen zu entfernen, verwende <code>A_Args[1] := <a href="commands/StrReplace.htm">StrReplace</a>(A_Args[1], '"')</code></p>
 <p>Eingehende Parameter, sofern vorhanden, werden als Array in die Built-In-Variable <strong>A_Args</strong> gespeichert, und können mithilfe des <a href="Objects.htm#Usage_Simple_Arrays">Array-Syntaxes</a> abgerufen werden. <code>A_Args[1]</code> enthält den ersten Parameter. Das folgende Beispiel beendet das Skript, falls zu wenig Parameter übergeben wurden:</p>
 <pre>if A_Args.Length() &lt; 3
 {
@@ -237,18 +237,18 @@ Verwendung:
 <p><a href="commands/RegWrite.htm">RegWrite</a> kann verwendet werden, um die Standardeinstellung für Skripte festzulegen, die vom Explorer aus gestartet werden (z. B. per Doppelklick einer Datei):</p>
 <pre><em>; Hebe die Kommentierung der entsprechenden Zeile auf oder lasse sie alle kommentiert,
 ;   um den Standard des aktuellen Builds wiederherzustellen.  Je nach Bedarf anpassen:
-; Zeichensatz = 0        ; Standard-ANSI-Zeichensatz des Systems
-; Zeichensatz = 65001    ; UTF-8
-; Zeichensatz = 1200     ; UTF-16
-; Zeichensatz = 1252     ; ANSI-Latin-1; Westeuropäisch (Windows)</em>
+; Zeichensatz := 0        ; Standard-ANSI-Zeichensatz des Systems
+; Zeichensatz := 65001    ; UTF-8
+; Zeichensatz := 1200     ; UTF-16
+; Zeichensatz := 1252     ; ANSI-Latin-1; Westeuropäisch (Windows)</em>
 if (Zeichensatz != "")
     Zeichensatz := " /CP" . Zeichensatz
-Befehl="%A_AhkPath%"%Zeichensatz% "`%1" `%*
-Key=AutoHotkeyScript\Shell\Open\Command
+Befehl := '"%A_AhkPath%" %Zeichensatz% "`%1" `%*'
+Key    := "AutoHotkeyScript\Shell\Open\Command"
 if A_IsAdmin    <em>; Für alle Benutzer setzen.</em>
-    RegWrite, REG_SZ, HKCR, %Key%,, %Befehl%
+    RegWrite, REG_SZ, HKCR\%Key%,, %Befehl%
 else            <em>; Nur für den aktuellen Benutzer setzen.</em>
-    RegWrite, REG_SZ, HKCU, Software\Classes\%Key%,, %Befehl%</pre>
+    RegWrite, REG_SZ, HKCU\Software\Classes\%Key%,, %Befehl%</pre>
 <p>Das setzt natürlich voraus, dass AutoHotkey bereits installiert worden ist. Ansonsten wäre das Ergebnis alles andere als zufriedenstellend.</p>
 
 <h2 id="debug">Ein Skript debuggen</h2>
@@ -269,13 +269,13 @@ else            <em>; Nur für den aktuellen Benutzer setzen.</em>
 <p>Beachte, dass diese Funktionalität bei kompilierten Skripten deaktiviert ist.</p>
 <p>Um interaktives Debuggen zu aktivieren, starte zuerst einen unterstützten Debugger-Client und führe danach das Skript mit der <b>/Debug</b>-Befehlszeilenoption aus.</p>
 <pre class="Syntax">AutoHotkey.exe /Debug[=<i>SERVER</i>:<i>PORT</i>] ...</pre>
-<p><i>SERVER</i> und <i>PORT</i> können weggelassen werden. Zum Beispiel wären die folgenden Zeilen ein und dasselbe:</p>
+<p><i>SERVER</i> und <i>PORT</i> können weggelassen werden. Zum Beispiel bewirken beide Zeilen dasselbe:</p>
 <pre>AutoHotkey /Debug "MeinSkript.ahk"
 AutoHotkey /Debug=localhost:9000 "MeinSkript.ahk"</pre>
 <p id="debug_attach">Um den Debugger nachträglich mit einem Skript zu verbinden, sende ihm eine Nachricht wie folgt:</p>
-<pre>Skriptpfad = <em>; SETZE HIER DEN VOLLSTÄNDIGEN PFAD DES SKRIPTS EIN</em>
+<pre>Skriptpfad := "" <em>; SETZE HIER DEN VOLLSTÄNDIGEN PFAD DES SKRIPTS EIN</em>
 DetectHiddenWindows On
-IfWinExist %Skriptpfad% ahk_class AutoHotkey
+if WinExist("%Skriptpfad% ahk_class AutoHotkey")
     <em>; Optionale Parameter:
     ;   wParam  = IPv4-Adresse des Debugger-Clients als 32-Bit-Integer.
     ;   lParam  = Port, der vom Debugger-Client abgehört werden soll.</em>
@@ -291,7 +291,7 @@ IfWinExist %Skriptpfad% ahk_class AutoHotkey
 <pre>AutoHotkey110800_Install.exe /S</pre>
 <p>Um anstelle des Standardverzeichnisses ein anderes Verzeichnis anzugeben, verwende den /D-Parameter (lässt man /S weg, würde /D das Standardverzeichnis ändern, welches vom Installer angezeigt wird). Zum Beispiel:</p>
 <pre>AutoHotkey110800_Install.exe /S /D=C:\Programme\AutoHotkey</pre>
-<p>Falls AutoHotkey zuvor installiert wurde, erkennt der Installer automatisch, welche Version von AutoHotkey.exe als Standardeinstellung gesetzt werden soll. Ansonsten gilt als Standardeinstellung Unicode 32-Bit oder Unicode 64-Bit, abhängig davon, ob das Betriebssystem im 64-Bit-Format ist. Soll die Standardversion überschrieben werden, übergebe einen der folgenden Parameter:</p>
+<p><strong>Version</strong>: Falls AutoHotkey zuvor installiert wurde, erkennt der Installer automatisch, welche Version von AutoHotkey.exe als Standardeinstellung gesetzt werden soll. Ansonsten gilt als Standardeinstellung Unicode 32-Bit oder Unicode 64-Bit, abhängig davon, ob das Betriebssystem im 64-Bit-Format ist. Soll die Standardversion überschrieben werden, übergebe einen der folgenden Parameter:</p>
 <ul>
   <li><code>/A32</code> oder <code>/ANSI</code>: ANSI 32-Bit.</li>
   <li><code>/U64</code> oder <code>/x64</code>: Unicode 64-Bit (nur bei 64-Bit-Systemen möglich).</li>
@@ -299,14 +299,40 @@ IfWinExist %Skriptpfad% ahk_class AutoHotkey
 </ul>
 <p>Das folgende Beispiel installiert AutoHotkey automatisch und setzt ANSI 32-Bit als Standardversion:</p>
 <pre>AutoHotkey110800_Install.exe /S /A32</pre>
-<p>Um AutoHotkey automatisch zu deinstallieren, übergebe den Parameter <code>/Uninstall</code> an Installer.ahk. Zum Beispiel:</p>
+<p><strong>Deinstallieren</strong>: Um AutoHotkey automatisch zu deinstallieren, übergebe den Parameter <code>/Uninstall</code> an Installer.ahk. Zum Beispiel:</p>
 <pre>"C:\Programme\AutoHotkey\AutoHotkey.exe" "C:\Programme\AutoHotkey\Installer.ahk" /Uninstall</pre>
 <p>In Versionen älter als 1.1.08.00 muss <code>uninst.exe /S</code> verwendet werden. Zum Beispiel:</p>
 <pre>"C:\Programme\AutoHotkey\uninst.exe" /S</pre>
 <p><strong>Hinweis</strong>: Installer.ahk muss mit Administratorrechten ausgeführt werden, um richtig funktionieren zu können.</p>
-<p>In den neueren Versionen des Installers befindet sich an der unteren rechten Ecke ein Link, mit dem man die Setup-Dateien ohne Installation extrahieren kann. Ist diese Funktion vorhanden, kann man den Parameter <code>/E</code> angeben, um sie über die Kommandozeile aufrufen zu können. Zum Beispiel:</p>
+<p><strong>Extrahieren</strong>: In den neueren Versionen des Installers befindet sich an der unteren rechten Ecke ein Link, mit dem man die Setup-Dateien ohne Installation extrahieren kann. Wenn diese Funktion vorhanden ist, kann sie mit der Befehlszeilenoption <code>/E</code> aufgerufen werden. Zum Beispiel:</p>
 <pre>AutoHotkey110903_Install.exe /D=F:\AutoHotkey /E</pre>
-<p>Im automatischen Install/Uninstall-Modus werden laufende Skripte automatisch geschlossen, wo immer es notwendig ist. Verwende die <code>/R</code>-Option (benötigt v1.1.19.02+), um diese Skripte automatisch neu zu laden, unter Verwendung der EXE, mit der sie gerade laufen, <strong>ohne</strong> Befehlszeilenparameter. Diese Option wird nicht unterstützt, wenn man Installer.ahk zum Ändern der Einstellungen verwendet.</p>
+<p><strong>Skripte neustarten</strong> <span class="ver">[v1.1.19.02+]</span>: Im automatischen Install/Uninstall-Modus werden laufende Skripte automatisch geschlossen, wo immer es notwendig ist. Verwende die <code>/R</code>-Option , um diese Skripte automatisch neu zu laden, unter Verwendung der EXE, mit der sie gerade laufen, <strong>ohne</strong> Befehlszeilenparameter. Das Setup wird versuchen, die Skripte via Explorer zu starten, daher werden sie nicht mit Administratorrechten laufen, wenn UAC aktiv ist.</p>
+
+<p id="Installer_IsHostApp"><strong>Taskleistenschaltflächen</strong> <span class="ver">[v1.1.08+]</span>: Standardmäßig werden in Windows 7 oder höher Taskleistenschaltflächen von mehreren Skripten automatisch zu einer Taskleistenschaltfläche zusammengefasst. Die Option <em>Separate taskbar buttons</em> (Separate Taskleistenschaltflächen) deaktiviert dieses Verhalten, indem sie jede ausführbare AutoHotkey-Datei als <a href="https://msdn.microsoft.com/de-de/library/ee872121#APPLICATIONS">Host-App (IsHostApp)</a> registriert.</p>
+<p><span class="ver">[v1.1.24.02+]:</span> Installationen via Befehlszeile können <code>/IsHostApp</code> oder <code>/IsHostApp=1</code> benutzen, um die Option zu aktivieren, und <code>/IsHostApp=0</code>, um sie zu deaktivieren.</p>
+
+<h3 id="Installer_uiAccess">Mit UI-Access ausführen <span class="ver">[v1.1.24.02+]</span></h3>
+<p>Das Installer-GUI hat die Option "Add 'Run with UI Access' to context menus" ('Mit UI-Access ausführen' in das Kontextmenü einfügen). Diese Kontextmenü-Option bietet einen Workaround für häufig auftretende <a href="FAQ.htm#uac">UAC-bezogene Probleme</a>, damit das Skript administrative Programme automatisieren kann - ohne dass das Skript mit Administratorrechten laufen muss. Um das zu erreichen, wird der Installer Folgendes tun:</p>
+<ul>
+  <li>AutoHotkeyA32.exe, AutoHotkeyU32.exe und (sofern vorhanden) AutoHotkeyU64.exe in AutoHotkey*_UIA.exe umbenennen.</li>
+  <li><a href="https://msdn.microsoft.com/de-de/library/ee671610">uiAccess-Attribut</a> im integrierten Manifest jeder UIA-Datei setzen.</li>
+  <li>Ein selbst-signiertes digitales Zertifikat namens "AutoHotkey" erstellen und jede UIA-Datei signieren.</li>
+  <li>Die Kontextmenü-Option registrieren, um die entsprechende EXE-Datei ausführen zu können.</li>
+</ul>
+<p>Wenn irgendeine dieser UIA-Dateien vor der Installation vorhanden sein sollte, wird der Installer sie automatisch aktualisieren, selbst wenn die uiAccess-Option inaktiv ist.</p>
+<p>Installationen via Befehlszeile können <code>/uiAccess</code> oder <code>/uiAccess=1</code> benutzen, um die Option zu aktivieren, und <code>/uiAccess=0</code>, um sie zu deaktivieren. Standardmäßig wird der Installer die Option aktivieren, wenn UAC aktiv ist und wenn die UI-Access-Kontextmenü-Option vor der Installation vorhanden war.</p>
+<p>Skripte, die andere Skripte mit UI-Access ausführen müssen, können einfach <a href="commands/Run.htm">Run</a> benutzen, um die entsprechende UIA.EXE-Datei mit den normalen <a href="#cmd">Befehlszeilenparametern</a> auszuführen.</p>
+<p><strong>Bekannte Einschränkungen:</strong>:</p>
+<ul>
+  <li>UIA ist nur wirksam, wenn der Speicherort der Datei vertrauenswürdig ist; zum Beispiel ein Unterverzeichnis im Programme-Ordner.</li>
+  <li>UIA.EXE-Dateien funktionieren nur auf anderen Computern, wenn das digitale Zertifikat, welches zum Erstellen dieser Dateien benutzt wurde, auch auf diesen Computern installiert ist.</li>
+  <li>UIA.EXE-Dateien können aufgrund von Sicherheitseinschränkungen nicht via CreateProcess gestartet werden. Stattdessen kann ShellExecute benutzt werden. <a href="commands/Run.htm">Run</a> versucht beides.</li>
+  <li>UIA.EXE-Dateien können nicht modifiziert werden, weil das ansonsten deren digitale Signatur ungültig machen würde.</li>
+  <li>Da die "Integritätsstufe" von UIA-Programmen sich von anderen Programmen unterscheidet, haben sie nur Zugriff auf Objekte, die von anderen UIA-Programmen registriert worden sind. Zum Beispiel würde <code><a href="commands/ComObjActive.htm">ComObjActive</a>("Word.Application")</code> fehlschlagen, weil Word nicht für UI-Access markiert wurde.</li>
+  <li>Die eigenen Fenster des Skripts können aus Sicherheitsgründen nur von UIA-Programmen/Skripten automatisiert werden.</li>
+  <li>Das Ausführen eines Nicht-UIA-Skripts, das einen Maus-Hook benutzt (selbst ein einfaches <code>#InstallMouseHook</code>), könnte alle Maus-Hotkeys blockieren, wenn die Maus auf ein Fenster eines UIA-Skripts zeigt, oder sogar Hotkeys, die vom UIA-Skript selbst implementiert worden sind. Ein Workaround wäre, UIA-Skripte zuletzt zu laden.</li>
+</ul>
+<p>Schau dir <a href="https://autohotkey.com/board/topic/70449-enable-interaction-with-administrative-programs/">Enable interaction with administrative programs</a> (Interaktion mit administrativen Programmen ermöglichen) im Archiv-Forum an, um mehr zu erfahren.</p>
 
 <h2>Skript-Beispiele</h2>
 <p>Auf <a href="scripts/">dieser Seite</a> kann man einige nützliche Skripte finden.</p>

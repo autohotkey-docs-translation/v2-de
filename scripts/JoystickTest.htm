@@ -17,15 +17,16 @@
 </p>
 <p><a href="JoystickTest.ahk">Dieses Skript herunterladen</a>  |  <a href="index.htm">Andere Beispiel-Skripte</a>  |  <a href="../AutoHotkey.htm">Home</a></p>
 
-<pre class="NoIndent"><em>; 6. Juli 2005: Automatische Erkennung der Joystick-Nummer hinzugefügt.
-; 8. Mai 2005: Fehler behoben: JoyAxes wird nicht länger abgefragt, das heißt,
+<pre class="NoIndent"><em>; 16. Juli 2016: Code für Kompatibilität mit AHK v2 überarbeitet
+; 6. Juli 2005 : Automatische Erkennung der Joystick-Nummer hinzugefügt.
+; 8. Mai 2005  : Fehler behoben: JoyAxes wird nicht länger abgefragt, das heißt,
 ; ob der Joystick angeschlossen ist.  Einige Joysticks sind
 ; Gamepads und haben keine einzige Achse.</em>
 
 <em>; Wenn unbedingt der Bedarf besteht, eine bestimmte Joystick-Nummer zu verwenden, ändert
 ; den folgenden Wert von 0 auf eine Joystick-Nummer (1-16).
 ; Bei einem Wert von 0 wird die Joystick-Nummer automatisch erkannt:</em>
-JoystickNumber = 0
+JoystickNumber := 0
 
 <em>; ENDE DES KONFIGURATIONSBEREICHS. Hier danach keine Änderungen durchführen,
 ; es sei denn, die allgemeine Funktionalität des Skripts soll geändert werden.</em>
@@ -36,9 +37,9 @@ if JoystickNumber &lt;= 0
     Loop 16  <em>; Jede Joystick-Nummer auf Existenz überprüfen.</em>
     {
         GetKeyState, JoyName, %A_Index%JoyName
-        if JoyName &lt;&gt;
+        if JoyName &lt;&gt; ""
         {
-            JoystickNumber = %A_Index%
+            JoystickNumber := A_Index
             break
         }
     }
@@ -50,47 +51,46 @@ if JoystickNumber &lt;= 0
 }
 
 #SingleInstance
-SetFormat, float, 03  <em>; Dezimalpunkt von den Prozentwerten der Achsenpositionen weglassen.</em>
 GetKeyState, joy_buttons, %JoystickNumber%JoyButtons
 GetKeyState, joy_name, %JoystickNumber%JoyName
 GetKeyState, joy_info, %JoystickNumber%JoyInfo
 Loop
 {
-    buttons_down =
-    Loop, %joy_buttons%
+    buttons_down := ""
+    Loop, joy_buttons
     {
         GetKeyState, joy%a_index%, %JoystickNumber%joy%a_index%
-        if joy%a_index% = D
-            buttons_down = %buttons_down%%a_space%%a_index%
+        if joy%a_index%
+            buttons_down .= " " a_index
     }
     GetKeyState, joyx, %JoystickNumber%JoyX
-    axis_info = X%joyx%
+    axis_info := "X" Round(joyx)
     GetKeyState, joyy, %JoystickNumber%JoyY
-    axis_info = %axis_info%%a_space%%a_space%Y%joyy%
-    IfInString, joy_info, Z
+    axis_info .= "  Y" Round(joyy)
+    if InStr(joy_info, "Z")
     {
         GetKeyState, joyz, %JoystickNumber%JoyZ
-        axis_info = %axis_info%%a_space%%a_space%Z%joyz%
+        axis_info .= "  Z" Round(joyz)
     }
-    IfInString, joy_info, R
+    if InStr(joy_info, "R")
     {
         GetKeyState, joyr, %JoystickNumber%JoyR
-        axis_info = %axis_info%%a_space%%a_space%R%joyr%
+        axis_info .= "  R" Round(joyr)
     }
-    IfInString, joy_info, U
+    if InStr(joy_info, "U")
     {
         GetKeyState, joyu, %JoystickNumber%JoyU
-        axis_info = %axis_info%%a_space%%a_space%U%joyu%
+        axis_info .= "  U" Round(joyu)
     }
-    IfInString, joy_info, V
+    if InStr(joy_info, "V")
     {
         GetKeyState, joyv, %JoystickNumber%JoyV
-        axis_info = %axis_info%%a_space%%a_space%V%joyv%
+        axis_info .= "  V" Round(joyv)
     }
-    IfInString, joy_info, P
+    if InStr(joy_info, "P")
     {
         GetKeyState, joyp, %JoystickNumber%JoyPOV
-        axis_info = %axis_info%%a_space%%a_space%POV%joyp%
+        axis_info .= "  POV" Round(joyp)
     }
     ToolTip, %joy_name% (#%JoystickNumber%):`n%axis_info%`nGedrückte Tasten: %buttons_down%`n`n(Zum Beenden Rechtsklick auf Infobereichssymbol)
     Sleep, 100

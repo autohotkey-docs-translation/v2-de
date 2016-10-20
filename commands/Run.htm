@@ -56,7 +56,7 @@
 <p>Wenn das <em>Ziel</em> Kommas enthält, müssen sie mit einem <a href="../misc/EscapeChar.htm">Escapezeichen</a> versehen werden, wie es in dem folgenden Beispiel dreimal gemacht wird:</p>
 <pre>Run rundll32.exe shell32.dll<span class="style3">`,</span>Control_RunDLL desk.cpl<span class="style3">`,`,</span> 3  <em>; Öffnet Systemsteuerung &gt; Anzeige &gt; Einstellungen</em></pre>
 <p>Startet man ein Programm via <a href="../Variables.htm#ComSpec">Comspec</a> (cmd.exe) - z. B. um die Ein- oder Ausgabe des Programms umzuleiten - sollte, sofern Leerzeichen im Pfad oder Namen enthalten sind, die komplette Zeichenkette mit äußeren Anführungszeichen umschlossen werden. Im folgenden Beispiel werden die äußeren Anführungszeichen in rot und alle inneren Anführungszeichen in schwarz dargestellt:</p>
-<pre>Run %comspec% /c <span class="style3">"</span>"C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">"</span></pre>
+<pre>Run %A_ComSpec% /c <span class="style3">"</span>"C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">"</span></pre>
 <p>Wenn <em>Ziel</em> nicht gestartet werden kann, wird ein Fehlerfenster angezeigt und der aktuelle Thread beendet, sofern man <strong>UseErrorLevel</strong> nicht im dritten Parameter verwendet oder den Fehler nicht via <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a>-Anweisung abgefängt.</p>
 <p>Die Performance kann etwas verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, wie z. B. <code>Run, C:\Windows\Notepad.exe "C:\Meine Dokumente\Test.txt"</code> anstelle von <code>Run, C:\Meine Dokumente\Test.txt</code>.</p>
 <p>Spezielle <a href="../misc/CLSID-List.htm">CLSID-Ordner</a> können via Run geöffnet werden. Zum Beispiel:</p>
@@ -102,7 +102,7 @@ Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em>
 
 Run, mailto:someone@domain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist der Haupttext der Nachricht.
 Run, ReadMe.doc, , Max UseErrorLevel  <em>; Startet maximiert und zeigt bei Misserfolg kein Dialogfenster an.</em>
-if ErrorLevel = ERROR
+if ErrorLevel = "ERROR"
     MsgBox Das Dokument konnte nicht geöffnet werden.
 
 RunWait, %comspec% /c dir c:\ &gt;&gt;c:\DirTest.txt, , min
@@ -116,7 +116,7 @@ Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; Öffnet den Arbeitsplatz/Com
 Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em>
 
 <em>; Mit "&amp;&amp;" können mehrere Befehle hintereinander ausgeführt werden:</em>
-Run, %comspec% /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause
+Run, %A_ComSpec% /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause
 </pre>
 
 <pre class="NoIndent" id="StdOut">
@@ -135,7 +135,7 @@ RunWaitEin(Befehl) {
     <em>; WshShell-Objekt: <a href="https://msdn.microsoft.com/de-de/library/aew9yb99">http://msdn.microsoft.com/en-us/library/aew9yb99</a></em>
     shell := ComObjCreate("WScript.Shell")
     <em>; Führt einen einzelnen Befehl via cmd.exe aus</em>
-    exec := shell.Exec(ComSpec " /C " Befehl)
+    exec := shell.Exec(A_ComSpec " /C " Befehl)
     <em>; Liest die Ausgaben aller Befehle und gibt sie zurück</em>
     return exec.StdOut.ReadAll()
 }
@@ -143,7 +143,7 @@ RunWaitEin(Befehl) {
 RunWaitViele(Befehle) {
     shell := ComObjCreate("WScript.Shell")
     <em>; Öffnet cmd.exe mit deaktivierter Textanzeige</em>
-    exec := shell.Exec(ComSpec " /Q /K echo off")
+    exec := shell.Exec(A_ComSpec " /Q /K echo off")
     <em>; Sendet die Befehle, die ausgeführt werden sollen, getrennt durch Newline</em>
     exec.StdIn.WriteLine(Befehle "`nexit")  <em>; Immer ein Exit am Ende!</em>
     <em>; Liest die Ausgaben aller Befehle und gibt sie zurück</em>
@@ -164,7 +164,7 @@ ExecScript(Script, Warten:=true)
 }
 
 <em>; Beispiel:</em>
-InputBox expr,, Trage einen Ausdruck ein`, der in einem neuen Skript ausgewertet werden soll.,,,,,,,, Asc("*")
+InputBox expr,, Trage einen Ausdruck ein`, der in einem neuen Skript ausgewertet werden soll.,, Ord("*")
 Ergebnis := ExecScript("FileAppend % (" expr "), *")
 MsgBox % "Ergebnis: " Ergebnis
 </pre>

@@ -1,10 +1,5 @@
 toc = [
-  {label:"AutoHotkey",path:"AutoHotkey.htm"},
-  {label:"Tutorial (Schnellstart)",path:"Tutorial.htm"},
-  {label:"FAQ (häufig gestellte Fragen)",path:"FAQ.htm"},
-  {label:"Befehls- und Funktionsliste",path:"commands/index.htm"},
-  {label:"Skript-Beispiele",path:"scripts/index.htm"},
-  {label:"Änderungen & Neue Features",path:"ChangeLog.htm"},
+  {label:"Kurzübersicht",path:"AutoHotkey.htm"},
   {label:"Grundlagen und Syntax",children:
   [
     {label:"Hotkeys",path:"Hotkeys.htm"},
@@ -28,20 +23,29 @@ toc = [
       {label:"Funktionsobjekte",path:"objects/Functor.htm"}
     ]}
   ]},
-  {label:"Umgebungsverwaltung",children:
+  {label:"Häufig gestellte Fragen",path:"FAQ.htm"},
+  {label:"Tutorial (Schnellstart)",path:"Tutorial.htm"},
+  {label:"Aktuelle Änderungen",path:"ChangeLog.htm"},
+  {label:"Skript-Beispiele",path:"scripts/index.htm"},
+  {label:"Skript-Kompatibilität",path:"Compat.htm"},
+  {label:"Befehls- und Funktionsliste",path:"commands/index.htm"},
+  {label:"Umgebung",children:
   [
     {label:"ClipWait",path:"commands/ClipWait.htm"},
     {label:"EnvGet",path:"commands/EnvGet.htm"},
     {label:"EnvSet",path:"commands/EnvSet.htm"},
-    {label:"EnvUpdate",path:"commands/EnvUpdate.htm"}
+    {label:"EnvUpdate",path:"commands/EnvUpdate.htm"},
+    {label:"OnClipboardChange",path:"commands/OnClipboardChange.htm"},
+    {label:"SysGet",path:"commands/SysGet.htm"}
   ]},
-  {label:"Natives Code-Interop",children:
+  {label:"Externe Libraries",children:
   [
     {label:"DllCall",path:"commands/DllCall.htm"},
     {label:"NumGet",path:"commands/NumGet.htm"},
     {label:"NumPut",path:"commands/NumPut.htm"},
     {label:"RegisterCallback",path:"commands/RegisterCallback.htm"},
-    {label:"StrPut()/StrGet()",path:"commands/StrPutGet.htm"},
+    {label:"StrPut/StrGet",path:"commands/StrPutGet.htm"},
+    {label:"VarSetCapacity",path:"commands/VarSetCapacity.htm"},
     {label:"COM",children:
     [
       {label:"ComObjActive",path:"commands/ComObjActive.htm"},
@@ -81,7 +85,7 @@ toc = [
     {label:"FileGetVersion",path:"commands/FileGetVersion.htm"},
     {label:"FileInstall",path:"commands/FileInstall.htm"},
     {label:"FileMove",path:"commands/FileMove.htm"},
-    {label:"FileOpen()",path:"commands/FileOpen.htm"},
+    {label:"FileOpen",path:"commands/FileOpen.htm"},
     {label:"FileRead",path:"commands/FileRead.htm"},
     {label:"FileRecycle",path:"commands/FileRecycle.htm"},
     {label:"FileRecycleEmpty",path:"commands/FileRecycleEmpty.htm"},
@@ -112,7 +116,7 @@ toc = [
     {label:"Gosub",path:"commands/Gosub.htm"},
     {label:"Goto",path:"commands/Goto.htm"},
     {label:"If (Ausdruck)",path:"commands/IfExpression.htm"},
-    {label:"Loop-Befehle",path:"commands/Loop.htm",children:
+    {label:"Loop",path:"commands/Loop.htm",children:
     [
       {label:"Loop",path:"commands/Loop.htm"},
       {label:"Loop (Dateien & Ordner)",path:"commands/LoopFile.htm"},
@@ -133,35 +137,7 @@ toc = [
     {label:"Until",path:"commands/Until.htm"},
     {label:"While-Schleife",path:"commands/While.htm"}
   ]},
-  {label:"Built-in-Funktionen",path:"Functions.htm",children:
-  [
-    {label:"Chr",path:"Functions.htm#Chr"},
-    {label:"FileExist",path:"Functions.htm#FileExist"},
-    {label:"Format",path:"commands/Format.htm"},
-    {label:"GetKeyName/VK/SC",path:"Functions.htm#GetKeyName"},
-    {label:"InStr",path:"commands/InStr.htm"},
-    {label:"IsByRef",path:"Functions.htm#IsByRef"},
-    {label:"IsFunc",path:"Functions.htm#IsFunc"},
-    {label:"IsLabel",path:"Functions.htm#IsLabel"},
-    {label:"NumGet",path:"commands/NumGet.htm"},
-    {label:"NumPut",path:"commands/NumPut.htm"},
-    {label:"OnClipboardChange",path:"commands/OnClipboardChange.htm"},
-    {label:"OnExit",path:"commands/OnExit.htm"},
-    {label:"OnMessage",path:"commands/OnMessage.htm"},
-    {label:"Ord",path:"Functions.htm#Ord"},
-    {label:"RegExMatch",path:"commands/RegExMatch.htm"},
-    {label:"RegExReplace",path:"commands/RegExReplace.htm"},
-    {label:"RegisterCallback",path:"commands/RegisterCallback.htm"},
-    {label:"StrLen",path:"Functions.htm#StrLen"},
-    {label:"StrPut/StrGet",path:"commands/StrPutGet.htm"},
-    {label:"StrReplace",path:"commands/StrReplace.htm"},
-    {label:"StrSplit",path:"commands/StrSplit.htm"},
-    {label:"SubStr",path:"commands/SubStr.htm"},
-    {label:"VarSetCapacity",path:"commands/VarSetCapacity.htm"},
-    {label:"WinActive",path:"commands/WinActive.htm"},
-    {label:"WinExist",path:"commands/WinExist.htm"}
-  ]},
-  {label:"GUI, MsgBox, InputBox & andere Dialogfenster",children:
+  {label:"Grafische Benutzeroberflächen",children:
   [
     {label:"DirSelect",path:"commands/DirSelect.htm"},
     {label:"FileSelect",path:"commands/FileSelect.htm"},
@@ -177,6 +153,23 @@ toc = [
     {label:"OnMessage",path:"commands/OnMessage.htm"},
     {label:"ToolTip",path:"commands/ToolTip.htm"},
     {label:"TrayTip",path:"commands/TrayTip.htm"}
+  ]},
+  {label:"Mathematik",path:"commands/Math.htm",children:
+  [
+    {label:"Abs",path:"commands/Math.htm#Abs"},
+    {label:"Ceil",path:"commands/Math.htm#Ceil"},
+    {label:"DateAdd",path:"commands/DateAdd.htm"},
+    {label:"DateDiff",path:"commands/DateDiff.htm"},
+    {label:"Exp",path:"commands/Math.htm#Exp"},
+    {label:"Floor",path:"commands/Math.htm#Floor"},
+    {label:"Log",path:"commands/Math.htm#Log"},
+    {label:"Ln",path:"commands/Math.htm#Ln"},
+    {label:"Mod",path:"commands/Math.htm#Mod"},
+    {label:"Random",path:"commands/Random.htm"},
+    {label:"Round",path:"commands/Math.htm#Round"},
+    {label:"Sqrt",path:"commands/Math.htm#Sqrt"},
+    {label:"Sin/Cos/Tan",path:"commands/Math.htm#Sin"},
+    {label:"ASin/ACos/ATan",path:"commands/Math.htm#ASin"}
   ]},
   {label:"Maus und Tastatur",children:
   [
@@ -207,6 +200,7 @@ toc = [
     {label:"ControlClick",path:"commands/ControlClick.htm"},
     {label:"ControlSend, ControlSendRaw",path:"commands/ControlSend.htm"},
     {label:"CoordMode",path:"commands/CoordMode.htm"},
+    {label:"GetKeyName/VK/SC",path:"commands/GetKey.htm"},
     {label:"GetKeyState",path:"commands/GetKeyState.htm"},
     {label:"Tastenliste (Tastatur, Maus, Joystick)",path:"KeyList.htm"},
     {label:"KeyHistory",path:"commands/KeyHistory.htm"},
@@ -225,52 +219,30 @@ toc = [
     {label:"SetNumScrollCapsLockState",path:"commands/SetNumScrollCapsLockState.htm"},
     {label:"SetStoreCapslockMode",path:"commands/SetStoreCapslockMode.htm"}
   ]},
-  {label:"Mathematik",children:
+  {label:"Sonstiges",children:
   [
-    {label:"Abs",path:"Functions.htm#Abs"},
-    {label:"Ceil",path:"Functions.htm#Ceil"},
-    {label:"Exp",path:"Functions.htm#Exp"},
-    {label:"Floor",path:"Functions.htm#Floor"},
-    {label:"Log",path:"Functions.htm#Log"},
-    {label:"Ln",path:"Functions.htm#Ln"},
-    {label:"Mod",path:"Functions.htm#Mod"},
-    {label:"Random",path:"commands/Random.htm"},
-    {label:"Round",path:"Functions.htm#Round"},
-    {label:"Sqrt",path:"Functions.htm#Sqrt"},
-    {label:"Sin/Cos/Tan",path:"Functions.htm#Sin"},
-    {label:"ASin/ACos/ATan",path:"Functions.htm#ASin"},
-    {label:"DateAdd",path:"commands/DateAdd.htm"},
-    {label:"DateDiff",path:"commands/DateDiff.htm"}
-  ]},
-  {label:"Bildschirmverwaltung",children:
-  [
-    {label:"ImageSearch",path:"commands/ImageSearch.htm"},
-    {label:"PixelGetColor",path:"commands/PixelGetColor.htm"},
-    {label:"PixelSearch",path:"commands/PixelSearch.htm"}
-  ]},
-  {label:"Verschiedene Befehle",children:
-  [
-    {label:"#NoTrayIcon",path:"commands/_NoTrayIcon.htm"},
-    {label:"#SingleInstance",path:"commands/_SingleInstance.htm"},
-    {label:"#Warn",path:"commands/_Warn.htm"},
     {label:"Deref",path:"commands/Deref.htm"},
     {label:"Download",path:"commands/Download.htm"},
     {label:"Edit",path:"commands/Edit.htm"},
+    {label:"Func",path:"commands/Func.htm"},
+    {label:"IsByRef",path:"commands/IsByRef.htm"},
+    {label:"IsFunc",path:"commands/IsFunc.htm"},
+    {label:"IsLabel",path:"commands/IsLabel.htm"},
+    {label:"IsObject",path:"commands/IsObject.htm"},
     {label:"ListLines",path:"commands/ListLines.htm"},
     {label:"ListVars",path:"commands/ListVars.htm"},
     {label:"MonitorGet",path:"commands/MonitorGet.htm"},
     {label:"OutputDebug",path:"commands/OutputDebug.htm"},
-    {label:"SysGet",path:"commands/SysGet.htm"},
     {label:"VarSetCapacity",path:"commands/VarSetCapacity.htm"}
   ]},
-  {label:"Prozessverwaltung",children:
+  {label:"Prozess",children:
   [
     {label:"Process",path:"commands/Process.htm"},
     {label:"Run/RunWait",path:"commands/Run.htm"},
     {label:"RunAs",path:"commands/RunAs.htm"},
     {label:"Shutdown",path:"commands/Shutdown.htm"}
   ]},
-  {label:"Registry-Verwaltung",children:
+  {label:"Registry",children:
   [
     {label:"Loop (Registry)",path:"commands/LoopReg.htm"},
     {label:"RegDelete",path:"commands/RegDelete.htm"},
@@ -278,32 +250,40 @@ toc = [
     {label:"RegWrite",path:"commands/RegWrite.htm"},
     {label:"SetRegView",path:"commands/SetRegView.htm"}
   ]},
-  {label:"Sound-Befehle",children:
+  {label:"Bildschirm",children:
+  [
+    {label:"ImageSearch",path:"commands/ImageSearch.htm"},
+    {label:"PixelGetColor",path:"commands/PixelGetColor.htm"},
+    {label:"PixelSearch",path:"commands/PixelSearch.htm"}
+  ]},
+  {label:"Sound",children:
   [
     {label:"SoundBeep",path:"commands/SoundBeep.htm"},
     {label:"SoundGet",path:"commands/SoundGet.htm"},
     {label:"SoundPlay",path:"commands/SoundPlay.htm"},
     {label:"SoundSet",path:"commands/SoundSet.htm"},
   ]},
-  {label:"Zeichenkettenverwaltung",children:
+  {label:"Zeichenkette",children:
   [
-    {label:"Format()",path:"commands/Format.htm"},
+    {label:"Chr",path:"commands/Chr.htm"},
+    {label:"Format",path:"commands/Format.htm"},
     {label:"FormatTime",path:"commands/FormatTime.htm"},
-    {label:"InStr()",path:"commands/InStr.htm"},
+    {label:"InStr",path:"commands/InStr.htm"},
     {label:"Loop (Zeichenkette parsen)",path:"commands/LoopParse.htm"},
-    {label:"RegExMatch()",path:"commands/RegExMatch.htm"},
-    {label:"RegExReplace()",path:"commands/RegExReplace.htm"},
+    {label:"Ord",path:"commands/Ord.htm"},
+    {label:"RegExMatch",path:"commands/RegExMatch.htm"},
+    {label:"RegExReplace",path:"commands/RegExReplace.htm"},
     {label:"Sort",path:"commands/Sort.htm"},
     {label:"StringCaseSense",path:"commands/StringCaseSense.htm"},
     {label:"StrLower/StrUpper",path:"commands/StrLower.htm"},
-    {label:"StrLen()",path:"Functions.htm#StrLen"},
-    {label:"StrPut()/StrGet()",path:"commands/StrPutGet.htm"},
-    {label:"StrReplace()",path:"commands/StrReplace.htm"},
-    {label:"StrSplit()",path:"commands/StrSplit.htm"},
-    {label:"SubStr()",path:"commands/SubStr.htm"},
-    {label:"Trim()",path:"commands/Trim.htm"}
+    {label:"StrLen",path:"Functions.htm#StrLen"},
+    {label:"StrPut/StrGet",path:"commands/StrPutGet.htm"},
+    {label:"StrReplace",path:"commands/StrReplace.htm"},
+    {label:"StrSplit",path:"commands/StrSplit.htm"},
+    {label:"SubStr",path:"commands/SubStr.htm"},
+    {label:"Trim",path:"commands/Trim.htm"}
   ]},
-  {label:"Fensterverwaltung",children:
+  {label:"Fenster",children:
   [
     {label:"Steuerelemente",children:
     [
@@ -338,7 +318,9 @@ toc = [
     {label:"StatusBarWait",path:"commands/StatusBarWait.htm"},
     {label:"WinActivate",path:"commands/WinActivate.htm"},
     {label:"WinActivateBottom",path:"commands/WinActivateBottom.htm"},
+    {label:"WinActive",path:"commands/WinActive.htm"},
     {label:"WinClose",path:"commands/WinClose.htm"},
+    {label:"WinExist",path:"commands/WinExist.htm"},
     {label:"WinGet.. (verschiedenes)",path:"commands/WinGet.htm"},
     {label:"WinGetClass",path:"commands/WinGetClass.htm"},
     {label:"WinGetPos",path:"commands/WinGetPos.htm"},
