@@ -66,7 +66,7 @@
   <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">Built-In-Variablen</a> an eine Funktion via Verweis zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
   <li id="recurse">Theoretisch kann eine Funktion sich selbst rekursiv aufrufen. Wenn sie sich jedoch selbst ihre eigenen <a href="#Locals">lokalen Variablen</a> oder Nicht-ByRef-Parameter per <em>ByRef</em> übergibt, wird der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit selben Namen verweisen, anstatt auf dem Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
   <li>Wenn ein Parameter bei einem Funktionsaufruf in eine Variable aufgelöst wird (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können andere Parameter auf der linken oder rechten Seite diese Variable ändern, bevor sie an die Funktion übergeben wird. Zum Beispiel würde <code>Funktion(Var, Var++)</code> unerwartet eine 0 und 1 übergeben, wenn <em>Var</em> zu Beginn 0 ist, selbst wenn der erste Parameter der Funktion nicht als <em>ByRef</em> markiert ist. Da dieses Verhalten unlogisch ist, könnte es in einer zukünftigen Version geändert werden.</li>
-  <li>ByRef werden nicht direkt in Funktionen unterstützt, die von COM-Clienten aufgerufen werden, oder beim Aufrufen von COM-Methoden. Stattdessen wird das Skript ein <a href="commands/ComObjActive.htm#ByRef">Wrapper-Objekt</a> übergeben müssen oder empfangen, das den <a href="commands/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
+  <li>ByRef werden nicht direkt in Funktionen unterstützt, die von COM-Clienten aufgerufen werden, oder beim Aufrufen von COM-Methoden. Stattdessen wird das Skript ein <a href="commands/ComObject.htm#ByRef">Wrapper-Objekt</a> übergeben müssen oder empfangen, das den <a href="commands/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
 </ul>
 <h2 id="optional">Optionale Parameter</h2>
 <p>Bei einer Funktionsdefinition können die Parameter als optional gekennzeichnet werden. Dazu muss ein Zuweisungsoperator und ein Standardwert angefügt werden. Im folgenden Beispiel ist der Z-Parameter als optional gekennzeichnet:</p>
@@ -75,9 +75,9 @@
 }</pre>
 <p>Übergibt der Aufrufer <strong>drei</strong> Parameter an die obere Funktion, wird der Standardwert von Z ignoriert. Wenn der Aufrufer aber nur <strong>zwei</strong> Parameter übergibt, wird in Z automatisch der Wert 0 gespeichert.</p>
 <p id="missing">Es ist nicht möglich, alleinstehende optionale Parameter in der Mitte der Parameterliste zu verwenden. Das heißt, dass alle Parameter, die auf der rechten Seite des ersten optionalen Parameters vorkommen, auch als optional gekennzeichnet werden müssen. Beim Aufrufen der Funktion können die optionale Parameter in der Mitte der Parameterliste weggelassen werden, wie unten gezeigt:</p>
-<pre>Funktion(1,, 3)
-Funktion(X, Y:=2, Z:=0) {  <em>; Beachte, dass Z in diesem Fall weiterhin optional sein muss.</em>
-    MsgBox %X%, %Y%, %Z%
+<pre>Func(1,, 3)
+Func(X, Y:=2, Z:=0) {  <em>; Beachte, dass Z in diesem Fall weiterhin optional sein muss.</em>
+    MsgBox("%X%, %Y%, %Z%")
 }</pre>
 <p id="OptionalByRef"> <a href="#ByRef">ByRef-Parameter</a> unterstützen auch Standardwerte; zum Beispiel: <code>Funktion(ByRef p1 = "")</code>. Jedes Mal, wenn der Aufrufer einen solchen Parameter weglässt, erstellt die Funktion eine lokale Variable, die den Standardwert enthält; das heißt, dass die Funktion sich so verhält, als würde das Schlüsselwort "ByRef" fehlen.</p>
 <p>Als Standardwert eines Parameters sind folgende Werte zulässig: <code>True</code>, <code>False</code>, ein literaler Integer, eine literale Gleitkommazahl oder eine literale Zeichenkette wie "fox" oder "".</p>
@@ -104,6 +104,7 @@ returnByRef(ByRef val1, ByRef val2, ByRef val3)
   return
 }
 </pre>
+<p>Mithilfe von Objekten und Arrays können mehrere Werte oder sogar benannte Werte zurückgegeben werden:</p>
 <pre>
 Test1 := returnArray1()
 MsgBox % Test1[1] "," Test1[2]
@@ -164,7 +165,15 @@ MsgBox % Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
 </ul>
 <h2 id="Locals">Lokale und globale Variablen</h2>
 <h3>Lokale Variablen</h3>
-<p>Alle Variablen, die innerhalb einer Funktion abgerufen oder erstellt werden, sind standardmäßig <em>lokal</em> (außer <a href="#SuperGlobal">superglobale</a> Variablen und Built-in-Variablen wie <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a>). Die Inhalte der lokalen Variablen sind nur für Zeilen innerhalb der Funktion sichtbar. Daher kann eine lokale Variable den gleichen Namen haben wie eine globale Variable, aber mit unterschiedlichem Inhalt. Alle lokalen Variablen sind zu Beginn leer, und das jedes Mal, wenn die Funktion aufgerufen wird.</p>
+<p>Lokale Variablen gelten nur für eine einzige Funktion und sind nur in dieser sichtbar. Daher kann eine lokale Variable den gleichen Namen haben wie eine globale Variable, aber mit unterschiedlichem Inhalt. Separate Funktionen können ohne Probleme die gleichen Variablennamen benutzen.</p>
+<p>Alle lokalen Variablen, die nicht <a href="#static">statisch</a> sind, werden automatisch freigegeben (leer gemacht), wenn die Funktion ihr Ende erreicht hat.</p>
+<p>Variablen, die innerhalb einer Funktion abgerufen oder erstellt werden, sind standardmäßig lokal, aber es gibt folgende Ausnahmen:</p>
+<ul>
+  <li><a href="#SuperGlobal">Superglobale</a> Variablen, inklusive <a href="Objects.htm#Custom_Classes">Klassen</a>.</li>
+  <li>Built-In-Variablen wie <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a>.</li>
+</ul>
+<p>Zudem kann das Standardverhalten wie unten gezeigt überschrieben werden.</p>
+
 <h3 id="Global">Globale Variablen</h3>
 <p>Um innerhalb einer Funktion auf eine vorhandene globale Variable zu verweisen (oder eine neue zu erstellen), deklariere die Variable als global, bevor man sie verwendet. Zum Beispiel:</p>
 <pre>LogZuDatei(TextZuLog)
@@ -215,7 +224,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <h2 id="DynCall">Dynamisches Aufrufen einer Funktion</h2>
 <p>Eine Funktion (auch eine <a href="#BuiltIn">Built-in-Funktion</a>) kann mithilfe von Prozentzeichen dynamisch aufgerufen werden. Zum Beispiel würde <code>%Var%(x, "Fuchs")</code> die Funktion aufrufen, deren Name in <em>Var</em> enthalten ist. Ebenso würde <code>Funktion%A_Index%()</code> Funktion1(), Funktion2() und so weiter aufrufen, abhängig vom aktuellen Wert in A_Index.</p>
 <p><em>Var</em> in <code>%Var%()</code> kann einen Funktionsnamen oder ein <a href="objects/Functor.htm">Funktionsobjekt</a> enthalten. Falls die Funktion nicht existiert, wird stattdessen die __Call-Meta-Funktion des <a href="Objects.htm#Default_Base_Object">Standard-base-Objekts</a> aufgerufen (und wenn diese Methode undefiniert ist, wie immer die __Call-Meta-Funktion aufgerufen).</p>
-<p>Kann die Funktion aufgrund einer der unten genannten Gründe nicht aufgerufen werden, wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst:</p>
+<p>Kann die Funktion aufgrund einer der unten genannten Gründe nicht aufgerufen werden, wird eine <a href="commands/Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst:</p>
 <ul>
   <li>Aufrufen einer nicht-existierenden Funktion, das mithilfe von <code>If <a href="#IsFunc">IsFunc</a>(VariableMitFunktionsname)</code> verhindert werden kann. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">Built-in-Funktionen</a>) muss explizit im Skript vorkommen (zum Beispiel über <a href="commands/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Library-Funktion</a>).</li>
   <li>Übergeben von zu wenigen Parametern, das verhindert werden kann, wenn der Rückgabewert von <a href="#IsFunc">IsFunc()</a> überprüft wird (das ist die Anzahl der Pflichtparameter plus 1). Hinweis: Die Übergabe von zu vielen Parametern wird toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
@@ -237,10 +246,9 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p id="GosubPublic">Verwendet eine Funktion das <a href="commands/Gosub.htm">GoSub</a>, um zu einer öffentlichen Subroutine zu springen (die sich außerhalb der Funktionsklammern befindet), sind alle Variablen außerhalb global und die funktions-eigenen <a href="#Locals">lokalen Variablen</a> nicht abrufbar, bis die Subroutine ihr Return erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
 <p>Das <a href="commands/Goto.htm">Goto</a> kann nicht verwendet werden, um vom Inneren der Funktion nach außen zu springen. Allerdings kann eine Funktion per <a href="commands/Gosub.htm">GoSub</a> zu einer externen/öffentlichen Subroutine springen und von dort aus per Goto weiterspringen.</p>
 <p>In der Regel sollte man auf <a href="commands/Goto.htm">Goto</a> verzichten. Dieser Befehl kann aber innerhalb einer Funktion nützlich sein, wo man auf eine andere Position springen muss. Diese Methode kann helfen, komplexe Funktionen zu vereinfachen, die mehrere Rückgabepunkte haben, bei denen zuvor einige Säuberungsaktionen durchgeführt werden müssen.</p>
-<p>Eine Funktion kann extern-aufrufende Subroutinen wie <a href="commands/SetTimer.htm">Timer</a>, <a href="commands/Gui.htm#label">g-Label</a> und <a href="commands/Menu.htm">Menüpunkte</a> enthalten. Dies ist eine übliche Vorgehensweise, um sie in eine separate Datei zu packen und später via <a href="commands/_Include.htm">#Include</a> bereitzustellen, so dass sie den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> des Skripts nicht stören können. Allerdings gelten folgende Einschränkungen:</p>
+<p>Eine Funktion kann extern-aufrufende Subroutinen wie <a href="commands/SetTimer.htm">Timer</a> und <a href="commands/Menu.htm">Menüpunkte</a> enthalten. Dies ist eine übliche Vorgehensweise, um sie in eine separate Datei zu packen und später via <a href="commands/_Include.htm">#Include</a> bereitzustellen, so dass sie den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> des Skripts nicht stören können. Allerdings gelten folgende Einschränkungen:</p>
 <ul>
-  <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Locals">lokalen</a>), wenn ihre Funktionen normal aufgerufen werden, weil ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), in der Lage wäre, die Werte von lokalen Variablen zu ändern, wie sie vom unterbrochenen Thread gesehen werden. Jedes Mal, wenn eine Funktion zu ihrem Aufrufer zurückkehrt, werden all ihre lokale Variablen leer gemacht, um deren Speicher freizugeben.</li>
-  <li>Solche Subroutinen sollten nur <a href="#Global">globale Variablen</a> (keine <a href="#static">statischen Variablen</a>) als <a href="commands/Gui.htm#var">GUI-Steuerelement-Variablen</a> verwenden.</li>
+  <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Locals">lokalen</a>), wenn ihre Funktionen normal aufgerufen werden, weil ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), in der Lage wäre, die Werte von lokalen Variablen zu ändern, wie sie vom unterbrochenen Thread gesehen werden. Jedes Mal, wenn eine Funktion zu ihrem Aufrufer zurückkehrt, werden all ihre lokalen Variablen leer gemacht, um deren Speicher freizugeben.</li>
   <li>Wenn eine Funktion von einem Subroutinen-<a href="misc/Threads.htm">Thread</a> betreten wird, werden alle Verweise auf <a href="misc/Arrays.htm">dynamische Variablen</a>, die von diesem Thread erstellt wurden, als <a href="#Global">globale Variablen</a> behandelt (einschließlich array-erstellende Befehle). <a href="misc/Labels.htm">Lokale Label</a> hingegen können nicht dynamisch verwiesen werden.</li>
 </ul>
 <h2 id="remarks">Return, Exit und allgemeine Bemerkungen</h2>
@@ -303,17 +311,21 @@ Pfad-zur-gerade-laufenden-AutoHotkey.exe\Lib\  <em>; Standard-Library.</em></pre
     <td><a href="commands/RegExReplace.htm">RegExReplace</a></td>
     <td>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb einer Zeichenkette.</td>
   </tr>
-  <tr id="SubStr">
-    <td><a href="commands/SubStr.htm">SubStr</a></td>
-    <td>Ermittelt ein oder mehrere Zeichen von der angegebenen Position innerhalb einer Zeichenkette.</td>
-  </tr>
   <tr id="StrLen">
     <td><a href="commands/StringLen.htm">StrLen</a></td>
     <td>Ermittelt die Anzahl an Zeichen, die sich in einer Zeichenkette befinden.</td>
   </tr>
+  <tr id="StrReplace">
+    <td><a href="commands/StrReplace.htm">StrReplace</a></td>
+    <td>Ersetzt Vorkommen der angegebenen Teilzeichenkette mit einer neuen Zeichenkette.</td>
+  </tr>
   <tr id="StrSplit">
-    <td><a href="commands/StringSplit.htm">StrSplit</a></td>
+    <td><a href="commands/StrSplit.htm">StrSplit</a></td>
     <td>Teilt eine Zeichenkette in mehreren Teilzeichenketten auf, basierend auf die angegebenen Trennzeichen.</td>
+  </tr>
+  <tr id="SubStr">
+    <td><a href="commands/SubStr.htm">SubStr</a></td>
+    <td>Ermittelt ein oder mehrere Zeichen von der angegebenen Position innerhalb einer Zeichenkette.</td>
   </tr>
   <tr id="WinActive">
     <td><a href="commands/WinActive.htm">WinActive</a></td>

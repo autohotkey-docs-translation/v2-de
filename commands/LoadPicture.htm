@@ -37,6 +37,13 @@
 
 <h3 id="Remarks">Bemerkungen</h3>
 <p>LoadPicture unterstützt auch <a href="../misc/ImageHandles.htm">die Handle-Syntax</a>, z. B. zum Erstellen eines skalierten Bildes auf Basis einer Symbol- oder Bitmap-Ressource, die bereits in den Speicher geladen worden ist, oder zum Konvertieren eines Symbols in eine Bitmap durch Weglassen von <em>Bildtyp</em>.</p>
+<p>Wenn das Bild aus dem Speicher freigegeben werden muss, kann je nach Typ des Handle eine passende Funktion aufgerufen werden.</p>
+<pre>if (not Bildtyp)  <em>; IMAGE_BITMAP (0) oder Bildtyp-Parameter fehlt.</em>
+    DllCall("DeleteObject", "ptr", Handle)
+else if (Bildtyp = 1)  <em>; IMAGE_ICON</em>
+    DllCall("DestroyIcon", "ptr", Handle)
+else if (Bildtyp = 2)  <em>; IMAGE_CURSOR</em>
+    DllCall("DestroyCursor", "ptr", Handle)</pre>
 
 <h3>Siehe auch</h3>
 <p><a href="../misc/ImageHandles.htm">Bild-Handles</a></p>
@@ -53,23 +60,24 @@ Loop, Files, %A_WinDir%\Web\Wallpaper\*.jpg, R
 }
 if !Bilder.Length()
 {
-    <em>; Wenn das passiert, muss du den Pfad auf der Loop-Zeile darüber ändern.</em>
+    <em>; Wenn das passiert, musst du den Pfad auf der Loop-Zeile darüber ändern.</em>
     MsgBox, Keine Bilder gefunden!  Probiere ein anderes Verzeichnis aus.
     ExitApp
 }
 <em>; Fügt das Picture-Steuerelement hinzu, unter Beibehaltung des Seitenverhältnisses vom ersten Bild.</em>
-Gui, Add, Pic, w600 h-1 vBild +Border, % "HBITMAP:*" Bilder.1
-Gui, Show
+Gui := GuiCreate()
+Pic := Gui.Add("Pic", "w600 h-1 vBild +Border", "HBITMAP:*" Bilder.1)
+Gui.Show()
 Loop
 {
     <em>; Wechselt auf ein anderes Bild!</em>
-    GuiControl, , Bild, % "HBITMAP:*" Bilder[Mod(A_Index, Bilder.Length())+1]
+    Pic.Value := "HBITMAP:*" Bilder[Mod(A_Index, Bilder.Length())+1]
     Sleep 3000
 }
-return
-GuiClose:
-GuiEscape:
-ExitApp</pre>
+
+GuiEscape() {
+    ExitApp
+}</pre>
 
 </body>
 </html>

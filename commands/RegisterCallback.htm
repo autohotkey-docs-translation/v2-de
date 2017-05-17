@@ -47,7 +47,7 @@
 <p>Das richtige Interpretieren von Parametern erfordert ein gutes Verständnis darüber, wie die x86-Aufrufkonvention funktioniert. Da Autohotkey keine typisierten Parameter besitzt, besteht Callback's Parameterliste voraussichtlich aus Integern, von denen einige neuinterpretiert werden müssen.</p>
 
 <p><strong>AutoHotkey 32-bit:</strong> Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Kleinere Typen werden auf 32 Bit erweitert, während größere Typen in mehreren 32-Bit-Parametern aufgeteilt werden.</p>
-<p>Wenn ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispielen offenbart werden:</p>
+<p>Wenn ein eingehender Parameter als vorzeichenbehafteter Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispiele offenbart werden:</p>
 <pre><em>; Methode #1</em>
 if wParam &gt; 0x7FFFFFFF
     wParam := -(~wParam) - 1
@@ -66,7 +66,7 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 }</pre>
 <p>Wenn ein eingehender Parameter als Zeichenkette vorgesehen ist, dann ist das, was aktuell empfangen wird, die aktuelle Adresse der Zeichenkette. Mit <a href="StrPutGet.htm">StrGet</a> kann die Zeichenkette selbst abgerufen werden:</p>
 <pre>MeineZeichenkette := StrGet(MeinParameter)</pre>
-<p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, kann man die einzelnen Elementen durch Befolgen der Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" extrahieren.</p>
+<p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, kann man die einzelnen Elemente durch Befolgen der Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" extrahieren.</p>
 
 <p id="Indirect"><strong>Parameter via Adresse abrufen:</strong> Wenn die Funktion als <a href="../Functions.htm#Variadic">variadisch</a> deklariert ist, wird der letzte Parameter die <i>Adresse</i> des ersten Callback-Parameters erhalten, der einem Skript-Parameter nicht zugewiesen wurde. Zum Beispiel:</p>
 <pre>
@@ -127,20 +127,18 @@ EnumWindowsProc(hwnd, lParam)
 Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 Pinsel := DllCall("CreateSolidBrush", UInt, Texthintergrundfarbe)
 
-Gui, Add, Text, HwndMeinTextHwnd, Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.
-Gui +LastFound
-GuiHwnd := WinExist()
+Gui := GuiCreate()
+Text := Gui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.")
 
 <em>; 64-Bit-Skripte müssen SetWindowLongPtr statt SetWindowLong aufrufen:</em>
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
 WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "" wird der Fast-Modus beim Setzen der Unterklasse verhindert.</em>
-    , <strong>4</strong>, MeinTextHwnd)  <em>; Es muss die genaue Parameteranzahl angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
-WindowProcAlt := DllCall(SetWindowLong, Ptr, GuiHwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
+    , <strong>4</strong>, Text.Hwnd)  <em>; Es muss die genaue Parameteranzahl angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
+WindowProcAlt := DllCall(SetWindowLong, Ptr, Gui.Hwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
     , Ptr, WindowProcNeu, Ptr)  <em>; Wert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
 
-Gui Show
-return
+Gui.Show()
 
 WindowProc(hwnd, uMsg, wParam, lParam)
 {
@@ -153,7 +151,7 @@ WindowProc(hwnd, uMsg, wParam, lParam)
     }
     <em>; Ansonsten (da oben nichts zurückgegeben wurde) werden alle unbehandelten Ereignisse an das originale WindowProc übergeben.</em>
     return DllCall("CallWindowProc", Ptr, WindowProcAlt, Ptr, hwnd, UInt, uMsg, Ptr, wParam, Ptr, lParam)
-}p</pre>
+}</pre>
 
 </body>
 </html>

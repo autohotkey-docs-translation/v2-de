@@ -85,29 +85,31 @@ if ErrorLevel <em>; Die PID ist noch vorhanden.</em>
 #z:: <em>; Hotkey: WIN+Z</em>
 WinGetPID, aktive_pid, A
 WinGetTitle, aktiver_titel, A
-Gui, 5:Add, Text,, Drücke ESCAPE zum Abbrechen, oder klicke doppelt auf einen`nneuen Prioritätslevel für das folgende Fenster:`n%aktiver_titel%
-Gui, 5:Add, ListBox, vMeineListBox gMeineListBox r5, Normal|High|Low|BelowNormal|AboveNormal
-Gui, 5:Add, Button, default, OK
-Gui, 5:Show,, Priorität setzen
+Gui := GuiCreate(, "Priorität setzen")
+Gui.Add("Text",, "Drücke ESCAPE zum Abbrechen, oder klicke doppelt auf einen`nneuen Prioritätslevel für das folgende Fenster:`n%aktiver_titel%")
+LB := Gui.Add("ListBox", "gMeineListBox r5", "Normal|High|Low|BelowNormal|AboveNormal")
+Gui.Add("Button", "default gButtonOK", "OK")
+
+Gui.OnEscape := Gui.OnClose := ObjBindMethod(Gui, "Destroy")
+
+Gui.Show()
 return
 
-5GuiEscape:
-5GuiClose:
-Gui, Destroy
-return
+MeineListBox(GuiCtrl, GuiEvent)
+{
+  if (GuiEvent = "DoubleClick")
+    ButtonOK()
+}
 
-MeineListBox:
-if A_GuiEvent &lt;&gt; "DoubleClick"
-    return
-<em>; springe ansonsten zum nächsten Label:</em>
-5ButtonOK:
-GuiControlGet, MeineListBox
-Gui, Destroy
-if ProcessSetPriority(MeineListBox, aktive_pid)
-    MsgBox Erfolg: Die Priorität wurde auf "%MeineListBox%" gesetzt.
-else
-    MsgBox Fehler: Die Priorität konnte nicht auf "%MeineListBox%" gesetzt werden.
-return</pre>
+ButtonOK()
+{
+  global
+  if ProcessSetPriority(LB.Text, aktive_pid)
+    MsgBox Erfolg: Die Priorität wurde auf "%LB.Text%" gesetzt.
+  else
+    MsgBox Fehler: Die Priorität konnte nicht auf "%LB.Text%" gesetzt werden.
+  Gui.Destroy()
+}</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ListEx"><em>; Beispiel #4: Ermittelt eine Liste von allen laufenden Prozessen via DllCall und zeigt sie dann in einer Message Box an.</em>
 
@@ -152,16 +154,17 @@ Loop, % r // 4  <em>; Parst das Array in IDs als DWORDs (32 Bit):</em>
 }
 DllCall("FreeLibrary", "Ptr", hModule)  <em>; Entlädt die Library, um Speicher freizugeben.</em>
 <em>;Sort, l, C  ; Hebe die Kommentierung in dieser Zeile auf, um die Liste alphabetisch zu sortieren.</em>
-MsgBox, 0, %c% Prozesse, %l%</pre>
+MsgBox("%l%", "%c% Prozesse", 0)</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ListCom"><em>; Beispiel #5: Ermittelt eine Liste von allen laufenden Prozessen via COM.</em>
 
-Gui, Add, ListView, x2 y0 w400 h500, Prozessname|Befehlszeile
+Gui := GuiCreate(, "Prozessliste")
+LV := Gui.Add("ListView", "x2 y0 w400 h500", "Prozessname|Befehlszeile")
 for Prozess in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process")
-    LV_Add("", Prozess.Name, Prozess.CommandLine)
-Gui, Show,, Prozessliste
+    LV.Add("", Prozess.Name, Prozess.CommandLine)
+Gui.Show()
 
-<em>; Win32_Prozess: <a href="https://msdn.microsoft.com/de-de/library/aa394372.aspx">http://msdn.microsoft.com/en-us/library/aa394372.aspx</a></em>
+<em>; Win32_Process: <a href="https://msdn.microsoft.com/de-de/library/aa394372.aspx">http://msdn.microsoft.com/en-us/library/aa394372.aspx</a></em>
 </pre>
 
 </body>

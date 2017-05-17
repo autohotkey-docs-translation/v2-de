@@ -81,11 +81,12 @@ Kontrolltypen := "VOLUME,ONOFF,MUTE,MONO,LOUDNESS,STEREOENH,BASSBOOST,PAN,QSOUND
 Komponententypen := "MASTER,HEADPHONES,DIGITAL,LINE,MICROPHONE,SYNTH,CD,TELEPHONE,PCSPEAKER,WAVE,AUX,ANALOG,N/A"
 
 <em>; Erstellt eine ListView und bereitet diese auf die Hauptschleife vor:</em>
-Gui, Add, Text, w400 h400 vSplashText, Soundkarteninfos werden ermittelt...
-Gui, Add, Listview, w400 h400 vMeineListView, Komponententyp|Kontrolltyp|Einstellung|Mixer
-Gui, Show
-GuiControl, Hide, MeineListView
-LV_ModifyCol(4, "Integer")
+Gui := GuiCreate()
+L   := Gui.Add("Text", "w400 h400 vSplashText", "Soundkarteninfos werden ermittelt...")
+LV  := Gui.Add("Listview", "wp hp xp yp", "Komponententyp|Kontrolltyp|Einstellung|Mixer")
+Gui.Show()
+LV.Visible := false
+LV.ModifyCol(4, "Integer")
 
 Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab.</em>
 {
@@ -125,17 +126,17 @@ Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab
                     KomponentenZeichenkette .= ":" Instanz
                 if Einstellung is "float"
                     Einstellung := Format("{:0.2f}", Einstellung)  <em>; Begrenzt die maximale Dezimalstellenanzahl eines Prozentwertes auf 2.</em>
-                LV_Add("", KomponentenZeichenkette, Kontrolle, Einstellung, Mixer)
+                LV.Add("", KomponentenZeichenkette, Kontrolle, Einstellung, Mixer)
             }  <em>; Für jeden Kontrolltyp.</em>
         }  <em>; Für jede Komponenteninstanz.</em>
     }  <em>; Für jeden Komponententyp.</em>
 }  <em>; Für jeden Mixer.</em>
 
-Loop % LV_GetCount("Col")  <em>; Passt die Größe jeder Spalte automatisch am Inhalt an.</em>
-    LV_ModifyCol(A_Index, "AutoHdr")
+Loop % LV.GetCount("Col")  <em>; Passt die Größe jeder Spalte automatisch am Inhalt an.</em>
+    LV.ModifyCol(A_Index, "AutoHdr")
 
-GuiControl, Hide, SplashText
-GuiControl, Show, MeineListView
+L.Visible  := false
+LV.Visible := true
 return</pre>
 
 </body>

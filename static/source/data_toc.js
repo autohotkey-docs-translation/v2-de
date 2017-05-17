@@ -34,7 +34,6 @@ toc = [
     {label:"ClipWait",path:"commands/ClipWait.htm"},
     {label:"EnvGet",path:"commands/EnvGet.htm"},
     {label:"EnvSet",path:"commands/EnvSet.htm"},
-    {label:"EnvUpdate",path:"commands/EnvUpdate.htm"},
     {label:"OnClipboardChange",path:"commands/OnClipboardChange.htm"},
     {label:"SysGet",path:"commands/SysGet.htm"}
   ]},
@@ -141,10 +140,12 @@ toc = [
   [
     {label:"DirSelect",path:"commands/DirSelect.htm"},
     {label:"FileSelect",path:"commands/FileSelect.htm"},
-    {label:"Gui",path:"commands/Gui.htm"},
     {label:"Gui-Steuerelementarten",path:"commands/GuiControls.htm"},
-    {label:"GuiControl",path:"commands/GuiControl.htm"},
-    {label:"GuiControlGet",path:"commands/GuiControlGet.htm"},
+    {label:"Gui-Objekt",path:"objects/Gui.htm"},
+    {label:"GuiControl-Objekt",path:"objects/GuiControl.htm"},
+    {label:"GuiCreate",path:"commands/GuiCreate.htm"},
+    {label:"GuiCtrlFromHwnd",path:"commands/GuiCtrlFromHwnd.htm"},
+    {label:"GuiFromHwnd",path:"commands/GuiFromHwnd.htm"},
     {label:"ListView",path:"commands/ListView.htm"},
     {label:"TreeView",path:"commands/TreeView.htm"},
     {label:"InputBox",path:"commands/InputBox.htm"},

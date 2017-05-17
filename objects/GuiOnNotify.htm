@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>OnNotify</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>OnNotify</h1>
+<p>Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn das Steuerelement eine Nachricht via <a href="https://msdn.microsoft.com/library/bb775583">WM_NOTIFY</a> empfängt.</p>
+<pre class="Syntax">
+GuiControl.OnNotify(NachrichtCode, Callback [, HinzufügenEntfernen := 1])
+</pre>
+
+<h3>Parameter</h2>
+<dl>
+  <dt>GuiControl</dt>
+  <dd><p>Das <a href="GuiControl.htm">GuiControl</a>-Objekt eines Steuerelements, das überwacht werden soll.</p></dd>
+  
+  <dt>NachrichtCode</dt>
+  <dd><p>Ein steuerelement-definierter Nachrichtencode, der überwacht werden soll.</p></dd>
+  
+  <dt>Callback</dt>
+  <dd>
+    <p>Eine Funktion, Methode oder ein Objekt, das aufgerufen werden soll, wenn das Ereignis ausgelöst wird.</p>
+    <p>Wenn dieser Parameter eine Zeichenkette ist, dann ist dessen Bedeutung abhängig davon, ob das GUI ein <a href="../commands/GuiCreate.htm#EventObj">Event-Sink</a> hat (das heißt, ob <a href="../commands/GuiCreate.htm">GuiCreate</a>'s <em>EreignisObj</em>-Parameter angegeben wurde). Wenn das GUI ein Event-Sink hat, muss die Zeichenkette der Name einer Methode sein, die zu einem Event-Sink gehört; ansonsten muss sie der Name einer Funktion sein.</p>
+    <p>Wenn man in diesem Fall trotzdem eine Funktion registrieren möchte, muss ein <a href="Func.htm">Funktionsverweis</a> übergeben werden.</p>
+  </dd>
+  
+  <dt>HinzufügenEntfernen</dt>
+  <dd>
+    <p>Eines der folgenden Werte:<br>
+    <strong>1</strong> (Standard): Ruft die Callback-Funktion bei mehreren registrierten Callback-Funktionen als Letzte auf.<br>
+    <strong>-1</strong>: Ruft die Callback-Funktion bei mehreren registrierten Callback-Funktionen als Erste auf.<br>
+    <strong>0</strong>: Ruft die Callback-Funktion überhaupt nicht auf.</p>
+  </dd>
+</dl>
+
+<h2 id="WM_NOTIFY">WM_NOTIFY</h2>
+<p>Bestimmte Typen von Steuerelementen senden eine <a href="https://msdn.microsoft.com/library/bb775583">WM_NOTIFY</a>-Nachricht, wann immer ein interessantes Ereignis auftritt oder das Steuerelement bestimmte Informationen über das Programm benötigt. Der <em>lParam</em>-Parameter von dieser Nachricht enthält einen Pointer, der auf eine Struktur mit Informationen über die Nachricht verweist. Die Art der Struktur ist abhängig vom Nachrichtencode und vom Typ des Steuerelements, das die Nachricht ausgelöst hat, aber immer basierend auf <a href="https://msdn.microsoft.com/library/bb775514">NMHDR</a>.</p>
+<p>Welche Nachrichten es genau gibt (falls vorhanden), welche Art von Struktur sie bereitstellen und wie sie den Rückgabewert interpretieren, findest du in der Dokumentation des Steuerelements. <a href="https://msdn.microsoft.com/library/bb773169">Control Library (MSDN)</a> enthält Links zu typischen Windows-Steuerelementen. Die Nachrichtencodes (Nummern) sind in der Windows SDK zu finden, oder via Suchmaschine.</p>
+<p>AutoHotkey nutzt die Felder <em>IdFrom</em> und <em>HwndFrom</em>, um zu ermitteln, welches Steuerelement die Nachricht gesendet hat, um sie anschließend an das entsprechende Objekt senden zu können. Das <em>code</em>-Feld enthält den Nachrichtencode. Da diese nur benutzt werden, um die Callback-Funktion in Übereinstimmung mit <em>GuiControl</em> und <em>NachrichtCode</em> zu registrieren, sind sie für das Skript kaum nützlich.</p>
+
+<h2 id="Callback_Parameters">Callback-Parameter</h2>
+<p>Die <a href="GuiOnEvent.htm#Callback_Parameters">OnEvent-Hinweise</a> bezüglich <code>this</code> und Bound-Funktionen gelten auch für OnNotify.</p>
+<p>Die Callback-Funktion akzeptiert zwei Parameter:</p>
+<pre class="Syntax">Callback(GuiControl, lParam)</pre>
+<p>Wie bereits erwähnt, ist <em>lParam</em> die Adresse einer Nachrichtenstruktur, die von <a href="https://msdn.microsoft.com/library/bb775514">NMHDR</a> abgeleitet wurde. Dessen genaue Bedeutung ist vom Typ des Steuerelements und Nachrichtencode abhängig. Wenn die Struktur zusätzliche Informationen über die Nachricht enthält, kann die Callback-Funktion sie via <a href="../commands/NumGet.htm">NumGet</a> und/oder <a href="../commands/StrPutGet.htm">StrGet</a> abrufen.</p>
+
+<h2 id="Callback_Return_Value">Callback-Rückgabewert</h2>
+<p>Wenn mehrere Callback-Funktionen für ein Ereignis registriert sind, kann eine Callback-Funktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Callback-Funktionen aufgerufen werden.</p>
+<p>Der Rückgabewert kann je nach Nachricht eine zusätzliche Bedeutung haben. Zum Beispiel könnte die ListView-Nachricht <a href="https://msdn.microsoft.com/library/bb774798">LVN_BEGINLABELEDIT</a> (-175 oder-105) das Editieren der Beschriftung verbieten, wenn die Callback-Funktion TRUE (1) zurückgeben würde.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p>Folgende <a href="GuiOnEvent.htm">OnEvent</a>-Hinweise gelten auch für OnNotify: <a href="GuiOnEvent.htm#Threads">Threads</a>, <a href="GuiOnEvent.htm#Destroying_the_GUI">GUI zerstören</a>.</p>
+<p>Mit <a href="GuiOnCommand.htm">OnCommand</a> kann eine WM_COMMAND-Nachricht überwacht werden.</p>
+
+</body>
+</html>

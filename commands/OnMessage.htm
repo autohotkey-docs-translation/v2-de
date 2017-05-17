@@ -26,7 +26,7 @@
   <dd><p>Der Name einer <a href="../Functions.htm">Funktion</a>, oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>. Um einen literalen Funktionsnamen zu übergeben, muss er in Anführungszeichen gesetzt werden.</p>
   </dd>
 
-  <dt>MaxThreads</dt>
+  <dt id="MaxThreads">MaxThreads</dt>
   <dd><p>Normalerweise lässt man diesen Parameter (Integer) weg, um die überwachende Funktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Diese Methode ist üblicherweise am sinnvollsten, weil das Skript sonst Nachrichten in chronologisch falscher Reihenfolge abarbeiten würde, wann immer die überwachende Funktion sich selbst unterbricht. Demzufolge kann <em>Critical</em> als Alternative zu <em>MaxThreads</em> verwendet werden, wie es <a href="#Critical">weiter unten</a> beschrieben wird.</p>
   <p>Standardmäßig werden mehrere Funktionen, die für eine einzige <em>NachrNummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um eine Funktion zu registrieren, die vor allen anderen registrierten Funktionen erfolgen soll, muss ein negativer Wert bei <em>MaxThreads</em> angegeben werden. Zum Beispiel würde <code>OnMessage(Nachr, Fn,-2)</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für die Nachricht <em>Nachr</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
 
@@ -69,13 +69,7 @@ Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die 
 <p>Du kannst eine oder mehrere Parameter vom Ende der Liste weglassen, wenn du die entsprechende Information nicht benötigst. Zum Beispiel würde eine Funktion, definiert als <code>MeineNachrichtenüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineNachrichtenüberwachung()</code>, gar keine von  ihnen.</p>
 
 <h3>Weitere verfügbare Informationen für die Funktion</h3>
-<p>Neben den oben genannten Parametern kann die Funktion auch auf die Werte der folgenden Built-in-Variablen zurückgreifen:</p>
-<ul>
-  <li><a href="../Variables.htm#Gui">A_Gui</a>: Wenn die Nachricht zu einem GUI-Fenster oder -Steuerelement gesendet wurde, wird A_Gui die <a href="Gui.htm#MultiWin">Nummer des GUI-Fensters</a> sein (dieses Fenster ist auch das <a href="Gui.htm#DefaultWin">Standard-GUI-Fenster</a> der Funktion).</li>
-  <li><a href="../Variables.htm#GuiControl">A_GuiControl</a>: Wenn die Nachricht zu einem GUI-Steuerelement gesendet wurde, wird A_GuiControl den Variablennamen des Steuerelements oder einen anderen Wert, wie in <a href="../Variables.htm#GuiControl">A_GuiControl</a> beschrieben, enthalten. Einige Steuerelemente können bestimmte Nachrichtentypen nie empfangen. Klickt der Benutzer beispielsweise auf ein <a href="GuiControls.htm#Text">Text-Steuerelement</a>, würde das Betriebssystem die WM_LBUTTONDOWN-Nachricht nicht zum Steuerelement, sondern zum übergeordneten Fenster senden; demzufolge ist A_GuiControl leer.</li>
-  <li><a href="../Variables.htm#GuiX">A_GuiX</a> und <a href="../Variables.htm#GuiY">A_GuiY</a>: Beide enthalten -2147483648, wenn die eingehende Nachricht via <a href="PostMessage.htm">SendMessage</a> gesendet wurde. Wenn sie via <a href="PostMessage.htm">PostMessage</a> gesendet wurde, enthalten beide Variablen die Koordinaten des Mauszeigers (relativ zum Bildschirm), die während des Sendens gegolten haben.</li>
-  <li><a href="../Variables.htm#EventInfo">A_EventInfo</a>: Enthält 0, wenn die eingehende Nachricht via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</li>
-</ul>
+<p>Neben den oben genannten Parametern kann die Funktion auch auf die Built-in-Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> zurückgreifen, die 0 enthalten wird, wenn die Nachricht via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</p>
 <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Nachricht gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
 <pre>DetectHiddenWindows On
 NachrÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, zu dem die Nachricht gesendet wurde.</em></pre>
@@ -94,31 +88,37 @@ NachrÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des
 <p>Kommt eine überwachte Nachricht kleiner als 0x312 an, während das Skript aufgrund von <a href="Thread.htm">Thread Interrupt</a> oder <a href="Critical.htm">Critical</a> unterbrechungsfrei ist, wird der aktuelle Thread unterbrochen, so dass die Funktion aufgerufen werden kann. Im Gegensatz dazu wird eine überwachte Nachricht größer gleich 0x312 zwischengespeichert, bis der Thread endet oder wieder unterbrochen werden kann.</p>
 <p>Die <a href="../misc/Threads.htm">Priorität</a> von OnMessage-Threads ist immer 0. Demzufolge werden keine Nachrichten überwacht oder zwischengespeichert, wenn der aktuelle Thread eine Priorität höher als 0 hat.</p>
 <p>Sei vorsichtig, wenn du Systemnachrichten (solche unter 0x400) überwachst. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Nachricht länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Nachricht durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
-<p>Zeigt das Skript einen Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Nachrichten, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Skript beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Nachricht direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
-<p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Nachrichten zu einem Skript-Thread senden, allerdings könnten dabei Nachrichten verloren gehen, wenn das Skript einen Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Nachrichten zum Hauptfenster des Skripts oder zu einem seiner GUI-Fenster zu senden.</p>
+<p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Nachrichten, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Skript beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Nachricht direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
+<p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Nachrichten zu einem Skript-Thread senden, allerdings könnten dabei Nachrichten verloren gehen, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Nachrichten zum Hauptfenster des Skripts oder zu einem seiner GUI-Fenster zu senden.</p>
 <h3>Siehe auch</h3>
 <p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fensternachrichten</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie Mausklicks innerhalb eines GUI-Fensters überwacht werden können.
-; Verwandtes Thema: <a href="Gui.htm#GuiContextMenu">GuiContextMenu</a></em>
+; Verwandtes Thema: <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu</a>-Ereignis</em>
 
-Gui, Add, Text,, Klicken Sie irgendwo auf das Fenster.
-Gui, Add, Edit, w200 vMeinEdit
-Gui, Show
+Gui := GuiCreate(, "Beispielfenster")
+Gui.Add("Text",, "Klicken Sie irgendwo auf das Fenster.")
+Gui.Add("Edit", "w200 vMeinEdit")
+Gui.Show()
 OnMessage(0x201, "WM_LBUTTONDOWN")
-return
 
-WM_LBUTTONDOWN(wParam, lParam)
+WM_LBUTTONDOWN(wParam, lParam, msg, hwnd)
 {
     X := lParam &amp; 0xFFFF
     Y := lParam &gt;&gt; 16
-    if A_GuiControl
-        Steuerelement := "`n(im Steuerelement " . A_GuiControl . ")"
-    ToolTip Sie haben im GUI-Fenster #%A_Gui% auf die Koordinaten %X%x%Y% geklickt.%Steuerelement%
+    Gui := GuiFromHwnd(hwnd)
+    GuiControl := GuiCtrlFromHwnd(hwnd)
+    if GuiControl
+    {
+        Gui := GuiControl.Gui
+        Steuerelement := "`n(im Steuerelement " . GuiControl.ClassNN . ")"
+    }
+    ToolTip Sie haben im GUI-Fenster '%Gui.Title%' auf die Koordinaten %X%x%Y% geklickt.%Steuerelement%
 }
 
-GuiClose:
-ExitApp</pre>
+GuiClose() {
+    ExitApp
+}</pre>
 
 <pre class="NoIndent" id="shutdown"><em>; Beispiel: Das folgende Skript zeigt, wie man das Abmelden/Herunterfahren des Systems erkennen und unterbrechen kann (es wurde gemeldet, dass dies NICHT in Windows Vista und höher funktioniert).
 ; Verwandtes Thema: <a href="OnExit.htm">OnExit</a></em>
@@ -135,9 +135,9 @@ WM_QUERYENDSESSION(wParam, lParam)
         Ereignis := "Abmelden"
     else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
         Ereignis := "Herunterfahren"
-    MsgBox, 4,, %Ereignis% im Gange.  Erlauben?
+    Result := MsgBox("%Ereignis% im Gange.  Erlauben?",, 4)
     <em>; Das Betriebssystem kann erst mit dem Herunterfahren/Abmelden fortfahren, wenn der Benutzer auf Ja klickt.</em>
-    return A_MsgBoxResult = "Yes"
+    return Result = "Yes"
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Zeigt, wie ein Skript eine benutzerdefinierte Nachricht und bis zu zwei Zahlen von einem anderen Skript oder Programm empfängt
@@ -182,7 +182,7 @@ Empfange_WM_COPYDATA(wParam, lParam)
 ZielSkriptTitel := "Empfänger.ahk ahk_class AutoHotkey"
 
 #space::  <em>; Hotkey: WIN+LEERTASTE. Drücke ihn, um eine InputBox zur Eingabe einer Zeichenkette anzuzeigen.</em>
-InputBox, ZuSendendeZeichenkette, Text via WM_COPYDATA senden, Tragen Sie den zu sendenden Text ein:
+InputBox, ZuSendendeZeichenkette, Tragen Sie den zu sendenden Text ein:, Text via WM_COPYDATA senden
 if ErrorLevel  <em>; Benutzer hat den Abbrechen-Button gedrückt.</em>
     return
 Ergebnis := Sende_WM_COPYDATA(ZuSendendeZeichenkette, ZielSkriptTitel)

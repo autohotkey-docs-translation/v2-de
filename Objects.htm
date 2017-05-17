@@ -94,6 +94,8 @@ Array := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <p id="same_thing">In AutoHotkey v1.x sind einfache Arrays und assoziative Arrays das gleiche. Das Behandeln von <code>[]</code> als einfaches lineares Array stellt sicher, dass dessen Rolle eindeutig zugeordnet werden kann, und erhöht die Chance, dass dein Skript auch mit einer zukünftigen Version von AutoHotkey noch funktionieren wird, wo vielleicht zwischen einfachem und assoziativem Array unterschieden wird.</p>
 
 <h3 id="Usage_Objects">Objekte</h3>
+<p>Bei allen Objekttypen kann die Schreibweise <code>Objekt.LiteralerKey</code> benutzt werden, um auf eine Eigenschaft, ein Array oder eine Methode zuzugreifen. Hierbei muss <em>LiteralerKey</em> ein Identifier oder Integer sein, und <em>Objekt</em> ein beliebiger Ausdruck. Identifiers (Bezeichner) sind Zeichenketten ohne Anführungszeichen, die aus alphanumerischen Zeichen, Unterstrich und Nicht-ASCII-Zeichen bestehen können. Zum Beispiel wäre <code>match.Pos</code> das gleiche wie <code>match["Pos"]</code>, oder <code>arr.1</code> das gleiche wie <code>arr[1]</code>. Es darf kein Leerzeichen nach dem Punkt erfolgen.</p>
+<p><strong>Beispiele:</strong></p>
 <p>Abrufen einer Eigenschaft:</p>
 <pre>Wert := Objekt.Eigenschaft</pre>
 <p>Setzen einer Eigenschaft:</p>
@@ -154,7 +156,7 @@ obj.item[x] := y</pre>
 </ul>
 <p>Einige Zeichenketten sollten nicht als Keys verwendet werden:</p>
 <ul>
-  <li>Standardmäßig kann mit dem Zeichenketten-Key "base" das <a href="#Custom_Objects">base-Objekt</a> des Objekts abgerufen oder gesetzt werden, und wäre demzufolge nicht dazu geeignet, gewöhnliche Werte mithilfe einer normalen Zuweisung abzuspeichern. Wenn ein Wert allerdings auf andere Weise abgespeichert wird (z. B. <code><a href="objects/Object.htm#RawSet">ObjRawSet</a>(Object, "base", "")</code> oder <code><a href="objects/Object.htm#SetCapacity">Object.SetCapacity</a>("base", 0)</code>, wird sich der base-Key wie ein beliebige Zeichenkette verhalten.</li>
+  <li>Standardmäßig kann mit dem Zeichenketten-Key "base" das <a href="#Custom_Objects">base-Objekt</a> des Objekts abgerufen oder gesetzt werden, und wäre demzufolge nicht dazu geeignet, gewöhnliche Werte mithilfe einer normalen Zuweisung abzuspeichern. Wenn ein Wert allerdings auf andere Weise abgespeichert wird (z. B. <code><a href="objects/Object.htm#RawSet">ObjRawSet</a>(Object, "base", "")</code> oder <code><a href="objects/Object.htm#SetCapacity">Object.SetCapacity</a>("base", 0)</code>, wird sich der base-Key wie eine beliebige Zeichenkette verhalten.</li>
   <li><a href="objects/Object.htm">Built-In-Methoden</a> wie "Length" können als Keys verwendet werden, aber sobald man einen Wert in sie speichert, verlieren sie ihre ursprüngliche Funktion (es sei denn, dieser Wert selbst verweist auf die entsprechende Funktion, wie z. B. <em>ObjLength</em>).</li>
 </ul>
 
@@ -471,7 +473,7 @@ class Farbe
 <pre>blau := new Farbe(0x0000ff)
 MsgBox % blau.R "," blau.G "," blau.B
 
-class Eigenschaften extends <a href="objects/Functor.htm#class_FunctionObject">Funktionsobjekt</a>
+class Eigenschaften
 {
     __Call(aTarget, aName, aParams*)
     {
@@ -592,7 +594,7 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 
 <h2 id="Implementation">Implementierung</h2>
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
-<p>AutoHotkey verwendet ein einfaches Referenzzählungsmechanismus, um Ressourcen eines Objekts freizugeben, das nicht länger im Skript gebraucht wird. Skript-Autoren sollten diesen Mechanismus nur aufrufen, wenn man direkt mit unverwalteten <a href="#Implementation_Pointers">Pointer, die auf Objekte verweisen</a>, arbeiten muss.</p>
+<p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um Ressourcen eines Objekts freizugeben, das nicht länger im Skript gebraucht wird. Skript-Autoren sollten diesen Mechanismus nur aufrufen, wenn man direkt mit unverwalteten <a href="#Implementation_Pointers">Pointer, die auf Objekte verweisen</a>, arbeiten muss.</p>
 <p>Temporär zurückgegebene Verweise von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Dadurch können temporäre Objekte für die Ressourcenverwaltung verwendet werden. Zum Beispiel:</p>
 <pre>MsgBox % <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", (new <a href="#GMem">GMem</a>(0, 20)).ptr, "ptr")  <em>; 20</em></pre>
 <p>Wenn Code beim Freigeben des letzten Verweises auf ein Objekt ausgeführt werden soll, muss man die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion implementieren.</p>

@@ -26,7 +26,9 @@
 <p id="Variable_types"><strong>Variablentypen</strong>: AutoHotkey besitzt keine explizit definierten Variablentypen. Stattdessen kann jede Variable eine Zeichenkette, einen Integer, Objektverweis oder eine Fließkommazahl enthalten. Darüber hinaus werden Zahlen automatisch in oder von Zeichenketten umgewandelt, falls notwendig.  Mit der <a href="commands/Type.htm">Type</a>-Funktion kann der aktuelle Typ eines Wertes festgestellt werden.</p>
 <p id="Variable_scope"><strong>Gültigkeitsbereiche und Deklarationen von Variablen</strong>: Mit Ausnahme von <a href="Functions.htm#Locals">lokalen Variablen</a> in Funktionen sind alle Variablen global; das heißt, dass deren Inhalte jederzeit vom Skript gelesen oder geändert werden können. Im Normalfall müssen Variablen nicht deklariert werden (in <a href="Functions.htm#Global">Funktionen</a> gibt es Ausnahmen); Variablen stehen zur Verfügung, sobald sie verwendet werden (zudem sind sie anfangs leer).</p>
 <p id="Variable_names"><strong>Variablennamen</strong>: Bei Variablennamen ist die Groß- und Kleinschreibung egal (zum Beispiel wäre <em>AktuellesDatum</em> das gleiche wie <em>aktuellesdatum</em>). Variablennamen können bis zu 253 Zeichen lang sein und dürfen nur aus Buchstaben, Zahlen, Unterstrichen und Nicht-ASCII-Zeichen bestehen. Variablennamen dürfen nicht mit einer Zahl beginnen.</p>
-<p id="Reserved_words"><strong>Reservierte Wörter:</strong> <code>or</code>, <code>and</code>, <code>not</code>, <code>is</code>, <code>in</code> und <code>contains</code>. Diese Wörter dienen als <a href="#Operators">Operatoren</a> und sind daher als Variablennamen nicht zu gebrauchen, wenn sie literal in einem Ausdruck angegeben werden.</p>
+<p id="Reserved_words"><strong>Reservierte Wörter:</strong> <code>and</code>, <code>contains</code>, <code>in</code>, <code>is</code>, <code>new</code>, <code>not</code> und <code>or</code>. Diese Wörter dienen als <a href="#Operators">Operatoren</a> und sind daher als Variablennamen nicht zu gebrauchen, wenn sie literal in einem Ausdruck angegeben werden.</p>
+<p>Die Namen der Ablaufsteuerungsanweisungen sind auch reserviert, um in erster Linie Fehler zu finden. Dazu gehören: <code>Break</code>, <code>Catch</code>, <code>Continue</code>, <code>Else</code>, <code>Finally</code>, <code>For</code>, <code>Gosub</code>, <code>Goto</code>, <code>If</code>, <code>Loop</code>, <code>LoopFile</code>, <code>LoopParse</code>, <code>LoopRead</code>, <code>LoopReg</code>, <code>Return</code>, <code>Throw</code>, <code>Try</code>, <code>Until</code>, <code>While</code></p>
+<p>Funktionen, Klassen und Fenstergruppen benutzen die gleiche Validierung wie Variablen und haben deshalb die gleichen Einschränkungen.</p>
 <p id="assigning"><strong>Speichern von Variablenwerten</strong>: Um einen String oder eine Zahl in eine Variable zu speichern, verwende den <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, gefolgt von einer Zahl, einem String in Anführungszeichen oder ein beliebig anderer <a href="#Expressions">Ausdruck</a>. Zum Beispiel:</p>
 <pre>MeineZahl := 123
 MeineZeichenkette := "Das ist eine literale Zeichenkette."
@@ -76,7 +78,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
 <p>AusgabeVar-Parameter lassen das auch zu, aber das Ergebnis des Ausdrucks sollte der Name (vollständig oder teilweise) einer Variable in Form einer Zeichenkette sein.</p>
 
 <h2 id="Operators">Operatoren innerhalb von Ausdrücken</h2>
-<p>Operatoren mit gleichwertiger Priorität, wie z. B. Multiplizieren (*) und Dividieren, (/), werden von links nach rechts ausgewertet, sofern nicht anders unten angegeben. Ein Operator mit niedrigerer Priorität, wie z. B. Addieren (+), wird erst ausgewertet, wenn ein höherer Operator, wie z. B. Multiplizieren (*), ausgewertet wurde. Zum Beispiel würde 3 + 2 * 2 wie 3 + (2 * 2) ausgewertet werden. Mit runden Klammern können die Prioritäten wie folgt überschrieben werden: (3 + 2) * 2</p>
+<p>Operatoren mit gleichwertiger Priorität, wie z. B. Multiplizieren (*) und Dividieren, (/), werden von links nach rechts ausgewertet, sofern nicht anders unten angegeben. Ein Operator mit niedrigerer Priorität, wie z. B. Addieren (+), wird <em>erst</em> ausgewertet, wenn ein höherer Operator, wie z. B. Multiplizieren (*), ausgewertet wurde. Zum Beispiel würde 3 + 2 * 2 wie 3 + (2 * 2) ausgewertet werden. Mit runden Klammern können die Prioritäten wie folgt überschrieben werden: (3 + 2) * 2</p>
 <p>In der Regel werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte bei einer mathematischen Operation <strong>nicht</strong> als Null angesehen. Stattdessen werden sie als Fehler behandelt - der Fehler bewirkt, dass dieser Teil des Ausdrucks eine leere Zeichenkette zurückgibt. Wenn beispielsweise eine Variable namens X leer wäre, würde der Ausdruck X+1 einen leeren Wert statt eine 1 zurückgeben.</p>
 
 <h3>Ausdrucksoperatoren (in absteigender Priorität)</h3>
@@ -263,7 +265,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
         
         &lt;&lt;=</strong>
     </td>
-    <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable. Der einfachste Zuweisungsoperator ist das <a href="commands/SetExpression.htm">Doppelpunkt-Gleich (:=)</a> - dieser Operator kann das Ergebnis eines Ausdrucks in eine Variable speichern. Da sie eine Kurzschreibweise eines Operators sind, findest du ihre Beschreibung jeweils beim dazugehörigen Operator in dieser Tabelle. Beispiel 1: <code>Var //= 2</code> führt eine <a href="#FloorDivide">Floor-Division</a> durch, um <em>Var</em> mit 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Beispiel 2: <code>Var <strong>.=</strong> "abc"</code> ist die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code>.</p>
+    <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable. Der einfachste Zuweisungsoperator ist das <a href="commands/SetExpression.htm">Doppelpunkt-Gleich (:=)</a> - dieser Operator kann das Ergebnis eines Ausdrucks in eine Variable speichern. Da sie eine Kurzschreibweise eines Operators ist, findest du ihre Beschreibung jeweils beim dazugehörigen Operator in dieser Tabelle. Beispiel 1: <code>Var //= 2</code> führt eine <a href="#FloorDivide">Floor-Division</a> durch, um <em>Var</em> mit 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Beispiel 2: <code>Var <strong>.=</strong> "abc"</code> ist die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code>.</p>
       <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Demzufolge würde eine Zeile wie <code>Var1 := Var2 := 0</code> eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
     <p>Verwendet man eine Zuweisung als Eingabewert eines anderen Operators, wird ihr Wert die Variable selbst sein. Zum Beispiel wäre der Ausdruck <code>(Var += 2) &gt; 50</code> wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Mit diesem Verfahren könnte man auch eine Zuweisung via <a href="Functions.htm#ByRef">ByRef</a> übergeben oder ihre <a href="#amp">Adresse</a> verwenden; zum Beispiel: <code>&amp;(x:="abc")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: Die Auswertung von <code>not x := y</code> entspräche <code>not (x := y)</code>, <code>++Var := X</code> entspräche <code>++(Var := X)</code>; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> entspräche <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code>.</p>
@@ -309,10 +311,9 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
   <li>Datum und Zeit: <a href="#YYYY">A_YYYY</a>, <a href="#MM">A_MM</a>, <a href="#DD">A_DD</a>, <a href="#Hour">A_Hour</a>, <a href="#Min">A_Min</a>, <a href="#Sec">A_Sec</a>, <a href="#date">(...mehr...)</a></li>
   <li>Skript-Einstellungen: <a href="#IsSuspended">A_IsSuspended</a>, <a href="#TitleMatchMode">A_TitleMatchMode</a>, <a href="#settings">(...mehr...)</a></li>
   <li>Abwesenheit des Benutzers: <a href="#TimeIdle">A_TimeIdle</a>, <a href="#TimeIdlePhysical">A_TimeIdlePhysical</a></li>
-  <li>GUI-Fenster und Menüleisten: <a href="#MsgBoxResult">A_MsgBoxResult</a>, <a href="#Gui">A_Gui</a>, <a href="#GuiControl">A_GuiControl</a>, <a href="#GuiEvent">A_GuiEvent</a>, <a href="#EventInfo">A_EventInfo</a></li>
   <li>Hotkeys, Hotstrings und benutzerdefinierte Menüpunkte: <a href="#ThisHotkey">A_ThisHotkey</a>, <a href="#EndChar">A_EndChar</a>, <a href="#ThisMenuItem">A_ThisMenuItem</a>, <a href="#h">(...mehr...)</a></li>
   <li>Betriebssystem und Benutzerinformationen: <a href="#OSVersion">A_OSVersion</a>, <a href="#Screen">A_ScreenWidth</a>, <a href="#Screen">A_ScreenHeight</a>, <a href="#os">(...mehr...)</a></li>
-  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#Caret">A_CaretX</a>, <a href="#Caret">A_CaretY</a>, <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/Clipboard.htm#ClipboardAll">ClipboardAll</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a></li>
+  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#Caret">A_CaretX</a>, <a href="#Caret">A_CaretY</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/Clipboard.htm#ClipboardAll">ClipboardAll</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a></li>
   <li>Loop: <a href="#Index">A_Index</a>, <a href="#loop">(...mehr...)</a></li>
 </ul>
 <h3>Sonderzeichen</h3>
@@ -348,11 +349,11 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
   </tr>
   <tr id="ScriptName">
     <td>A_ScriptName</td>
-    <td>Der Dateiname des aktuellen Skripts, ohne Pfad, z. B. MeinSkript.ahk.</td>
+    <td><strong>Lesen/Schreiben:</strong> Der Standardtitel für MsgBox, InputBox, FileSelect, DirSelect und GuiCreate. Wenn dieser Variable keinen Wert zugewiesen wird, gilt standardmäßig der Dateiname des aktuellen Skripts, ohne Pfad, z. B. MeinSkript.ahk.</td>
   </tr>
   <tr id="ScriptFullPath">
     <td>A_ScriptFullPath</td>
-    <td>Der vollständige Pfad des Skripts, z. B. C:\Meine Dokumente\MeinSkript.ahk.</td>
+    <td>Der vollständige Pfad des aktuellen Skripts, z. B. C:\Meine Dokumente\MeinSkript.ahk.</td>
   </tr>
   <tr id="ScriptHwnd">
     <td>A_ScriptHwnd</td>
@@ -373,7 +374,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
   </tr>
   <tr id="ThisLabel">
     <td>A_ThisLabel</td>
-    <td>Der Name des <a href="misc/Labels.htm">Labels</a> (Subroutine), das gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeinLabel. A_ThisLabel wird aktualisiert, wann immer das Skript <a href="commands/Gosub.htm">Gosub</a>/<a href="commands/Return.htm">Return</a> oder <a href="commands/Goto.htm">Goto</a> ausführt. A_ThisLabel wird auch aktualisiert, wenn automatisch-aufgerufene Labels wie <a href="commands/SetTimer.htm">Timer</a>, <a href="commands/Gui.htm#DefaultWin">GUI-Threads</a>, <a href="commands/Menu.htm">Menüpunkte</a>, <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> erfolgen. A_ThisLabel wird nicht aktualisiert, wenn die Skriptausführung in eines der oben genannten Label "gelangt"; in diesem Fall behält A_ThisLabel seinen vorherigen Wert. Siehe auch: <a href="#ThisHotkey">A_ThisHotkey</a> und <a href="commands/IsLabel.htm">IsLabel()</a></td>
+    <td>Der Name des <a href="misc/Labels.htm">Labels</a> (Subroutine), das gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeinLabel. A_ThisLabel wird aktualisiert, wann immer das Skript <a href="commands/Gosub.htm">Gosub</a>/<a href="commands/Return.htm">Return</a> oder <a href="commands/Goto.htm">Goto</a> ausführt. A_ThisLabel wird auch aktualisiert, wenn automatisch-aufgerufene Labels wie <a href="commands/SetTimer.htm">Timer</a>, <a href="objects/GuiOnEvent.htm#Threads">GUI-Threads</a>, <a href="commands/Menu.htm">Menüpunkte</a>, <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> erfolgen. A_ThisLabel wird nicht aktualisiert, wenn die Skriptausführung in eines der oben genannten Label "gelangt"; in diesem Fall behält A_ThisLabel seinen vorherigen Wert. Siehe auch: <a href="#ThisHotkey">A_ThisHotkey</a> und <a href="commands/IsLabel.htm">IsLabel()</a></td>
   </tr>
   <tr id="AhkVersion">
     <td>A_AhkVersion</td>
@@ -596,66 +597,6 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
     <td><p>Diese Variable verhält sich wie A_TimeIdle, aber ignoriert künstliche Tastatureingaben und/oder Mausklicks, wann immer der entsprechende Hook (<a href="commands/_InstallKeybdHook.htm">Tastatur</a> oder <a href="commands/_InstallMouseHook.htm">Maus</a>) installiert wird; das heißt, dass die Variable nur auf physische Ereignisse reagiert. Dadurch wird verhindert, dass simulierte Tastatureingaben und Mausklicks fälschlicherweise die Anwesenheit des Benutzers vortäuschen. Wenn beide Hooks fehlen, hat diese Variable die gleiche Bedeutung wie A_TimeIdle. Wenn nur ein einziger Hook installiert ist, werden nur seine physischen Eingaben Einfluss auf A_TimeIdlePhysical haben (der andere/nicht-installierte Hook, sowohl physisch als auch künstlich, hat keine Wirkung).</p></td>
   </tr>
 </table>
-<h3>GUI-Fenster und Menüleisten</h3>
-<table class="info">
-  <tr id="MsgBoxResult">
-    <td>A_MsgBoxResult</td>
-    <td>Das <a href="commands/MsgBox.htm#Result">Ergebnis</a> des jüngsten <a href="commands/MsgBox.htm">MsgBox</a>-Befehls.</td>
-  </tr>
-  <tr id="DefaultGui">
-    <td>A_DefaultGui</td>
-    <td>Name oder Nummer vom <a href="commands/Gui.htm#Default">Standard-GUI</a> des aktuellen Threads.</td>
-  </tr>
-  <tr id="DefaultListView">
-    <td>A_DefaultListView</td>
-    <td><a href="commands/Gui.htm#Events">Variablenname</a> oder <a href="commands/Gui.htm#HwndOutputVar">HWND</a> des <a href="commands/ListView.htm">ListView-Steuerelements</a>, auf dem sich die <a href="commands/ListView.htm#BuiltIn">ListView-Funktionen</a> gerade beziehen. Fehlt dem Standard-GUI eine ListView, dann ist diese Variable leer.</td>
-  </tr>
-  <tr id="DefaultTreeView">
-    <td>A_DefaultTreeView</td>
-    <td><a href="commands/Gui.htm#Events">Variablenname</a> oder <a href="commands/Gui.htm#HwndOutputVar">HWND</a> des <a href="commands/TreeView.htm">TreeView-Steuerelements</a>, auf dem sich die <a href="commands/TreeView.htm#BuiltIn">TreeView-Funktionen</a> gerade beziehen. Fehlt dem Standard-GUI eine TreeView, dann ist diese Variable leer.</td>
-  </tr>
-  <tr id="Gui">
-    <td>A_Gui</td>
-    <td>Name oder Nummer des <a href="commands/Gui.htm">GUI</a>-Fensters, das den <a href="misc/Threads.htm">aktuellen Thread</a> gestartet hat. Diese Variable enthält nur einen Wert, wenn ein GUI-Steuerelement, Menüleistenelement oder Ereignis wie GuiClose/GuiEscape den aktuellen Thread gestartet hat.</td>
-  </tr>
-  <tr id="GuiControl">
-    <td>A_GuiControl</td>
-    <td>Das GUI-Steuerelement bzw. der Name seiner zugeordneten Variable, welches den <a href="misc/Threads.htm">aktuellen Thread</a> gestartet hat. Fehlt dem Steuerelement eine <a href="commands/Gui.htm#Events">zugeordnete Variable</a>, enthält A_GuiControl stattdessen die ersten 63 Zeichen des Textes/der Bezeichnung (da man meistens den Buttons keine Variablennamen zuordnet). A_GuiControl ist leer, sobald: 1) A_Gui leer ist; 2) ein GUI-Menüleistenpunkt oder Ereignis wie GuiClose/GuiEscape den aktuellen Thread gestartet hat; 3) dem Steuerelement eine zugeordnete Variable und Bezeichnung fehlt; oder 4) das Steuerelement nicht länger vorhanden ist, welches ursprünglich den aktuellen Thread gestartet hat (z. B. durch <a href="commands/Gui.htm#Destroy">Gui Destroy</a>).</td>
-  </tr>
-  <tr id="GuiWidth">
-    <td>A_GuiWidth<br>
-    
-    A_GuiHeight</td>
-    <td>Diese Variablen enthalten die Breite und Höhe des GUI-Fensters, sofern sie in einer <a href="commands/Gui.htm#GuiSize">GuiSize-Subroutine</a> verwendet werden. Sie beziehen sich auf den Client-Bereich des GUI-Fensters - das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen. Diese Werte sind von der <a href="commands/Gui.htm#DPIScale">DPI-Skalierung</a> abhängig.</td>
-  </tr>
-  <tr>
-    <td><span id="GuiX"></span><span id="GuiY"></span>A_GuiX<br>
-    
-    A_GuiY</td>
-    <td>Diese Variablen enthalten die X- und Y-Koordinaten bei <a href="commands/Gui.htm#GuiContextMenu">GuiContextMenu</a>- und <a href="commands/Gui.htm#GuiDropFiles">GuiDropFiles</a>-Ereignissen. Die Koordinaten sind relativ zur linken oberen Ecke des Fensters. Diese Werte sind von der <a href="commands/Gui.htm#DPIScale">DPI-Skalierung</a> abhängig.</td>
-  </tr>
-  <tr>
-    <td><span id="GuiEvent"></span><span id="GuiControlEvent"></span>A_GuiEvent<br><span class="small80">oder A_GuiControlEvent</span></td>
-    <td><p>Das Ereignis, welches den <a href="misc/Threads.htm">aktuellen Thread</a> gestartet hat. Wenn dieser Thread von etwas gestartet wurde, das keine <a href="commands/Gui.htm">GUI-Aktion</a> ist, dann ist diese Variable leer. Ansonsten enthält sie eine der folgenden Zeichenketten:</p>
-      <p><strong>Normal</strong>: Das Ereignis wurde durch einen Linksklick oder durch Tastatureingaben ausgelöst (Pfeiltasten, Tabulatortaste, Leertaste, unterstrichene Tastenkürzel und so weiter). Dieser Wert wird auch bei Menüleistenelementen und Sonderereignissen wie GuiClose und GuiEscape verwendet.</p>
-      <p><strong>DoubleClick</strong>: Das Ereignis wurde durch einen Doppelklick ausgelöst. Hinweis: Der erste Klick des Doppelklicks löst weiterhin ein <em>Normal</em>-Ereignis aus. Das heißt, dass die Subroutine zweimal gestartet wird: einmal beim ersten Klick und nochmals beim zweiten Klick.</p>
-      <p><strong>RightClick</strong>: Tritt nur bei <a href="commands/Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="commands/ListView.htm">ListViews</a> und <a href="commands/TreeView.htm">TreeViews</a> auf.</p>
-      <p><strong>Kontextabhängige Werte:</strong> Für weitere Details, siehe <a href="commands/Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="commands/Gui.htm#GuiDropFiles">GuiDropFiles</a>, <a href="commands/GuiControls.htm#Slider">Slider</a>, <a href="commands/GuiControls.htm#MonthCal">MonthCal</a>, <a href="commands/ListView.htm">ListView</a> und <a href="commands/TreeView.htm">TreeView</a>.</p>
-    </td>
-  </tr>
-  <tr id="EventInfo">
-    <td>A_EventInfo</td>
-    <td><p>Enthält zusätzliche Informationen über die folgenden Ereignisse:</p>
-      <ul>
-        <li>Das <a href="commands/OnClipboardChange.htm">OnClipboardChange-Label</a></li>
-        <li><a href="Hotkeys.htm#Wheel">Mausrad-Hotkeys</a> (WheelDown/Up/Left/Right)</li>
-        <li><a href="commands/RegisterCallback.htm">RegisterCallback()</a></li>
-        <li><a href="commands/Gui.htm#label">GUI-Ereignisse</a>, also <a href="commands/Gui.htm#GuiContextMenu">GuiContextMenu</a>, <a href="commands/Gui.htm#GuiDropFiles">GuiDropFiles</a>, <a href="commands/GuiControls.htm#ListBox">ListBox</a>, <a href="commands/ListView.htm">ListView</a>, <a href="commands/TreeView.htm">TreeView</a> und <a href="commands/GuiControls.htm#StatusBar">StatusBar</a>. Wenn es keine zusätzlichen Informationen über ein Ereignis gibt, enthält A_EventInfo eine 0.</li>
-      </ul>
-      <p><strong>Lesen/Schreiben:</strong> A_EventInfo kann auch vom Skript gesetzt werden, aber akzeptiert werden nur vorzeichenlose Integer innerhalb eines Pointer-Bereichs (32-Bit oder 64-Bit, je nach Version von AutoHotkey).</p></td>
-  </tr>
-</table>
-<p>Hinweis: Im Gegensatz zu Variablen wie A_ThisHotkey behält jeder <a href="misc/Threads.htm">Thread</a> seinen eigenen Wert für A_Gui, A_GuiControl, A_GuiX/Y, A_GuiEvent und A_EventInfo. Das heißt, dass die ursprünglichen/richtigen Werte auch dann noch zur Verfügung stehen, wenn ein Thread unterbrochen und dann fortgesetzt wird.</p>
 <h3 id="h">Hotkeys, Hotstrings und benutzerdefinierte Menüpunkte</h3>
 <table class="info">
   <tr id="ThisMenuItem">
@@ -797,13 +738,8 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
   <tr id="IsAdmin">
     <td>A_IsAdmin</td>
     <td><p>Wenn der aktuelle Benutzer Administratorrechte hat, enthält diese Variable eine 1. Ansonsten enthält sie eine 0.</p>
-    <p id="RequireAdmin">Um ein Skript dazu zu bringen, sich selbst mit Administratorrechten neu zu starten (oder den Benutzer danach zu fragen), können die folgenden Zeilen in das obere Ende des Skripts eingefügt werden:</p>
-    <pre>if not A_IsAdmin
-{
-   Run *RunAs "%A_ScriptFullPath%"&lt;/e0&gt;
-   ExitApp
-}</pre>
-    <p>Diese Methode ist nicht der einzige Weg, um die Fenster eines Programms zu automatisieren, das mit Administratorrechten läuft. Siehe <a href="FAQ.htm#uac">das FAQ</a>, um mehr darüber zu erfahren.</p></td>
+    <p id="RequireAdmin">Mit <a href="commands/Run.htm#RunAs">Run *RunAs</a> kann man das Skript mit Adminrechten neu starten lassen (oder anzeigen lassen, dass der Benutzer Adminrechte benötigt). Beachte aber, dass ein mit Adminrechten gestartetes Skript dazu führt, dass alle Programme, die das Skript startet, auch Adminrechte haben werden. In <a href="FAQ.htm#uac">der FAQ</a> findest du eine mögliche Alternative.</p>
+    </td>
   </tr>
   <tr id="Screen">
     <td><p>A_ScreenWidth<br>
@@ -820,7 +756,7 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
   </tr>
   <tr id="ScreenDPI">
     <td>A_ScreenDPI</td>
-    <td>Die Anzahl der Pixel pro logischem Inch entlang der Bildschirmbreite. Bei einem Multi-Anzeigegerät-System gilt dieser Wert für alle Anzeigegeräte. Bei vielen Systemen ist das 96; abhängig von der Textgrößeneinstellung (DPI) des Systems. Siehe auch <a href="commands/Gui.htm#DPIScale">Gui -DPIScale</a>.</td>
+    <td>Die Anzahl der Pixel pro logischem Inch entlang der Bildschirmbreite. Bei einem Multi-Anzeigegerät-System gilt dieser Wert für alle Anzeigegeräte. Bei vielen Systemen ist das 96; abhängig von der Textgrößeneinstellung (DPI) des Systems. Siehe auch GUI's <a href="commands/GuiCreate.htm#DPIScale">-DPIScale</a>-Option.</td>
   </tr>
   <tr id="IPAddress">
     <td>A_IPAddress1 bis 4</td>
@@ -848,6 +784,16 @@ BeobachteEinfügemarke:
 return
 </pre>
     </td>
+  </tr>
+  <tr id="EventInfo">
+    <td>A_EventInfo</td>
+    <td><p>Enthält zusätzliche Informationen über die folgenden Ereignisse:</p>
+      <ul>
+        <li><a href="Hotkeys.htm#Wheel">Mausrad-Hotkeys</a> (WheelDown/Up/Left/Right)</li>
+        <li><a href="commands/RegisterCallback.htm">RegisterCallback()</a></li>
+      </ul>
+<p>Hinweis: Im Gegensatz zu Variablen wie A_ThisHotkey behält jeder <a href="misc/Threads.htm">Thread</a> seinen eigenen Wert für A_EventInfo. Das heißt, dass die ursprünglichen/richtigen Werte auch dann noch zur Verfügung stehen, wenn ein Thread unterbrochen und dann fortgesetzt wird.</p>
+      <p><strong>Lesen/Schreiben:</strong> A_EventInfo kann auch vom Skript gesetzt werden, aber akzeptiert werden nur vorzeichenlose Integer innerhalb eines Pointer-Bereichs (32-Bit oder 64-Bit, je nach Version von AutoHotkey).</p></td>
   </tr>
   <tr>
     <td>Clipboard</td>

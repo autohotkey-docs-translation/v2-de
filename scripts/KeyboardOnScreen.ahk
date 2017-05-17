@@ -45,77 +45,75 @@ k_KeySize := "w%k_KeyWidth% h%k_KeyHeight%"
 k_Position := "x+%k_KeyMargin% %k_KeySize%"
 
 ;---- Create a GUI window for the on-screen keyboard:
-Gui, Font, s%k_FontSize% %k_FontStyle%, %k_FontName%
-Gui, -Caption +E0x200 +ToolWindow
-TransColor := "F1ECED"
-Gui, Color, %TransColor%  ; This color will be made transparent later below.
+Gui := GuiCreate("-Caption +E0x200 +ToolWindow")
+Gui.SetFont("s%k_FontSize% %k_FontStyle%", k_FontName)
+Gui.BackColor := "F1ECED"  ; This color will be made transparent later below.
 
 ;---- Add a button for each key. Position the first button with absolute
 ; coordinates so that all other buttons can be positioned relative to it:
-Gui, Add, Button, section %k_KeySize% xm+%k_KeyWidth%, 1
-Gui, Add, Button, %k_Position%, 2
-Gui, Add, Button, %k_Position%, 3
-Gui, Add, Button, %k_Position%, 4
-Gui, Add, Button, %k_Position%, 5
-Gui, Add, Button, %k_Position%, 6
-Gui, Add, Button, %k_Position%, 7
-Gui, Add, Button, %k_Position%, 8
-Gui, Add, Button, %k_Position%, 9
-Gui, Add, Button, %k_Position%, 0
-Gui, Add, Button, %k_Position%, -
-Gui, Add, Button, %k_Position%, =
-Gui, Add, Button, %k_Position%, Bk
+Gui.Add("Button", "section %k_KeySize% xm+%k_KeyWidth%", "1")
+Gui.Add("Button", k_Position, "2")
+Gui.Add("Button", k_Position, "3")
+Gui.Add("Button", k_Position, "4")
+Gui.Add("Button", k_Position, "5")
+Gui.Add("Button", k_Position, "6")
+Gui.Add("Button", k_Position, "7")
+Gui.Add("Button", k_Position, "8")
+Gui.Add("Button", k_Position, "9")
+Gui.Add("Button", k_Position, "0")
+Gui.Add("Button", k_Position, "-")
+Gui.Add("Button", k_Position, "=")
+Gui.Add("Button", k_Position, "Bk")
 
-Gui, Add, Button, xm y+%k_KeyMargin% h%k_KeyHeight%, Tab  ; Auto-width.
-Gui, Add, Button, %k_Position%, Q
-Gui, Add, Button, %k_Position%, W
-Gui, Add, Button, %k_Position%, E
-Gui, Add, Button, %k_Position%, R
-Gui, Add, Button, %k_Position%, T
-Gui, Add, Button, %k_Position%, Y
-Gui, Add, Button, %k_Position%, U
-Gui, Add, Button, %k_Position%, I
-Gui, Add, Button, %k_Position%, O
-Gui, Add, Button, %k_Position%, P
-Gui, Add, Button, %k_Position%, [
-Gui, Add, Button, %k_Position%, ]
-Gui, Add, Button, %k_Position%, \
+Gui.Add("Button", "xm y+%k_KeyMargin% h%k_KeyHeight%", "Tab")  ; Auto-width.
+Gui.Add("Button", k_Position, "Q")
+Gui.Add("Button", k_Position, "W")
+Gui.Add("Button", k_Position, "E")
+Gui.Add("Button", k_Position, "R")
+Gui.Add("Button", k_Position, "T")
+Gui.Add("Button", k_Position, "Y")
+Gui.Add("Button", k_Position, "U")
+Gui.Add("Button", k_Position, "I")
+Gui.Add("Button", k_Position, "O")
+Gui.Add("Button", k_Position, "P")
+Gui.Add("Button", k_Position, "[")
+Gui.Add("Button", k_Position, "]")
+Gui.Add("Button", k_Position, "\")
 
-Gui, Add, Button, xs+%k_KeyWidthHalf% y+%k_KeyMargin% %k_KeySize%, A
-Gui, Add, Button, %k_Position%, S
-Gui, Add, Button, %k_Position%, D
-Gui, Add, Button, %k_Position%, F
-Gui, Add, Button, %k_Position%, G
-Gui, Add, Button, %k_Position%, H
-Gui, Add, Button, %k_Position%, J
-Gui, Add, Button, %k_Position%, K
-Gui, Add, Button, %k_Position%, L
-Gui, Add, Button, %k_Position%, `;
-Gui, Add, Button, %k_Position%, '
-Gui, Add, Button, x+%k_KeyMargin% h%k_KeyHeight%, Enter  ; Auto-width.
+Gui.Add("Button", "xs+%k_KeyWidthHalf% y+%k_KeyMargin% %k_KeySize%", "A")
+Gui.Add("Button", k_Position, "S")
+Gui.Add("Button", k_Position, "D")
+Gui.Add("Button", k_Position, "F")
+Gui.Add("Button", k_Position, "G")
+Gui.Add("Button", k_Position, "H")
+Gui.Add("Button", k_Position, "J")
+Gui.Add("Button", k_Position, "K")
+Gui.Add("Button", k_Position, "L")
+Gui.Add("Button", k_Position, ";")
+Gui.Add("Button", k_Position, "'")
+Gui.Add("Button", "x+%k_KeyMargin% h%k_KeyHeight%", "Enter")  ; Auto-width.
 
 ; The first button below adds %A_Space% at the end to widen it a little,
 ; making the layout of keys next to it more accurately reflect a real keyboard:
-Gui, Add, Button, xm y+%k_KeyMargin% h%k_KeyHeight%, Shift%A_Space%%A_Space%
-Gui, Add, Button, %k_Position%, Z
-Gui, Add, Button, %k_Position%, X
-Gui, Add, Button, %k_Position%, C
-Gui, Add, Button, %k_Position%, V
-Gui, Add, Button, %k_Position%, B
-Gui, Add, Button, %k_Position%, N
-Gui, Add, Button, %k_Position%, M
-Gui, Add, Button, %k_Position%, `,
-Gui, Add, Button, %k_Position%, .
-Gui, Add, Button, %k_Position%, /
+Gui.Add("Button", "xm y+%k_KeyMargin% h%k_KeyHeight%", "Shift  ")
+Gui.Add("Button", k_Position, "Z")
+Gui.Add("Button", k_Position, "X")
+Gui.Add("Button", k_Position, "C")
+Gui.Add("Button", k_Position, "V")
+Gui.Add("Button", k_Position, "B")
+Gui.Add("Button", k_Position, "N")
+Gui.Add("Button", k_Position, "M")
+Gui.Add("Button", k_Position, ",")
+Gui.Add("Button", k_Position, ".")
+Gui.Add("Button", k_Position, "/")
 
-Gui, Add, Button, xm y+%k_KeyMargin% h%k_KeyHeight%, Ctrl  ; Auto-width.
-Gui, Add, Button, h%k_KeyHeight% x+%k_KeyMargin%, Win      ; Auto-width.
-Gui, Add, Button, h%k_KeyHeight% x+%k_KeyMargin%, Alt      ; Auto-width.
-Gui, Add, Button, h%k_KeyHeight% x+%k_KeyMargin% w%k_SpacebarWidth%, Space
-
+Gui.Add("Button", "xm y+%k_KeyMargin% h%k_KeyHeight%", "Ctrl")  ; Auto-width.
+Gui.Add("Button", "h%k_KeyHeight% x+%k_KeyMargin%", "Win")      ; Auto-width.
+Gui.Add("Button", "h%k_KeyHeight% x+%k_KeyMargin%", "Alt")      ; Auto-width.
+Gui.Add("Button", "h%k_KeyHeight% x+%k_KeyMargin% w%k_SpacebarWidth%", "Space")
 
 ;---- Show the window:
-Gui, Show
+Gui.Show()
 k_IsVisible := true
 
 WinGetID, k_ID, A   ; Get its window ID.
@@ -139,7 +137,7 @@ k_WindowY := k_WorkAreaBottom - k_WindowHeight
 
 WinMove, A,, %k_WindowX%, %k_WindowY%
 WinSetAlwaysOnTop, On, ahk_id %k_ID%
-WinSetTransColor, %TransColor% 220, ahk_id %k_ID%
+WinSetTransColor, %Gui.BackColor% 220, ahk_id %k_ID%
 
 
 ;---- Set all keys as hotkeys. See www.asciitable.com
@@ -205,19 +203,18 @@ Return
 k_ShowHide:
 if k_IsVisible = true
 {
-	Gui, Cancel
+	Gui.Hide()
 	Menu, Tray, Rename, %k_MenuItemHide%, %k_MenuItemShow%
 	k_IsVisible := false
 }
 else
 {
-	Gui, Show
+	Gui.Show()
 	Menu, Tray, Rename, %k_MenuItemShow%, %k_MenuItemHide%
 	k_IsVisible := true
 }
 return
 
 
-GuiClose:
 k_MenuExit:
 ExitApp
