@@ -92,7 +92,7 @@ return</pre>
     <td><strong>~</strong></td>
     <td><p>Beim Drücken des Hotkeys wird seine ursprüngliche Funktion nicht blockiert (bzw. nicht im System versteckt). In den beiden folgenden Beispielen wird der Mausklick des Benutzers weiterhin an das aktive Fenster gesendet:</p>
       <pre>~RButton::MsgBox Sie haben die rechte Maustaste gedrückt.
-~RButton &amp; C::MsgBox Sie haben C gedrückt, während die rechte Maustaste gedrückt wird.</pre>
+~RButton &amp; C::MsgBox("Sie haben C gedrückt, während die rechte Maustaste gedrückt wird.")</pre>
       <p>Im Gegensatz zu den anderen Präfix-Symbolen darf das Tilde-Präfix in einigen Hotkey-<a href="commands/_IfWinActive.htm#variant">Varianten</a> vorkommen und in anderen nicht. Fügt man eine Tilde allerdings an die <a href="#prefix">Präfixtaste</a> einer beliebigen benutzerdefinierten Kombination, die weder ausgeschaltet noch suspendiert wurde, dann wird Tilde das Verhalten dieser Präfixtaste bei <em>allen</em> Kombinationen beeinflussen.</p>
       <p>Spezielle Hotkeys, die etwas mit <a href="#alttab">Alt-Tab</a> zu tun haben, ignorieren immer das Tilde-Präfix.</p>
       <p>Fügt man das Tilde-Präfix an eine benutzerdefinierte Modifikatortaste (<a href="#prefix">Präfixtaste</a>), die auch als eigener Hotkey dient, dann wird dieser Hotkey ausgelöst, sobald die Taste gedrückt wird, anstatt sie bis zum Loslassen der Taste hinauszuzögern. Zum Beispiel wird der oben genannte Hotkey <em>~RButton</em> ausgelöst, sobald die Maustaste gedrückt wird. Vor v1.1.14 (oder ohne Tilde-Präfix) wurde er erst nach dem Loslassen der Maustaste ausgelöst, aber nur, wenn die Tastenkombination <em>RButton &amp; C</em> nicht aktiviert war.</p>
@@ -137,11 +137,11 @@ return</pre>
 <h2 id="Context">Kontextabhängige Hotkeys</h2>
 <p>Die Direktiven <a href="commands/_IfWinActive.htm">#IfWinActive/Exist</a> und <a href="commands/_If.htm">#If</a> können Hotkeys dazu bringen, je nach Bedingung unterschiedliche (oder überhaupt keine) Aktionen durchzuführen. Zum Beispiel:</p>
 <pre>#IfWinActive, ahk_class Notepad
-^a::MsgBox Sie haben STRG+A gedrückt, während der Editor aktiv ist. Das Drücken von STRG+A in jedem anderen Fenster wird stattdessen die Tastatureingabe STRG+A übergeben.
-#c::MsgBox Sie haben WIN+C gedrückt, während der Editor aktiv ist.
+^a::MsgBox("Sie haben STRG+A gedrückt, während der Editor aktiv ist.") Das Drücken von STRG+A in jedem anderen Fenster wird stattdessen die Tastatureingabe STRG+A übergeben.
+#c::MsgBox("Sie haben WIN+C gedrückt, während der Editor aktiv ist.")
 
 #IfWinActive
-#c::MsgBox Sie haben WIN+C gedrückt, während ein Fenster außer dem Editor aktiv ist.
+#c::MsgBox("Sie haben WIN+C gedrückt, während ein Fenster außer dem Editor aktiv ist.")
 
 #If <a href="commands/_If.htm#Examples">MouseIsOver</a>("ahk_class Shell_TrayWnd")
 WheelUp::Send {Volume_Up}     <em>; Mausrad über die Taskleiste: Lautstärke erhöhen/verringern.</em>
@@ -150,7 +150,7 @@ WheelDown::Send {Volume_Down} <em>;</em>
 
 <h2 id="combo">Benutzerdefinierte Kombinationen</h2>
 <p>Mithilfe von " &amp; " kann eine benutzerdefinierte Kombination von zwei Tasten (außer Joystick-Tasten) definiert werden. Im folgenden Beispiel würde der Hotkey ausgelöst werden, wenn man Numpad0 gedrückt hält und danach die zweite Taste drückt:</p>
-<pre id="prefix">Numpad0 <strong>&amp;</strong> Numpad1::MsgBox, Sie haben Numpad1 gedrückt, während Numpad0 gedrückt wurde.
+<pre id="prefix">Numpad0 <strong>&amp;</strong> Numpad1::MsgBox("Sie haben Numpad1 gedrückt, während Numpad0 gedrückt wurde.")
 Numpad0 <strong>&amp;</strong> Numpad2::Run Notepad</pre>
 <p><strong>Die Präfixtasten verlieren ihre ursprüngliche Funktion:</strong> Im obigen Beispiel wurde Numpad0 als <em>Präfixtaste</em> definiert; wenn man nur diese Taste drückt, wird nichts passieren. Um das zu vermeiden, kann man die Numpad0-Taste wie folgt konfigurieren, damit sie eine neue Aktion durchführen kann:</p>
 <pre>Numpad0::WinMaximize A   <em>; Maximiert das aktive/vorderste Fenster.</em>
@@ -181,8 +181,8 @@ RControl &amp; Enter::ShiftAltTab  <em>; Ohne die rechte STRG-Taste loszulassen,
 
 <h2 id="Wheel">Mausrad-Hotkeys</h2>
 <p>Hotkeys, die beim Drehen des Mausrads ausgeführt werden, können mit WheelDown und WheelUp realisiert werden. WheelLeft und WheelRight werden auch unterstützt, allerdings funktionieren diese nicht in Betriebssystemen älter als Windows Vista. Hier einige Beispiele für Mausrad-Hotkeys:</p>
-<pre>MButton &amp; WheelDown::MsgBox Sie haben das Mausrad nach unten gedreht, während die mittlere Maustaste gedrückt wurde.
-^!WheelUp::MsgBox Sie haben das Mausrad nach oben gedreht, während STRG+ALT gedrückt wurde.</pre>
+<pre>MButton &amp; WheelDown::MsgBox("Sie haben das Mausrad nach unten gedreht, während die mittlere Maustaste gedrückt wurde.")
+^!WheelUp::MsgBox("Sie haben das Mausrad nach oben gedreht, während STRG+ALT gedrückt wurde.")</pre>
 <p>Die Built-in-Variable <strong>A_EventInfo</strong> enthält die Anzahl an gedrehten Rasterungen (standardmäßig 120). Allerdings kann A_EventInfo unter folgenden Umständen größer oder kleiner als 120 sein:</p>
 <ul>
   <li>Meldet die Maus-Hardware eine Drehungsgröße kleiner als eine Rasterung, enthält A_EventInfo einen Wert kleiner als 120;</li>
@@ -206,18 +206,18 @@ return</pre>
 <p>Jede Ziffernblocktaste kann dazu gebracht werden, je nach Status der NUM-Taste zwei verschiedene Hotkey-Subroutinen zu starten. Alternativ kann man eine Ziffernblocktaste auch dazu bringen, die gleiche Subroutine zu starten, unabhängig vom Status der NUM-Taste. Zum Beispiel:</p>
 <pre>NumpadEnd::
 Numpad1::
-MsgBox, Dieser Hotkey wurde gestartet, egal ob die NUM-Taste An ist oder nicht.
+MsgBox("Dieser Hotkey wurde gestartet, egal ob die NUM-Taste An ist oder nicht.")
 return</pre>
 <p>Wenn der <a href="#Tilde">Tilde-Operator (~)</a> einmal in Verbindung mit einer <a href="#prefix">Präfixtaste</a> verwendet wurde, ändert er das Verhalten dieser Präfixtaste bei allen Kombinationen. Zum Beispiel würde bei beiden folgenden Hotkeys das aktive Fenster alle Rechtsklick-Ereignisse empfangen, obwohl das Tilde-Zeichen nur in einer der Definitionen vorkommt:</p>
-<pre>~RButton &amp; LButton::MsgBox Sie haben die linke Maustaste gedrückt, während die rechte gedrückt wurde.
-RButton &amp; WheelUp::MsgBox Sie haben das Mausrad nach oben gedreht, während die rechte Maustaste gedrückt wurde.</pre>
+<pre>~RButton &amp; LButton::MsgBox("Sie haben die linke Maustaste gedrückt, während die rechte gedrückt wurde.")
+RButton &amp; WheelUp::MsgBox("Sie haben das Mausrad nach oben gedreht, während die rechte Maustaste gedrückt wurde.")</pre>
 <p>Der <a href="commands/Suspend.htm">Suspend</a>-Befehl kann vorübergehend alle Hotkeys deaktivieren, außer solche, bei denen eine Ausnahme gemacht worden ist. Um solche Hotkeys gezielt zu bestimmen, verwende <a href="commands/_IfWinActive.htm">#IfWinActive/Exist</a>.</p>
 <p>Mithilfe des <a href="commands/Hotkey.htm">Hotkey</a>-Befehls können Hotkeys dynamisch erstellt werden, während das Skript läuft. Der Hotkey-Befehl kann zudem Hotkeys, die im Skript bereits vorkommen, einzeln bearbeiten, deaktivieren oder aktivieren.</p>
 <p>Joystick-Hotkeys unterstützen Modifikatortasten wie ^ (STRG) und # (WIN) zurzeit nicht als Präfix. Allerdings kann man <a href="commands/GetKeyState.htm">GetKeyState</a> wie folgt verwenden, um diesen Effekt nachzuahmen:</p>
 <pre>Joy2::
 if not GetKeyState("Control")  <em>; Weder die linke noch die rechte STRG-Taste ist gedrückt.</em>
     return  <em>; also nichts tun.</em>
-MsgBox Sie haben die zweite Taste vom ersten Joystick gedrückt, während die STRG-Taste gedrückt wurde.
+MsgBox("Sie haben die zweite Taste vom ersten Joystick gedrückt, während die STRG-Taste gedrückt wurde.")
 return</pre>
 <p>Manchmal ist es notwendig, dass ein Hotkey auf das Loslassen seiner Modifikatortasten warten muss, bevor er fortfahren kann. Siehe dazu folgendes Beispiel:</p>
 <pre>^!s::Send {Delete}</pre>
