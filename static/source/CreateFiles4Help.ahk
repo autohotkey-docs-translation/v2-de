@@ -17,7 +17,7 @@ SetWorkingDir %A_ScriptDir%\..
 ; A server-side script does content.js for autohotkey.com:
 ; Overwrite("content.js", JQueryJS "`n" TreeJQueryJS "`n" TocJS "`n" IndexJS "`n" TranslateJS "`n" MainJS)
 Overwrite("content.chm.js", JQueryJS "`n" TranslateJS "`n" MainJS)
-SetWorkingDir %A_ScriptDir%\..\..\..
+SetWorkingDir %A_ScriptDir%\..\..
 Overwrite("Table of Contents.hhc", TOC_CreateHHC(TocJS))
 Overwrite("Index.hhk", INDEX_CreateHHK(IndexJS))
 return
@@ -65,7 +65,7 @@ TOC_CreateListCallback(byref output, data)
         if data[i].path
         {
             Transform, param_local, HTML, % data[i].path
-            output .= "<param name=""Local"" value=""docs/" param_local """>"
+            output .= "<param name=""Local"" value=""" param_local """>"
         }
 
         output .= "</object>"
@@ -102,7 +102,7 @@ INDEX_CreateHHK(data)
         Transform, param_name, HTML, % data[i][0]
         output .= "<param name=""Name"" value=""" param_name """>"
         Transform, param_local, HTML, % data[i][1]
-        output .= "<param name=""Local"" value=""docs/" param_local """>"
+        output .= "<param name=""Local"" value=""" param_local """>"
 
         output .= "</object>`n"
     }
