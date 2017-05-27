@@ -12,7 +12,7 @@
 <body>
 
 <h1>OnNotify</h1>
-<p>Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn das Steuerelement eine Nachricht via <a href="https://msdn.microsoft.com/library/bb775583">WM_NOTIFY</a> empfängt.</p>
+<p>Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn eine Steuerelementbenachrichtigung via <a href="https://msdn.microsoft.com/library/bb775583">WM_NOTIFY</a>-Meldung empfangen wird.</p>
 <pre class="Syntax">
 GuiControl.OnNotify(NachrichtCode, Callback [, HinzufügenEntfernen := 1])
 </pre>
@@ -23,7 +23,7 @@ GuiControl.OnNotify(NachrichtCode, Callback [, HinzufügenEntfernen := 1])
   <dd><p>Das <a href="GuiControl.htm">GuiControl</a>-Objekt eines Steuerelements, das überwacht werden soll.</p></dd>
   
   <dt>NachrichtCode</dt>
-  <dd><p>Ein steuerelement-definierter Nachrichtencode, der überwacht werden soll.</p></dd>
+  <dd><p>Ein steuerelement-definierter Benachrichtigungscode, der überwacht werden soll.</p></dd>
   
   <dt>Callback</dt>
   <dd>
@@ -42,23 +42,23 @@ GuiControl.OnNotify(NachrichtCode, Callback [, HinzufügenEntfernen := 1])
 </dl>
 
 <h2 id="WM_NOTIFY">WM_NOTIFY</h2>
-<p>Bestimmte Typen von Steuerelementen senden eine <a href="https://msdn.microsoft.com/library/bb775583">WM_NOTIFY</a>-Nachricht, wann immer ein interessantes Ereignis auftritt oder das Steuerelement bestimmte Informationen über das Programm benötigt. Der <em>lParam</em>-Parameter von dieser Nachricht enthält einen Pointer, der auf eine Struktur mit Informationen über die Nachricht verweist. Die Art der Struktur ist abhängig vom Nachrichtencode und vom Typ des Steuerelements, das die Nachricht ausgelöst hat, aber immer basierend auf <a href="https://msdn.microsoft.com/library/bb775514">NMHDR</a>.</p>
-<p>Welche Nachrichten es genau gibt (falls vorhanden), welche Art von Struktur sie bereitstellen und wie sie den Rückgabewert interpretieren, findest du in der Dokumentation des Steuerelements. <a href="https://msdn.microsoft.com/library/bb773169">Control Library (MSDN)</a> enthält Links zu typischen Windows-Steuerelementen. Die Nachrichtencodes (Nummern) sind in der Windows SDK zu finden, oder via Suchmaschine.</p>
-<p>AutoHotkey nutzt die Felder <em>IdFrom</em> und <em>HwndFrom</em>, um zu ermitteln, welches Steuerelement die Nachricht gesendet hat, um sie anschließend an das entsprechende Objekt senden zu können. Das <em>code</em>-Feld enthält den Nachrichtencode. Da diese nur benutzt werden, um die Callback-Funktion in Übereinstimmung mit <em>GuiControl</em> und <em>NachrichtCode</em> zu registrieren, sind sie für das Skript kaum nützlich.</p>
+<p>Bestimmte Typen von Steuerelementen senden eine <a href="https://msdn.microsoft.com/library/bb775583">WM_NOTIFY</a>-Meldung, wann immer ein interessantes Ereignis auftritt oder das Steuerelement bestimmte Informationen über das Programm benötigt. Der <em>lParam</em>-Parameter von dieser Meldung enthält einen Pointer, der auf eine Struktur mit Informationen über die Benachrichtigung verweist. Die Art der Struktur ist abhängig vom Benachrichtigungscode und vom Typ des Steuerelements, das die Benachrichtigung ausgelöst hat, aber immer basierend auf <a href="https://msdn.microsoft.com/library/bb775514">NMHDR</a>.</p>
+<p>Welche Benachrichtigungen es genau gibt (falls vorhanden), welche Art von Struktur sie bereitstellen und wie sie den Rückgabewert interpretieren, findest du in der Dokumentation des Steuerelements. <a href="https://msdn.microsoft.com/library/bb773169">Control Library (MSDN)</a> enthält Links zu typischen Windows-Steuerelementen. Die Benachrichtigungscodes (Nummern) sind in der Windows SDK zu finden, oder via Suchmaschine.</p>
+<p>AutoHotkey nutzt die Felder <em>IdFrom</em> und <em>HwndFrom</em>, um zu ermitteln, welches Steuerelement die Benachrichtigung gesendet hat, um sie anschließend an das entsprechende Objekt senden zu können. Das <em>code</em>-Feld enthält den Benachrichtigungscode. Da diese nur benutzt werden, um die Callback-Funktion in Übereinstimmung mit <em>GuiControl</em> und <em>NachrichtCode</em> zu registrieren, sind sie für das Skript kaum nützlich.</p>
 
 <h2 id="Callback_Parameters">Callback-Parameter</h2>
 <p>Die <a href="GuiOnEvent.htm#Callback_Parameters">OnEvent-Hinweise</a> bezüglich <code>this</code> und Bound-Funktionen gelten auch für OnNotify.</p>
 <p>Die Callback-Funktion akzeptiert zwei Parameter:</p>
 <pre class="Syntax">Callback(GuiControl, lParam)</pre>
-<p>Wie bereits erwähnt, ist <em>lParam</em> die Adresse einer Nachrichtenstruktur, die von <a href="https://msdn.microsoft.com/library/bb775514">NMHDR</a> abgeleitet wurde. Dessen genaue Bedeutung ist vom Typ des Steuerelements und Nachrichtencode abhängig. Wenn die Struktur zusätzliche Informationen über die Nachricht enthält, kann die Callback-Funktion sie via <a href="../commands/NumGet.htm">NumGet</a> und/oder <a href="../commands/StrPutGet.htm">StrGet</a> abrufen.</p>
+<p>Wie bereits erwähnt, ist <em>lParam</em> die Adresse einer Benachrichtigungsstruktur, die von <a href="https://msdn.microsoft.com/library/bb775514">NMHDR</a> abgeleitet wurde. Dessen genaue Bedeutung ist vom Typ des Steuerelements und Benachrichtigungscode abhängig. Wenn die Struktur zusätzliche Informationen über die Benachrichtigung enthält, kann die Callback-Funktion sie via <a href="../commands/NumGet.htm">NumGet</a> und/oder <a href="../commands/StrPutGet.htm">StrGet</a> abrufen.</p>
 
 <h2 id="Callback_Return_Value">Callback-Rückgabewert</h2>
 <p>Wenn mehrere Callback-Funktionen für ein Ereignis registriert sind, kann eine Callback-Funktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Callback-Funktionen aufgerufen werden.</p>
-<p>Der Rückgabewert kann je nach Nachricht eine zusätzliche Bedeutung haben. Zum Beispiel könnte die ListView-Nachricht <a href="https://msdn.microsoft.com/library/bb774798">LVN_BEGINLABELEDIT</a> (-175 oder-105) das Editieren der Beschriftung verbieten, wenn die Callback-Funktion TRUE (1) zurückgeben würde.</p>
+<p>Der Rückgabewert kann je nach Benachrichtigung eine zusätzliche Bedeutung haben. Zum Beispiel könnte die ListView-Benachrichtigung <a href="https://msdn.microsoft.com/library/bb774798">LVN_BEGINLABELEDIT</a> (-175 oder-105) das Editieren der Beschriftung verbieten, wenn die Callback-Funktion TRUE (1) zurückgeben würde.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p>Folgende <a href="GuiOnEvent.htm">OnEvent</a>-Hinweise gelten auch für OnNotify: <a href="GuiOnEvent.htm#Threads">Threads</a>, <a href="GuiOnEvent.htm#Destroying_the_GUI">GUI zerstören</a>.</p>
-<p>Mit <a href="GuiOnCommand.htm">OnCommand</a> kann eine WM_COMMAND-Nachricht überwacht werden.</p>
+<p><a href="GuiOnCommand.htm">OnCommand</a> kann Benachrichtigungen überwachen, die als WM_COMMAND-Meldung gesendet wurden.</p>
 
 </body>
 </html>

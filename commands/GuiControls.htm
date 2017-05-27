@@ -46,7 +46,7 @@ LaunchGoogle() {
     Run("www.google.com")
 }</pre>
 <p>Text-Steuerelemente unterstützen auch das <a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick-Ereignis</a>.</p>
-<p id="SS_NOTIFY">Nur Text-Steuerelemente mit dem SS_NOTIFY-Style (0x100) senden Klick- und Doppelklicknachrichten, daher wird <a href="../objects/GuiOnEvent.htm">OnEvent</a> automatisch diesen Style hinzufügen, wenn ein Click- oder DoubleClick-Callback-Funktion registriert wird. In Windows Vista und höher bewirkt der SS_NOTIFY-Style, dass der Text des Steuerelements bei einem Doppelklick in die Zwischenablage kopiert wird.</p>
+<p id="SS_NOTIFY">Nur Text-Steuerelemente mit dem SS_NOTIFY-Style (0x100) senden Klick- und Doppelklickbenachrichtigungen, daher wird <a href="../objects/GuiOnEvent.htm">OnEvent</a> automatisch diesen Style hinzufügen, wenn ein Click- oder DoubleClick-Callback-Funktion registriert wird. In Windows Vista und höher bewirkt der SS_NOTIFY-Style, dass der Text des Steuerelements bei einem Doppelklick in die Zwischenablage kopiert wird.</p>
 <p>Ein Und-Zeichen (&amp;) kann im Text verwendet werden, um einen Buchstaben zu unterstreichen. Zum Beispiel:</p>
 <pre>Gui.Add("Text",, "&amp;Vorname:")
 Gui.Add("Edit")</pre>
@@ -152,7 +152,7 @@ MeinBtn.OnEvent("Click", "MeinBtn_Click")  <em>; Ruft MeinBtn_Click beim Anklick
 <p>Wenn man <a href="../objects/Gui.htm#Submit">Gui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> benutzt, ist der Rückgabewert die Positionsnummer des aktuell ausgewählten Elements (das erste Element ist 1, das Zweite ist 2 und so weiter), oder 0, wenn keines ausgewählt ist. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Text abgerufen werden.</p>
 <p>Immer wenn der Benutzer ein neues Element auswählt, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst. Die Ereignisse <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt.</p>
 <p>Verwende die <a href="../objects/Gui.htm#R">R- oder H-Option</a>, um die Höhe der Aufklappliste zu bestimmen. Zum Beispiel würde <code>R5</code> die Liste 5 Zeilen hoch machen, während <code>H400</code> die Gesamthöhe des Auswahlfeldes und der Liste auf 400 Pixel setzen würde. Sind R und H nicht vorhanden, erweitert sich die Liste automatisch, um die verfügbare Desktophöhe des Benutzers sinvoll zu nutzen (allerdings werden Betriebssysteme älter als Windows XP standardmäßig 3 Zeilen anzeigen).</p>
-<p id="ComboBoxHeight">Um die Höhe des Auswahlfeldes oder der Listeneinträge zu ändern, verwende die <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb775911">CB_SETITEMHEIGHT</a>-Nachricht wie folgt:</p>
+<p id="ComboBoxHeight">Um die Höhe des Auswahlfeldes oder der Listeneinträge zu ändern, verwende die <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb775911">CB_SETITEMHEIGHT</a>-Meldung wie folgt:</p>
 <pre>Gui := GuiCreate(, "Test")
 DDL := Gui.Add("DDL", "vcbx w200", "Eins||Zwei")
 <em>; CB_SETITEMHEIGHT = 0x153</em>
@@ -310,7 +310,7 @@ SS: Sekunde 00</p>
   <tr><td>7</td><td>TB_BOTTOM</td><td>Der Benutzer hat die ENDE-Taste gedrückt, um den Slider ganz nach rechts oder nach unten zu verschieben. </td></tr>
   <tr><td colspan="3"><strong>Nur wenn die AltSubmit-Option vorhanden ist:</strong></td></tr>
   <tr><td>5</td><td>TB_THUMBTRACK</td><td>Der Benutzer zieht den Slider momentan mit der Maus. Das heißt, dass die Maustaste zurzeit gedrückt wird.</td></tr>
-  <tr><td>8</td><td>TB_ENDTRACK</td><td>Der Benutzer hat aufgehört, den Slider mit der Maus oder Tastatur zu verschieben. Hinweis: Mit Ausnahme der Mausradbewegung (TB_THUMBPOSITION), wird das Change-Ereignis nochmals bei TB_ENDTRACK ausgelöst, auch wenn es bereits durch einen der oben genannten Nachrichtencodes ausgelöst wurde.</td></tr>
+  <tr><td>8</td><td>TB_ENDTRACK</td><td>Der Benutzer hat aufgehört, den Slider mit der Maus oder Tastatur zu verschieben. Hinweis: Mit Ausnahme der Mausradbewegung (TB_THUMBPOSITION), wird das Change-Ereignis nochmals bei TB_ENDTRACK ausgelöst, auch wenn es bereits durch einen der oben genannten Meldungscodes ausgelöst wurde.</td></tr>
 </table>
 
 <h3>Slider-Optionen</h3>
@@ -393,7 +393,7 @@ Tab.UseTab("Name", true)  <em>; Das gleiche wie oben, aber mit exakter Übereins
   <li>Tab2 setzt seine Tab-Buttons in der Reihenfolgenliste unter seinen Untersteuerelementen.</li>
   <li>Tab3 gruppiert seine Untersteuerelemente innerhalb der Reihenfolgenliste und fügt sie unter den Tab-Buttons ein.</li>
 </ul>
-<p id="Tab_Notifs"><strong>Benachrichtigungen (Tab3)</strong>: Gewöhnliche und <a href="#Custom">benutzerdefinierte</a> Steuerelemente senden Benachrichtigungen in der Regel an ihre <a href="#Tab_Parent">übergeordneten Fenster</a>. WM_COMMAND, WM_NOTIFY, WM_VSCROLL, WM_HSCROLL oder WM_CTLCOLOR-Benachrichtigungen, die an das <a href="#Tab_Parent">Tab-Dialogfenster</a> eines Tab3-Steuerelements gesendet werden, werden an das GUI-Fenster weitergeleitet und können via <a href="OnMessage.htm">OnMessage</a> abgefangen werden. Wenn das Tab-Steuerelement das aktuelle Windows-Design verwendet und wenn die Option <a href="../objects/Gui.htm#BackgroundTrans">+BackgroundTrans</a> fehlt, wird WM_CTLCOLORSTATIC vollkommen vom Tab-Dialogfenster berücksichtigt und nicht weitergeleitet. Andere Benachrichtigungen (z. B. benutzerdefinierte Benachrichtigungen) werden nicht unterstützt.</p>
+<p id="Tab_Notifs"><strong>Benachrichtigungsmeldungen (Tab3)</strong>: Gewöhnliche und <a href="#Custom">benutzerdefinierte</a> Steuerelemente senden Benachrichtigungsmeldungen in der Regel an ihre <a href="#Tab_Parent">übergeordneten Fenster</a>. WM_COMMAND-, WM_NOTIFY-, WM_VSCROLL-, WM_HSCROLL- oder WM_CTLCOLOR-Meldungen, die an das <a href="#Tab_Parent">Tab-Dialogfenster</a> eines Tab3-Steuerelements gesendet werden, werden an das GUI-Fenster weitergeleitet und können via <a href="OnMessage.htm">OnMessage</a> abgefangen werden. Wenn das Tab-Steuerelement das aktuelle Windows-Design verwendet und wenn die Option <a href="../objects/Gui.htm#BackgroundTrans">+BackgroundTrans</a> fehlt, wird WM_CTLCOLORSTATIC vollkommen vom Tab-Dialogfenster berücksichtigt und nicht weitergeleitet. Andere Benachrichtigungsmeldungen (z. B. benutzerdefinierte Meldungen) werden nicht unterstützt.</p>
 <p id="Tab2_Issues"><strong>Bekannte Probleme mit Tab2</strong>:</p>
 <ul>
   <li><a href="../objects/Gui.htm#BackgroundTrans">BackgroundTrans</a> funktioniert nicht in einem Tab2-Steuerelement.</li>
@@ -505,7 +505,7 @@ class WB_events {
 <pre>Gui.Add("Custom", "ClassComboBoxEx32")  <em>; Fügt ein <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb775740">ComboBoxEx</a>-Steuerelement hinzu.</em>
 Gui.Add("Custom", "ClassScintilla")  <em>; Fügt ein <a href="http://scintilla.org/">Scintilla</a>-Steuerelement hinzu. Beachte, dass vorher die SciLexer.dll-Library geladen werden muss.</em></pre>
 <p>AutoHotkey verwendet standardmäßig die Text-Routinen für Windows-Steuerelemente, wenn Texte im Steuerelement per <code>Gui.Add</code> oder <code>GuiCtrl.Value</code> abgerufen/ersetzt werden sollen.</p>
-<p><strong>Ereignisse</strong>: Da die Bedeutung eines Nachrichtencodes abhängig vom Steuerelement ist, das ihn gesendet hat, unterstützen Custom-Steuerelemente kein <a href="../objects/GuiOnEvent.htm">OnEvent</a>. Wenn das Steuerelement allerdings WM_NOTIFY- oder WM_COMMAND-Nachrichten versendet, kann das Skript auf <a href="../objects/GuiOnNotify.htm">OnNotify</a> oder <a href="../objects/GuiOnCommand.htm">OnCommand</a> zurückgreifen, um sie zu erkennen.</p>
+<p><strong>Ereignisse</strong>: Da die Bedeutung eines Benachrichtigungscodes abhängig vom Steuerelement ist, das ihn gesendet hat, unterstützen Custom-Steuerelemente kein <a href="../objects/GuiOnEvent.htm">OnEvent</a>. Wenn das Steuerelement allerdings Benachrichtigungen in Form von WM_NOTIFY- oder WM_COMMAND-Meldungen versendet, kann das Skript auf <a href="../objects/GuiOnNotify.htm">OnNotify</a> oder <a href="../objects/GuiOnCommand.htm">OnCommand</a> zurückgreifen, um sie zu erkennen.</p>
 <p>Das folgende Beispiel zeigt, wie ein <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb761374">IP-Adressen-Steuerelement</a> hinzugefügt und verwendet werden kann:</p>
 <pre>global Gui := GuiCreate()
 
