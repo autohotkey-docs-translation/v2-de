@@ -15,10 +15,10 @@
 
 <p>Erstellt, bearbeitet, aktiviert oder deaktiviert ein Hotkey, während das Skript läuft.</p>
 
-<pre class="Syntax">Hotkey, Tastenname [, Label, Optionen]
-Hotkey, IfWinActive/Exist [, Fenstertitel, Fenstertext]
-Hotkey, If [, Ausdruck]
-Hotkey, If, % Funktionsobjekt</pre>
+<pre class="Syntax"><span class="func">Hotkey</span> Tastenname <span class="optional">, Label, Optionen</span>
+<span class="func">Hotkey</span> "IfWinActive/Exist" <span class="optional">, Fenstertitel, Fenstertext</span>
+<span class="func">Hotkey</span> "If" <span class="optional">, Ausdruck</span>
+<span class="func">Hotkey</span> "If", Funktionsobjekt</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -89,7 +89,6 @@ Hotkey, If, % Funktionsobjekt</pre>
 </dl>
 
 <h3 id="ErrorLevel">ErrorLevel</h3>
-<p>Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p>Ist der erste Parameter "If", wird eine Ausnahme ausgelöst, wenn ein Parameter ungültig ist oder eine Speicherzuweisung fehlschlägt. ErrorLevel wird in solchen Fällen nicht gesetzt.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird nur geändert, wenn das Wort UseErrorLevel in den <em>Optionen</em> vorhanden ist.</p>
 <table class="info">
@@ -191,28 +190,29 @@ Gui.Add("Text", "xm", "Präfixtaste:")
 Gui.Add("Edit", "yp x100 w100 vPräfix", "Space")
 Gui.Add("Text", "xm", "Suffix-Hotkey:")
 Gui.Add("Edit", "yp x100 w100 vSuffix", "f &amp; j")
-Gui.Add("Button", "Default gButtonRegistrieren", "Registrieren")
+Gui.Add("Button", "Default", "Registrieren").OnEvent("Click", "RegistriereHotkey")
+Gui.OnEvent("Close", "Gui_Close")
+Gui.OnEvent("Escape", "Gui_Close")
 Gui.Show()
 
-ButtonRegistrieren() {
-    global
-    Gespeichert := Gui.Submit(false)
+RegistriereHotkey(BtnCtrl) {
     local fn
+    Gespeichert := BtnCtrl.Gui.Submit(false)
     fn := Func("HotkeySollteAuslösen").Bind(Gespeichert.Präfix)
-    Hotkey If, % fn
-    Hotkey % Gespeichert.Suffix, FireHotkey
+    Hotkey("If", fn)
+    Hotkey(Gespeichert.Suffix, "HotkeyAuslösen")
 }
 
-HotkeySollteAuslösen(Präfix, thisHotkey) {
+HotkeySollteAuslösen(Präfix) {
     return GetKeyState(Präfix)
 }
 
 HotkeyAuslösen() {
-    MsgBox %A_ThisHotkey%
+    MsgBox(A_ThisHotkey)
 }
 
-GuiEscape() {
-    WinClose()
+Gui_Close() {
+    ExitApp()
 }</pre>
 
 </body>

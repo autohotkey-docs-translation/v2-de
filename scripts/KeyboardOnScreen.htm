@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Bildschirmtastatur (benötigt XP/2k/NT) -- von Jon</title>
+<title>Bildschirmtastatur</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<h1>Bildschirmtastatur (benötigt XP/2k/NT) -- von Jon</h1>
+<h1>Bildschirmtastatur <span class="headnote">Basierend auf dem v1-Skript von Jon</span></h1>
 
 <p>Dieses Skript erstellt eine nachgebildete Tastatur am unteren Rand des Bildschirms, das die gedrückten Tasten in Echtzeit anzeigt. Das hat mir geholfen, Eingaben zu machen, ohne dabei auf die Tastatur zu schauen. Die Größe der Bildschirmtastatur kann im oberen Bereich des Skripts angepasst werden. Außerdem kann die Tastatur angezeigt oder versteckt werden, wenn das Infobereichssymbol doppelt angeklickt wird.
 </p>
@@ -38,197 +38,97 @@ k_Monitor := ""
 <em>;---- Ende des Konfigurationsbereichs.  Hier danach keine Änderungen durchführen,
 ; es sei denn, die allgemeine Funktionalität des Skripts soll geändert werden.</em>
 
+<em>;---- Ein GUI-Fenster für die Bildschirmtastatur erstellen:</em>
+Gui := GuiCreate("-Caption +ToolWindow +AlwaysOnTop +Disabled")
+Gui.SetFont("s%k_FontSize% %k_FontStyle%", k_FontName)
+Gui.MarginY := 0, Gui.MarginX := 0
 
 <em>;---- Infobereichsmenü ändern:</em>
-Menu, Tray, Add, %k_MenuItemHide%, k_ShowHide
-Menu, Tray, Add, &amp;Exit, k_MenuExit
-Menu, Tray, Default, %k_MenuItemHide%
-Menu, Tray, NoStandard
+fn := Func("k_ShowHide").bind(Gui, k_MenuItemHide, k_MenuItemShow)
+Menu("Tray", "Add", k_MenuItemHide, fn)
+Menu("Tray", "Add", "&amp;Exit", "k_MenuExit")
+Menu("Tray", "Default", k_MenuItemHide)
+Menu("Tray", "NoStandard")
 
-<em>;---- Abmessungen der Objekte berechnen, basierend auf der ausgewählten Schriftgröße:</em>
-k_KeyWidth := k_FontSize * 3
-k_KeyHeight := k_FontSize * 3
-k_KeyMargin := k_FontSize / 6
-k_SpacebarWidth := k_FontSize * 25
-k_KeyWidthHalf := k_KeyWidth / 2
+<em>;---- Für jede Taste einen Button hinzufügen:</em>
 
-k_KeySize := w%k_KeyWidth% h%k_KeyHeight%
-k_Position := x+%k_KeyMargin% %k_KeySize%
+<em>; Das Tastaturlayout, das du siehst:</em>
+k_cL := [ ["``", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Back "]
+        , ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\  "]
+        , ["Caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"]
+        , ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift  "]
+        , ["Ctrl", "Win", "Alt", "Space ", "Alt", "Win", "Menu", "Ctrl"] ]
 
-<em>;---- Ein GUI-Fenster für die Bildschirmtastatur erstellen:</em>
-Gui := GuiCreate("-Caption +E0x200 +ToolWindow")
-Gui.SetFont("s%k_FontSize% %k_FontStyle%", k_FontName)
-Gui.BackColor := "F1ECED" <em>; Diese Farbe wird später transparent gemacht.</em>
+<em>; AutoHotkey's offizielle Tastennamen für die Tasten oben (leer lassen wenn identisch):</em>
+k_oL := [ [, , , , , , , , , , , , , "Backspace"]
+        , []
+        , ["CapsLock"]
+        , ["LShift", , , , , , , , , , , "RShift"]
+        , ["LCtrl", "LWin", "LAlt", , "RAlt", "RWin", "AppsKey", "RCtrl"] ]
 
-<em>;---- Für jede Taste einen Button hinzufügen. Der erste Button wird mit absoluten
-; Koordinaten positioniert, sodass alle anderen Buttons sich darauf beziehen:</em>
-Gui.Add("Button", "section %k_KeySize% xm+%k_KeyWidth%", "1")
-Gui.Add("Button", k_Position, "2")
-Gui.Add("Button", k_Position, "3")
-Gui.Add("Button", k_Position, "4")
-Gui.Add("Button", k_Position, "5")
-Gui.Add("Button", k_Position, "6")
-Gui.Add("Button", k_Position, "7")
-Gui.Add("Button", k_Position, "8")
-Gui.Add("Button", k_Position, "9")
-Gui.Add("Button", k_Position, "0")
-Gui.Add("Button", k_Position, "-")
-Gui.Add("Button", k_Position, "=")
-Gui.Add("Button", k_Position, "Bk")
+<em>; Jede Taste in der Liste mit benutzerdefinierten Tastennamen durchgehen:</em>
+For n, k_Row in k_cL
+  For i, k_CustomKeyName in k_Row
+  {
+    k_OfficialKeyName := k_oL[n][i]
+    <em>; Objektmaße anhand der ausgewählten Schriftgröße berechnen:</em>
+    opt := "h" k_FontSize * 3 " w" k_FontSize * (StrLen(k_CustomKeyName) + 2) " x+m" 
+    if i = 1
+      opt .= " y+m xm"
+    <em>; Wenn der Benutzer eine Taste drückt, klicke den entsprechenden Button auf dem Bildschirm:</em>
+    fn := Func("k_KeyPress").bind(Gui.Add("Button", opt, k_CustomKeyName))
+    <em>; If the key has an official key name use it:</em>
+    if k_OfficialKeyName
+      Hotkey("~*" k_OfficialKeyName, fn)
+    else
+      Hotkey("~*" Trim(k_CustomKeyName), fn)
+  }
 
-Gui.Add("Button", "xm y+%k_KeyMargin% h%k_KeyHeight%", "Tab")  <em>; Automatische Breite.</em>
-Gui.Add("Button", k_Position, "Q")
-Gui.Add("Button", k_Position, "W")
-Gui.Add("Button", k_Position, "E")
-Gui.Add("Button", k_Position, "R")
-Gui.Add("Button", k_Position, "T")
-Gui.Add("Button", k_Position, "Y")
-Gui.Add("Button", k_Position, "U")
-Gui.Add("Button", k_Position, "I")
-Gui.Add("Button", k_Position, "O")
-Gui.Add("Button", k_Position, "P")
-Gui.Add("Button", k_Position, "[")
-Gui.Add("Button", k_Position, "]")
-Gui.Add("Button", k_Position, "\")
-
-Gui.Add("Button", "xs+%k_KeyWidthHalf% y+%k_KeyMargin% %k_KeySize%", "A")
-Gui.Add("Button", k_Position, "S")
-Gui.Add("Button", k_Position, "D")
-Gui.Add("Button", k_Position, "F")
-Gui.Add("Button", k_Position, "G")
-Gui.Add("Button", k_Position, "H")
-Gui.Add("Button", k_Position, "J")
-Gui.Add("Button", k_Position, "K")
-Gui.Add("Button", k_Position, "L")
-Gui.Add("Button", k_Position, ";")
-Gui.Add("Button", k_Position, "'")
-Gui.Add("Button", "x+%k_KeyMargin% h%k_KeyHeight%", "Enter")  <em>; Automatische Breite.</em>
-
-<em>; Der erste untere Button enthält am Ende %A_Space%, um sie etwas breiter zu machen,
-; damit das Layout der Tasten daneben mehr einer echten Tastatur entspricht:</em>
-Gui.Add("Button", "xm y+%k_KeyMargin% h%k_KeyHeight%", "Shift  ")
-Gui.Add("Button", k_Position, "Z")
-Gui.Add("Button", k_Position, "X")
-Gui.Add("Button", k_Position, "C")
-Gui.Add("Button", k_Position, "V")
-Gui.Add("Button", k_Position, "B")
-Gui.Add("Button", k_Position, "N")
-Gui.Add("Button", k_Position, "M")
-Gui.Add("Button", k_Position, ",")
-Gui.Add("Button", k_Position, ".")
-Gui.Add("Button", k_Position, "/")
-
-Gui.Add("Button", "xm y+%k_KeyMargin% h%k_KeyHeight%", "Ctrl")  <em>; Automatische Breite.</em>
-Gui.Add("Button", "h%k_KeyHeight% x+%k_KeyMargin%", "Win")      <em>; Automatische Breite.</em>
-Gui.Add("Button", "h%k_KeyHeight% x+%k_KeyMargin%", "Alt")      <em>; Automatische Breite.</em>
-Gui.Add("Button", "h%k_KeyHeight% x+%k_KeyMargin% w%k_SpacebarWidth%", "Space")
+<em>;---- Tastatur am unteren Rand des Bildschirms positionieren
+; (unter Berücksichtigung der Taskleistenposition):</em>
+Gui.Show("Hide") <em>; Notwendig, um die berechnete Breite und Höhe des Fensters zu erhalten.
+; X-Position des Fensters berechnen:</em>
+MonitorGetWorkArea(k_Monitor, WL,, WR, WB)
+k_xPos := (WR - WL - Gui.Pos.W) / 2 <em>; Position berechnen, um sie horizontal zu zentrieren.
+; Das Folgende wird durchgeführt, falls sich das Fenster nicht auf dem primären Monitor befindet
+; oder wenn die Taskleiste auf der linken Seite des Bildschirms verankert ist:</em>
+k_xPos += WL
+<em>; Y-Position des Fensters berechnen:</em>
+k_yPos := WB - Gui.Pos.H
 
 <em>;---- Fenster anzeigen:</em>
-Gui.Show()
-k_IsVisible := true
+Gui.Show("x" k_xPos " y" k_yPos " NA")
 
-WinGetID, k_ID, A   <em>; Fenster-ID abrufen.</em>
-WinGetPos,,, k_WindowWidth, k_WindowHeight, A
-
-<em>;---- Tastatur am unteren Rand des Bildschirms positionieren (unter Berücksichtigung
-; der Position der Taskleiste):</em>
-MonitorGetWorkArea, %k_Monitor%, k_WorkAreaLeft,, k_WorkAreaRight, k_WorkAreaBottom
-
-<em>; X-Position des Fensters berechnen:</em>
-k_WindowX := k_WorkAreaRight
-k_WindowX -= k_WorkAreaLeft  <em>; Nun enthält k_WindowX die Breite des Monitors.</em>
-k_WindowX -= k_WindowWidth
-k_WindowX /= 2  <em>; Position berechnen, um sie horizontal zu zentrieren.
-; Das Folgende wird durchgeführt, falls sich das Fenster nicht auf den primären Monitor befindet
-; oder wenn die Taskleiste auf der linken Seite des Bildschirms verankert ist:</em>
-k_WindowX += k_WorkAreaLeft
-
-<em>; Y-Position des Fensters berechnen:</em>
-k_WindowY := k_WorkAreaBottom - k_WindowHeight
-
-WinMove, A,, %k_WindowX%, %k_WindowY%
-WinSetAlwaysOnTop, On, ahk_id %k_ID%
-WinSetTransColor, %Gui.BackColor% 220, ahk_id %k_ID%
-
-
-<em>;---- Alle Tasten als Hotkeys bestimmen. Siehe www.asciitable.com</em>
-k_n := 1
-k_ASCII := 45
-
-Loop
-{
-    k_char := StrUpper(Chr(k_ASCII))
-    if !InStr("&lt;&gt;^~?,", k_char)
-        Hotkey, ~*%k_char%, k_KeyPress
-        <em>; Mit dem oberen Sternchenpräfix wird die Taste erkannt, unabhängig davon,
-        ; ob der Benutzer die Modifikatortasten wie STRG und UMSCHALT gedrückt hält.</em>
-    if k_ASCII = 93
-        break
-    k_ASCII++
+<em>;---- Funktionsdefinitionen:</em>
+k_KeyPress(BtnCtrl)
+{ 
+  BtnCtrl.Opt("Default") <em>; Die zuletzt gedrückte Taste hervorheben.</em>
+  ControlClick(, "ahk_id %BtnCtrl.Hwnd%",,,, "D")
+  KeyWait(SubStr(A_ThisHotkey, 3))
+  ControlClick(, "ahk_id %BtnCtrl.Hwnd%",,,, "U")
 }
 
-return <em>; Ende des automatischen Ausführungsbereichs.</em>
-
-
-<em>;---- Beim Tastendruck den entsprechenden Button auf dem Bildschirm drücken:</em>
-
-~*Backspace::
-ControlClick, Bk, ahk_id %k_ID%, , LEFT, 1, D
-KeyWait, Backspace
-ControlClick, Bk, ahk_id %k_ID%, , LEFT, 1, U
-return
-
-
-<em>; LShift und RShift werden anstelle von "Shift" verwendet, denn als Hotkey
-; würde "Shift" beim Loslassen der Taste standardmäßig ausgeführt (in älteren AHK-Versionen):</em>
-~*LShift::
-~*RShift::
-~*LCtrl::  <em>; Ctrl muss anstelle von Control verwendet werden, damit es mit dem Button-Namen übereinstimmt.</em>
-~*RCtrl::
-~*LAlt::
-~*RAlt::
-~*LWin::
-~*RWin::
-k_ThisHotkey := SubStr(A_ThisHotkey, 3)
-ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, D
-KeyWait, %k_ThisHotkey%
-ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, U
-return
-
-
-~*,::
-~*'::
-~*Space::
-~*Enter::
-~*Tab::
-k_KeyPress:
-StrReplace, k_ThisHotkey, %A_ThisHotkey%, ~
-StrReplace, k_ThisHotkey, %k_ThisHotkey%, *
-SetTitleMatchMode, 3  <em>; Verhindert, dass die Tasten T und B nicht mit Tabulator und Rücktaste (Backspace) verwechselt werden.</em>
-ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, D
-KeyWait, %k_ThisHotkey%
-ControlClick, %k_ThisHotkey%, ahk_id %k_ID%, , LEFT, 1, U
-Return
-
-
-k_ShowHide:
-if k_IsVisible = true
+k_ShowHide(GuiObj, HideText, ShowText)
 {
-    Gui.Hide()
-    Menu, Tray, Rename, %k_MenuItemHide%, %k_MenuItemShow%
-    k_IsVisible := false
+  static isVisible := true
+  if isVisible
+  {
+    GuiObj.Hide()
+    Menu("Tray", "Rename", HideText, ShowText)
+    isVisible := false
+  }
+  else
+  {
+    GuiObj.Show()
+    Menu("Tray", "Rename", ShowText, HideText)
+    isVisible := true
+  }
 }
-else
+
+k_MenuExit()
 {
-    Gui.Show()
-    Menu, Tray, Rename, %k_MenuItemShow%, %k_MenuItemHide%
-    k_IsVisible := true
+  ExitApp()
 }
-return
-
-
-k_MenuExit:
-ExitApp
 </pre>
 </body>
 </html>

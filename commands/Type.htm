@@ -12,23 +12,54 @@
 
 <h1>Type</h1>
 <p>Ermittelt den genauen Typ eines Wertes.</p>
-<pre class="Syntax">AusgabeVar := Type(Wert)</pre>
+<pre class="Syntax">AusgabeVar := <span class="func">Type</span>(Wert)</pre>
 
 <h3>Rückgabewert</h3>
-<p>Der Rückgabewert ist eine Zeichenkette, die den Typ des <em>Wert</em>es kennzeichnet. Mögliche Werte sind:</p>
+<p>Der Rückgabewert ist eine Zeichenkette, die den Typ des <em>Wert</em>es kennzeichnet. Einfache Werte geben eine der folgenden Zeichenketten zurück:</p>
 <ul>
   <li>String</li>
   <li>Integer</li>
   <li>Float</li>
-  <li>Object</li>
 </ul>
-<p>Wenn <em>Wert</em> ein Objekt ist, wird diese Funktion "Object" zurückgeben, oder einen etwas spezifischeren Typ wie "<a href="../objects/Func.htm">Func</a>", "<a href="../objects/File.htm">FileObject</a>" oder "<a href="ComObjCreate.htm">ComObject</a>".</p>
+<p>Wenn <em>Wert</em> ein Objekt ist, wird der Rückgabewert der Klassenname des Objekts sein.</p>
+<p>Beim <a href="../objects/Object.htm">Object</a>-Typ ist der Klassenname dynamisch und wird mithilfe eines Algorithmus, wie unten gezeigt, ermittelt:</p>
+<pre>
+Object_Type(Value) {
+    if ObjHasKey(Value, "__Class")  <em>; Stellt sicher, dass Klassen nicht als Instanz von einer base-Klasse gemeldet werden.</em>
+        return "Class"
+    while Value := Value.base
+        if ObjHasKey(Value, "__Class")
+            return Value.__Class
+    return "Object"
+}
+</pre>
+<p>Im Gegensatz zu dieser Funktion bewirkt Type() jedoch nicht, dass die Meta-Funktionen des Objekts aufgerufen werden.</p>
+<p>Bei COM-Wrapper-Objekten hängt der Rückgabewert vom gewrappten <a href="ComObjType.htm">Variantentyp</a> ab. Er wird wie folgt ermittelt:</p>
+<pre>
+ComObject_Type(obj)
+{
+    if ComObjType(obj) &amp; 0x2000 <em>; VT_ARRAY</em>
+        return "<a href="ComObjArray.htm">ComObjArray</a>"
+    if ComObjType(obj) &amp; 0x4000 <em>; VT_BYREF</em>
+        return "<a href="ComObject.htm#ByRef">ComObjRef</a>"
+    if (ComObjType(obj) = 9 || ComObjType(obj) = 13) <em>; VT_DISPATCH || VT_UNKNOWN</em>
+        &amp;&amp; ComObjValue(obj) != 0
+    {
+        if (classname := <a href="ComObjType.htm">ComObjType</a>(obj, "Class")) != ""
+            return classname
+        if ComObjType(obj) = 9 <em>; VT_DISPATCH</em>
+            return "ComObject"
+    }
+    return "ComObj"
+}
+</pre>
 
 <h3>Bemerkungen</h3>
 <p>Dieser Funktion sollte man nicht benutzen, um zu überprüfen, ob ein Wert numerisch ist, da auch numerische <em>Zeichenketten</em> in mathematischen Ausdrücken oder in Verbindung mit Built-In-Funktionen gültig sein können. In einigen Fällen kann der genaue Typ eines Wertes aber wichtig sein. Übergibt man beispielsweise eine Variable an <a href="NumPut.htm">NumPut</a>, die einen reinen Integer (nicht eine numerische Zeichenkette) enthält, wird nicht die Adresse der Variable, sondern der Integer verwendet.</p>
 <p>Um zu überprüfen, ob ein Wert als Zahl benutzt werden kann, ist der Ausdruck <code><a href="is.htm"><i>Wert</i> is <i>Typ</i></a></code> erforderlich, wo <em>Typ</em> entweder <code>"number"</code>, <code>"integer"</code> oder <code>"float"</code> sein muss.</p>
 <p>Mit <code><a href="is.htm"><i>Wert</i> is 'object'</a></code> kann man überprüfen, ob ein Wert ein Objekt beliebigen Typs ist.</p>
 <p>Mit <code><a href="is.htm#Objects"><i>Wert</i> is <i>Klassenname</i></a></code> kann man überprüfen, ob der Wert ein abgeleitetes Objekt von einer benutzerdefinierten Klasse ist.</p>
+<p>Bei Built-In-Typen kann die Klasse des Objekts nicht direkt referenziert werden.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="../Variables.htm#Variable_types">Variablentypen</a>, <a href="../Variables.htm#Expressions">Ausdrücke</a>, <a href="is.htm"><em>Wert</em> is <em>Typ</em></a></p>

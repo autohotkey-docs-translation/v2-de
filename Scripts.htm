@@ -37,28 +37,26 @@
 <p>Falls das Ausführen des automatischen Ausführungsbereichs zu lange dauert (oder nie das Ende erreicht), werden die Standardwerte der oben genannten Einstellungen nach 100 Millisekunden automatisch wirksam. Wenn das Ende des automatischen Ausführungsbereichs schließlich erreicht ist (wenn überhaupt), werden die Standardwerte nochmals auf die aktuellen Werte aktualisiert. Daher ist es besser, die Standardeinstellungen im oberen Bereich des Skripts zu ändern, das <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="commands/SetTimer.htm">Timer</a> oder <a href="commands/Menu.htm">benutzerdefinierte Menüpunkte</a> enthält. Beachte außerdem, dass jeder <a href="misc/Threads.htm">Thread</a> seine eigene Sammlung von den oben genannten Einstellungen aufbewahrt. Änderungen an diesen Einstellungen beeinflussen keine anderen <a href="misc/Threads.htm">Threads</a>.</p>
 <h2 id="esc">Escapesequenzen</h2>
 <p>AutoHotkey's <a href="misc/EscapeChar.htm">Escapezeichen</a> ist ein Akzent / umgekehrtes Häkchen (`), das auf der deutschen Tastatur direkt links neben der Rücktaste zu finden ist. Das Benutzen dieses Zeichens statt eines umgekehrten Schrägstrichs verhindert, dass zwei umgekehrte Schrägstriche in Dateipfaden angegeben werden müssen.</p>
-<p>Da Kommas und Prozentzeichen eine besondere Bedeutung in der AutoHotkey-Sprache haben, sollte man <code>`,</code> oder <code>`%</code> angeben, um diese literal verwenden zu können. Bei einem <a href="commands/MsgBox.htm">MsgBox</a>-Befehl müssen Kommas nicht mit einem Escapezeichen versehen werden. Eine weitere Ausnahme sind Kommas innerhalb des letzten Parameters eines Befehls: diese müssen nicht mit einem Escapezeichen versehen werden. Siehe auch: <a href="misc/EscapeChar.htm">Escapesequenzen</a>.</p>
+<p>Man kann ein Anführungszeichen mit einem Escapezeichen versehen, um es in eine <a href="Variables.htm#Expressions">in Anführungszeichen gesetzte Zeichenkette</a> einzufügen. Zum Beispiel würden all die folgenden Ausdrücke <code>"`""</code>, <code>'"'</code> und <code>Chr(34)</code> eine Zeichenkette erzeugen, die ein Anführungszeichen enthält.</p>
 <p>Einige Sonderzeichen können nur in Form einer Escapesequenz erzeugt werden. Häufig verwendet werden <code>`t</code> (Tabulator), <code>`n</code> (LF-Zeilenumbruchszeichen) und <code>`r</code> (CR-Zeilenumbruchszeichen).</p>
-<p>Tipp: Bei jedem Befehl kann man das erste Komma weglassen (außer wenn der erste Parameter leer ist oder mit einem <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> wie z. B. := beginnt, oder wenn der Befehl am Anfang eines <a href="#continuation">Fortsetzungsbereichs</a> einzeln vorkommt). Zum Beispiel:</p>
-<pre>MsgBox Das ist ok.
-MsgBox<strong>,</strong> Das ist auch ok (es hat ein direktes Komma).</pre>
 <h2 id="Comments">Kommentare in einem Skript</h2>
 <p>Skripte können kommentiert werden, indem man am Anfang einer Zeile ein Semikolon verwendet. Zum Beispiel:</p>
 <pre><em>; Diese ganze Zeile ist ein Kommentar.</em></pre>
 <p>Kommentare können auch ans Ende eines Befehls gesetzt werden - in diesem Fall muss auf der linken Seite des Semikolons mindestens ein Leer- oder Tabulatorzeichen vorkommen. Zum Beispiel:</p>
-<pre>Run Notepad  <em>; Dieser Kommentar befindet sich neben dem Befehl.</em></pre>
-<p>Darüber hinaus können die Symbole /* und */ verwendet werden, um einen ganzen Bereich auszukommentieren, <em>aber nur, wenn sich die Symbole am Zeilenanfang befinden</em>. Zum Beispiel:</p>
+<pre>Run "Notepad"  <em>; Dieser Kommentar befindet sich neben dem Befehl.</em></pre>
+<p>Darüber hinaus können die Symbole <code>/*</code> und <code>*/</code> verwendet werden, um einen ganzen Bereich auszukommentieren, wie zum Beispiel:</p>
 <pre><em>/*
-MsgBox, Diese Zeile wurde auskommentiert (deaktiviert).
-MsgBox, Diese auch. 
+MsgBox "Diese Zeile wurde auskommentiert (deaktiviert)."
+MsgBox "Diese auch."
 */</em></pre>
+<p>Ohne Leerraumzeichen muss <code>/*</code> am Anfang der Zeile stehen, während <code>*/</code> nur am Anfang oder Ende einer Zeile stehen kann. Es ist auch möglich <code>*/</code> wegzulassen - in diesem Fall wird der Rest der Datei auskommentiert.</p>
 <p>Da Kommentare beim Starten eines Skripts ignoriert werden, haben sie keinen Einfluss auf die Performance oder Speicherauslastung.</p>
 
 <h2 id="continuation">Eine lange Zeile in mehreren kurzen Zeilen aufteilen</h2>
 <p>Lange Zeilen können in mehreren kurzen Zeilen aufgeteilt werden, um sie besser lesbar und verwaltbar zu machen. Die Ausführungsgeschwindigkeit des Skripts wird dabei nicht reduziert, weil solche Zeilen im Speicher zusammengeführt werden, bevor das Skript startet.</p>
 <p><strong>Methode #1</strong>: Eine Zeile, die mit "and", "or", ||, &amp;&amp;, einem Komma oder einem <a href="Variables.htm#concat">Punkt</a> beginnt, wird automatisch mit der oberen Zeile zusammengeführt (das gilt auch für <a href="Variables.htm#Operators">Ausdrucksoperatoren</a>, außer ++ und --). Im folgenden Beispiel wird die zweite Zeile an der ersten angefügt, weil sie mit einem Komma beginnt:</p>
-<pre>FileAppend, Das ist der Text, der angefügt wird.`n   <em>; Kommentar hier möglich.</em>
-    <strong>,</strong> %A_ProgramFiles%\BeliebigeAnwendung\Log-Datei.txt  <em>; Kommentar.</em></pre>
+<pre>FileAppend "Das ist der Text, der angefügt wird.`n"   <em>; Kommentar hier möglich.</em>
+    <strong>,</strong> A_ProgramFiles "\BeliebigeAnwendung\Log-Datei.txt"  <em>; Kommentar.</em></pre>
 <p>Die folgenden Zeilen würden auch zu einer einzelnen Zeile zusammengeführt werden, weil die letzten beiden mit "and" oder "or" beginnen:</p>
 <pre>if (Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau"   <em>; Kommentar.</em>
     <strong>or</strong> Farbe = "Schwarz" or Farbe = "Grau" or Farbe = "Weiß")   <em>; Kommentar.</em>
@@ -77,16 +75,15 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
 )"
 
 <em>; BEISPIEL #2:</em>
-FileAppend<strong>,</strong>  <em>; Das Komma ist in diesem Fall erforderlich.</em>
+FileAppend "
 (
 Eine Textzeile.
-<i>Standardmäßig</i> wird das CR-Zeichen (Enter) zwischen der vorherigen und dieser Zeile als LF-Zeichen (`n) in die Datei geschrieben.
-    <i>Standardmäßig</i> wird der Tabulator auf der linken Seite dieser Zeile auch in die Datei geschrieben (das gleiche gilt auch für Leerzeichen).
-<i>Standardmäßig</i> werden Variablenverweise wie %Var% in den Variableninhalt aufgelöst.
-), C:\Meine Datei.txt</pre>
+Standardmäßig wird das CR-Zeichen (Enter) zwischen der vorherigen und dieser Zeile in die Datei geschrieben.
+	Diese Zeile wurde mit einem Tabulator eingerückt; standardmäßig wird dieser Tabulator auch in die Datei geschrieben.
+)", A_Desktop "\Meine Datei.txt"</pre>
 <p>In den oberen Beispielen sind mehrere Zeilen mit runden Klammern am Anfang und Ende eingegrenzt. Das nennt man <em>Fortsetzungsbereich</em>. Beachte, dass die Zeile nach der runden Endklammer den letzten Parameter von <a href="commands/FileAppend.htm">FileAppend</a> enthält. Diese Anwendungsart ist optional; das wird in solchen Fällen getan, um das Komma nicht als literales Komma, sondern als Parametertrennung zu behandeln.</p>
 <p id="continuation_defaults">Standardmäßig verhalten sich Anführungszeichen innerhalb eines Fortsetzungsbereiches so, als wären sie mit einem Escapezeichen versehen (d. h. sie werden als literale Zeichen interpretiert). Darüber hinaus werden führende Leer- und Tabulatorzeichen weggelassen, abhängig von der Einrückung der ersten Zeile innerhalb des Fortsetzungsbereiches. Enthält die erste Zeile eine Mischung aus Leer- und Tabulatorzeichen, wird nur der erste Zeichentyp als Einrückung behandelt. Wenn jede Zeile weniger eingerückt ist als die erste Zeile oder mit den falschen Zeichen eingerückt ist, werden alle führenden Leerraumzeichen auf dieser Zeile beibehalten. </p>
-<p>Das Standardverhalten eines Fortsetzungsbereichs kann überschrieben werden, indem man eine oder mehrere der folgenden Optionen auf der rechten Seite der runden Startklammer einfügt. Sind mehrere Optionen notwendig, trenne sie jeweils mit einem Leerzeichen. Zum Beispiel: <code>( LTrim Join| %</code>.</p>
+<p>Das Standardverhalten eines Fortsetzungsbereichs kann überschrieben werden, indem man eine oder mehrere der folgenden Optionen auf der rechten Seite der runden Startklammer einfügt. Sind mehrere Optionen notwendig, trenne sie jeweils mit einem Leerzeichen. Zum Beispiel: <code>( LTrim Join|</code>.</p>
 <p id="Join"><strong>Join</strong>: Gibt an, wie die Zeilen verbunden werden sollen. Ist diese Option nicht vorhanden, erfolgt nach jeder Zeile, außer der letzten, ein Zeilenumbruchszeichen (`n). Ist das Wort <em>Join</em> alleine angegeben, werden die Zeilen direkt verbunden, ohne das Zeichen dazwischen vorkommen. Ansonsten können unmittelbar nach dem Wort <em>Join</em> bis zu 15 Zeichen erfolgen. Zum Beispiel würde <code>Join`s</code> nach jeder Zeile, außer der letzten, ein Leerzeichen einfügen ("`s" kennzeichnet ein literales Leerzeichen - eine spezielle Escapesequenz, die nur von <em>Join</em> erkannt werden kann). Ein weiteres Beispiel ist <code>Join`r`n</code>, das das Zeilenumbruchspaar CR+LF zwischen den Zeilen einfügt. Ebenso würde <code>Join|</code> einen senkrechten Strich zwischen den Zeilen eingefügen. Falls die letzte Zeile auch mit einer Join-Zeichenkette enden soll, muss man unmittelbar über der runden Endklammer des Bereichs eine leere Zeile einfügen.</p>
 <p>Bekannte Einschränkung: Wenn die Join-Zeichenkette mit einem Doppelpunkt endet, darf sie nicht die letzte Option auf dieser Zeile sein. Zum Beispiel: <code>(Join:</code> wird als Label "(Join" behandelt und <code>(LTrim Join:</code> wird nicht unterstützt, aber <code>(Join: C</code> ist in Ordnung.</p>
 <p id="LTrim"><strong>LTrim</strong>: Entfernt alle Leer- und Tabulatorzeichen am Anfang jeder Zeile. Dies ist normalerweise aufgrund des <a href="#continuation_defaults">"intelligenten" Standardverhalten</a> nicht notwendig.</p>
@@ -94,17 +91,15 @@ Eine Textzeile.
 <p id="RTrim0"><strong>RTrim0</strong> (RTrim und eine 0): Deaktiviert das Entfernen von Leer- und Tabulatorzeichen am Ende jeder Zeile.</p>
 <p id="CommentOption"><strong>Comments</strong> (oder <strong>Comment</strong> oder <strong>Com</strong> oder <strong>C</strong>): Ermöglicht <a href="#Comments">Semikolon-Kommentare</a> innerhalb des Fortsetzungsbereichs (aber nicht <code>/*..*/</code>). Solche Kommentare (sowie alle links vorkommenden Leer- und Tabulatorzeichen) werden im Endergebnis entfernt, anstatt als literaler Text behandelt zu werden. Jeder Kommentar kann auf der rechten Seite einer Zeile oder auf einer neuen Zeile vorkommen.</p>
 <p id="QuotesOption"><strong>Quotes</strong> (oder <strong>Q</strong>): Stellt die Fähigkeit wieder her, Strings in Anführungszeichen zu terminieren, wenn ein Ausdruck in einem Fortsetzungsbereich verwendet wird.</p>
-<p><strong>%</strong> (Prozentzeichen): Behandelt Prozentzeichen nicht als Variablenverweise, sondern als literale Zeichen. Dadurch wird verhindert, dass jedes einzelne Prozentzeichen mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden muss. Diese Option ist dort unnötig, wo Prozentzeichen bereits literal vorkommen können, wie bei <a href="Hotstrings.htm">automatisch-ersetzende Hotstrings</a>.</p>
-<p><strong>,</strong> (Komma): Behandelt Kommas nicht als literale Kommas, sondern als Trennzeichen. Diese selten verwendete Option ist nur für Kommas notwendig, die zwischen den Befehlsparametern vorkommen, weil bei <a href="Functions.htm">Funktionsaufrufen</a> der Typ des Kommas egal ist. Zudem transformiert diese Option nur solche Kommas, die Parameter tatsächlich trennen. Das heißt, sobald der letzte Parameter des Befehls erreicht wird (oder keine Parameter vorhanden sind), werden nachfolgende Kommas als literale Kommas behandelt, unabhängig von dieser Option.</p>
 <p id="accent"><strong>`</strong> (umgekehrtes Häkchen): Behandelt jedes umgekehrte Häkchen nicht als <a href="misc/EscapeChar.htm">Escapezeichen</a>, sondern als literales Zeichen. Dadurch wird auch verhindert, dass Kommas und Prozentzeichen explizit und einzeln mit einem Escapezeichen versehen werden können. Darüber hinaus unterdrückt diese Option die Umwandlung von explizit angegebenen Escapesequenzen wie `r und `t.</p>
 <p id="non-continuation"><strong>)</strong>: Erscheint eine runde Endklammer in den Optionen des Fortsetzungsbereichs (außer als Parameter der <a href="#Join">Join</a>-Option), wird die Zeile als Ausdruck neu interpretiert, anstatt als Beginn eines Fortsetzungsbereichs. Auf diese Weise können Ausdrücke wie <code>(x.y)[z]()</code> funktionieren, ohne dabei die runde Startklammer mit einem Escapezeichen versehen zu müssen.</p>
 <p><a href="misc/EscapeChar.htm">Escapesequenzen</a> wie `n (Zeilenumbruch) und `t (Tabulator) werden innerhalb des Fortsetzungsbereichs unterstützt, solange die <a href="#accent">Akzent-Option (`)</a> nicht vorhanden ist.</p>
 <p>Fehlt die <a href="#CommentOption">Comment-Option</a>, werden Semikolon- und /*..*/-Kommentare innerhalb eines Fortsetzungsbereichs nicht unterstützt, weil sie als literaler Text angesehen werden. Allerdings können Kommentare in den unteren und oberen Zeilen des Bereichs eingefügt werden. Zum Beispiel:</p>
-<pre>FileAppend<strong>,</strong>   <em>; Kommentar.
+<pre>FileAppend "   <em>; Kommentar.
 ; Kommentar.</em>
 ( LTrim Join    <em>; Kommentar.</em>
-     ; Das ist <strong>kein</strong> Kommentar; es ist literal. Fügt das Wort <i>Comments</i> in der Zeile darüber ein, damit es ein Kommentar wird.
-), C:\Datei.txt   <em>; Kommentar.</em></pre>
+    &nbsp;; Das ist <strong>kein</strong> Kommentar; es ist literal. Füge das Wort <i>Comments</i> in die Zeile darüber ein, um sie zu einem Kommentar zu machen.
+)", "C:\Datei.txt"   <em>; Kommentar.</em></pre>
 <p>Daraus folgt, dass Semikolons innerhalb eines Fortsetzungsbereichs nie mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden müssen.</p>
 <p>Ein Fortsetzungsbereich kann keine Zeile erzeugen, deren Länge 16.383 Zeichen überschreitet (Bei dem Versuch warnt dich das Programm, bevor es startet). Man kann das umgehen, wenn mehrere Verkettungen bei einer Variable durchgeführt werden. Zum Beispiel:</p>
 <pre>Var := "
@@ -115,7 +110,7 @@ Var .= "`n  <em>; Fügt mithilfe eines weiteren Fortsetzungsbereichs mehr Text h
 (
 ...
 )"
-FileAppend, %Var%, C:\Meine Datei.txt</pre>
+FileAppend Var, "C:\Meine Datei.txt"</pre>
 <p>Soll eine Zeile mit einer literalen runden Endklammer beginnen, obwohl sie normalerweise das Ende eines Fortsetzungsbereichs kennzeichnet, muss man ein Akzent / umgekehrtes Häkchen davor setzen: <code>`)</code>.</p>
 <p>Nach einem Fortsetzungsbereich kann eine Zeile folgen, die die runde Startklammer eines weiteren Fortsetzungsbereichs enthält. Auf diese Weise können die oben genannten Optionen beim Erstellen einer einzelnen Zeile variieren.</p>
 <p>Die stückweise Konstruktion eines Fortsetzungsbereichs per <a href="commands/_Include.htm">#Include</a> wird nicht unterstützt.</p>
@@ -207,21 +202,21 @@ Verwendung:
 <p id="cmd_args">Eingehende Parameter, sofern vorhanden, werden als Array in die Built-In-Variable <strong>A_Args</strong> gespeichert, und können mithilfe des <a href="Objects.htm#Usage_Simple_Arrays">Array-Syntaxes</a> abgerufen werden. <code>A_Args[1]</code> enthält den ersten Parameter. Das folgende Beispiel beendet das Skript, falls zu wenig Parameter übergeben wurden:</p>
 <pre>if A_Args.Length() &lt; 3
 {
-    MsgBox("Das Skript benötigt mindestens 3 eingehende Parameter, jedoch kamen nur %argc% an.")
+    MsgBox "Das Skript benötigt mindestens 3 eingehende Parameter, jedoch kamen nur " argc " an."
     ExitApp
 }</pre>
 <p>Variiert die Anzahl an übergebenen Parametern (wenn der Benutzer zum Beispiel mit der Maus mehrere Dateien auf ein Skript zieht und ablegt), kann das folgende Beispiel verwendet werden, um sie einzeln zu extrahieren:</p>
 <pre>for n, param in A_Args  <em>; Für jeden Parameter:</em>
 {
-    MsgBox, Parameter Nr. %n% ist %param%.
+    MsgBox "Parameter Nr. " n " ist " param "."
 }
 </pre>
 <p>Sind die Parameter Dateinamen, kann das folgende Beispiel verwendet werden, um sie in ihre zeichengenaue lange Namen umzuwandeln (wie im Dateisystem gespeichert), einschließlich des vollständigen/absoluten Pfads:</p>
 <pre>for n, ÜbergebenerPfad in A_Args  <em>; Für jeden Parameter (oder abgelegte Datei auf das Skript):</em>
 {
-    Loop Files, %ÜbergebenerPfad%, FD  <em>; Dateien und Verzeichnisse einbeziehen.</em>
+    Loop Files, ÜbergebenerPfad, "FD"  <em>; Dateien und Verzeichnisse einbeziehen.</em>
         LangerPfad := A_LoopFileFullPath
-    MsgBox Der zeichengenaue lange Pfadname der Datei`n%ÜbergebenerPfad%`nist:`n%LangerPfad%
+    MsgBox "Der zeichengenaue lange Pfadname der Datei`n" ÜbergebenerPfad "`nist:`n" LangerPfad
 }</pre>
 <p>Bekannte Einschränkung: das Ziehen und Ablegen von Dateien auf eine .ahk-Datei kann fehlschlagen, wenn 8.3-Namen (Kurznamen) in einem NTFS-Dateisystem deaktiviert worden sind. Eine Möglichkeit zur Umgehung des Problems ist es, das Skript zu <a href="#ahk2exe">kompilieren</a> und die Dateien dann auf die resultierende EXE-Datei abzulegen.</p>
 
@@ -243,12 +238,12 @@ Verwendung:
 ; Zeichensatz := 1252     ; ANSI-Latin-1; Westeuropäisch (Windows)</em>
 if (Zeichensatz != "")
     Zeichensatz := " /CP" . Zeichensatz
-Befehl := '"%A_AhkPath%" %Zeichensatz% "`%1" `%*'
+Befehl := '"' A_AhkPath '" ' Zeichensatz ' "%1" %*'
 Key    := "AutoHotkeyScript\Shell\Open\Command"
 if A_IsAdmin    <em>; Für alle Benutzer setzen.</em>
-    RegWrite, REG_SZ, HKCR\%Key%,, %Befehl%
+    RegWrite Befehl, "REG_SZ", "HKCR\" Key
 else            <em>; Nur für den aktuellen Benutzer setzen.</em>
-    RegWrite, REG_SZ, HKCU\Software\Classes\%Key%,, %Befehl%</pre>
+    RegWrite Befehl, "REG_SZ", "HKCU\Software\Classes\" Key</pre>
 <p>Das setzt natürlich voraus, dass AutoHotkey bereits installiert worden ist. Ansonsten wäre das Ergebnis alles andere als zufriedenstellend.</p>
 
 <h2 id="debug">Ein Skript debuggen</h2>
@@ -274,8 +269,8 @@ else            <em>; Nur für den aktuellen Benutzer setzen.</em>
 AutoHotkey /Debug=localhost:9000 "MeinSkript.ahk"</pre>
 <p id="debug_attach">Um den Debugger nachträglich mit einem Skript zu verbinden, sende ihm eine Meldung wie folgt:</p>
 <pre>Skriptpfad := "" <em>; SETZE HIER DEN VOLLSTÄNDIGEN PFAD DES SKRIPTS EIN</em>
-DetectHiddenWindows On
-if WinExist("%Skriptpfad% ahk_class AutoHotkey")
+A_DetectHiddenWindows := True
+if WinExist(Skriptpfad " ahk_class AutoHotkey")
     <em>; Optionale Parameter:
     ;   wParam  = IPv4-Adresse des Debugger-Clients als 32-Bit-Integer.
     ;   lParam  = Port, der vom Debugger-Client abgehört werden soll.</em>

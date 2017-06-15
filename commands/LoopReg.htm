@@ -15,8 +15,7 @@
 
 <p>Ruft die Inhalte des angegebenen Registry-Subkeys einzeln ab.</p>
 
-<pre class="Syntax">Loop, Reg, KeyName [, Modus]
-LoopReg(KeyName [, Modus])</pre>
+<pre class="Syntax"><span class="func">Loop Reg</span>, KeyName <span class="optional">, Modus</span></pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -51,11 +50,7 @@ LoopReg(KeyName [, Modus])</pre>
   </tr>
   <tr>
     <td>A_LoopRegKey</td>
-    <td>Name des zurzeit verwendeten Rootkeys (HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG). Beim Zugriff auf eine Remote-Registry wird dieser Wert <strong>nicht</strong> den Namen des Computers enthalten.</td>
-  </tr>
-  <tr>
-    <td>A_LoopRegSubKey</td>
-    <td>Name des aktuellen Subkeys. Der Inhalt dieser Variable ist identisch zum <em>Key</em>-Parameter, es sei denn, der <em>Rekursiv</em>-Parameter wird benutzt, um andere Subkeys durchzugehen. In diesem Fall wird es der vollständige Pfad des aktuell abgerufenen Eintrags sein, ohne Rootkey. Zum Beispiel: Software\BeliebigeAnwendung\MeinSubkey</td>
+    <td>Der vollständige Name des Keys, der das aktuelle Schleifenelement enthält. Beim Zugriff auf eine Remote-Registry wird dieser Wert <strong>nicht</strong> den Namen des Computers enthalten.</td>
   </tr>
   <tr>
     <td>A_LoopRegTimeModified</td>
@@ -92,23 +87,23 @@ LoopReg(KeyName [, Modus])</pre>
 
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Löscht den Link-Verlauf des Internet Explorer.</em>
-Loop, Reg, HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\TypedURLs
+Loop Reg, "HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\TypedURLs"
     RegDelete</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Ein funktionierendes Testskript:</em>
-Loop, Reg, HKCU\Software\Microsoft\Windows, R KV  <em>; Ermittelt rekursiv Keys und Werte.</em>
+Loop Reg, "HKCU\Software\Microsoft\Windows", "R KV"  <em>; Ermittelt rekursiv Keys und Werte.</em>
 {
     if a_LoopRegType = "key"
         Wert := ""
     else
     {
-        RegRead, Wert
+        Wert := RegRead()
         if ErrorLevel
             Wert := "*error*"
     }
-    Result := MsgBox("%a_LoopRegName% = %Wert% (%a_LoopRegType%)`n`nWeiter?",, 4)
-    if Result = "No", break
-}</pre>
+    Result := MsgBox(a_LoopRegName " = " Wert " (" a_LoopRegType ")`n`nWeiter?",, "y/n")
+}
+Until Result = "No"</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel: Dieses Beispiel sucht in der gesamten Registry
 ; nach einem oder mehreren bestimmten Werten.</em>
@@ -118,19 +113,19 @@ return
 RegSuche(Ziel)
 {
     RegSucheFortfahren := true
-    Loop, Reg, HKEY_LOCAL_MACHINE, KVR
+    Loop Reg, "HKEY_LOCAL_MACHINE", "KVR"
     {
         Gosub, RegEintragUntersuchen
         if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
-    Loop, Reg, HKEY_USERS, KVR
+    Loop Reg, "HKEY_USERS", "KVR"
     {
         Gosub, RegEintragUntersuchen
         if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
-    Loop, Reg, HKEY_CURRENT_CONFIG, KVR
+    Loop Reg, "HKEY_CURRENT_CONFIG", "KVR"
     {
         Gosub, RegEintragUntersuchen
         if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
@@ -144,12 +139,12 @@ RegSuche(Ziel)
 RegEintragUntersuchen:
     if A_LoopRegType = "KEY"  <em>; Entferne diese zwei Zeilen, wenn die Key-Namen auch überprüft werden sollen.</em>
         return
-    RegRead, RegWert
+    RegWert := RegRead()
     if ErrorLevel
         return
     if InStr(RegWert, Ziel)
     {
-        Result := MsgBox("Der folgende Treffer wurde gefunden:`n%A_LoopRegKey%\%A_LoopRegSubKey%\%A_LoopRegName%`nWert = %RegWert%`n`Weiter?",, 4)
+        Result := MsgBox("Der folgende Treffer wurde gefunden:`n" A_LoopRegKey "\" A_LoopRegSubKey "\" A_LoopRegName "`nWert = " RegWert "`n`Weiter?",, "y/n")
         if Result = "No"
             RegSucheFortfahren := false  <em>; Suche stoppen</em>
     }

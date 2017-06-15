@@ -67,12 +67,12 @@ Array := Array(Element1, Element2, ..., ElementN)</pre>
 <pre>array := ["eins", "zwei", "drei"]
 
 <em>; Durchläuft das Array von 1 bis zu seinem Ende:</em>
-<a href="commands/Loop.htm">Loop</a> % array.Length()
-    MsgBox % array[A_Index]
+<a href="commands/Loop.htm">Loop</a> array.Length()
+    MsgBox array[A_Index]
 
 <em>; Enumeriert die Inhalte des Arrays:</em>
 <a href="commands/For.htm">For</a> index, wert in array
-    MsgBox % "Element " index " ist '" wert "'"
+    MsgBox "Element " index " ist '" wert "'"
 </pre>
 
 <span id="Arrays"></span><h3 id="Usage_Associative_Arrays">Assoziative Arrays</h3>
@@ -89,7 +89,7 @@ Array := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <p>Enumerieren von Elementen:</p>
 <pre>array := {zehn: 10, zwanzig: 20, dreißig: 30}
 <a href="commands/For.htm">For</a> key, value in array
-    MsgBox %key% = %value%</pre>
+    MsgBox key ' = ' value</pre>
 <p>Assoziative Arrays können lückenhaft gefüllt werden - zum Beispiel enthält <code>{1: "a", 1000: "b"}</code> nur zwei Key-Value-Paare, nicht 1000.</p>
 <p id="same_thing">In AutoHotkey v1.x sind einfache Arrays und assoziative Arrays das gleiche. Das Behandeln von <code>[]</code> als einfaches lineares Array stellt sicher, dass dessen Rolle eindeutig zugeordnet werden kann, und erhöht die Chance, dass dein Skript auch mit einer zukünftigen Version von AutoHotkey noch funktionieren wird, wo vielleicht zwischen einfachem und assoziativem Array unterschieden wird.</p>
 
@@ -139,7 +139,7 @@ x := "", y := ""             <em>; Ohne die obige Zeile würde dies hier die Obj
   <li>Objekte werden immer als <i>True</i> angesehen, falls ein logischer Wert erforderlich ist, wie z. B. in <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code>.</li>
   <li>Eine Objektadresse kann mithilfe des <code>&amp;</code>-Operators abgerufen werden. So eine Adresse identifiziert eindeutig das Objekt - von seiner Erstellung bis zur letzten <a href="#Refs">Freigabe</a> seines Verweises.</li>
 </ul>
-<p>Dort, wo ein Objekt nicht erwartet wird, wird das Objekt als leere Zeichenkette angesehen. Zum Beispiel würde <code>MsgBox %objekt%</code> eine leere MsgBox anzeigen und <code>objekt + 1</code> eine leere Zeichenkette zurückgeben. Verlasse dich nicht auf dieses Verhalten, weil es noch geändert werden könnte.</p>
+<p>Dort, wo ein Objekt nicht erwartet wird, wird das Objekt als leere Zeichenkette angesehen. Zum Beispiel würde <code>MsgBox meinObjekt</code> eine leere MsgBox anzeigen und <code>meinObjekt + 1</code> eine leere Zeichenkette zurückgeben. Verlasse dich nicht auf dieses Verhalten, weil es noch geändert werden könnte.</p>
 <p>Ein Zuweisungsoperator unmittelbar nach einem Methodenaufruf ist das gleiche wie, als würde man eine Eigenschaft mit Parametern setzen. Zum Beispiel bewirken beide Zeilen dasselbe:</p>
 <pre>obj.item(x) := y
 obj.item[x] := y</pre>
@@ -206,10 +206,10 @@ Loop 2
     array[A_Index]()
 
 ErsteFunk(Parameter) {
-    MsgBox % A_ThisFunc ": " (IsObject(Parameter) ? "Objekt" : Parameter)
+    MsgBox A_ThisFunc ": " (IsObject(Parameter) ? "Objekt" : Parameter)
 }
 ZweiteFunk(Parameter) {
-    MsgBox % A_ThisFunc ": " (IsObject(Parameter) ? "Objekt" : Parameter)
+    MsgBox A_ThisFunc ": " (IsObject(Parameter) ? "Objekt" : Parameter)
 }</pre>
 
 <h2 id="Custom_Objects">Benutzerdefinierte Objekte</h2>
@@ -224,7 +224,7 @@ baseObject := {foo: "bar"}</pre>
 <pre>obj1 := Object(), obj1.base := baseObject
 obj2 := {base: baseObjekt}
 obj3 := new baseObjekt
-MsgBox % obj1.foo " " obj2.foo " " obj3.foo</pre>
+MsgBox obj1.foo " " obj2.foo " " obj3.foo</pre>
 <p>Es ist jederzeit möglich, einem Objekt ein neues <code>base</code> zuzuweisen, das alle Eigenschaften und Methoden ersetzen würde, die das Objekt geerbt hat.</p>
 
 <h3 id="Custom_Prototypes">Prototypen</h3>
@@ -239,7 +239,7 @@ obj.test := Func("obj_test")
 obj.test()
 
 obj_test(this) {
-   MsgBox % this.foo
+   MsgBox this.foo
 }</pre>
 <p>Ruft man <code>obj.test()</code> auf, wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Üblicherweise benennt man die Funktion nach dem Objekttypen und dem Methodennamen.</p>
 <p>Ein Objekt ist ein <i>Prototyp</i> oder <i>base</i>, wenn ein anderes Objekt davon abgeleitet wurde:</p>
@@ -350,13 +350,13 @@ m2 := {base: GMem}.__New(0, 30)
         this.ptr := DllCall("GlobalAlloc", "uint", aFlags, "ptr", aGröße, "ptr")
         if !this.ptr
             return ""
-        MsgBox % "New GMem mit einer Größe von " aGröße " Bytes auf der Adresse " this.ptr "."
+        MsgBox "New GMem mit einer Größe von " aGröße " Bytes auf der Adresse " this.ptr "."
         return this  <em>; Diese Zeile kann weggelassen werden, wenn der Operator 'new' verwendet wird.</em>
     }
 
     __Delete()
     {
-        MsgBox % "Delete GMem auf der Adresse " this.ptr "."
+        MsgBox "Delete GMem auf der Adresse " this.ptr "."
         DllCall("GlobalFree", "ptr", this.ptr)
     }
 }</pre>
@@ -417,8 +417,8 @@ class <i>Klassenname</i> {
 <pre>rot := new Farbe(0xff0000), rot.R -= 5
 cyan := new Farbe(0), cyan.G := 255, cyan.B := 255
 
-MsgBox % "rot: " rot.R "," rot.G "," rot.B " = " rot.RGB
-MsgBox % "cyan: " cyan.R "," cyan.G "," cyan.B " = " cyan.RGB
+MsgBox "rot: " rot.R "," rot.G "," rot.B " = " rot.RGB
+MsgBox "cyan: " cyan.R "," cyan.G "," cyan.B " = " cyan.RGB
 
 class Farbe
 {
@@ -471,7 +471,7 @@ class Farbe
 <p>Siehe <a href="objects/Functor.htm#User-Defined">Funktionsobjekte</a>, wie Objekte erstellt werden können, die sich wie Funktionen verhalten.</p>
 <p>Ein Funktionsobjekt kann sich auch wie eine Meta-Funktion verhalten, um z. B. dynamische Eigenschaften zu definieren, die denen im vorherigen Abschnitt ähneln. Obwohl man die <a href="#Custom_Classes_property">Eigenschaftssyntax</a> immer wenn möglich verwenden sollte, zeigt das Beispiel unten das Potenzial von Meta-Funktionen, um neue Konzepte oder Verhaltensmuster zu implementieren, oder um die Struktur des Skripts zu ändern.</p>
 <pre>blau := new Farbe(0x0000ff)
-MsgBox % blau.R "," blau.G "," blau.B
+MsgBox blau.R "," blau.G "," blau.B
 
 class Eigenschaften
 {
@@ -514,7 +514,7 @@ class Farbe
 x[1,2,3] := "..."
 
 <em>; Ermittelt den Wert und ruft die Beispielmethode auf.</em>
-MsgBox % x[1,2,3] "`n" x.addr() "`n" x[1].addr() "`n" x[1,2].addr()
+MsgBox x[1,2,3] "`n" x.addr() "`n" x[1].addr() "`n" x[1,2].addr()
 
 x_Setter(x, p1, p2, p3) {
     x[p1] := new x.base
@@ -546,7 +546,7 @@ x_Addr(x) {
 <pre>"".base.__Set := Func("Default_Set_AutomaticVarInit")
 
 empty_var.foo := "bar"
-MsgBox % empty_var.foo
+MsgBox empty_var.foo
 
 Default_Set_AutomaticVarInit(ByRef var, key, value)
 {
@@ -559,8 +559,8 @@ Default_Set_AutomaticVarInit(ByRef var, key, value)
 <pre>"".base.__Get := Func("Default_Get_PseudoProperty")
 "".base.is    := Func("Default_is")
 
-MsgBox % A_AhkPath.length " == " StrLen(A_AhkPath)
-MsgBox % A_AhkPath.length.is("integer")
+MsgBox A_AhkPath.length " == " StrLen(A_AhkPath)
+MsgBox A_AhkPath.length.is("int")
 
 Default_Get_PseudoProperty(nonobj, key)
 {
@@ -570,13 +570,12 @@ Default_Get_PseudoProperty(nonobj, key)
 
 Default_is(nonobj, type)
 {
-    if nonobj is %type%
-        return true
-    return false
+    static alias := {int: "integer"}
+    return nonobj is (alias[type] or type)
 }</pre>
 <p>Beachte, dass Built-in-Funktionen auch möglich sind, aber in diesem Fall können die runden Klammern nicht weggelassen werden:</p>
 <pre>"".base.length := Func("StrLen")
-MsgBox % A_AhkPath.length() " == " StrLen(A_AhkPath)</pre>
+MsgBox A_AhkPath.length() " == " StrLen(A_AhkPath)</pre>
 
 <h4 id="Default__Warn">Debuggen</h4>
 <p>Standardmäßig bewirkt der Aufruf eines Nicht-Objekt-Wertes, dass eine Ausnahme ausgelöst wird. Das folgende Beispiel ändert das Verhalten, so dass eine Warnung angezeigt und dann das Skript fortgesetzt wird:</p>
@@ -588,7 +587,7 @@ x := (1 + 1).is("integer")
 Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 {
     ListLines
-    MsgBox Ein Nicht-Objekt-Wert wurde unsachgemäß aufgerufen.`n`nSpeziell: %nonobj%
+    MsgBox "Ein Nicht-Objekt-Wert wurde unsachgemäß aufgerufen.`n`nSpeziell: " nonobj
     return "" <em>; Überschreibt das Standardverhalten durch Rückgabe eines Wertes.</em>
 }</pre>
 
@@ -596,7 +595,7 @@ Default__Warn(nonobj, p1="", p2="", p3="", p4="")
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
 <p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um Ressourcen eines Objekts freizugeben, das nicht länger im Skript gebraucht wird. Skript-Autoren sollten diesen Mechanismus nur aufrufen, wenn man direkt mit unverwalteten <a href="#Implementation_Pointers">Pointer, die auf Objekte verweisen</a>, arbeiten muss.</p>
 <p>Temporär zurückgegebene Verweise von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Dadurch können temporäre Objekte für die Ressourcenverwaltung verwendet werden. Zum Beispiel:</p>
-<pre>MsgBox % <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", (new <a href="#GMem">GMem</a>(0, 20)).ptr, "ptr")  <em>; 20</em></pre>
+<pre>MsgBox <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", (new <a href="#GMem">GMem</a>(0, 20)).ptr, "ptr")  <em>; 20</em></pre>
 <p>Wenn Code beim Freigeben des letzten Verweises auf ein Objekt ausgeführt werden soll, muss man die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion implementieren.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>

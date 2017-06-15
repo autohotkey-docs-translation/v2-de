@@ -15,12 +15,9 @@
 
 <p>Ermittelt, welches Steuerelement im Zielfenster den Eingabefokus hat.</p>
 
-<pre class="Syntax">ControlGetFocus, AusgabeVar [, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
+<pre class="Syntax">ClassNN := <span class="func">ControlGetFocus</span>(<span class="optional">Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
 <h3>Parameter</h3>
 <dl>
-
-  <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in die der Identifikator des Steuerelements gespeichert werden soll. Der Identifikator selbst besteht aus den Klassennamen des Steuerelements, gefolgt von einer laufenden Nummer innerhalb des übergeordneten Fensters, z. B. Button12.</p></dd>
 
   <dt>Fenstertitel</dt>
   <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
@@ -36,22 +33,25 @@
 
 </dl>
 
+<h3>Rückgabewert</h3>
+<p>Gibt das ClassNN des Steuerelements zurück; also den Klassennamen des Steuerelements, gefolgt von dessen Reihenfolgennummer innerhalb des übergeordneten Fensters, z. B. Button12.</p>
+<p>Wenn ein Problem auftrat oder wenn keines der Steuerelemente im Zielfenster den Tastaturfokus hat, ist der Rückgabewert leer.</p>
+
 <h3>ErrorLevel</h3>
-<p>Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn das Steuerelement mit dem Eingabefokus ermittelt werden konnte. Ansonsten (z. B. wenn das Fenster nicht existiert oder kein einziges Steuerelement den Eingabefokus hat) wird ErrorLevel auf 1 gesetzt.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Tastaturfokus nicht ermittelt werden konnte, ansonsten auf 0. Ein ErrorLevel von 1 bedeutet in der Regel, dass das Fenster nicht existiert.</p>
+
 <h3>Bemerkungen</h3>
 <p>Das Steuerelement, welches mit diesem Befehl ermittelt wird, ist auch das Steuerelement, welches die Tastatureingaben des Benutzers empfängt.</p>
-<p>Das Fenster muss aktiv sein, damit ein Steuerelement fokussiert sein kann. Ist das Fenster nicht aktiv, wird <em>AusgabeVar</em> leer gemacht.</p>
-<p>Vor v1.1.19.03 verhinderte ControlGetFocus, wenn es mehrmals schnell ausgeführt wurde (also alle 500 ms oder schneller), dass der Benutzer einen Doppelklick machen konnte. Diese Problematik wurde behoben.</p>
+<p>Das Fenster muss aktiv sein, damit ein Steuerelement fokussiert sein kann, aber auch in einem aktiven Fenster kann manchmal ein fokussiertes Steuerelement fehlen. Wenn das Zielfenster gefunden wurde, aber keines seiner Steuerelemente den Tastaturfokus hat, wird ErrorLevel auf 0 gesetzt und der Rückgabewert leer gemacht.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 <h3>Siehe auch</h3>
 <p><a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlSend.htm">ControlSend</a></p>
 <h3>Beispiel</h3>
-<pre class="NoIndent">ControlGetFocus, AusgabeVar, Unbenannt - Editor
+<pre class="NoIndent">Fokussiert := ControlGetFocus("Unbenannt - Editor")
 if ErrorLevel
-    MsgBox, Das Fenster existiert nicht oder hat keine Steuerelemente mit Eingabefokus.
+    MsgBox "Das Zielfenster existiert nicht."
 else
-    MsgBox, Steuerelement mit Eingabefokus = %AusgabeVar%</pre>
+    MsgBox "Steuerelement mit Tastaturfokus = " Fokussiert</pre>
 
 </body>
 </html>

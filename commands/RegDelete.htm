@@ -16,26 +16,27 @@
 
 <p>Löscht einen Wert oder Subkey aus der Registry.</p>
 
-<pre class="Syntax">RegDelete, KeyName [, Wertname]
-RegDeleteKey, KeyName</pre>
+<pre class="Syntax"><span class="func">RegDelete</span> <span class="optional">KeyName, Wertname</span>
+<span class="func">RegDeleteKey</span> <span class="optional">KeyName</span></pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>KeyName</dt>
   <dd><p>Der vollständige Name des Registry-Keys.</p>
-  <p>Dieser Parameter muss mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um den Zugriff auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zu ermöglichen, muss der Computername und ein Doppelpunkt wie folgt vorangestellt werden: \\workstation01\HKEY_LOCAL_MACHINE</p></dd>
+  <p>Dieser Parameter muss mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um den Zugriff auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zu ermöglichen, muss der Computername und ein Doppelpunkt wie folgt vorangestellt werden: \\workstation01\HKEY_LOCAL_MACHINE</p>
+  <p><em>KeyName</em> kann nur weggelassen werden, wenn eine <a href="LoopReg.htm">Registry-Schleife</a> läuft - in diesem Fall gilt standardmäßig der Key des aktuellen Schleifenelements. Wenn das Element ein Subkey ist, wird standardmäßig der vollständige Name dieses Subkeys benutzt. Wenn das Element ein Wert ist, gilt für <em>Wertname</em> standardmäßig der Name dieses Wertes, was aber überschrieben werden kann.</p></dd>
 
   <dt>Wertname</dt>
-  <dd><p>Der Name des Wertes, der gelöscht werden soll. Fehlt dieser Parameter oder ist er leer, wird der Standardwert des Keys gelöscht. Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt.</p></dd>
+  <dd><p>Der Name des Wertes, der gelöscht werden soll. Fehlt dieser Parameter ist er leer, wird der Standardwert des Keys gelöscht (außer wie oben erwähnt). Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt.</p></dd>
 
 </dl>
 <h3>ErrorLevel</h3>
-<p>Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 <h3>Bemerkungen</h3>
 <p>Das Löschen von Registry-Einträgen kann erhebliche Probleme verursachen - also sei vorsichtig!</p>
 <p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Keys und -Werte abgerufen und bearbeitet werden.</p>
+<p>Innerhalb einer <a href="LoopReg.htm">Registry-Schleife</a> löschen RegDelete und RegDeleteKey nicht unbedingt das aktuelle Schleifenelement. Wenn das Element ein Subkey ist, wird <code>RegDelete()</code> nur seinen Standardwert löschen, während <code>RegDeleteKey()</code> den Key selbst löschen wird. Wenn das Element ein Wert ist, wird <code>RegDeleteKey()</code> den Key löschen, der diesen Wert <em>enthält</em>, inklusive alle Subkeys und Werte.</p>
 <p>In den Bemerkungen zur <a href="LoopReg.htm#remote">Registry-Schleife</a> findest du Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge aus den 64-Bit-Registry-Bereichen in einem 32-Bit-Skript oder umgekehrt entfernt werden.</p>
 

@@ -15,7 +15,7 @@
 
 <p>Ruft eine Funktion innerhalb einer DLL-Datei auf, wie z. B. eine API-Funktion von Windows.</p>
 
-<pre class="Syntax">Ergebnis := DllCall("[DllDatei\]Funktion" [, Typ1, Arg1, Typ2, Arg2, "Cdecl Rückgabetyp"])</pre>
+<pre class="Syntax">Ergebnis := <span class="func">DllCall</span>("<span class="optional">DllDatei\</span>Funktion" <span class="optional">, Typ1, Arg1, Typ2, Arg2, "Cdecl Rückgabetyp"</span>)</pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -226,12 +226,12 @@ BeobachteScrollleiste:
 AktivesFenster := WinExist("A")
 if not AktivesFenster  <em>; Kein aktives Fenster.</em>
     return
-ControlGetFocus, FokussiertesSteuerelement, ahk_id %AktivesFenster%
+FokussiertesSteuerelement := ControlGetFocus()  <em>; Alle Parameter weglassen, um das Zuletzt Gefundene Fenster zu benutzen.</em>
 if not FokussiertesSteuerelement  <em>; Kein fokussiertes Steuerelement.</em>
     return
 <em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
-ControlGet, UnterelementHWND, Hwnd,, %FokussiertesSteuerelement%, ahk_id %AktivesFenster%
-ToolTip % <strong>DllCall</strong>("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
+UnterelementHWND := ControlGetHwnd(FokussiertesSteuerelement)
+ToolTip(<strong>DllCall</strong>("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1))  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 return</pre>
 
 <pre class="NoIndent" id="file"><em>; Beispiel: ; Beispiel: Dieses Skript schreibt etwas Text in eine Datei und liest ihn wieder in den Speicher.

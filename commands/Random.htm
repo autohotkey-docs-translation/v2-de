@@ -15,13 +15,9 @@
 
 <p>Erzeugt eine pseudo-zufallsgenerierte Zahl.</p>
 
-<pre class="Syntax">Random, AusgabeVar [, Min, Max]
-Random, , NeuerStartwert</pre>
+<pre class="Syntax">N := <span class="func">Random</span>(<span class="optional">Min, Max</span>)</pre>
 <h3>Parameter</h3>
 <dl>
-
-  <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der das Ergebnis gespeichert werden soll.</p></dd>
 
   <dt>Min</dt>
   <dd>Die kleinstmöglich generierbare Zahl, die negativ oder eine Gleitkommazahl sein kann. Fehlt dieser Parameter, gilt standardmäßig 0. Während ein Integer nur einen kleinstmöglichen Wert von -2147483648 haben kann, haben Gleitkommazahlen keine Einschränkungen.</dd>
@@ -29,21 +25,23 @@ Random, , NeuerStartwert</pre>
   <dt>Max</dt>
   <dd><p>Die höchstmöglich generierbare Zahl, die negativ oder eine Gleitkommazahl sein kann. Fehlt dieser Parameter, gilt standardmäßig 2147483647 (diese Zahl ist gleichzeitig auch der größtmögliche Integer-Wert; Gleitkommazahlen haben keine Einschränkungen).</p></dd>
 
-  <dt>NeuerStartwert</dt>
-  <dd><p>Dieser Modus reseedet ("erneuert") den Zufallszahlengenerator mit <em>NeuerStartwert</em>. Dieser Vorgang hat Einfluss auf alle danach generierten Zufallszahlen. <em>NeuerStartwert</em> sollte ein Integer zwischen 0 und 4294967295 (0xFFFFFFFF) sein. Das Setzen eines neuen Startwertes kann die Qualität/Sicherheit von erzeugten Zufallszahlen verbessern, besonders wenn <em>NeuerStartwert</em> eine richtige statt pseudo-generierte Zufallszahl ist. In der Regel muss das Setzen eines neuen Startwertes nicht mehr als einmal durchgeführt werden.</p>
-      <p>Wenn man dieses Verfahren nie anwendet, wird der Startwert die niedrigwertigen 32-Bits des 64-Bit-Wertes sein, der die Anzahl von 100-Nanosekunden-Intervallen seit 1. Januar 1601 ist. Dieser Wert wandert alle ~7.2 Minuten von 0 bis 4294967295.</p></dd>
-
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Dieser Befehl erzeugt eine pseudo-zufallsgenerierte Zahl - also eine Zahl, die eine echte Zufallszahl vortäuscht, aber in Wirklichkeit auf Basis einer komplizierten Formel errechnet wurde, um das Bestimmen/Erraten der nächsten Zahl extrem zu erschweren.</p>
+<p>Diese Funktion gibt eine pseudo-zufallsgenerierte Zahl zurück - also eine Zahl, die eine echte Zufallszahl vortäuscht, aber in Wirklichkeit auf Basis einer komplizierten Formel errechnet wurde, um das Bestimmen/Erraten der nächsten Zahl extrem zu erschweren.</p>
 <p>Jede Zahl innerhalb des angegebenen Bereichs hat ungefähr die gleich hohe Chance, generiert zu werden (siehe aber "Bekannte Einschränkungen" weiter unten).</p>
 <p>Enthält <em>Min</em> oder <em>Max</em> einen Dezimalpunkt, wird das Endergebnis eine Gleitkommazahl sein. Ansonsten wird das Ergebnis ein Integer sein.</p>
 <p>Bekannte Einschränkungen bei Gleitkommazahlen: 1) Es können nur ca. 4.294.967.296 eindeutige Zahlen für einen bestimmten Bereich erzeugt werden, demzufolge werden alle anderen Zahlen in dem Bereich nie erzeugt; 2) es ist möglich, dass ein Ergebnis etwas größer ist als der angegebene <em>Max</em>-Wert (teilweise verursacht durch die Ungenauigkeit innerhalb von Gleitkommazahlen).</p>
 
+<h3>RandomSeed</h3>
+<p>Reseedet ("erneuert") den Zufallszahlengenerator mit <em>NeuerStartwert</em>.</p>
+<pre class="Syntax"><span class="func">RandomSeed</span> NeuerStartwert</pre>
+<p>Dieser Vorgang hat Einfluss auf alle danach generierten Zufallszahlen. <em>NeuerStartwert</em> sollte ein Integer zwischen 0 und 4294967295 (0xFFFFFFFF) sein. Das Setzen eines neuen Startwertes kann die Qualität/Sicherheit von erzeugten Zufallszahlen verbessern, besonders wenn <em>NeuerStartwert</em> eine richtige statt pseudo-generierte Zufallszahl ist. In der Regel muss das Setzen eines neuen Startwertes nicht mehr als einmal durchgeführt werden.</p>
+<p>Wenn man dieses Verfahren nie anwendet, wird der Startwert die niedrigwertigen 32-Bits des 64-Bit-Wertes sein, der die Anzahl von 100-Nanosekunden-Intervallen seit 1. Januar 1601 ist. Dieser Wert wandert alle ~7.2 Minuten von 0 bis 4294967295.</p></dd>
+
 <h3>Beispiele</h3>
-<pre class="NoIndent">Random, rand, 1, 10
-Random, rand, 0.0, 1.0</pre>
+<pre class="NoIndent">Nummer := Random(1, 10)
+Bruch := Random(0.0, 1.0)</pre>
 <h3>Kommentare aus dem originalen Quellcode</h3>
 <P>Diese Funktion verwendet den Mersenne-Twister-Zufallszahlengenerator, MT19937, geschrieben von Takuji Nishimura und Makoto Matsumoto, Shawn Cokus, Matthe Bellew und Isaku Wada.</P>
 <P>Der Mersenne-Twister ist ein Algorithmus zum Erzeugen von Zufallzahlen. Bei dessen Entwicklung wurden die Fehler anderer Generatoren berücksichtigt. Die Periode, 2<SUP>19937</SUP>-1, und die Gleichverteilung, 623 Dimensionen, sind weitaus größer. Der Generator ist zudem schnell; er verhindert Multiplikation und Division, und profitiert von Caches und Pipelines. Mehr Informationen findest du auf der Entwickler-Webseite: www.math.keio.ac.jp/~matumoto/emt.html</P>

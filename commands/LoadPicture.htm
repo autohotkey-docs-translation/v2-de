@@ -14,7 +14,7 @@
 <h1>LoadPicture</h1>
 
 <p>Lädt ein Bild aus einer Datei und gibt ein Bitmap- oder Symbol-Handle zurück.</p>
-<pre class="Syntax">Handle := LoadPicture(Dateiname [, Optionen, ByRef Bildtyp])</pre>
+<pre class="Syntax">Handle := <span class="func">LoadPicture</span>(Dateiname <span class="optional">, Optionen, ByRef Bildtyp</span>)</pre>
 
 <h3>Parameter</h3>
 <dl>
@@ -53,7 +53,7 @@ else if (Bildtyp = 2)  <em>; IMAGE_CURSOR</em>
 
 Bilder := []
 <em>; Findet einige Bilder zum Anzeigen.</em>
-Loop, Files, %A_WinDir%\Web\Wallpaper\*.jpg, R
+LoopFiles("%A_WinDir%\Web\Wallpaper\*.jpg", "R")
 {
     <em>; Lädt jedes Bild und fügt es in den Array ein.</em>
     Bilder.Push(LoadPicture(A_LoopFileFullPath))
@@ -61,21 +61,22 @@ Loop, Files, %A_WinDir%\Web\Wallpaper\*.jpg, R
 if !Bilder.Length()
 {
     <em>; Wenn das passiert, musst du den Pfad auf der Loop-Zeile darüber ändern.</em>
-    MsgBox, Keine Bilder gefunden!  Probiere ein anderes Verzeichnis aus.
-    ExitApp
+    MsgBox("Keine Bilder gefunden! Probiere ein anderes Verzeichnis aus.")
+    ExitApp()
 }
 <em>; Fügt das Picture-Steuerelement hinzu, unter Beibehaltung des Seitenverhältnisses vom ersten Bild.</em>
 Gui := GuiCreate()
 Pic := Gui.Add("Pic", "w600 h-1 vBild +Border", "HBITMAP:*" Bilder.1)
+Gui.OnEvent("Escape", "Gui_Escape")
 Gui.Show()
 Loop
 {
     <em>; Wechselt auf ein anderes Bild!</em>
     Pic.Value := "HBITMAP:*" Bilder[Mod(A_Index, Bilder.Length())+1]
-    Sleep 3000
+    Sleep(3000)
 }
 
-GuiEscape() {
+Gui_Escape() {
     ExitApp
 }</pre>
 

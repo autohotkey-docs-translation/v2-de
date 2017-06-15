@@ -17,7 +17,7 @@
 
 <div class="methodShort" id="Read"><h2>Read</h2>
 <p>Liest eine Zeichenfolge aus der Datei und rückt dabei den Dateizeiger vor.</p>
-<pre class="Syntax">Zeichenkette := File.Read([Zeichen])</pre>
+<pre class="Syntax">Zeichenkette := File.<span class="func">Read</span>(<span class="optional">Zeichen</span>)</pre>
 <table class="info">
   <tr><td style="width:15%">Zeichen</td><td>Die maximale Anzahl der zu lesenden Zeichen. Fehlt dieser Parameter, wird der Rest der Datei gelesen und als Zeichenkette zurückgegeben. Falls das File-Objekt von einem Handle, das auf ein nicht-suchendes Device (z. B. ein Konsolenpuffer oder Pipe) verweist, erzeugt wurde, bewirkt das Weglassen des Parameters, dass die Methode fehlschlägt oder nur die aktuell verfügbaren Daten zurückgibt.</td></tr>
   <tr><td><b>Rückgabe</b></td><td>Eine Zeichenkette.</td></tr>
@@ -25,7 +25,7 @@
 
 <div class="methodShort" id="Write"><h2>Write</h2>
 <p>Schreibt eine Zeichenfolge in die Datei und rückt dabei den Dateizeiger vor.</p>
-<pre class="Syntax">File.Write(Zeichenkette)</pre>
+<pre class="Syntax">File.<span class="func">Write</span>(Zeichenkette)</pre>
 <table class="info">
   <tr><td style="width:15%">Zeichenkette</td><td>Eine Zeichenkette.</td></tr>
   <tr><td><b>Rückgabe</b></td><td>Die Anzahl der Bytes (nicht Zeichen), die geschrieben wurden.</td></tr>
@@ -33,7 +33,7 @@
 
 <div class="methodShort" id="ReadLine"><h2>ReadLine</h2>
 <p>Liest eine Textzeile aus der Datei und rückt dabei den Dateizeiger vor.</p>
-<pre class="Syntax">Zeile := File.ReadLine()</pre>
+<pre class="Syntax">Zeile := File.<span class="func">ReadLine</span>()</pre>
 <table class="info">
   <tr><td style="width:15%"><b>Rückgabe</b></td><td width="85%">Eine Textzeile ohne Zeilenende.</td></tr>
 </table>
@@ -41,7 +41,7 @@
 
 <div class="methodShort" id="WriteLine"><h2>WriteLine</h2>
 <p>Schreibt eine Zeichenfolge gefolgt von <code>`n</code> oder <code>`r`n</code>, abhängig von den EOL-Flags, die zum Öffnen der Datei verwendet wurden. Der Dateizeiger wird dabei vorgerückt.</p>
-<pre class="Syntax">File.WriteLine([Zeichenkette])</pre>
+<pre class="Syntax">File.<span class="func">WriteLine</span>(Zeichenkette)</pre>
 <table class="info">
   <tr><td style="width:15%">Zeichenkette</td><td>Eine optionale Zeichenkette.</td></tr>
   <tr><td><b>Rückgabe</b></td><td>Die Anzahl der Bytes (nicht Zeichen), die geschrieben wurden.</td></tr>
@@ -72,27 +72,33 @@
 </table></div>
 
 <div class="methodShort" id="RawRead"><h2>RawRead</h2>
-<p>Liest unbearbeitete Binärdaten aus der Datei in den Speicher. Falls eine Variable angegeben ist, dann wird sie je nach Bedarf automatisch erweitert.</p>
-<pre class="Syntax">File.RawRead(VarOderAdresse, Bytes)</pre>
+<p>Liest unbearbeitete Binärdaten aus der Datei in den Speicher.</p>
+<pre class="Syntax">File.<span class="func">RawRead</span>(Puffer, Bytes)</pre>
 <table class="info">
-  <tr><td style="width:15%">VarOderAdresse</td><td>Eine Variable oder Speicheradresse, in der die Daten kopiert werden. Die Verwendung hat Ähnlichkeit mit <a href="../commands/NumGet.htm">NumGet</a>.</td></tr>
+  <tr><td style="width:15%">Puffer</td><td>Eine Variable oder Speicheradresse, in der die Daten gespeichert werden sollen.</td></tr>
   <tr><td>Bytes</td><td>Die maximale Anzahl der zu lesenden Bytes.</td></tr>
   <tr><td><b>Rückgabe</b></td><td>Die Anzahl der Bytes, die gelesen wurden.</td></tr>
 </table>
-<p>Wenn eine Try-Anweisung aktiv ist und <em>Bytes</em> ungleich Null ist, aber keine Bytes gelesen wurden, wird eine Ausnahme ausgelöst. Mit <a href="#AtEOF">AtEOF</a> kann man das verhindern, wenn nötig.</p></div>
+<p>Um die Daten auf einer Speicheradresse zu lesen, muss ein reiner Integer wie <code>&amp;Variable + Offset</code> oder eine Variable, die einen reinen Integer enthält, übergeben werden.</p>
+<p>Um die Daten in eine Variable zu lesen, muss eine Variable, die entweder leer ist oder eine Zeichenkette enthält, übergeben werden. Fehlt der <em>Bytes</em>-Parameter, gilt standardmäßig die Kapazität der Variable. Wenn <em>Bytes</em> größer als die Kapazität der Variable ist, wird die Variable erweitert. Nachdem die Daten gelesen wurden, wird die Länge der Variable auf die Zeichenkettenlänge der Daten gesetzt (aufgerundet auf eine ganze Zahl).</p>
+</div>
 
 <div class="methodShort" id="RawWrite"><h2>RawWrite</h2>
 <p>Schreibt unbearbeitete Binärdaten in die Datei.</p>
-<pre class="Syntax">File.RawWrite(VarOderAdresse, Bytes)</pre>
+<pre class="Syntax">File.<span class="func">RawWrite</span>(Daten, Bytes)</pre>
 <table class="info">
-  <tr><td style="width:15%">VarOderAdresse</td><td>Eine Variable, die die Daten oder die Adresse der Daten im Speicher enthält. Die Verwendung hat Ähnlichkeit mit <a href="../commands/NumPut.htm">NumPut</a>.</td></tr>
+  <tr><td style="width:15%">Daten</td><td>Eine Speicheradresse oder Zeichenkette, die binäre Daten enthält.</td></tr>
   <tr><td>Bytes</td><td>Die maximale Anzahl der zu schreibenden Bytes.</td></tr>
   <tr><td><b>Rückgabe</b></td><td>Die Anzahl der Bytes, die geschrieben wurden.</td></tr>
-</table></div>
+</table>
+<p>Um Daten aus einer bestimmten Speicheradresse zu schreiben, muss ein reiner Integer wie <code>&amp;Variable + Offset</code> oder eine Variable, die einen reinen Integer enthält, übergeben werden.</p>
+<p>Um Daten aus einer Zeichenkette mit binären Daten zu schreiben, muss eine Zeichenkette oder eine Variable, die eine Zeichenkette enthält, übergeben werden. Fehlt der <em>Bytes</em>-Parameter, gilt standardmäßig die Zeichenkettenlänge mal 2 (sodass immer eine gerade Zahl vorhanden ist).</p>
+<p>Ein Beispiel dazu findest du im Abschnitt <a href="../misc/Clipboard.htm#Save">Speichern und Wiederherstellen der Zwischenablage</a>.</p>
+</div>
 
 <div class="methodShort" id="Seek"><h2>Seek</h2>
 <p>Verschiebt den Dateizeiger.</p>
-<pre class="Syntax">File.Seek(Distanz [, Ausgangspunkt = 0])
+<pre class="Syntax">File.<span class="func">Seek</span>(Distanz <span class="optional">, Ausgangspunkt := 0</span>)
 File.Position := Distanz
 File.Pos := Distanz</pre>
 <table class="info">
@@ -106,9 +112,8 @@ File.Pos := Distanz</pre>
 </table></div>
 
 <div class="methodShort" id="Tell"><h2>Tell</h2>
-<pre class="Syntax">Pos := File.Tell()
-Pos := File.Position
-Pos := File.Pos</pre>
+<pre class="Syntax">Pos := File.<span class="func">Tell</span>()
+Pos := File.Position</pre>
 <table class="info">
   <tr><td style="width:15%"><b>Rückgabe</b></td><td>Die aktuelle Position des Dateizeigers, wobei 0 der Anfang der Datei ist.</td></tr>
 </table></div>
@@ -132,7 +137,7 @@ File.Length := NeueGröße</pre>
 
 <div class="methodShort" id="Close"><h2>Close</h2>
 <p>Schließt die Datei, löscht alle Daten im Zwischenspeicher auf der Festplatte und hebt die Sperrungen auf. Obwohl die Datei beim Freigeben des Objekts automatisch geschlossen wird, ist es empfehlenswert, die Datei so schnell wie möglich zu schließen.</p>
-<pre class="Syntax">File.Close()</pre>
+<pre class="Syntax">File.<span class="func">Close</span>()</pre>
 <p><i>Keine Parameter oder Rückgabewerte.</i></p></div>
 
 <div class="methodShort" id="Encoding"><h2>Encoding</h2>

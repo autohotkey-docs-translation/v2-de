@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Control</title>
+<title>Control-Funktionen</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -11,84 +11,448 @@
 </head>
 <body>
 
-<h1>Control</h1>
+<h1>Control-Funktionen</h1>
 
-<p>Ermöglicht eine Vielzahl von Änderungen an einem Steuerelement.</p>
+<p>Funktionen zum Abrufen von Informationen über ein Steuerelement, oder zum Modifizieren eines Steuerelements.</p>
+<pre>
+<em>; Allgemein (alle Steuerelementtypen):</em>
+Logisch := <a href="#GetEnabled">ControlGetEnabled</a>(...)
+           <a href="#SetEnabled">ControlSetEnabled</a>(TrueFalseToggle, ...)
+Logisch := <a href="#GetVisible">ControlGetVisible</a>(...)
+           <a href="#Hide">ControlHide</a>(...)
+           <a href="#Show">ControlShow</a>(...)
+Integer := <a href="#GetHwnd">ControlGetHwnd</a>(...)
+Integer := <a href="#GetStyle">ControlGetStyle</a>(...)
+           <a href="#SetStyle">ControlSetStyle</a>(Wert, ...)
+Integer := <a href="#GetStyle">ControlGetExStyle</a>(...)
+           <a href="#SetStyle">ControlSetExStyle</a>(Wert, ...)
 
-<pre class="Syntax">Control, Befehl [, Wert, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme]</pre>
-<h3>Parameter</h3>
+<em>; Edit:</em>
+Integer := <a href="#GetCurrentCol">ControlGetCurrentCol</a>(...)
+Integer := <a href="#GetCurrentLine">ControlGetCurrentLine</a>(...)
+Integer := <a href="#GetLineCount">ControlGetLineCount</a>(...)
+Zkette  := <a href="#GetLine">ControlGetLine</a>(Index, ...)
+Zkette  := <a href="#GetSelected">ControlGetSelected</a>(...)
+           <a href="#EditPaste">ControlEditPaste</a>(Zeichenkette, ...)
+
+<em>; CheckBox und Radio:</em>
+Logisch := <a href="#GetChecked">ControlGetChecked</a>(...)
+           <a href="#SetChecked">ControlSetChecked</a>(TrueFalseToggle, ...)
+
+<em>; ListBox und ComboBox:</em>
+Zkette  := <a href="#GetChoice">ControlGetChoice</a>(...)
+           <a href="#Choose">ControlChoose</a>(Index, ...)
+           <a href="#ChooseString">ControlChooseString</a>(Zeichenkette, ...)
+Index   := <a href="#AddItem">ControlAddItem</a>(Zeichenkette, ...)
+           <a href="#DeleteItem">ControlDeleteItem</a>(Index, ...)
+Index   := <a href="#FindItem">ControlFindItem</a>(Zeichenkette, ...)
+
+<em>; ListView, ListBox und ComboBox:</em>
+Zkette  := <a href="#GetList">ControlGetList</a>(Optionen, ...)
+
+<em>; ComboBox:</em>
+           <a href="#ShowDropDown">ControlShowDropDown</a>(...)
+           <a href="#HideDropDown">ControlHideDropDown</a>(...)
+
+<em>; Tab (SysTabControl32):</em>
+Integer := <a href="#GetTab">ControlGetTab</a>(...)
+           <a href="#SetTab">ControlSetTab</a>(N, ...)
+</pre>
+<p>Ersetze <code>...</code> mit den <a href="#standard-parameters">optionalen Standardparametern</a>:<br>
+<code>Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</code></p>
+
+<h2>Alle Steuerelemente</h2>
+
+<h3 id="GetEnabled">ControlGetEnabled</h3>
+<p>Gibt 1 (True) zurück, wenn <em>Steuerelement</em> aktiviert ist, oder 0 (False), wenn es deaktiviert ist.</p>
+<pre class="Syntax"><span class="func">ControlGetEnabled</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
 <dl>
-
-  <dt>Befehl, Wert</dt>
-  <dd><p>Siehe untere Liste.</p></dd>
-
-  <dt>Steuerelement</dt>
-  <dd><p>Kann entweder das ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, das beides mit Windows Spy ermittelt werden kann. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Wenn dieser Parameter leer ist, wird das oberste Steuerelement des Fensters benutzt.</p>
-    <p>Um ein Steuerelement per HWND (Windows Handle) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>ahk_id %SteuerelementHwnd%</code> im <em>Fenstertitel</em>-Parameter angegeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="ControlGet.htm#Hwnd">ControlGet Hwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
-
-  <dt>Fenstertitel</dt>
-  <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
-
-  <dt>Fenstertext</dt>
-  <dd><p>In diesem Parameter kann eine Zeichenkette angegeben werden, die in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
-
-  <dt>Titelausnahme</dt>
-  <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
-
-  <dt>Textausnahme</dt>
-  <dd><p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p></dd>
-
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
 </dl>
 
-<h3>Befehl, Wert</h3>
-<p>Die Parameter <em>Befehl</em> und <em>Wert</em> sind voneinander abhängig und können wie folgt verwendet werden.</p>
-<p><strong>Check</strong>: Markiert einen Radio-Button oder eine CheckBox.</p>
-<p><strong>Uncheck</strong>: Entfernt die Markierung von einem Radio-Button oder einer CheckBox.</p>
-<p><strong>Enable</strong>: Aktiviert ein Steuerelement, das zuvor deaktiviert wurde.</p>
-<p><strong>Disable</strong>: Deaktiviert oder "ergraut" ein Steuerelement.</p>
-<p><strong>Show</strong>: Steuerelement einblenden, das zuvor ausgeblendet wurde.</p>
-<p><strong>Hide</strong>: Steuerelement ausblenden. Außerdem ist es möglich, die Tastenkombination des Steuerelements (unterstrichener Buchstabe) mit <code>Control Disable</code> zu unterbinden.</p>
-<p><strong>Style, N</strong> <u>oder</u> <strong>ExStyle, N</strong>: Ändert jeweils den Style oder Extended Style eines Steuerelements. Wenn das erste Zeichen von <strong>N</strong> ein Plus- oder Minuszeichen ist, wird einer oder mehrere Styles in <strong>N</strong> jeweils hinzugefügt oder entfernt. Wenn das erste Zeichen von N ein Zirkumflex (^) ist, wird einer oder mehrere Styles jeweils auf den entgegengesetzten Zustand gesetzt. Wenn das erste Zeichen in <strong>N</strong> eine Ziffer ist, wird der Style des Steuerelements komplett überschrieben. <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn das Fenster/Steuerelement nicht gefunden wird oder wenn der Style nicht benutzt werden darf.</p>
+<h3 id="SetEnabled">ControlSetEnabled</h3>
+<p>Aktiviert oder deaktiviert ein Steuerelement.</p>
+<pre class="Syntax"><span class="func">ControlSetEnabled</span> Wert <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Wert</dt>
+  <dd><p>Eine der folgenden Zeichenketten (Groß-/Kleinschreibung ist egal) oder Nummern:<br>
+    <code>ON</code> oder <code>1</code> (<a href="Variables.htm#True">true</a>) aktiviert die Einstellung.<br>
+    <code>OFF</code> oder <code>0</code> (<a href="../Variables.htm#False">false</a>) deaktiviert die Einstellung.<br>
+    <code>TOGGLE</code> oder <code>-1</code> setzt die Einstellung auf den entgegengesetzten Zustand.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h3 id="GetVisible">ControlGetVisible</h3>
+<p>Gibt 1 (True) zurück, wenn <em>Steuerelement</em> sichtbar ist, oder 0 (False), wenn es versteckt ist.</p>
+<pre class="Syntax"><span class="func">ControlGetVisible</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h3 id="Hide">ControlHide</h3>
+<p>Versteckt ein Steuerelement. Außerdem ist es möglich, die Tastenkombination des Steuerelements (unterstrichener Buchstabe) mit <a href="#SetEnabled">ControlSetEnabled</a> zu unterbinden.</p>
+<pre class="Syntax"><span class="func">ControlHide</span> <span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h3 id="Show">ControlShow</h3>
+<p>Macht ein Steuerelement wieder sichtbar, falls es zuvor versteckt wurde.</p>
+<pre class="Syntax"><span class="func">ControlShow</span> <span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h3 id="GetHwnd">ControlGetHwnd</h3>
+<p>Ermittelt das HWND (Window Handle) des angegebenen Steuerelements.</p>
+<pre class="Syntax"><span class="func">ControlGetHwnd</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Zum Beispiel: <code>EditHwnd := ControlGetHwnd("Edit1", Fenstertitel)</code>.</p>
+<p>Das HWND eines Steuerelements benutzt man häufig in Verbindung mit <a href="PostMessage.htm">PostMessage</a>, <a href="PostMessage.htm">SendMessage</a> und <a href="DllCall.htm">DllCall</a>. Beachte zudem, dass das HWND eines Steuerelements auch mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden kann. Dieses HWND kann im Fenstertitel-Parameter direkt mit <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a> verwendet werden (das auch bei versteckten Steuerelementen funktioniert, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist).</p>
+
+<h3 id="GetStyle">ControlGetStyle / ControlGetExStyle</h3>
+<p>Ermittelt einen Integer, der den Style oder erweiterten Style eines Steuerelements repräsentiert.</p>
+<pre class="Syntax"><span class="func">ControlGetStyle</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)
+<span class="func">ControlGetExStyle</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles.</p>
+
+<h3 id="SetStyle">ControlSetStyle / ControlSetExStyle</h3>
+<p>Ändert jeweils den Style oder Extended Style eines Steuerelements.</p>
+<pre class="Syntax"><span class="func">ControlSetStyle</span> Wert <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>
+<span class="func">ControlSetExStyle</span> Wert <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Wert</dt>
+  <dd>
+  <p>Verwende einen positiven Integer, um den Style des Fensters komplett zu überschreiben; also um den Style auf den angegebenen <em>Wert</em> zu setzen.</p>
+  <p>Mit einem Pluszeichen (+), Minuszeichen (-) oder Zirkumflex (^) können Styles als numerische Zeichenketten jeweils hinzugefügt, entfernt oder umgeschaltet werden. Der neue Style-Wert wird wie folgt berechnet (AktuellerStyle kann mit <a href="#GetStyle">ControlGetStyle/ControlGetExStyle</a> oder <a href="WinGet.htm#Style">WinGetStyle/WinGetExStyle</a> abgerufen werden):</p>
+  <table class="info">
+    <tr>
+      <th>Operation</th>
+      <th>Präfix</th>
+      <th>Beispiel-Zeichenkette</th>
+      <th>Formel</th>
+    </tr>
+    <tr>
+      <td>Hinzufügen</td>
+      <td>+</td>
+      <td>+0x80</td>
+      <td><code>NeuerStyle := AktuellerStyle | Wert</code></td>
+    </tr>
+    <tr>
+      <td>Entfernen</td>
+      <td>-</td>
+      <td>-0x80</td>
+      <td><code>NeuerStyle := AktuellerStyle &amp; ~Wert</code></td>
+    </tr>
+    <tr>
+      <td>Umschalten</td>
+      <td>^</td>
+      <td>^0x80</td>
+      <td><code>NeuerStyle := AktuellerStyle ^ Wert</code></td>
+    </tr>
+  </table>
+  <p>Wenn <em>Wert</em> ein negativer Integer ist, wird er wie die entsprechende numerische Zeichenkette behandelt.</p>
+  <p>Um die Präfixe + oder ^ in einem Ausdruck literal zu verwenden, muss der Präfix oder Wert in Anführungszeichen gesetzt werden. Zum Beispiel: <code>WinSetStyle("+0x80")</code> oder <code>WinSetStyle("^" UmzuschaltenderStyle)</code>. Ansonsten würde beispielsweise der <a href="../Variables.htm#Expressions">Ausdruck</a> <code><a href="../Variables.htm#unary">+123</a></code> 123 erzeugen (also ohne Präfix) und <code>^123</code> einen Syntaxfehler auslösen.</p>
+  </dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn das Fenster/Steuerelement nicht gefunden wird oder wenn der Style nicht benutzt werden darf.</p>
 <p>Bei bestimmten Style-Änderungen ist es notwendig, dass das komplette Fenster per <a href="WinSet.htm#Redraw">WinRedraw</a> neu gezeichnet werden muss. Zudem listet die <a href="../misc/Styles.htm">Style-Tabelle</a> einige Style-Nummern auf. Zum Beispiel:</p>
-<pre>Control, Style, ^0x800000, Edit1, Fenstertitel  <em>; Setzt den WS_BORDER-Style auf den entgegengesetzten Zustand.</em></pre>
-<p><strong>ShowDropDown</strong>: Öffnet eine ComboBox, so dass deren Auswahlmöglichkeiten sichtbar werden.</p>
-<p><strong>HideDropDown</strong>: Kehrt das Obengenannte um.</p>
-<p><strong>TabLeft [, Count]</strong> und <strong>TabRight [, Count]</strong>: Verschiebt den Tab in einem SysTabControl32 ein oder mehrmals nach links oder rechts. <em>Count</em> ist automatisch 1, wenn dieser Parameter leer oder weggelassen wird. Falls ein Tab stattdessen direkt per Nummer ausgewählt werden soll, ersetze die unten genannte 5 mit der Tab-Nummer, die ausgewählt werden soll, allerdings um 1 subtrahiert. Das heißt, dass 0 den ersten Tab auswählt, 1 den zweiten Tab auswählt und so weiter:</p>
-<pre><a href="PostMessage.htm">SendMessage</a>, 0x1330, <span class="red">5</span>,, SysTabControl321, Fenstertitel  <em>; 0x1330 ist TCM_SETCURFOCUS.</em>
-Sleep 0  <em>; Diese und die nächste Zeile sind nur bei bestimmten Tab-Steuerelementen notwendig.</em>
-SendMessage, 0x130C, <span class="red">5</span>,, SysTabControl321, Fenstertitel  <em>; 0x130C ist TCM_SETCURSEL.</em></pre>
-<p><strong>Add, Zeichenkette</strong>: Fügt die <em>Zeichenkette</em> als neuen Eintrag ans Ende einer ListBox oder ComboBox hinzu (und möglicherweise andere Steuerelemente).</p>
-<p><strong>Delete, N</strong>: Entfernt den N-ten Eintrag aus einer ListBox oder ComboBox. <em>N</em> muss für das erste Element eine 1 sein, für das Zweite eine 2, und so weiter.</p>
-<p id="Choose"><strong>Choose, N</strong>: Setzt die Auswahl auf den N-ten Eintrag innerhalb einer ListBox oder ComboBox. <em>N</em> muss für das erste Element eine 1 sein, für das Zweite eine 2, und so weiter. Im folgenden Beispiel wird gezeigt, wie alle Einträge innerhalb einer <em>Mehrfachauswahl</em>-Listbox gleichzeitig ausgewählt werden können:</p>
+<pre>ControlSetStyle("^0x800000", "Edit1", "Fenstertitel")  <em>; Setzt den WS_BORDER-Style auf den entgegengesetzten Zustand.</em></pre>
+
+<h2>CheckBox und Radio</h2>
+
+<h3 id="GetChecked">ControlGetChecked</h3>
+<p>Gibt 1 (True) zurück, wenn das Feld des CheckBox- oder Radio-Steuerelements gefüllt ist, oder 0 (False), wenn nicht.</p>
+<pre class="Syntax"><span class="func">ControlGetChecked</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h3 id="SetChecked">ControlSetChecked</h3>
+<p>Aktiviert oder deaktiviert bzw. füllt oder leert das Feld eines Radio- oder CheckBox-Steuerelements.</p>
+<pre class="Syntax"><span class="func">ControlSetChecked</span> Wert <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Wert</dt>
+  <dd><p>Eine der folgenden Zeichenketten (Groß-/Kleinschreibung ist egal) oder Nummern:<br>
+    <code>ON</code> oder <code>1</code> (<a href="Variables.htm#True">true</a>) aktiviert die Einstellung.<br>
+    <code>OFF</code> oder <code>0</code> (<a href="../Variables.htm#False">false</a>) deaktiviert die Einstellung.<br>
+    <code>TOGGLE</code> oder <code>-1</code> setzt die Einstellung auf den entgegengesetzten Zustand.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h2>Edit</h2>
+
+<h3 id="GetCurrentCol">ControlGetCurrentCol</h3>
+<p>Gibt die Spaltennummer eines Edit-Steuerelements zurück, auf der sich die Texteinfügemarke befindet.</p>
+<pre class="Syntax"><span class="func">ControlGetCurrentCol</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Die erste Spalte ist 1. Wenn im Steuerelement Text markiert wurde, ist der Rückgabewert die Spaltennummer, von wo aus die Markierung beginnt.</p>
+
+<h3 id="GetCurrentLine">ControlGetCurrentLine</h3>
+<p>Gibt die Zeilennummer eines Edit-Steuerelements zurück, auf der sich die Texteinfügemarke befindet.</p>
+<pre class="Syntax"><span class="func">ControlGetCurrentLine</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Die erste Zeile ist 1. Wenn im Steuerelement Text markiert wurde, ist der Rückgabewert die Zeilennummer, von wo aus die Markierung beginnt.</p>
+
+<h3 id="GetLineCount">ControlGetLineCount</h3>
+<p>Gibt die Gesamtanzahl der Zeilen eines Edit-Steuerelements zurück.</p>
+<pre class="Syntax"><span class="func">ControlGetLineCount</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Alle Eingabefelder haben mindestens eine Zeile, selbst wenn das Steuerelement leer ist.</p>
+
+<h3 id="GetLine">ControlGetLine</h3>
+<p>Gibt den Text auf Zeile <em>N</em> in einem Edit-Steuerelement zurück.</p>
+<pre class="Syntax"><span class="func">ControlGetLine</span>(N <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>N</dt>
+  <dd><p>Die Zeilennummer. Zeile 1 ist die erste Zeile.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Je nach Beschaffenheit des Steuerelements kann der Rückgabewert mit einem CR (`r) oder einem CR + LF (`r`n) enden.</p>
+<p>Es wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn <em>N</em> negativ oder nicht-numerisch ist.</p>
+<p>Zum Beispiel: <code>Zeile1 := ControlGetLine(1, "Edit1", "ahk_class Notepad")</code></p>
+
+<h3 id="GetSelected">ControlGetSelected</h3>
+<p>Gibt den markierten Text eines Edit-Steuerelements zurück.</p>
+<pre class="Syntax"><span class="func">ControlGetSelected</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Wenn kein markierter Text vorhanden ist, wird eine leere Zeichenkette zurückgegeben und ErrorLevel auf 0 gesetzt (um Erfolg zu signalisieren). Es ist möglich, dass bestimmte Steuerelementarten wie RichEdit20A den Text nicht richtig darstellen (z. B. Metapad).</p>
+
+<h3 id="EditPaste">ControlEditPaste</h3>
+<p>Fügt die <em>Zeichenkette</em> an der Einfügemarke innerhalb eines Edit-Steuerelements ein.</p>
+<pre class="Syntax"><span class="func">ControlEditPaste</span> Zeichenkette <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Zeichenkette</dt>
+  <dd><p>Eine Zeichenkette, die eingefügt werden soll.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Der Effekt ähnelt dem Einfügen via STRG+V, aber diese Funktion hat weder Einfluss auf den Inhalt der <a href="../misc/Clipboard.htm">Zwischenablage</a> noch muss das Steuerelement den Tastaturfokus haben.</p>
+
+<h2>ListBox und ComboBox</h2>
+
+<h3 id="GetChoice">ControlGetChoice</h3>
+<p>Gibt den Namen des aktuell ausgewählten Eintrags einer ListBox oder ComboBox zurück.</p>
+<pre class="Syntax"><span class="func">ControlGetChoice</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Um stattdessen die Positionsnummer des ausgewählten Eintrags zu ermitteln, befolge dieses Beispiel (verwendet aber nur eine der beiden Zeilen):</p>
+<pre>AuswahlPos := <a href="PostMessage.htm">SendMessage</a>(0x188, 0, 0, "ListBox1", Fenstertitel)  <em>; 0x188 ist LB_GETCURSEL (bei einer ListBox).</em>
+AuswahlPos := <a href="PostMessage.htm">SendMessage</a>(0x147, 0, 0, "ComboBox1", Fenstertitel)  <em>; 0x147 ist CB_GETCURSEL (bei einer DropDownList oder ComboBox).</em>
+AuswahlPos += 1  <em>; Wandelt 0-basiert in 1-basiert um, so dass der erste Eintrag mit 1 beginnt, nicht 0.</em></pre>
+
+<h3 id="Choose">ControlChoose</h3>
+<p>Setzt die Auswahl auf den N-ten Eintrag innerhalb einer ListBox oder ComboBox. <em>N</em> muss für das erste Element eine 1 sein, für das Zweite eine 2, und so weiter. </p>
+<pre class="Syntax"><span class="func">ControlChoose</span> N <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>N</dt>
+  <dd><p>Der Index des Elements, wo 1 das erste Element ist, 2 das Zweite, und so weiter.</p>
+    <p>Benutze 0, um alle Elemente abzuwählen.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Das folgende Beispiel zeigt, wie alle Elemente innerhalb einer <em>Mehrfachauswahl</em>-ListBox ausgewählt werden können:</p>
 <pre><a href="PostMessage.htm">PostMessage</a>, 0x185, 1, -1, ListBox1, Fenstertitel  <em>; Alle ListBox-Einträge auswählen. 0x185 ist LB_SETSEL.</em></pre>
-<p><strong>ChooseString, Zeichenkette</strong>: Setzt die Auswahl auf den ersten Eintrag innerhalb einer ListBox oder ComboBox, dessen führender Teil mit der <em>Zeichenkette</em> übereinstimmt. Die Suche unterscheidet nicht zwischen Groß- und Kleinschreibung. Enthält eine ListBox/ComboBox beispielsweise den Eintrag "UNIX-Text", würde es genügen, das Wort unix (kleingeschrieben) anzugeben, um es auszuwählen.</p>
-<p><strong>EditPaste, Zeichenkette</strong>: Fügt die <em>Zeichenkette</em> an der Einfügemarke innerhalb eines Eingabefeldes ein (der Inhalt der <a href="../misc/Clipboard.htm">Zwischenablage</a> ist davon nicht betroffen).</p>
+
+<h3 id="ChooseString">ControlChooseString</h3>
+<p>Setzt die Auswahl auf den ersten Eintrag innerhalb einer ListBox oder ComboBox, dessen führender Teil mit der <em>Zeichenkette</em> übereinstimmt.</p>
+<pre class="Syntax"><span class="func">ControlChooseString</span> Zeichenkette <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Zeichenkette</dt>
+  <dd><p>Eine Zeichenkette, die ausgewählt werden soll (siehe oben). Die Suche unterscheidet nicht zwischen Groß- und Kleinschreibung. Enthält eine ListBox/ComboBox beispielsweise den Eintrag "UNIX-Text", würde es genügen, das Wort "unix" (kleingeschrieben) anzugeben, um es auszuwählen.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Gibt den Index des ausgewählten Elements zurück, wo 1 das erste Element ist, 2 das Zweite, und so weiter. Bei Misserfolg wird der Rückgabewert leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
+
+<h3 id="AddItem">ControlAddItem</h3>
+<p>Erweitert die aktuelle Liste einer ListBox oder ComboBox mit der angegebenen <em>Zeichenkette</em>.</p>
+<pre class="Syntax">N := <span class="func">ControlAddItem</span>(Zeichenkette <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Gibt den Index des neuen Elements zurück, wo 1 das erste Element ist, 2 das Zweite, und so weiter. Bei Misserfolg wird der Rückgabewert leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
+
+<h3 id="DeleteItem">ControlDeleteItem</h3>
+<p>Entfernt den N-ten Eintrag aus einer ListBox oder ComboBox.</p>
+<pre class="Syntax"><span class="func">ControlDeleteItem</span> N <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>N</dt>
+  <dd><p>Der Index des Elements, wo 1 das erste Element ist, 2 das Zweite, und so weiter.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h3 id="FindItem">ControlFindItem</h3>
+<p>Gibt die Positionsnummer eines ListBox- oder ComboBox-Eintrags zurück, der genau mit <em>Zeichenkette</em> übereinstimmt.</p>
+<pre class="Syntax"><span class="func">ControlFindItem</span> Zeichenkette <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Zeichenkette</dt>
+  <dd><p>Eine Zeichenkette, die gefunden werden soll. Die Suche unterscheidet nicht zwischen Groß- und Kleinschreibung. Im Gegensatz zu <a href="Control.htm#ChooseString">ControlChooseString</a> muss der komplette Text des Eintrags übereinstimmen, nicht nur der führende Teil.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Der erste Eintrag im Steuerelement ist 1, der zweite ist 2 und so weiter. Erfolgt keine Übereinstimmung, wird der Rückgabewert leer gemacht und ErrorLevel auf 1 gesetzt.</p>
+
+<h2>ListView, ListBox und ComboBox</h2>
+
+<h3 id="GetList">ControlGetList</h3>
+<p>Ermittelt eine Liste mit Einträgen von einer ListView, ListBox, ComboBox oder DropDownList.</p>
+<pre class="Syntax"><span class="func">ControlGetList</span>(<span class="optional">Optionen, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Optionen</dt>
+  <dd><p>Legt fest, was abgerufen werden soll, wenn das Steuerelement eine ListView ist (siehe unten). Bei anderen Steuerelementtypen sollte <em>Optionen</em> leer sein.</p></dd>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h4 id="ListView">ListView</h4>
+<p>Ist der <em>Optionen</em>-Parameter leer oder nicht vorhanden, wird der ganze Text vom Steuerelement abgerufen. Jede Reihe, außer die letzte, endet mit einem Zeilenumbruch (`n). Innerhalb jeder Reihe endet jedes Feld (Spalte), außer das letzte, mit einem Tabulatorzeichen (`t).</p>
+<p>Die <em>Optionen</em> können entweder leer sein oder mehrere folgende Wörter enthalten, die mit Leer- oder Tabulatorzeichen getrennt sind:</p>
+<p><em>Selected</em>: Ermittelt nur die markierten (hervorgehobenen) Reihen. Sind keine vorhanden, wird der Rückgabewert leer gemacht.<br>
+  <em>Focused</em>: Ermittelt nur die fokussierte Reihe. Sind keine vorhanden, wird der Rückgabewert leer gemacht.<br>
+  <em id="ColN">Col4</em>: Ermittelt nur die N-te Spalte (Feld), anstatt alle Spalten.  <br>
+  <em>Count</em>: Ermittelt die Gesamtanzahl der Reihen im Steuerelement.<br>
+  <em>Count Selected</em>: Ermittelt die Gesamtanzahl der markierten (hervorgehobenen) Reihen.<br>
+  <em>Count Focused</em>: Ermittelt die Reihennummer (Position) der fokussierten Reihe (0, wenn keine vorhanden).<br>
+<em>Count Col</em>: Ermittelt die Spaltenanzahl des Steuerelements (oder -1, falls die Anzahl nicht ermittelt werden kann).</p>
+<p>HINWEIS: Einige Anwendungen speichern ihren ListView-Text vertraulich, wodurch deren Text nicht abgerufen werden kann. In diesem Fall wird ErrorLevel üblicherweise auf 0 gesetzt (signalisiert Erfolg), aber alle abgerufenen Felder leer sein.</p>
+<p>Bei Erfolg wird ErrorLevel auf 0 gesetzt. Bei Misserfolg wird ErrorLevel auf 1 gesetzt und der Rückgabewert leer gemacht. Fehler treten auf, wenn: 1) das angegebene Fenster oder Steuerelement nicht existiert; 2) das Steuerelement nicht vom Typ SysListView32 ist; 3) der Prozess mit dem ListView nicht geöffnet werden konnte, da er gesperrt ist oder Benutzerrechte fehlen; 4) die <a href="#ColN">Col<em>N</em>-Option</a> auf eine nicht-existierende Spalte verweist.</p>
+<p>Um die Reihen und Felder aus einem ListView einzeln zu extrahieren, verwende eine <a href="LoopParse.htm">Parsende Schleife</a> wie folgt:</p>
+<pre>Liste := ControlGetList("Selected", "SysListView321", Fenstertitel)
+Loop, Parse, %Liste%, `n  <em>; Reihen sind durch Zeilenvorschübe (`n) abgegrenzt.</em>
+{
+    Reihennummer := A_Index
+    Loop, Parse, %A_LoopField%, %A_Tab%  <em>; Felder (Spalten) sind in jeder Reihe durch Tabulatoren (A_Tab) abgegrenzt.</em>
+        MsgBox("Reihe #" Reihennummer " Spalte #" A_Index " enthält " A_LoopField ".")
+}</pre>
+<p>Außerdem ist es möglich, die Größe der ListView-Spalten per <a href="PostMessage.htm">SendMessage</a> zu ändern:</p>
+<pre>SendMessage(4126, 0, 80, "SysListView321", Fenstertitel)  <em>; 4126 ist die Meldung LVM_SETCOLUMNWIDTH.
+; 0 kennzeichnet die erste Spalte (1 die zweite, 2 die dritte und so weiter). 80 ist die neue Breite.
+; Ersetze 80 mit -1, um die Spaltenbreite automatisch anzupassen. Ersetze 80 mit -2, um das gleiche unter Berücksichtigung der Spaltenkopfbreite zu bewirken.</em></pre>
+
+<h4>ListBox und ComboBox (inklusive DropDownList)</h4>
+<p>Der gesamte Text wird vom Steuerelement ermittelt (das heißt, dass die oben genannten ListView-Optionen wie <em>Count</em> und <em>Selected</em> nicht unterstützt werden).</p>
+<p>Jede Reihe, außer die letzte, endet mit einem Zeilenumbruch (`n). Um die Einträge einzeln abzurufen, verwende eine <a href="LoopParse.htm">Parsende Schleife</a> wie folgt:</p>
+<pre>Liste := ControlGetList("", "ComboBox1", Fenstertitel)
+Loop, Parse, %Liste%, `n
+    MsgBox("Eintragsnummer " A_Index " ist " A_LoopField ".")</pre>
+
+<h2>ComboBox</h2>
+
+<h3 id="ShowDropDown">ControlShowDropDown</h3>
+<p>Öffnet eine ComboBox, so dass deren Auswahlmöglichkeiten sichtbar werden.</p>
+<pre class="Syntax"><span class="func">ControlShowDropDown</span> <span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Beispiel:</p>
+<pre>Send("#r")  <em>; Zeigt das Ausführen-Dialogfenster an.</em>
+WinWaitActive("ahk_class #32770")  <em>; Wartet auf das Erscheinen des Dialogfensters.</em>
+ControlShowDropDown("ComboBox1")  <em>; Öffnet die DropDown-Liste. Der vierte Parameter wurde weggelassen, um das Zuletzt Gefundene Fenster zu verwenden.</em>
+Sleep(2000)
+ControlHideDropDown("ComboBox1")  <em>; Versteckt die DropDown-Liste.</em>
+Sleep(1000)
+Send("{Esc}")  <em>; Versteckt das Dialogfenster.</em></pre>
+
+<h3 id="HideDropDown">ControlHideDropDown</h3>
+<p>Kehrt das Obengenannte um.</p>
+<pre class="Syntax"><span class="func">ControlHideDropDown</span> <span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h2>Tab</h2>
+
+<h3 id="GetTab">ControlGetTab</h3>
+<p>Gibt die Positionsnummer des ausgewählten Tabs eines SysTabControl32-Steuerelements.</p>
+<pre class="Syntax"><span class="func">ControlGetTab</span>(<span class="optional">Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+<p>Der erste Tab ist 1, der zweite ist 2 und so weiter. Wenn kein Tab ausgewählt wurde (selten), ist der Rückgabewert 0.</p>
+<p>Um stattdessen die Gesamtanzahl der Tabs (Seiten) eines Tab-Steuerelements zu ermitteln, befolge dieses Beispiel:</p>
+<pre>TabAnzahl := <a href="PostMessage.htm">SendMessage</a>(0x1304,,, "SysTabControl321", Fenstertitel)  <em>; 0x1304 ist TCM_GETITEMCOUNT.</em></pre>
+<p>Beispiel:</p>
+<pre>WelcherTab := ControlGetTab("SysTabControl321", "Beliebiger Fenstertitel")
+if ErrorLevel
+    MsgBox("Es wurde ein Problem festgestellt.")
+else
+    MsgBox("Tab #" WelcherTab " ist aktiv.")</pre>
+
+<h3 id="SetTab">ControlSetTab</h3>
+<p>Wählt den Nten Tab eines SysTabControl32-Steuerelements aus.</p>
+<pre class="Syntax"><span class="func">ControlSetTab</span> N <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<dl>
+  <dt>Steuerelement, Fenstertitel, etc.</dt>
+  <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
+</dl>
+
+<h2>Allgemein</h2>
+
+<h3 id="standard-parameters">Standardparameter</h3>
+<p>Alle Funktionen auf dieser Seite nutzen die folgenden Parameter, um das Zielsteuerelement und -fenster zu identifizieren:</p>
+<dl>
+  <dt>Steuerelement</dt>
+  <dd><p>Kann entweder das ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, das beides mit Windows Spy ermittelt werden kann. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Wenn dieser Parameter leer ist, wird das oberste Steuerelement des Fensters benutzt.</p>
+    <p>Um ein Steuerelement per HWND (Windows Handle) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>"ahk_id " SteuerelementHwnd</code> im <em>Fenstertitel</em>-Parameter angegeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="Control.htm#GetHwnd">ControlGetHwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
+  <dt>Fenstertitel</dt>
+  <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
+  <dt>Fenstertext</dt>
+  <dd><p>In diesem Parameter kann eine Zeichenkette angegeben werden, die in einem Textelement des Zielfensters vorkommt (abrufbar mit Windows Spy). Versteckte Textelemente werden auch erkannt, sofern <a href="DetectHiddenText.htm">DetectHiddenText</a> aktiv ist.</p></dd>
+  <dt>Titelausnahme</dt>
+  <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
+  <dt>Textausnahme</dt>
+  <dd><p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p></dd>
+</dl>
+
 <h3>ErrorLevel</h3>
-<p>Dieser Befehl ist in der Lage, bei Misserfolg eine Ausnahme auszulösen. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt. Zusätzlich wird, sofern nicht anders angegeben, jede Funktion bei Erfolg eine 1 (True) und bei Misserfolg eine 0 (False) zurückgeben.</p>
+<p>Es wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn ungültige Parameter erkannt werden.</p>
+
 <h3>Bemerkungen</h3>
-<p>Um die Zuverlässigkeit des Befehls zu verbessern, erfolgt nach jeder Verwendung automatisch eine Verzögerung (außer bei <em>Style</em> und <em>ExStyle</em>). Diese Verzögerung kann per <a href="SetControlDelay.htm">SetControlDelay</a> geändert werden.</p>
+<p>Um die Zuverlässigkeit zu verbessern, erfolgt nach jeder Verwendung einer steuerelement-modifizierenden Funktion automatisch eine Verzögerung (außer bei <em>ControlSetStyle</em> und <em>ControlSetExStyle</em>). Diese Verzögerung kann via <a href="SetControlDelay.htm">SetControlDelay</a> oder durch direktes Ändern des <a href="../Variables.htm#ControlDelay">A_ControlDelay</a>-Wertes geändert werden. Schau dir die <a href="SetControlDelay.htm#Remarks">Bemerkungen zu SetControlDelay</a> an, um mehr zu erfahren.</p>
 <p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann das ClassNN oder HWND vom Steuerelement erfasst werden, das sich gerade eben unter dem Mauszeiger befindet.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 
 <h3>Siehe auch</h3>
-<p><a href="SetControlDelay.htm">SetControlDelay</a>, <a href="ControlGet.htm">ControlGet</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="WinSet.htm">WinSet</a></p>
-<h3>Beispiel</h3>
-<h4>Funktionssyntax</h4>
-<pre class="NoIndent">Send("#r")		<em>; Zeigt das Ausführen-Dialogfenster an.</em>
-WinWaitActive("ahk_class #32770")		<em>; Wartet auf das Erscheinen des Dialogfensters.</em>
-Control("ShowDropDown", "", "ComboBox1")	<em>; Öffnet die DropDown-Liste. Der vierte Parameter wurde weggelassen, um das Zuletzt Gefundene Fenster zu verwenden.</em>
-Sleep(2000)
-Control("HideDropDown", "", "ComboBox1")	<em>; Versteckt die DropDown-Liste.</em>
-Sleep(1000)
-Send("{Esc}")		<em>; Versteckt das Dialogfenster.</em></pre>
-<h4>Befehlssyntax</h4>
-<pre class="NoIndent">Send, #r		<em>; Zeigt das Ausführen-Dialogfenster an.</em>
-WinWaitActive, ahk_class #32770		<em>; Wartet auf das Erscheinen des Dialogfensters.</em>
-Control, ShowDropDown,, ComboBox1,	<em>; Öffnet die DropDown-Liste. Der vierte Parameter wurde weggelassen, um das Zuletzt Gefundene Fenster zu verwenden.</em>
-Sleep, 2000
-Control, HideDropDown,, ComboBox1,	<em>; Versteckt die DropDown-Liste.</em>
-Sleep, 1000
-Send, {Esc}		<em>; Versteckt das Dialogfenster.</em></pre>
+<p><a href="SetControlDelay.htm">SetControlDelay</a>, <a href="WinSet.htm">WinSet-Funktionen</a>, <a href="WinGet.htm">WinGet-Funktionen</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a> (für via Skript erstellte Steuerelemente)</p>
+<p>Andere Control-Funktionen: <a href="ControlGetFocus.htm">ControlGetFocus</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlGetText.htm">ControlGetText</a>, <a href="ControlSetText.htm">ControlSetText</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSend.htm">ControlSend</a></p>
+
 </body>
 </html>

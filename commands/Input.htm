@@ -15,14 +15,14 @@
 
 <p>Wartet darauf, dass der Benutzer eine Zeichenkette eingibt.</p>
 
-<pre class="Syntax">Input [, AusgabeVar, Optionen, Endtasten, Vergleichsliste]</pre>
+<pre class="Syntax">Text := <span class="func">Input</span>(<span class="optional">Optionen, Endtasten, Vergleichsliste</span>)</pre>
+
 <h3>Parameter</h3>
 <dl>
 
-  <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der die Benutzereingabe gespeichert werden soll (standardmäßig werden künstliche Eingaben auch erfasst).</p>
-      <p>Fehlt dieser und die anderen Parameter, werden alle laufenden Inputs in den anderen <a href="../misc/Threads.htm">Threads</a> beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort NewInput gesetzt. Das <a href="../misc/ErrorLevel.htm">ErrorLevel</a> des aktuellen Befehls wird dagegen auf 0 gesetzt, wenn er einen vorherigen Input beenden konnte, oder auf 1, wenn es keinen vorherigen Input gab, den er beenden konnte.</p>
-      <p><em>AusgabeVar</em> wird an sich keine Tastatureingaben enthalten. Stattdessen enthält es Zeichen, die von Tastatureingaben erzeugt werden, abhängig von der Tastaturbelegung/Sprache des aktiven Fensters. Tastatureingaben, die keine Zeichen erzeugen (wie z. B. BILD-NACH-OBEN und ESC), werden dementsprechend nicht gespeichert (allerdings können sie via <em>Endtasten</em>-Parameter erkannt werden).</p>
+  <dt>Text (Rückgabewert)</dt>
+  <dd><p>Der vom Benutzer eingegebene Text (standardmäßig werden künstlich erzeugte Eingaben auch erfasst).</p>
+      <p>Der Text besteht aus Zeichen, die von Tastatureingaben erzeugt werden, abhängig von der Tastaturbelegung/Sprache des aktiven Fensters. Tastatureingaben, die keine Zeichen erzeugen (wie z. B. BILD-NACH-OBEN und ESC), werden dementsprechend nicht gespeichert (allerdings können sie via <em>Endtasten</em>-Parameter erkannt werden).</p>
       <p>Leerraumzeichen wie z. B. TAB (`t) werden literal gespeichert. ENTER als LF-Zeichen (`n).</p></dd>
 
   <dt>Optionen</dt>
@@ -33,9 +33,9 @@
       <p><strong>L</strong>: Längenbegrenzung (z. B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Erreicht der Text diese Länge, wird der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt. Wenn der Text stattdessen mit einem Element aus der <em>Vergleichsliste</em> übereinstimmt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Fehlt die Zahl, wird die Länge auf 16.383 Zeichen begrenzt (der höchste zulässige Wert).</p>
       <p><strong>M</strong>: Tastenkombinationen wie STRG+A bis STRG+Z werden erkannt und in echte ASCII-Zeichen umgewandelt, falls möglich. Das folgende Beispiel zeigt, wie STRG+C erkannt werden kann:</p>
       <pre>StrgC := Chr(3) <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
-Input, AusgabeVar, L1 M
+AusgabeVar := Input("L1 M")
 if (AusgabeVar = StrgC)
-    MsgBox, Sie haben STRG+C gedrückt.
+    MsgBox "Sie haben STRG+C gedrückt."
 ExitApp</pre>
       <p>Hinweis: STRG+A bis STRG+Z sind die Zeichen von <a href="Chr.htm">Chr(1)</a> bis <a href="Chr.htm">Chr(26)</a>. Außerdem ist es möglich, dass die <strong>M</strong>-Option einige Tastenkürzel wie STRG+NACH-LINKS dazu bringen kann, sich während eines Inputs falsch zu verhalten.</p>
       <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Anzahl an Sekunden, die gewartet werden sollen, bevor der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Timeout gesetzt wird. Hat der Input die Zeit überschritten, wird <em>AusgabeVar</em> auf das gesetzt, was auch immer der Benutzer gerade eingegeben hat. Dieser Wert kann eine Gleitkommazahl wie z. B. 2.5 sein.</p>
@@ -55,21 +55,20 @@ ExitApp</pre>
   <dt>Vergleichsliste</dt>
   <dd><p>Eine kommagetrennte Liste mit Stichwörtern, die den Input beenden können (in diesem Fall wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt). Alles, was der Benutzer eingibt, muss exakt mit einem Element aus der Liste übereinstimmen, damit der Input fortfahren kann (sofern die <a href="#asterisk">*-Option</a> nicht vorhanden ist). <strong>Alle Leer- und Tabulatorzeichen an den angrenzenden Kommas sind von Bedeutung</strong> - das heißt, dass sie ein Teil der Übereinstimmungszeichenkette sind. Wenn <em>Vergleichsliste</em> beispielsweise "ABC , XYZ" wäre, kann eine Übereinstimmung nur erfolgen, wenn der Benutzer ein Leerzeichen nach ABC oder vor XYZ eingibt.</p>
       <p>Zwei aufeinanderfolgende Kommas ergeben ein literales Komma. Zum Beispiel würde die folgende Zeile ein literales Komma nach dem Wort Zeichenkette1 erzeugen: "Zeichenkette1,,,Zeichenkette2". Im Vergleich dazu würde die folgende Liste nur ein einzelnes Element mit einem literalen Komma dazwischen enthalten: "einzelnes,,Element".</p>
-    <p>Da die Elemente in <em>Vergleichsliste</em> nicht als einzelne Parameter behandelt werden, kann die Liste komplett in einer Variable enthalten sein. Diese Methode ist sowieso notwendig, wenn die Liste eine Länge von 16.383 Zeichen überschreitet (die maximale Länge einer Skript-Zeile). Zum Beispiel könnte <em>Vergleichsliste</em> aus <code>%Liste1%,%Liste2%,%Liste3%</code> bestehen, von der jede Unterliste eine lange Liste mit Elementen enthält.</p>
+    <p>Da die Elemente in <em>Vergleichsliste</em> nicht als einzelne Parameter behandelt werden, kann die Liste komplett in einer Variable enthalten sein. Diese Methode ist sowieso notwendig, wenn die Liste eine Länge von 16.383 Zeichen überschreitet (die maximale Länge einer Skript-Zeile). Zum Beispiel könnte <em>Vergleichsliste</em> der <a href="../Variables.htm#Expressions">Ausdruck</a> <code>List1 "," List2 "," List3</code> sein, von der jede Unterliste eine lange Liste mit Elementen enthält.</p>
     </dd>
 
 </dl>
 
 <h3>ErrorLevel</h3>
-<p>Dieser Befehl ist in der Lage, eine Ausnahme auszulösen, wenn er ohne Parameter aufgerufen wird, oder wenn kein Input am Laufen ist. Für mehr Informationen, siehe <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a>.</p>
 <table class="info">
   <tr>
-    <td style="width:15%"><p>1 oder 0</p></td>
-    <td><p>Immer wenn der Befehl ohne Parameter erfolgt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt, wenn er erfolgreich einen vorherigen Input beenden konnte, oder auf 1, wenn es keinen vorherigen Input gab, den er beenden konnte.</p></td>
+    <td style="width:15%">NewInput</td>
+    <td>Der Input wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> terminiert, der die Input-Funktion aufgerufen hat.</td>
   </tr>
   <tr>
-    <td>NewInput</td>
-    <td>Der Input wurde durch einen anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, der den Input-Befehl benutzte.</td>
+    <td>End</td>
+    <td>Der Input wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> terminiert, der die <a href="#InputEnd">InputEnd</a>-Funktion aufgerufen hat.</td>
   </tr>
   <tr>
     <td>Max</td>
@@ -92,19 +91,31 @@ ExitApp</pre>
     </td>
   </tr>
 </table>
+
 <h3>Bemerkungen</h3>
 <p>Verwendet man diesen Befehl, während ein Input in einem anderen <a href="../misc/Threads.htm">Thread</a> bereits am Laufen ist, wird dieser Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort NewInput gesetzt. Danach wird ein neuer Input eingeleitet (sofern Parameter angegeben sind).</p>
 <p>Während ein Input am Laufen ist, können neue <a href="../misc/Threads.htm">Threads</a> wie <a href="Menu.htm">benutzerdefinierte Menüelemente</a> oder <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a> erstellt werden. Zudem sind Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> auch dann noch aktiv, wenn der Input <a href="#vis">sichtbar</a> ist. Wenn der Input nicht sichtbar ist, können nur <a href="_UseHook.htm">Hook-Hotkeys</a> ausgelöst werden.</p>
 <p>Verwendet ein Skript diesen Befehl das erste Mal, wird der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> installiert (sofern es noch nicht geschehen ist). Der Tastatur-Hook bleibt installiert, sofern er nicht von einem <a href="Suspend.htm">Suspend</a>- oder <a href="Hotkey.htm">Hotkey</a>-Befehl entfernt wird, weil er nicht länger benötigt wird.</p>
 <p>Verwendest du mehrere Sprachen oder Tastaturbelegungen, greift der Input auf die Tastaturbelegung des aktiven Fensters zurück, anstatt auf die des Skripts (egal ob die Eingabe <a href="#vis">sichtbar</a> ist oder nicht).</p>
 <p>Zwar sind <a href="../Hotstrings.htm">Hotstrings</a> nicht so flexibel wie ein Input-Befehl, allerdings sind sie leichter zu handhaben.</p>
+
+<h3 id="InputEnd">InputEnd</h3>
+<p>Terminiert alle laufenden Input-Funktionen in einem anderen <a href="../misc/Threads.htm">Thread</a>.</p>
+<pre class="Syntax"><span class="func">InputEnd</span> </pre>
+<p>Gibt True zurück, wenn ein Input am Laufen war, ansonsten False.</p>
+
 <h3>Siehe auch</h3>
 <p><a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Wartet darauf, dass der Benutzer eine Taste drückt.  Tasten, die keine sichtbaren Zeichen erzeugen (z. B.
 ; Modifikatortasten, Funktionstasten, Pfeiltasten), sind als Endtasten aufgelistet, so dass auch
 ; sie erkannt werden können.</em>
-Input, Einzeltaste, L1, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{Capslock}{Numlock}{PrintScreen}{Pause}</pre>
+Einzelzeichen := Input("L1", "{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{Capslock}{Numlock}{PrintScreen}{Pause}")
+if InStr(ErrorLevel, "EndKey:")
+    Einzeltaste := SubStr(ErrorLevel, 8)
+else
+    Einzeltaste := Einzelzeichen
+MsgBox Einzeltaste</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Dies ist ein funktionierendes Hotkey-Beispiel.  Da der Hotkey den Tilde-Präfix (~) hat,
 ; wird seine Tastatureingabe selbst an das aktive Fenster übergeben.
@@ -116,19 +127,19 @@ Input, Einzeltaste, L1, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{R
 Input, Benutzereingabe, V T5 L4 C, {enter}.{esc}{tab}, btw,otoh,fl,ahk,ca
 if (ErrorLevel = "Max")
 {
-    MsgBox, Ihre Eingabe "%Benutzereingabe%" hat die maximale Textlänge erreicht.
+    MsgBox "Ihre Eingabe " Benutzereingabe " hat die maximale Textlänge erreicht."
     return
 }
 if (ErrorLevel = "Timeout")
 {
-    MsgBox, Sie haben "%Benutzereingabe%" innerhalb der verfügbaren Zeit eingegeben.
+    MsgBox "Sie haben " Benutzereingabe " innerhalb der verfügbaren Zeit eingegeben."
     return
 }
 if (ErrorLevel = "NewInput")
     return
 If InStr(ErrorLevel, "EndKey:")
 {
-    MsgBox, Sie haben "%Benutzereingabe%" eingegeben und Eingabe mit %ErrorLevel% beendet.
+    MsgBox "Sie haben " Benutzereingabe " eingegeben und Eingabe mit " ErrorLevel " beendet."
     return
 }
 <em>; Ansonsten wurde eine Übereinstimmung gefunden.</em>

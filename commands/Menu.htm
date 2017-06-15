@@ -15,7 +15,7 @@
 
 <p>Erstellt, löscht, ändert und zeigt Menüs und Menüpunkte. Ändert das Infobereichssymbol und sein ToolTip. Kontrolliert, ob das Hauptfenster eines <a href="../Scripts.htm#ahk2exe">kompilierten Skripts</a> geöffnet werden kann.</p>
 
-<pre class="Syntax">Menu, Menüname, Befehl [, P3, P4, P5]</pre>
+<pre class="Syntax"><span class="func">Menu</span> Menüname, Befehl <span class="optional">, P3, P4, P5</span></pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -236,20 +236,23 @@ Test:
 MsgBox, Sie haben "%A_ThisMenuItem%" im Menü "%A_ThisMenu%" ausgewählt.
 return</pre>
 <pre class="NoIndent"><em>; BEISPIEL #4: Dieses Skript zeigt, wie Symbole in seinen Menüpunkten eingefügt werden können.</em>
-Menu, Dateimenü, Add, Skript-Symbol, MenuHandler
-Menu, Dateimenü, Add, Sperren-Symbol, MenuHandler
-Menu, Dateimenü, Add, Pause-Symbol, MenuHandler
-Menu, Dateimenü, Icon, Skript-Symbol, %A_AhkPath%, 2 <em>; Verwendet die zweite Symbolgruppe aus der Datei.</em>
-Menu, Dateimenü, Icon, Sperren-Symbol, %A_AhkPath%, -206 <em>; Symbol mit dem Ressourcenidentifikator 206.</em>
-Menu, Dateimenü, Icon, Pause-Symbol, %A_AhkPath%, -207 <em>; Symbol mit dem Ressourcenidentifikator 207.</em>
-Menu, MeineMenüleiste, Add, &amp;Datei, :Dateimenü
+Menu("Dateimenü", "Add", "Skript-Symbol", "MenuHandler")
+Menu("Dateimenü", "Add", "Sperren-Symbol", "MenuHandler")
+Menu("Dateimenü", "Add", "Pause-Symbol", "MenuHandler")
+Menu("Dateimenü", "Icon", "Skript-Symbol", A_AhkPath, 2) <em>; 2. Symbolgruppe aus der Datei</em>
+Menu("Dateimenü", "Icon", "Sperren-Symbol", A_AhkPath, -206) <em>; Symbol mit Ressourcen-ID 206</em>
+Menu("Dateimenü", "Icon", "Pause-Symbol", A_AhkPath, -207) <em>; Symbol mit Ressourcen-ID 207</em>
+Menu("MeineMenüleiste", "Add", "&amp;Datei", ":Dateimenü")
 Gui := GuiCreate()
 Gui.Menu := "MeineMenüleiste"
-Gui.Add("Button", "gExitApp", "Beendet dieses Beispiel")
+Gui.Add("Button",, "Beendet dieses Beispiel").OnEvent("Click", "Exit_Click")
 Gui.Show()
 
 MenuHandler() {
 }
-</pre>
+
+Exit_Click() {
+  WinClose()
+}</pre>
 </body>
 </html>

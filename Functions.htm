@@ -33,19 +33,18 @@
 <p id="define">Eine Funktion ist prinzipiell das gleiche wie eine Subroutine (<a href="commands/Gosub.htm">GoSub</a>), außer dass sie Parameter (Eingabewerte) von ihrem Aufrufer entgegennehmen kann. Darüber hinaus kann eine Funktion optional einen Wert an den Aufrufer zurückgeben. Das folgende Beispiel zeigt, wie eine einfache Funktion zwei Zahlen entgegennimmt und deren Summe zurückgibt:</p>
 <pre>Addieren(x, y)
 {
-    return x + y   <em>; "<a href="commands/Return.htm">Return</a>" erwartet einen <a href="Variables.htm#Expressions">Ausdruck</a>.</em>
+    <a href="commands/Return.htm">return</a> x + y
 }</pre>
 <p>So etwas nennt man auch eine <em>Funktionsdefinition</em>, weil es eine Funktion mit dem Namen "Addieren" erstellt (Groß- und Kleinschreibung ist egal) und festlegt, dass jeder, der sie aufruft, genau zwei Parameter (x und y) bereitstellen muss. Um die Funktion aufzurufen, speichert man ihr Ergebnis mithilfe des <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operators</a> (<strong><a href="commands/SetExpression.htm">:=</a></strong>) in eine Variable. Zum Beispiel:</p>
 <pre>Var := Addieren(2, 3)  <em>; Speichert die Zahl 5 in Var.</em></pre>
 <p>Man kann eine Funktion auch aufrufen, ohne ihren Rückgabewert speichern zu müssen:</p>
-<pre>Addieren(2, 3)</pre>
+<pre>Addieren(2, 3)
+Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisung am Anfang einer Zeile steht.</em></pre>
 <p>In diesem Fall aber wird der zurückgegebene Wert der Funktion verworfen; wenn die Funktion nur einen Rückgabewert erzeugen würde, wäre ihr Aufruf daher sinnlos.</p>
-<p>Da ein Funktionsaufruf ein <a href="Variables.htm#Expressions">Ausdruck</a> ist, sollten Variablennamen in ihrer Parameterliste nicht von Prozentzeichen umschlossen sein. Dagegen sollten literale Zeichenketten in Anführungszeichen gesetzt werden. Zum Beispiel:</p>
+<p>Innerhalb eines Ausdrucks wird ein Funktionsaufruf in den Rückgabewert der Funktion "umgewandelt". Der Rückgabewert kann in eine Variable gespeichert werden, wie oben gezeigt, oder kann wie folgt direkt benutzt werden:</p>
 <pre>if <a href="commands/InStr.htm">InStr</a>(MeineVar, "Fuchs")
-    MsgBox Die Variable MeineVar enthält das Wort Fuchs.</pre>
-<p>Desweiteren kann man Funktionen innerhalb der Parameter eines Befehls aufrufen (außer in AusgabeVar-Parametern). Allerdings müssen Parameter, die keine <a href="Variables.htm#Expressions">Ausdrücke</a> unterstützen, den "%"-Präfix wie folgt verwenden:</p>
-<pre>MsgBox <strong>%</strong> "Das Ergebnis ist: " <strong>.</strong> Addieren(3, 2)</pre>
-<p>Das "%"-Präfix kann auch in Parametern verwendet werden, die bereits Ausdrücke unterstützen, aber es wird einfach ignoriert.</p>
+    MsgBox "Die Variable MeineVar enthält das Wort Fuchs."</pre>
+
 <h2 id="param">Parameter</h2>
 <p>Beim Definieren einer Funktion werden die Parameter neben dem Funktionsnamen in runden Klammern aufgelistet (Leerzeichen zwischen dem Namen und der runden Startklammer sind nicht erlaubt). Braucht die Funktion keine Parameter, können die runden Klammern leer gelassen werden; zum Beispiel: <code>ErmittleAktuellenZeitstempel()</code>.</p>
 <p id="ByRef"><strong>ByRef-Parameter</strong>: Innerhalb der Funktion werden Parameter grundsätzlich wie <a href="#Locals">lokale Variablen</a> behandelt, sofern sie nicht wie folgt als <em>ByRef</em>-Parameter definiert werden:</p>
@@ -75,17 +74,16 @@
 }</pre>
 <p>Übergibt der Aufrufer <strong>drei</strong> Parameter an die obere Funktion, wird der Standardwert von Z ignoriert. Wenn der Aufrufer aber nur <strong>zwei</strong> Parameter übergibt, wird in Z automatisch der Wert 0 gespeichert.</p>
 <p id="missing">Es ist nicht möglich, alleinstehende optionale Parameter in der Mitte der Parameterliste zu verwenden. Das heißt, dass alle Parameter, die auf der rechten Seite des ersten optionalen Parameters vorkommen, auch als optional gekennzeichnet werden müssen. Beim Aufrufen der Funktion können die optionale Parameter in der Mitte der Parameterliste weggelassen werden, wie unten gezeigt:</p>
-<pre>Func(1,, 3)
-Func(X, Y:=2, Z:=0) {  <em>; Beachte, dass Z in diesem Fall weiterhin optional sein muss.</em>
-    MsgBox("%X%, %Y%, %Z%")
+<pre>Funktion(1,, 3)
+Funktion(X, Y:=2, Z:=0) {  <em>; Beachte, dass Z in diesem Fall weiterhin optional sein muss.</em>
+    MsgBox X ", " Y ", " Z
 }</pre>
-<p id="OptionalByRef"> <a href="#ByRef">ByRef-Parameter</a> unterstützen auch Standardwerte; zum Beispiel: <code>Funktion(ByRef p1 = "")</code>. Jedes Mal, wenn der Aufrufer einen solchen Parameter weglässt, erstellt die Funktion eine lokale Variable, die den Standardwert enthält; das heißt, dass die Funktion sich so verhält, als würde das Schlüsselwort "ByRef" fehlen.</p>
+<p id="OptionalByRef"> <a href="#ByRef">ByRef-Parameter</a> unterstützen auch Standardwerte; zum Beispiel: <code>Funktion(ByRef p1 := "")</code>. Jedes Mal, wenn der Aufrufer einen solchen Parameter weglässt, erstellt die Funktion eine lokale Variable, die den Standardwert enthält; das heißt, dass die Funktion sich so verhält, als würde das Schlüsselwort "ByRef" fehlen.</p>
 <p>Als Standardwert eines Parameters sind folgende Werte zulässig: <code>True</code>, <code>False</code>, ein literaler Integer, eine literale Gleitkommazahl oder eine literale Zeichenkette wie "fox" oder "".</p>
 <h2 id="return">Rückgabewerte an den Aufrufer</h2>
 <p>Wie man bereits in der <a href="#intro">Einführung</a> lesen konnte, kann eine Funktion dazu gebracht werden, einen Wert per <a href="commands/Return.htm">Return</a> an ihren Aufrufer zurückzugeben.</p>
 <pre>
-Test := returnTest()
-MsgBox % Test
+MsgBox returnTest()
 
 returnTest() {
   return 123
@@ -94,26 +92,26 @@ returnTest() {
 <p>Wenn noch mehr Ergebnisse von einer Funktion zurückgegeben werden sollen, kann man auch <a href="#ByRef">ByRef</a> verwenden:</p>
 <pre>
 returnByRef(A,B,C)
-MsgBox % A "," B "," C
+MsgBox A "," B "," C
 
-returnByRef(ByRef val1, ByRef val2, ByRef val3)
+returnByRef(ByRef Wert1, ByRef Wert2, ByRef Wert3)
 {
-  val1 := "A"
-  val2 := 100
-  val3 := 1.1
+  Wert1 := "A"
+  Wert2 := 100
+  Wert3 := 1.1
   return
 }
 </pre>
 <p>Mithilfe von Objekten und Arrays können mehrere Werte oder sogar benannte Werte zurückgegeben werden:</p>
 <pre>
 Test1 := returnArray1()
-MsgBox % Test1[1] "," Test1[2]
+MsgBox Test1[1] "," Test1[2]
 
 Test2 := returnArray2()
-MsgBox % Test2[1] "," Test2[2]
+MsgBox Test2[1] "," Test2[2]
 
 Test3 := returnObject()
-MsgBox % Test3.id "," Test3.val
+MsgBox Test3.id "," Test3.val
 
 returnArray1() {
   Test := [123,"ABC"]
@@ -138,7 +136,7 @@ returnObject() {
         str .= param . sep
     return SubStr(str, 1, -StrLen(sep))
 }
-MsgBox % Verbinden("`n", "eins", "zwei", "drei")</pre>
+MsgBox Verbinden("`n", "eins", "zwei", "drei")</pre>
 <p>Ruft man eine variadische Funktion auf, sind überschüssige Parameter über ein Objekt zugreifbar, das im letzten Parameter der Funktion gespeichert ist. Der erste überschüssige Parameter ist <code>params[1]</code>, der Zweite ist <code>params[2]</code> und so weiter. Da es ein Standard-<a href="objects/Object.htm">Objekt</a> ist, kann mit <code>params.<a href="objects/Object.htm#Length">Length</a>()</code> die Parameteranzahl ermittelt werden.</p>
 <p>Hinweise:</p>
 <ul>
@@ -179,7 +177,7 @@ MsgBox % Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
 <pre>LogZuDatei(TextZuLog)
 {
     <strong>global</strong> LogDateiname  <em>; Dieser globalen Variable wurde bereits ein Wert außerhalb dieser Funktion zugewiesen.</em>
-    FileAppend, %TextZuLog%`n, %LogDateiname%
+    FileAppend TextZuLog "`n", LogDateiname
 }</pre>
 <p id="AssumeGlobal"><strong>Global-behandelnder Modus</strong>: Muss eine Funktion viele globale Variablen erstellen oder auf sie zugreifen, kann die Funktion so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) global behandelt. Dazu muss in der ersten Zeile das Wort "global" stehen. Zum Beispiel:</p>
 <pre>SetzeStandardwerte()
@@ -197,7 +195,7 @@ MsgBox % Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
     <strong>static</strong> Zeilenanzahl := 0
     Zeilenanzahl += 1  <em>; Behandelt einen Zähler lokal (der Wert bleibt zwischen den Funktionsaufrufen erhalten).</em>
     global LogDateiname
-    FileAppend, %Zeilenanzahl%: %TextZuLog%`n, %LogDateiname%
+    FileAppend Zeilenanzahl ": " TextZuLog "`n", LogDateiname
 }</pre>
 <p id="InitStatic">Eine statische Variable kann nicht nur deklariert, sondern auch initialisiert werden, indem man danach <code>:=</code> und ein <a href="Variables.htm#Expressions">Ausdruck</a> anfügt. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Jede statische Variable wird nur einmal initialisiert. Die Initialisierung von statischen Variablen erfolgt in der Reihenfolge ihrer aktuellen Position innerhalb der Skriptdatei, aber vor dem automatischen Ausführungsbereich des Skripts.</p>
 <p id="AssumeStatic"><strong>Statisch-behandelnder Modus</strong>: Eine Funktion kann so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) statisch behandelt. Dazu muss in der ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
@@ -291,6 +289,10 @@ Pfad-zur-gerade-laufenden-AutoHotkey.exe\Lib\  <em>; Standard-Library.</em></pre
     <th style="width:150px">Funktion</th>
     <th>Beschreibung</th>
   </tr>
+  <tr id="DirExist">
+    <td><a href="commands/FileExist.htm">DirExist</a></td>
+    <td>Überprüft, ob ein Ordner vorhanden ist, und gibt seine Attribute zurück.</td>
+  </tr>
   <tr id="FileExist">
     <td><a href="commands/FileExist.htm">FileExist</a></td>
     <td>Überprüft, ob eine Datei oder ein Ordner vorhanden ist, und gibt ihre/seine Attribute zurück.</td>
@@ -312,7 +314,7 @@ Pfad-zur-gerade-laufenden-AutoHotkey.exe\Lib\  <em>; Standard-Library.</em></pre
     <td>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb einer Zeichenkette.</td>
   </tr>
   <tr id="StrLen">
-    <td><a href="commands/StringLen.htm">StrLen</a></td>
+    <td><a href="commands/StrLen.htm">StrLen</a></td>
     <td>Ermittelt die Anzahl an Zeichen, die sich in einer Zeichenkette befinden.</td>
   </tr>
   <tr id="StrReplace">

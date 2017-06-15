@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Lautstärke-Bildschirmanzeige (OSD) -- von Rajat</title>
+<title>Lautstärke-Bildschirmanzeige</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -11,96 +11,83 @@
 </head>
 <body>
 
-<h1>Lautstärke-Bildschirmanzeige (OSD) -- von Rajat</h1>
+<h1>Lautstärke-Bildschirmanzeige <span class="headnote">Basierend auf dem v1-Skript von Rajat</span></h1>
 
 <p>Dieses Skript ermöglicht beliebige Hotkeys, die Gesamt- und/oder Wave-Lautstärke zu erhöhen oder zu verringern. Beide Lautstärken werden als Balkendiagramme mit unterschiedlichen Farben angezeigt.
 </p>
 <p><a href="VolumeOSD.ahk">Dieses Skript herunterladen</a>  |  <a href="index.htm">Andere Beispiel-Skripte</a>  |  <a href="../AutoHotkey.htm">Home</a></p>
 
-<pre class="NoIndent"><em>;_________________________________________________
-;_______Benutzereinstellungen_____________________________ </em>
+<pre class="NoIndent"><em>; --- Benutzereinstellungen ---
 
-<em>; Nur in diesem Bereich oder Hotkey-Bereich Änderungen durchführen!! </em>
-
-<em>; Der Prozentwert, um wieviel die Lautstärke jedes Mal erhöht oder verringert wird:</em>
-vol_Step := 4
+; Der Prozentsatz, um wie viel die Lautstärke jedes Mal erhöht oder verringert werden soll:</em>
+config := {Step: 4}
 
 <em>; Wie lange die Balkendiagramme der Lautstärken angezeigt werden sollen:</em>
-vol_DisplayTime := 2000
+config.DisplayTime := 2000
 
-<em>; Balkenfarbe der Gesamtlautstärke (siehe Hilfe-Datei, um präzisere
-; Farbtöne anzugeben):</em>
-vol_CBM := "Red"
+<em>; Balkenfarbe der Gesamtlautstärke (siehe Hilfe für präzisere Farbtöne):</em>
+config.CBM := "Red"
 
 <em>; Balkenfarbe der Wave-Lautstärke</em>
-vol_CBW := "Blue"
+config.CBW := "Blue"
 
-<em>; Hintergrundfarbe</em>
-vol_CW := "Silver"
+<em>; Hintergrundfarbe:</em>
+config.CW := "Silver"
 
-<em>; Balkenposition auf dem Bildschirm.  Verwendet "center", um den Balken in dieser Abmessung zu zentrieren:</em>
-vol_PosX := "center"
-vol_PosY := "center"
-vol_Width := 150  <em>; Balkenbreite</em>
-vol_Thick := 12   <em>; Balkendicke</em>
+<em>; Balkenposition auf dem Bildschirm. Mit "center" kann der Balken jeweils zentriert werden:</em>
+config.PosX := "center"
+config.PosY := "center"
+config.Width := 150  <em>; Balkenbreite</em>
+config.Thick := 12   <em>; Balkendicke</em>
 
-<em>; Wenn die aktuelle Tastatur Multimedia-Tasten für die Lautstärke hat, dann
-; kannst du versuchen, die unteren Hotkeys so zu ändern, dass sie
-; Volume_Up, ^Volume_Up, Volume_Down und ^Volume_Down verwenden:</em>
-HotKey, #Up, vol_MasterUp      <em>; Win+Pfeil nach oben</em>
-HotKey, #Down, vol_MasterDown
-HotKey, +#Up, vol_WaveUp       <em>; Umschalt+Win+Pfeil nach oben</em>
-HotKey, +#Down, vol_WaveDown
+<em>; Wenn du Multimedia-Tasten zum Einstellen der Lautstärke hast,
+; dann kannst du die Tasten unten mit Volume_Up,
+; ^Volume_Up, Volume_Down, und ^Volume_Down ersetzen:</em>
+config.MasterUp := "#Up"      <em>; Win+Pfeil nach oben</em>
+config.MasterDown := "#Down"
+config.WaveUp := "+#Up"       <em>; Umschalt+Win+Pfeil nach oben</em>
+config.WaveDown := "+#Down"
 
+<em>; --- Auto-Ausführungsbereich ---
 
-<em>;___________________________________________ 
-;_____automatischer Ausführungsbereich__________________</em>
-
-<em>; HIER DANACH KEINE ÄNDERUNGEN DURCHFÜHREN (es sei denn, du weißt, was du tust).</em>
+; HIER BITTE NICHTS ÄNDERN (es sei denn, du weißt, was du tust).</em>
 
 #SingleInstance
 
-<em>; Progress-Fenster</em>
+<em>; Balkenfenster erstellen:</em>
+G := GuiCreate("+ToolWindow -Caption -Border +Disabled")
+G.MarginX := 0, G.MarginY := 0
+opt := "w" config.Width " h" config.Thick " background" config.CW
+G.Add("Progress", opt " vMaster c" config.CBM)
+G.Add("Progress", opt " vWave c" config.CBW)
 
-Gui := GuiCreate("+ToolWindow -Caption -Border +Disabled")
-Gui.MarginX := 0, Gui.MarginY := 0
-Master := Gui.Add("Progress", "w%vol_Width% h%vol_Thick% c%vol_CBM% background%vol_CW%")
-Wave := Gui.Add("Progress", "w%vol_Width% h%vol_Thick% c%vol_CBW% background%vol_CW%")
-Return
+<em>; Funktionsverweise für die Hotkeys erstellen:</em>
+vol_MasterUp := Func("ChangeVolume").bind(config, G, "+")
+vol_MasterDown := Func("ChangeVolume").bind(config, G, "-")
+vol_WaveUp := Func("ChangeVolume").bind(config, G, "+", "Wave")
+vol_WaveDown := Func("ChangeVolume").bind(config, G, "-", "Wave")
 
-<em>;___________________________________________</em>
+<em>; Hotkeys registrieren:</em>
+Hotkey(config.MasterUp, vol_MasterUp)
+Hotkey(config.MasterDown, vol_MasterDown)
+Hotkey(config.WaveUp, vol_WaveUp)
+Hotkey(config.WaveDown, vol_WaveDown)
 
-vol_WaveUp:
-SoundSet, +%vol_Step%, Wave
-Gosub, vol_ShowBars
-return
+<em>; --- Funktionsdefinitionen ---</em>
 
-vol_WaveDown:
-SoundSet, -%vol_Step%, Wave
-Gosub, vol_ShowBars
-return
+ChangeVolume(config, G, Prefix, ComponentType := "Master")
+{
+  SoundSet(Prefix config.Step, ComponentType)
+  G.Control["Master"].Value := Round(SoundGet("Master"))
+  G.Control["Wave"].Value := Round(SoundGet("Wave"))
+  G.Show("x" config.PosX " y" config.PosY)
+  HideWindow := Func("HideWindow").bind(G)
+  SetTimer(HideWindow, -config.DisplayTime)
+}
 
-vol_MasterUp:
-SoundSet, +%vol_Step%
-Gosub, vol_ShowBars
-return
-
-vol_MasterDown:
-SoundSet, -%vol_Step%
-Gosub, vol_ShowBars
-return
-
-vol_ShowBars:
-<em>; Sobald beide Lautstärken vom Benutzer oder von einem externen Programm geändert werden, werden die neuen Lautstärken abgerufen:</em>
-Master.Value := Round(SoundGet("Master"))
-Wave.Value := Round(SoundGet("Wave"))
-Gui.Show("x%vol_PosX% y%vol_PosY%")
-SetTimer, vol_BarOff, -%vol_DisplayTime%
-return
-
-vol_BarOff:
-Gui.Hide()
-return
-</pre>
+HideWindow(G)
+{
+  G.Hide()
+}</pre>
 </body>
 </html>

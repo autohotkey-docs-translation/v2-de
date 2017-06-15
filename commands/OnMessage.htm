@@ -15,7 +15,7 @@
 
 <p>Bestimmt eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, die automatisch aufgerufen werden sollen, wenn das Skript die angegebene Meldung empfängt.</p>
 
-<pre class="Syntax">OnMessage(Meldenummer [, Funktion, MaxThreads])</pre>
+<pre class="Syntax"><span class="func">OnMessage</span> Meldenummer <span class="optional">, Funktion, MaxThreads</span></pre>
 <h3>Parameter</h3>
 <dl>
 
@@ -36,14 +36,12 @@
 
 <p>Beliebig viele Funktionen oder <a href="../objects/Functor.htm">Funktionsobjekte</a> können eine <em>Meldenummer</em> überwachen.</p>
 <p>Beide folgenden Zeilen registrieren ein Funktionsobjekt, das <strong>nach</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
-<pre class="Syntax">
-OnMessage(Meldenummer, Funktion)     <em>; Option 1</em>
-OnMessage(Meldenummer, Funktion, 1)  <em>; Option 2 (MaxThreads = 1)</em>
-</pre>
+<pre class="Syntax"><span class="func">OnMessage</span> Meldenummer, Funktion     <em>; Option 1 - MaxThreads weglassen</em>
+<span class="func">OnMessage</span> Meldenummer, Funktion, 1  <em>; Option 2 - MaxThreads auf 1 setzen</em></pre>
 <p>Folgendes registriert ein Funktionsobjekt, das <strong>vor</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
-<pre class="Syntax">OnMessage(Meldenummer, Funktion, -1)</pre>
+<pre class="Syntax"><span class="func">OnMessage</span> Meldenummer, Funktion, -1</pre>
 <p>Um ein Funktionsobjekt zu deregistrieren, muss 0 bei <em>MaxThreads</em> angegeben werden:</p>
-<pre class="Syntax">OnMessage(Meldenummer, Funktion, 0)</pre>
+<pre class="Syntax"><span class="func">OnMessage</span> Meldenummer, Funktion, 0</pre>
 
 <h3 id="Failure">Misserfolg</h3>
 <p>Es wird eine Ausnahme ausgelöst, wenn <em>Funktion</em>:</p>
@@ -98,7 +96,8 @@ MeldeÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des
 
 Gui := GuiCreate(, "Beispielfenster")
 Gui.Add("Text",, "Klicken Sie irgendwo auf das Fenster.")
-Gui.Add("Edit", "w200 vMeinEdit")
+Gui.Add("Edit", "w200")
+Gui.OnEvent("Close", "Gui_Close")
 Gui.Show()
 OnMessage(0x201, "WM_LBUTTONDOWN")
 
@@ -113,11 +112,11 @@ WM_LBUTTONDOWN(wParam, lParam, msg, hwnd)
         Gui := GuiControl.Gui
         Steuerelement := "`n(im Steuerelement " . GuiControl.ClassNN . ")"
     }
-    ToolTip Sie haben im GUI-Fenster '%Gui.Title%' auf die Koordinaten %X%x%Y% geklickt.%Steuerelement%
+    ToolTip("Sie haben im GUI-Fenster '%Gui.Title%' auf die Koordinaten %X%x%Y% geklickt." Steuerelement)
 }
 
-GuiClose() {
-    ExitApp
+Gui_Close() {
+    ExitApp()
 }</pre>
 
 <pre class="NoIndent" id="shutdown"><em>; Beispiel: Das folgende Skript zeigt, wie man das Abmelden/Herunterfahren des Systems erkennen und unterbrechen kann (es wurde gemeldet, dass dies NICHT in Windows Vista und höher funktioniert).
@@ -189,7 +188,7 @@ Ergebnis := Sende_WM_COPYDATA(ZuSendendeZeichenkette, ZielSkriptTitel)
 if Ergebnis = "ERROR"
     MsgBox SendMessage fehlgeschlagen. Gibt es den folgenden Fenstertitel?:`n%ZielSkriptTitel%
 else if Ergebnis = 0
-    MsgBox("Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde.")
+    MsgBox Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde.
 return
 
 Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; ByRef verbraucht in diesem Fall weniger Speicher.
@@ -205,7 +204,9 @@ Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; By
     Vorher_TitleMatchMode := A_TitleMatchMode
     DetectHiddenWindows On
     SetTitleMatchMode 2
-    SendMessage, 0x4a, 0, &amp;KopieDatenStrukt,, %ZielSkriptTitel%  <em>; 0x4a ist WM_COPYDATA. Muss Send verwenden, nicht Post.</em>
+    TimeoutWert := 4000  <em>; Optional. Zeit in Millisekunden, die Empfänger.ahk zum Antworten hat. Standard ist 5000</em>
+    <em>; Muss Send verwenden, nicht Post.</em>
+    SendMessage 0x4a, 0, &amp;KopieDatenStrukt,, ZielSkriptTitel,,,, TimeoutWert <em>; 0x4a ist WM_COPYDATA.</em>
     DetectHiddenWindows %Vorher_DetectHiddenWindows%  <em>; Stellt die ursprüngliche Einstellung wieder her.</em>
     SetTitleMatchMode %Vorher_TitleMatchMode%         <em>; Hier auch.</em>
     return ErrorLevel  <em>; Gibt SendMessage's Antwort zum Aufrufer zurück.</em>

@@ -36,23 +36,24 @@ KopieVonVar := Var</pre>
 <p>Variablen ohne zugewiesenem Wert enthalten standardmäßig eine leere Zeichenkette. enn der Inhalt einer Variable gelöscht werden soll, weist man der Variable einfach eine leere Zeichenkette zu:</p>
 <pre>MeineVar := ""</pre>
 <p>Es ist außerdem möglich, der Variable indirekt einen Wert zuzuweisen, wenn sie als <em>Ausgabevariable</em> eines Befehls verwendet wird. Zum Beispiel:</p>
-<pre><a href="commands/WinGetTitle.htm">WinGetTitle</a> <strong>Titel</strong>, A</pre>
-<p id="retrieving"><strong>Abrufen von Variablenwerten</strong>: Um den Inhalt einer Variable in eine Zeichenkette einzufügen, umschließe den Variablennamen mit Prozentzeichen. Zum Beispiel:</p>
-<pre><a href="commands/MsgBox.htm">MsgBox</a> Der Wert in der Variable namens Var ist %Var%.
-MsgBox("Der Wert in der Variable namens Var ist %Var%.")
+<pre><a href="commands/MouseGetPos.htm">MouseGetPos</a> <strong>x</strong>, <strong>y</strong></pre>
+<p id="retrieving"><strong>Abrufen von Variablenwerten</strong>: Mit <a href="#concat">Verkettung</a> oder <a href="commands/Format.htm">Format</a> kann der Inhalt einer Variable in eine Zeichenkette eingefügt werden. Zum Beispiel:</p>
+<pre><a href="commands/MsgBox.htm">MsgBox</a> "Der Wert von Var ist " . Var . "."
+MsgBox "Der Wert in der Variable namens Var ist " Var "."
+MsgBox Format("Var hat den Wert {1}.", Var)
 </pre>
-<p>Dagegen werden die Prozentzeichen bei Variablenverweisen innerhalb eines Ausdrucks weggelassen (anders als in einem String in Anführungszeichen). Zum Beispiel:</p>
-<pre>MsgBox("Die Summe von X und Y ist " . (X + Y))  <em>; Mit einem Punkt können zwei Strings verkettet (verbunden) werden.</em>
+<p>Teilausdrücke können auf dieselbe Weise mit Zeichenketten kombiniert werden. Zum Beispiel:</p>
+<pre>MsgBox("Die Summe von X und Y ist " . (X + Y))
 </pre>
 <p><strong>Vergleichen von Variablen</strong>: Bitte ließ dir den folgenden Abschnitt genau durch, wie auf welche Weise Vergleiche durchgeführt werden können.</p>
 <h2 id="Expressions">Ausdrücke</h2>
 <p>Ausdrücke sind nützlich, um eine oder mehrere Operationen an Variablen, literalen Zeichenketten und/oder literalen Zahlen durchzuführen.</p>
 <p>Innerhalb eines Ausdrucks werden Variablennamen nicht mit Prozentzeichen umschlossen (nur bei Variablen innerhalb einer Zeichenkette mit Anführungszeichen, und bei <a href="misc/Arrays.htm#pseudo">Pseudo-Arrays</a> und anderen <a href="#ref">Doppelverweisen</a>). Demzufolge müssen literale Zeichenketten in Anführungszeichen gesetzt werden, wenn sie nicht als Variablen interpretiert werden sollen. Zum Beispiel:</p>
 <pre>if (AktuelleEinstellung &gt; 100 or GefundeneFarbe &lt;&gt; "Blau")
-    MsgBox Die Einstellung ist zu hoch oder die Farbe ist falsch.</pre>
+    MsgBox "Die Einstellung ist zu hoch oder die Farbe ist falsch."</pre>
 <p>Im obigen Beispiel kann man sehen, dass "Blau" in Anführungszeichen gesetzt wurde, weil es als Zeichenkette interpretiert werden soll. Einfache Anführungszeichen (') und doppelte Anführungszeichen (") sind funktionsgemäß identisch, außer dass eine Zeichenkette, die von einfachen Anführungszeichen umschlossen ist, literale doppelte Anführungszeichen enthalten kann, und umgekehrt. Um ein <em>tatsächliches</em> Anführungszeichen innerhalb eines literalen Strings einzufügen, muss das Anführungszeichen entweder mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden oder der String von gegenteiligen Anführungszeichen umschlossen werden. Zum Beispiel:</p>
-<pre>MsgBox % "Sie sagte: <span class="red">`"</span>Ein Apfel pro Tag.<span class="red">`"</span>"
-MsgBox % <span class="red">'</span>Sie sagte: "Ein Apfel pro Tag."<span class="red">'</span></pre>
+<pre>MsgBox "Sie sagte: <span class="red">`"</span>Ein Apfel pro Tag.<span class="red">`"</span>"
+MsgBox <span class="red">'</span>Sie sagte: "Ein Apfel pro Tag."<span class="red">'</span></pre>
 <p><strong>Leere Zeichenketten</strong>: Mithilfe von zwei aufeinanderfolgenden Anführungszeichen kann eine leere Zeichenkette in einem Ausdruck angegeben werden. Zum Beispiel wäre die Anweisung <code>if (MeineVar &lt;&gt; "")</code> wahr, wenn <em>MeineVar</em> nicht leer ist.</p>
 <p><strong>Speichern eines Ausdruckwertes</strong>: Mit dem <a href="commands/SetExpression.htm">Operator ":="</a> kann der Wert bzw. das Ergebnis eines Ausdrucks in eine Variable gespeichert werden. Zum Beispiel:</p>
 <pre>Nettopreis := Preis * (1 - Rabatt/100)</pre>
@@ -68,14 +69,6 @@ Weitersuchen := true</pre>
 <p>Innerhalb von Ausdrücken werden direkt angegebene Zahlen ohne Anführungszeichen wie <code>128</code>, <code>0x7F</code> und <code>1.0</code> in reine Zahlen umgewandelt, bevor das Skript seine Ausführung beginnt. Das heißt, dass die Zahl-Zeichenkette-Konvertierung einen Wert erzeugen würde, der vom originalen Literalwert abweicht. Zum Beispiel:</p>
 <pre>MsgBox(0x7F)  <em>; Zeigt 128</em>
 MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
-<p id="percent-space"><strong>Erzwingen eines Ausdrucks</strong>: Im Normalfall unterstützen Befehlsparameter keine Ausdrücke (außer AusgabeVar-Parameter). Durch Voranstellen eines Prozentzeichens und Leer- oder Tabulatorzeichens kann man die Auswertung eines Ausdrucks erzwingen. Zum Beispiel:</p>
-<pre><a href="commands/FileAppend.htm">FileAppend</a>, <strong>%</strong> MeinArray[i], Meine Datei.txt
-<a href="commands/MsgBox.htm">MsgBox</a> <strong>%</strong> "Die MeineVar-Variable enthält " . MeineVar . "."
-<a href="commands/WinSet.htm#Transparent">WinSetTransparent</a>, <strong>%</strong> X + 100
-<a href="commands/WinSet.htm">Control</a>, Choose, <strong>%</strong> AktuelleAuswahl - 1</pre>
-<p>Außerdem ist es jederzeit möglich, einen Ausdruck in eine Zeichenkette einzufügen, wenn man sie wie folgt mit Prozentzeichen umschließt:</p>
-<pre>MsgBox, Die aktuelle Uhrzeit ist %FormatTime(A_Now, "Time")%.</pre>
-<p>AusgabeVar-Parameter lassen das auch zu, aber das Ergebnis des Ausdrucks sollte der Name (vollständig oder teilweise) einer Variable in Form einer Zeichenkette sein.</p>
 
 <h2 id="Operators">Operatoren innerhalb von Ausdrücken</h2>
 <p>Operatoren mit gleichwertiger Priorität, wie z. B. Multiplizieren (*) und Dividieren, (/), werden von links nach rechts ausgewertet, sofern nicht anders unten angegeben. Ein Operator mit niedrigerer Priorität, wie z. B. Addieren (+), wird <em>erst</em> ausgewertet, wenn ein höherer Operator, wie z. B. Multiplizieren (*), ausgewertet wurde. Zum Beispiel würde 3 + 2 * 2 wie 3 + (2 * 2) ausgewertet werden. Mit runden Klammern können die Prioritäten wie folgt überschrieben werden: (3 + 2) * 2</p>
@@ -86,12 +79,9 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
   <tr id="ref">
     <td style="text-align:center; white-space:nowrap"><strong>%Ausdr%</strong></td>
     <td>
-      <p>Bettet einen Ausdruck (<em>Ausdr</em>) in eine Zeichenkette mit Anführungszeichen ein, oder ruft dynamisch eine Variable via Name ab. Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von Zeichenketten mit Anführungszeichen und runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
-      <p><strong>Innerhalb einer Zeichenkette mit Anführungszeichen</strong> wird <em>Ausdr</em> ausgewertet und das Ergebnis dieser Position innerhalb der Zeichenkette eingefügt. Zum Beispiel bewirken beide Zeilen dasselbe:</p>
-      <pre>MsgBox("Hallo, %A_UserName%!")
-MsgBox, Hallo`, %A_Username%!
-MsgBox("Hallo, " A_UserName "!")</pre>
-      <p><strong>Anderswo</strong> wird dynamisch eine Variable via Name abgerufen. Das <u>Ergebnis</u> des Teilausdrucks muss der komplette oder unvollständige Name einer Variable sein, die abgerufen werden soll. Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und unvollständige <a href="#Variable_names">Variablennamen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
+      <p>Wertet den Teilausdruck <em>Ausdr</em> aus und benutzt seinen Wert als Namen oder teilweisen Namen einer Variable oder Funktionen. Dadurch kann das Skript auf eine Variable oder Funktion verweisen, deren Name nicht direkt im Skript vorkommt, aber durch Auswerten von <em>Ausdr</em> ermittelt werden kann, das üblicherweise eine andere Variable ist. Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
+      <p><code>%Ausdr%()</code> bewirkt einen <a href="Functions.htm#DynCall">dynamischen Funktionsaufruf</a>.</p>
+      <p><code>%Ausdr%</code> ermittelt dynamisch eine Variable via Name. Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der komplette oder teilweise Name einer Variable sein, die abgerufen werden soll. Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und teilweise <a href="#Variable_names">Variablennamen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
       <p>Wenn die Variable noch nicht existieren sollte, wird eine leere Variable erstellt. Eine <a href="commands/Throw.htm#Exception">Ausnahme</a> wird ausgelöst, wenn der Name <a href="#Variable_names">ungültig</a> ist.</p>
       <p>Meistens verwendet man diese Methode bei <a href="misc/Arrays.htm#pseudo">Pseudo-Array</a>-Elementen, z. B:</p>
       <pre>Loop 4
@@ -112,7 +102,7 @@ MsgBox("Hallo, " A_UserName "!")</pre>
     
     --</strong></td>
     <td>
-      <p><strong>Pre- und Post-Inkrement/Dekrement</strong>. Erhöht oder verringert eine Variable um 1. Der Operator kann entweder vor oder hinter dem Variablennamen erfolgen. Erfolgt der Operator <em>vor</em> dem Namen, wird die Operation sofort durchgeführt und ihr Ergebnis für die nächste Operation bereitgestellt. Zum Beispiel würde <code>Var := ++X</code> die X-Variable sofort erhöhen und ihr Wert in <em>Var</em> speichern. Erfolgt der Operator <em>hinter</em> dem Variablennamen, wird die Operation <em>erst nach</em> der nächsten Operation durchgeführt. Zum Beispiel würde <code>Var := X++</code> die X-Variable erst erhöhen, wenn der aktuelle Wert von X in <em>Var</em> gespeichert wird. Aufgrund der Abwärtskompatibilität behandeln diese Operatoren leere Variablen als Null, sofern sie alleine auf einer Zeile vorkommen; zum Beispiel würde sowohl <code>y := 1, ++x</code> als auch <code>MsgBox % ++x</code> ein leeres Ergebnis erzeugen, wenn x leer ist.</p>
+      <p><strong>Pre- und Post-Inkrement/Dekrement</strong>. Erhöht oder verringert eine Variable um 1. Der Operator kann entweder vor oder hinter dem Variablennamen erfolgen. Erfolgt der Operator <em>vor</em> dem Namen, wird die Operation sofort durchgeführt und ihr Ergebnis für die nächste Operation bereitgestellt. Zum Beispiel würde <code>Var := ++X</code> die X-Variable sofort erhöhen und ihr Wert in <em>Var</em> speichern. Erfolgt der Operator <em>hinter</em> dem Variablennamen, wird die Operation <em>erst nach</em> der nächsten Operation durchgeführt. Zum Beispiel würde <code>Var := X++</code> die X-Variable erst erhöhen, wenn der aktuelle Wert von X in <em>Var</em> gespeichert wird. Aufgrund der Abwärtskompatibilität behandeln diese Operatoren leere Variablen als Null, sofern sie alleine auf einer Zeile vorkommen; zum Beispiel würde sowohl <code>y := 1, ++x</code> als auch <code>MsgBox ++x</code> ein leeres Ergebnis erzeugen, wenn x leer ist.</p>
       <p>Wenn die Zielvariable leer ist, wird sie von den Operatoren <strong>++</strong> und <strong>--</strong> als Null behandelt. Dadurch kann eine Zeile wie <code>Var++</code> in einem Hotkey benutzt werden, ohne zuerst <em>Var</em> im <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> initialisieren zu müssen.</p>
     </td>
   </tr>
@@ -134,7 +124,7 @@ MsgBox("Hallo, " A_UserName "!")</pre>
       <p><strong>Logisches NICHT (!)</strong>: Ist der Operand leer oder 0, wird das Ergebnis mit einem logischen NICHT eine 1 sein, also "wahr". Ansonsten ist das Ergebnis eine 0 (falsch). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, aber <strong>!</strong> hat eine höhere Priorität. Aufeinanderfolgende einstellige Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
       <p><strong>Bitweises NICHT (~)</strong>: Invertiert jedes Bit seines Operanden. Ist der Operand eine Gleitkommazahl, wird er vor der Berechnung auf einen Integer gekürzt. Liegt der Operand zwischen 0 und 4294967295 (0xffffffff), wird er als <u>vorzeichenloser</u> 32-Bit-Wert behandelt. Ansonsten wird er als <u>vorzeichenbehafteter</u> 64-Bit-Wert behandelt. Zum Beispiel wäre <code>~0xf0f</code> dann 0xfffff0f0 (4294963440).</p>
       <p id="amp"><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ermittelt die Adresse des Speicherinhalts von <em>MeineVar</em>. Solche Adressen sind üblicherweise bei <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> nützlich. Der Inhalt von <em>MeineVar</em> kann eine Zeichenkette, ein 64-Bit-Integer, eine 64-Bit-Gleitkommazahl oder ein Objekt sein.</p>
-      <p><strong>Dereferenzierung (*)</strong>: <code>*Ausdruck</code> geht davon aus, dass <code>Ausdruck</code> in eine numerische Speicheradresse aufgelöst wird; es ermittelt das Byte auf dieser Adresse als eine Zahl zwischen 0 und 255 (0 wird immer abgerufen, wenn die Adresse 0 ist; jede andere ungültige Adresse sollte man lassen, weil das Skript ansonsten abstürzen könnte). Allerdings ist <a href="Functions.htm#NumGet">NumGet()</a> zum Abrufen von binären Zahlen besser geeignet.</p></td>
+    </td>
   </tr>
   <tr>
     <td style="text-align:center"><strong>*<br>
@@ -179,7 +169,7 @@ MsgBox("Hallo, " A_UserName "!")</pre>
       <p><strong>Verkettung</strong>. Mit dem Punkt-Operator können zwei Elemente zu einer Zeichenkette kombiniert werden (auf beiden Seiten des Punktes muss mindestens ein Leerzeichen vorkommen). Den Punkt kann man weglassen, um das gleiche zu erreichen (außer bei Zweideutigkeiten wie <code>x <strong>-</strong>y</code>, oder wenn das rechtsbefindliche Element ein ++ oder -- davor hat). Wenn man den Punkt weglässt, müssen Elemente, die zusammengeführt werden sollen, mit mindestens einem Leerzeichen voeinander getrennt werden.</p>
       <pre>Var := "Die Farbe ist " <strong>.</strong> GefundeneFarbe  <em>; Explizite Verkettung</em>
 Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
-Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb einer Zeichenkette</em></pre>
+</pre>
       <p>Teilausdrücke kann man auch verketten. Zum Beispiel: <code>Var := "Der Nettopreis ist " <strong>.</strong> Preis * (1 - Rabatt/100)</code>.</p>
       <p>Eine Zeile, die mit einem Punkt (oder beliebig anderen Operator) beginnt, wird automatisch mit der Zeile darüber <a href="Scripts.htm#continuation">verbunden</a>.</p>
       <p>Es wird immer die komplette <a href="Functions.htm#StrLen">Länge</a> von jedem Eingabewert benutzt, sogar wenn binäre Nullen enthalten sind. Zum Beispiel würde <code>Chr(0x2010) Chr(0x0000) Chr(0x4030)</code> die folgende Byte-Kette erzeugen (wegen der UTF-16-LE-Codierung): 0x10, 0x20, 0, 0, 0x30, 0x40. Das Ergebnis hat einen zusätzlichen Null-Terminator (binäre Null), der in der Länge nicht enthalten ist.</p>
@@ -361,7 +351,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
   </tr>
   <tr id="LineNumber">
     <td>A_LineNumber</td>
-    <td><p>Die Nummer der aktuell ausgeführten Zeile innerhalb des Skripts (oder die Zeile aus einer <a href="commands/_Include.htm">#Include-Datei</a>). Diese Zeilennummer kann man auch in <a href="commands/ListLines.htm">ListLines</a> finden; sie kann nützlich zum Melden eines Fehlers sein, z. B.: <code>MsgBox, Eine Zeile konnte nicht in die Log-Datei geschrieben werden (Zeilennummer %A_LineNumber%)</code></p>
+    <td><p>Die Nummer der aktuell ausgeführten Zeile innerhalb des Skripts (oder die Zeile aus einer <a href="commands/_Include.htm">#Include-Datei</a>). Diese Zeilennummer kann man auch in <a href="commands/ListLines.htm">ListLines</a> finden; sie kann nützlich zum Melden eines Fehlers sein, z. B.: <code>MsgBox "Eine Zeile konnte nicht in die Log-Datei geschrieben werden (Zeilennummer " A_LineNumber ")"</code>.</p>
     <p>Die Zeilennummern eines <a href="Scripts.htm#ahk2exe">kompilierten Skripts</a> können sich von den Zeilennummern der unkompilierten Version unterscheiden, weil bei der Kompilierung das Skript und seine <a href="commands/_Include.htm">#Include-Dateien</a> in eine große Skriptdatei umgewandelt werden.</p></td>
   </tr>
   <tr id="LineFile">
@@ -398,7 +388,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
 <table class="info">
   <tr id="YYYY">
     <td>A_YYYY</td>
-    <td>Das aktuelle 4-stellige Jahr (z. B. 2004). Synonym für A_Year. Hinweis: Wenn der Zeit- oder Datumswert in einem Format angezeigt werden soll, das deinem Gebietsschema oder deiner Sprache entspricht, dann verwende <code><a href="commands/FormatTime.htm">FormatTime</a>, AusgabeVar</code> (Zeit und langes Datum) oder <code><a href="commands/FormatTime.htm">FormatTime</a>, AusgabeVar,, LongDate</code> (ermittelt ein Datum im langen Format).</td>
+    <td>Das aktuelle 4-stellige Jahr (z. B. 2004). Synonym für A_Year. Hinweis: Wenn der Zeit- oder Datumswert in einem Format angezeigt werden soll, das deinem Gebietsschema oder deiner Sprache entspricht, dann verwende <code><a href="commands/FormatTime.htm">FormatTime</a>()</code> (Zeit und langes Datum) oder <code><a href="commands/FormatTime.htm">FormatTime</a>(, "LongDate")</code> (ermittelt ein Datum im langen Format).</td>
   </tr>
   <tr id="MM">
     <td>A_MM</td>
@@ -430,7 +420,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
   </tr>
   <tr id="YDay">
     <td>A_YDay</td>
-    <td>Der aktuelle Tag im Jahr (1-366). Der Wert wird nicht mit Nullen aufgefüllt, z. B. wird 9 abgerufen, nicht 009. Ein Wert kann wie folgt mit Nullen aufgefüllt werden: <code><a href="commands/FormatTime.htm">FormatTime</a>, AusgabeVar, , YDay0</code>.</td>
+    <td>Der aktuelle Tag im Jahr (1-366). Der Wert wird nicht mit Nullen aufgefüllt, z. B. wird 9 abgerufen, nicht 009. Ein Wert kann wie folgt mit Nullen aufgefüllt werden: <code><a href="commands/FormatTime.htm">FormatTime</a>(, "YDay0")</code>.</td>
   </tr>
   <tr id="YWeek">
     <td>A_YWeek</td>
@@ -438,7 +428,7 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
   </tr>
   <tr id="Hour">
     <td>A_Hour</td>
-    <td>Die aktuelle zweistellige Stunde (00-23) im 24-Stunden-Format. Das folgende Beispiel zeigt, wie die Zeit im 12-Stunden-Format sowie die Indikatoren AM bzw. PM abgerufen werden können: <code><a href="commands/FormatTime.htm">FormatTime</a>, AusgabeVar, , h:mm:ss tt</code>.</td>
+    <td>Die aktuelle zweistellige Stunde (00-23) im 24-Stunden-Format. Das folgende Beispiel zeigt, wie die Zeit im 12-Stunden-Format sowie die Indikatoren AM bzw. PM abgerufen werden können: <code><a href="commands/FormatTime.htm">FormatTime</a>(, "h:mm:ss tt")</code></td>
   </tr>
   <tr id="Min">
     <td>A_Min</td>
@@ -464,9 +454,9 @@ Var := "Die Farbe ist %GefundeneFarbe%"   <em>; Variablensubstitution innerhalb 
     <td>A_TickCount</td>
     <td><p>Ruft die Anzahl der Millisekunden ab, die seit dem Systemstart verstrichen sind. Die verstrichene Zeit kann man messen, indem man A_TickCount in eine Variable speichert und diese Variable dann von dem neuesten A_TickCount-Wert subtrahiert. Zum Beispiel:</p>
         <pre>Startzeit := A_TickCount
-Sleep, 1000
+Sleep 1000
 Laufzeit := A_TickCount - Startzeit
-MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
+MsgBox Laufzeit " Millisekunden sind verstrichen."</pre>
 <p>Schaue dir <a href="commands/DllCall.htm#QPC">QueryPerformanceCounter()</a> an, wenn du eine höhere Genauigkeit als die 10 ms von A_TickCount benötigst.</p>
 </td>
   </tr>
@@ -483,7 +473,7 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
   </tr>
   <tr id="IsCritical">
     <td>A_IsCritical</td>
-    <td>Enthält eine 0, wenn <a href="commands/Critical.htm">Critical</a> im <a href="misc/Threads.htm">aktuellen Thread</a> ausgeschalten ist. Ansonsten enthält sie ein Integer größer als Null - also die verwendete <a href="commands/Critical.htm#Interval">Meldungsüberprüfungsfrequenz</a> von Critical. Da <code>Critical 0</code> den kritischen Status deaktiviert, kann der aktuelle Status von Critical mithilfe von <code>Alt_IsCritical := A_IsCritical</code> gespeichert und später mit <code>Critical %Alt_IsCritical%</code> wiederhergestellt werden.</td>
+    <td>Enthält eine 0, wenn <a href="commands/Critical.htm">Critical</a> im <a href="misc/Threads.htm">aktuellen Thread</a> ausgeschalten ist. Ansonsten enthält sie ein Integer größer als Null - also die verwendete <a href="commands/Critical.htm#Interval">Meldungsüberprüfungsfrequenz</a> von Critical. Der aktuelle Status von Critical kann mithilfe von <code>Alt_IsCritical := A_IsCritical</code> gespeichert und später mit <code>A_IsCritical := Alt_IsCritical</code> wiederhergestellt werden.</td>
   </tr>
   <tr id="TitleMatchMode">
     <td>A_TitleMatchMode</td>
@@ -573,11 +563,11 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
   </tr>
   <tr id="IconTip">
     <td>A_IconTip</td>
-    <td>Enthält den Text des ToolTips, den man via <code><a href="commands/Menu.htm">Menu</a>, Tray, Tip</code> für das Infobereichssymbol definiert hat. Ansonsten ist diese Variable leer.</td>
+    <td>Enthält den Text des ToolTips, den man via <code><a href="commands/Menu.htm">Menu</a> "Tray", "Tip"</code> für das Infobereichssymbol definiert hat. Ansonsten ist diese Variable leer.</td>
   </tr>
   <tr id="IconFile">
     <td>A_IconFile</td>
-    <td>Enthält den vollständigen Pfad der Symboldatei, die man via <code><a href="commands/Menu.htm">Menu</a>, Tray, Icon</code> für das Infobereichssymbol definiert hat. Ansonsten ist diese Variable leer. <strong>Bekannte Einschränkung:</strong> Dieser Pfad kann falsch sein, wenn man einen relativen Pfad einer DLL-Systemdatei übergeben hat; zum Beispiel <code>Menu, Tray, Icon, user32.dll, 2</code>.</td>
+    <td>Enthält den vollständigen Pfad der Symboldatei, die man via <code><a href="commands/Menu.htm">Menu</a> "Tray", "Icon"</code> für das Infobereichssymbol definiert hat. Ansonsten ist diese Variable leer. <strong>Bekannte Einschränkung:</strong> Dieser Pfad kann falsch sein, wenn man einen relativen Pfad einer DLL-Systemdatei übergeben hat; zum Beispiel <code>Menu "Tray", "Icon", "user32.dll", 2</code>.</td>
   </tr>
   <tr id="IconNumber">
     <td>A_IconNumber</td>
@@ -590,7 +580,7 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
     <td>A_TimeIdle</td>
     <td>Ruft die Anzahl der Millisekunden ab, die seit der letzten Eingabe (Tastatur, Maus usw.) verstrichen sind. Diese Variable ist nützlich, um herauszufinden, ob der Benutzer abwesend ist. Physische Benutzereingaben sowie künstlich erzeugte Eingaben von <strong>beliebigen</strong> Programmen oder Skripten (z. B. der <a href="commands/Send.htm">Send</a>- oder <a href="commands/MouseMove.htm">MouseMove</a>-Befehl) werden diesen Wert wieder auf 0 setzen. Dieser Wert erhöht sich in der Regel um 10, deshalb sollte man verhindern zu überprüfen, ob er genau mit einem anderen Wert übereinstimmt. Überprüfe stattdessen, ob dieser Wert größer oder kleiner als ein anderer Wert ist. Zum Beispiel:
 <pre>if A_TimeIdle &gt; 600000
-    MsgBox, Die letzte Eingabeaktivität erfolgte vor ca. 10 Minuten.</pre></td>
+    MsgBox "Die letzte Eingabeaktivität erfolgte vor ca. 10 Minuten."</pre></td>
   </tr>
   <tr id="TimeIdlePhysical">
     <td>A_TimeIdlePhysical</td>
@@ -749,8 +739,8 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
       <p>Mit <a href="commands/SysGet.htm">SysGet</a> können die Abmessungen von anderen Anzeigegeräten abgerufen werden.</p>
       <p>Das folgende Beispiel zeigt, wie die Breite und Höhe des gesamten Desktops ermittelt werden kann (selbst wenn er sich über mehrere Anzeigegeräte erstrecken sollte):</p>
 <pre>
-<a href="commands/SysGet.htm">SysGet</a>, VirtuelleBreite, 78
-<a href="commands/SysGet.htm">SysGet</a>, VirtuelleHöhe, 79
+VirtuelleBreite := <a href="commands/SysGet.htm">SysGet</a>(78)
+VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
 </pre>
     <p>Mit <a href="commands/SysGet.htm">SysGet</a> kann man auch den Arbeitsbereich eines Anzeigegeräts ermitteln. Dieser Bereich kann kleiner sein als der Gesamtbereich des Anzeigegeräts, weil die Abmessungen von der Taskleiste und anderen registrierten Desktopsymbolleisten abgezogen werden.</p></td>
   </tr>
@@ -776,12 +766,10 @@ MsgBox,  %Laufzeit% Millisekunden sind verstrichen.</pre>
     <td><p>Die aktuellen X- und Y-Koordinaten der Texteinfügemarke. Die Koordinaten beziehen sich auf das aktive Fenster. <a href="commands/CoordMode.htm">CoordMode</a> kann verwendet werden, um den ganzen Bildschirm einzubeziehen. Wenn es kein aktives Fenster gibt oder wenn die Position der Einfügemarke nicht ermittelt werden kann, sind diese Variablen leer.</p>
       <p>Das folgende Skript zeigt dir in einem sich selbst aktualisierenden ToolTip die Position der Einfügemarke an, während du die Einfügemarke verschiebst. Beachte, dass einige Fenster (z. B. bestimmte Versionen von MS Word) immer die gleiche Position der Einfügemarke melden, egal auf welcher Position sie wirklich ist.</p>
 <pre>
-SetTimer, BeobachteEinfügemarke, 100
-return
-
-BeobachteEinfügemarke:
-  ToolTip, X%A_CaretX% Y%A_CaretY%, A_CaretX, A_CaretY - 20
-return
+SetTimer BeobachteEinfügemarke, 100
+BeobachteEinfügemarke() {
+    ToolTip, "X" A_CaretX " Y" A_CaretY, A_CaretX, A_CaretY - 20
+}
 </pre>
     </td>
   </tr>
