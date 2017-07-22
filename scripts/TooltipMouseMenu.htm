@@ -41,10 +41,10 @@ MenuItems := "Editor/Rechner/Bereich 3/Bereich 4/Bereich 5"
 ;______Hier dynamische Menüpunkte___________</em>
 
 <em>; Syntax:
-;     Dyn# = Menüpunkt|Fenstertitel</em>
+;     Dyn[#] := "Menüpunkt|Fenstertitel"</em>
 
-Dyn1 := "MS Word|- Microsoft Word"
-Dyn2 := "Editor II|- Editor"
+Dyn := [ "MS Word|- Microsoft Word"
+       , "Editor II|- Editor" ]
 
 <em>;___________________________________________</em>
 
@@ -57,32 +57,32 @@ Exit
 <em>; Hier können die Menübereiche erstellt oder bearbeitet werden.</em>
 
 Editor:
-Run, Notepad.exe
-Return
+Run "Notepad.exe"
+return
 
 Rechner:
-Run, Calc
-Return
+Run "Calc"
+return
 
 Bereich3:
-MsgBox, 3 ausgewählt
-Return
+MsgBox "3 ausgewählt"
+return
 
 Bereich4:
-MsgBox, 4 ausgewählt
-Return
+MsgBox "4 ausgewählt"
+return
 
 Bereich5:
-MsgBox, 5 ausgewählt
-Return
+MsgBox "5 ausgewählt"
+return
 
 MSWord:
-msgbox, Das ist ein dynamischer Eintrag (Word)
-Return
+MsgBox "Das ist ein dynamischer Eintrag (Word)"
+return
 
 EditorII:
-msgbox, Das ist ein dynamischer Eintrag (Editor)
-Return
+MsgBox "Das ist ein dynamischer Eintrag (Editor)"
+return
 
 
 <em>;___________________________________________
@@ -93,82 +93,59 @@ HowLong := 0
 Loop
 {
     HowLong++
-    Sleep, 10
+    Sleep 10
     if !GetKeyState("MButton", "P")
         Break
 }
-if HowLong &lt; UMDelay, return
+if HowLong &lt; UMDelay
+    return
 
 
-<em>; Dynamisches Menü vorbereiten</em>
+<em>; Dynamisches Menü vorbereiten:</em>
 DynMenu := ""
-Loop
+For i, item in Dyn
 {
-    if Dyn%a_index% = "", break
-
-    ppos := InStr(dyn%a_index%, "|")
-    item := SubStr(dyn%a_index%, 1, ppos)
-    ppos += 2
-    win := SubStr(dyn%a_index%, ppos, 1000)
-
-    if WinActive(win)
-        DynMenu .= "/" item
+    mp := StrSplit(item, "|")
+    if WinActive(mp[2])
+        DynMenu .= "/" mp[1]
 }
 
 
-<em>; Sortiertes Hauptmenü mit dynamisches Menü verbinden</em>
-TempMenu := Sort(MenuItems, "D/") DynMenu
-
-
-<em>; Frühere Einträge entfernen</em>
-Loop
-{
-    if MenuItem%a_index% = "", break
-    MenuItem%a_index% := ""
-}
-
-<em>; Neue Einträge erstellen</em>
-Loop, Parse, %TempMenu%, /
-{
-    MenuItem%a_index% := a_loopfield
-}
+<em>; Sortiertes Hauptmenü mit dynamisches Menü verbinden, und frühere Einträge entfernen und neue Einträge erstellen:</em>
+MenuItem := StrSplit(Sort(MenuItems, "D/") DynMenu, "/")
 
 <em>; Das Menü erstellen</em>
 Menu := MenuTitle
-Loop
-{
-    if MenuItem%a_index% = "", break
-    numItems++
-    MenuText := MenuItem%a_index%
-    Menu .= "`n" MenuText
-}
+For i, item in MenuItem
+    Menu .= "`n" item
 
-MouseGetPos, mX, mY
-HotKey, ~LButton, MenuClick
-HotKey, ~LButton, On
-ToolTip, %Menu%, %mX%, %mY%
-WinActivate, %MenuTitle%
-Return
+MouseGetPos mX, mY
+HotKey "~LButton", "MenuClick"
+HotKey "~LButton", "On"
+ToolTip Menu, mX, mY
+WinActivate MenuTitle
+return
 
 
 MenuClick:
-HotKey, ~LButton, Off
+HotKey "~LButton", "Off"
 if !WinActive(MenuTitle)
 {
     ToolTip
-    Return
+    return
 }
 
-MouseGetPos, mX, mY
+MouseGetPos mX, mY
 ToolTip
-mY -= 3        <em>; Platz, bevor die erste Zeile startet</em>
-mY /= 13    <em>; Benötigter Platz jeder Zeile</em>
-if mY &lt; 1, return
-if mY &gt; numItems, return
-TargetSection := MenuItem%Round(mY)%
-StrReplace, TargetSection, %TargetSection%, %a_space%
-Gosub, %TargetSection%
-Return
+mY -= 3   &lt;e16&gt;; Platz, bevor die erste Zeile startet.&lt;/e16&gt;
+mY /= 13  &lt;e17&gt;; Benötigter Platz jeder Zeile.&lt;/e17&gt;
+if mY &lt; 1
+    return
+if mY &gt; MenuItem.Length()
+    return
+TargetSection := MenuItem[Round(mY)]
+Gosub(StrReplace(TargetSection, "`s"))
+return
 </pre>
 </body>
 </html>

@@ -21,7 +21,7 @@
 <dl>
 
   <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der der Rückgabewert des Befehls gespeichert werden soll. Wenn man diesen Befehl als Funktion aufruft, wird <em>AusgabeVar</em> den Rückgabewert repräsentieren.</p></dd>
+  <dd><p>Name der Variable, in der der Rückgabewert der Funktion gespeichert werden soll.</p></dd>
 
   <dt>Fenstertitel</dt>
   <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
@@ -55,69 +55,77 @@
 <p id="ControlsHwnd"><strong>WinGetControlsHwnd</strong>: Das gleiche wie oben, außer dass das <a href="Control.htm#GetHwnd">Fenster-Handle (HWND)</a> von jedem Steuerelement abgerufen wird, anstatt dessen ClassNN.</p>
 <p id="Transparent"><strong>WinGetTransparent</strong>: Ermittelt die Transparenzstärke eines Fensters (siehe <a href="WinSet.htm">WinSet</a>, wie es transparent gemacht werden kann). <em>AusgabeVar</em> wird leer gemacht, wenn: 1) das Betriebssystem älter als Windows XP ist; 2) keine passenden Fenster gefunden werden; 3) das Fenster nicht transparent ist; oder 4) andere Bedingungen auftreten (durch das Verhalten des Betriebssystems), z. B. wenn das transparent gemachte Fenster minimiert, wiederhergestellt und/oder skaliert wurde. Ansonsten wird eine Zahl zwischen 0 und 255 gespeichert - 0 wäre ein durchsichtiges Fenster und 255 ein undurchsichtiges Fenster. Zum Beispiel:</p>
 <pre>MouseGetPos,,, MausFenster
-WinGetTransparent, Transparent, ahk_id %MausFenster%  <em>; Transparenz eines Fensters unterhalb des Mauszeigers.</em></pre>
+Transparent := WinGetTransparent("ahk_id " MausFenster)  <em>; Transparenz eines Fensters unterhalb des Mauszeigers.</em></pre>
 <p id="TransColor"><strong>WinGetTransColor</strong>: Ermittelt die im Fenster als transparent markierte Farbe (siehe <a href="WinSet.htm#TransColor">WinSet</a>, wie eine transparente Farbe gesetzt werden kann). <em>AusgabeVar</em> wird leer gemacht, wenn: 1) das Betriebssystem älter als Windows XP ist; 2) keine passenden Fenster gefunden werden; 3) das Fenster keine transparente Farbe hat; oder 4) andere Bedingungen auftreten (durch das Verhalten des Betriebssystems), z. B. wenn das transparent gemachte Fenster minimiert, wiederhergestellt und/oder skaliert wurde. Ansonsten wird eine 6-stellige hexadezimale RGB-Farbe gespeichert (z. B. 0x00CC99). Zum Beispiel:</p>
 <pre>MouseGetPos,,, MausFenster
-WinGetTransColor, TransFarbe, ahk_id %MausFenster%  <em>; Transparente Farbe eines Fensters unterhalb des Mauszeigers.</em></pre>
+TransFarbe := WinGetTransColor("ahk_id " MausFenster)  <em>; Transparente Farbe eines Fensters unterhalb des Mauszeigers.</em></pre>
 <p id="Style"><strong>WinGetStyle</strong> oder <strong>WinGetExStyle</strong>: Ermittelt einen Integer, der den Style oder erweiterten Style eines Fensters repräsentiert. Wenn keine passenden Fenster gefunden werden, wird <em>AusgabeVar</em> leer gemacht. Das folgende Beispiel stellt fest, ob ein Fenster den WS_DISABLED-Style hat:</p>
-<pre>WinGetStyle, Style, Mein Fenstertitel
-if (Style &amp; 0x8000000)  <em>; 0x8000000 ist WS_DISABLED.</em>
+<pre>if (WinGetStyle("Mein Fenstertitel") &amp; 0x8000000)  <em>; 0x8000000 ist WS_DISABLED.</em>
   ... das Fenster ist deaktiviert, entsprechende Maßnahme werden durchgeführt.</pre>
 <p>Das nächste Beispiel stellt fest, ob ein Fenster den WS_EX_TOPMOST-Style hat (immer im Vordergund):</p>
-<pre>WinGetExStyle, ExStyle, Mein Fenstertitel
-if (ExStyle &amp; 0x8)  <em>; 0x8 ist WS_EX_TOPMOST.</em>
+<pre>if (WinGetExStyle("Mein Fenstertitel") &amp; 0x8)  <em>; 0x8 ist WS_EX_TOPMOST.</em>
   ... das Fenster ist immer im Vordergrund, entsprechende Maßnahme werden durchgeführt.</pre>
 <p>Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles.</p>
 <h3>Bemerkungen</h3>
 <p>Die ID-Nummer eines Fensters ist nur gültig, während es existiert. Wenn man also eine Anwendung neustarten würde, bekämen all ihre Fenster neue ID-Nummern.</p>
-<p>Alle ID-Nummern, die von diesen Befehlen abgerufen werden, sind numerisch (ohne den Präfix "ahk_id").</p>
+<p>Alle ID-Nummern, die mit diese Funktionen abgerufen werden, sind numerisch (ohne den Präfix "ahk_id").</p>
 <p>Die ID des Fensters, das sich unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 <h3>Siehe auch</h3>
 <p><a href="WinGetClass.htm">WinGetClass</a>, <a href="Process.htm">Process</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="MouseGetPos.htm">MouseGetPos</a>, <a href="Control.htm">Control-Funktionen</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="GroupAdd.htm">GroupAdd</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel #1: Maximiert das aktive Fenster und meldet dessen eindeutige ID:</em>
-WinGetID, AktiveID, A
-WinMaximize, ahk_id %AktivID%
-MsgBox, Die ID des aktiven Fensters ist "%AktiveID%".
+AktiveID := WinGetID("A")
+WinMaximize "ahk_id " AktiveID
+MsgBox "Die ID des aktiven Fensters ist " AktiveID
 
 <em>; Beispiel #2: Zeigt Infos über jedes Fenster im Betriebssystem an:</em>
-WinGetList, id,,, Program Manager
-Loop, % id.Length
+id := WinGetList(,, "Program Manager")
+Loop id.Length()
 {
     diese_ID := id[A_Index]
-    WinActivate, ahk_id %diese_ID%
-    WinGetClass, diese_Klasse, ahk_id %diese_ID%
-    WinGetTitle, dieser_Titel, ahk_id %diese_ID%
-    Result := MsgBox("Gehe alle Fenster durch`n%a_index% von %id%`nahk_id %diese_ID%`nahk_class %diese_Klasse%`n%dieser_Titel%`n`nWeiter?",, 4)
-    if Result = "No", break
+    WinActivate "ahk_id " diese_ID
+    diese_Klasse := WinGetClass("ahk_id " diese_ID)
+    dieser_Titel := WinGetTitle("ahk_id " diese_ID)
+    Result := MsgBox(Format("
+    (
+      Gehe alle Fenster durch
+      {1} von {2}
+      ahk_id {3}
+      ahk_class {4}
+      {5}
+  
+      Weiter?
+    )", A_Index, id.Length(), diese_ID, diese_Klasse, dieser_Titel),, 4)
+    if Result = "No"
+        break
 }
 
 <em>; Beispiel #3: Zeigt alle Steuerelementnamen eines Fensters an:</em>
 for n, ctrl in WinGetControls("A")
 {
-    Result := MsgBox("Steuerelement #%n% ist "%ctrl%". Weiter?",, 4)
+    Result := MsgBox("Steuerelement #" n " ist '" ctrl "'. Weiter?",, 4)
     if Result = "No"
         break
 }
 
 <em>; Beispiel #4: Zeigt in Echtzeit eine Steuerelementliste des aktiven Fensters an:</em>
-SetTimer, überwacheAktivesFenster, 200
+SetTimer "überwacheAktivesFenster", 200
 
 überwacheAktivesFenster() {
     Steuerelementliste := ""
-    WinGetControls, Steuerelemente, A
+    Steuerelemente := WinGetControls("A")
     if !Steuerelemente {
-        ToolTip, Kein sichtbares Fenster aktiv.
+        ToolTip "Kein sichtbares Fenster aktiv."
         return
     }
     if !Steuerelemente.Length() {
-        ToolTip, Das aktive Fenster hat keine Steuerelemente.
+        ToolTip "Das aktive Fenster hat keine Steuerelemente."
         return
     }
-    Loop % Steuerelemente.Length()
+    Loop Steuerelemente.Length()
         Steuerelementliste .= Steuerelemente[A_Index] . "`n"
-    ToolTip, %Steuerelementliste%
+    ToolTip Steuerelementliste
 }</pre>
 
 </body>

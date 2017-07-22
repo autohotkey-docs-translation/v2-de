@@ -20,14 +20,13 @@
 <p>Um einen Hotstring zu definieren, muss die auslösende Abkürzung wie folgt von Doppelpunkt-Paaren umschlossen werden:</p>
 <pre>::bzw::beziehungsweise</pre>
 <p>Die Abkürzung bzw wird automatisch mit "beziehungsweise" ersetzt, wann immer du sie eingibst (standardmäßig aber erst, wenn danach ein <a href="#EndChars">Endungszeichen</a> erfolgt ist, wie z. B. ein Leerzeichen, Punkt oder Enter).</p>
-<p id="auto">Das "beziehungsweise"-Beispiel oben ist ein sogenannter automatisch-ersetzender Hotstring, weil der eingegebene Text automatisch gelöscht und mit der angegebenen Zeichenkette nach dem zweiten Doppelpunkt-Paar ersetzt wird. Desweiteren kann ein Hotstring auch zum Durchführen einer benutzerdefinierten Aktion verwendet werden, wie es in den folgenden Beispielen gezeigt wird. Beachte, dass die Befehle <u>unterhalb</u> des Hotstrings erscheinen müssen:</p>
+<p id="auto">Das "beziehungsweise"-Beispiel oben ist ein sogenannter automatisch-ersetzender Hotstring, weil der eingegebene Text automatisch gelöscht und mit der angegebenen Zeichenkette nach dem zweiten Doppelpunkt-Paar ersetzt wird. Desweiteren kann ein Hotstring auch zum Durchführen einer benutzerdefinierten Aktion verwendet werden, wie es in den folgenden Beispielen gezeigt wird. Beachte, dass die Funktionen <u>unterhalb</u> des Hotstrings erscheinen müssen:</p>
 <pre>::bzw::
-MsgBox Du hast "bzw" eingegeben.
+MsgBox 'Du hast "bzw" eingegeben.'
 return
 
 :*:]d::  <em>; Dieser Hotstring ersetzt "]d" mit dem aktuellen Datum- und Zeitwert.</em>
-<a href="commands/FormatTime.htm">FormatTime</a>, AktuellerZeitstempel,, d.M.yyyy HH:mm  <em>; z. B. 21.6.2011 15:10</em>
-SendInput %AktuellerZeitstempel%
+SendInput <a href="commands/FormatTime.htm">FormatTime</a>(, "d.M.yyyy HH:mm")  <em>; z. B. 21.6.2011 15:10</em>
 return</pre>
 <p>Die beiden Beispiele oben sind keine automatisch-ersetzende Hotstrings. Aber auch hier wird die eingegebene Abkürzung standardmäßig gelöscht. Dies erfolgt durch wiederholendes Löschen des letzten Zeichens, das mit der <a href="#b0">b0-Option</a> deaktiviert werden kann.</p>
 <h2 id="EndChars">Endungszeichen</h2>
@@ -53,7 +52,7 @@ return</pre>
 <ul>
   <li>SI (SendInput): Die Tastenverzögerung wird ignoriert, da eine Verzögerung in diesem Modus nicht möglich ist. Es sei denn, SendInput ist <a href="commands/Send.htm#SendInputUnavail">nicht verfügbar</a> - in diesem Fall greifen die Hotstrings auf den unten genannten SendPlay-Modus zurück (der die Tastenverzögerung berücksichtigt).</li>
   <li>SP (SendPlay): Standardmäßig gilt eine Verzögerungsdauer von Null, das bei SendPlay das gleiche ist wie -1 (keine Verzögerung). In diesem Modus ist die Verzögerung eher die <a href="commands/SetKeyDelay.htm#dur">Druckdauer</a>, als die Verzögerung zwischen den Tastatureingaben.</li>
-  <li>SE (SendEvent): Standardmäßig gilt eine Verzögerungsdauer von Null. Für die meisten Zwecke ist eine Null empfohlen, da sie schnell ist, aber immer noch gut mit anderen Prozessen kooperiert (aufgrund der internen Durchführung von <a href="commands/Sleep.htm">Sleep 0</a>). Mit k-1, das die Verzögerung komplett deaktiviert, kann das Automatische Ersetzen beschleunigt werden, wenn eine starke CPU-Belastung häufig auftreten sollte. Bei -1 wird die Prozess-Priorität des Skripts eine wichtige Rolle dabei spielen, wie schnell Tastatureingaben gesendet werden können. Mit <code><a href="commands/Process.htm#Priority">ProcessSetPriority</a>, High</code> kann die Priorität eines Skripts erhöht werden.</li>
+  <li>SE (SendEvent): Standardmäßig gilt eine Verzögerungsdauer von Null. Für die meisten Zwecke ist eine Null empfohlen, da sie schnell ist, aber immer noch gut mit anderen Prozessen kooperiert (aufgrund der internen Durchführung von <a href="commands/Sleep.htm">Sleep 0</a>). Mit k-1, das die Verzögerung komplett deaktiviert, kann das Automatische Ersetzen beschleunigt werden, wenn eine starke CPU-Belastung häufig auftreten sollte. Bei -1 wird die Prozess-Priorität des Skripts eine wichtige Rolle dabei spielen, wie schnell Tastatureingaben gesendet werden können. Mit <code><a href="commands/Process.htm#Priority">ProcessSetPriority</a> "High"</code> kann die Priorität eines Skripts erhöht werden.</li>
 </ul>
 <p><strong>O</strong>: Lässt das Endungszeichen im Ausgabetext weg, der mit einem <a href="#auto">automatisch-ersetzenden Hotstring</a> erzeugt wurde. Diese Option kann nützlich sein, wenn du einen Hotstring dazu bringen willst, weiterhin ein Endungszeichen zu benötigen, um eindeutig zu bleiben, aber nicht willst, dass dieses Endungszeichen auf dem Bildschirm angezeigt werden soll. Wenn <code>:o:ar::Aristokrat</code> beispielsweise ein Hotstring ist, würde die Eingabe von "ar", gefolgt von einem Leerzeichen, "Aristokrat" ohne nachfolgendem Leerzeichen erzeugen. Dadurch hat man die Möglichkeit, das Wort in den Plural oder Kasus zu setzen, ohne dabei die Rücktaste verwenden zu müssen. Mit <strong>O0</strong> (Buchstabe O mit einer Null danach) kann diese Option wieder deaktiviert werden.</p>
 <p><strong>Pn</strong>: Die <a href="misc/Threads.htm">Priorität</a> des Hotstrings (z. B. P1). Diese selten verwendete Option funktioniert nicht bei <a href="#auto">automatisch-ersetzenden Hotstrings</a>.</p>
@@ -67,7 +66,7 @@ return</pre>
 <p>Werden keine der oben genannten Optionen verwendet, gilt standardmäßig SendInput. Beachte aber, dass, im Gegensatz zur SI-Option, SendEvent statt SendPlay verwendet wird, sobald SendInput nicht zur Verfügung steht.</p>
 <p id="z"><strong>Z</strong>: Diese selten verwendete Option setzt die Hotstring-Erkennung wieder zurück, wann immer der Hotstring ausgelöst wird. Das heißt, dass das Skript auf einen völlig neuen Hotstring wartet und alles, was du zuvor eingegeben hast, ignoriert. Dieser Sachverhalt kann verhindern, dass Hotstrings unbeabsichtigt ausgelöst werden. Dazu wird folgendes Beispiel in Betracht gezogen:</p>
 <pre>:b0*?:11::
-SendInput xx
+SendInput "xx"
 return</pre>
 <p>Da die Z-Option fehlt, würde das Eingeben von 111 (drei aufeinanderfolgenden Einsen) den Hotstring zweimal auslösen, weil die mittlere 1 das <em>letzte</em> Zeichen vom ersten Auslösen ist, aber auch das <em>erste</em> Zeichen vom zweiten Auslösen. Wenn du den Buchstaben Z vor b0 einfügst, müsstest du vier statt drei Einsen eingeben, um den Hotstring zweimal auslösen zu können. Mit <strong>Z0</strong> kann diese Option wieder deaktiviert werden.</p>
 <h2 id="continuation">Lange Ersatztexte</h2>
@@ -92,26 +91,26 @@ Siehe <a href="Scripts.htm#continuation">Fortsetzungsbereich</a>, wie diese Stan
 <p>Download: <a href="http://www.autohotkey.com/download/AutoCorrect.ahk">AutoCorrect.ahk</a> (127 KB)</p>
 <p>Autor: <a href="http://www.biancolo.com/blog/autocorrect/">Jim Biancolo</a> und <a href="http://en.wikipedia.org/wiki/Wikipedia:Lists_of_common_misspellings">Wikipedia's Lists of Common Misspellings</a></p>
 <h2>Bemerkungen</h2>
-<p>Variablenverweise wie <code>%MeineVar%</code>, die innerhalb des Ersatztextes vorkommen, werden zurzeit nicht unterstützt. Man kann dies umgehen, wenn man Hotstrings nicht <a href="#auto">automatisch-ersetzend</a> macht. Verwende stattdessen den <a href="commands/Send.htm#SendInput">SendInput</a>-Befehl unterhalb der Abkürzung, gefolgt von einer Zeile, die nur das Wort Return enthält.</p>
+<p>Aktuell unterstützt der Ersatztext keine <a href="Variables.htm#Expressions">Ausdrücke</a>. Man kann dies umgehen, wenn man Hotstrings nicht <a href="#auto">automatisch-ersetzend</a> macht. Verwende stattdessen die <a href="commands/Send.htm#SendInput">SendInput</a>-Funktion unterhalb der Abkürzung, gefolgt von einer Zeile, die nur das Wort Return enthält.</p>
 <p>Um ein zusätzliches Leer- oder Tabulatorzeichen nach dem Ersatztext zu senden, füge es am Ende des Ersatztextes ein und mache das letzte Zeichen zu einem umgekehrten Häkchen (`). Zum Beispiel:</p>
 <pre>:*:bzw::beziehungsweise `</pre>
 <p id="NoMouse">Ein Klick auf die linke oder rechte Maustaste wird die Hotstring-Erkennung zurücksetzen. Das heißt, dass das Skript auf einen völlig neuen Hotstring warten und alles, was du zuvor eingegeben hast, ignorieren wird (ist dies unerwünscht, verwende die Zeile <code><a href="commands/_Hotstring.htm">#Hotstring NoMouse</a></code> irgendwo im Skript). Dieses "Zurücksetzen bei einem Mausklick" ist standardmäßig so festgelegt, weil jeder Klick üblicherweise die Texteinfügemarke (Caret) verschiebt oder den Tastaturfokus auf ein neues Steuerelement/Feld setzt. In solchen Fällen ist es generell wünschenswert: 1) einen Hotstring auslösen zu können, auch ohne <a href="#Question">Fragezeichen-Option</a>; 2) das Auslösen zu verhindern, wenn du nach einem Mausklick etwas eingibst, das zufällig eine gültige Abkürzung aus der vorherigen Eingabe formt.</p>
-<p>Die Built-in-Variable <strong>A_EndChar</strong> enthält das Endungszeichen, das du zuletzt eingegeben hast, um einen nicht-automatisch-ersetzenden Hotstring auszulösen. Wenn ein Endungszeichen nicht benötigt wurde (wegen der <a href="#Asterisk">*-Option</a>), wird sie leer sein. A_EndChar ist nützlich beim Erstellen von Hotstrings, die den Send-Befehl verwenden oder deren Verhalten variieren sollen, je nachdem, welches Endungszeichen du eingegeben hast. Mit <code>SendRaw %A_EndChar%</code> kann das Endungszeichen selbst gesendet werden (<a href="commands/Send.htm">SendRaw</a> wird hier verwendet, weil der normale Send-Befehl nicht in der Lage ist, Zeichen wie !{} richtig zu senden).</p>
+<p>Die Built-in-Variable <strong>A_EndChar</strong> enthält das Endungszeichen, das du zuletzt eingegeben hast, um einen nicht-automatisch-ersetzenden Hotstring auszulösen. Wenn ein Endungszeichen nicht benötigt wurde (wegen der <a href="#Asterisk">*-Option</a>), wird sie leer sein. A_EndChar ist nützlich beim Erstellen von Hotstrings, die die Send-Funktion verwenden oder deren Verhalten variieren sollen, je nachdem, welches Endungszeichen du eingegeben hast. Mit <code>SendRaw A_EndChar</code> kann das Endungszeichen selbst gesendet werden (<a href="commands/Send.htm">SendRaw</a> wird hier verwendet, weil die normale Send-Funktion nicht in der Lage ist, Zeichen wie !{} richtig zu senden).</p>
 <p>Einzelne Doppelpunkte müssen innerhalb von Hotstring-Definitionen nicht mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden. Umgekehrte Häkchen und Semikolons benötigen dagegen ein Leerzeichen oder einen Tabulator auf der linken Seite. Unter <a href="misc/EscapeChar.htm">Escapesequenzen</a> findest du eine komplette Liste.</p>
-<p>Die Sonderzeichen des <a href="commands/Send.htm">Send-Befehls</a> wie {Enter} werden im Ersatztext des <a href="#auto">automatisch-ersetzenden Hotstrings</a> unterstützt (sofern die <a href="#raw">Raw-Option</a> nicht verwendet wird). Die Hotstring-Abkürzungen selbst unterstützen keine Sonderzeichen dieser Art. Verwende stattdessen `n für die ENTER-Taste und `t (oder ein literales Tabulatorzeichen) für die TAB-Taste (unter <a href="misc/EscapeChar.htm">Escapesequenzen</a> findest du eine komplette Liste). Zum Beispiel würde der Hotstring <code>:*:ab`t::</code> ausgelöst werden, wenn du "ab", gefolgt von einem Tabulatorzeichen, eingibst.</p>
+<p>Die Sonderzeichen der <a href="commands/Send.htm">Send-Funktion</a> wie {Enter} werden im Ersatztext des <a href="#auto">automatisch-ersetzenden Hotstrings</a> unterstützt (sofern die <a href="#raw">Raw-Option</a> nicht verwendet wird). Die Hotstring-Abkürzungen selbst unterstützen keine Sonderzeichen dieser Art. Verwende stattdessen `n für die ENTER-Taste und `t (oder ein literales Tabulatorzeichen) für die TAB-Taste (unter <a href="misc/EscapeChar.htm">Escapesequenzen</a> findest du eine komplette Liste). Zum Beispiel würde der Hotstring <code>:*:ab`t::</code> ausgelöst werden, wenn du "ab", gefolgt von einem Tabulatorzeichen, eingibst.</p>
 <p>Leer- und Tabulatorzeichen werden innerhalb von Hotstring-Definitionen literal behandelt. Zum Beispiel würden die folgenden Hotstrings zwei unterschiedliche Ergebnisse erzeugen: <code>::bzw::beziehungsweise</code> und <code>::bzw:: :beziehungsweise</code>.</p>
-<p>Jede Hotstring-Abkürzung kann nicht länger sein als 40 Zeichen. Das Programm wird dich warnen, wenn diese Länge überschritten wurde. Dagegen ist die Länge des Ersatztextes auf ca. 5000 Zeichen begrenzt, wenn der <a href="#SendMode">Sendemodus</a> standardmäßig SendInput ist. Dieses Limit kann auf 16383 Zeichen erhöht werden, wenn man auf einen der anderen <a href="#SendMode">Sendemethoden</a> wechselt. Desweiteren kann eine unbegrenzte Anzahl an Zeichen gesendet werden, wenn <code><a href="commands/Send.htm#SendPlayDetail">SendPlay %MeineVar%</a></code> in der Hotstring-Definition angegeben wird.</p>
+<p>Jede Hotstring-Abkürzung kann nicht länger sein als 40 Zeichen. Das Programm wird dich warnen, wenn diese Länge überschritten wurde. Dagegen ist die Länge des Ersatztextes auf ca. 5000 Zeichen begrenzt, wenn der <a href="#SendMode">Sendemodus</a> standardmäßig SendInput ist. Dieses Limit kann auf 16383 Zeichen erhöht werden, wenn man auf einen der anderen <a href="#SendMode">Sendemethoden</a> wechselt. Desweiteren kann eine unbegrenzte Anzahl an Zeichen gesendet werden, wenn <code><a href="commands/Send.htm#SendPlayDetail">SendPlay</a> MeineVar</code> in der Hotstring-Definition angegeben wird.</p>
 <p>Die Reihenfolge, in der die Hotstrings definiert werden, bestimmt ihre relative Priorität zueinander. Das heißt, wenn deine Eingabe mehr als einen Hotstring auslösen kann, wird nur der erste im Skript aufgelistete Hotstring in Kraft treten. Verwandtes Thema: <a href="#variant">Kontextabhängige Hotstrings</a>.</p>
 <p>Jedes Rücksetzen, das du mit der Rücktaste durchführst, wird zum Erkennen des Hotstrings mit einbezogen. Verwendest du aber Pfeiltasten, BILD-NACH-OBEN, BILD-NACH-UNTEN, POS1 und ENDE, um innerhalb eines Editors zu navigieren, wird der Hotstring-Erkennungsprozess zurückgesetzt. Das heißt, dass das Skript auf einen völlig neuen Hotstring warten wird.</p>
 <p>Ein Hotstring kann eingegeben werden, selbst wenn das aktive Fenster deine Tastatureingaben ignoriert. Das heißt, dass der Hotstring noch ausgelöst wird, obwohl die auslösende  Abkürzung nicht sichtbar ist. Zudem kannst du immer noch die Rücktaste drücken, um die aktuellste Tastatureingabe rückgängig zu machen (auch wenn die Auswirkung nicht zu sehen ist).</p>
 <p id="label">Es ist möglich, mit <a href="commands/Gosub.htm">Gosub</a> oder <a href="commands/Goto.htm">Goto</a> zu einem Hotstring-Label zu springen, wenn du sein erstes Doppelpunkt-Paar (einschließlich die Optionssymbole) vor seinem Namen setzt. Zum Beispiel: <code>Gosub ::xyz</code>. Springt man aber zu einem <a href="#auto">einzeiligen (automatisch-ersetzenden) Hotstring</a>, wird nichts anderes ausgeführt als ein <a href="commands/Return.htm">Return</a>.</p>
-<p>Hotstrings werden weder überwacht, noch können sie von einem unsichtbaren <a href="commands/Input.htm">Input</a>-Befehl ausgelöst werden. Nur sichtbare Eingaben sind in der Lage, sie auszulösen.</p>
+<p>Hotstrings werden weder überwacht, noch können sie von einer unsichtbaren <a href="commands/Input.htm">Input</a>-Funktion ausgelöst werden. Nur sichtbare Eingaben sind in der Lage, sie auszulösen.</p>
 <p id="InputLevel">Standardmäßig werden Tastatureingaben, die von einem AutoHotkey-Skript erzeugt wurden, keine Hotstrings auslösen. Dadurch kann verhindert werden, dass eine Endlosschleife erzeugt wird, in der Hotstrings sich gegenseitig immer und immer wieder auslösen. Dieses Verhalten kann mit <a href="commands/_InputLevel.htm">#InputLevel</a> und <a href="commands/SendLevel.htm">SendLevel</a> kontrolliert werden. Allerdings verwenden automatisch-ersetzende Hotstrings immer Sendestufe 0 und können deshalb nie <a href="commands/_UseHook.htm">Hook-Hotkeys</a> oder Hotstrings auslösen.</p>
-<p>In bestimmten Fällen ist der <a href="commands/Input.htm">Input</a>-Befehl flexibler als Hotstrings. Durch diesen Befehl müssen deine Tastatureingaben nicht sichtbar im aktiven Fenster eingegeben werden (z. B. in einem Spiel). Zudem unterstützt er Zeichen wie Escape als Endungstasten.</p>
+<p>In bestimmten Fällen ist die <a href="commands/Input.htm">Input</a>-Funktion flexibler als Hotstrings. Durch diesen Befehl müssen deine Tastatureingaben nicht sichtbar im aktiven Fenster eingegeben werden (z. B. in einem Spiel). Zudem unterstützt er Zeichen wie Escape als Endungstasten.</p>
 <p>Der <a href="commands/_InstallKeybdHook.htm">Tastatur-Hook</a> wird automatisch in Kraft treten, sobald das Skript Hotstrings enthält.</p>
 <p>In einigen Punkten verhalten sich Hotstrings genauso wie Hotkeys:</p>
 <ul>
-  <li>Sie werden vom <a href="commands/Suspend.htm">Suspend</a>-Befehl beeinflusst.</li>
+  <li>Sie werden von der <a href="commands/Suspend.htm">Suspend</a>-Funktion beeinflusst.</li>
   <li>Sie berücksichtigen <a href="commands/_MaxThreads.htm">#MaxThreads</a> und <a href="commands/_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a> (aber nicht <a href="commands/_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>).</li>
   <li>Skripte, die Hotstrings enthalten, sind automatisch <a href="Scripts.htm#persistent">persistent</a>.</li>
   <li>Nicht-automatisch-ersetzende Hotstrings werden einen neuen <a href="misc/Threads.htm">Thread</a> erstellen, sobald sie gestartet werden. Außerdem werden sie die Built-in-Hotkey-Variablen wie <a href="Variables.htm#ThisHotkey">A_ThisHotkey</a> aktualisieren.</li>
@@ -125,36 +124,41 @@ Siehe <a href="Scripts.htm#continuation">Fortsetzungsbereich</a>, wie diese Stan
 ; (bzw. Textverarbeitungsprogramme) funktioniert.  Speichert den aktuellen Inhalt der Zwischenablage,
 ; um sie später wiederherstellen zu können. Allerdings gilt das nur für Klartext:</em>
 ClipboardAlt := ClipboardAll
-Clipboard := "" <em>; Muss anfangs leer sein, damit die Erkennung funktioniert.</em>
-Send ^c
+Clipboard := ""  <em>; Muss anfangs leer sein, damit die Erkennung funktioniert.</em>
+Send "^c"
 ClipWait 1
 if ErrorLevel  <em>; ClipWait hat die Zeit überschritten.</em>
     return
 <em>; Ersetzt CRLF und/oder LF mit `n, um es für einen Hotstring im Raw-Modus verwendbar zu machen:
 ; Das gleiche wird für jedes andere Zeichen getan,
 ; das ein Problem im Raw-Modus sein könnte:</em>
-StrReplace, Hotstring, % Clipboard, ``, ````  <em>; Zuerst diese Ersetzung, um Störungen bei den anderen darunter zu vermeiden.</em>
-StrReplace, Hotstring, % Hotstring, `r`n, ``r  <em>; Das `r funktioniert besser als `n in MS Word usw.</em>
-StrReplace, Hotstring, % Hotstring, `n, ``r
-StrReplace, Hotstring, % Hotstring, %A_Tab%, ``t
-StrReplace, Hotstring, % Hotstring, `;, ```;
+Hotstring := StrReplace(Clipboard, "``", "````")  <em>; Zuerst diese Ersetzung, um Störungen bei den anderen darunter zu vermeiden.</em>
+Hotstring := StrReplace(Hotstring, "`r`n", "``r")  <em>; Das `r funktioniert besser als `n in MS Word usw.</em>
+Hotstring := StrReplace(Hotstring, "`n", "``r")
+Hotstring := StrReplace(Hotstring, "`t", "``t")
+Hotstring := StrReplace(Hotstring, "`;", "```;")
 Clipboard := ClipboardAlt  <em>; Stellt den vorherigen Inhalt der Zwischenablage wieder her.
 ; Verschiebt die Texteinfügemarke der InputBox auf eine bessere Position:</em>
-SetTimer, VerschiebeEinfügemarke, 10
+SetTimer "VerschiebeEinfügemarke", 10
 <em>; Zeigt die InputBox für den Standard-Hotstring an:</em>
-InputBox, Hotstring, Gebe deine Abkürzung an der vorgegebenen Einfügemarke ein. Bei Bedarf kannst du den Ersatztext noch bearbeiten.`n`nBeispieleintrag: :R:bzw`::beziehungsweise, Neuer Hotstring, , :R:`:::%Hotstring%
+Hotstring := InputBox("
+(
+Gebe deine Abkürzung an der vorgegebenen Einfügemarke ein. Bei Bedarf kannst du den Ersatztext noch bearbeiten.
+
+Beispieleintrag: :R:bzw`::beziehungsweise
+)", "Neuer Hotstring",, ":R`:::" Hotstring)
 if ErrorLevel  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
     return
-if InStr(Hotstring,":R`:::")
+if InStr(Hotstring, ":R`:::")
 {
-    MsgBox Es wurde keine Abkürzung angegeben. Der Hotstring wurde nicht hinzugefügt.
+    MsgBox "Es wurde keine Abkürzung angegeben. Der Hotstring wurde nicht hinzugefügt."
     return
 }
 <em>; Ansonsten wird der Hotstring hinzugefügt und das Skript neu geladen:</em>
-FileAppend, `n%Hotstring%, %A_ScriptFullPath%  <em>; Setzt ein `n an den Anfang, falls eine leere Zeile am Ende der Datei fehlt.</em>
+FileAppend "`n" Hotstring, A_ScriptFullPath  <em>; Setzt ein `n an den Anfang, falls eine leere Zeile am Ende der Datei fehlt.</em>
 Reload
 Sleep 200 <em>; Bei Erfolg wird das Reload diese Instanz während dem Sleep schließen, daher wird Zeile darunter nie erreicht.</em>
-Result := MsgBox("Der gerade eingefügte Hotstring wurde scheinbar nicht richtig formatiert.  Möchtest du das Skript öffnen, um es zu bearbeiten? Den betroffenen Hotstring findest du ganz unten im Skript.",, 4)
+Result := MsgBox("Der gerade eingefügte Hotstring wurde scheinbar nicht richtig formatiert. Möchtest du das Skript öffnen, um es zu bearbeiten? Den betroffenen Hotstring findest du ganz unten im Skript.",, 4)
 if Result = "Yes"
     Edit
 return
@@ -163,8 +167,8 @@ VerschiebeEinfügemarke:
 if !WinActive("Neuer Hotstring")
     return
 <em>; Verschiebt die Einfügemarke der InputBox auf eine Position, wo der Benutzer die Abkürzung eintragen kann.</em>
-Send {Home}{Right 3}
-SetTimer, VerschiebeEinfügemarke, Off
+Send "{Home}{Right 3}"
+SetTimer , "Off"
 return</pre>
 </body>
 </html>

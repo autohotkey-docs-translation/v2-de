@@ -13,7 +13,7 @@
 
 <h1>Kontextabhängige Hilfe in einem beliebigen Editor - von Rajat</h1>
 
-<p>Damit kann mit STRG+2 (oder ein anderer Hotkey) die Hilfe-Dateiseite für den markierten AutoHotkey-Befehl oder Schlüsselwort angezeigt werden. Wenn nichts markiert ist, dann wird der Befehlsname vom Anfang der aktuellen Zeile extrahiert.
+<p>Damit kann mit STRG+2 (oder ein anderer Hotkey) die Hilfe-Dateiseite für die markierte AutoHotkey-Funktion oder Schlüsselwort angezeigt werden. Wenn nichts markiert ist, dann wird der Funktionsname vom Anfang der aktuellen Zeile extrahiert.
 </p>
 <p><a href="ContextSensitiveHelp.ahk">Dieses Skript herunterladen</a>  |  <a href="index.htm">Andere Beispiel-Skripte</a>  |  <a href="../AutoHotkey.htm">Home</a></p>
 
@@ -29,27 +29,27 @@ $^2::
 SetWinDelay 10
 SetKeyDelay 0
 
-C_ClipboardPrev := clipboard
-clipboard := ""
+C_ClipboardPrev := Clipboard
+Clipboard := ""
 <em>; Verwendet das hervorgehobene Wort, falls vorhanden (da der Benutzer
-; manchmal etwas absichtlich hervorhebt, das kein Befehl ist):</em>
-Send, ^c
-ClipWait, 0.1
-if ErrorLevel &lt;&gt; 0
+; manchmal etwas absichtlich hervorhebt, das keine Funktion ist):</em>
+Send "^c"
+ClipWait 0.1
+if ErrorLevel
 {
     <em>; Die gesamte Zeile abrufen, weil Editoren die Cursor-Navigationstasten
     ; unterschiedlich behandeln:</em>
-    Send, {home}+{end}^c
-    ClipWait, 0.2
-    if ErrorLevel &lt;&gt; 0  <em>; Selten, daher kein Fehler melden.</em>
+    Send, "{home}+{end}^c"
+    ClipWait 0.2
+    if ErrorLevel  <em>; Selten, daher kein Fehler melden.</em>
     {
-        clipboard := C_ClipboardPrev
+        Clipboard := C_ClipboardPrev
         return
     }
 }
-C_Cmd := Trim(clipboard)  <em>; Tabulator- &amp; Leerzeichen davor oder danach entfernen.</em>
-clipboard := C_ClipboardPrev  <em>; Die vorherige Zwischenablage wiederherstellen.</em>
-Loop, parse, %C_Cmd%, %A_Space%`,  <em>; Das erste Leerzeichen oder Komma kennzeichnet das Ende des Befehls.</em>
+C_Cmd := Trim(Clipboard)  <em>; Tabulator- &amp; Leerzeichen davor oder danach entfernen.</em>
+Clipboard := C_ClipboardPrev  <em>; Die vorherige Zwischenablage wiederherstellen.</em>
+Loop Parse, C_Cmd, "`s"  <em>; Das erste Leerzeichen kennzeichnet das Ende der Funktion.</em>
 {
     C_Cmd := A_LoopField
     break <em>; d.h. wir benötigen nur einen Durchlauf.</em>
@@ -57,29 +57,29 @@ Loop, parse, %C_Cmd%, %A_Space%`,  <em>; Das erste Leerzeichen oder Komma kennze
 if !WinExist("Hilfe für AutoHotkey")
 {
     <em>; Den Standort von AutoHotkey ermitteln:</em>
-    RegRead, ahk_dir, HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey, InstallDir
+    ahk_dir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir")
     if ErrorLevel  <em>; Nichts gefunden, so in anderen häufigen Standorten nachschauen.</em>
     {
         if A_AhkPath
-            SplitPath, %A_AhkPath%,, ahk_dir
+            SplitPath A_AhkPath,, ahk_dir
         else if FileExist("..\..\AutoHotkey.chm")
             ahk_dir := "..\.."
-        else if FileExist("%A_ProgramFiles%\AutoHotkey\AutoHotkey.chm")
-            ahk_dir := "%A_ProgramFiles%\AutoHotkey"
+        else if FileExist(A_ProgramFiles "\AutoHotkey\AutoHotkey.chm")
+            ahk_dir := A_ProgramFiles "\AutoHotkey
         else
         {
-            MsgBox AutoHotkey-Ordner konnte nicht gefunden werden.
+            MsgBox "AutoHotkey-Ordner konnte nicht gefunden werden."
             return
         }
     }
-    Run %ahk_dir%\AutoHotkey.chm
-    WinWait Hilfe für AutoHotkey
+    Run ahk_dir "\AutoHotkey.chm"
+    WinWait "Hilfe für AutoHotkey"
 }
 <em>; Der obere Befehl bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:</em>
 WinActivate
 WinWaitActive
-StrReplace, C_Cmd, %C_Cmd%, #, {#}
-send, !n{home}+{end}%C_Cmd%{enter}
+C_Cmd := StrReplace(C_Cmd, "#", "{#}")
+Send "!n{home}+{end}" C_Cmd "{enter}"
 return
 </pre>
 </body>

@@ -13,26 +13,27 @@
 <body>
 <h1>Clipboard und <a href="#ClipboardAll">ClipboardAll</a></h1>
 
-<p><em>Clipboard</em> ist eine Built-in-<a href="../Variables.htm">Variable</a>, die den aktuellen Inhalt der Windows-Zwischenablage enthält, falls dieser in Textform ist. <em><a href="#ClipboardAll">ClipboardAll()</a></em> hingegen gibt ein Objekt zurück, das alles von der Zwischenablage enthält, wie z. B. Bilder und Formatierung.</p>
+<p><em>Clipboard</em> ist eine Built-in-<a href="../Variables.htm">Variable</a>, die den aktuellen Inhalt der Windows-Zwischenablage enthält, falls dieser in Textform ist. <em><a href="#ClipboardAll">ClipboardAll</a></em> hingegen gibt ein Objekt zurück, das alles von der Zwischenablage enthält, wie z. B. Bilder und Formatierung.</p>
 <p id="CopiedFiles">Jede Textzeile in <em>Clipboard</em> endet normalerweise mit einem CR- und LF-Zeichen, die im Skript als <code>`r`n</code> ausgedrückt werden können. Dateien (die beispielsweise mit STRG+C kopiert wurden) gelten als Text: Sie werden automatisch in ihren Dateinamen umgewandelt (mit vollständigem Pfad), sobald <em>Clipboard</em> im Skript verwendet wird. Um die Dateien einzeln zu extrahieren, befolgt dieses Beispiel:</p>
-<pre><a href="../commands/LoopParse.htm">Loop, parse</a>, %clipboard%, `n, `r
+<pre><a href="../commands/LoopParse.htm">Loop Parse</a>, Clipboard, "`n", "`r"
 {
-    Result := MsgBox("Dateinummer %A_Index% ist %A_LoopField%.`n`nWeiter?",, 4)
-    if Result = "No", break
+    Result := MsgBox("Dateinummer " A_Index " ist " A_LoopField ".`n`nWeiter?",, 4)
+    if Result = "No"
+        break
 }</pre>
-<p>Um die Dateinamen in alphabetischer Reihenfolge zu sortieren, verwendet den <a href="../commands/Sort.htm">Sort</a>-Befehl. Um die Dateinamen von der Zwischenablage in eine Datei zu schreiben, verwendet <code><a href="../commands/FileAppend.htm">FileAppend</a>, %clipboard%`r`n, C:\Meine Datei.txt</code>. Um die Versuchsdauer zu ändern, wie oft die Zwischenablage geöffnet werden soll (wenn sie beispielsweise von einer anderen Anwendung benutzt wird), verwendet <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a>.</p>
+<p>Um die Dateinamen in alphabetischer Reihenfolge zu sortieren, verwendet die <a href="../commands/Sort.htm">Sort</a>-Funktion. Um die Dateinamen von der Zwischenablage in eine Datei zu schreiben, verwendet <code><a href="../commands/FileAppend.htm">FileAppend</a> Clipboard "`r`n", "C:\Meine Datei.txt"</code>. Um die Versuchsdauer zu ändern, wie oft die Zwischenablage geöffnet werden soll (wenn sie beispielsweise von einer anderen Anwendung benutzt wird), verwendet <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeOut</a>.</p>
 <strong>Einfache Beispiele:</strong>
-<pre>clipboard := "eigener Text"   <em>; Ersetzt die Zwischenablage mit neuem Inhalt.</em>
-clipboard := ""  <em>; Leert die Zwischenablage.</em>
-clipboard := clipboard   <em>; Wandelt jede kopierte Datei, HTML oder anders formatierter Text in Klartext um.</em>
-clipboard := "%clipboard% angefügter Text."   <em>; Fügt etwas Text an die Zwischenablage.</em>
-StrReplace, clipboard, %clipboard%, ABC, DEF   <em>; Ersetzt alle Vorkommen von ABC mit DEF (und wandelt die Zwischenablage in Klartext um).</em></pre>
+<pre>Clipboard := "eigener Text"   <em>; Ersetzt die Zwischenablage mit neuem Inhalt.</em>
+Clipboard := ""  <em>; Leert die Zwischenablage.</em>
+Clipboard := Clipboard   <em>; Wandelt jede kopierte Datei, HTML oder anders formatierter Text in Klartext um.</em>
+Clipboard := Clipboard " angefügter Text."   <em>; Fügt etwas Text an die Zwischenablage.</em>
+Clipboard := StrReplace(Clipboard, "ABC", "DEF")   <em>; Ersetzt alle Vorkommen von ABC mit DEF (und wandelt die Zwischenablage in Klartext um).</em></pre>
 
 <p><strong>ClipWait verwenden, um die Zuverlässigkeit des Skripts zu verbessern:</strong></p>
-<pre>clipboard := ""  <em>; Beginnt leer, damit ClipWait erkennt, wenn der Text angekommen ist.</em>
-Send ^c
+<pre>Clipboard := ""  <em>; Beginnt leer, damit ClipWait erkennt, wenn der Text angekommen ist.</em>
+Send "^c"
 <a href="../commands/ClipWait.htm">ClipWait</a>  <em>; Wartet, bis die Zwischenablage Text enthält.</em>
-MsgBox STRG+C hat folgenden Inhalt in die Zwischenablage kopiert:`n`n%clipboard%</pre>
+MsgBox "STRG+C hat folgenden Inhalt in die Zwischenablage kopiert:`n`n" Clipboard</pre>
 
 <h2 id="ClipboardAll">ClipboardAll <span class="headnote">(alles in der Zwischenablage speichern und wiederherstellen)</span></h2>
 <p>Erstellt ein Objekt, dass alles von der Zwischenablage enthält (z. B. Bilder und Formatierung).</p>
@@ -42,7 +43,7 @@ MsgBox STRG+C hat folgenden Inhalt in die Zwischenablage kopiert:`n`n%clipboard%
 <p>Wenn beide Parameter fehlen, werden die aktuellen Inhalte der Zwischenablage abgerufen. Ansonsten können bis zu zwei Parameter benutzt werden, um ein Objekt zu erstellen, das die angegebenen Binärdaten der Zwischenablage enthält.</p>
 <dl>
   <dt>Daten</dt>
-  <dd><p>Eine Zeichenkette mit Binärdaten, oder ein reiner Integer, der die Adresse von Binärdaten ist. Die Daten müssen in einem bestimmten Format sein, das in der Regel ein vorheriger Aufruf von ClipboardAll() hervorbringt. Siehe FileAppend unten.</p></dd>
+  <dd><p>Eine Zeichenkette mit Binärdaten, oder ein reiner Integer, der die Adresse von Binärdaten ist. Die Daten müssen in einem bestimmten Format sein, das in der Regel ein vorheriger Aufruf von ClipboardAll hervorbringt. Siehe FileAppend unten.</p></dd>
   <dt>Größe</dt>
   <dd><p>Die Anzahl der Bytes, die die Daten enthalten. Dieser Parameter ist optional, wenn <em>Daten</em> eine Zeichenkette ist.</p></dd>
 </dl>

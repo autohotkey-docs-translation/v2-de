@@ -52,21 +52,21 @@
 ; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
 <a href="SetRegView.htm">SetRegView</a> 64  <em>; Benötigt v1.1.08+</em>
 
-RegRead, AusgabeVar, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion, ProgramFilesDir
-MsgBox, Programme sind in: %AusgabeVar%
+AusgabeVar := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "ProgramFilesDir")
+MsgBox "Programme sind in: " AusgabeVar
 
 <em>; Ein anderer Weg, um den Pfad des Programm-Ordners zu ermitteln:</em>
-EnvGet AusgabeVar, % <a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles"
-MsgBox, Programme sind in: %AusgabeVar%
+AusgabeVar := EnvGet(<a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles")
+MsgBox "Programme sind in: " AusgabeVar
 </pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Das folgende Beispiel ermittelt den TYP eines Registry-Wertes (z. B. REG_SZ oder REG_DWORD).</em>
-MsgBox % RegKeyTyp("HKCU", "Environment", "TEMP")
+MsgBox RegKeyTyp("HKCU", "Environment", "TEMP")
 return
 
 RegKeyTyp(Rootkey, Subkey, Wertname)  <em>; Diese Funktion gibt den Typ des angegebenen Wertes zurück.</em>
 {
-    Loop, Reg, %Rootkey%\%Subkey%
+    Loop Reg, Rootkey "\" Subkey
         if (A_LoopRegName = Wertname)
             return A_LoopRegType
     return "Fehler"

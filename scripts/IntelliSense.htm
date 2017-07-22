@@ -38,45 +38,45 @@ I_Icon := ""
 <em>; ENDE DES KONFIGURATIONSBEREICHS (Hier danach keine Änderungen durchführen,
 ; es sei denn, die allgemeine Funktionalität des Skripts soll geändert werden).</em>
 
-SetKeyDelay, 0
+SetKeyDelay 0
 #SingleInstance
 
 if I_HelpHotkey &lt;&gt; ""
-    Hotkey, %I_HelpHotkey%, I_HelpHotkey
+    Hotkey I_HelpHotkey, "I_HelpHotkey"
 
 <em>; Infobereichssymbol ändern (falls ein Symbol im Konfigurationsbereich angegeben wurde):</em>
 if I_Icon &lt;&gt; ""
     if FileExist(I_Icon)
-        Menu, Tray, Icon, %I_Icon%
+        Menu "Tray", "Icon", I_Icon
 
 <em>; Standort von AutoHotkey ermitteln:</em>
-RegRead, ahk_dir, HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey, InstallDir
+ahk_dir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir")
 if ErrorLevel  <em>; Nichts gefunden, so in anderen häufigen Standorten nachschauen.</em>
 {
     if A_AhkPath
-        SplitPath, %A_AhkPath%,, ahk_dir
+        SplitPath A_AhkPath,, ahk_dir
     else if FileExist("..\..\AutoHotkey.chm")
         ahk_dir := "..\.."
-    else if FileExist("%A_ProgramFiles%\AutoHotkey\AutoHotkey.chm")
-        ahk_dir := "%A_ProgramFiles%\AutoHotkey"
+    else if FileExist(A_ProgramFiles "\AutoHotkey\AutoHotkey.chm")
+        ahk_dir := A_ProgramFiles "\AutoHotkey"
     else
     {
-        MsgBox AutoHotkey-Ordner konnte nicht gefunden werden.
+        MsgBox "AutoHotkey-Ordner konnte nicht gefunden werden."
         ExitApp
     }
 }
 
-ahk_help_file := "%ahk_dir%\AutoHotkey.chm"
+ahk_help_file := ahk_dir "\AutoHotkey.chm"
 
 <em>; Befehlssyntax lesen:</em>
-Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
+Loop Read, ahk_dir "\Extras\Editors\Syntax\Commands.txt"
 {
     I_FullCmd := A_LoopReadLine
 
     <em>; Anweisungen haben ein erstes Leerzeichen anstelle eines ersten Kommas.</em>
     <em>; So wird je nachdem verwendet, was zuerst als Endzeichen im Befehlsnamen vorkommt:</em>
     I_cPos := InStr(I_FullCmd, ",")
-    I_sPos := InStr(I_FullCmd, " ")
+    I_sPos := InStr(I_FullCmd, "`s")
     if (!I_cPos or (I_cPos &gt; I_sPos and I_sPos))
         I_EndPos := I_sPos
     else
@@ -87,10 +87,10 @@ Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
     else  <em>; Eine Anweisung/ein Befehl ohne Parameter.</em>
         I_CurrCmd := A_LoopReadLine
     
-    StrReplace, I_CurrCmd, %I_CurrCmd%, [
-    StrReplace, I_CurrCmd, %I_CurrCmd%, %A_Space%
-    StrReplace, I_FullCmd, %I_FullCmd%, ``n, `n
-    StrReplace, I_FullCmd, %I_FullCmd%, ``t, `t
+    I_CurrCmd := StrReplace(I_CurrCmd, "[")
+    I_CurrCmd := StrReplace(I_CurrCmd, "`s")
+    I_FullCmd := StrReplace(I_FullCmd, "``n", "`n")
+    I_FullCmd := StrReplace(I_FullCmd, "``t", "`t")
     
     <em>; Arrays mit Befehlsnamen und vollständige Befehlssyntax erstellen:</em>
     I_Cmd%A_Index% := I_CurrCmd
@@ -101,16 +101,15 @@ Loop, Read, %ahk_dir%\Extras\Editors\Syntax\Commands.txt
 Loop
 {
     <em>; Editor-Fenster überprüfen:</em>
-    WinGetTitle, ActiveTitle, A
-    if !InStr(ActiveTitle, I_Editor)
+    if !InStr(WinGetTitle("A"), I_Editor)
     {
         ToolTip
-        Sleep, 500
+        Sleep 500
         Continue
     }
     
     <em>; Alle Tasten bis zur Endtaste abrufen:</em>
-    Input, I_Word, V, {enter}{escape}{space}`,
+    I_Word := Input("V", "{Enter}{Escape}{Space},")
     I_EndKey := ErrorLevel
     
     <em>; ToolTip wird in folgenden Fällen versteckt:</em>
@@ -121,16 +120,15 @@ Loop
     }
 
     <em>; Nochmals Editor-Fenster überprüfen!</em>
-    WinGetTitle, ActiveTitle, A
-    if !InStr(ActiveTitle, I_Editor)
+    if !InStr(WinGetTitle("A"), I_Editor)
     {
         ToolTip
         Continue
     }
 
     <em>; Jede vorhandene Einrückung ersetzen:</em>
-    StrReplace, I_Word, %I_Word%, %A_Space%
-    StrReplace, I_Word, %I_Word%, %A_Tab%
+    I_Word := StrReplace(I_Word, "`s")
+    I_Word := StrReplace(I_Word, "`t")
     if I_Word = ""
         Continue
     
@@ -163,27 +161,27 @@ Loop
     
     <em>; Übereinstimmende Befehle anzeigen, um den Benutzer zu führen:</em>
     I_ThisFullCmd := I_FullCmd%I_Index%
-    ToolTip, %I_ThisFullCmd%, %A_CaretX%, %A_CaretY% + 20
+    ToolTip I_ThisFullCmd, A_CaretX, A_CaretY + 20
 }
 
 
 
 I_HelpHotkey:
-WinGetTitle, ActiveTitle, A
-if !InStr(ActiveTitle, I_Editor), Return
+if !InStr(WinGetTitle("A"), I_Editor)
+  return
 
 ToolTip  <em>; Syntaxhelfer deaktivieren, da er zurzeit nicht benötigt wird.</em>
 
-SetTitleMatchMode, 1  <em>; Falls es 3 ist. Diese Einstellung gilt nur für diesen Thread.</em>
-if !WinExist("AutoHotkey Help")
+SetTitleMatchMode 1  <em>; Falls es 3 ist. Diese Einstellung gilt nur für diesen Thread.</em>
+if !WinExist("Hilfe für AutoHotkey")
 {
     if !FileExist(ahk_help_file)
     {
-        MsgBox, Hilfe-Datei konnte nicht gefunden werden: %ahk_help_file%.
+        MsgBox "Hilfe-Datei konnte nicht gefunden werden: " ahk_help_file
         return
     }
-    Run, %ahk_help_file%
-    WinWait, AutoHotkey Help
+    Run ahk_help_file
+    WinWait "Hilfe für AutoHotkey"
 }
 
 if I_ThisCmd = ""  <em>; Stattdessen wird die aktuellste Benutzereingabe verwendet.</em>
@@ -192,8 +190,8 @@ if I_ThisCmd = ""  <em>; Stattdessen wird die aktuellste Benutzereingabe verwend
 <em>; Der obere Befehl bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:</em>
 WinActivate
 WinWaitActive
-StrReplace, I_ThisCmd, %I_ThisCmd%, #, {#}  <em>; Führende # ersetzen, falls vorhanden.</em>
-Send, !n{home}+{end}%I_HelpOn%{enter}
+I_ThisCmd := StrReplace(I_ThisCmd, "#", "{#}")  <em>; Führende # ersetzen, falls vorhanden.</em>
+Send "!n{home}+{end}" I_HelpOn "{enter}"
 return
 </pre>
 </body>

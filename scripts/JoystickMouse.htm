@@ -51,10 +51,10 @@ JoystickNumber := 1
 
 #SingleInstance
 
-JoystickPrefix := "%JoystickNumber%Joy"
-Hotkey, %JoystickPrefix%%ButtonLeft%, ButtonLeft
-Hotkey, %JoystickPrefix%%ButtonRight%, ButtonRight
-Hotkey, %JoystickPrefix%%ButtonMiddle%, ButtonMiddle
+JoystickPrefix := JoystickNumber "Joy"
+Hotkey JoystickPrefix . ButtonLeft, "ButtonLeft"
+Hotkey JoystickPrefix . ButtonRight, "ButtonRight"
+Hotkey JoystickPrefix . ButtonMiddle, "ButtonMiddle"
 
 <em>; Benötigte Achsenabstände berechnen, um den Mauszeiger bewegen zu können:</em>
 JoyThresholdUpper := 50 + JoyThreshold
@@ -64,11 +64,11 @@ if InvertYAxis
 else
     YAxisMultiplier := 1
 
-SetTimer, WatchJoystick, 10  <em>; Joystick-Bewegung überwachen.</em>
+SetTimer "WatchJoystick", 10  <em>; Joystick-Bewegung überwachen.</em>
 
-GetKeyState, JoyInfo, %JoystickNumber%JoyInfo
+JoyInfo := GetKeyState(JoystickNumber "JoyInfo")
 if InStr(JoyInfo, "P")  <em>; Joystick hat einen Rundblickschalter (POV), also als Mausrad verwenden.</em>
-    SetTimer, MouseWheel, %WheelDelay%
+    SetTimer "MouseWheel", WheelDelay
 
 return  <em>; Ende des automatischen Ausführungsbereichs.</em>
 
@@ -79,51 +79,51 @@ return  <em>; Ende des automatischen Ausführungsbereichs.</em>
 
 ButtonLeft:
 SetMouseDelay, -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick, left,,, 1, 0, D  <em>; Hält die linke Maustaste gedrückt.</em>
-SetTimer, WaitForLeftButtonUp, 10
+MouseClick "Left",,, 1, 0, "D"  <em>; Hält die linke Maustaste gedrückt.</em>
+SetTimer "WaitForLeftButtonUp", 10
 return
 
 ButtonRight:
-SetMouseDelay, -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick, right,,, 1, 0, D  <em>; Hält die rechte Maustaste gedrückt.</em>
-SetTimer, WaitForRightButtonUp, 10
+SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+MouseClick "Right",,, 1, 0, "D"  <em>; Hält die rechte Maustaste gedrückt.</em>
+SetTimer "WaitForRightButtonUp", 10
 return
 
 ButtonMiddle:
-SetMouseDelay, -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick, middle,,, 1, 0, D  <em>; Hält die mittlere Maustaste gedrückt.</em>
-SetTimer, WaitForMiddleButtonUp, 10
+SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+MouseClick "Middle",,, 1, 0, "D"  <em>; Hält die mittlere Maustaste gedrückt.</em>
+SetTimer "WaitForMiddleButtonUp", 10
 return
 
 WaitForLeftButtonUp:
 if GetKeyState(JoystickPrefix . ButtonLeft)
     return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
 ; Ansonsten wurde die Taste losgelassen.</em>
-SetTimer,, off
-SetMouseDelay, -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick, left,,, 1, 0, U  <em>; Lässt die Maustaste los.</em>
+SetTimer , "Off"
+SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+MouseClick "Left",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
 return
 
 WaitForRightButtonUp:
 if GetKeyState(JoystickPrefix . ButtonRight)
     return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
 ; Ansonsten wurde die Taste losgelassen.</em>
-SetTimer,, off
-MouseClick, right,,, 1, 0, U  <em>; Lässt die Maustaste los.</em>
+SetTimer , "Off"
+MouseClick "Right",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
 return
 
 WaitForMiddleButtonUp:
 if GetKeyState(JoystickPrefix . ButtonMiddle)
     return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
 ; Ansonsten wurde die Taste losgelassen.</em>
-SetTimer,, off
-MouseClick, middle,,, 1, 0, U  <em>; Lässt die Maustaste los.</em>
+SetTimer , "Off"
+MouseClick "Middle",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
 return
 
 WatchJoystick:
 MouseNeedsToBeMoved := false  <em>; Standardwert setzen.</em>
-GetKeyState, joyx, %JoystickNumber%JoyX
-GetKeyState, joyy, %JoystickNumber%JoyY
+joyx := GetKeyState(JoystickNumber "JoyX")
+joyy := GetKeyState(JoystickNumber "JoyY")
 if joyx &gt; JoyThresholdUpper
 {
     MouseNeedsToBeMoved := true
@@ -150,19 +150,19 @@ else
     DeltaY := 0
 if MouseNeedsToBeMoved
 {
-    SetMouseDelay, -1  <em>; Flüssigerer Bewegungsablauf.</em>
-    MouseMove, % DeltaX * JoyMultiplier, % DeltaY * JoyMultiplier * YAxisMultiplier, 0, R
+    SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+    MouseMove DeltaX * JoyMultiplier, DeltaY * JoyMultiplier * YAxisMultiplier, 0, "R"
 }
 return
 
 MouseWheel:
-GetKeyState, JoyPOV, %JoystickNumber%JoyPOV
+JoyPOV := GetKeyState(JoystickNumber "JoyPOV")
 if JoyPOV = -1  <em>; Kein Winkel.</em>
     return
 if (JoyPOV &gt; 31500 or JoyPOV &lt; 4500)  <em>; Nach vorne</em>
-    Send {WheelUp}
+    Send "{WheelUp}"
 else if JoyPOV &gt;= 13500 and JoyPOV &lt;= 22500  <em>; Nach hinten</em>
-    Send {WheelDown}
+    Send "{WheelDown}"
 return
 </pre>
 </body>

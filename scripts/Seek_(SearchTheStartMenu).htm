@@ -33,10 +33,9 @@ Wichtige Hinweise:
 Schau dir AutoHotkey's Tutorial an, wie man dieses Skript startet
 oder wie man es kompilieren kann, falls notwendig.
 
-'Seek' erstellt nur 2 Dateien in deinem TMP-Verzeichnis:
+'Seek' erstellt nur eine Datei in deinem TMP-Verzeichnis:
 
-  a. _Seek.key  (Cache-Datei für den aktuellsten Suchtext)
-  b. _Seek.list (Cache-Datei für die Verzeichnisauflistung)
+  a. _Seek.ini (Cache-Datei für das neueste Suchwort und die Verzeichnisauflistung)
 
 Wenn 'Seek' das erste Mal gestartet wird, wird es dein Startmenü scannen
 und die Verzeichnisauflistung in eine Cache-Datei speichern.
@@ -70,14 +69,14 @@ Eine benutzerdefinierte Liste von Verzeichnissen, die zusätzlich
 gescannt werden sollen. Der volle Pfad darf nicht in Anführungszeichen gesetzt werden.
 Fehlt diese Datei, werden nur die Standardverzeichnisse gescannt.
 */</em>
-config.SeekMyDir := "%A_ScriptDir%\Seek.dir"
+config.SeekMyDir := A_ScriptDir "\Seek.dir"
 
 <em>/*
 Bestimme den Dateinamen und Standort, wo die Verzeichnisauflistung
 und der Suchtext der letzten Suche gespeichert werden soll.
 Dieser Wert kann nach Belieben geändert werden.
 */</em>
-config.saveFile := "%A_Temp%\_Seek.ini"
+config.saveFile := A_Temp "\_Seek.ini"
 
 <em>/*
 Suchtext zwischenspeichern (True/False)
@@ -121,21 +120,21 @@ if A_Args[1] ~= "^(--help|-help|/h|-h|/\?|-\?)$"
        Verzeichnis-Scan im Hintergrund durchzuführen)
       -help  Diese Hilfe anzeigen
   )", config.ScriptTitle)
-  ExitApp()
+  ExitApp
 }
 
 <em>; Überprüfen, ob die wichtigen Umgebungsvariablen vorhanden und gültig sind:</em>
 if !FileExist(A_Temp) <em>; Pfad nicht vorhanden.</em>
 {
   MsgBox("
-  (
+  (Q
     Diese wichtige Umgebungsvariable ist entweder nicht definiert oder ungültig:
     
-        TMP = %A_Temp%
+        TMP = " A_Temp "
         
     Bitte dieses Problem beheben, bevor Seek fortgesetzt werden kann.
   )", config.ScriptTitle)
-  ExitApp()
+  ExitApp
 }
 
 <em>; Startmenü ohne GUI scannen:</em>
@@ -201,7 +200,8 @@ FindMatches(config, LB, B_1, B_2, E_Search)
 
 <em>; Aktuellste Auswahl aus Cache-Datei abrufen und Element auswählen:</em>
 if config.TrackKeyPhrase
-  LB.Choose(IniRead(config.saveFile, "LastSession", "Selection"))
+  if (LastSelection := IniRead(config.saveFile, "LastSession", "Selection"))
+    LB.Choose(LastSelection)
 
 <em>; Funktionsdefinitionen ---
 
@@ -241,15 +241,15 @@ SaveFileList(config)
 
   <em>; Benutzerdefinierte Pfade in dem Scan einbeziehen:</em>
   if FileExist(config.SeekMyDir)
-    LoopRead(config.SeekMyDir)
+    Loop Read, config.SeekMyDir
     {
       if !FileExist(A_LoopReadLine)
         MsgBox("
-        (
+        (Q
           Verarbeite deine benutzerdefinierte Verzeichnisliste...
           
-          '%A_LoopReadLine%' existiert nicht und wird beim Scannen ignoriert.
-          Bitte überprüfe [ %config.SeekMyDir% ].
+          '" A_LoopReadLine "' existiert nicht und wird beim Scannen ignoriert.
+          Bitte überprüfe [ " config.SeekMyDir " ].
         )", config.ScriptTitle, 8192)
       else
         LocationArray.Push(A_LoopReadLine)
@@ -263,9 +263,9 @@ SaveFileList(config)
     <em>; Platz mithilfe von relativen Pfaden sparen:</em>
     IniWrite(Location, config.saveFile, "LocationList", "L" i)
     A_WorkingDir := Location
-    LoopFiles("*", config.ScanMode "R")
+    Loop Files, "*", config.ScanMode "R"
       if !InStr(FileGetAttrib(A_LoopFilePath), "H") <em>; Versteckte Dateien ausschließen.</em>
-        FileList .= "`%L" i "`%\" A_LoopFilePath "`n"
+        FileList .= "%L" i "%\" A_LoopFilePath "`n"
   }
   IniDelete(config.saveFile, "FileList")
   IniWrite(FileList, config.saveFile, "FileList")
@@ -286,9 +286,11 @@ FindMatches(config, LB, B_1, B_2, E_Search)
         break
       L%A_Index% := Location
     }
-    LoopParse(IniRead(config.saveFile, "FileList"), "`n")
+    Loop Parse, IniRead(config.saveFile, "FileList"), "`n"
     {
-      Line := Deref(A_LoopField) <em>; %L_n% mit Standortpfaden ersetzen.</em>
+      Line := A_LoopField
+      if RegExMatch(Line, "%(L\d+)%", m) <em>; %L_n% mit Standortpfaden ersetzen.</em>&gt;
+        Line := StrReplace(Line, "%" m[1] "%", %m[1]%)
       if SearchText &lt;&gt; E_Search.Value
       {
         <em>; Benutzer hat Suchtext geändert.
@@ -300,7 +302,7 @@ FindMatches(config, LB, B_1, B_2, E_Search)
         <em>; Treffer zur Liste hinzufügen:</em>
         SplitPath(Line, Name)
         MatchFound := true
-        LoopParse(SearchText, " ")
+        Loop Parse, SearchText, "`s"
         {
           if !InStr(Name, A_LoopField)
           {
@@ -343,8 +345,8 @@ OpenTarget(config, LB)
   if !FileExist(LB.Text)
   {
     MsgBox("
-    (
-      %LB.Text% existiert nicht.
+    (Q
+      " LB.Text " existiert nicht.
       
       Das bedeutet, dass der Verzeichnis-Cache veraltet ist. Du kannst
       unten auf 'Startmenü scannen' klicken, um deine Verzeichnisauflistung
@@ -362,13 +364,13 @@ OpenTarget(config, LB)
   else
   {
     MsgBox("
-    (
-      %LB.Text% ist weder ein Verzeichnis noch eine Datei.
+    (Q
+      " LB.Text " ist weder ein Verzeichnis noch eine Datei.
       
       Das sollte nicht passieren. Die Suche kann nicht fortgesetzt werden. Beende...
     )")
   }
-  WinClose()
+  WinClose
 }
 
 <em>; Benutzer hat 'Verzeichnis öffnen' angeklickt:</em>
@@ -376,10 +378,10 @@ OpenFolder(config, LB)
 {
   Path := LB.Text
   <em>; Wenn der Benutzer eine Datei statt ein Verzeichnis auswählt, wird der
-  ; Verzeichnispfad extrahiert (Ich benutze DriveGet anstelle von FileGetAttrib,
+  ; Verzeichnispfad extrahiert (Ich benutze DriveGetStatus anstelle von FileGetAttrib,
   ; um das Szenario zu erlauben, wo LB.Text ungültig ist, aber der Verzeichnis-
   ; pfad von LB.Text gültig ist):</em>
-  if DriveGet("Status", Path) &lt;&gt; "Ready" <em>; kein Verzeichnis</em>
+  if DriveGetStatus(Path) &lt;&gt; "Ready" <em>; kein Verzeichnis</em>
   {
     SplitPath(Path,, Dir)
     Path := Dir
@@ -389,8 +391,8 @@ OpenFolder(config, LB)
   if !FileExist(Path)
   {
     MsgBox("
-    (
-      %Path% existiert nicht.
+    (Q
+      " Path " existiert nicht.
       
       Das bedeutet, dass der Verzeichnis-Cache veraltet ist. Du kannst
       unten auf 'Startmenü scannen' klicken, um deine Verzeichnisauflistung
@@ -401,7 +403,7 @@ OpenFolder(config, LB)
 
   <em>; Verzeichnis öffnen:</em>
   if FileExist(config.dirExplorer)
-    Run('"%config.dirExplorer%" "%Path%"') <em>; Mit benutzerdefiniertem Dateiexplorer öffnen.</em>
+    Run(Format('"{1}" "{2}"', config.dirExplorer, Path)) <em>; Mit benutzerdefiniertem Dateiexplorer öffnen.</em>
   else
     Run(Path) <em>; Mit Standardexplorer öffnen.</em>
 }
@@ -415,7 +417,7 @@ Gui_Close(config, E_Search, LB)
     IniWrite(E_Search.Value, config.saveFile, "LastSession", "SearchText")
     IniWrite(LB.Text, config.saveFile, "LastSession", "Selection")
   }
-  ExitApp()
+  ExitApp
 }
 </pre>
 </body>

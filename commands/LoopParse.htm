@@ -27,21 +27,21 @@
 
   <dt>Trennzeichen</dt>
   <dd><p>Fehlt dieser Parameter oder ist er leer, wird jedes Zeichen der eingehenden Zeichenkette als einzelne Teilzeichenkette behandelt.</p>
-      <p>Wenn dieser Parameter <strong>CSV</strong> ist, geht die Schleife davon aus, dass die Zeichenkette komma-getrennten Werte enthält (Comma-Separated Values). Das folgende Beispiel ist eine CSV-Zeile, die mit MS-Excel erstellt wurde: "Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in literalen Anführungszeichen",,"Letztes Feld, das ein literales Komma hat"</p>
+      <p id="CSV">Wenn dieser Parameter <code>"CSV"</code> ist, geht die Schleife davon aus, dass die Zeichenkette komma-getrennten Werte enthält (Comma-Separated Values). Das folgende Beispiel ist eine CSV-Zeile, die mit MS-Excel erstellt wurde: <code>"Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in literalen Anführungszeichen",,"Letztes Feld, das ein literales Komma hat"</code></p>
       <p>Ansonsten kann <em>Trennzeichen</em> ein oder mehrere Zeichen enthalten (zeichengenau), um zu bestimmen, wo die Abgrenzungen zwischen den Teilzeichenketten erfolgen sollen.</p>
       <p>Die Trennzeichen selbst werden nicht als Teil der Teilzeichenkette angesehen. Wenn zwischen zwei Trennzeichen nichts finden ist, wird die entsprechende Teilzeichenkette leer sein.</p>
-      <p>Zum Beispiel: `, (ein mit Escapezeichen versehenes Komma) würde die Zeichenkette jeweils bei einem Komma teilen. Im Vergleich dazu würde %A_Tab%%A_Space% eine neue Teilzeichenkette erstellen, wann immer ein Leer- oder Tabulatorzeichen in der Zeichenkette gefunden wird.</p>
+      <p>Zum Beispiel: <code>','</code> (ein Komma) würde die Zeichenkette jeweils bei einem Komma teilen. Im Vergleich dazu würde <code>A_Tab A_Space</code> eine neue Teilzeichenkette erstellen, wann immer ein Leer- oder Tabulatorzeichen in der Zeichenkette gefunden wird.</p>
       <p>Wenn du eine Zeichenkette anstelle eines Zeichens als Trennung verwenden willst, solltest du zuvor mit <a href="StrReplace.htm">StrReplace</a> alle Vorkommen der Zeichenkette mit einem einzelnen Zeichen ersetzen, das im Text ansonsten nie vorkommt, wie beispielsweise eines der folgenden Sonderzeichen: ¢¤¥¦§©ª«®µ¶. Das folgende Beispiel zeigt, wie die Zeichenkette &lt;br&gt; als Trennung verwendet werden kann:</p>
-      <pre>StrReplace, NeueHTML, %HTMLZeichenkette%, &lt;br&gt;, ¢
-Loop, parse, %NeueHTML%, ¢ <em>; Parst die Zeichenkette basierend auf das Cent-Symbol.</em>
+      <pre>NeueHTML := StrReplace(HTMLZeichenkette, "&lt;br&gt;", "¢")
+Loop Parse, NeueHTML, "¢" <em>; Parst die Zeichenkette basierend auf das Cent-Symbol.</em>
 {
 ...
 }</pre></dd>
 
   <dt>ZuEntfernendeZeichen</dt>
-  <dd><p>Eine optionale Liste mit Zeichen (zeichengenau), die bei jeder Teilzeichenkette am Anfang und Ende entfernt werden sollen. Wenn <em>ZuEntfernendeZeichen</em> beispielsweise %A_Space%%A_Tab% wäre, wird bei jeder abgerufenen Teilzeichenkette Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
+  <dd><p>Eine optionale Liste mit Zeichen (zeichengenau), die bei jeder Teilzeichenkette am Anfang und Ende entfernt werden sollen. Wenn <em>ZuEntfernendeZeichen</em> beispielsweise <code>A_Space A_Tab</code> wäre, wird bei jeder abgerufenen Teilzeichenkette Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
     <p>Wenn <em>Trennzeichen</em> leer ist, wird <em>ZuEntfernendeZeichen</em> kennzeichnen, welche Zeichen nicht geparst werden sollen (die Schleife wird sie nicht sehen).</p>
-    <p>Im Gegensatz zum letzten Parameter der meisten anderen Befehle müssen Kommas in <em>ZuEntfernendeZeichen</em> mit einem Escapezeichen versehen werden (`,).</p></dd>
+  </dd>
 
 </dl>
 
@@ -50,42 +50,42 @@ Loop, parse, %NeueHTML%, ¢ <em>; Parst die Zeichenkette basierend auf das Cent-
 <p id="LoopField">Die Built-in-Variable <strong>A_LoopField</strong> ist nur in einer parsenden Schleife von Bedeutung. Sie enthält den Inhalt der aktuellen Teilzeichenkette (Feld). Wenn eine innere parsende Schleife von einer äußeren parsenden Schleife umschlossen ist, wird das Feld von der innersten Schleife Vorrang haben.</p>
 <p>Zwar gibt es nicht die Built-in-Variable "A_LoopDelimiter", allerdings zeigt das Beispiel ganz unten, wie man ermitteln kann, welche Trennung bei jedem Feld verwendet wurde.</p>
 <p>Die Zeichenkette oder ihre Felder können eine unbegrenzte Größe haben.</p>
-<p>Mit dem <a href="Sort.htm">Sort</a>-Befehl können die Felder vor dem Parsen neu angeordnet werden.</p>
+<p>Mit der <a href="Sort.htm">Sort</a>-Funktion können die Felder vor dem Parsen neu angeordnet werden.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite findest du Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 <h3>Siehe auch</h3>
 <p><a href="StrSplit.htm">StrSplit</a>, <a href="LoopReadFile.htm">Datei-lesende Schleife</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="Sort.htm">Sort</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel #1:</em>
 Farben := "rot,grün,blau"
-Loop, parse, %Farben%, `,
+Loop parse, Farben, ","
 {
-    MsgBox, Farbnummer %A_Index% ist %A_LoopField%.
+    MsgBox "Farbnummer " A_Index " ist " A_LoopField
 }</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #2: Liest den Inhalt einer Variable zeilenweise aus (so ähnlich wie eine <a href="LoopReadFile.htm">Datei-lesende Schleife</a>).
 ; Mit <a href="FileRead.htm">FileRead</a> kann eine Datei in eine Variable geladen werden:</em>
-Loop, parse, %Dateiinhalt%, `n, `r  <em>; Durch die Angabe von `n vor `r können sowohl Windows- als auch Unix-Dateien geparst werden.</em>
+Loop parse, Dateiinhalt, "`n", "`r"  <em>; Durch die Angabe von `n vor `r können sowohl Windows- als auch Unix-Dateien geparst werden.</em>
 {
-    Result := MsgBox("Zeilennummer %A_Index% ist %A_LoopField%.`n`nWeiter?",, 4)
-    if Result = "No", break
-}</pre>
+    Result := MsgBox("Zeilennummer " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
+}
+until Result = "No"</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #3: Dieses Beispiel ist das gleiche wie oben, außer dass es für die Zwischenablage ist.
 ; Es ist nützlich, wann immer die Zwischenablage Dateien enthält, wie z. B. solche, die von einem offenen Explorer-Fenster
 ; kopiert wurden (das Programm wandelt solche Dateien automatisch in ihre Dateinamen um):</em>
-Loop, parse, %clipboard%, `n, `r
+Loop parse, clipboard, "`n", "`r"
 {
-    Result := MsgBox("Dateinummer %A_Index% ist %A_LoopField%.`n`nWeiter?",, 4)
-    if Result = "No", break
-}</pre>
+    Result := MsgBox("Dateinummer " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
+}
+until Result = "No"</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #4: Parst eine Datei mit kommagetrennten Werten (CSV):</em>
-Loop, read, C:\Datenbank-Export.csv
+Loop read, "C:\Datenbank-Export.csv"
 {
     Zeilennummer := A_Index
-    Loop, parse, %A_LoopReadLine%, CSV
+    Loop parse, A_LoopReadLine, "CSV"
     {
-        Result := MsgBox("Feld %Zeilennummer%-%A_Index% ist:`n%A_LoopField%`n`nWeiter?",, 4)
+        Result := MsgBox("Feld " Zeilennummer "-" A_Index " ist:`n" A_LoopField "`n`nWeiter?",, "y/n")
         if Result = "No"
             return
     }
@@ -98,14 +98,14 @@ Farben := "Rot,Grün|Blau;Gelb|Cyan,Magenta"
 <em>; Initialisiert einen Zähler, um unsere aktuelle Zeichenkettenposition im Auge zu behalten.</em>
 Position := 0
 
-Loop, Parse, %Farben%, `,|;
+Loop Parse, Farben, ",|;"
 {
     <em>; Berechnet die Position der Trennung am Ende dieses Feldes.</em>
     Position += StrLen(A_LoopField) + 1
     <em>; Ermittelt die Trennung, die von der parsenden Schleife gefunden wurde.</em>
     Trennung := SubStr(Farben, Position, 1)
 
-    MsgBox Feld: %A_LoopField%`Trennung: %Trennung%
+    MsgBox "Feld: " A_LoopField "`nTrennung: " Trennung
 }</pre>
 
 </body>

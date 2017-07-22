@@ -24,7 +24,7 @@
 
   <dt>Steuerelement</dt>
   <dd><p>Kann entweder das ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, das beides mit Windows Spy ermittelt werden kann. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Fehlt dieser Parameter oder ist er leer, wird das oberste Steuerelement des Fensters benutzt.</p>
-    <p>Um ein Steuerelement per HWND (Windows Handle) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>ahk_id %SteuerelementHwnd%</code> im <em>Fenstertitel</em>-Parameter angegeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="Control.htm#GetHwnd">ControlGetHwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
+    <p>Um ein Steuerelement per HWND (Windows Handle) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>"ahk_id " SteuerelementHwnd</code> im <em>Fenstertitel</em>-Parameter angegeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="Control.htm#GetHwnd">ControlGetHwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p></dd>
 
   <dt>Fenstertitel</dt>
   <dd><p>Ein Fenstertitel oder sonstige Kriterien, die das Zielfenster ermitteln sollen. Siehe <a href="../misc/WinTitle.htm">Fenstertitel</a>.</p></dd>
@@ -45,15 +45,15 @@
 <h3>Bemerkungen</h3>
 <p>Hinweis: Um Text aus einem ListView-, ListBox- oder ComboBox-Steuerelement zu ermitteln, verwende stattdessen <a href="Control.htm#GetList">ControlGetList</a>.</p>
 <p>Erscheint der ermittelte Text gekürzt (unvollständig), muss <code><a href="VarSetCapacity.htm">VarSetCapacity(AusgabeVar, 55)</a></code> vor ControlGetText verwenden werden [55 sollte durch eine wesentlich größere Zahl als die Länge des Textes ersetzt werden]. Da einige Anwendungen nicht richtig auf die WM_GETTEXTLENGTH-Meldung reagieren, macht AutoHotkey die Ausgabevariable zu klein, wodurch der Text nicht mehr reinpasst.</p>
-<p>Dieser Befehl kann eine große Menge an RAM erzeugen, wenn das Steuerelement (z. B. ein Editor mit einem geöffneten umfangreichen Dokument) eine große Menge an Text beinhaltet. Allerdings kann der Speicher der Variable geleert werden, indem man ihr nichts zuteilt, z. B. <code>AusgabeVar := ""</code>.</p>
+<p>Diese Funktion kann eine große Menge an RAM erzeugen, wenn das Steuerelement (z. B. ein Editor mit einem geöffneten umfangreichen Dokument) eine große Menge an Text beinhaltet. Allerdings kann der Speicher der Variable geleert werden, indem man ihr nichts zuteilt, z. B. <code>AusgabeVar := ""</code>.</p>
 <p>Meistens enthält der abgerufene Text eines Steuerelements CR- und LF-Zeichen (`r`n), anstatt ein einzelnes LF-Zeichen (`n), um das Ende jeder Zeile zu kennzeichnen.</p>
-<p>Es ist nicht notwendig, <code>SetTitleMatchMode Slow</code> zu verwenden, weil ControlGetText den Text immer mithilfe der langsamen Methode ermittelt (da bei dieser Methode die Chance höher ist, dass der Befehl bei den meisten Steuerelementarten funktioniert).</p>
+<p>Es ist nicht notwendig, <code>SetTitleMatchMode "Slow"</code> zu verwenden, weil ControlGetText den Text immer mithilfe der langsamen Methode ermittelt (da bei dieser Methode die Chance höher ist, dass der Befehl bei den meisten Steuerelementarten funktioniert).</p>
 <p>Mit <a href="WinGet.htm#Controls">WinGetControls</a> oder <a href="WinGet.htm#ControlsHwnd">WinGetControlsHwnd</a> kann eine Liste mit Steuerelementen von einem Fenster abgerufen werden.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 <h3>Siehe auch</h3>
 <p><a href="ControlSetText.htm">ControlSetText</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="Control.htm">Control-Funktionen</a>, <a href="ControlMove.htm">ControlMove</a>, <a href="ControlFocus.htm">ControlFocus</a>, <a href="ControlClick.htm">ControlClick</a>, <a href="ControlSend.htm">ControlSend</a></p>
 <h3>Beispiel</h3>
-<pre class="NoIndent">ControlGetText, AusgabeVar, Edit1, Unbenannt -</pre>
+<pre class="NoIndent">OutputVar := ControlGetText("Edit1", "Unbenannt -")</pre>
 
 </body>
 </html>

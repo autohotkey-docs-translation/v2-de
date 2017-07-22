@@ -14,7 +14,7 @@
 
 <h1>WinLIRC-Client</h1>
 
-<p>Dieses Skript empfängt Benachrichtigungen von <a href="http://winlirc.sourceforge.net">WinLIRC</a>, sobald eine Taste der Fernbedienung gedrückt wird. Außerdem kann damit Winamp, Windows Media Player und so weiter automatisiert werden. Es ist einfach zu konfigurieren. Wenn zum Beispiel WinLIRC einen Button namens "VolUp" auf der Fernbedienung erkennt, dann wird ein Label namens VolUp erstellt und der Befehl <code>SoundSet +5</code> darunter verwendet, um die Lautstärke der Soundkarte um 5 % zu erhöhen.
+<p>Dieses Skript empfängt Benachrichtigungen von <a href="http://winlirc.sourceforge.net">WinLIRC</a>, sobald eine Taste der Fernbedienung gedrückt wird. Außerdem kann damit Winamp, Windows Media Player und so weiter automatisiert werden. Es ist einfach zu konfigurieren. Wenn zum Beispiel WinLIRC einen Button namens "VolUp" auf der Fernbedienung erkennt, dann wird ein Label namens VolUp erstellt und die Funktion <code>SoundSet "+5"</code> darunter verwendet, um die Lautstärke der Soundkarte um 5 % zu erhöhen.
 </p>
 <p><a href="WinLIRC.ahk">Dieses Skript herunterladen</a>  |  <a href="index.htm">Andere Beispiel-Skripte</a>  |  <a href="../AutoHotkey.htm">Home</a></p>
 
@@ -48,7 +48,7 @@
 DelayBetweenButtonRepeats := 200
 
 <em>; Gebt den Pfad zu WinLIRC an, wie z. B. C:\WinLIRC\winlirc.exe</em>
-WinLIRC_Path := "%A_ProgramFiles%\WinLIRC\winlirc.exe"
+WinLIRC_Path := A_ProgramFiles "\WinLIRC\winlirc.exe"
 
 <em>; Bestimmt die Adresse und den Port von WinLIRC. Häufig wird 127.0.0.1 (localhost) und 8765 verwendet.</em>
 WinLIRC_Address := "127.0.0.1"
@@ -70,27 +70,25 @@ return
 ; gelöscht werden.</em>
 
 VolUp:
-SoundSet +5  <em>; Gesamtlautstärke um 5 % erhöhen. In Vista oder höher sollte diese Zeile ersetzt werden mit: Send {Volume_Up}</em>
+SoundSet "+5"  <em>; Gesamtlautstärke um 5 % erhöhen. In Vista oder höher sollte diese Zeile ersetzt werden mit: Send {Volume_Up}</em>
 return
 
 VolDown:
-SoundSet -5  <em>; Gesamtlautstärke um 5 % verringern. In Vista oder höher sollte diese Zeile ersetzt werden mit: Send {Volume_Down}</em>
+SoundSet "-5"  <em>; Gesamtlautstärke um 5 % verringern. In Vista oder höher sollte diese Zeile ersetzt werden mit: Send {Volume_Down}</em>
 return
 
 ChUp:
-WinGetClass, ActiveClass, A
-if ActiveClass ~= "^(Winamp v1\.x|Winamp PE)$"  <em>; Winamp ist aktiv.</em>
-    Send {right}  <em>; Die rechte Pfeiltaste senden.</em>
+if WinGetClass("A") ~= "^(Winamp v1\.x|Winamp PE)$"  <em>; Winamp ist aktiv.</em>
+    Send "{right}"  <em>; Die rechte Pfeiltaste senden.</em>
 else  <em>; Irgendein anderes Fenster ist aktiv.</em>
-    Send {WheelUp}  <em>; Das Mausrad eine Rasterung nach oben drehen.</em>
+    Send "{WheelUp}"  <em>; Das Mausrad eine Rasterung nach oben drehen.</em>
 return
 
 ChDown:
-WinGetClass, ActiveClass, A
-if ActiveClass ~= "^(Winamp v1\.x|Winamp PE)$"  <em>; Winamp ist aktiv.</em>
-    Send {left}  <em>; Die linke Pfeiltaste senden.</em>
+if WinGetClass("A") ~= "^(Winamp v1\.x|Winamp PE)$"  <em>; Winamp ist aktiv.</em>
+    Send "{left}"  <em>; Die linke Pfeiltaste senden.</em>
 else  <em>; Irgendein anderes Fenster ist aktiv.</em>
-    Send {WheelDown}  <em>; Das Mausrad eine Rasterung nach unten drehen.</em>
+    Send "{WheelDown}"  <em>; Das Mausrad eine Rasterung nach unten drehen.</em>
 return
 
 Menu:
@@ -100,11 +98,11 @@ if WinExist("Unbenannt - Editor")
 }
 else
 {
-    Run, Notepad
-    WinWait, Unbenannt - Editor
+    Run "Notepad"
+    WinWait "Unbenannt - Editor"
     WinActivate
 }
-Send Hier einige gesendete Tastatureingaben im Editor.{Enter}
+Send "Hier einige gesendete Tastatureingaben im Editor.{Enter}"
 return
 
 <em>; Die oben genannten Beispiele geben einen Eindruck davon, wie häufige Aufgaben durchgeführt werden.
@@ -120,15 +118,14 @@ WinLIRC_Init:
 OnExit("ExitSub")  <em>; Um die Verbindung zu beenden.</em>
 
 <em>; WinLIRC starten, falls noch nicht getan:</em>
-ProcessExist, ErrorLevel, winlirc.exe
-if not ErrorLevel  <em>; Keine PID für WinLIRC gefunden.</em>
+if not ProcessExist("winlirc.exe")  <em>; Keine PID für WinLIRC gefunden.</em>
 {
     if !FileExist(WinLIRC_Path)
     {
-        MsgBox Die Datei "%WinLIRC_Path%" ist nicht vorhanden. Bitte diesen Skript bearbeiten, um den Standort festzulegen.
+        MsgBox "Die Datei '" WinLIRC_Path "' ist nicht vorhanden." Bitte diesen Skript bearbeiten, um den Standort festzulegen.
         ExitApp
     }
-    Run %WinLIRC_Path%
+    Run WinLIRC_Path
     Sleep 200  <em>; Gibt WinLIRC Zeit, zu starten (wahrscheinlich nie notwendig, nur zur Sicherheit).</em>
 }
 
@@ -138,10 +135,10 @@ if socket = -1  <em>; Verbindung fehlgeschlagen (der Grund wird bereits angezeig
     ExitApp
 
 <em>; Das Hauptfenster vom Skript finden:</em>
-ProcessExist, ErrorLevel  <em>; Dadurch enthält ErrorLevel die PID des Skripts (wird auf diese Weise durchgeführt, um kompilierte Skripte zu unterstützen).</em>
-DetectHiddenWindows On
-ScriptMainWindowId := WinExist("ahk_class AutoHotkey ahk_pid " . ErrorLevel)
-DetectHiddenWindows Off
+ErrorLevel := ProcessExist()  <em>; Dadurch enthält ErrorLevel die PID des Skripts (wird auf diese Weise durchgeführt, um kompilierte Skripte zu unterstützen).</em>
+DetectHiddenWindows True
+ScriptMainWindowId := WinExist("ahk_class AutoHotkey ahk_pid " ErrorLevel)
+DetectHiddenWindows False
 
 <em>; Sobald das Betriebssystem dem Skript meldet, dass eingehende Daten darauf warten,
 ; empfangen zu werden, wird eine Funktion ausgeführt, um die Daten zu lesen:</em>
@@ -152,9 +149,9 @@ OnMessage(NotificationMsg, "ReceiveData")
 ; Dadurch wird verhindert, dass die Verbindung abgefragt werden muss, daher verringert sich der Ressourcenverbrauch.</em>
 FD_READ := 1     <em>; Wird empfangen, falls lesbare Daten verfügbar sind.</em>
 FD_CLOSE := 32   <em>; Wird empfangen, falls die Verbindung unterbrochen wurde.</em>
-if DllCall("Ws2_32\WSAAsyncSelect", "UInt", socket, "UInt", ScriptMainWindowId, "UInt", NotificationMsg, "Int", FD_READ|FD_CLOSE)
+if DllCall("Ws2_32\WSAAsyncSelect", UInt, socket, UInt, ScriptMainWindowId, UInt, NotificationMsg, Int, FD_READ|FD_CLOSE)
 {
-    MsgBox % "WSAAsyncSelect() indicated Winsock error " . DllCall("Ws2_32\WSAGetLastError")
+    MsgBox "WSAAsyncSelect() indicated Winsock error " DllCall("Ws2_32\WSAGetLastError")
     ExitApp
 }
 return
@@ -166,27 +163,27 @@ ConnectToAddress(IPAddress, Port)
 ; Gibt bei Misserfolg eine -1 (INVALID_SOCKET) und bei Erfolg die Sockel-ID zurück.</em>
 {
     VarSetCapacity(wsaData, 400)
-    result := DllCall("Ws2_32\WSAStartup", "UShort", 0x0002, "UInt", &amp;wsaData) <em>; Winsock 2.0 (0x0002) anfordern</em>
+    result := DllCall("Ws2_32\WSAStartup", UShort, 0x0002, UInt, &amp;wsaData) <em>; Winsock 2.0 (0x0002) anfordern</em>
     <em>; Da WSAStartup() wahrscheinlich die erste aufgerufene Winsock-Funktion des Skripts ist,</em>
     <em>; wird ErrorLevel überprüft, ob Winsock 2.0 verfügbar ist:</em>
     if ErrorLevel
     {
-        MsgBox WSAStartup() konnte aufgrund des Fehlers %ErrorLevel% nicht aufgerufen werden. Es wird Winsock 2.0 oder höher benötigt.
+        MsgBox "WSAStartup() konnte aufgrund des Fehlers " ErrorLevel " nicht aufgerufen werden." Es wird Winsock 2.0 oder höher benötigt.
         return -1
     }
     if result  <em>; Ungleich 0, das heißt Misserfolg (die meisten Winsock-Funktionen geben bei Erfolg eine 0 zurück).</em>
     {
-        MsgBox % "WSAStartup() kennzeichnet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError")
+        MsgBox "WSAStartup() kennzeichnet Winsock-Fehler " DllCall("Ws2_32\WSAGetLastError")
         return -1
     }
 
     AF_INET := 2
     SOCK_STREAM := 1
     IPPROTO_TCP := 6
-    socket := DllCall("Ws2_32\socket", "Int", AF_INET, "Int", SOCK_STREAM, "Int", IPPROTO_TCP)
+    socket := DllCall("Ws2_32\socket", Int, AF_INET, Int, SOCK_STREAM, Int, IPPROTO_TCP)
     if socket = -1
     {
-        MsgBox % "socket() kennzeichnet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError")
+        MsgBox "socket() kennzeichnet Winsock-Fehler " DllCall("Ws2_32\WSAGetLastError")
         return -1
     }
 
@@ -194,13 +191,13 @@ ConnectToAddress(IPAddress, Port)
     SizeOfSocketAddress := 16
     VarSetCapacity(SocketAddress, SizeOfSocketAddress)
     InsertInteger(2, SocketAddress, 0, AF_INET)   <em>; sin_family</em>
-    InsertInteger(DllCall("Ws2_32\htons", "UShort", Port), SocketAddress, 2, 2)   <em>; sin_port</em>
-    InsertInteger(DllCall("Ws2_32\inet_addr", "AStr", IPAddress), SocketAddress, 4, 4)   <em>; sin_addr.s_addr</em>
+    InsertInteger(DllCall("Ws2_32\htons", UShort, Port), SocketAddress, 2, 2)   <em>; sin_port</em>
+    InsertInteger(DllCall("Ws2_32\inet_addr", AStr, IPAddress), SocketAddress, 4, 4)   <em>; sin_addr.s_addr</em>
 
     <em>; Verbindungsversuch:</em>
-    if DllCall("Ws2_32\connect", "UInt", socket, "UInt", &amp;SocketAddress, "Int", SizeOfSocketAddress)
+    if DllCall("Ws2_32\connect", UInt, socket, UInt, &amp;SocketAddress, Int, SizeOfSocketAddress)
     {
-        MsgBox % "connect() kennzeichnet Winsock-Fehler " . DllCall("Ws2_32\WSAGetLastError") . ". Wird WinLIRC ausgeführt?"
+        MsgBox "connect() kennzeichnet Winsock-Fehler " DllCall("Ws2_32\WSAGetLastError") ". Wird WinLIRC ausgeführt?"
         return -1
     }
     return socket  <em>; Kennzeichnet Erfolg, indem eine gültige Sockel-ID anstelle von -1 zurückgegeben wird.</em>
@@ -209,7 +206,7 @@ ConnectToAddress(IPAddress, Port)
 
 
 ReceiveData(wParam, lParam)
-<em>; Durch OnMessage() wird diese Funktion automatisch aufgerufen, wann immer neue Daten
+<em>; Durch OnMessage wird diese Funktion automatisch aufgerufen, wann immer neue Daten
 ; bei der Verbindung eintreffen.  Sie liest die Daten von WinLIRC und führt entsprechende Aktionen abhängig
 ; vom Inhalt durch.</em>
 {
@@ -218,7 +215,7 @@ ReceiveData(wParam, lParam)
     ReceivedDataSize := 4096  <em>; Hoher Wert, falls viele Daten zwischengespeichert werden, weil eine Verzögerung beim Verarbeiten der vorherigen Daten auftreten kann.</em>
 
     VarSetCapacity(ReceivedData, ReceivedDataSize, 0)  <em>; Mit einer 0 im letzten Parameter wird die Zeichenkette terminiert, damit sie für recv() verwendet werden kann.</em>
-    ReceivedDataLength := DllCall("Ws2_32\recv", "UInt", socket, "Str", ReceivedData, "Int", ReceivedDataSize, "Int", 0)
+    ReceivedDataLength := DllCall("Ws2_32\recv", UInt, socket, Str, ReceivedData, Int, ReceivedDataSize, Int, 0)
     if ReceivedDataLength = 0  <em>; Die Verbindung wurde ordnungsgemäß unterbrochen, vielleicht weil WinLIRC beendet wurde.</em>
         ExitApp  <em>; Die OnExit-Subroutine wird für uns WSACleanup() aufrufen.</em>
     if ReceivedDataLength = -1
@@ -228,19 +225,19 @@ ReceiveData(wParam, lParam)
             return 1
         if WinsockError &lt;&gt; 10054 <em>; WSAECONNRESET, dass passieren kann, wenn WinLIRC durch das Herunterfahren/Abmelden des Systems geschlossen wird.</em>
             <em>; Da das ein unerwarteter Fehler ist, muss er gemeldet werden.  Außerdem beenden, um eine Endlosschleife zu verhindern.</em>
-            MsgBox % "recv() kennzeichnet Winsock-Fehler " . WinsockError
+            MsgBox "recv() kennzeichnet Winsock-Fehler " WinsockError
         ExitApp  <em>; Die OnExit-Subroutine wird für uns WSACleanup() aufrufen.</em>
     }
     <em>; Ansonsten die empfangenen Daten bearbeiten. Tests zeigen, dass es möglich ist, mehr als eine Zeile gleichzeitig zu erhalten</em>
     <em>; (selbst beim expliziten Senden eines IR-Signals), wodurch die folgende Mehthode richtig behandelt wird.</em>
     <em>; Empfangene Daten von WinLIRC sehen z. B. wie folgt aus (siehe Dokumentation zu WinLIRC für Details):</em>
     <em>; 0000000000eab154 00 Tastenname Fernbedienungsname</em>
-    Loop, parse, %ReceivedData%, `n, `r
+    Loop Parse, ReceivedData, "`n", "`r"
     {
         if A_LoopField ~= "^(|BEGIN|SIGHUP|END)$"  <em>; Leere Zeilen und Startmeldungen von WinLIRC ignorieren.</em>
             continue
         ButtonName := ""  <em>; Leer machen, falls weniger als 3 Felder unten gefunden werden.</em>
-        Loop, parse, %A_LoopField%, %A_Space%  <em>; Tastenname extrahieren, der sich im dritten Feld befindet.</em>
+        Loop Parse, A_LoopField, "`s"  <em>; Tastenname extrahieren, der sich im dritten Feld befindet.</em>
             if A_Index = 3
                 ButtonName := A_LoopField
         global DelayBetweenButtonRepeats  <em>; Globale Variablen deklarieren, damit sie für diese Funktion verfügbar sind.</em>
@@ -248,15 +245,15 @@ ReceiveData(wParam, lParam)
         if (ButtonName != PrevButtonName || A_TickCount - PrevButtonTime &gt; DelayBetweenButtonRepeats)
         {
             if IsLabel(ButtonName)  <em>; Es ist eine Subroutine vorhanden, die sich auf diese Taste bezieht.</em>
-                Gosub %ButtonName%  <em>; Die Subroutine starten.</em>
+                Gosub(ButtonName)  <em>; Die Subroutine starten.</em>
             else <em>; Falls keine entsprechende Subroutine vorhanden ist, kurz anzeigen, welche Taste gedrückt wurde.</em>
             {
                 if (ButtonName == PrevButtonName)
                     RepeatCount += 1
                 else
                     RepeatCount := 1
-                ToolTip, Button from WinLIRC, %ButtonName% (%RepeatCount%)
-                SetTimer, SplashOff, -3000  <em>; Dadurch können mehr Signale beim Anzeigen des Fensters verarbeitet werden.</em>
+                ToolTip "Taste von WinLIRC, " ButtonName " (" RepeatCount ")"
+                SetTimer "SplashOff", -3000  <em>; Dadurch können mehr Signale beim Anzeigen des Fensters verarbeitet werden.</em>
             }
             PrevButtonName := ButtonName
             PrevButtonTime := A_TickCount
@@ -278,7 +275,7 @@ InsertInteger(pInteger, ByRef pDest, pOffset := 0, pSize := 4)
 ; wird nur die Anzahl an Bytes in pSize beginnend bei pOffset geändert.</em>
 {
     Loop pSize  <em>; Jeden Byte im Integer als unbearbeitete Binärdaten in die Struktur kopieren.</em>
-        DllCall("RtlFillMemory", "UInt", &amp;pDest + pOffset + A_Index-1, "UInt", 1, "UChar", pInteger &gt;&gt; 8*(A_Index-1) &amp; 0xFF)
+        DllCall("RtlFillMemory", UInt, &amp;pDest + pOffset + A_Index-1, UInt, 1, UChar, pInteger &gt;&gt; 8*(A_Index-1) &amp; 0xFF)
 }
 
 

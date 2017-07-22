@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<h1>RegisterCallback()</h1>
+<h1>RegisterCallback</h1>
 
 <p>Erstellt eine Maschinencode-Adresse, die ihren Aufruf zu einer <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
@@ -20,7 +20,7 @@
 <dl>
 
   <dt>Adresse</dt>
-  <dd><p>Bei Erfolg gibt RegisterCallback() eine numerische Adresse zurück, die mit <a href="DllCall.htm">DllCall()</a> oder Ähnlichem aufgerufen werden kann. Bei Misserfolg gibt sie eine leere Zeichenkette zurück. Fehler treten auf, wenn <em>Funktionsname</em>: 1) nicht existiert; 2) zu viele oder zu wenig Parameter in Bezug auf <em>Parameteranzahl</em> akzeptiert; oder 3) einen beliebigen <a href="../Functions.htm#ByRef">ByRef-Parameter</a> akzeptiert.</p></dd>
+  <dd><p>Bei Erfolg gibt RegisterCallback eine numerische Adresse zurück, die mit <a href="DllCall.htm">DllCall</a> oder Ähnlichem aufgerufen werden kann. Bei Misserfolg gibt sie eine leere Zeichenkette zurück. Fehler treten auf, wenn <em>Funktionsname</em>: 1) nicht existiert; 2) zu viele oder zu wenig Parameter in Bezug auf <em>Parameteranzahl</em> akzeptiert; oder 3) einen beliebigen <a href="../Functions.htm#ByRef">ByRef-Parameter</a> akzeptiert.</p></dd>
 
   <dt>Funktionsname</dt>
   <dd>
@@ -29,7 +29,7 @@
   </dd>
 
   <dt>Optionen</dt>
-  <dd><p>Verwende null oder mehrere der folgenden Wörter. Trenne diese Optionen jeweils mit einem Leerzeichen (z.B. <code>C Fast</code>).</p>
+  <dd><p>Verwende null oder mehrere der folgenden Wörter. Trenne diese Optionen jeweils mit einem Leerzeichen (z.B. <code>"C Fast"</code>).</p>
     <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass jedesmal ein neuer <a href="../misc/Threads.htm">Thread</a> startet, wenn <em>Funktionsname</em> aufgerufen wird. Zwar ist dies leistungsfähiger, allerdings sollte es nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wurde, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Denn <em>Funktionsname</em> kann globale Einstellungen eines Threads wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> jederzeit ändern. Weitere Informationen findest du bei den <a href="#Threads">Bemerkungen</a>.</p>
     <p><strong>CDecl</strong> oder <strong>C</strong>: Passt die <em>Adresse</em> an die "C"-Aufrufkonvention an. Diese Option lässt man üblicherweise weg, weil die Standard-Aufrufkonvention in der Regel für Callbacks genügt.</p></dd>
 
@@ -75,9 +75,9 @@ DieFunktion("DieFunktion wurde direkt aufgerufen.")  <em>; Ruft DieFunktion dire
 DllCall(callback, float, 10.5, int64, 42)        <em>; Ruft DieFunktion via Callback auf.</em>
 DieFunktion(params*) {
     if IsObject(params)
-        MsgBox % params[1]
+        MsgBox params[1]
     else
-        MsgBox % <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
+        MsgBox <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
 }</pre>
 <p>Die meisten Callbacks verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>Parameteranzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen.</p>
 <p>Bei <em>Cdecl</em> oder 64-Bit-Aufrufkonventionen hat <em>Parameteranzahl</em> nur Einfluss darauf, wievielen Skriptparametern Werte zugewiesen werden können. Wenn dieser Parameter fehlt, werden alle optionalen Parameter ihren Standardwert bekommen und aus den Berechnungen für die Adresse, gespeichert in <em>params</em>, ausgeschlossen.</p>
@@ -91,11 +91,11 @@ DieFunktion(params*) {
 <p>Um die eigene Unterbrechung (oder von einem anderen Thread) zu verhindern, kann ein Callback <a href="Critical.htm">Critical</a> in der ersten Zeile verwenden. Allerdings ist dies nicht effektiv, wenn die Funktion indirekt via eingehende Meldung kleiner als 0x312 aufgerufen wird (das Erhöhen von Critical's <a href="Critical.htm#Interval">Intervall</a> könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
 
 <h3>Speicher</h3>
-<p>Jede Verwendung von RegisterCallback() bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das RegisterCallback() unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
+<p>Jede Verwendung von RegisterCallback bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das RegisterCallback unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
 <pre>DllCall("GlobalFree", "Ptr", Adresse, "Ptr")</pre>
 
 <h3>Siehe auch</h3>
-<p><a href="DllCall.htm">DllCall()</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
+<p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt eine Zusammenfassung aller Fenster auf höchster Ebene an.</em>
@@ -104,17 +104,17 @@ DieFunktion(params*) {
 if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird:</em>
     EnumAdresse := <strong>RegisterCallback</strong>("EnumWindowsProc", "Fast")
 
-DetectHiddenWindows On  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
+DetectHiddenWindows True  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
 
 <em>; Übergibt die Kontrolle an EnumWindows(), das Callback wiederholend aufruft:</em>
 DllCall("EnumWindows", Ptr, EnumAdresse, Ptr, 0)
-MsgBox %Ausgabe%  <em>; Zeigt die gesammelten Informationen von Callback an.</em>
+MsgBox Ausgabe  <em>; Zeigt die gesammelten Informationen von Callback an.</em>
 
 EnumWindowsProc(hwnd, lParam)
 {
     global Ausgabe
-    WinGetTitle, Titel, ahk_id %hwnd%
-    WinGetClass, Klasse, ahk_id %hwnd%
+    Titel := WinGetTitle("ahk_id " hwnd)
+    Klasse := WinGetClass("ahk_id " hwnd)
     if Titel
         Ausgabe .= "HWND: " . hwnd . "`tTitel: " . Titel . "`tKlasse: " . Klasse . "`n"
     return true  <em>; Setzt EnumWindows() fort, bis alle Fenster abgearbeitet wurden.</em>
@@ -138,7 +138,7 @@ WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "
 WindowProcAlt := DllCall(SetWindowLong, Ptr, Gui.Hwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
     , Ptr, WindowProcNeu, Ptr)  <em>; Wert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
 
-Gui.Show()
+Gui.Show
 
 WindowProc(hwnd, uMsg, wParam, lParam)
 {

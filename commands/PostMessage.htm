@@ -24,15 +24,13 @@
   <dt>Meldung</dt>
   <dd><p>Eine Meldungsnummer, die gesendet werden soll. Welche Nummern beispielsweise verwendet werden können, findest du in der <a href="../misc/SendMessageList.htm">Meldungsliste</a>.</p></dd>
 
-  <dt>wParam</dt>
-  <dd><p>Die erste Komponente der Meldung. Fehlt dieser Parameter oder ist er leer, wird eine 0 gesendet.</p></dd>
-
-  <dt>lParam</dt>
-  <dd><p>Die zweite Komponente der Meldung. Fehlt dieser Parameter oder ist er leer, wird eine 0 gesendet.</p></dd>
+  <dt>wParam, lParam</dt>
+  <dd><p>Die Parameter der Meldung. Wenn ein Parameter fehlt, gilt standardmäßig 0.</p>
+    <p>Jeder Parameter kann ein reiner Integer oder eine Zeichenkette sein. Wenn er eine Zeichenkette ist, wird die Adresse der Zeichenkette gesendet (auch wenn es sich um eine numerische Zeichenkette handelt). Wenn es sich um einen Variablenverweis handelt, wie z. B. <code>meinPuf</code>, und enthält diese Variable eine Zeichenkette (oder ist leer), wird danach die Länge der Variable aktualisiert, falls sie vom Zielfenster geändert wird.</p></dd>
 
   <dt>Steuerelement</dt>
   <dd><p>Fehlt dieser Parameter oder ist er leer, wird die Meldung direkt zum Zielfenster gesendet, anstatt zu einem seiner Steuerelemente. Ansonsten kann dieser Parameter entweder das ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, die beide mit Windows Spy ermittelt werden können. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>.</p>
-    <p>Um ein Steuerelement per HWND (Windows Handle) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>ahk_id %SteuerelementHwnd%</code> im <em>Fenstertitel</em>-Parameter angegeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="Control.htm#GetHwnd">ControlGetHwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p>
+    <p>Um ein Steuerelement per HWND (Windows Handle) anzusteuern, muss der <em>Steuerelement</em>-Parameter leer gelassen und <code>"ahk_id " SteuerelementHwnd</code> im <em>Fenstertitel</em>-Parameter angegeben werden (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist). Das HWND eines Steuerelements wird üblicherweise per <a href="Control.htm#GetHwnd">ControlGetHwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p>
     </dd>
 
   <dt>Fenstertitel</dt>
@@ -48,75 +46,75 @@
   <dd><p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p></dd>
 
   <dt>Zeitlimit</dt>
-  <dd><p>Die maximale Wartezeit in Millisekunden, in der das Zielfenster die Meldung verarbeiten kann. Fehlt dieser Parameter, gilt standardmäßig 5000 (Millisekunden); in den älteren Versionen von AutoHotkey, die diesen Parameter nicht unterstützen, gilt dieser Wert auch. Wenn das Zielfenster die Meldung innerhalb dieser Zeit nicht verarbeitet, wird der Befehl beendet und ErrorLevel auf das Wort ERROR gesetzt.</p></dd>
+  <dd><p>Die maximale Wartezeit in Millisekunden, in der das Zielfenster die Meldung verarbeiten kann. Fehlt dieser Parameter, gilt standardmäßig 5000 (Millisekunden); in den älteren Versionen von AutoHotkey, die diesen Parameter nicht unterstützen, gilt dieser Wert auch. Wenn das Zielfenster die Meldung innerhalb dieser Zeit nicht verarbeitet, wird die Funktion beendet und ErrorLevel auf 1 gesetzt.</p></dd>
 
 </dl>
 
-<h3>ErrorLevel</h3>
-<p>PostMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn es ein Problem gab - z. B. wenn das Zielfenster oder Steuerelement nicht vorhanden ist. Ansonsten wird es auf 0 gesetzt.</p>
-<p>SendMessage: <a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf ERROR gesetzt, wenn es ein Problem gab oder der Befehl die Zeit überschritten hat. Ansonsten wird es auf das numerische Ergebnis der Meldung gesetzt, das manchmal eine "Antwort" sein könnte, abhängig von der Art der Meldung und ihrem Zielfenster.</p>
+<h3>Rückgabewert</h3>
+<p>PostMessage gibt eine leere Zeichenkette zurück.</p>
+<p>SendMessage gibt eine leere Zeichenkette zurück, wenn es ein Problem gab oder die Wartezeit für die Meldung abgelaufen ist. Ansonsten gibt sie das numerische Ergebnis der Meldung zurück, das manchmal eine "Antwort" sein könnte, abhängig von der Art der Meldung und ihrem Zielfenster.</p>
 <p>Der mögliche Wertebereich ist abhängig davon, welches Zielfenster verwendet wird und welche Version von AutoHotkey läuft. Bei einer 32-Bit-Version von AutoHotkey, oder wenn das Zielfenster 32-Bit ist, wird das Ergebnis ein vorzeichenloser 32-Bit-Integer zwischen 0 und 4294967295 sein. Bei einer 64-Bit-Version von AutoHotkey mit einem 64-Bit-Fenster wird das Ergebnis ein vorzeichenbehafteter 64-Bit-Integer zwischen -9223372036854775808 und 9223372036854775807 sein.</p>
 <p>Wenn das Ergebnis ein vorzeichenbehafteter 32-Bit-Integer sein soll (ein Wert von -2147483648 bis 2147483648), kann es wie folgt auf 32-Bit gekürzt und in ein vorzeichenbehafteten Wert umgewandelt werden:</p>
-<pre>Meldeantwort := ErrorLevel &lt;&lt; 32 &gt;&gt; 32</pre>
+<pre>Meldeantwort := Meldeantwort &lt;&lt; 32 &gt;&gt; 32</pre>
 <p>Diese Umwandlung könnte auch in der 64-Bit-Version von AutoHotkey notwendig sein, weil die Ergebnisse von 32-Bit-Fenstern mit Nullen erweitert sind. Zum Beispiel würde ein Ergebnis von -1, zurückgegeben von einem 32-Bit-Fenster, in einer beliebigen AutoHotkey-Version als 0xFFFFFFFF  gesehen werden, aber ein Ergebnis von -1, zurückgegeben von einem 64-Bit-Fenster, in der 32-Bit-Version als 0xFFFFFFFF und in der 64-Bit-Version als -1.</p>
 
+<h3>ErrorLevel</h3>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn es ein Problem gab - z. B. wenn das Zielfenster oder Steuerelement nicht vorhanden ist - oder wenn SendMessage die Wartezeit überschritten hat. Ansonsten wird es auf 0 gesetzt.</p>
+
 <h3>Bemerkungen</h3>
-<p>Sei vorsichtig, wenn du solche Befehle verwendest - das Senden einer Meldung zum falschen Fenster (oder Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht darauf abgestimmt, bestimmte Arten von Meldungen aus externen Quellen zu erwarten.</p>
+<p>Sei vorsichtig, wenn du solche Funktionen verwendest - das Senden einer Meldung zum falschen Fenster (oder Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht darauf abgestimmt, bestimmte Arten von Meldungen aus externen Quellen zu erwarten.</p>
 <p>PostMessage setzt die Meldung in die Meldungswarteschlange des Zielfensters. Dieser Befehl wartet nicht auf eine Bestätigung oder Antwort. SendMessage hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
-<p>Die <em>wParam</em>- und <em>lParam</em>-Parameter sollten Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet; also sollte der Wert zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Variables.htm#cap">der von AutoHotkey unterstützt wird</a>, verwendet werden. Ein Präfix von 0x kennzeichnet einen hexadezimalen Wert, wie bei allen Integer-Werten in AutoHotkey. Zum Beispiel wäre 0xFF das gleiche wie 255.</p>
-<p>Es ist möglich, eine Zeichenkette via <em>wParam</em> oder <em>lParam</em> zu senden, indem man die Adresse einer Variable angibt. Das folgende Beispiel verwendet den <a href="../Variables.htm#amp">Adressoperator (&amp;)</a>, um dies zu tun:</p>
-<pre>SendMessage, 0xC, 0, <strong>&amp;MeineVar</strong>, ClassNN, Fenstertitel  <em>; 0XC ist WM_SETTEXT</em></pre>
-<p>Eine Zeichenkette in MeineVar wird korrekt erkannt, der vom Empfänger der Meldung eingefügt wurde, ohne dass zusätzliche Schritte notwendig sind. Diese Erkennung funktioniert allerdings nur, wenn das erste Zeichen des Parameters ein Und-Zeichen (&amp;) ist; zum Beispiel würde <code>5+&amp;MeineVar</code> nicht funktionieren, sondern nur <code>&amp;MeineVar</code> oder <code>&amp;MeineVar+5</code>.</p>
-<p>Eine literale bzw. in Anführungszeichen gesetzte Zeichenkette kann auch gesendet werden (in diesem Fall sollte der &amp;-Operator weggelassen werden):</p>
-<pre>Run Notepad
-WinWaitActive Unbenannt - Editor
-SendMessage, 0xC, 0, <strong>"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM_SETTEXT</em></pre>
+<p>Die <em>wParam</em>- und <em>lParam</em>-Parameter sollten in der Regel reine Integer sein. Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits verwendet; also sollte der Wert zwischen -2147483648 und 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Variables.htm#cap">der von AutoHotkey unterstützt wird</a>, verwendet werden. Ein Präfix von 0x kennzeichnet einen hexadezimalen Wert, wie bei allen Integer-Werten in AutoHotkey. Zum Beispiel wäre 0xFF das gleiche wie 255.</p>
+<p>Wenn <em>wParam</em> oder <em>lParam</em> eine Zeichenkette oder eine Variable mit Zeichenkette ist (selbst eine leere oder numerische Zeichenkette), wird die Adresse der Zeichenkette oder Variable gesendet. Zum Beispiel:</p>
+<pre>Run "Notepad"
+WinWait "Unbenannt - Editor"
+SendMessage 0xC, 0, <strong>"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM_SETTEXT</em></pre>
 <p>Um eine Meldung zu allen Fenstern im Betriebssystem zu senden - einschließlich solcher, die versteckt oder deaktiviert sind - ist es erforderlich, <code>ahk_id 0xFFFF</code> in <em>Fenstertitel</em> anzugeben (0xFFFF ist HWND_BROADCAST). Diese Technik sollte nur für Meldungen benutzt werden, die zum Broadcasten geeignet sind, wie z. B.:</p>
-<pre>SendMessage, 0x1A,,,, ahk_id 0xFFFF  <em>; 0x1A ist WM_SETTINGCHANGE</em></pre>
-<p>Mit <a href="OnMessage.htm">OnMessage()</a> kann ein Skript eine Meldung abfangen.</p>
-<p>Um mehr über das Verwenden solcher Befehle zu erfahren, siehe <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>.</p>
+<pre>SendMessage 0x1A,,,, "ahk_id 0xFFFF"  <em>; 0x1A ist WM_SETTINGCHANGE</em></pre>
+<p>Mit <a href="OnMessage.htm">OnMessage</a> kann ein Skript eine Meldung abfangen.</p>
+<p>Um mehr über das Verwenden solcher Funktionen zu erfahren, siehe <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Solange <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist, werden versteckte Fenster nicht wahrgenommen.</p>
 
 <h3>Siehe auch</h3>
-<p><a href="../misc/SendMessageList.htm">Meldungsliste</a>, <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>, <a href="OnMessage.htm">OnMessage()</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a>, <a href="DllCall.htm">DllCall</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="MenuSelect.htm">MenuSelect</a></p>
+<p><a href="../misc/SendMessageList.htm">Meldungsliste</a>, <a href="../misc/SendMessage.htm">Tutorial zum Senden von Meldungen</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="../misc/Winamp.htm">Winamp automatisieren</a>, <a href="DllCall.htm">DllCall</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="MenuSelect.htm">MenuSelect</a></p>
 <h3 id="Examples">Beispiele</h3>
 <pre class="NoIndent">#o::  <em>; WIN+O-Hotkey zum Ausschalten des Anzeigegeräts.</em>
 Sleep 1000  <em>; Gibt dem Benutzer die Chance, die Tasten loszulassen (sofern ihr Loslassen das Anzeigegerät wieder aufwecken würden).
 ; Schaltet das Anzeigegerät aus:</em>
-SendMessage, 0x112, 0xF170, 2,, Program Manager  <em>; 0x112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.
+SendMessage 0x112, 0xF170, 2,, "Program Manager"  <em>; 0x112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.
 ; Beachtet oben, dass die 2 mit -1 ersetzt werden kann, um den Monitor einzuschalten,
 ; oder mit 1, um den Energiesparmodus des Monitors zu aktivieren.</em>
 return
 
 <em>; Startet den ausgewählten Bildschirmschoner des Benutzers:</em>
-SendMessage, 0x112, 0xF140, 0,, Program Manager  <em>; 0x112 ist WM_SYSCOMMAND und 0xF140 ist SC_SCREENSAVE.</em>
+SendMessage 0x112, 0xF140, 0,, "Program Manager"  <em>; 0x112 ist WM_SYSCOMMAND und 0xF140 ist SC_SCREENSAVE.</em>
 
 <em>; Eine Zeile nach oben scrollen (bei einem Steuerelement mit vertikalem Scrollbalken):</em>
-ControlGetFocus, Steuerelement, A
-SendMessage, 0x115, 0, 0, %Steuerelement%, A
+ControlGetFocus Steuerelement, "A"
+SendMessage 0x115, 0, 0, Steuerelement, "A"
 
 <em>; Eine Zeile nach unten scrollen:</em>
-ControlGetFocus, Steuerelement, A
-SendMessage, 0x115, 1, 0, %Steuerelement%, A
+ControlGetFocus Steuerelement, "A"
+SendMessage 0x115, 1, 0, Steuerelement, "A"
 
 <em>; Schaltet die Tastaturbelegung/Sprache des aktiven Fensters auf Englisch:</em>
-PostMessage, 0x50, 0, 0x4090409,, A  <em>; 0x50 ist WM_INPUTLANGCHANGEREQUEST.</em>
+PostMessage 0x50, 0, 0x4090409,, "A"  <em>; 0x50 ist WM_INPUTLANGCHANGEREQUEST.</em>
 
 <em>; Dieses Beispiel fragt Winamp, welche Track-Nummer zurzeit aktiv ist:</em>
-SetTitleMatchMode, 2
-SendMessage, 1024, 0, 120, - Winamp
-if ErrorLevel != "Error"
+SetTitleMatchMode 2
+Track := SendMessage(1024, 0, 120, "- Winamp")
+if !ErrorLevel
 {
-    ErrorLevel++  <em>; Die Zählung von Winamp beginnt bei "0", also um 1 erhöhen.</em>
-    MsgBox, Track #%ErrorLevel% ist aktiv oder wird abgespielt.
+    Track++  <em>; Die Zählung von Winamp beginnt bei "0", also um 1 erhöhen.</em>
+    MsgBox "Track #" Track " ist aktiv oder wird abgespielt."
 }
 <em>; Siehe <a href="../misc/Winamp.htm">Winamp automatisieren</a> für mehr Informationen.</em>
 
-<em>; Um die Prozess-ID eines AHK-Skripts zu finden (eine Alternative zu "<a href="WinGet.htm">WinGet PID</a>"):</em>
-SetTitleMatchMode, 2
-DetectHiddenWindows, on
-SendMessage, 0x44, 0x405, 0, , BeliebigesSkript.ahk - AutoHotkey v
-MsgBox %ErrorLevel% ist die Prozess-ID.</pre>
+<em>; Um die Prozess-ID eines AHK-Skripts zu finden (eine Alternative zu "<a href="WinGet.htm#PID">WinGet PID</a>"):</em>
+SetTitleMatchMode 2
+DetectHiddenWindows true
+pid := SendMessage(0x44, 0x405, 0, , "BeliebigesSkript.ahk - AutoHotkey v")
+MsgBox pid " ist die Prozess-ID."</pre>
 
 </body>
 </html>

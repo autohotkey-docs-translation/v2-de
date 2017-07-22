@@ -59,7 +59,7 @@ Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisu
 <p>Da <a href="commands/Return.htm">Return</a> nur einen einzigen Wert an den Funktionsaufrufer zurückgeben kann, ist <em>ByRef</em> gut dafür geeignet, zusätzliche Ergebnisse zurückzugeben. Bringe den Aufrufer einfach dazu, eine Variable zu übergeben (üblicherweise leer), in der die Funktion einen Wert speichern kann.</p>
 <p>Beim Übergeben langer Zeichenketten an eine Funktion ist <em>ByRef</em> leistungsfähiger und außerdem platzsparend, weil keine Kopie der Zeichenkette gemacht werden muss. Ebenso ist <em>ByRef</em>, wenn man eine lange Zeichenkette an den Aufrufer zurücksenden will, leistungsfähiger als <code>Return LangeZeichenkette</code>.</p>
 <p>Übergibt man etwas anderes als eine veränderbare Variable an einen ByRef-Parameter, verhält sich die Funktion so, als wäre das Schlüsselwort "ByRef" nicht vorhanden. Zum Beispiel würde <code>Tauschen(A_Index, i)</code> den Wert von <i>A_Index</i> in <i>i</i> speichern, aber den gespeicherten Wert in <i>Links</i> verwerfen, sobald die <i>Tauschen</i>-Funktion fertig ist.</p>
-<p>Mit der <a href="#IsByRef">IsByRef()</a>-Funktion kann festgestellt werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
+<p>Mit der <a href="#IsByRef">IsByRef</a>-Funktion kann festgestellt werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
 <p>Bekannte Einschränkungen:</p>
 <ul>
   <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">Built-In-Variablen</a> an eine Funktion via Verweis zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
@@ -147,7 +147,7 @@ MsgBox Verbinden("`n", "eins", "zwei", "drei")</pre>
 <h3 id="VariadicCall">Variadische Funktionsaufrufe</h3>
 <p>Während variadische Funktionen eine beliebige Parameteranzahl <i>akzeptieren</i> können, kann ein Array mit Parametern an <i>jede</i> Funktion durch Anwenden der gleichen Syntax beim Funktionsaufruf übergeben werden:</p>
 <pre>Teilzeichenketten := ["eins", "zwei", "drei"]
-MsgBox % Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
+MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
 <p>Hinweise:</p>
 <ul>
   <li>Die Nummerierung der Parameter beginnt innerhalb des Quell-Arrays bei 1.</li>
@@ -225,13 +225,13 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Kann die Funktion aufgrund einer der unten genannten Gründe nicht aufgerufen werden, wird eine <a href="commands/Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst:</p>
 <ul>
   <li>Aufrufen einer nicht-existierenden Funktion, das mithilfe von <code>If <a href="#IsFunc">IsFunc</a>(VariableMitFunktionsname)</code> verhindert werden kann. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">Built-in-Funktionen</a>) muss explizit im Skript vorkommen (zum Beispiel über <a href="commands/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Library-Funktion</a>).</li>
-  <li>Übergeben von zu wenigen Parametern, das verhindert werden kann, wenn der Rückgabewert von <a href="#IsFunc">IsFunc()</a> überprüft wird (das ist die Anzahl der Pflichtparameter plus 1). Hinweis: Die Übergabe von zu vielen Parametern wird toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
+  <li>Übergeben von zu wenigen Parametern, das verhindert werden kann, wenn der Rückgabewert von <a href="#IsFunc">IsFunc</a> überprüft wird (das ist die Anzahl der Pflichtparameter plus 1). Hinweis: Die Übergabe von zu vielen Parametern wird toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
 </ul>
 <p>Beachte, dass ein dynamischer Aufruf einer Funktion etwas langsamer ist als ein normaler Aufruf, weil normale Aufrufe aufgelöst (nachgeschlagen) werden, bevor das Skript seine Ausführung beginnt.</p>
 <h2 id="ShortCircuit">Logische Kurzschlussauswertung</h2>
 <p>Sobald <em>AND, OR</em> und der <a href="Variables.htm#ternary">ternäre Operator</a> innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> verwendet werden, schließen sie sich kurz, um die Performance zu erhöhen (egal ob Funktionsaufrufe vorhanden sind oder nicht). Beim Kurzschließen werden nur Bereiche des Ausdrucks ausgewertet, die Einfluss auf das Endergebnis haben. Im folgenden Beispiel wird gezeigt, wie genau das funktioniert:</p>
 <pre>if (FarbName &lt;&gt; "" AND not FindeFarbe(FarbName))
-    MsgBox %FarbName% konnte nicht gefunden werden.</pre>
+    MsgBox FarbName " konnte nicht gefunden werden."</pre>
 <p>Wenn die <em>FarbName</em>-Variable leer sein sollte, wird die FindeFarbe()-Funktion niemals aufgerufen, weil die linke Seite von <em>AND</em> als <em>falsch</em> gewertet wird, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>wahr</em> zu bringen.</p>
 <p>Dieses Verhalten führt dazu, dass Nebeneffekte von einer Funktion (wie das Ändern des Inhalts einer globalen Variable) nie auftreten werden, wenn diese Funktion auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen wird.</p>
 <p>Beachte außerdem, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise durchgeht. Im Ausdruck des folgenden Beispiels würde nur der Vergleich ganz links erfolgen, wann immer <em>FarbName</em> leer ist, weil die linke Seite dann ausreichen würde, um das Endergebnis mit Sicherheit zu bestimmen:</p>
@@ -247,11 +247,11 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Eine Funktion kann extern-aufrufende Subroutinen wie <a href="commands/SetTimer.htm">Timer</a> und <a href="commands/Menu.htm">Menüpunkte</a> enthalten. Dies ist eine übliche Vorgehensweise, um sie in eine separate Datei zu packen und später via <a href="commands/_Include.htm">#Include</a> bereitzustellen, so dass sie den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> des Skripts nicht stören können. Allerdings gelten folgende Einschränkungen:</p>
 <ul>
   <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Locals">lokalen</a>), wenn ihre Funktionen normal aufgerufen werden, weil ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), in der Lage wäre, die Werte von lokalen Variablen zu ändern, wie sie vom unterbrochenen Thread gesehen werden. Jedes Mal, wenn eine Funktion zu ihrem Aufrufer zurückkehrt, werden all ihre lokalen Variablen leer gemacht, um deren Speicher freizugeben.</li>
-  <li>Wenn eine Funktion von einem Subroutinen-<a href="misc/Threads.htm">Thread</a> betreten wird, werden alle Verweise auf <a href="misc/Arrays.htm">dynamische Variablen</a>, die von diesem Thread erstellt wurden, als <a href="#Global">globale Variablen</a> behandelt (einschließlich array-erstellende Befehle). <a href="misc/Labels.htm">Lokale Label</a> hingegen können nicht dynamisch verwiesen werden.</li>
+  <li>Wenn eine Funktion von einem Subroutinen-<a href="misc/Threads.htm">Thread</a> betreten wird, werden alle Verweise auf <a href="misc/Arrays.htm">dynamische Variablen</a>, die von diesem Thread erstellt wurden, als <a href="#Global">globale Variablen</a> behandelt (einschließlich array-erstellende Funktionen). <a href="misc/Labels.htm">Lokale Label</a> hingegen können nicht dynamisch verwiesen werden.</li>
 </ul>
 <h2 id="remarks">Return, Exit und allgemeine Bemerkungen</h2>
 <p>Erreicht der Ausführungsablauf innerhalb einer Funktion die geschweifte Endklammer der Funktion, ohne auf ein <a href="commands/Return.htm">Return</a> gestoßen zu sein, endet die Funktion und gibt ihren Aufrufer eine leere Zeichenkette zurück. Ein leerer Wert wird auch zurückgegeben, wenn der Parameter von <a href="commands/Return.htm">Return</a> explizit fehlt.</p>
-<p>Wenn eine Funktion den <a href="misc/Threads.htm">aktuellen Thread</a> mit dem <a href="commands/Exit.htm">Exit</a>-Befehl terminiert, erhält ihr Aufrufer überhaupt keinen Rückgabewert. Zum Beispiel: Die Anweisung <code>Var := Addieren(2, 3)</code> würde <code>Var</code> unverändert belassen, wenn <code>Add()</code> per Exit beendet wird. Das gleiche passiert, wenn die Funktion einen Laufzeitfehler verursacht, wie das <a href="commands/Run.htm">Ausführen</a> einer nicht-existierenden Datei (nur wenn <a href="commands/Run.htm#UseErrorLevel">UseErrorLevel</a> nicht aktiv ist).</p>
+<p>Wenn eine Funktion den <a href="misc/Threads.htm">aktuellen Thread</a> mit <a href="commands/Exit.htm">Exit</a> terminiert, erhält ihr Aufrufer überhaupt keinen Rückgabewert. Zum Beispiel: Die Anweisung <code>Var := Addieren(2, 3)</code> würde <code>Var</code> unverändert belassen, wenn <code>Add()</code> per Exit beendet wird. Das gleiche passiert, wenn die Funktion einen Laufzeitfehler verursacht, wie das <a href="commands/Run.htm">Ausführen</a> einer nicht-existierenden Datei (nur wenn <a href="commands/Run.htm#UseErrorLevel">UseErrorLevel</a> nicht aktiv ist).</p>
 <p>Eine Funktion kann den Wert von <a href="misc/ErrorLevel.htm">ErrorLevel</a> ändern, um einen zusätzlichen Wert zurückzugeben, der sich leicht merken lässt.</p>
 <p>Um eine Funktion mit einer oder mehreren leeren Zeichenketten aufzurufen, verwende zwei Anführungszeichen wie folgt: <code>FindeFarbe(FarbName, "")</code>.</p>
 <p>Da das Aufrufen einer Funktion keinen neuen <a href="misc/Threads.htm">Thread</a> startet, werden von der Funktion geänderten Einstellungen wie <a href="commands/SendMode.htm">SendMode</a> oder <a href="commands/SetTitleMatchMode.htm">SetTitleMatchMode</a> auch für den Aufrufer wirksam.</p>
@@ -268,9 +268,9 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Erklärung: Erreicht der Ausführungsablauf des Skripts eine Funktionsdefinition, wird er sie sofort überspringen und seine Ausführung bei der Zeile nach der geschweiften Endklammer fortsetzen. Daraus folgt, dass die Ausführung nie in eine Funktion geraten kann, oder dass das Vorhandensein von einer oder mehreren Funktionen am Anfang des Skripts den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a> beeinflussen könnten.</p>
 <h2 id="lib">Libraries mit Funktionen: Standard- und Benutzer-Library</h2>
 <p>Ein Skript kann eine Funktion aus einer externen Datei aufrufen, ohne dabei <a href="commands/_Include.htm">#Include</a> verwenden zu müssen. Damit dies funktioniert, muss eine Datei, die den gleichen Namen hat wie die Funktion, in einem der folgenden Library-Verzeichnissen vorkommen:</p>
-<pre><a href="Variables.htm#ScriptDir">%A_ScriptDir%</a>\Lib\  <em>; Lokale Library.</em>
-<a href="Variables.htm#MyDocuments">%A_MyDocuments%</a>\AutoHotkey\Lib\  <em>; Benutzer-Library.</em>
-Pfad-zur-gerade-laufenden-AutoHotkey.exe\Lib\  <em>; Standard-Library.</em></pre>
+<pre><a href="Variables.htm#ScriptDir">A_ScriptDir</a> "\Lib\"  <em>; Lokale Library.</em>
+<a href="Variables.htm#MyDocuments">A_MyDocuments</a> "\AutoHotkey\Lib\"  <em>; Benutzer-Library.</em>
+"Pfad-zur-gerade-laufenden-AutoHotkey.exe\Lib\"  <em>; Standard-Library.</em></pre>
 <p>Ruft ein Skript beispielsweise die nicht-existierende Funktion <code>MeineFunktion()</code> auf, sucht das Programm nach einer Datei namens "MeineFunktion.ahk" in der Benutzer-Library. Wenn sie dort nicht gefunden werden kann, wird die Standard-Library durchsucht. Ergibt die Suche weiterhin keine Treffer und enthält der Funktionsname einen Unterstrich (z. B. <code>MeinPräfix_MeineFunktion</code>), sucht das Programm in beiden Libraries nach einer Datei namens <code>MeinPräfix.ahk</code> und lädt sie, falls sie existiert. Auf diese Weise kann <code>MeinPräfix.ahk</code> sowohl die Funktion <code>MeinPräfix_MeineFunktion</code> als auch andere verwandte Funktionen enthalten, deren Namen mit <code>MeinPräfix_</code> beginnen.</p>
 <p>Zuerst wird die lokale Library durchsucht, danach die Benutzer- und Standard-Library.</p>
 <p>Nur ein direkter Funktionsaufruf wie <code>MeineFunk()</code> kann eine Library automatisch einfügen lassen. Wenn die Funktion nur dynamisch oder indirekt aufgerufen wird, z. B. via Timer oder GUI-Ereignis, dann muss die Library explizit in das Skript eingefügt werden. Zum Beispiel: <code><a href="commands/_Include.htm">#Include</a> &lt;MeineFunk&gt;</code></p>
@@ -280,8 +280,8 @@ Pfad-zur-gerade-laufenden-AutoHotkey.exe\Lib\  <em>; Standard-Library.</em></pre
 <p>Funktionen, die auf diese Weise eingefügt werden, haben die gleiche Performance wie andere Funktionen, weil sie geladen werden, bevor das Skript seine Ausführung beginnt.</p>
 <h2 id="BuiltIn">Built-in-Funktionen</h2>
 <p>Jeder optionale Parameter, der am Ende der Parameterliste einer Built-in-Funktion vorkommt, kann komplett weggelassen werden. Zum Beispiel könnte man <code>WinExist("Unbenannt - Editor")</code> angeben, weil die Funktion ihre anderen drei Parameter als leere Werte ansieht.</p>
-<p>Eine Built-in-Funktion wird überschrieben, wenn das Skript seine eigene Funktion mit dem gleichen Namen definieren würde. Zum Beispiel könnte man anstelle der normalen WinExist()-Funktion eine selbstdefinierte Funktion verwenden. Allerdings kann danach die originale Funktion nicht mehr aufgerufen werden.</p>
-<p>Externe Funktionen, die sich in DLL-Dateien befinden, können per <a href="commands/DllCall.htm">DllCall()</a> aufgerufen werden.</p>
+<p>Eine Built-in-Funktion wird überschrieben, wenn das Skript seine eigene Funktion mit dem gleichen Namen definieren würde. Zum Beispiel könnte man anstelle der normalen WinExist-Funktion eine selbstdefinierte Funktion verwenden. Allerdings kann danach die originale Funktion nicht mehr aufgerufen werden.</p>
+<p>Externe Funktionen, die sich in DLL-Dateien befinden, können per <a href="commands/DllCall.htm">DllCall</a> aufgerufen werden.</p>
 <p>Klicke unten auf den Namen einer bestimmten Built-In-Funktion, um mehr über sie zu erfahren.</p>
 <h3>Häufig verwendete Funktionen</h3>
 <table class="info">

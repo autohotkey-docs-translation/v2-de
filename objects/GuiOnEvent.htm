@@ -94,7 +94,7 @@
 <h3 id="Close">Close</h3>
 <p>Startet, wenn der Benutzer oder ein anderes Programm versucht das Fenster zu schließen, z. B. X-Schaltfläche in der Titelleiste drücken, "Schließen" im Systemmenü auswählen oder <a href="../commands/WinClose.htm">WinClose</a> aufrufen.</p>
 <pre class="Syntax">Gui_<span class="func">Close</span>(GuiObj)</pre>
-<p>Standardmäßig wird das Fenster automatisch versteckt, sobald die Callback-Funktion ausgeführt wurde, oder wenn keine Callback-Funktionen registriert sind. Eine Callback-Funktion kann das verhindern, indem sie eine 1 (oder <code>True</code>) zurückgibt; dadurch wird auch verhindert, dass die restlichen Callback-Funktionen aufgerufen werden. Die Callback-Funktion kann das Fenster via <a href="Gui.htm#Cancel">Gui.Hide()</a> sofort verstecken, oder das Fenster via <a href="Gui.htm#Destroy">Gui.Destroy()</a> zerstören.</p>
+<p>Standardmäßig wird das Fenster automatisch versteckt, sobald die Callback-Funktion ausgeführt wurde, oder wenn keine Callback-Funktionen registriert sind. Eine Callback-Funktion kann das verhindern, indem sie eine 1 (oder <code>True</code>) zurückgibt; dadurch wird auch verhindert, dass die restlichen Callback-Funktionen aufgerufen werden. Die Callback-Funktion kann das Fenster via <a href="Gui.htm#Cancel">Gui.Hide</a> sofort verstecken, oder das Fenster via <a href="Gui.htm#Destroy">Gui.Destroy</a> zerstören.</p>
 <p>Das folgende Beispiel zeigt, wie man eine GUI dazu bringen kann, den Benutzer zu fragen, ob das Fenster geschlossen werden soll:</p>
 <pre>MeinGui := GuiCreate()
 MeinGui.AddText("", "Drücken Sie Alt+F4 oder die X-Schaltfläche in der Titelleiste.")
@@ -103,7 +103,7 @@ MeinGui_Close(thisGui) {  <em>; Dieser Parameter ist optional.</em>
     if MsgBox("Wollen Sie die GUI wirklich schließen?",, "y/n") = "No"
         return true  <em>; true = 1</em>
 }
-myGui.Show()</pre>
+MeinGui.Show</pre>
 
 <h3 id="ContextMenu">ContextMenu</h3>
 <p>Startet immer dann, wenn der Benutzer innerhalb des Fensters (außer Titelleiste und Menüleiste) einen Rechtsklick macht. Dieses Label startet auch, wenn der Benutzer die MENÜ-Taste oder UMSCHALT+F10 drückt.</p>
@@ -116,7 +116,7 @@ myGui.Show()</pre>
   <dt>IstRechtsklick</dt><dd>
     <p><code>True</code>, wenn der Benutzer die rechte Maustaste gedrückt hat.<br>
     <code>False</code>, wenn der Benutzer die MENÜ-Taste oder UMSCHALT+F10 gedrückt hat.</p></dd>
-  <dt>X, Y</dt><dd><p>Die X- und Y-Koordinaten der Position, wo das Menü angezeigt werden soll (z. B. <code><a href="../commands/Menu.htm">Menu</a>, MeinKontext, Show, %X%, %Y%</code>). Die Koordinaten sind relativ zur linken oberen Ecke des Fenster-Clientbereichs.</p></dd>
+  <dt>X, Y</dt><dd><p>Die X- und Y-Koordinaten der Position, wo das Menü angezeigt werden soll (z. B. <code><a href="../commands/Menu.htm">Menu</a> "MeinKontext", "Show", X, Y</code>). Die Koordinaten sind relativ zur linken oberen Ecke des Fenster-Clientbereichs.</p></dd>
 </dl>
 <p>Das ContextMenu-Ereignis kann, im Gegensatz zu vielen anderen GUI-Ereignissen, mehrere <a href="../misc/Threads.htm">Threads</a> zur selben Zeit offen haben.</p>
 <p>Jedes Steuerelement kann sein eigenes ContextMenu-Ereignis via Callback-Funktion steuern, die Vorrang vor anderen Callback-Funktionen hat. Steuerelement-spezifische Callback-Funktionen haben keinen <em>GuiObj</em>-Parameter, aber alle anderen Parameter bleiben gleich.</p>
@@ -132,8 +132,8 @@ myGui.Show()</pre>
   <dt>DateiArray</dt>
   <dd><p>Ein <a href="../Objects.htm#Usage_Simple_Arrays">Array (Objekt)</a> mit Dateinamen, wo <code>DateiArray[1]</code> die erste Datei ist und <code>DateiArray.Length()</code> die Anzahl der Dateien zurückgibt. Mit einer <a href="../commands/For.htm">For-Schleife</a> kann man die Dateien einzeln durchgehen:</p>
 <pre>Gui_DropFiles(GuiObj, GuiCtrlObj, DateiArray, X, Y) {
-    for i, file in DateiArray
-        MsgBox Datei %i% ist:`n%file%
+    for i, Datei in DateiArray
+        MsgBox "Datei " i " ist:`n" Datei
 }</pre></dd>
 
   <dt>X, Y</dt>
@@ -158,9 +158,9 @@ myGui.Show()</pre>
 </dl>
 <p>Ein Skript kann mit dem Size-Ereignis die Steuerelemente neu positionieren und größer/kleiner machen, wenn der Benutzer die Größe des Fensters ändern sollte.</p>
 <p>Wenn man das Fenster größer/kleiner macht (auch via Skript), wird das Size-Ereignis nicht sofort ausgelöst. Wenn der aktuelle Thread <a href="../commands/Thread.htm#Interrupt">nicht unterbrochen werden kann</a>, wird das Size-Ereignis (und alle anderen Fenstereignisse) erst ausgelöst, wenn der Thread unterbrechbar ist. Das folgende Beispiel zeigt, wie das Size-Ereignis sofort ausgelöst werden kann, nachdem das Skript die Größe des Fensters geändert hat:</p>
-<pre><a href="../commands/Critical.htm#Off">Critical Off</a>  <em>; Selbst wenn Critical On nie verwendet wurde.</em>
+<pre><a href="../commands/Critical.htm#Off">Critical</a> "Off"  <em>; Selbst wenn Critical "On" nie verwendet wurde.</em>
 <a href="../commands/Sleep.htm">Sleep -1</a></pre>
-<p><a href="Gui.htm#Show">Gui.Show()</a> führt automatisch ein <code>Sleep -1</code> aus, demzufolge könnte man in diesem Fall das Sleep weglassen.</p>
+<p><a href="Gui.htm#Show">Gui.Show</a> führt automatisch ein <code>Sleep -1</code> aus, demzufolge könnte man in diesem Fall das Sleep weglassen.</p>
 
 <h2>Steuerelement-Ereignisse</h2>
 

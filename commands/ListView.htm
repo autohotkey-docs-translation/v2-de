@@ -47,7 +47,7 @@ LV := Gui.Add("ListView", "r20 w700", "Name|Größe (KB)")
 LV.OnEvent("DoubleClick", "LV_DoubleClick")
 
 <em>; Sammelt eine Liste mit Dateien von einem Ordner und fügt sie in die ListView ein:</em>
-LoopFiles("%A_MyDocuments%\*.*")
+Loop Files, A_MyDocuments "\*.*"
   <a href="#Add">LV.Add</a>(, A_LoopFileName, A_LoopFileSizeKB)
 
 <a href="#ModifyCol">LV.ModifyCol</a>()  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
@@ -59,7 +59,7 @@ Gui.Show()
 LV_DoubleClick(LV, Reihennummer)
 {
   Reihentext := <a href="#GetText">LV.GetText</a>(Reihennummer)  <em>; Ermittelt den Text vom ersten Feld der Reihe.</em>
-  ToolTip("Sie haben die Reihennummer %Reihennummer% doppelt angeklickt. Text: '%Reihentext%'")
+  ToolTip "Sie haben die Reihennummer " Reihennummer " doppelt angeklickt. Text: '" Reihentext "'")
 }</pre>
 <h2 id="Options">Optionen und Styles für den <em>Optionen</em>-Parameter</h2>
 <p><strong>Background</strong>: Verwende das Wort Background, unmittelbar gefolgt von einem Farbnamen (siehe <a href="../misc/Colors.htm">Farbtabelle</a>) oder RGB-Wert (der 0x-Präfix ist optional). Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Fehlt diese Option, gilt als Hintergrundfarbe die Standard-Hintergrundfarbe des Betriebssystems. Mit <code>BackgroundDefault</code> oder <code>-Background</code> kann die Standard-Hintergrundfarbe des Betriebssystems erzwungen werden (in der Regel weiß). Mit <code>LV.Opt("+BackgroundDefault")</code> kann beispielsweise die Standardfarbe wiederhergestellt werden.</p>
@@ -223,7 +223,7 @@ LV_DoubleClick(LV, Reihennummer)
       <dd>Fehlt dieser Parameter, wird die Anzahl der Reihen im Steuerelement zurückgegeben. Wenn dieser Parameter "S" oder "Select" ist, wird die Zählung nur die ausgewählten/hervorgehobenen Reihen einbeziehen. Wenn dieser Parameter "Col" oder "Column" ist, wird die Anzahl der Spalten im Steuerelement zurückgegeben. Der Rückgabewert wird sofort abgerufen, weil das Steuerelement solche Zählungen immer im Blick behält.</dd>
     </dl>
     <p>Diese Methode wird häufig in der obersten Zeile einer Schleife verwendet - in diesem Fall würde die Funktion nur einmal aufgerufen werden (vor dem ersten Durchlauf). Zum Beispiel:</p>
-    <pre>Loop(LV.GetCount())
+    <pre>Loop LV.GetCount
 {
     AbgerufenerText := LV.GetText(A_Index)
     if InStr(AbgerufenerText, "beliebiger Filtertext")
@@ -231,10 +231,10 @@ LV_DoubleClick(LV, Reihennummer)
 }</pre>
     <p>Das folgende Beispiel zeigt, wie die Breiten der Spalten einer ListView abgerufen werden können, um sie z. B. in eine INI-Datei zu speichern, so dass sie zwischen den Sitzungen erhalten bleiben:</p>
     <pre>Gui.Opt("+LastFound")
-Loop(LV.GetCount("Column"))
+Loop LV.GetCount("Column")
 {
     Spaltenbreite := SendMessage(4125, A_Index - 1, 0, "SysListView321")  <em>; 4125 ist LVM_GETCOLUMNWIDTH.</em>
-    MsgBox("Die Spalte %A_Index% hat eine Breite von %Spaltenbreite%.")
+    MsgBox("Die Spalte " A_Index " hat eine Breite von " Spaltenbreite ".")
 }</pre>
   </div>
   <div class="methodShort" id="GetNext">
@@ -255,7 +255,7 @@ Loop
     if not Reihennummer  <em>; Oben wurde null zurückgegeben, also gibt es keine weiteren ausgewählten Reihen.</em>
         break
     Text := LV.GetText(Reihennummer)
-    MsgBox('Die nächste ausgewählte Reihe ist #%Reihennummer%, die im ersten Feld "%Text%" enthält.')
+    MsgBox('Die nächste ausgewählte Reihe ist #' Reihennummer ', die im ersten Feld "' Text '" enthält.')
 }</pre>
     <p>Das nächste Beispiel ist eine alternative Methode, mit der man herausfinden kann, ob eine bestimmte Reihennummer markiert ist:</p>
     <pre>Gui.Opt("+LastFound")
@@ -314,12 +314,12 @@ IstMarkiert := (Elementstatus &gt;&gt; 12) - 1  <em>; Setzt IstMarkiert auf True
 LV := Gui.Add("ListView", "h200 w180", "Symbol &amp; Nummer|Beschreibung")  <em>; Erstellt eine ListView.</em>
 ImageListID := <a href="#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für 10 kleine Symbole.</em>
 LV.<a href="#SetImageList">SetImageList</a>(ImageListID)  <em>; Verbindet die obige ImageList mit der aktuellen ListView.</em>
-Loop(10)  <em>; Fügt mehrere Symbole aus der DLL in die ImageList ein.</em>
+Loop 10  <em>; Fügt mehrere Symbole aus der DLL in die ImageList ein.</em>
     <a href="#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index) 
-Loop(10)  <em>; Fügt Reihen in die ListView ein (für jedes Symbol eine Reihe).</em>
+Loop 10  <em>; Fügt Reihen in die ListView ein (für jedes Symbol eine Reihe).</em>
     LV.Add("Icon" . A_Index, A_Index, "n/a")
 LV.ModifyCol("Hdr")  <em>; Passt die Breiten der Spalten automatisch an.</em>
-Gui.Show()</pre>
+Gui.Show</pre>
 <h3 id="IL_Create">IL_Create</h3>
   <p>Erstellt eine neue zunächst leere ImageList, und gibt die eindeutige ID der ImageList zurück (oder eine 0 bei Misserfolg).</p>
   <pre class="Syntax">EindeutigeID := <span class="func">IL_Create</span>(<span class="optional">AnfänglicheAnzahl := 2, WachsendeAnzahl := 5, GroßeSymbole := false</span>)</pre>
@@ -338,7 +338,7 @@ Gui.Show()</pre>
     <dt>ImageListID</dt>
     <dd>Die ID einer ImageList, die via <a href="#IL_Create">IL_Create</a> erstellt wurde.</dd>
     <dt>Dateiname</dt>
-    <dd>Der Name einer Datei mit Symbolen (.ICO), mit Cursorn (.CUR) oder mit animierten Cursorn (.ANI) (zurzeit werden animierte Cursor innerhalb einer ListView nicht animiert), oder ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> wie <code>HBITMAP:%handle%</code>. Andere Symbolquellen können sein: EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten.</dd>
+    <dd>Der Name einer Datei mit Symbolen (.ICO), mit Cursorn (.CUR) oder mit animierten Cursorn (.ANI) (zurzeit werden animierte Cursor innerhalb einer ListView nicht animiert), oder ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> wie <code>"HBITMAP:" handle</code>. Andere Symbolquellen können sein: EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten.</dd>
     <dt>Symbolnummer</dt>
     <dd>Wenn anstelle der ersten Symbolgruppe eine andere verwendet werden soll, muss bei <em>Symbolnummer</em> deren Nummer angegeben werden. Wenn <em>Symbolnummer</em> negativ ist, wird sein absoluter Wert als Ressourcen-ID eines Symbols innerhalb einer ausführbaren Datei angesehen. Das folgende Beispiel zeigt, wie das Standardsymbol aus der zweiten Symbolgruppe verwendet werden kann: <code>IL_Add(ImageListID, "C:\Meine Anwendung.exe", 2)</code>.</dd>
     <dt>BildSkalieren</dt>
@@ -385,7 +385,7 @@ LV.Modify(0, "-Select")  <em>; Wählt alle ab.</em>
 LV.Modify(0, "-Check")  <em>; Demarkiert alle <a href="#Checked">Checkboxes</a>.</em>
 
 <em>; Passt die Breite der Spalten an den Inhalt der Reihen an:</em>
-LV.<a href="#ModifyCol">ModifyCol</a>()  <em>; Es gibt keine Parameter in diesem Modus.</em></pre>
+LV.<a href="#ModifyCol">ModifyCol</a>  <em>; Es gibt keine Parameter in diesem Modus.</em></pre>
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; HAUPTBEISPIEL
 ; Das folgende Skript ist aufwendiger als das Beispiel ganz oben.
@@ -426,7 +426,7 @@ B_3.OnEvent("Click", Func("WechsleAnsicht").bind(LV))
 Gui.OnEvent("Size", Func("Gui_Size").bind(LV))
 
 <em>; Zeigt das Fenster an:</em>
-Gui.Show()
+Gui.Show
 
 LadeOrdner(Gui, LV, ImageListID1, ImageListID2)
 {
@@ -447,7 +447,7 @@ LadeOrdner(Gui, LV, ImageListID1, ImageListID2)
 
   <em>; Sammelt eine Liste mit Dateinamen vom ausgewählten Ordner und fügt sie in die ListView ein:</em>
   LV.Opt("-Redraw")  <em>; Verbessert die Performance durch Deaktivieren der Neuzeichnung während des Ladens.</em>
-  LoopFiles("%Ordner%\*.*")
+  Loop Files, Ordner "\*.*"
   {
     Dateiname := A_LoopFilePath  <em>; Muss in eine schreibbare Variable gespeichert werden, damit sie unten verwendet werden kann.
 
@@ -501,13 +501,13 @@ LadeOrdner(Gui, LV, ImageListID1, ImageListID2)
     <a href="#Add">LV.Add</a>("Icon" . Symbolnummer, A_LoopFileName, A_LoopFileDir, A_LoopFileSizeKB, Dateiendung)
   }
   LV.Opt("+Redraw")  <em>; Reaktiviert die Neuzeichnung (es wurde oben deaktiviert).</em>
-  LV.ModifyCol()  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
+  LV.ModifyCol  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
   LV.ModifyCol(3, 65) <em>; Macht die Spalte "Größe" etwas breiter, um die Spaltenüberschrift komplett sichtbar zu machen.</em>
 }
 
 LeereListe(LV)
 {
-  <a href="#Delete">LV.Delete</a>()  <em>; Leert die ListView, aber hält das Symbol-Cache aus praktischen Gründen intakt.</em>
+  <a href="#Delete">LV.Delete</a>  <em>; Leert die ListView, aber hält das Symbol-Cache aus praktischen Gründen intakt.</em>
 }
 
 WechsleAnsicht(LV)

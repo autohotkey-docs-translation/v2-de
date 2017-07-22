@@ -34,33 +34,33 @@ return  <em>; Ende des automatischen Ausführungsbereichs</em>
 ; in einen benutzerdefinierten Menüpunkt anstelle eines Hotkeys verwandelt wird.  Die Verzögerung erlaubt es,
 ; das aktive Fenster, welches vom angezeigten Menü deaktiviert wurde,
 ; wieder aktiv zu machen:
-;Sleep, 200</em>
-WinGetID, ws_ID, A
-Loop, Parse, %ws_IDList%, |
+;Sleep 200</em>
+ws_ID := WinGetID("A")
+Loop Parse, ws_IDList, "|"
 {
     if A_LoopField = ws_ID
     {
         <em>; Übereinstimmung gefunden, daher sollte das Fenster wiederhergestellt werden (aufrollen):</em>
         ws_Height := ws_Window%ws_ID%
-        WinMove, ahk_id %ws_ID%,,,,, %ws_Height%
-        StrReplace, ws_IDList, %ws_IDList%, |%ws_ID%
+        WinMove ,,, ws_Height, "ahk_id " ws_ID
+        ws_IDList := StrReplace(ws_IDList, "|" ws_ID)
         return
     }
 }
-WinGetPos,,,, ws_Height, A
+WinGetPos ,,, ws_Height, "A"
 ws_Window%ws_ID% := ws_Height
-WinMove, ahk_id %ws_ID%,,,,, %ws_MinHeight%
+WinMove ,,, ws_MinHeight, "ahk_id " ws_ID
 ws_IDList .= "|" ws_ID
 return
 
 ExitSub()
 {
-    Loop, Parse, %ws_IDList%, |
+    Loop Parse, ws_IDList, "|"
     {
         if A_LoopField = ""  <em>; Das erste Feld in der Liste ist normalerweise leer.</em>
             continue         <em>; Also überspringen.</em>
         ws_Height := ws_Window%A_LoopField%
-        WinMove, ahk_id %A_LoopField%,,,,, %ws_Height%
+        WinMove ,,, ws_Height, "ahk_id " A_LoopField
     }
     ExitApp  <em>; Muss für die OnExit-Subroutine durchgeführt werden, um das Skript tatsächlich zu beenden.</em>
 }

@@ -21,15 +21,14 @@
 
   <dt>AusgabeVar</dt>
   <dd><p>Name der Variable, in der der ausgewählte Ordner gespeichert werden soll. Sie wird leer gemacht, wenn der Benutzer das Dialogfenster abgebrochen hat (weil er einen Ordner nicht auswählen möchte). Wählt der Benutzer ein Root-Verzeichnis aus (z. B. C:\), wird <em>AusgabeVar</em> mit einem umgekehrten Schrägstrich enden. Falls das unerwünscht ist, kann der Schrägstrich wie folgt entfernt werden:</p>
-      <pre>DirSelect, Ordner
-Ordner := RegExReplace(Ordner, "\\$")  <em>; Entfernt den umgekehrten Schrägstrich am Ende, falls vorhanden.</em></pre></dd>
+      <pre>Ordner := RegExReplace(DirSelect(), "\\$")  <em>; Entfernt den umgekehrten Schrägstrich am Ende, falls vorhanden.</em></pre></dd>
 
   <dt>Startordner</dt>
-  <dd><p>Fehlt dieser Parameter oder ist er leer, wird die Startauswahl im Benutzerordner "Eigene Dokumente" (oder auch im Arbeitsplatz/Computer) beginnen. Ein <a href="../misc/CLSID-List.htm">CLSID</a>-Ordner wie <code>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</code> (Arbeitsplatz/Computer) kann angegeben werden, um die Navigation bei einem bestimmten Ordner zu beginnen.</p>
-      <p>Ansonsten kann in diesem Parameter ein Sternchen angegeben werden, unmittelbar gefolgt vom absoluten Pfad des Laufwerks oder Ordners, das zu Beginn ausgewählt sein soll. Zum Beispiel würde <code>*C:\</code> das C-Laufwerk zu Beginn auwählen. Ebenso würde <code>*C:\Mein Ordner</code> diesen bestimmten Ordner zu Beginn auswählen.</p>
+  <dd><p>Fehlt dieser Parameter oder ist er leer, wird die Startauswahl im Benutzerordner "Eigene Dokumente" (oder auch im Arbeitsplatz/Computer) beginnen. Ein <a href="../misc/CLSID-List.htm">CLSID</a>-Ordner wie <code>"::{20d04fe0-3aea-1069-a2d8-08002b30309d}"</code> (Arbeitsplatz/Computer) kann angegeben werden, um die Navigation bei einem bestimmten Ordner zu beginnen.</p>
+      <p>Ansonsten kann in diesem Parameter ein Sternchen angegeben werden, unmittelbar gefolgt vom absoluten Pfad des Laufwerks oder Ordners, das zu Beginn ausgewählt sein soll. Zum Beispiel würde <code>"*C:\"</code> das C-Laufwerk zu Beginn auswählen. Ebenso würde <code>"*C:\Mein Ordner"</code> diesen bestimmten Ordner zu Beginn auswählen.</p>
       <p>Das Sternchen kennzeichnet, dass der Benutzer vom Startordner bis zum Hauptverzeichnis navigieren darf. Ohne Sternchen darf der Benutzer nur einen Ordner innerhalb von <em>Startordner</em> (oder den <em>Startordner</em> selbst) auswählen. Ein Vorteil vom Weglassen des Sternchens ist es, dass der Verzeichnisbaum von <em>Startordner</em> zu Beginn aufgeklappt ist, so dass der Benutzer das Pluszeichen nicht erst anklicken muss.</p>
       <p>Ist das Sternchen vorhanden, kann bei Bedarf die Aufwärtsnavigation auf einen Ordner (außer Desktop) beschränkt werden. Dazu muss vor dem Sternchen der absolute Pfad des höchsten Ordners und ein nachfolgendes Leer- oder Tabulatorzeichen angegeben werden. Das folgende Beispiel zeigt, wie der Benutzer daran gehindert werden kann, auf die darüberliegende Ebene von C:\Mein Ordner zu navigieren (das Startverzeichnis selbst ist aber C:\Mein Ordner\Projekte):<br>
-      <code>C:\Mein Ordner *C:\Mein Ordner\Projekte</code></p>
+      <code>"C:\Mein Ordner *C:\Mein Ordner\Projekte"</code></p>
     </dd>
 
   <dt>Optionen</dt>
@@ -43,7 +42,7 @@ Ordner := RegExReplace(Ordner, "\\$")  <em>; Entfernt den umgekehrten Schrägstr
       </p></dd>
 
   <dt>Anzeigetext</dt>
-  <dd><p>Text, der im Fenster angezeigt werden soll, um den Benutzer zu sagen, was er tun soll. Fehlt dieser Parameter oder ist er leer, wird standardmäßig "Select Folder - %A_SCRIPTNAME%" (der Name des aktuellen Skripts) gelten.</p></dd>
+  <dd><p>Text, der im Fenster angezeigt werden soll, um den Benutzer zu sagen, was er tun soll. Fehlt dieser Parameter oder ist er leer, wird standardmäßig <code>"Select Folder - " <a href="../Variables.htm#ScriptName">A_ScriptName</a></code> (der Name des aktuellen Skripts) gelten.</p></dd>
 
 </dl>
 
@@ -52,21 +51,21 @@ Ordner := RegExReplace(Ordner, "\\$")  <em>; Entfernt den umgekehrten Schrägstr
 <h3>Bemerkungen</h3>
 <p>Ein GUI-Fenster kann per <a href="GuiCreate.htm#OwnDialogs">+OwnDialogs</a>-Option ein modales Ordnerauswahlfenster anzeigen. Ein modales Dialogfenster hindert den Benutzer daran, mit dem GUI-Fenster zu interagieren, bis das Dialogfenster wieder geschlossen wird.</p>
 <p>Bekannte Einschränkung: Ein <a href="SetTimer.htm">Timer</a>, den man während eines Ordnerauswahlfensters startet, wird die Mausklicks des Benutzers innerhalb des Dialogfensters hinauszögern, bis der Timer endet. Um dies zu umgehen, solltest du keine Timer verwenden, deren Subroutinen eine lange Zeit zum Beenden brauchen, oder alle Timer während des Dialogfensters deaktivieren:</p>
-<pre><a href="Thread.htm">Thread</a>, NoTimers
-DirSelect, AusgabeVar,, 3
-Thread, NoTimers, false</pre>
+<pre><a href="Thread.htm">Thread</a> "NoTimers"
+AusgabeVar := DirSelect(,, 3)
+Thread "NoTimers", false</pre>
 <h3>Siehe auch</h3>
 <p><a href="FileSelect.htm">FileSelect</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="InputBox.htm">InputBox</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="GuiCreate.htm">GUI</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DirCopy.htm">DirCopy</a>, <a href="DirMove.htm">DirMove</a>, <a href="SplitPath.htm">SplitPath</a></p>
-<p>Das Betriebssystem bietet zudem Standard-Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schriftart oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="DllCall.htm">DllCall()</a> angezeigt werden, siehe dazu <a href="http://www.autohotkey.com/forum/topic17230.html">www.autohotkey.com/forum/topic17230.html</a>.</p>
+<p>Das Betriebssystem bietet zudem Standard-Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schriftart oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="DllCall.htm">DllCall</a> angezeigt werden, siehe dazu <a href="http://www.autohotkey.com/forum/topic17230.html">www.autohotkey.com/forum/topic17230.html</a>.</p>
 <h3>Beispiel</h3>
-<pre class="NoIndent">DirSelect, AusgabeVar, , 3
+<pre class="NoIndent">AusgabeVar := DirSelect(, 3)
 if AusgabeVar = ""
-    MsgBox, Keinen Ordner ausgewählt.
+    MsgBox "Keinen Ordner ausgewählt."
 else
-    MsgBox, Ordner "%AusgabeVar%" ausgewählt.
+    MsgBox "Ordner '" AusgabeVar "' ausgewählt."
 
 <em>; <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel:</em>
-DirSelect, AusgabeVar, ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; Arbeitsplatz/Computer</em></pre>
+AusgabeVar := DirSelect("::{20d04fe0-3aea-1069-a2d8-08002b30309d}")  <em>; Arbeitsplatz/Computer</em></pre>
 
 </body>
 </html>

@@ -29,7 +29,7 @@
   <dd><p>Dieser Parameter wird beim Abrufen eines Joystick-Status ignoriert.</p>
       <p>Fehlt dieser Parameter, wird standardmäßig der logische Tastenstatus ermittelt. Dieser Status macht dem Betriebssystem und aktivem Fenster glauben, dass die Taste gedrückt wurde, welches aber nicht unbedingt dem physischen Status entspricht.</p>
 	  <p>Alternativ kann einer der folgenden Buchstaben angegeben werden:</p>
-      <p><strong>P</strong>: Ermittelt den physischen Status (z. B. ob der Benutzer eine Taste physisch gedrückt hält). Der physische Zustand einer Taste oder Maustaste ist üblicherweise das gleiche wie der logische Zustand, sofern keine Tastatur- und/oder Maus-Hooks installiert sind. Ist dies aber der Fall, kann der Befehl genau wiedergeben, ob der Benutzer eine Taste physisch gedrückt hält oder nicht (solange sie nach unten gedrückt wurde, während das Skript lief). Mit dem <a href="KeyHistory.htm">KeyHistory</a>-Befehl oder -Menüpunkt kannst du überprüfen, ob dein Skript die Hooks benutzt. Durch Hinzufügen von <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> können die Hooks im Skript erzwungen werden.</p>
+      <p><strong>P</strong>: Ermittelt den physischen Status (z. B. ob der Benutzer eine Taste physisch gedrückt hält). Der physische Zustand einer Taste oder Maustaste ist üblicherweise das gleiche wie der logische Zustand, sofern keine Tastatur- und/oder Maus-Hooks installiert sind. Ist dies aber der Fall, kann der Befehl genau wiedergeben, ob der Benutzer eine Taste physisch gedrückt hält oder nicht (solange sie nach unten gedrückt wurde, während das Skript lief). Mit der <a href="KeyHistory.htm">KeyHistory</a>-Funktion oder dem dazugehörigen Menüpunkt kannst du überprüfen, ob dein Skript die Hooks benutzt. Durch Hinzufügen von <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a> und/oder <a href="_InstallMouseHook.htm">#InstallMouseHook</a> können die Hooks im Skript erzwungen werden.</p>
       <p><strong>T</strong>: Ermittelt den Umschaltstatus (nur für umschaltbare Tasten wie FESTSTELL, NUM, ROLLEN und EINFG von Bedeutung). Ein abgerufener Wert von 1 (True) bedeutet, dass die Taste "An" ist, während 0 (False) bedeutet, dass sie "Aus" ist.</p>
     </dd>
 
@@ -55,14 +55,13 @@
 <p><a href="KeyWait.htm">KeyWait</a>, <a href="../KeyList.htm">Tastenliste</a>, <a href="../misc/RemapJoystick.htm">Joystick-Neubelegung</a>, <a href="KeyHistory.htm">KeyHistory</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Einfache Beispiele:</em>
-GetKeyState, Status, RButton  <em>; Rechte Maustaste.</em>
-GetKeyState, Status, Joy2  <em>; Die zweite Taste des ersten Joysticks.</em>
+Status := GetKeyState("RButton")  <em>; Rechte Maustaste.</em>
+Status := GetKeyState("Joy2")  <em>; Die zweite Taste des ersten Joysticks.</em>
 
-GetKeyState, Status, Shift
-if Status
-    MsgBox Mindestens eine UMSCHALT-Taste ist unten.
+if GetKeyState("Shift")
+    MsgBox "Mindestens eine UMSCHALT-Taste ist unten."
 else
-    MsgBox Keine UMSCHALT-Taste unten.
+    MsgBox "Keine UMSCHALT-Taste unten."
 
 Status := GetKeyState("Capslock", "T")  <em>; True, wenn FESTSTELL-Taste aktiv ist, ansonsten False.</em>
 
@@ -72,28 +71,27 @@ Status := GetKeyState("Capslock", "T")  <em>; True, wenn FESTSTELL-Taste aktiv i
 ; unten ist, das NumpadAdd effektiv in eine Maustaste transformiert). Diese Methode
 ; kann zum Wiederholen einer Aktion benutzt werden, während der Benutzer eine Taste gedrückt hält:</em>
 *NumpadAdd::
-MouseClick, left,,, 1, 0, D  <em>; Hält die linke Maustaste gedrückt.</em>
+MouseClick "left",,, 1, 0, "D"  <em>; Hält die linke Maustaste gedrückt.</em>
 Loop
 {
-    Sleep, 10
-    GetKeyState, Status, NumpadAdd, P
-    if !Status  <em>; Die Taste wurde losgelassen, also Schleife verlassen.</em>
+    Sleep 10
+    if !GetKeyState("NumpadAdd", "P")  <em>; Die Taste wurde losgelassen, also Schleife verlassen.</em>
         break
     <em>; ... füge hier beliebig andere Aktionen ein, die wiederholt werden sollen.</em>
 }
-MouseClick, left,,, 1, 0, U  <em>; Lässt die Maustaste los.</em>
+MouseClick "left",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
 return
 
 <em>; Beispiel: Macht das Verhalten einer Joystick-Taste abhängig von der Achsenposition des Joysticks.</em>
 joy2:: 
 
-GetKeyState, joyx, JoyX
+joyx := GetKeyState("JoyX")
 if joyx &gt; 75
-    MsgBox("Aktion #1 (Taste gedrückt, während Joystick nach rechts bewegt wurde).")
+    MsgBox "Aktion #1 (Taste gedrückt, während Joystick nach rechts bewegt wurde)."
 else if joyx &lt; 25
-    MsgBox("Aktion #2 (Taste gedrückt, während Joystick nach links bewegt wurde).")
+    MsgBox "Aktion #2 (Taste gedrückt, während Joystick nach links bewegt wurde)."
 else
-    MsgBox("Aktion #3 (Taste gedrückt, während Joystick horizontal zentriert wurde).")
+    MsgBox "Aktion #3 (Taste gedrückt, während Joystick horizontal zentriert wurde)."
 return
 
 <em>; Siehe <a href="../misc/RemapJoystick.htm">Joystick-Neubelegung</a> und <a href="../scripts/JoystickMouse.htm">Joystick-Zu-Maus-Skript</a> für weitere Beispiele.</em></pre>

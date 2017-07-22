@@ -40,11 +40,11 @@ f_Hotkey := "~MButton"
 
 <em>/*
 MENÜELEMENTE &lt;-- Diese Zeichenkette nicht ändern.
-Desktop      ; %A_Desktop%
-Favoriten    ; %A_Desktop%\..\Favorites
-Eigene Dokumente ; %A_MyDocuments%
+Desktop      ; %USERPROFILE%\Desktop
+Favoriten    ; %USERPROFILE%\Favorites
+Eigene Dokumente ; %USERPROFILE%\My Documents
 
-Programme; %A_ProgramFiles%
+Programme; %PROGRAMFILES%
 */</em>
 
 
@@ -54,24 +54,23 @@ Programme; %A_ProgramFiles%
 
 #SingleInstance  <em>; Notwendig, da der Hotkey dynamisch erstellt wird.</em>
 
-Hotkey, %f_Hotkey%, f_DisplayMenu
-f_HotkeyFirstChar := SubStr(f_Hotkey, 1, 1)
-if f_HotkeyFirstChar = "~"  <em>; Menü nur für bestimmte Fenstertypen anzeigen.</em>
+Hotkey f_Hotkey, "f_DisplayMenu"
+if SubStr(f_Hotkey, 1, 1) = "~"  <em>; Menü nur für bestimmte Fenstertypen anzeigen.</em>
     f_AlwaysShowMenu := false
 else
     f_AlwaysShowMenu := true
 
 <em>; Wird verwendet, um zuverlässig festzustellen, ob das Skript kompiliert ist:</em>
-SplitPath, %A_ScriptName%,,, f_FileExt
+SplitPath A_ScriptName,,, f_FileExt
 if f_FileExt = "Exe"  <em>; Menüpunkte von einer externen Datei lesen..</em>
-    f_FavoritesFile := "%A_ScriptDir%\Favorites.ini"
+    f_FavoritesFile := A_ScriptDir "\Favorites.ini"
 else  <em>; Menüpunkte direkt von diesem Skript lesen.</em>
     f_FavoritesFile := A_ScriptFullPath
 
 <em>;----Konfigurationsdatei lesen.</em>
 f_AtStartingPos := false
 f_MenuItemCount := 0
-Loop, Read, %f_FavoritesFile%
+Loop Read, f_FavoritesFile
 {
     if f_FileExt &lt;&gt; "Exe"
     {
@@ -92,15 +91,14 @@ Loop, Read, %f_FavoritesFile%
     <em>; mit A_ThisMenuItemPos gewährleistet wird:</em>
     f_MenuItemCount++
     if !A_LoopReadLine  <em>; Leer kennzeichnet eine Trennlinie.</em>
-        Menu, Favorites, Add
+        Menu "Favorites", "Add"
     else
     {
-        f_line := StrSplit(A_LoopReadLine, ";", " `t")
+        f_line := StrSplit(A_LoopReadLine, ";", "`s`t")
         <em>; Referenzen auf Variablen innerhalb jeden Feldes auflösen, und
         ; ein neues Array-Element mit dem Ordnerpfad erstellen:</em>
-        f_path%f_MenuItemCount% := Deref(f_line[2])
-        f_line[1] := Deref(f_line[1])
-        Menu, Favorites, Add, % f_line[1], f_OpenFavorite
+        f_path%f_MenuItemCount% := f_line[2]
+        Menu "Favorites", "Add",  f_line[1], "f_OpenFavorite"
     }
 }
 return  <em>;----Ende des automatischen Ausführungsbereichs.</em>
@@ -116,59 +114,61 @@ if f_class = "#32770"    <em>; Es ist ein Dialogfenster.</em>
 {
     <em>; Aktiviert das Fenster, sodass nachfolgende Klicks auch außerhalb des Dialogfensters
     ; funktionieren, falls der Benutzer die mittlere Maustaste drückt:</em>
-    WinActivate ahk_id %f_window_id%
+    WinActivate "ahk_id " f_window_id
     <em>; Ermittelt jeden Dateinamen, der bereits im Feld vorhanden ist,
     ; sodass er wiederhergestellt werden kann, nachdem zum neuen Ordner gewechselt wurde:</em>
-    ControlGetText, f_text, Edit1, ahk_id %f_window_id%
-    ControlSetText, Edit1, %f_path%, ahk_id %f_window_id%
-    ControlFocus, Edit1, ahk_id %f_window_id%
-    ControlSend, Edit1, {Enter}, ahk_id %f_window_id%
-    Sleep, 100  <em>; Bei einigen Dialogfenstern oder in einigen Fällen wird zusätzliche Zeit benötigt.</em>
-    ControlSetText, Edit1, %f_text%, ahk_id %f_window_id%
+    f_text := ControlGetText("Edit1", "ahk_id " f_window_id)
+    ControlSetText f_path, "Edit1", "ahk_id " f_window_id
+    ControlFocus "Edit1", "ahk_id " f_window_id
+    ControlSend "{Enter}", "Edit1", "ahk_id " f_window_id
+    Sleep 100  <em>; Bei einigen Dialogfenstern oder in einigen Fällen wird zusätzliche Zeit benötigt.</em>
+    ControlSetText f_text, "Edit1", "ahk_id " f_window_id
     return
     <em>; dann springe ans Ende der Subroutine, um die Standardaktion auszuführen.</em>
 }
 else if f_class  ~= "ExploreWClass|CabinetWClass"  <em>; Ordner im Explorer wechseln.</em>
 {
-    ControlClick, ToolbarWindow323, ahk_id %f_window_id%,,,, NA x1 y1
-    ControlSetText, Edit1, %f_path%, ahk_id %f_window_id%
+    if StrSplit(A_OSVersion, ".")[1] &gt;= 6  <em>; Windows Vista oder höher.</em>
+        ControlClick "ToolbarWindow323", "ahk_id " f_window_id,,,, "NA x1 y1"
+    ControlFocus "Edit1", "ahk_id " f_window_id
+    ControlSetText f_path, "Edit1", "ahk_id " f_window_id
     <em>; Tekl hat Folgendes berichtet: "Wenn ich auf den Ordner L:\folder wechseln will,
     ; dann zeigt die Adressleiste http://www.L:\folder.com. Als Übergangslösung
     ; habe ich {right} vor {Enter} hinzugefügt":</em>
-    ControlSend, Edit1, {Right}{Enter}, ahk_id %f_window_id%
+    ControlSend "{Right}{Enter}", "Edit1", "ahk_id " f_window_id
     return
     <em>; dann springe ans Ende der Subroutine, um die Standardaktion auszuführen.</em>
 }
 else if f_class = "ConsoleWindowClass" <em>; CD im Konsolenfenster verwenden, um auf das Verzeichnis zu springen.</em>
 {
-    WinActivate, ahk_id %f_window_id% <em>; Weil es durch mclick manchmal deaktiviert wird.</em>
-    SetKeyDelay, 0  <em>; Nur während des Hotkey-Threads wirksam.</em>
+     WinActivate "ahk_id " f_window_id <em>; Weil es durch mclick manchmal deaktiviert wird.</em>
+    SetKeyDelay 0  <em>; Nur während des Hotkey-Threads wirksam.</em>
     if InStr(f_path, ":")  <em>; Es enthält einen Laufwerksbuchstaben</em>
     {
         f_path_drive := SubStr(f_path, 1, 1)
-        Send %f_path_drive%:{enter}
+        Send f_path_drive ":{enter}"
     }
-    Send, cd %f_path%{Enter}
+    Send "cd " f_path "{Enter}"
     return
 }
 <em>; Da oben keine Rückgabe erfolgt, gilt eins der folgenden Angaben:
 ; 1) Es ist ein nicht unterstützter Fenstertyp, aber f_AlwaysShowMenu ist y (ja).</em>
-Run, Explorer %f_path%  <em>; Könnte ohne Anführungszeichen mit mehr Systemen funktionieren.</em>
+Run "explorer " f_path  <em>; Könnte ohne Anführungszeichen mit mehr Systemen funktionieren.</em>
 return
 
 
 <em>;----Das Menü anzeigen</em>
 f_DisplayMenu:
 <em>; Diese ersten paar Variablen werden hier bestimmt und von f_OpenFavorite verwendet:</em>
-WinGetID, f_window_id, A
-WinGetClass, f_class, ahk_id %f_window_id%
+f_window_id := WinGetID("A")
+f_class := WinGetClass("ahk_id " f_window_id)
 if f_AlwaysShowMenu = false  <em>; Das Menü sollte nur selektiv angezeigt werden.</em>
 {
     if !(f_class ~= "#32770|ExploreWClass|CabinetWClass|ConsoleWindowClass")
         return <em>; Wenn anderer Fenstertyp, dann Menü nicht anzeigen.</em>
 }
 <em>; Ansonsten sollte das Menü für diesen Fenstertyp präsentiert werden:</em>
-Menu, Favorites, show
+Menu "Favorites", "Show"
 return
 </pre>
 </body>

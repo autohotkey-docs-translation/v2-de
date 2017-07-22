@@ -57,7 +57,7 @@
     <td>Der Zeitpunkt, wann der aktuelle Subkey oder einer seiner Werte zuletzt modifiziert wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable wird leer sein, wenn der aktuell abgerufene Eintrag kein Subkey ist (also wenn <em>A_LoopRegType</em> nicht das Wort KEY ist).</td>
   </tr>
 </table>
-<p>Innerhalb einer Registry-Schleife können bei folgenden Befehlen die Parameter weggelassen werden, um zu kennzeichnen, dass der aktuell ermittelte Eintrag abgearbeitet werden soll:</p>
+<p>Innerhalb einer Registry-Schleife können bei folgenden Funktionen die Parameter weggelassen werden, um zu kennzeichnen, dass der aktuell ermittelte Eintrag abgearbeitet werden soll:</p>
 <table class="info">
   <tr>
     <td style="width:21%"><a href="RegRead.htm">RegRead</a>, AusgabeVar</td>
@@ -115,19 +115,19 @@ RegSuche(Ziel)
     RegSucheFortfahren := true
     Loop Reg, "HKEY_LOCAL_MACHINE", "KVR"
     {
-        Gosub, RegEintragUntersuchen
+        Gosub RegEintragUntersuchen
         if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
     Loop Reg, "HKEY_USERS", "KVR"
     {
-        Gosub, RegEintragUntersuchen
+        Gosub RegEintragUntersuchen
         if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
     Loop Reg, "HKEY_CURRENT_CONFIG", "KVR"
     {
-        Gosub, RegEintragUntersuchen
+        Gosub RegEintragUntersuchen
         if !RegSucheFortfahren  <em>; Suche wurde gestoppt</em>
             return
     }
@@ -144,13 +144,19 @@ RegEintragUntersuchen:
         return
     if InStr(RegWert, Ziel)
     {
-        Result := MsgBox("Der folgende Treffer wurde gefunden:`n" A_LoopRegKey "\" A_LoopRegSubKey "\" A_LoopRegName "`nWert = " RegWert "`n`Weiter?",, "y/n")
+        Result := MsgBox(Format("
+        (
+        Der folgende Treffer wurde gefunden:
+        {1}\{2}
+        Wert = {3}
+        
+        Weiter?
+        )", A_LoopRegKey, A_LoopRegName, RegWert),, "y/n")
         if Result = "No"
             RegSucheFortfahren := false  <em>; Suche stoppen</em>
     }
     return
 }
-return
 </pre>
 
 </body>

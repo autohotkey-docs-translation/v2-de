@@ -45,7 +45,7 @@
 
   <dt>AusgabeVarPID</dt>
   <dd><p>Name der Variable, in der die eindeutige <a href="Process.htm">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte - dies passiert üblicherweise nur, wenn ein Systemverb, ein Dokument oder eine Verknüpfung gestartet wird, anstatt eine ausführbare Datei. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> überprüft werden (ansonsten wäre die PID ungültig, weil der Prozess nach RunWait nicht mehr existiert).</p>
-      <p>Nachdem der Run-Befehl eine PID ermittelt hat, kann es sein, dass Fenster, die vom Prozess erstellt werden, noch nicht verfügbar sind. Um wenigstens auf die Erstellung eines Fensters zu warten, solltest du <code><a href="WinWait.htm">WinWait</a> ahk_pid %AusgabeVarPID%</code> verwenden.</p></dd>
+      <p>Nachdem die Run-Funktion eine PID ermittelt hat, kann es sein, dass Fenster, die vom Prozess erstellt werden, noch nicht verfügbar sind. Um wenigstens auf die Erstellung eines Fensters zu warten, solltest du <code><a href="WinWait.htm">WinWait</a> "ahk_pid " AusgabeVarPID</code> verwenden.</p></dd>
 
 </dl>
 <h3>ErrorLevel</h3>
@@ -53,45 +53,43 @@
 <p>RunWait: Setzt ErrorLevel auf den Exitcode des Programms (ein vorzeichenbehafteter 32-Bit-Integer). Wenn das Starten fehlschlägt, während UseErrorLevel aktiv ist, wird das Wort ERROR gespeichert.</p>
 <h3>Bemerkungen</h3>
 <p>RunWait wird, im Gegensatz zu Run, warten, bis das <em>Ziel</em> geschlossen oder beendet wird, und setzt dann <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf den Exitcode des Programms (ein vorzeichenbehafteter 32-Bit-Integer). Einige Programme geben sofort einen Exitcode zurück, obwohl sie noch laufen; solche Programme erzeugen einen weiteren Prozess.</p>
-<p>Wenn das <em>Ziel</em> Kommas enthält, müssen sie mit einem <a href="../misc/EscapeChar.htm">Escapezeichen</a> versehen werden, wie es in dem folgenden Beispiel dreimal gemacht wird:</p>
-<pre>Run rundll32.exe shell32.dll<span class="style3">`,</span>Control_RunDLL desk.cpl<span class="style3">`,`,</span> 3  <em>; Öffnet Systemsteuerung &gt; Anzeige &gt; Einstellungen</em></pre>
-<p>Startet man ein Programm via <a href="../Variables.htm#ComSpec">Comspec</a> (cmd.exe) - z. B. um die Ein- oder Ausgabe des Programms umzuleiten - sollte, sofern Leerzeichen im Pfad oder Namen enthalten sind, die komplette Zeichenkette mit äußeren Anführungszeichen umschlossen werden. Im folgenden Beispiel werden die äußeren Anführungszeichen in rot und alle inneren Anführungszeichen in schwarz dargestellt:</p>
-<pre>Run %A_ComSpec% /c <span class="style3">"</span>"C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">"</span></pre>
+<p>Startet man ein Programm via <a href="../Variables.htm#ComSpec">Comspec</a> (cmd.exe) - z. B. um die Ein- oder Ausgabe des Programms umzuleiten - sollte, sofern Leerzeichen im Pfad oder Namen enthalten sind, die komplette Zeichenkette mit äußeren Hochkommas umschlossen werden. Im folgenden Beispiel werden die äußeren Hochkommas in rot und alle inneren Anführungszeichen in schwarz dargestellt:</p>
+<pre>Run A_ComSpec <span class="style3">'</span> /c "C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">'</span></pre>
 <p>Wenn <em>Ziel</em> nicht gestartet werden kann, wird ein Fehlerfenster angezeigt und der aktuelle Thread beendet, sofern man <strong>UseErrorLevel</strong> nicht im dritten Parameter verwendet oder den Fehler nicht via <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a>-Anweisung abgefängt.</p>
-<p>Die Performance kann etwas verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, wie z. B. <code>Run, C:\Windows\Notepad.exe "C:\Meine Dokumente\Test.txt"</code> anstelle von <code>Run, C:\Meine Dokumente\Test.txt</code>.</p>
+<p>Die Performance kann etwas verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, wie z. B. <code>Run 'C:\Windows\Notepad.exe "C:\Meine Dokumente\Test.txt"'</code> anstelle von <code>Run "C:\Meine Dokumente\Test.txt"</code>.</p>
 <p>Spezielle <a href="../misc/CLSID-List.htm">CLSID-Ordner</a> können via Run geöffnet werden. Zum Beispiel:</p>
-<pre>Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; Öffnet den Arbeitsplatz/Computer.</em>
-Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em></pre>
+<pre>Run "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"  <em>; Öffnet den Arbeitsplatz/Computer.</em>
+Run "::{645ff040-5081-101b-9f08-00aa002f954e}"  <em>; Öffnet den Papierkorb.</em></pre>
 <p id="verbs">Systemverben beziehen sich auf Aktionen, die im Rechtsklickmenü einer Datei innerhalb des Explorers verfügbar sind. Startet man eine Datei ohne Verb, wird das Standardverb (üblicherweise "open") für diesen bestimmten Dateityp verwendet. Ansonsten sollte nach dem Verb der Name der Zieldatei erfolgen. Zurzeit werden folgende Verben unterstützt:</p>
 <table class="info">
   <tr>
     <td style="width:8%">*<i>verb</i></td>
-    <td>Beliebiges systemdefiniertes oder benutzerdefiniertes Verb. Zum Beispiel: <code>Run *Compile %A_ScriptFullPath%</code><br>In Windows Vista und höher kann das Verb <a href="#RunAs">*RunAs</a> als Ersatz für den Kontextmenüpunkt <i>Als Administrator ausführen</i> benutzt werden.</td>
+    <td>Beliebiges systemdefiniertes oder benutzerdefiniertes Verb. Zum Beispiel: <code>Run "*Compile " A_ScriptFullPath</code><br>In Windows Vista und höher kann das Verb <a href="#RunAs">*RunAs</a> als Ersatz für den Kontextmenüpunkt <i>Als Administrator ausführen</i> benutzt werden.</td>
   </tr>
   <tr>
     <td>properties</td>
-    <td>Öffnet das Explorer-Eigenschaftsfenster für die angegebene Datei. Zum Beispiel: <code>Run, properties "C:\Meine Datei.txt"</code>.<br>
+    <td>Öffnet das Explorer-Eigenschaftsfenster für die angegebene Datei. Zum Beispiel: <code>Run 'properties "C:\Meine Datei"'</code><br>
     Hinweis: Das Eigenschaftsfenster wird automatisch geschlossen, sobald das Skript beendet wird. Um das zu verhindern, muss man <a href="WinWait.htm">WinWait</a> verwenden, um auf das Erscheinen des Fensters zu warten, und dann <a href="WinWaitClose.htm">WinWaitClose</a>, um auf das Schließen des Fensters zu warten.</td>
   </tr>
   <tr>
     <td>find</td>
-    <td>Öffnet eine Instanz vom Explorer's Such-Assistenten oder Suchergebnisfenster im angegebenen Ordner. Zum Beispiel: <code>Run, find D:\</code></td>
+    <td>Öffnet eine Instanz vom Explorer's Such-Assistenten oder Suchergebnisfenster im angegebenen Ordner. Zum Beispiel: <code>Run "find D:\"</code></td>
   </tr>
   <tr>
     <td>explore</td>
-    <td>Öffnet eine Instanz des Explorers im angegebenen Ordner. Zum Beispiel: <code>Run, explore %A_ProgramFiles%</code>.</td>
+    <td>Öffnet eine Instanz des Explorers im angegebenen Ordner. Zum Beispiel: <code>Run "explore " A_ProgramFiles</code>.</td>
   </tr>
   <tr>
     <td>edit</td>
-    <td>Öffnet die angegebene Datei zum Editieren. Dieser Vorgang kann fehlschlagen, wenn der Dateityp der angegebenen Datei keine Edit-Aktion hat. Zum Beispiel: <code>Run, edit "C:\Meine Datei.txt"</code>.</td>
+    <td>Öffnet die angegebene Datei zum Editieren. Dieser Vorgang kann fehlschlagen, wenn der Dateityp der angegebenen Datei keine Edit-Aktion hat. Zum Beispiel: <code>Run 'edit "C:\Meine Datei.txt"'</code></td>
   </tr>
   <tr>
     <td>open</td>
-    <td>Öffnet die angegebene Datei (normalerweise nicht notwendig, weil es die Standardaktion für die meisten Dateitypen ist). Zum Beispiel: <code>Run, open "Meine Datei.txt"</code>.</td>
+    <td>Öffnet die angegebene Datei (normalerweise nicht notwendig, weil es die Standardaktion für die meisten Dateitypen ist). Zum Beispiel: <code>Run 'open "Meine Datei.txt"'</code>.</td>
   </tr>
   <tr>
     <td>print</td>
-    <td>Druckt die angegebene Datei mit der zugehörigen Anwendung, falls vorhanden. Zum Beispiel: <code>Run, print "Meine Datei.txt"</code>.</td>
+    <td>Druckt die angegebene Datei mit der zugehörigen Anwendung, falls vorhanden. Zum Beispiel: <code>Run 'print "Meine Datei.txt"'</code></td>
   </tr>
 </table>
 <p>Während RunWait im Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> per <a href="../Hotkeys.htm">Hotkey</a>, <a href="Menu.htm">benutzerdefinierte Menüeinträge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
@@ -105,14 +103,14 @@ if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
     try
     {
         if A_IsCompiled
-            Run *RunAs "%A_ScriptFullPath%" /restart
+            Run '*RunAs "' A_ScriptFullPath '" /restart'
         else
-            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+            Run '*RunAs "' A_AhkPath '" /restart "' A_ScriptFullPath '"'
     }
     ExitApp
 }
 
-MsgBox A_IsAdmin: %A_IsAdmin%`nCommand line: %full_command_line%</pre>
+MsgBox "A_IsAdmin: " A_IsAdmin "`nCommand line: " full_command_line</pre>
 <p>Wenn der Benutzer im UAC-Dialogfenster auf Abbrechen drückt oder wenn Run aus einem anderen Grund fehlschlägt, wird das Skript einfach beendet.</p>
 <p>Das <a href="../Scripts.htm#SlashR">/restart</a> stellt sicher, dass keine <a href="_SingleInstance.htm">Einzelinstanz</a>-Nachfrage erscheint, wenn eine neue Instanz des Skripts startet, bevor ExitApp aufgerufen wird.</p>
 <p>Wenn UAC deaktiviert ist, wird <em>*RunAs</em> den Prozess ohne Erhöhung seiner Rechte starten. Es wird überprüft, ob <code>/restart</code> in der Befehlszeile vorkommt, um sicherzustellen, dass das Skript nicht in eine ausweglose Schleife hineingerät. Beachte, dass <code>/restart</code> ein built-interner Parameter ist, und daher nicht im <a href="../Scripts.htm#cmd_args">Befehlszeilenparameter-Array</a> zu finden ist.</p>
@@ -122,39 +120,42 @@ MsgBox A_IsAdmin: %A_IsAdmin%`nCommand line: %full_command_line%</pre>
   <li>Um das Skript nach Abbrechen der UAC-Nachfrage weiterlaufen zu lassen, muss ExitApp in den Try-Block verschoben werden.</li>
   <li>Um das Skript nach fehlgeschlagenem Neustart weiterlaufen zu lassen (weil die Skriptdatei z. B. geändert oder gelöscht wurde), muss ExitApp entfernt und Run mit RunWait ersetzt werden. Bei Erfolg lässt <code>/restart</code> die neue Instanz die alte Instanz terminieren. Bei Misserfolg wird die neue Instanz beendet und RunWait abgeschlossen.</li>
 </ul>
-<p>Wenn UAC aktiviert ist, wird der AutoHotkey-Installer das Verb <em>RunAs</em> bei <em>.ahk</em>-Dateien registrieren, wodurch <code>Run *RunAs skript.ahk</code> ein Skript als Administrator starten kann - mit der vordefinierten ausführbaren Datei.</p>
+<p>Wenn UAC aktiviert ist, wird der AutoHotkey-Installer das Verb <em>RunAs</em> bei <em>.ahk</em>-Dateien registrieren, wodurch <code>Run "*RunAs skript.ahk"</code> ein Skript als Administrator starten kann - mit der vordefinierten ausführbaren Datei.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="RunAs.htm">RunAs</a>, <a href="Process.htm">Process</a>, <a href="Exit.htm">Exit</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DllCall.htm">DllCall</a></p>
 
 <h3>Beispiele</h3>
-<pre class="NoIndent">Run, Notepad.exe, C:\Meine Dokumente, max
+<pre class="NoIndent">Run "Notepad.exe", "C:\Meine Dokumente", "max"
 
-Run, mailto:someone@domain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist der Haupttext der Nachricht.
-Run, ReadMe.doc, , Max UseErrorLevel  <em>; Startet maximiert und zeigt bei Misserfolg kein Dialogfenster an.</em>
+Run "mailto:someone@domain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist der Haupttext der Nachricht."
+Run "ReadMe.doc", , "Max UseErrorLevel"  <em>; Startet maximiert und zeigt bei Misserfolg kein Dialogfenster an.</em>
 if ErrorLevel = "ERROR"
-    MsgBox Das Dokument konnte nicht geöffnet werden.
+    MsgBox "Das Dokument konnte nicht geöffnet werden."
 
-RunWait, %comspec% /c dir c:\ &gt;&gt;c:\DirTest.txt, , min
-Run, c:\DirTest.txt
-Run, properties c:\DirTest.txt
+RunWait A_ComSpec " /c dir c:\ &gt;&gt;c:\DirTest.txt", , "min"
+Run "c:\DirTest.txt"
+Run "properties c:\DirTest.txt"
 
-Run, http://www.google.com <em>; Jede URL kann geöffnet werden.</em>
-Run, mailto:someone@somedomain.com  <em>; Dies sollte die voreingestellte E-Mail-Anwendung öffnen.</em>
+Run "http://www.google.com" <em>; Jede URL kann geöffnet werden</em>
+Run "mailto:someone@somedomain.com"  <em>; Dies sollte die voreingestellte E-Mail-Anwendung öffnen.</em>
 
-Run ::{20d04fe0-3aea-1069-a2d8-08002b30309d}  <em>; Öffnet den Arbeitsplatz/Computer.</em>
-Run ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Öffnet den Papierkorb.</em>
+Run "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"  <em>; Öffnet den Arbeitsplatz/Computer.</em>
+Run "::{645ff040-5081-101b-9f08-00aa002f954e}"  <em>; Öffnet den Papierkorb.</em>
 
 <em>; Mit "&amp;&amp;" können mehrere Befehle hintereinander ausgeführt werden:</em>
-Run, %A_ComSpec% /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause
+Run A_ComSpec " /c dir /b &gt; C:\Liste.txt &amp;&amp; type C:\Liste.txt &amp;&amp; pause"
+
+<em>; Folgende Zeile öffnet Systemsteuerung &gt; Anzeige &gt; Einstellungen:</em>
+Run "rundll32.exe shell32.dll,Control_RunDLL desk.cpl,, 3"
 </pre>
 
 <pre class="NoIndent" id="StdOut">
 <em>; Das folgende Beispiel zeigt, wie ein Befehl ausgeführt und seine Ausgabe ermittelt werden kann:</em>
-MsgBox % RunWaitEin("dir " A_ScriptDir)
+MsgBox RunWaitEin("dir " A_ScriptDir)
 
 <em>; ...oder wie mehrere Befehle in einem Rutsch ausgeführt und deren Ausgaben ermittelt werden können:</em>
-MsgBox % RunWaitViele("
+MsgBox RunWaitViele("
 (
 echo Füge hier deine Befehle ein,
 echo die ausgeführt werden sollen,
@@ -194,9 +195,9 @@ ExecScript(Script, Warten:=true)
 }
 
 <em>; Beispiel:</em>
-InputBox expr, Trage einen Ausdruck ein`, der in einem neuen Skript ausgewertet werden soll.,,, Ord("*")
-Ergebnis := ExecScript("FileAppend % (" expr "), *")
-MsgBox % "Ergebnis: " Ergebnis
+expr := InputBox("Trage einen Ausdruck ein, der in einem neuen Skript ausgewertet werden soll.",,, 'Ord("*")')
+Ergebnis := ExecScript('FileAppend ' expr ', "*"')
+MsgBox "Ergebnis: " Ergebnis
 </pre>
 
 </body>

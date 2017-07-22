@@ -102,14 +102,14 @@ Gui.Add("Text",, "Vorname:")
 Gui.Add("Text",, "Nachname:")
 Gui.Add("Edit", "vVorname ym")  <em>; Die ym-Option beginnt eine neue Spalte für Steuerelemente.</em>
 Gui.Add("Edit", "vNachname")
-Gui.Add("Button", "default", "OK").OnEvent("Click", "Gui_Close")
+Gui.Add("Button", "default", "OK").OnEvent("Click", Func("Gui_Close").bind(Gui))
 Gui.OnEvent("Close", "Gui_Close")
 Gui.Show()
 
 Gui_Close(Gui)
 {
   Gespeichert := Gui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
-  MsgBox("Sie haben '%Gespeichert.Vorname% %Gespeichert.Nachname%' eingegeben.")
+  MsgBox("Sie haben '" Gespeichert.Vorname " " Gespeichert.Nachname "' eingegeben.")
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Tab-Steuerelement:</em>
@@ -123,7 +123,8 @@ Gui.Add("Radio",, "Optionsfeld 2")
 Tab.UseTab(3)
 Gui.Add("Edit", "vMeinEdit r5")  <em>; r5 bedeutet 5 Reihen hoch.</em>
 Tab.UseTab()  <em>; nachfolgende Steuerelemente werden nicht als Teil des Tab-Steuerelements angesehen.</em>
-Gui.Add("Button", "default xm", "OK").OnEvent("Click", "Gui_Close")  <em>; xm positioniert den Button in die untere linke Ecke.</em>
+Btn := Gui.Add("Button", "default xm", "OK")  <em>; xm positioniert den Button in die untere linke Ecke.</em>
+Btn.OnEvent("Click", Func("Gui_Close").bind(Gui))
 Gui.OnEvent("Close", "Gui_Close")
 Gui.OnEvent("Escape", "Gui_Close")
 Gui.Show()
@@ -140,7 +141,7 @@ Gui := GuiCreate()
 Gui.Add("Text",, "Wählen Sie eine Datei aus der unteren Liste aus.")
 fn := Func("StarteDatei").bind(Gui)
 LB := Gui.Add("ListBox", "w640 r10 vDatei"), LB.OnEvent("DoubleClick", fn)
-LoopFiles("C:\*.*")  <em>; Ordner und musterbasierte Suche je nach Bedarf anpassen.</em>
+Loop Files, "C:\*.*"  <em>; Ordner und musterbasierte Suche je nach Bedarf anpassen.</em>
     LB.Add(A_LoopFilePath)
 Gui.Add("Button", "Default", "OK").OnEvent("Click", fn)
 Gui.Show()
@@ -148,7 +149,7 @@ Gui.Show()
 StarteDatei(Gui)
 {
   Gespeichert := Gui.Submit()
-  if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n%Gespeichert.Datei%",, 4) = "No"
+  if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n" Gespeichert.Datei,, 4) = "No"
     return
   try <em>; Ansonsten versuchen zu starten:</em>
     Run(Gespeichert.Datei)
@@ -159,14 +160,14 @@ StarteDatei(Gui)
 <pre class="NoIndent" id="ExToolTip"><em>; Beispiel: Zeigt eine kontextabhängige Hilfe an (via ToolTip), wenn man den Mauszeiger über ein bestimmtes Steuerelement bewegt:</em>
 
 Gui := GuiCreate()
-Gui.Add("Edit", "vMeinEdit")
-MeinEdit_TT := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
-Gui.Add("DropDownList", "vMeineDDL", "Rot|Grün|Blau")
-MeineDDL_TT := "Wählen Sie eine Farbe aus."
+Gui.Add("Edit", "v<strong>MeinEdit</strong>")
+<strong>MeinEdit</strong>_TT := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
+Gui.Add("DropDownList", "v<strong>MeineDDL</strong>", "Rot|Grün|Blau")
+<strong>MeineDDL</strong>_TT := "Wählen Sie eine Farbe aus."
 Gui.Add("Checkbox", "vMeineCheckBox", "Dieses Steuerelement hat kein Tooltip.")
 Gui.OnEvent("Close", "Gui_Close")
 Gui.Show()
-OnMessage(0x200, "WM_MOUSEMOVE")
+<a href="OnMessage.htm">OnMessage</a>(0x200, "WM_MOUSEMOVE")
 
 WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
 {
@@ -174,7 +175,7 @@ WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
   static AltesHwnd
   if (Hwnd &lt;&gt; AltesHwnd)
   {
-    Text := "", ToolTip() <em>; Vorheriges Tooltip ausschalten.</em>
+    Text := "", <a href="ToolTip.htm">ToolTip</a>() <em>; Vorheriges Tooltip ausschalten.</em>
     AktSteuerelement := GuiCtrlFromHwnd(Hwnd)
     if AktSteuerelement
     {
@@ -213,14 +214,14 @@ Gui.Show("x0 y400 NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fe
 AktualisiereOSD(GuiCtrl)
 {
   MouseGetPos(MausX, MausY)
-  GuiCtrl.Value := "X%MausX%, Y%MausY%"
+  GuiCtrl.Value := "X" MausX ", Y" MausY
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Eine animierte Fortschrittsleiste auf einem Hintergrundbild.</em>
 
 Gui := GuiCreate()
 Gui.BackColor := "White"
-Gui.Add("Picture", "x0 y0 h350 w450", "%A_WinDir%\Web\Wallpaper\Windows\img0.jpg")
+Gui.Add("Picture", "x0 y0 h350 w450", A_WinDir "\Web\Wallpaper\Windows\img0.jpg")
 MeinBtn := Gui.Add("Button", "Default xp+20 yp+250", "Animation starten")
 MeinProgress := Gui.Add("Progress", "w416")
 MeinText := Gui.Add("Text", "wp")  <em>; wp bedeutet "vorherige Breite verwenden".</em>
@@ -229,7 +230,7 @@ Gui.Show()
 
 AnimiereLeiste(ProgressCtrl, TextCtrl)
 {
-  LoopFiles("%A_WinDir%\*.*")
+  Loop Files, A_WinDir "\*.*"
   {
     if A_Index &gt; 100
       break
@@ -265,7 +266,7 @@ LadeNeuesBild(Gui, RadioCtrl, PicCtrl)
     Breite := A_ScreenWidth - 28  <em>; Minus 28, um Platz für Rahmen und Innenabstand zu schaffen.</em>
     Höhe := -1  <em>; "Seitenverhältnis beibehalten" erscheint sinnvoll.</em>
   }
-  PicCtrl.Value := "*w%Breite% *h%Höhe% %Datei%"  <em>; Bild laden.</em>
+  PicCtrl.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
   Gui.Title := Datei
   Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
 }</pre>
@@ -341,7 +342,7 @@ MenüDateiBeenden()  <em>; Benutzer hat "Exit" im Dateimenü ausgewählt.</em>
 
 MenüHilfeÜber()
 {
-  Über := GuiCreate("+owner%Gui.Hwnd%")  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
+  Über := GuiCreate("+owner" Gui.Hwnd)  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
   Gui.Opt("+Disabled")  <em>; Deaktiviert das Hauptfenster.</em>
   Über.Add("Text",, "Beliebiger Text.")
   Über.Add("Button", "Default", "OK").OnEvent("Click", "Über_Close")
@@ -355,7 +356,7 @@ leseInhalt(Dateiname)
   Dateiinhalt := FileRead(Dateiname)  <em>; Liest den Inhalt der Datei und speichert ihn in die Variable.</em>
   if ErrorLevel
   {
-    MsgBox("'%Dateiname%' konnte nicht geöffnet werden.")
+    MsgBox("'" Dateiname "' konnte nicht geöffnet werden.")
     return
   }
   HauptEdit.Value := Dateiinhalt  <em>; Fügt den Text in das Steuerelement ein.</em>
@@ -371,7 +372,7 @@ speichereInhalt(Dateiname)
     FileDelete(Dateiname)
     if ErrorLevel
     {
-      MsgBox("Überschreiben der Datei '%Dateiname%' fehlgeschlagen.")
+      MsgBox("Überschreiben der Datei '" Dateiname "' fehlgeschlagen.")
       return
     }
   }
@@ -397,7 +398,7 @@ Gui_Size(Gui, MinMax, Breite, Höhe)
   if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
     return
   <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Die Größe des Eingabefeldes muss entsprechend angepasst werden.</em>
-  HauptEdit.Move("W%Breite-20% H%Höhe-20%")
+  HauptEdit.Move("W" Breite-20 " H" Höhe-20)
 }</pre>
 </body>
 </html>

@@ -43,7 +43,7 @@ P2C1 := TV.Add("Erstes Unterelement von Oberelement 2", P2)
 P2C2 := TV.Add("Zweites Unterelement von Oberelement 2", P2)
 P2C2C1 := TV.Add("Erstes Unterelement von Unterelement 2", P2C2)
 
-Gui.Show()  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
+Gui.Show  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
 <h2 id="Options">Optionen und Styles für den <em>Optionen</em>-Parameter</h2>
 <p><strong>Background</strong>: Verwende das Wort Background, unmittelbar gefolgt von einem Farbnamen (siehe <a href="../misc/Colors.htm">Farbtabelle</a>) oder RGB-Wert (der 0x-Präfix ist optional). Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Fehlt diese Option, gilt als Hintergrundfarbe die Standard-Hintergrundfarbe des Betriebssystems. Mit <code>BackgroundDefault</code> oder <code>-Background</code> kann die Standard-Hintergrundfarbe des Betriebssystems erzwungen werden (in der Regel weiß). Mit <code>TV.Opt("+BackgroundDefault")</code> kann beispielsweise die Standardfarbe wiederhergestellt werden.</p>
 <p><strong>Buttons</strong>: Mit <code>-Buttons</code> kann verhindert werden, dass Plus- oder Minuszeichen links neben den Elementen angezeigt werden, die Unterelemente haben.</p>
@@ -54,9 +54,9 @@ Gui.Show()  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
 <pre>ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für anfänglich 10 Symbole.</em>
 Loop 10  <em>; Lädt die ImageList mit einigen vordefinierten Systemsymbolen.</em>
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
-TV := Gui.Add("TreeView", "<strong>ImageList%ImageListID%</strong>")
+TV := Gui.Add("TreeView", <strong>"ImageList" . ImageListID</strong>)
 <a href="#Add">TV.Add</a>("Elementname", 0, "Icon4")  <em>; Fügt ein Element in die TreeView ein und gibt ihm ein Ordnersymbol.</em>
-Gui.Show()</pre>
+Gui.Show</pre>
 <p><strong>Lines</strong>: Mit <code>-Lines</code> kann verhindert werden, dass Verbindungslinien zwischen den Ober- und Unterelementen angezeigt werden. Das Entfernen solcher Linien verhindert allerdings auch, dass die Plus-/Minuszeichen bei den Top-Level-Elementen angezeigt werden.</p>
 <p id="ReadOnly"><strong>ReadOnly</strong>: Verwende <code>-ReadOnly</code>, um das Editieren von Texten/Namen der Elemente zu erlauben. Um ein Element zu editieren, kannst du es auswählen und dann die <a href="#WantF2">F2-Taste</a> drücken. Oder klicke das Element einmal an, um es auszuwählen, warte mindestens eine halbe Sekunde und klicke dann das Element nochmals an, um es zu editieren. Das folgende Beispiel zeigt, wie ein Element, nachdem es editiert wurde, in Bezug auf seine Nachbarelemente alphabetisch neu positioniert werden kann:</p>
 <pre>TV := Gui.Add("TreeView", "-ReadOnly")
@@ -171,11 +171,11 @@ MeinTree_Edit(TV, Element)
   &nbsp;Das folgende Beispiel durchläuft die gesamte Baumstruktur, Element für Element:<pre>ElementID := 0  <em>; Beginnt die Suche beim ersten Element.</em>
 Loop
 {
-    ElementID := TV.GetNext(ElementID, "Full")  <em>; Ersetze "Full" mit "Checked" , um alle markierten Elemente zu finden.</em>
+    ElementID := TV.GetNext(ElementID, "Full")  <em>; Ersetze "Full" mit "Checked", um alle markierten Elemente zu finden.</em>
     if not ElementID <em>; Keine weiteren Elemente verfügbar.</em>
         break
     Elementtext := TV.GetText(ElementID)
-    MsgBox('Das nächste Element ist %ElementID%, das den Text "%Elementtext%" beinhaltet.')
+    MsgBox('Das nächste Element ist ' ElementID ', das den Text "' Elementtext '" beinhaltet.')
 }</pre>
 </div>
 <div class="methodShort" id="GetText">
@@ -237,7 +237,7 @@ ButtonOK() {
   global
   if Gui.FocusedCtrl != TV
     return
-  MsgBox("Sie haben ENTER gedrückt. Die ID des ausgewählten Elements ist " TV.GetSelection())
+  MsgBox("Sie haben ENTER gedrückt. Die ID des ausgewählten Elements ist " TV.GetSelection)
 }</pre>
 <p>Neben der Möglichkeit, mit der Tastatur von Element zu Element zu navigieren, könnte der Benutzer auch eine inkrementelle Suche durchführen, indem er die ersten Zeichen eines Elementnamens eingibt. Dabei springt die Auswahl auf das nächst passende Element.</p>
 <p>Zwar kann man ein Text mit beliebiger Länge in den Elementen einer TreeView speichern, allerdings werden nur die ersten 260 Zeichen angezeigt.</p>
@@ -268,8 +268,8 @@ ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(5)
 Loop 5 
   <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
 <em>; Erstellt eine TreeView und ListView, um ein Windows Explorer nachzuahmen:</em>
-TV := <a href="#GuiAdd">Gui.Add</a>("TreeView", "r20 w%TreeViewBreite% <a href="#ImageList">ImageList</a>%ImageListID%")
-LV := Gui.Add("ListView", "r20 w%ListViewBreite% x+10", "Name|Bearbeitet")
+TV := <a href="#GuiAdd">Gui.Add</a>("TreeView", "r20 w" TreeViewBreite " <a href="#ImageList">ImageList</a>" ImageListID)
+LV := Gui.Add("ListView", "r20 w" ListViewBreite " x+10", "Name|Bearbeitet")
 
 <em>; Erstellt eine Statusleiste, um Infos über die Anzahl an Dateien und ihre Gesamtgrößen anzuzeigen:</em>
 SB := Gui.Add("<a href="GuiControls.htm#StatusBar">StatusBar</a>")
@@ -292,14 +292,14 @@ LV.ModifyCol(1, ListViewBreite - Spalte2Breite - 30)  <em>; Genug Platz für ver
 LV.ModifyCol(2, Spalte2Breite)
 
 <em>; Zeigt das Fenster. Das Skript wird benachrichtigt, wann immer Benutzer eine geeignete Aktion durchführt:</em>
-Gui.Show()
+Gui.Show
 
 SetzeUnterordnerInBaum(TV, Ordner, VerzListe, OberelementID := 0)
 {
   <em>; Diese Funktion fügt alle Unterordner des angegebenen Ordners in die TreeView ein
   ; und speichert deren Pfade verbunden mit einer ID in ein Objekt zur späteren Benutzung.
   ; Außerdem ruft sie sich selbst rekursiv auf, um Unterordner in jeder Ebene zu sammeln.</em>
-  LoopFiles("%Ordner%\*.*", "D")  <em>; Ermittelt alle Unterordner des Ordners.</em>
+  Loop Files, Ordner "\*.*", "D"  <em>; Ermittelt alle Unterordner des Ordners.</em>
   {
     ElementID := <a href="#Add">TV.Add</a>(A_LoopFileName, OberelementID, "Icon4")
     VerzListe[ElementID] := A_LoopFilePath
@@ -314,7 +314,7 @@ TV_ItemSelect(VerzListe, SB, LV, TV, Element)  <em>; Diese Funktion wird aufgeru
   LV.Delete()  <em>; Leert alle Reihen.</em>
   LV.Opt("-Redraw")  <em>; Verbessert die Lade-Performance durch Deaktivieren der Neuzeichnung.</em>
   Gesamtgröße := 0  <em>; Für die Schleife unten initialisieren.</em>
-  LoopFiles(VerzListe[Element] "\*.*")  <em>; Der Einfachheit halber werden die Ordner weggelassen, um nur die Dateien in der Listview anzuzeigen.</em>
+  Loop Files, VerzListe[Element] "\*.*"  <em>; Der Einfachheit halber werden die Ordner weggelassen, um nur die Dateien in der Listview anzuzeigen.</em>
   {
     LV.Add(, A_LoopFileName, A_LoopFileTimeModified)
     Gesamtgröße += A_LoopFileSize

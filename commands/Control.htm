@@ -283,7 +283,7 @@ AuswahlPos += 1  <em>; Wandelt 0-basiert in 1-basiert um, so dass der erste Eint
   <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
 </dl>
 <p>Das folgende Beispiel zeigt, wie alle Elemente innerhalb einer <em>Mehrfachauswahl</em>-ListBox ausgewählt werden können:</p>
-<pre><a href="PostMessage.htm">PostMessage</a>, 0x185, 1, -1, ListBox1, Fenstertitel  <em>; Alle ListBox-Einträge auswählen. 0x185 ist LB_SETSEL.</em></pre>
+<pre><a href="PostMessage.htm">PostMessage</a>(0x185, 1, -1, "ListBox1", Fenstertitel)  <em>; Alle ListBox-Einträge auswählen. 0x185 ist LB_SETSEL.</em></pre>
 
 <h3 id="ChooseString">ControlChooseString</h3>
 <p>Setzt die Auswahl auf den ersten Eintrag innerhalb einer ListBox oder ComboBox, dessen führender Teil mit der <em>Zeichenkette</em> übereinstimmt.</p>
@@ -352,11 +352,11 @@ AuswahlPos += 1  <em>; Wandelt 0-basiert in 1-basiert um, so dass der erste Eint
 <p>Bei Erfolg wird ErrorLevel auf 0 gesetzt. Bei Misserfolg wird ErrorLevel auf 1 gesetzt und der Rückgabewert leer gemacht. Fehler treten auf, wenn: 1) das angegebene Fenster oder Steuerelement nicht existiert; 2) das Steuerelement nicht vom Typ SysListView32 ist; 3) der Prozess mit dem ListView nicht geöffnet werden konnte, da er gesperrt ist oder Benutzerrechte fehlen; 4) die <a href="#ColN">Col<em>N</em>-Option</a> auf eine nicht-existierende Spalte verweist.</p>
 <p>Um die Reihen und Felder aus einem ListView einzeln zu extrahieren, verwende eine <a href="LoopParse.htm">Parsende Schleife</a> wie folgt:</p>
 <pre>Liste := ControlGetList("Selected", "SysListView321", Fenstertitel)
-Loop, Parse, %Liste%, `n  <em>; Reihen sind durch Zeilenvorschübe (`n) abgegrenzt.</em>
+Loop Parse, Liste, "`n"  <em>; Reihen sind durch Zeilenvorschübe (`n) abgegrenzt.</em>
 {
     Reihennummer := A_Index
-    Loop, Parse, %A_LoopField%, %A_Tab%  <em>; Felder (Spalten) sind in jeder Reihe durch Tabulatoren (A_Tab) abgegrenzt.</em>
-        MsgBox("Reihe #" Reihennummer " Spalte #" A_Index " enthält " A_LoopField ".")
+    Loop Parse, A_LoopField, A_Tab  <em>; Felder (Spalten) sind in jeder Reihe durch Tabulatoren (A_Tab) abgegrenzt.</em>
+        MsgBox "Reihe #" Reihennummer " Spalte #" A_Index " enthält " A_LoopField
 }</pre>
 <p>Außerdem ist es möglich, die Größe der ListView-Spalten per <a href="PostMessage.htm">SendMessage</a> zu ändern:</p>
 <pre>SendMessage(4126, 0, 80, "SysListView321", Fenstertitel)  <em>; 4126 ist die Meldung LVM_SETCOLUMNWIDTH.
@@ -367,8 +367,8 @@ Loop, Parse, %Liste%, `n  <em>; Reihen sind durch Zeilenvorschübe (`n) abgegren
 <p>Der gesamte Text wird vom Steuerelement ermittelt (das heißt, dass die oben genannten ListView-Optionen wie <em>Count</em> und <em>Selected</em> nicht unterstützt werden).</p>
 <p>Jede Reihe, außer die letzte, endet mit einem Zeilenumbruch (`n). Um die Einträge einzeln abzurufen, verwende eine <a href="LoopParse.htm">Parsende Schleife</a> wie folgt:</p>
 <pre>Liste := ControlGetList("", "ComboBox1", Fenstertitel)
-Loop, Parse, %Liste%, `n
-    MsgBox("Eintragsnummer " A_Index " ist " A_LoopField ".")</pre>
+Loop Parse, Liste, "`n"
+    MsgBox "Eintragsnummer " A_Index " ist " A_LoopField</pre>
 
 <h2>ComboBox</h2>
 
@@ -380,13 +380,13 @@ Loop, Parse, %Liste%, `n
   <dd><p>Siehe <a href="#standard-parameters">Standardparameter</a>.</p></dd>
 </dl>
 <p>Beispiel:</p>
-<pre>Send("#r")  <em>; Zeigt das Ausführen-Dialogfenster an.</em>
-WinWaitActive("ahk_class #32770")  <em>; Wartet auf das Erscheinen des Dialogfensters.</em>
-ControlShowDropDown("ComboBox1")  <em>; Öffnet die DropDown-Liste. Der vierte Parameter wurde weggelassen, um das Zuletzt Gefundene Fenster zu verwenden.</em>
-Sleep(2000)
-ControlHideDropDown("ComboBox1")  <em>; Versteckt die DropDown-Liste.</em>
-Sleep(1000)
-Send("{Esc}")  <em>; Versteckt das Dialogfenster.</em></pre>
+<pre>Send "#r"  <em>; Zeigt das Ausführen-Dialogfenster an.</em>
+WinWaitActive "ahk_class #32770"  <em>; Wartet auf das Erscheinen des Dialogfensters.</em>
+ControlShowDropDown "ComboBox1"  <em>; Öffnet die DropDown-Liste. Der zweite Parameter wurde weggelassen, um das Zuletzt Gefundene Fenster zu verwenden.</em>
+Sleep 2000
+ControlHideDropDown "ComboBox1"  <em>; Versteckt die DropDown-Liste.</em>
+Sleep 1000
+Send "{Esc}"  <em>; Versteckt das Dialogfenster.</em></pre>
 
 <h3 id="HideDropDown">ControlHideDropDown</h3>
 <p>Kehrt das Obengenannte um.</p>

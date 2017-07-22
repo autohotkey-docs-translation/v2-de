@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<h1>OnMessage()</h1>
+<h1>OnMessage</h1>
 
 <p>Bestimmt eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, die automatisch aufgerufen werden sollen, wenn das Skript die angegebene Meldung empfängt.</p>
 
@@ -28,7 +28,7 @@
 
   <dt id="MaxThreads">MaxThreads</dt>
   <dd><p>Normalerweise lässt man diesen Parameter (Integer) weg, um die überwachende Funktion jeweils auf einen einzigen <a href="../misc/Threads.htm">Thread</a> zu begrenzen. Diese Methode ist üblicherweise am sinnvollsten, weil das Skript sonst Meldungen in chronologisch falscher Reihenfolge abarbeiten würde, wann immer die überwachende Funktion sich selbst unterbricht. Demzufolge kann <em>Critical</em> als Alternative zu <em>MaxThreads</em> verwendet werden, wie es <a href="#Critical">weiter unten</a> beschrieben wird.</p>
-  <p>Standardmäßig werden mehrere Funktionen, die für eine einzige <em>MdlgNummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um eine Funktion zu registrieren, die vor allen anderen registrierten Funktionen erfolgen soll, muss ein negativer Wert bei <em>MaxThreads</em> angegeben werden. Zum Beispiel würde <code>OnMessage(Mdlg, Fn,-2)</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für <em>Mdlg</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
+  <p>Standardmäßig werden mehrere Funktionen, die für eine einzige <em>MdlgNummer</em> registriert sind, in der Reihenfolge aufgerufen, wie sie registriert wurden. Um eine Funktion zu registrieren, die vor allen anderen registrierten Funktionen erfolgen soll, muss ein negativer Wert bei <em>MaxThreads</em> angegeben werden. Zum Beispiel würde <code>OnMessage Mldg, Fn,-2</code> die Funktion <code>Fn</code> vor allen anderen registrierten Funktionen für <em>Mldg</em> aufrufen, und maximal 2 Threads für <em>Fn</em> erlauben. Wenn die Funktion allerdings bereits registriert ist, wird die Reihenfolge nicht geändert, sofern sie nicht de- und dann neuregistriert wurde.</p></dd>
 
 </dl>
 
@@ -69,7 +69,7 @@ Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die 
 <h3>Weitere verfügbare Informationen für die Funktion</h3>
 <p>Neben den oben genannten Parametern kann die Funktion auch auf die Built-in-Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> zurückgreifen, die 0 enthalten wird, wenn die Meldung via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</p>
 <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Meldung gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
-<pre>DetectHiddenWindows On
+<pre>DetectHiddenWindows True
 MeldeÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, zu dem die Meldung gesendet wurde.</em></pre>
 
 <h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
@@ -89,7 +89,7 @@ MeldeÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des
 <p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Meldungen, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Skript beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Meldung direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
 <p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Meldungen zu einem Skript-Thread senden, allerdings könnten dabei Meldungen verloren gehen, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen zum Hauptfenster des Skripts oder zu einem seiner GUI-Fenster zu senden.</p>
 <h3>Siehe auch</h3>
-<p><a href="RegisterCallback.htm">RegisterCallback()</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall()</a></p>
+<p><a href="RegisterCallback.htm">RegisterCallback</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie Mausklicks innerhalb eines GUI-Fensters überwacht werden können.
 ; Verwandtes Thema: <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu</a>-Ereignis</em>
@@ -98,8 +98,8 @@ Gui := GuiCreate(, "Beispielfenster")
 Gui.Add("Text",, "Klicken Sie irgendwo auf das Fenster.")
 Gui.Add("Edit", "w200")
 Gui.OnEvent("Close", "Gui_Close")
-Gui.Show()
-OnMessage(0x201, "WM_LBUTTONDOWN")
+Gui.Show
+OnMessage 0x201, "WM_LBUTTONDOWN"
 
 WM_LBUTTONDOWN(wParam, lParam, msg, hwnd)
 {
@@ -112,19 +112,19 @@ WM_LBUTTONDOWN(wParam, lParam, msg, hwnd)
         Gui := GuiControl.Gui
         Steuerelement := "`n(im Steuerelement " . GuiControl.ClassNN . ")"
     }
-    ToolTip("Sie haben im GUI-Fenster '%Gui.Title%' auf die Koordinaten %X%x%Y% geklickt." Steuerelement)
+    ToolTip "Sie haben im GUI-Fenster '" Gui.Title "' auf die Koordinaten " X "x" Y " geklickt." Steuerelement
 }
 
 Gui_Close() {
-    ExitApp()
+    ExitApp
 }</pre>
 
 <pre class="NoIndent" id="shutdown"><em>; Beispiel: Das folgende Skript zeigt, wie man das Abmelden/Herunterfahren des Systems erkennen und unterbrechen kann (es wurde gemeldet, dass dies NICHT in Windows Vista und höher funktioniert).
 ; Verwandtes Thema: <a href="OnExit.htm">OnExit</a></em>
 
 <em>; Der folgende DllCall-Befehl ist optional: er teilt dem OS mit, dass dieses Skript <i>zuerst</i> beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
-DllCall("kernel32.dll\SetProcessShutdownParameters", UInt, 0x4FF, UInt, 0)
-OnMessage(0x11, "WM_QUERYENDSESSION")
+DllCall "kernel32.dll\SetProcessShutdownParameters", UInt, 0x4FF, UInt, 0
+OnMessage 0x11, "WM_QUERYENDSESSION"
 return
 
 WM_QUERYENDSESSION(wParam, lParam)
@@ -134,7 +134,7 @@ WM_QUERYENDSESSION(wParam, lParam)
         Ereignis := "Abmelden"
     else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
         Ereignis := "Herunterfahren"
-    Result := MsgBox("%Ereignis% im Gange.  Erlauben?",, 4)
+    Result := MsgBox(Ereignis " im Gange. Erlauben?",, 4)
     <em>; Das Betriebssystem kann erst mit dem Herunterfahren/Abmelden fortfahren, wenn der Benutzer auf Ja klickt.</em>
     return Result = "Yes"
 }</pre>
@@ -142,22 +142,22 @@ WM_QUERYENDSESSION(wParam, lParam)
 <pre class="NoIndent"><em>; Beispiel: Zeigt, wie ein Skript eine benutzerdefinierte Meldung und bis zu zwei Zahlen von einem anderen Skript oder Programm empfängt
 ; (Schaue dir das Beispiel danach an, wie man Zeichenketten sendet).</em>
 
-OnMessage(0x5555, "Meldeüberwachung")
-OnMessage(0x5556, "Meldeüberwachung")
+OnMessage 0x5555, "Meldeüberwachung"
+OnMessage 0x5556, "Meldeüberwachung"
 
 MeldÜberwachung(wParam, lParam, msg)
 {
     <em>; Damit die Funktion schnell zum Ende kommen kann, ist es besser, ein ToolTip zu verwenden,</em>
     <em>; weil so etwas wie eine MsgBox dies verhindern würde:</em>
-    ToolTip Meldung %msg% angekommen:`nWPARAM: %wParam%`nLPARAM: %lParam%
+    ToolTip "Meldung " msg " angekommen:`nWPARAM: " wParam "`nLPARAM: " lParam
 }
 
 <em>; Mit den folgenden Zeilen innerhalb eines anderen Skripts kann die Funktion im oberen Skript ausgeführt werden:</em>
 SetTitleMatchMode 2
-DetectHiddenWindows On
+DetectHiddenWindows True
 if WinExist("Empfänger.ahk ahk_class AutoHotkey")
-    PostMessage, 0x5555, 11, 22  <em>; Aufgrund von WinExist() wird die Meldung zum "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>" gesendet.</em>
-DetectHiddenWindows Off  <em>; Kann nach PostMessage wieder deaktiviert werden.</em></pre>
+    PostMessage 0x5555, 11, 22  <em>; Aufgrund von WinExist wird die Meldung zum "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>" gesendet.</em>
+DetectHiddenWindows False  <em>; Kann nach PostMessage wieder deaktiviert werden.</em></pre>
 
 <pre class="NoIndent" id="SendString"><em>; Beispiel: Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript.  Um dieses Beispiel
 ; verwenden zu können, musst du beide der folgenden Skripte speichern und ausführen und dann WIN+LEERTASTE drücken,
@@ -165,7 +165,7 @@ DetectHiddenWindows Off  <em>; Kann nach PostMessage wieder deaktiviert werden.<
 
 <em>; Speichere das folgende Skript als "<strong>Empfänger.ahk</strong>" und starte es:</em>
 #SingleInstance
-OnMessage(0x4a, "Empfange_WM_COPYDATA")  <em>; 0x4a ist WM_COPYDATA</em>
+OnMessage 0x4a, "Empfange_WM_COPYDATA"  <em>; 0x4a ist WM_COPYDATA</em>
 return
 
 Empfange_WM_COPYDATA(wParam, lParam)
@@ -173,7 +173,7 @@ Empfange_WM_COPYDATA(wParam, lParam)
     ZeichenketteAdresse := NumGet(lParam + 2*A_PtrSize)  <em>; Ermittelt die Adresse des lpData-Elements in CopyDataStruct.</em>
     Datenkopie := StrGet(ZeichenketteAdresse)  <em>; Kopiert die Zeichenkette aus der Struktur.</em>
     <em>; Zeige die Zeichenkette via ToolTip statt MsgBox an, so dass wir rechtzeitig fertig werden:</em>
-    ToolTip %A_ScriptName%`nhat die folgende Zeichenkette empfangen:`n%Datenkopie%
+    ToolTip A_ScriptName "`nhat die folgende Zeichenkette empfangen:`n" Datenkopie
     return true  <em>; Die Rückgabe einer 1 (wahr) ist der übliche Weg, um diese Meldung zu bestätigen.</em>
 }
 
@@ -181,14 +181,14 @@ Empfange_WM_COPYDATA(wParam, lParam)
 ZielSkriptTitel := "Empfänger.ahk ahk_class AutoHotkey"
 
 #space::  <em>; Hotkey: WIN+LEERTASTE. Drücke ihn, um eine InputBox zur Eingabe einer Zeichenkette anzuzeigen.</em>
-InputBox, ZuSendendeZeichenkette, Tragen Sie den zu sendenden Text ein:, Text via WM_COPYDATA senden
+ZuSendendeZeichenkette := InputBox("Tragen Sie den zu sendenden Text ein:", "Text via WM_COPYDATA senden")
 if ErrorLevel  <em>; Benutzer hat den Abbrechen-Button gedrückt.</em>
     return
 Ergebnis := Sende_WM_COPYDATA(ZuSendendeZeichenkette, ZielSkriptTitel)
-if Ergebnis = "ERROR"
-    MsgBox SendMessage fehlgeschlagen. Gibt es den folgenden Fenstertitel?:`n%ZielSkriptTitel%
+if Ergebnis = ""
+    MsgBox "SendMessage fehlgeschlagen oder Zeit überschritten. Gibt es den folgenden Fenstertitel?:`n" ZielSkriptTitel
 else if Ergebnis = 0
-    MsgBox Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde.
+    MsgBox "Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde."
 return
 
 Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; ByRef verbraucht in diesem Fall weniger Speicher.
@@ -202,17 +202,17 @@ Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; By
     NumPut(&amp;ZuSendendeZeichenkette, KopieDatenStrukt, 2*A_PtrSize)  <em>; Lässt lpData auf die Zeichenkette selbst verweisen.</em>
     Vorher_DetectHiddenWindows := A_DetectHiddenWindows
     Vorher_TitleMatchMode := A_TitleMatchMode
-    DetectHiddenWindows On
+    DetectHiddenWindows True
     SetTitleMatchMode 2
     TimeoutWert := 4000  <em>; Optional. Zeit in Millisekunden, die Empfänger.ahk zum Antworten hat. Standard ist 5000</em>
     <em>; Muss Send verwenden, nicht Post.</em>
-    SendMessage 0x4a, 0, &amp;KopieDatenStrukt,, ZielSkriptTitel,,,, TimeoutWert <em>; 0x4a ist WM_COPYDATA.</em>
-    DetectHiddenWindows %Vorher_DetectHiddenWindows%  <em>; Stellt die ursprüngliche Einstellung wieder her.</em>
-    SetTitleMatchMode %Vorher_TitleMatchMode%         <em>; Hier auch.</em>
-    return ErrorLevel  <em>; Gibt SendMessage's Antwort zum Aufrufer zurück.</em>
+    Rückgabewert := SendMessage(0x4a, 0, &amp;KopieDatenStrukt,, ZielSkriptTitel,,,, TimeoutWert) <em>; 0x4a ist WM_COPYDATA.</em>
+    DetectHiddenWindows Vorher_DetectHiddenWindows  <em>; Stellt die ursprüngliche Einstellung wieder her.</em>
+    SetTitleMatchMode Vorher_TitleMatchMode         <em>; Hier auch.</em>
+    return Rückgabewert  &lt;e22&gt;; Gibt SendMessage's Antwort zum Aufrufer zurück.&lt;/e22&gt;
 }</pre>
 
-<pre class="NoIndent"><em>; Beispiel: Siehe <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a>, wie OnMessage() zum Empfangen von Meldungen verwendet
+<pre class="NoIndent"><em>; Beispiel: Siehe <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a>, wie OnMessage zum Empfangen von Meldungen verwendet
 ; werden kann, die über die Netzwerkverbindung gesendet wurden.</em></pre>
 
 </body>

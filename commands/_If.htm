@@ -27,8 +27,8 @@
 
 <h3>Grundlagen zur Bedienung</h3>
 <p>Es kann ein beliebiger gültiger Ausdruck verwendet werden, um den Kontext zu definieren, bei dem ein Hotkey aktiv sein soll. Zum Beispiel:</p>
-<pre>#If WinActive("ahk_class Notepad") or WinActive(Fenstertitel)
-#Space::MsgBox Sie haben WIN+LEERTASTE im Editor oder %Fenstertitel% gedrückt.</pre>
+<pre>#If WinActive("ahk_class Notepad") or WinActive(MeinFenstertitel)
+#Space::MsgBox "Sie haben WIN+LEERTASTE im Editor oder " MeinFenstertitel " gedrückt."</pre>
 <p>Die #If-Direktive ist wie die #IfWin-Direktive von der Position abhängig: sie beeinflusst nur Hotkeys und Hotstrings, die sich im Skript physisch darunter befinden. Zudem schließen sich #If und #IfWin gegenseitig aus; das heißt, dass nur das aktuellste #If oder #IfWin wirksam sein wird.</p>
 <p>Um die Kontextabhängigkeit zu deaktivieren, muss #If oder #IfWin ohne Parameter angegeben werden. Zum Beispiel:</p>
 <pre>#If</pre>
@@ -48,18 +48,18 @@
 <pre class="NoIndent">
 <em>; Beispiel 1: Anpassen der Lautstärke durch Drehen des Mausrades innerhalb der Taskleiste.</em>
 #If MausIstÜber("ahk_class Shell_TrayWnd")
-WheelUp::Send {Volume_Up}
-WheelDown::Send {Volume_Down}
+WheelUp::Send "{Volume_Up}"
+WheelDown::Send "{Volume_Down}"
 
 MausIstÜber(Fenstertitel) {
-    MouseGetPos,,, Fenster
-    return WinExist(Fenstertitel . " ahk_id " . Fenster)
+    MouseGetPos ,, Win
+    return WinExist(Fenstertitel " ahk_id " Fenster)
 }
 
 <em>; Beispiel #2: Einfaches wort-löschendes Tastenkürzel für alle Eingabefelder.</em>
 #If AktivesSteuerelementIstKlasse("Edit")
-^BS::Send ^+{Left}{Del}
-^Del::Send ^+{Right}{Del}
+^BS::Send "^+{Left}{Del}"
+^Del::Send "^+{Right}{Del}"
 
 AktivesSteuerelementIstKlasse(Klasse) {
     FokusSteuerelement := ControlGetFocus("A")
@@ -74,15 +74,15 @@ Esc::ExitApp
 
 <em id="ex4">; Beispiel #4: Dynamische Hotkeys. <b>Benötigt Beispiel #1.</b></em>
 NumpadAdd::
-Hotkey, If, MausIstÜber("ahk_class Shell_TrayWnd")
+Hotkey "If", 'MouseIsOver("ahk_class Shell_TrayWnd")'
 if (zweimalhoch := !zweimalhoch)
-    Hotkey, WheelUp, ZweimalHoch
+    Hotkey "WheelUp", "DoubleUp"
 else
-    Hotkey, WheelUp, WheelUp
+    Hotkey "WheelUp", "WheelUp"
 return
 
 ZweimalHoch:
-Send {Volume_Up 2}
+Send "{Volume_Up 2}"
 return
 </pre>
 

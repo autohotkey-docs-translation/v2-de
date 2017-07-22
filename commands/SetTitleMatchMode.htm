@@ -13,7 +13,7 @@
 
 <h1>SetTitleMatchMode</h1>
 
-<p>Setzt das Übereinstimmungsverhalten des Fenstertitel-Parameters in Befehlen wie <a href="WinWait.htm">WinWait</a>.</p>
+<p>Setzt das Übereinstimmungsverhalten des Fenstertitel-Parameters bei internen Funktionen wie <a href="WinWait.htm">WinWait</a>.</p>
 
 <pre class="Syntax"><span class="func">SetTitleMatchMode</span> Übereinstimmungsmodus
 <span class="func">SetTitleMatchMode</span> "Fast|Slow"</pre>
@@ -25,11 +25,11 @@
       <p><strong>1</strong>: Der Titel eines Fensters muss mit dem angegebenen <em>Fenstertitel</em> beginnen, um eine Übereinstimmung zu sein.<br>
         <strong>2</strong>: Der Titel eines Fensters kann den angegebenen <em>Fenstertitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein. <br>
       <strong>3</strong>: Der Titel eines Fensters muss genau mit dem angegebenen <em>Fenstertitel</em> übereinstimmen, um eine Übereinstimmung zu sein.</p>
-      <p id="RegEx"><strong>RegEx</strong>: Ändert <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> in <a href="../misc/RegEx-QuickRef.htm">reguläre Ausdrücke</a>. Umschließe solche Ausdrücke nicht mit Anführungszeichen, wenn sie in Verbindung mit Befehlen verwendet werden. Zum Beispiel: <code><a href="WinActivate.htm">WinActivate Unbenannt.*Editor</a></code>.</p>
+      <p id="RegEx"><strong>"RegEx"</strong>: Ändert <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> in <a href="../misc/RegEx-QuickRef.htm">reguläre Ausdrücke</a>. Zum Beispiel: <code><a href="WinActivate.htm">WinActivate</a> "Unbenannt.*Editor"</code>.</p>
       <p>Hinweis:</p>
       <ul>
         <li>RegEx gilt auch für <a href="../misc/WinTitle.htm#ahk_class">ahk_class</a> und <a href="../misc/WinTitle.htm#ahk_exe">ahk_exe</a>; zum Beispiel würde <code>ahk_class IEFrame</code> ein Fenster suchen, dessen Klassenname irgendwo <em>IEFrame</em> enthält (weil reguläre Ausdrücke <em>überall</em> eine Übereinstimmung in der Zeichenkette finden können).</li>
-        <li>Jede Komponente in <em>Fenstertitel</em> muss einzeln behandelt werden. Im Beispiel <code>i)^unbenannt ahk_class i)^editor$ ahk_pid %meinepid%</code> sind <code>i)^unbenannt</code> und <code>i)^editor$</code> seperate RegEx-Muster, während <code>%meinepid%</code> numerisch verglichen wird (es ist kein RegEx-Muster).</li>
+        <li>Jede Komponente in <em>Fenstertitel</em> muss einzeln behandelt werden. Im Beispiel <code>"i)^unbenannt ahk_class i)^editor$ ahk_pid " meinepid</code> sind <code>i)^unbenannt</code> und <code>i)^editor$</code> seperate RegEx-Muster, während <code>meinepid</code> numerisch verglichen wird (es ist kein RegEx-Muster).</li>
         <li>Bei <em>Fenstertext</em> werden alle Textelemente (z. B. der Text eines Steuerelements) getrennt voneinander mit dem RegEx verglichen. Demzufolge ist es nicht möglich, eine Übereinstimmung mit mehr als einem Textelement zu haben.</li>
       </ul>
       <p>Die oberen Methoden haben Einfluss auf <em>Titelausnahme</em>, wie sie es auch auf <em>Fenstertitel</em> haben. Zum Beispiel erfordert der dritte Modus, dass der Titel eines Fensters genau mit <em>Titelausnahme</em> übereinstimmen muss, um dieses Fenster zu ignorieren.</p>
@@ -45,25 +45,25 @@
 </dl>
 
 <h3>Bemerkungen</h3>
-<p>Dieser Befehl beeinflusst das Verhalten aller Fenster-Befehle (z. B. <a href="WinExist.htm">WinExist</a> und <a href="WinActivate.htm">WinActivate</a>). <a href="WinGetText.htm">WinGetText</a> wird auf die gleiche Weise wie andere Befehle beeinflusst, aber benutzt zum Abrufen von Text die <em>Slow</em>-Methode.</p>
+<p>Diese Funktion beeinflusst das Verhalten aller Fensterfunktionen (z. B. <a href="WinExist.htm">WinExist</a> und <a href="WinActivate.htm">WinActivate</a>). <a href="WinGetText.htm">WinGetText</a> wird auf die gleiche Weise wie andere Funktionen beeinflusst, aber benutzt zum Abrufen von Text die <em>Slow</em>-Methode.</p>
 <p>Wenn dieser Befehl ohne Parameter angegeben wurde, gilt standardmäßig 2 und <em>Fast</em>.</p>
 <p>Bei einer <a href="../misc/WinTitle.htm#ahk_group">Fenstergruppe</a> gilt der aktuelle Titelübereinstimmungsmodus für jede einzelne Regel in der Gruppe.</p>
 <p>In der Regel sollte der <em>Slow</em>-Modus nur verwendet werden, wenn das Zielfenster nicht eindeutig durch seinen Titel oder <em>Fast</em>-Modus-Text identifiziert werden kann. Der Slow-Modus kann extrem langsam sein, wenn es bestimmte Anwendungsfenster gibt, die beschäftigt sind oder "nicht antworten" können.</p>
 <p>Window Spy hat eine Option für <em>Slow TitleMatchMode</em>, um auf einfache Weise feststellen zu können, ob der <em>Slow</em>-Modus notwendig ist.</p>
-<p>Wenn du beide Attribute ändern willst, muss du den Befehl wie folgt zweimal ausführen:</p>
-<pre>SetTitleMatchMode, 2
-SetTitleMatchMode, slow</pre>
+<p>Wenn du beide Attribute ändern willst, muss du die Funktion wie folgt zweimal ausführen:</p>
+<pre>SetTitleMatchMode 2
+SetTitleMatchMode "slow"</pre>
 <p>Die Built-in-Variablen <strong>A_TitleMatchMode</strong> und <strong>A_TitleMatchModeSpeed</strong> enthalten die aktuellen Einstellungen.</p>
 <p>Egal bei welchem Übereinstimmungsmodus - <em>Fenstertitel</em>, <em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em> unterscheiden zwischen Groß- und Kleinschreibung. Die einzige Ausnahme ist die <a href="../misc/RegEx-QuickRef.htm#Options">Zeichenungenauigkeits-Option</a> des RegEx-Modus; zum Beispiel: <code><strong>i)</strong>unbenannt - editor</code>.</p>
-<p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) beginnt mit der Standardeinstellung des Befehls. Diese Standardeinstellung kann geändert werden, wenn man diesen Befehl bereits im automatischen Ausführungsbereich (am Anfang des Skripts) definiert.</p>
+<p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) beginnt mit der Standardeinstellung der Funktion. Diese Standardeinstellung kann geändert werden, wenn man diese Funktion bereits im automatischen Ausführungsbereich (am Anfang des Skripts) definiert.</p>
 <h3>Siehe auch</h3>
-<p><a href="SetWinDelay.htm">SetWinDelay</a>, <a href="WinExist.htm">WinExist</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="RegExMatch.htm">RegExMatch()</a></p>
+<p><a href="SetWinDelay.htm">SetWinDelay</a>, <a href="WinExist.htm">WinExist</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="RegExMatch.htm">RegExMatch</a></p>
 <h3>Beispiel</h3>
 <pre class="NoIndent">SetTitleMatchMode 1
 <em>; ODER:</em>
-SetTitleMatchMode RegEx
+SetTitleMatchMode "RegEx"
 
-SetTitleMatchMode Slow  <em>; Slow/Fast können unabhängig von den anderen Modi gesetzt werden.</em></pre>
+SetTitleMatchMode "Slow"  <em>; Slow/Fast können unabhängig von den anderen Modi gesetzt werden.</em></pre>
 
 </body>
 </html>

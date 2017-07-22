@@ -36,16 +36,16 @@
 
   <dt>RootVerz\Dateiname</dt>
   <dd><p>Ist dieser Parameter vorhanden, kann er eines oder beide der folgenden Elemente enthalten:</p>
-      <p><strong>RootVerz</strong>: Das Root- bzw. Startverzeichnis, das als Unterordner im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet wird, wenn kein absoluter Pfad angegeben ist. Fehlt dieses Element oder ist es leer, gilt standardmäßig ein Startverzeichnis, das vom Betriebssystem vorgegeben ist (wahrscheinlich das Verzeichnis, das der Benutzer zuletzt per FileSelect ausgewählt hat). In Windows XP/2003 und niedriger kann auch ein <a href="../misc/CLSID-List.htm">CLSID</a>-Wert wie <code>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</code> (d. h. Arbeitsplatz/Computer) angegeben werden - in diesem Fall sollte jedes Unterverzeichnis nach dem CLSID-Wert mit einem umgekehrten Schrägstrich enden (ansonsten wird der Text nach dem letzten umgekehrten Schrägstrich als Dateiname interpretiert).</p>
+      <p><strong>RootVerz</strong>: Das Root- bzw. Startverzeichnis, das als Unterordner im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet wird, wenn kein absoluter Pfad angegeben ist. Fehlt dieses Element oder ist es leer, gilt standardmäßig ein Startverzeichnis, das vom Betriebssystem vorgegeben ist (wahrscheinlich das Verzeichnis, das der Benutzer zuletzt per FileSelect ausgewählt hat). In Windows XP/2003 und niedriger kann auch ein <a href="../misc/CLSID-List.htm">CLSID</a>-Wert wie <code>"::{20d04fe0-3aea-1069-a2d8-08002b30309d}"</code> (d. h. Arbeitsplatz/Computer) angegeben werden - in diesem Fall sollte jedes Unterverzeichnis nach dem CLSID-Wert mit einem umgekehrten Schrägstrich enden (ansonsten wird der Text nach dem letzten umgekehrten Schrägstrich als Dateiname interpretiert).</p>
       <p><strong>Dateiname</strong>: Ein Dateiname, der standardmäßig im Eingabefeld des Dialogfensters angezeigt werden soll. Es wird nur der Dateiname angezeigt (ohne Pfad). Für die korrekte Darstellung des Dialogfensters muss sichergestellt werden, dass keine illegalen Zeichen vorhanden sind (wie /&lt;|:").</p>
       <p>Beispiele:</p>
-      <pre>C:\Meine Bilder\Standard-Bildname.gif  <em>; Sowohl <i>RootVerz</i> als auch <i>Dateiname</i> vorhanden.</em>
-C:\Meine Bilder  <em>; Nur <i>RootVerz</i> vorhanden.</em>
-Meine Bilder  <em>; Nur <i>RootVerz</i> vorhanden, und es ist relativ zum aktuellen Arbeitsverzeichnis.</em>
-Meine Datei  <em>; Nur <i>Dateiname</i> vorhanden (aber wenn "Meine Datei" als Ordner existiert, wird es als <i>RootVerz</i> vermutet).</em></pre></dd>
+      <pre>"C:\Meine Bilder\Standard-Bildname.gif"  <em>; Sowohl <i>RootVerz</i> als auch <i>Dateiname</i> vorhanden.</em>
+"C:\Meine Bilder"  <em>; Nur <i>RootVerz</i> vorhanden.</em>
+"Meine Bilder"  <em>; Nur <i>RootVerz</i> vorhanden, und es ist relativ zum aktuellen Arbeitsverzeichnis.</em>
+"Meine Datei"  <em>; Nur <i>Dateiname</i> vorhanden (aber wenn "Meine Datei" als Ordner existiert, wird es als <i>RootVerz</i> vermutet).</em></pre></dd>
 
   <dt>Anzeigetext</dt>
-  <dd><p>Text, der im Fenster angezeigt werden soll, um den Benutzer zu sagen, was er tun soll. Fehlt dieser Parameter oder ist er leer, wird standardmäßig "Select File - %A_SCRIPTNAME%" (der Name des aktuellen Skripts) gelten.</p></dd>
+  <dd><p>Text, der im Fenster angezeigt werden soll, um den Benutzer zu sagen, was er tun soll. Fehlt dieser Parameter oder ist er leer, wird standardmäßig <code>"Select File - " <a href="../Variables.htm#ScriptName">A_ScriptName</a></code> (der Name des aktuellen Skripts) gelten.</p></dd>
 
   <dt>Filter</dt>
   <dd><p>Kennzeichnet, welche Dateitypen im Dialogfenster angezeigt werden sollen.</p>
@@ -70,39 +70,40 @@ test2.txt
 <p>Bei aktiver Mehrfachauswahl ist die Gesamtlänge aller ausgewählten Dateinamen auf 64 KB begrenzt. Zwar reicht das in der Regel für mehrere tausend Dateien, allerdings wird <em>AusgabeVar</em> leer gemacht, wenn sie das Limit überschreitet.</p>
 <p>Ein GUI-Fenster kann per <a href="GuiCreate.htm#OwnDialogs">+OwnDialogs</a>-Option ein modales Dateiauswahlfenster anzeigen. Ein modales Dialogfenster hindert den Benutzer daran, mit dem GUI-Fenster zu interagieren, bis das Dialogfenster wieder geschlossen wird.</p>
 <p>Bekannte Einschränkung: Ein <a href="SetTimer.htm">Timer</a>, den man während eines Dateiauswahlfensters startet, wird die Mausklicks des Benutzers innerhalb des Dialogfensters hinauszögern, bis der Timer endet. Um dies zu umgehen, solltest du keine Timer verwenden, deren Subroutinen eine lange Zeit zum Beenden brauchen, oder alle Timer während des Dialogfensters deaktivieren:</p>
-<pre><a href="Thread.htm">Thread</a>, NoTimers
-FileSelect, AusgabeVar
-Thread, NoTimers, false</pre>
+<pre><a href="Thread.htm">Thread</a> "NoTimers"
+AusgabeVar := FileSelect()
+Thread "NoTimers", false</pre>
 
 <h3>Siehe auch</h3>
 <p><a href="DirSelect.htm">DirSelect</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="InputBox.htm">InputBox</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="GuiCreate.htm">GUI</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="LoopParse.htm">Parsende Schleife</a>, <a href="SplitPath.htm">SplitPath</a></p>
-<p>Das Betriebssystem bietet zudem Standard-Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schriftart oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="DllCall.htm">DllCall()</a> angezeigt werden, siehe dazu <a href="http://www.autohotkey.com/forum/topic17230.html">www.autohotkey.com/forum/topic17230.html</a>.</p>
+<p>Das Betriebssystem bietet zudem Standard-Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schriftart oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="DllCall.htm">DllCall</a> angezeigt werden, siehe dazu <a href="http://www.autohotkey.com/forum/topic17230.html">www.autohotkey.com/forum/topic17230.html</a>.</p>
 <h3>Beispiele</h3>
-<pre class="NoIndent">FileSelect, AusgewählteDatei, 3, , Datei öffnen, Text-Dokumente (*.txt; *.doc)
+<pre class="NoIndent">AusgewählteDatei := FileSelect(3, , "Datei öffnen", "Text-Dokumente (*.txt; *.doc)")
 if AusgewählteDatei = ""
-    MsgBox, Der Benutzer hat nichts ausgewählt.
+    MsgBox "Der Benutzer hat nichts ausgewählt."
 else
-    MsgBox, Der Benutzer hat folgendes ausgewählt:`n%AusgewählteDatei%
+    MsgBox "Der Benutzer hat folgendes ausgewählt:`n" AusgewählteDatei
 
 
 <em>; <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel (benötigt XP/2003 oder niedriger):</em>
-FileSelect, AusgabeVar,, ::{645ff040-5081-101b-9f08-00aa002f954e}  <em>; Papierkorb.</em>
+AusgabeVar := FileSelect(, "::{645ff040-5081-101b-9f08-00aa002f954e}")  <em>; Papierkorb.</em>
 
 <em>; Mehrfachauswahl-Beispiel:</em>
-FileSelect, Dateien, M3  <em>; M3 = Mehrfachauswahl vorhandener Dateien.</em>
+Dateien := FileSelect("M3")  <em>; M3 = Mehrfachauswahl vorhandener Dateien.</em>
 if Dateien = ""
 {
-    MsgBox, Der Benutzer hat den Button "Abbrechen" betätigt.
+    MsgBox "Der Benutzer hat den Button 'Abbrechen' betätigt."
     return
 }
-Loop, parse, %Dateien%, `n
+Loop parse, Dateien, "`n"
 {
     if a_index = 1
-        MsgBox, Die ausgewählten Dateien befinden sich alle in %A_LoopField%.
+        MsgBox "Die ausgewählten Dateien befinden sich alle in " A_LoopField
     else
     {
-        Result := MsgBox("Die nächste Datei ist %A_LoopField%.  Weiter?",, 4)
-        if Result = "No", break
+        Result := MsgBox("Die nächste Datei ist " A_LoopField ". Weiter?",, 4)
+        if Result = "No"
+            break
     }
 }
 return</pre>

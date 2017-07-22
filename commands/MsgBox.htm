@@ -173,7 +173,7 @@ Result := <span class="func">MsgBox</span>(<span class="optional">Text, Titel, O
   <tr><th colspan="4">Weitere Nur-Zeichenketten-Optionen</th></tr>
   <tr id="OwnerOption">
     <td colspan="3"><p><strong>Owner:</strong> Um ein <a href="#Owner">übergeordnetes Fenster</a> für die MsgBox zu bestimmen, benutze das Wort <code>Owner</code> direkt gefolgt von einem HWND (Fenster-ID).</p></td>
-    <td><code>Owner<i>%HWND%</i></code></td>
+    <td><code>Owner<i>HWND</i></code></td>
   </tr>
   <tr id="Timeout">
     <td colspan="3"><p><strong>Timeout:</strong> Um die MsgBox automatisch schließen zu lassen, falls der Benutzer nicht mit ihr interagiert, benutze den Buchstaben <code>T</code> gefolgt einem Zeitlimitwert in Sekunden, der ein Dezimaltrennzeichen enthalten kann. Überschreitet dieser Wert 2.147.483 (24,8 Tage), wird er automatisch auf 2.147.483 zurückgesetzt.</p>
@@ -205,13 +205,12 @@ Continue<br>
 Timeout (also wenn die MsgBox das Zeitlimit überschritten hat)</p>
 
 <h3>Bemerkungen</h3>
-<p>Wenn man die Befehlssyntax benutzt, sollte man nicht vergessen, jegliche Kommas im Text oder Titel mit einem <a href="../misc/EscapeChar.htm">Escapezeichen</a> zu versehen, wenn sie literal sein sollen.</p>
 <p>Mit dem <a href="#Result">Rückgabewert</a> der Funktion kann man feststellen, welchen Button der Benutzer gedrückt hat. Zum Beispiel:</p>
 <pre>Result := MsgBox("Möchten Sie fortfahren? (drücken Sie Ja oder Nein)",, "YesNo")
 if Result = "Yes"
-    MsgBox Sie haben Ja gedrückt.
+    MsgBox "Sie haben Ja gedrückt."
 else
-    MsgBox Sie haben Nein gedrückt.
+    MsgBox "Sie haben Nein gedrückt."
 
 if MsgBox("Wiederholen oder Abbrechen?",, "R/C") = "Retry"
     MsgBox("Sie haben Wiederholen gedrückt.")</pre>
@@ -219,70 +218,42 @@ if MsgBox("Wiederholen oder Abbrechen?",, "R/C") = "Retry"
 <p><strong>Tipp</strong>: Drückt man STRG+C, während die Message Box aktiv ist, wird ihr Text in die Zwischenablage kopiert. Diese Möglichkeit kann bei allen Message Boxes angewendet werden, nicht nur bei solchen, die mit AutoHotkey erstellt worden sind.</p>
 <p id="Owner"><strong>MsgBox mit einem GUI-Fenster verwenden</strong>: Ein GUI-Fenster kann eine <em>modale</em> Message Box mithilfe der <a href="GuiCreate.htm#OwnDialogs">OwnDialogs-Option</a> darstellen. Solange ein <em>modales</em> Dialogfenster offen ist, kann der Benutzer nicht mit dem GUI-Fenster interagieren. In so einem Fall ist es nicht notwendig, die System-Modal- oder Task-Modal-Option aus der oberen Tabelle anzugeben.</p>
 <p>Wenn die <a href="GuiCreate.htm#OwnDialogs">OwnDialogs-Option</a> <em>nicht</em> aktiv ist, kann mit der Task-Modal-Option (8192) jedes Skriptfenster deaktiviert werden, solange die Message Box offen ist.</p>
-<p>Wenn die <code>Owner<i>%HWND%</i></code>-Option angegeben ist, hat sie Vorrang vor allen anderen Einstellungen. <i>HWND</i> kann das HWND eines beliebigen Fensters sein, sogar solche, die nicht vom Skript erstellt wurden.</p>
+<p>Wenn die <code>Owner<i>HWND</i></code>-Option angegeben ist, hat sie Vorrang vor allen anderen Einstellungen. <i>HWND</i> kann das HWND eines beliebigen Fensters sein, sogar solche, die nicht vom Skript erstellt wurden.</p>
 <p><strong>Der Hilfe-Button</strong>: Sofern die Hilfe-Button-Option (83) in den <em>Optionen</em> angegeben ist, wird der Hilfe-Button erst eine Wirkung haben, wenn die beiden folgenden Bedingungen erfüllt sind:</p>
 <ol>
   <li>Die Message Box wurde einem GUI-Fenster mithilfe der <a href="GuiCreate.htm#OwnDialogs">OwnDialogs-Option</a> untergeordnet.</li>
-  <li>Das Skript überwacht die WM_HELP-Meldung (0x53). Zum Beispiel: <code><a href="OnMessage.htm">OnMessage(0x53, "WM_HELP")</a></code>. Durch Aufrufen der WM_HELP-Funktion könnte man den Benutzer zusätzliche Hinweise mithilfe eines weiteren Fensters oder Message Box geben.</li>
+  <li>Das Skript überwacht die WM_HELP-Meldung (0x53). Zum Beispiel: <code><a href="OnMessage.htm">OnMessage</a>(0x53, "WM_HELP")</code>. Durch Aufrufen der WM_HELP-Funktion könnte man den Benutzer zusätzliche Hinweise mithilfe eines weiteren Fensters oder Message Box geben.</li>
 </ol>
 <p><strong>Der Schließen-Button (in der Titelleiste der MsgBox)</strong>: Da die Message Box ein Built-in-Feature vom Betriebssystem ist, wird ihr <strong>X</strong>-Button nur aktiv sein, wenn bestimmte Buttons vorhanden sind. Gibt es nur einen OK-Button, wäre das Anklicken von <strong>X</strong> das gleiche wie, als würde man OK drücken. Gibt es einen Abbrechen-Button, wäre das Anklicken von <strong>X</strong> das gleiche wie, als würde man Abbrechen drücken. Ansonsten ist der X-Button deaktiviert.</p>
 <h3>Siehe auch</h3>
 <p><a href="InputBox.htm">InputBox</a>, <a href="FileSelect.htm">FileSelect</a>, <a href="DirSelect.htm">DirSelect</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="GuiCreate.htm">GuiCreate</a></p>
 <h3>Beispiel</h3>
-<h4>Funktionssyntax</h4><pre class="NoIndent">MsgBox()  <em>; "Press OK to continue."</em>
+<pre class="NoIndent">MsgBox  <em>; "Press OK to continue."</em>
 
-MsgBox("Kommas (,) müssen in einer mit Anführungszeichen umschlossenen Zeichenkette nicht mit einem Escapezeichen versehen werden.")
+MsgBox "Das ist eine Zeichenkette."
 
-MsgBox("Diese MsgBox hat einen benutzerdefinierten Titel.", "Ein benutzerdefinierter Titel")
+MsgBox "Diese MsgBox hat einen benutzerdefinierten Titel.", "Ein benutzerdefinierter Titel"
 
-MsgBox("  <em>; Benutze einen <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>, um mehrere Zeilen aufzuteilen:</em>
+MsgBox "  <em>; Benutze einen <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>, um mehrere Zeilen aufzuteilen:</em>
   (
     Der erste Parameter wird als Nachricht angezeigt.
     Der zweite Parameter ist der Fenstertitel.
     Der dritte Parameter bestimmt den Typ der MsgBox.
-  )", "Fenstertitel", "iconi")
+  )", "Fenstertitel", "iconi"
 
 if MsgBox("Möchten Sie fortfahren? (Drücken Sie JA oder NEIN)",, "YesNo") = "No"
     return
 	
 result := MsgBox("Diese MsgBox wird in 5 Sekunden automatisch geschlossen.  Weiter?",, "Y/N T5")
 if result = "Timeout"
-    MsgBox("Sie haben innerhalb der 5 Sekunden weder auf JA noch auf NEIN gedrückt.")
+    MsgBox "Sie haben innerhalb der 5 Sekunden weder auf JA noch auf NEIN gedrückt."
 else if result = "No"
     return
 
 <em>; Füge eine Variable oder Nebenausdruck in die Nachricht ein.</em>
 var := 10
-MsgBox("Der Initialwert ist: " var)
-MsgBox("Das Ergebnis ist: " var * 2)  <em>; <a href="../Variables.htm#concat">Verkettung</a>.</em>
-MsgBox("Das Ergebnis ist: %var*2%")  <em>; Füge mit %% einen Ausdruck in eine Zeichenkette ein.</em></pre>
-<h4>Befehlssyntax</h4><pre class="NoIndent">MsgBox  <em>; "Press OK to continue."</em>
-
-MsgBox Bei dieser Syntax müssen Kommas (`,) im Text mit einem Escapezeichen versehen werden.
-
-MsgBox Diese MsgBox hat einen benutzerdefinierten Titel., Ein benutzerdefinierter Titel
-
-MsgBox,  <em>; Benutze einen <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a>, um mehrere Zeilen aufzuteilen:</em>
-  (
-    Der erste Parameter wird als Nachricht angezeigt.
-    Der zweite Parameter ist der Fenstertitel.
-    Der dritte Parameter bestimmt den Typ der MsgBox.
-  ), Fenstertitel, iconi
-
-MsgBox, Möchten Sie fortfahren? (Drücken Sie JA oder NEIN),, YesNo, result
-if result = "No"
-    return
-	
-MsgBox, Diese MsgBox wird in 5 Sekunden automatisch geschlossen.  Weiter?,, Y/N T5, result
-if result = "Timeout"
-    MsgBox, Sie haben innerhalb der 5 Sekunden weder auf JA noch auf NEIN gedrückt.
-else if result = "No"
-    return
-
-<em>; Füge eine Variable in die Nachricht ein.</em>
-var := 10
-MsgBox Der Initialwert ist: %var%  <em>; Umschließe Variablennamen mit Prozentzeichen.</em>
-MsgBox % "Das Ergebnis ist: " var * 2  <em>; Das Präfix "% " macht diesen ganzen Parameter zu einem Ausdruck.</em>
-MsgBox Das Ergebnis ist: %var*2%  <em>; Innerhalb von %% sind Ausdrücke auch erlaubt.</em></pre>
+MsgBox "Der Initialwert ist: " var
+MsgBox "Das Ergebnis ist: " var * 2  <em>; <a href="../Variables.htm#concat">Verkettung</a>.</em>
+MsgBox <a href="Format.htm">Format</a>("Das Ergebnis ist: {1}", var * 2)
 </body>
 </html>

@@ -28,7 +28,7 @@
 <body>
 <h1><em>Fenstertitel</em>-Parameter &amp; Zuletzt Gefundenes Fenster</h1>
 
-<p>Viele Befehle und einige Funktionen haben einen <em>Fenstertitel</em>-Parameter, mit dem bestimmt werden kann, welche Fenster einbezogen werden sollen. Dieser Parameter kann der Titel des Fensters (teilweise oder vollständig) sein, und/oder sonstige Kriterien, die auf dieser Seite beschrieben werden.</p>
+<p>Viele interne Funktionen haben einen <em>Fenstertitel</em>-Parameter, mit dem bestimmt werden kann, welche Fenster einbezogen werden sollen. Dieser Parameter kann der Titel des Fensters (teilweise oder vollständig) sein, und/oder sonstige Kriterien, die auf dieser Seite beschrieben werden.</p>
 
 <strong>Kurzübersicht:</strong>
 <table id="QuickRef">
@@ -53,30 +53,29 @@
 <p>Wenn <em>Fenstertitel</em> der Buchstabe <code>A</code> ist, und die drei anderen Fensterparameter (<em>Fenstertext</em>, <em>Titelausnahme</em> und <em>Textausnahme</em>) leer oder nicht vorhanden sind, wird das aktive Fenster verwendet.</p>
 <pre>
 <em>; Ermittelt die ID/HWND des aktiven Fensters</em>
-id := WinExist("A")
-MsgBox % id
+MsgBox WinExist("A")
 
 <em>; Drücke WIN+NACH-OBEN, um das aktive Fenster zu maximieren</em>
-#Up::WinMaximize, A</pre>
+#Up::WinMaximize "A"</pre>
 
 <h2 id="ahk_class">ahk_class Fensterklasse</h2>
 <p>Eine Fensterklasse ist eine Reihe von Attributen, das vom System als Vorlage zum Erstellen eines Fensters verwendet wird. Das heißt, dass der Klassenname des Fensters kennzeichnet, welche <em>Art</em> von Fenster es ist. Um eine Fensterklasse verwenden zu können, muss <code>ahk_class ExakterKlassenname</code> angegeben werden, wie in Window Spy angezeigt. <em>ExakterKlassenname</em> kann per <a href="../commands/WinGetClass.htm">WinGetClass</a> ermittelt werden.</p>
 <p>Falls der RegEx-<a href="../commands/SetTitleMatchMode.htm">Titelübereinstimmungsmodus</a> aktiv ist, akzeptiert ahk_class einen <a href="../misc/RegEx-QuickRef.htm">Regulären Ausdruck</a>.</p>
 <pre>
 <em>; Aktiviert ein Konsolenfenster (z. B. cmd.exe)</em>
-WinActivate, ahk_class ConsoleWindowClass
+WinActivate "ahk_class ConsoleWindowClass"
 </pre>
 
 <h2 id="ahk_id">ahk_id Eindeutige ID / HWND</h2>
-<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (Abkürzung für "Handle to Window"). Diese ID kann dazu verwendet werden, das Fenster oder Steuerelement zu identifizieren, auch wenn sich dessen Titel ändert. Die ID eines Fensters wird üblicherweise per <a href="../commands/WinExist.htm">WinExist()</a> oder <a href="../commands/WinGet.htm">WinGet</a> ermittelt. Die ID eines Steuerelements wird für gewöhnlich per <a href="../commands/Control.htm#GetHwnd">ControlGetHwnd</a>, <a href="../commands/MouseGetPos.htm">MouseGetPos</a> oder <a href="../commands/DllCall.htm">DllCall</a> ermittelt. Außerdem funktioniert ahk_id auch bei Steuerelementen, selbst wenn sie versteckt sind; das heißt, dass die Einstellung von <a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> bei Steuerelementen keine Rolle spielt.</p>
+<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (Abkürzung für "Handle to Window"). Diese ID kann dazu verwendet werden, das Fenster oder Steuerelement zu identifizieren, auch wenn sich dessen Titel ändert. Die ID eines Fensters wird üblicherweise per <a href="../commands/WinExist.htm">WinExist</a> oder <a href="../commands/WinGet.htm">WinGet</a> ermittelt. Die ID eines Steuerelements wird für gewöhnlich per <a href="../commands/Control.htm#GetHwnd">ControlGetHwnd</a>, <a href="../commands/MouseGetPos.htm">MouseGetPos</a> oder <a href="../commands/DllCall.htm">DllCall</a> ermittelt. Außerdem funktioniert ahk_id auch bei Steuerelementen, selbst wenn sie versteckt sind; das heißt, dass die Einstellung von <a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> bei Steuerelementen keine Rolle spielt.</p>
 <pre>
-WinActivate, ahk_id %VarMitID%
+WinActivate "ahk_id " VarMitID
 </pre>
 
 <h2 id="ahk_pid">ahk_pid Prozess-ID</h2>
 <p>Es ist möglich, mit ahk_pid ein Fenster zu bestimmen, das zu einem bestimmten Prozess gehört. Der Prozessidentifikator (PID) wird üblicherweise per <a href="../commands/WinGet.htm">WinGet</a>, <a href="../commands/Run.htm">Run</a> oder <a href="../commands/Process.htm">Process</a> ermittelt.</p>
 <pre>
-WinActivate, ahk_pid %VarMitPID%
+WinActivate "ahk_pid " VarMitPID
 </pre>
 
 <h2 id="ahk_exe">ahk_exe Prozessname/-pfad</h2>
@@ -85,53 +84,53 @@ WinActivate, ahk_pid %VarMitPID%
 <pre>
 <em>; Aktiviert ein vorhandenes notepad.exe-Fenster, oder öffnet ein Neues</em>
 if WinExist("ahk_exe notepad.exe")
-    WinActivate, ahk_exe notepad.exe
+    WinActivate "ahk_exe notepad.exe"
 else
-    Run, notepad.exe
+    Run "notepad.exe"
 </pre>
-<pre>SetTitleMatchMode RegEx
-WinActivate ahk_exe i)\\notepad\.exe$  <em>; Stimmt mit den Namensteil des vollständigen Pfads überein.</em></pre>
+<pre>SetTitleMatchMode "RegEx"
+WinActivate "ahk_exe i)\\notepad\.exe$"  <em>; Stimmt mit den Namensteil des vollständigen Pfads überein.</em></pre>
 
 <h2 id="ahk_group">ahk_group Fenstergruppe</h2>
 <p>Es ist möglich, mit ahk_group ein oder mehrere Fenster zu bestimmen, die mit den Regeln aus einer zuvor definierten <a href="../commands/GroupAdd.htm">Fenstergruppe</a> übereinstimmen.</p>
-<p>Die Befehle <a href="../commands/WinMinimize.htm">WinMinimize</a>, <a href="../commands/WinMaximize.htm">WinMaximize</a>, <a href="../commands/WinRestore.htm">WinRestore</a>, <a href="../commands/WinHide.htm">WinHide</a>, <a href="../commands/WinShow.htm">WinShow</a>, <a href="../commands/WinClose.htm">WinClose</a> und <a href="../commands/WinKill.htm">WinKill</a> werden mit <strong>allen</strong> Fenstern aus der Gruppe agieren. Andere Fensterbefehle wie <a href="../commands/WinActivate.htm">WinActivate</a> und <a href="../commands/WinExist.htm">WinExist</a> greifen hingegen nur auf das oberste Fenster einer Gruppe zu.</p>
+<p>Die Funktionen <a href="../commands/WinMinimize.htm">WinMinimize</a>, <a href="../commands/WinMaximize.htm">WinMaximize</a>, <a href="../commands/WinRestore.htm">WinRestore</a>, <a href="../commands/WinHide.htm">WinHide</a>, <a href="../commands/WinShow.htm">WinShow</a>, <a href="../commands/WinClose.htm">WinClose</a> und <a href="../commands/WinKill.htm">WinKill</a> werden mit <strong>allen</strong> Fenstern aus der Gruppe agieren. Andere Fensterfunktionen wie <a href="../commands/WinActivate.htm">WinActivate</a> und <a href="../commands/WinExist.htm">WinExist</a> greifen hingegen nur auf das oberste Fenster einer Gruppe zu.</p>
 <pre>
 <em>; Definiert die Gruppe: Windows-Explorer-Fenster</em>
-GroupAdd, Explorer, ahk_class ExploreWClass <em>; Unbenutzt in Vista und höher</em>
-GroupAdd, Explorer, ahk_class CabinetWClass
+GroupAdd "Explorer", "ahk_class ExploreWClass" <em>; Unbenutzt in Vista und höher</em>
+GroupAdd "Explorer", "ahk_class CabinetWClass"
 
 <em>; Aktiviert jedes Fenster, das mit den obigen Kriterien übereinstimmt</em>
-WinActivate, ahk_group Explorer
+WinActivate "ahk_group Explorer"
 </pre>
 
 <h2 id="multi">Mehrere Kriterien</h2>
 <p>Im Gegensatz zu <a href="#ahk_group">ahk_group</a> (das die Suche erweitert) kann die Suche durch Angabe von mehr als ein Kriterium innerhalb des Fenstertitel-Parameters eingeschränkt werden. Im folgenden Beispiel wartet das Skript auf ein Fenster, dessen Titel <em>Meine Datei.txt</em> enthält <strong>und</strong> dessen Klasse <em>Notepad</em> ist:</p>
-<pre>WinWait <strong>Meine Datei.txt</strong> ahk_class <strong>Notepad</strong>
+<pre>WinWait "<strong>Meine Datei.txt</strong> ahk_class <strong>Notepad</strong>"
 WinActivate  <em>; Aktiviert das zuvor gefundene Fenster.</em></pre>
 <p>Beim Verwenden dieser Methode sollte der Text des Titels (falls gewünscht) zuerst aufgelistet werden, gefolgt von einem oder mehreren zusätzlichen Kriterien. Die Kriterien sollten jeweils mit genau einem Leer- oder Tabulatorzeichen getrennt werden (jedes weitere Leer- oder Tabulatorzeichen wird als literales Teil des vorherigen Kriteriums angesehen).</p>
 <p><a href="#ahk_id">ahk_id</a> kann mit weiteren Kriterien kombiniert werden, um den Titel, die Klasse oder andere Attribute des Fensters zu testen:</p>
 <pre>
-MouseGetPos,,, id
+MouseGetPos ,, id
 if WinExist("ahk_class Notepad ahk_id " id)
-    MsgBox Die Maus befindet sich über Notepad.
+    MsgBox "Die Maus befindet sich über Notepad."
 </pre>
 
 
 <h2 id="LastFoundWindow">Das "zuletzt gefundene" Fenster</h2>
 
-<p>Das ist das Fenster, das zuletzt von <a href="../commands/WinExist.htm">IfWin[Not]Exist</a>, <a href="../commands/WinExist.htm">WinExist()</a>, <a href="../commands/WinActive.htm">IfWin[Not]Active</a>, <a href="../commands/WinActive.htm">WinActive()</a>, <a href="../commands/WinWaitActive.htm">WinWait[Not]Active</a> oder <a href="../commands/WinWait.htm">WinWait</a> gefunden wurde. Dadurch können Skripte einfacher erstellt und verwaltet werden, da der Fenstertitel und Fenstertext des Zielfensters nicht für jeden Fensterbefehl angegeben werden muss. Zudem verbessert das die Performance der Skripte, weil das Zielfenster, nachdem es gefunden wurde, nicht nochmal gesucht werden muss.</p>
-<p>Das "zuletzt gefundene" Fenster kann von allen Fensterbefehlen, außer <a href="../commands/WinWait.htm">WinWait</a>, <a href="../commands/WinActivateBottom.htm">WinActivateBottom</a> und <a href="../commands/GroupAdd.htm">GroupAdd</a>, verwendet werden. Um es zu nutzen, müssen alle vier Fensterparameter weggelassen werden (Fenstertitel, Fenstertext, Titelausnahme und Textausnahme).</p>
+<p>Das ist das Fenster, das zuletzt von <a href="../commands/WinExist.htm">IfWin[Not]Exist</a>, <a href="../commands/WinExist.htm">WinExist</a>, <a href="../commands/WinActive.htm">IfWin[Not]Active</a>, <a href="../commands/WinActive.htm">WinActive</a>, <a href="../commands/WinWaitActive.htm">WinWait[Not]Active</a> oder <a href="../commands/WinWait.htm">WinWait</a> gefunden wurde. Dadurch können Skripte einfacher erstellt und verwaltet werden, da der Fenstertitel und Fenstertext des Zielfensters nicht für jede Fensterfunktion angegeben werden muss. Zudem verbessert das die Performance der Skripte, weil das Zielfenster, nachdem es gefunden wurde, nicht nochmal gesucht werden muss.</p>
+<p>Das "zuletzt gefundene" Fenster kann von allen Fensterfunktionen, außer <a href="../commands/WinWait.htm">WinWait</a>, <a href="../commands/WinActivateBottom.htm">WinActivateBottom</a> und <a href="../commands/GroupAdd.htm">GroupAdd</a>, verwendet werden. Um es zu nutzen, müssen alle vier Fensterparameter weggelassen werden (Fenstertitel, Fenstertext, Titelausnahme und Textausnahme).</p>
 <p>Jeder <a href="../misc/Threads.htm">Thread</a> bewahrt seinen eigenen Wert des "zuletzt gefundenen" Fensters auf. Das heißt: Sobald der <a href="../misc/Threads.htm">aktuelle Thread</a> bei Wiederaufnahme des originalen Threads von einem anderen unterbrochen wird, wird er weiterhin seinen originalen Wert des "zuletzt gefundenen" Fensters haben, aber nicht den Wert des unterbrechenden Threads.</p>
 <p>Ist das zuletzt gefundene Fenster ein verstecktes <a href="../commands/GuiCreate.htm">Gui-Fenster</a>, kann es auch verwendet werden, wenn <a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> deaktiviert ist. Das wird oft in Verbindung mit GUI's <a href="../commands/GuiCreate.htm#LastFound">+LastFound</a>-Option benutzt.</p>
-<pre class="NoIndent">Run Notepad
-WinWait Unbenannt - Editor
+<pre class="NoIndent">Run "notepad"
+WinWait "Unbenannt - Editor"
 WinActivate  <em>; Verwendet das zuletzt gefundene Fenster.</em>
 
 if WinExist("Unbenannt - Editor")
 {
     WinActivate  <em>; Verwendet automatisch das oben gefundene Fenster.</em>
     WinMaximize  <em>; das gleiche</em>
-    Send, Beliebiger Text.{Enter}
+    Send "Beliebiger Text.{Enter}"
     return
 }
 
@@ -139,8 +138,8 @@ if !WinExist("Rechner")
     return
 else
 {
-    WinActivate  <em>; Das obige "IfWinNotExist" setzt auch das "zuletzt gefundene" Fenster für uns.</em>
-    WinMove, 40, 40  <em>; Verschiebt es auf eine neue Position.</em>
+    WinActivate  <em>; Das obige "!WinExist" setzt auch das "zuletzt gefundene" Fenster für uns.</em>
+    WinMove 40, 40  <em>; Verschiebt es auf eine neue Position.</em>
     return
 }</pre>
 
