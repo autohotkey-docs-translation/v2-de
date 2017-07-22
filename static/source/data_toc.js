@@ -26,7 +26,7 @@ toc = [
   {label:"Aktuelle Änderungen",path:"ChangeLog.htm"},
   {label:"Skript-Beispiele",path:"scripts/index.htm"},
   {label:"Skript-Kompatibilität",path:"Compat.htm"},
-  {label:"Befehls- und Funktionsliste",path:"commands/index.htm"},
+  {label:"Funktionsliste",path:"commands/index.htm"},
   {label:"Umgebung",children:
   [
     {label:"ClipWait",path:"commands/ClipWait.htm"},

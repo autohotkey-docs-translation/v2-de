@@ -269,7 +269,7 @@ index = [
   ["ComboBox-Steuerelemente (GUI)","commands/GuiControls.htm#ComboBox"],
   ["comma operator (multi-statement)","Variables.htm#comma"],["Komma-Operator (Mehrfachanweisung)","Variables.htm#comma"],
   ["command line parameters","Scripts.htm#cmd"],["Befehlzeilenparameter","Scripts.htm#cmd"],
-  ["commands, alphabetical list","commands/index.htm"],["Befehle, alphabetisch sortiert","commands/index.htm"],
+  ["Funktionen, alphabetisch sortiert","commands/index.htm"],
   ["comments in scripts","Scripts.htm#Comments"],["Kommentare in Skripten","Scripts.htm#Comments"],
   ["ComObjActive","commands/ComObjActive.htm"],
   ["ComObjArray","commands/ComObjArray.htm"],
