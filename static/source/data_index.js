@@ -546,7 +546,7 @@ index = [
   ["length of a string","commands/StrLen.htm"],["Länge einer Zeichenkette","commands/StrLen.htm"],
   ["Length-Methode (Objekt)","objects/Object.htm#Length"],
   ["Length-Methode (File-Objekt)","objects/File.htm#Length"],
-  ["Libraries mit Funktionen","Functions.htm#lib"],
+  ["libraries of functions","Functions.htm#lib"],["Funktionsbibliotheken","Functions.htm#lib"],
   ["license","license.htm"],["Lizenz","license.htm"],
   ["line continuation","Scripts.htm#continuation"],["Zeilenfortsetzung","Scripts.htm#continuation"],
   ["Link-Steuerelemente (GUI)","commands/GuiControls.htm#Link"],
