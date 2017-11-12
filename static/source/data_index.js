@@ -1,4 +1,4 @@
-index = [
+indexData = [
   ["#ClipboardTimeout","commands/_ClipboardTimeout.htm"],
   ["#ErrorStdOut","commands/_ErrorStdOut.htm"],
   ["#HotkeyInterval","commands/_HotkeyInterval.htm"],
@@ -739,8 +739,8 @@ index = [
   ["RunAs","commands/RunAs.htm"],
   ["RunWait","commands/Run.htm"],
   ["Scancode","commands/Send.htm#vk"],
-  ["Script Showcase","scripts/index.htm"],["Skript-Beispiele","scripts/index.htm"],
-  ["Scripts","Scripts.htm"],["Skripte","Scripts.htm"],
+  ["Skript-Beispiele","scripts/index.htm"],
+  ["Skripte","Scripts.htm"],
   ["select file","commands/FileSelect.htm"],["Auswählen einer Datei","commands/FileSelect.htm"],
   ["select folder","commands/DirSelect.htm"],["Auswählen eines Ordners","commands/DirSelect.htm"],
   ["Send","commands/Send.htm"],
