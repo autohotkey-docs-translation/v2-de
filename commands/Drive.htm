@@ -31,7 +31,7 @@
 <p>Verhindert, dass das angegebene Laufwerk ausgefahren werden kann.</p>
 <pre class="Syntax"><span class="func">DriveLock</span> Laufwerk</pre>
 <p>Zum Beispiel: <code>DriveLock("D:")</code>.</p>
-<p>Die meisten Laufwerke können nicht im offenen Zustand gesperrt werden. Allerdings könnte die Sperrung immer noch erfolgen, nachdem das Laufwerk geschlossen wurde.</p>
+<p>Die meisten Laufwerke können nicht im geöffneten Zustand gesperrt werden. Allerdings könnte die Sperrung immer noch erfolgen, nachdem das Laufwerk geschlossen wurde.</p>
 <p>Diese Funktion hat keine Auswirkung auf Laufwerke, die keine Sperrung zulassen (trifft auf die meisten schreibgeschützten Laufwerke zu).</p>
 <p>Mit <a href="#Unlock">DriveUnlock</a> kann ein Laufwerk entsperrt werden. Die Sperrung eines Laufwerks bleibt auch nach Beendigung des verantwortlichen Skripts bestehen. Andere Skripte, Programme oder ein Neustart des Systems können die Sperrung wieder aufheben.</p>
 <p>Wenn das angegebene Laufwerk nicht vorhanden ist oder die Sperrfunktion nicht unterstützt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Ansonsten wird es auf 0 gesetzt.</p>
@@ -40,7 +40,7 @@
 <p>Entsperrt ein Laufwerk, das zuvor mit DriveLock gesperrt wurde.</p>
 <pre class="Syntax"><span class="func">DriveUnlock</span> Laufwerk</pre>
 <p>Zum Beispiel: <code>DriveUnlock("D:")</code></p>
-<p>Diese Funktion muss mehrmals aufgerufen werden, falls das Laufwerk mehrmals gesperrt wurde (zumindest bei einigen Laufwerken). Wenn man beispielsweise <code>DriveLock("D:")</code> dreimal ausführen würde, wäre wiederum dreimal <code>DriveUnlock("D:")</code> notwendig, um die Sperrung aufzuheben. Genau aus diesem Grund und der Tatsache, dass der gesperrte Zustand eines Laufwerks nicht ermittelt werden kann, wäre es ratsam, diesen Zustand in eine <a href="../Variables.htm">Variable</a> zu speichern, um die Übersicht zu  behalten.</p>
+<p>Diese Funktion muss mehrmals aufgerufen werden, falls das Laufwerk mehrmals gesperrt wurde (zumindest bei einigen Laufwerken). Wenn man beispielsweise <code>DriveLock("D:")</code> dreimal aufrufen würde, wäre wiederum dreimal <code>DriveUnlock("D:")</code> notwendig, um die Sperrung aufzuheben. Genau aus diesem Grund und der Tatsache, dass der gesperrte Zustand eines Laufwerks nicht ermittelt werden kann, wäre es ratsam, diesen Zustand in eine <a href="../Variables.htm">Variable</a> zu speichern, um die Übersicht zu  behalten.</p>
 
 <h3 id="Eject">DriveEject</h3>
 <p>Öffnet oder schließt ein CD- oder DVD-Laufwerk.</p>
@@ -52,12 +52,12 @@
   <dd><p>Geben Sie <em>True</em> an, um das Laufwerk zu schließen. Geben Sie <em>False</em> an oder lassen Sie diesen Parameter weg, um das Laufwerk zu öffnen.</p></dd>
 </dl>
 <p>Während <em>DriveEject</em> das Laufwerk ein- oder ausfährt, wartet das Skript. Befindet sich das Laufwerk bereits in richtiger Position (offen oder geschlossen), wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt (also "kein Fehler").</p>
-<p>Es kann sein, dass <em>DriveEject</em> nicht funktionieren wird, wenn das Laufwerk über das Netzwerk zugreifbar ist, oder kein CD/DVD-Laufwerk ist. In solchen oder sonstigen Fällen wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Um andere Medien- oder Gerätetypen auszufahren, siehe das DllCall-Beispiel ganz unten.</p>
-<p>Es ist möglich, den vorherigen Zustand des Laufwerks zu ermitteln. Man lässt das Skript einfach die Zeit messen, die die Funktion zum Ausführen benötigt. Zum Beispiel würde der folgende Hotkey das Laufwerk jeweils in den entgegengesetzten Zustand (offen oder geschlossen) schalten:</p>
+<p><em>DriveEject</em> wird eventuell nicht funktionieren, wenn das angegebene Laufwerk ein Netzwerk- oder Nicht-CD/DVD-Laufwerk ist. Wenn es in solchen Fällen oder aus einem anderen Grund fehlschlägt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Um andere Medien- oder Gerätetypen auszufahren, siehe das DllCall-Beispiel ganz unten.</p>
+<p>Um den vorherigen Zustand des Laufwerks zu ermitteln, misst man einfach die Zeit, die die Funktion zum Ausführen benötigt. Der folgende Hotkey beispielsweise schaltet das Laufwerk jeweils in den entgegengesetzten Zustand (offen oder geschlossen):</p>
 <pre>#c::
 DriveEject()
-<em>; Wenn die Funktion schnell durchgeführt wurde, war das Laufwerk wahrscheinlich bereits offen.
-; In diesem Fall wird es eingefahren:</em>
+<em>; Wenn die Funktion schnell ausgeführt wurde, war das Laufwerk wahrscheinlich schon ausgefahren.
+; In diesem Fall kann es eingefahren werden:</em>
 if A_TimeSinceThisHotkey &lt; 1000  <em>; Passen Sie diese Zeit an, falls notwendig.</em>
     DriveEject(, true)
 return</pre>
@@ -68,7 +68,7 @@ return</pre>
 <p>Diese Funktionen geben bei Erfolg eine 1 und bei Misserfolg eine 0 zurück.</p>
 
 <h3>Bemerkungen</h3>
-<p>Das folgende Beispiel zeigt, wie außer CD/DVD noch andere Medien-/Gerätetypen ausgefahren werden können:</p>
+<p>Das folgende Beispiel zeigt, wie außer CD/DVD noch andere Typen von Medien/Geräten ausgefahren werden können:</p>
 <pre><em>; Fügen Sie in die erste Zeile den gewünschten Laufwerksbuchstaben ein (alle anderen Zeilen können ignoriert werden).</em>
 Laufwerksbuchstabe := "I:"  <em>; ; Tragen Sie hier das Laufwerk ein, das ausgefahren werden soll.</em>
 
