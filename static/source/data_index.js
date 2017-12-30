@@ -833,7 +833,7 @@ indexData = [
   ["ToolTip","commands/ToolTip.htm"],
   ["Transparenz eines Fensters","commands/WinSet.htm#Transparent"],
   ["tray icon","commands/_NoTrayIcon.htm"],["Infobereichssymbol","commands/_NoTrayIcon.htm"],
-  ["tray menu (customizing)","commands/Menu.htm"],["Infobereichsmenü anpassen","commands/Menu.htm"],
+  ["tray menu (customizing)","commands/Menu.htm"],["Tray-Menü anpassen","commands/Menu.htm"],
   ["TrayTip","commands/TrayTip.htm"],
   ["TreeView-Steuerelemente (GUI)","commands/TreeView.htm"],
   ["TreeView.Add","commands/TreeView.htm#Add"],
