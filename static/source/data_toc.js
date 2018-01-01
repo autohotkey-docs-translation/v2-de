@@ -149,13 +149,15 @@ tocData = [
     ["Bild-Handles","misc/ImageHandles.htm"],
     ["InputBox","commands/InputBox.htm"],
     ["LoadPicture","commands/LoadPicture.htm"],
-    ["Menu","commands/Menu.htm"],
-    ["MenuGetHandle","commands/MenuGetHandle.htm"],
-    ["MenuGetName","commands/MenuGetName.htm"],
+    ["Menu-Objekt","objects/Menu.htm"],
+    ["MenuCreate","commands/MenuCreate.htm"],
+    ["MenuFromHandle","commands/MenuFromHandle.htm"],
     ["MsgBox","commands/MsgBox.htm"],
     ["OnMessage","commands/OnMessage.htm"],
+    ["Standard-Windows-Schriftarten","misc/FontsStandard.htm"],
     ["Styles für Fenster/Steuerelement","misc/Styles.htm"],
     ["ToolTip","commands/ToolTip.htm"],
+    ["TraySetIcon","commands/TraySetIcon.htm"],
     ["TrayTip","commands/TrayTip.htm"]
   ]],
   ["Mathematik","commands/Math.htm",
@@ -168,6 +170,8 @@ tocData = [
     ["Floor","commands/Math.htm#Floor"],
     ["Log","commands/Math.htm#Log"],
     ["Ln","commands/Math.htm#Ln"],
+    ["Max","commands/Math.htm#Max"],
+    ["Min","commands/Math.htm#Min"],
     ["Mod","commands/Math.htm#Mod"],
     ["Random","commands/Random.htm"],
     ["Round","commands/Math.htm#Round"],
@@ -200,6 +204,7 @@ tocData = [
     ["#InstallMouseHook","commands/_InstallMouseHook.htm"],
     ["#KeyHistory","commands/_KeyHistory.htm"],
     ["BlockInput","commands/BlockInput.htm"],
+    ["CaretGetPos","commands/CaretGetPos.htm"],
     ["Click","commands/Click.htm"],
     ["ControlClick","commands/ControlClick.htm"],
     ["ControlSend, ControlSendRaw","commands/ControlSend.htm"],
@@ -234,7 +239,6 @@ tocData = [
     ["IsObject","commands/IsObject.htm"],
     ["ListLines","commands/ListLines.htm"],
     ["ListVars","commands/ListVars.htm"],
-    ["MonitorGet","commands/MonitorGet.htm"],
     ["OutputDebug","commands/OutputDebug.htm"],
     ["VarSetCapacity","commands/VarSetCapacity.htm"]
   ]],
@@ -265,9 +269,10 @@ tocData = [
     ["RegWrite","commands/RegWrite.htm"],
     ["SetRegView","commands/SetRegView.htm"]
   ]],
-  ["Bildschirm","",
+  ["Bildschirm und Monitor","",
   [
     ["ImageSearch","commands/ImageSearch.htm"],
+    ["MonitorGet","commands/MonitorGet.htm"],
     ["PixelGetColor","commands/PixelGetColor.htm"],
     ["PixelSearch","commands/PixelSearch.htm"]
   ]],
@@ -312,7 +317,6 @@ tocData = [
       ["ControlMove","commands/ControlMove.htm"],
       ["ControlSend/ControlSendRaw","commands/ControlSend.htm"],
       ["ControlSetText","commands/ControlSetText.htm"],
-      ["Menu","commands/Menu.htm"],
       ["MenuSelect","commands/MenuSelect.htm"],
       ["PostMessage/SendMessage","commands/PostMessage.htm"],
       ["SetControlDelay","commands/SetControlDelay.htm"]

@@ -40,19 +40,19 @@ k_Monitor := ""
 
 <em>;---- Ein GUI-Fenster für die Bildschirmtastatur erstellen:</em>
 Gui := GuiCreate("-Caption +ToolWindow +AlwaysOnTop +Disabled")
-Gui.SetFont("s" k_FontSize " " k_FontStyle, k_FontName)
+Gui.SetFont("s" k_FontSize " "  k_FontStyle, k_FontName)
 Gui.MarginY := 0, Gui.MarginX := 0
 
 <em>;---- Infobereichsmenü ändern:</em>
 fn := Func("k_ShowHide").bind(Gui, k_MenuItemHide, k_MenuItemShow)
-Menu("Tray", "Add", k_MenuItemHide, fn)
-Menu("Tray", "Add", "&amp;Exit", "k_MenuExit")
-Menu("Tray", "Default", k_MenuItemHide)
-Menu("Tray", "NoStandard")
+A_TrayMenu.Add k_MenuItemHide, fn
+A_TrayMenu.Add "&amp;Exit", "k_MenuExit"
+A_TrayMenu.Default := k_MenuItemHide
+A_TrayMenu.Standard := false
 
 <em>;---- Für jede Taste einen Button hinzufügen:</em>
 
-<em>; Das Tastaturlayout, das Sie sehen:</em>
+<em>; Das Tastaturlayout, das du siehst:</em>
 k_cL := [ ["``", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Back "]
         , ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\  "]
         , ["Caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"]
@@ -77,7 +77,7 @@ For n, k_Row in k_cL
       opt .= " y+m xm"
     <em>; Wenn der Benutzer eine Taste drückt, klicke den entsprechenden Button auf dem Bildschirm:</em>
     fn := Func("k_KeyPress").bind(Gui.Add("Button", opt, k_CustomKeyName))
-    <em>; If the key has an official key name use it:</em>
+    <em>; Wenn die Taste einen offiziellen Tastennamen hat, nutze ihn:</em>
     if k_OfficialKeyName
       Hotkey("~*" k_OfficialKeyName, fn)
     else
@@ -114,13 +114,13 @@ k_ShowHide(GuiObj, HideText, ShowText)
   if isVisible
   {
     GuiObj.Hide
-    Menu("Tray", "Rename", HideText, ShowText)
+    A_TrayMenu.Rename HideText, ShowText
     isVisible := false
   }
   else
   {
     GuiObj.Show
-    Menu("Tray", "Rename", ShowText, HideText)
+    A_TrayMenu.Rename ShowText, HideText
     isVisible := true
   }
 }

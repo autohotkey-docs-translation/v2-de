@@ -47,7 +47,7 @@ if I_HelpHotkey &lt;&gt; ""
 <em>; Infobereichssymbol ändern (falls ein Symbol im Konfigurationsbereich angegeben wurde):</em>
 if I_Icon &lt;&gt; ""
     if FileExist(I_Icon)
-        Menu "Tray", "Icon", I_Icon
+        TraySetIcon I_Icon
 
 <em>; Standort von AutoHotkey ermitteln:</em>
 ahk_dir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir")
@@ -161,7 +161,8 @@ Loop
     
     <em>; Übereinstimmende Befehle anzeigen, um den Benutzer zu führen:</em>
     I_ThisFullCmd := I_FullCmd%I_Index%
-    ToolTip I_ThisFullCmd, A_CaretX, A_CaretY + 20
+    CaretGetPos CaretX, CaretY
+    ToolTip I_ThisFullCmd, CaretX, CaretY + 20
 }
 
 
@@ -173,7 +174,7 @@ if !InStr(WinGetTitle("A"), I_Editor)
 ToolTip  <em>; Syntaxhelfer deaktivieren, da er zurzeit nicht benötigt wird.</em>
 
 SetTitleMatchMode 1  <em>; Falls es 3 ist. Diese Einstellung gilt nur für diesen Thread.</em>
-if !WinExist("Hilfe für AutoHotkey")
+if !WinExist("AutoHotkey Help")
 {
     if !FileExist(ahk_help_file)
     {
@@ -181,7 +182,7 @@ if !WinExist("Hilfe für AutoHotkey")
         return
     }
     Run ahk_help_file
-    WinWait "Hilfe für AutoHotkey"
+    WinWait "AutoHotkey Help"
 }
 
 if I_ThisCmd = ""  <em>; Stattdessen wird die aktuellste Benutzereingabe verwendet.</em>

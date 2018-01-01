@@ -42,7 +42,7 @@ f_Hotkey := "~MButton"
 MENÜELEMENTE &lt;-- Diese Zeichenkette nicht ändern.
 Desktop      ; %USERPROFILE%\Desktop
 Favoriten    ; %USERPROFILE%\Favorites
-Eigene Dokumente ; %USERPROFILE%\My Documents
+Dokumente    ; %USERPROFILE%\Documents
 
 Programme; %PROGRAMFILES%
 */</em>
@@ -69,14 +69,15 @@ else  <em>; Menüpunkte direkt von diesem Skript lesen.</em>
 
 <em>;----Konfigurationsdatei lesen.</em>
 f_AtStartingPos := false
-f_MenuItemCount := 0
+f_Paths := []
+f_Menu := MenuCreate()
 Loop Read, f_FavoritesFile
 {
     if f_FileExt &lt;&gt; "Exe"
     {
-        <em>; Da die Menüpunkte direkt von diesem Skript gelesen werden,</em>
-        <em>; werden alle Zeilen übersprungen, bis die Startzeile</em>
-        <em>; erreicht wird.</em>
+        <em>; Da die Menüpunkte direkt von diesem Skript gelesen werden,
+        ; werden alle Zeilen übersprungen, bis die Startzeile
+        ; erreicht wird.</em>
         if !f_AtStartingPos
         {
             if InStr(A_LoopReadLine, "MENÜELEMENTE")
@@ -87,74 +88,75 @@ Loop Read, f_FavoritesFile
         if A_LoopReadLine = "*/"
             break  <em>; Schleife unterbrechen</em>
     }
-    <em>; Menütrennlinien müssen auch mitgezählt werden, damit die Kompatibilität</em>
-    <em>; mit A_ThisMenuItemPos gewährleistet wird:</em>
+    <em>; Menütrennlinien müssen auch mitgezählt werden, damit die Kompatibilität
+    ; mit ItemPos gewährleistet wird:</em>
     f_MenuItemCount++
     if !A_LoopReadLine  <em>; Leer kennzeichnet eine Trennlinie.</em>
-        Menu "Favorites", "Add"
+        f_Menu.Add()
     else
     {
         f_line := StrSplit(A_LoopReadLine, ";", "`s`t")
         <em>; Referenzen auf Variablen innerhalb jeden Feldes auflösen, und
         ; ein neues Array-Element mit dem Ordnerpfad erstellen:</em>
-        f_path%f_MenuItemCount% := f_line[2]
-        Menu "Favorites", "Add",  f_line[1], "f_OpenFavorite"
+        f_Paths.Push(f_line[2])
+        f_Menu.Add(f_line[1], "f_OpenFavorite")
     }
 }
-return  <em>;----Ende des automatischen Ausführungsbereichs.</em>
+return  <em>;----Ende des automatischen Ausführungsbereichs.
 
 
-<em>;----Ausgewählten Lieblingsordner öffnen</em>
-f_OpenFavorite:
-<em>; Array-Element abfangen, das dem ausgewählten Menüpunkt entspricht:</em>
-f_path := f_path%A_ThisMenuItemPos%
-if f_path = ""
-    return
-if f_class = "#32770"    <em>; Es ist ein Dialogfenster.</em>
+;----Ausgewählten Lieblingsordner öffnen</em>
+f_OpenFavorite(ItemName, ItemPos)
 {
-    <em>; Aktiviert das Fenster, sodass nachfolgende Klicks auch außerhalb des Dialogfensters
-    ; funktionieren, falls der Benutzer die mittlere Maustaste drückt:</em>
-    WinActivate "ahk_id " f_window_id
-    <em>; Ermittelt jeden Dateinamen, der bereits im Feld vorhanden ist,
-    ; sodass er wiederhergestellt werden kann, nachdem zum neuen Ordner gewechselt wurde:</em>
-    f_text := ControlGetText("Edit1", "ahk_id " f_window_id)
-    ControlSetText f_path, "Edit1", "ahk_id " f_window_id
-    ControlFocus "Edit1", "ahk_id " f_window_id
-    ControlSend "{Enter}", "Edit1", "ahk_id " f_window_id
-    Sleep 100  <em>; Bei einigen Dialogfenstern oder in einigen Fällen wird zusätzliche Zeit benötigt.</em>
-    ControlSetText f_text, "Edit1", "ahk_id " f_window_id
-    return
-    <em>; dann springe ans Ende der Subroutine, um die Standardaktion auszuführen.</em>
-}
-else if f_class  ~= "ExploreWClass|CabinetWClass"  <em>; Ordner im Explorer wechseln.</em>
-{
-    if StrSplit(A_OSVersion, ".")[1] &gt;= 6  <em>; Windows Vista oder höher.</em>
-        ControlClick "ToolbarWindow323", "ahk_id " f_window_id,,,, "NA x1 y1"
-    ControlFocus "Edit1", "ahk_id " f_window_id
-    ControlSetText f_path, "Edit1", "ahk_id " f_window_id
-    <em>; Tekl hat Folgendes berichtet: "Wenn ich auf den Ordner L:\folder wechseln will,
-    ; zeigt mir die Adressleiste http://www.L:\folder.com. Um das zu umgehen,
-    ; habe ich {right} vor {Enter} eingefügt":</em>
-    ControlSend "{Right}{Enter}", "Edit1", "ahk_id " f_window_id
-    return
-    <em>; dann springe ans Ende der Subroutine, um die Standardaktion auszuführen.</em>
-}
-else if f_class = "ConsoleWindowClass" <em>; CD im Konsolenfenster verwenden, um auf das Verzeichnis zu springen.</em>
-{
-     WinActivate "ahk_id " f_window_id <em>; Weil es durch mclick manchmal deaktiviert wird.</em>
-    SetKeyDelay 0  <em>; Nur während des Hotkey-Threads wirksam.</em>
-    if InStr(f_path, ":")  <em>; Es enthält einen Laufwerksbuchstaben</em>
+    global
+    
+    <em>; Array-Element abfangen, das dem ausgewählten Menüpunkt entspricht:</em>
+    f_path := f_Paths[ItemPos]
+    if f_path = ""
+        return
+    if f_class = "#32770"    <em>; Es ist ein Dialogfenster.</em>
     {
-        f_path_drive := SubStr(f_path, 1, 1)
-        Send f_path_drive ":{enter}"
+        <em>; Aktiviert das Fenster, sodass nachfolgende Klicks auch außerhalb des Dialogfensters
+        ; funktionieren, falls der Benutzer die mittlere Maustaste drückt:</em>
+        WinActivate "ahk_id " f_window_id
+        <em>; Ermittelt jeden Dateinamen, der bereits im Feld vorhanden ist,
+        ; sodass er wiederhergestellt werden kann, nachdem zum neuen Ordner gewechselt wurde:</em>
+        f_text := ControlGetText("Edit1", "ahk_id " f_window_id)
+        ControlSetText f_path, "Edit1", "ahk_id " f_window_id
+        ControlFocus "Edit1", "ahk_id " f_window_id
+        ControlSend "{Enter}", "Edit1", "ahk_id " f_window_id
+        Sleep 100  <em>; Bei einigen Dialogfenstern oder in einigen Fällen wird zusätzliche Zeit benötigt.</em>
+        ControlSetText f_text, "Edit1", "ahk_id " f_window_id
+        return
     }
-    Send "cd " f_path "{Enter}"
-    return
+    else if f_class  ~= "ExploreWClass|CabinetWClass"  <em>; Ordner im Explorer wechseln.</em>
+    {
+        if StrSplit(A_OSVersion, ".")[1] &gt;= 6  <em>; Windows Vista oder höher.</em>
+            ControlClick "ToolbarWindow323", "ahk_id " f_window_id,,,, "NA x1 y1"
+        ControlFocus "Edit1", "ahk_id " f_window_id
+        ControlSetText f_path, "Edit1", "ahk_id " f_window_id
+        <em>; Tekl hat Folgendes berichtet: "Wenn ich auf den Ordner L:\folder wechseln will,
+        ; zeigt mir die Adressleiste http://www.L:\folder.com. Um das zu umgehen,
+        ; habe ich {right} vor {Enter} eingefügt":</em>
+        ControlSend "{Right}{Enter}", "Edit1", "ahk_id " f_window_id
+        return
+    }
+    else if f_class = "ConsoleWindowClass" <em>; CD im Konsolenfenster verwenden, um auf das Verzeichnis zu springen.</em>
+    {
+         WinActivate "ahk_id " f_window_id <em>; Weil es durch mclick manchmal deaktiviert wird.</em>
+        SetKeyDelay 0  <em>; Nur während des Hotkey-Threads wirksam.</em>
+        if InStr(f_path, ":")  <em>; Es enthält einen Laufwerksbuchstaben</em>
+        {
+            f_path_drive := SubStr(f_path, 1, 1)
+            Send f_path_drive ":{enter}"
+        }
+        Send "cd " f_path "{Enter}"
+        return
+    }
+    <em>; Da oben keine Rückgabe erfolgt, gilt eins der folgenden Angaben:
+    ; 1) Es ist ein nicht unterstützter Fenstertyp, aber f_AlwaysShowMenu ist y (ja).</em>
+    Run "explorer " f_path  <em>; Könnte ohne Anführungszeichen mit mehr Systemen funktionieren.</em>
 }
-<em>; Da oben keine Rückgabe erfolgt, gilt eins der folgenden Angaben:
-; 1) Es ist ein nicht unterstützter Fenstertyp, aber f_AlwaysShowMenu ist y (ja).</em>
-Run "explorer " f_path  <em>; Könnte ohne Anführungszeichen mit mehr Systemen funktionieren.</em>
-return
 
 
 <em>;----Das Menü anzeigen</em>
@@ -168,7 +170,7 @@ if f_AlwaysShowMenu = false  <em>; Das Menü sollte nur selektiv angezeigt werde
         return <em>; Wenn anderer Fenstertyp, dann Menü nicht anzeigen.</em>
 }
 <em>; Ansonsten sollte das Menü für diesen Fenstertyp präsentiert werden:</em>
-Menu "Favorites", "Show"
+f_Menu.Show()
 return
 </pre>
 </body>

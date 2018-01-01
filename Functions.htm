@@ -68,7 +68,9 @@ Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisu
   <li>ByRef wird nicht direkt unterstützt, wenn die Funktion von einem COM-Clienten aufgerufen wurde oder wenn eine COM-Methode aufgerufen wird. Stattdessen erhält oder muss das Skript ein <a href="commands/ComObject.htm#ByRef">Wrapper-Objekt</a> übergeben, das den <a href="commands/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
 </ul>
 <h2 id="optional">Optionale Parameter</h2>
-<p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden. Optionale Parameter haben rechts daneben einen Zuweisungsoperator und einen Standardwert. Die folgende Funktion hat einen Z-Parameter, der als optional gekennzeichnet ist:</p>
+<p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden. Um das zu tun, fügt man <code>:=</code> an, gefolgt vom Standardwert des Parameters, der Folgendes sein kann: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Gleitkommazahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie "fox" oder "".</p>
+<p>Die Verwendung von <code>=</code> (ohne Doppelpunkt) ist aus Gründen der Abwärtskompatibilität erlaubt, aber nicht empfohlen, da es in AutoHotkey v2 nicht mehr zugelassen ist. Unabhängig davon, welcher Operator verwendet wird, müssen Standardwerte, die Zeichenketten sind, immer in Anführungszeichen gesetzt werden.</p>
+<p>Die folgende Funktion hat einen Z-Parameter, der als optional gekennzeichnet ist:</p>
 <pre>Add(X, Y, Z := 0) {
     return X + Y + Z
 }</pre>
@@ -79,7 +81,7 @@ Funk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin optio
     MsgBox X ", " Y ", " Z
 }</pre>
 <p id="OptionalByRef"> <a href="#ByRef">ByRef-Parameter</a> können auch optional sein; zum Beispiel: <code>Funk(ByRef p1 := "")</code>. Jedes Mal, wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt; das heißt, dass die Funktion sich so verhalten wird, als wäre das Schlüsselwort "ByRef" nicht vorhanden.</p>
-<p>Der Standardwert eines Parameters kann Folgendes sein: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Gleitkommazahl oder eine direkt geschriebene Zeichenkette wie "fox" oder "".</p>
+
 <h2 id="return">Werte an den Aufrufer zurückgeben</h2>
 <p>Wie in der <a href="#intro">Einführung</a> bereits erwähnt, kann eine Funktion einen Wert via <a href="commands/Return.htm">Return</a> an ihren Aufrufer zurückgeben.</p>
 <pre>
@@ -244,7 +246,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p id="GosubPublic">Wenn eine Funktion <a href="commands/Gosub.htm">GoSub</a> verwendet, um zu einer öffentlichen Subroutine zu springen (also eine, die außerhalb der geschweiften Funktionsklammern zu finden ist), sind alle externen Variablen global und die <a href="#Locals">lokalen Variablen</a> der Funktion erst wieder zugänglich, wenn die Subroutine ihr Ende erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
 <p>Ein <a href="commands/Goto.htm">Goto</a> kann nicht verwendet werden, um innerhalb einer Funktion zu einer externen Subroutine zu springen, allerdings kann eine Funktion via <a href="commands/Gosub.htm">Gosub</a> zu einer externen Subroutine springen und von dort aus ein Goto durchführen.</p>
 <p>Ein <a href="commands/Goto.htm">Goto</a> ist trotz seines schlechten Rufes zum Beispiel nützlich, um innerhalb einer Funktion auf eine andere Position zu springen. Dies kann dazu beitragen, komplexe Funktionen zu vereinfachen, die mehrere Returns haben und vor einem Return aufgeräumt werden müssen.</p>
-<p>Eine Funktion kann Subroutinen enthalten, die extern aufgerufen werden, wie z. B. <a href="commands/SetTimer.htm">Timer</a> und <a href="commands/Menu.htm">Menüpunkte</a>. Dies ist eine übliche Vorgehensweise, um die Subroutinen in einer separaten Datei für <a href="commands/_Include.htm">#Include</a> zusammenzufassen. Dadurch wird verhindert, dass der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> des Skripts gestört wird. Allerdings gelten folgende Einschränkungen:</p>
+<p>Eine Funktion kann Subroutinen enthalten, die extern aufgerufen werden, wie z. B. <a href="commands/SetTimer.htm">Timer</a> und <a href="objects/Menu.htm">Menüpunkte</a>. Dies ist eine übliche Vorgehensweise, um die Subroutinen in einer separaten Datei für <a href="commands/_Include.htm">#Include</a> zusammenzufassen. Dadurch wird verhindert, dass der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> des Skripts gestört wird. Allerdings gelten folgende Einschränkungen:</p>
 <ul>
   <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Locals">lokalen</a> Variablen), wenn ihre Funktion jemals normal aufgerufen wird. Sonst könnte ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), die lokalen Variablen des unterbrochenen Threads ändern. Jedes Mal, wenn eine Funktion ihr Ende erreicht hat, werden alle lokalen Variablen leer gemacht, um ihren Speicher freizugeben.</li>
   <li>Wenn ein Subroutinen-<a href="misc/Threads.htm">Thread</a> in eine Funktion eindringt, werden alle Verweise auf <a href="misc/Arrays.htm">dynamische Variablen</a>, die von diesem Thread erstellt wurden, als <a href="#Global">globale Variablen</a> behandelt (einschließlich Funktionen, die Arrays erzeugen). <a href="misc/Labels.htm">Lokale Label</a> hingegen können nicht dynamisch verwiesen werden.</li>
@@ -352,9 +354,17 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
     <td><a href="commands/DllCall.htm">DllCall</a></td>
     <td>Ruft eine Funktion aus einer DLL-Datei auf, wie z. B. eine API-Funktion von Windows.</td>
   </tr>
+  <tr id="Exception">
+    <td><a href="commands/Throw.htm#Exception">Exception</a></td>
+    <td>Erstellt ein Objekt, das genutzt werden kann, um eine benutzerdefinierte Ausnahme auszulösen.</td>
+  </tr>
   <tr id="FileOpen">
     <td><a href="commands/FileOpen.htm">FileOpen</a></td>
     <td>Ermöglicht eine objektorientierte Dateibearbeitung.</td>
+  </tr>
+  <tr id="Format">
+    <td><a href="commands/Format.htm">Format</a></td>
+    <td>Formatiert eine variable Anzahl von Eingabewerten, basierend auf eine Formatzeichenkette.</td>
   </tr>
   <tr id="Func">
     <td><a href="commands/Func.htm">Func</a></td>
@@ -454,6 +464,10 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
   <tr id="Ln">
     <td><a href="commands/Math.htm#Ln">Ln</a></td>
     <td>Gibt den Logarithmus (Basis e) von <em>Zahl</em> zurück.</td>
+  </tr>
+  <tr>
+    <td><span id="Max"></span><span id="Min"></span><a href="commands/Math.htm#Max">Max</a> / <a href="commands/Math.htm#Min">Min</a></td>
+    <td>Gibt den höchsten/niedrigsten Wert von einer oder mehreren Zahlen zurück.</td>
   </tr>
   <tr id="Mod">
     <td><a href="commands/Math.htm#Mod">Mod</a></td>

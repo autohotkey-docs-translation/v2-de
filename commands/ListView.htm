@@ -78,7 +78,7 @@ LV_DoubleClick(LV, Reihennummer)
 <p><strong>R</strong>: Reihen-Höhe (bei der Erstellung). Geben Sie den Buchstaben R an und fügen Sie direkt danach die Anzahl der Reihen ein, für die innerhalb des Steuerelements Platz geschaffen werden soll. Zum Beispiel würde <code>R10</code> das Steuerelement 10 Reihen hoch machen. Falls das ListView mit einer <a href="#View">Anzeigemethode</a>, außer Report, erstellt wurde, wird die Größe des Steuerelements angepasst, so dass Symbolreihen anstelle von Textreihen hineinpassen. Hinweis: Fügt man <a href="#IL">Symbole</a> in den Reihen einer ListView ein, wird die Höhe jeder Reihe zunehmen, wodurch diese Option ungenau wird.</p>
 <p id="Sort"><strong>Sort:</strong> Das Steuerelement wird in Bezug zu den Inhalten der ersten Spalte alphabetisch sortiert.</p>
 <p id="SortDesc"><strong>SortDesc:</strong> Das gleiche wie oben, nur in absteigender Reihenfolge.</p>
-<p id="WantF2"><strong>WantF2</strong>: Geben Sie <code>-WantF2</code> (minus WantF2) an, um die Möglichkeit zu entfernen, die aktuell fokussierte Reihe via F2-Taste zu <a href="#ReadOnly">editieren</a>. Diese Einstellung wird ignoriert, wenn <code><a href="#ReadOnly">-ReadOnly</a></code> auch angegeben ist.</p>
+<p id="WantF2"><strong>WantF2</strong>: Geben Sie <code>-WantF2</code> (minus WantF2) an, um die Möglichkeit zu entfernen, die aktuell fokussierte Reihe via F2-Taste zu <a href="#ReadOnly">editieren</a>. Diese Einstellung wird ignoriert, wenn <code>-<a href="#ReadOnly">ReadOnly</a></code> auch angegeben ist.</p>
 <p><strong>(Unbenannte numerische Styles)</strong>: Da die restlichen Styles nur selten verwendet werden, haben sie keine Namen. In der <a href="../misc/Styles.htm#ListView">ListView-Style-Tabelle</a> finden Sie eine Liste mit Styles.</p>
 <h2 id="View">Anzeigemethoden</h2>
 <p>Eine ListView hat fünf Anzeigemethoden, von denen die Report-Ansicht am häufigsten verwendet wird (Standardeinstellung). Um eine der anderen Ansichten zu nutzen, fügt man ihr Name in den Optionen ein. Die Ansicht kann auch geändert werden, nachdem das Steuerelement erstellt wurde. Zum Beispiel: <code>LV.Opt("+IconSmall")</code>.</p>
@@ -540,13 +540,14 @@ ZeigeKontextmenü(LV, Element, IstRechtsklick, X, Y)  <em>; Als Reaktion auf Rec
   KontextReihenLeeren := Func("KontextReihenLeeren").bind(LV)
  
   <em>; Erstellt ein aufklappbares Menü, das als Kontextmenü verwendet wird:</em>
-  <a href="Menu.htm">Menu</a>("MeinKontextmenü", "Add", "Öffnen", KontextÖffnen)
-  Menu("MeinKontextmenü", "Add", "Eigenschaften", KontextEigenschaften)
-  Menu("MeinKontextmenü", "Add", "Aus ListView entfernen", KontextReihenLeeren)
-  Menu("MeinKontextmenü", "Default", "Öffnen")  <em>; Zeigt "Öffnen" in fetter Schrift an, um zu kennzeichnen, dass ein Doppelklick das gleiche bewirkt.
+  Kontextmenü := <a href="MenuCreate.htm">MenuCreate</a>()
+  Kontextmenü.<a href="../objects/Menu.htm#Add">Add</a>("Öffnen", KontextÖffnen)
+  Kontextmenü.Add("Eigenschaften", KontextEigenschaften)
+  Kontextmenü.Add("Aus ListView entfernen", KontextReihenLeeren)
+  Kontextmenü.<a href="../objects/Menu.htm#Default">Default</a> := "Öffnen"  <em>; Zeigt "Öffnen" in fetter Schrift an, um zu kennzeichnen, dass ein Doppelklick das gleiche bewirkt.
   ; Zeigt das Menü bei den Koordinaten X und Y an. Diese Koordinaten
   ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
-  Menu("MeinKontextmenü", "Show", X, Y)
+  Kontextmenü.<a href="../objects/Menu.htm#Show">Show</a>(X, Y)
 }
 
 KontextÖffnen(LV, Reihennummer)  <em>; Der Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
@@ -578,7 +579,7 @@ Gui_Size(LV, Gui, MinMax, Breite, Höhe)  <em>; Vergrößert/verkleinert die Lis
 {
   if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
     return
-  <em>; Ansonsten wurde die Fenstergröße geändert oder maximiert. Passt die Größe der ListView an den neuen Werten an.</em>
+  <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Passt die Größe der ListView an den neuen Werten an.</em>
   LV.Move("W" Breite-20 " H" Höhe-40)
 }</pre>
 

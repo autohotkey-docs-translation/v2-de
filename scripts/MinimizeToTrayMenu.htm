@@ -74,14 +74,14 @@ Hotkey mwt_UnHotkey, "mwt_UnMinimize"
 OnExit("mwt_RestoreAllThenExit")
 
 if mwt_StandardMenu = true
-    Menu "Tray", "Add"
+    A_TrayMenu.Add
 else
 {
-    Menu "Tray", "NoStandard"
-    Menu "Tray", "Add", "&amp;Beenden und Fenster sichtbar machen", "mwt_RestoreAllThenExit"
+    A_TrayMenu.Standard := false
+    A_TrayMenu.Add "&amp;Beenden und Fenster sichtbar machen", "mwt_RestoreAllThenExit"
 }
-Menu "Tray", "Add", "&amp;Alle versteckten Fenster sichtbar machen", "mwt_RestoreAll"
-Menu "Tray", "Add"  <em>; Eine weitere Trennlinie, um die obigen Menüpunkte abzugrenzen.</em>
+A_TrayMenu.Add "&amp;Alle versteckten Fenster sichtbar machen", "mwt_RestoreAll"
+A_TrayMenu.Add  <em>; Eine weitere Trennlinie, um die obigen Menüpunkte abzugrenzen.</em>
 
 mwt_MaxLength := 260  <em>; Verringern, um die Breite des Menüs zu begrenzen.</em>
 
@@ -175,7 +175,7 @@ Loop mwt_MaxWindows
 <em>; Das Element ins Array und im Menü einfügen:</em>
 if mwt_AlreadyExists = false
 {
-    Menu "Tray", "Add", mwt_ActiveTitle, "RestoreFromTrayMenu"
+    A_TrayMenu.Add mwt_ActiveTitle, "RestoreFromTrayMenu"
     mwt_WindowCount += 1
     Loop mwt_MaxWindows  <em>; Nach einer freien Stelle suchen.</em>
     {
@@ -191,23 +191,24 @@ if mwt_AlreadyExists = false
 return
 
 
-RestoreFromTrayMenu:
-Menu "Tray", "Delete", A_ThisMenuItem
-<em>; Fenster finden, basierend auf dessen eindeutigen Titel, der als Menüpunktname gespeichert ist:</em>
-Loop mwt_MaxWindows
+RestoreFromTrayMenu(ThisMenuItem)
 {
-    if mwt_WindowTitle%a_index% = A_ThisMenuItem  <em>; Übereinstimmung gefunden.</em>
+    A_TrayMenu.Delete ThisMenuItem
+    <em>; Fenster finden, basierend auf dessen eindeutigen Titel, der als Menüpunktname gespeichert ist:</em>
+    Loop mwt_MaxWindows
     {
-        IDToRestore := mwt_WindowID%A_Index%
-        WinShow "ahk_id " IDToRestore
-        WinActivate "ahk_id " IDToRestore  <em>; Manchmal notwendig.</em>
-        mwt_WindowID%A_Index% := ""  <em>; Leer machen, um die Stelle freizugeben.</em>
-        mwt_WindowTitle%A_Index% := ""
-        mwt_WindowCount -= 1
-        break
+        if mwt_WindowTitle%a_index% = ThisMenuItem  <em>; Übereinstimmung gefunden.</em>
+        {
+            IDToRestore := mwt_WindowID%A_Index%
+            WinShow "ahk_id " IDToRestore
+            WinActivate "ahk_id " IDToRestore  <em>; Manchmal notwendig.</em>
+            mwt_WindowID%A_Index% := ""  <em>; Leer machen, um die Stelle freizugeben.</em>
+            mwt_WindowTitle%A_Index% := ""
+            mwt_WindowCount -= 1
+            break
+        }
     }
 }
-return
 
 
 <em>; Damit wird das zuletzt minimierte Fenster aktiviert und sichtbar gemacht.</em>
@@ -222,7 +223,7 @@ if mwt_WindowCount &gt; 0
     
     <em>; Ermittelt den Menünamen des zuletzt minimierten Fensters und entfernt ihn</em>
     MenuToRemove := mwt_WindowTitle%mwt_WindowCount%
-    Menu "Tray", "Delete", MenuToRemove
+    A_TrayMenu.Delete MenuToRemove
     
     <em>; Array aufräumen und Fensterzählung verringern</em>
     mwt_WindowID%mwt_WindowCount% := ""
@@ -250,7 +251,7 @@ Loop mwt_MaxWindows
         <em>; Diesen Weg anstelle von DeleteAll durchführen, sodass die Trennlinie</em>
         <em>; und das erste Element erhalten bleiben:</em>
         MenuToRemove := mwt_WindowTitle%A_Index%
-        Menu "Tray", "Delete", MenuToRemove
+        A_TrayMenu.Delete MenuToRemove
         mwt_WindowID%A_Index% := ""  <em>; Leer machen, um eine Stelle freizugeben.</em>
         mwt_WindowTitle%A_Index% := ""
         mwt_WindowCount -= 1

@@ -21,10 +21,10 @@
 <dl>
 
   <dt id="Label">Label</dt>
-  <dd><p>Name des <a href="../misc/Labels.htm">Labels</a> oder <a href="../Hotkeys.htm">Hotkey-Labels</a>, der angesprungen werden soll, um die Funktionen unterhalb von <em>Label</em> auszuführen, bis ein <a href="Return.htm">Return</a> oder <a href="Exit.htm">Exit</a> erreicht wurde. <em>Label</em> kann, wie bei den meisten Parametern der anderen Funktionen auch, eine <a href="../Variables.htm">Variable</a> ohne Anführungszeichen sein, um den gespeicherten Namen in der Variable als Ziel zu verwenden.</p>
-  <p id="OmitLabel">Fehlt das <em>Label</em>, wird stattdessen <a href="../Variables.htm#ThisLabel">A_ThisLabel</a> verwendet. Zum Beispiel könnte <code>SetTimer , "Off"</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren. <code>SetTimer , 1000</code> wiederum würde entweder die <em>Periode</em> des aktuellen Timers ändern oder einen neuen Timer mit dem Label der aktuell laufenden Subroutine erstellen. Wenn A_ThisLabel leer ist, aber der aktuelle Thread durch einen Timer gestartet wurde, wird dieser Timer verwendet. Das ist besonders für Timer nützlich, die Funktionen oder Funktionsobjekte starten müssen.</p>
-  <p id="Functor">Wenn es kein gültiger Labelname ist, kann dieser Parameter der Name einer Funktion sein, oder ein einzelner Variablenverweis mit einem <a href="../objects/Functor.htm">Funktionsobjekt</a>. Zum Beispiel <code>SetTimer funkobj, 1000</code>. Andere Ausdrücke, die Objekte zurückgeben, werden zurzeit nicht unterstützt. Mehr dazu finden Sie im Beispiel <a href="#ExampleClass">weiter unten</a>.</p>
+  <dd><p>Eine Subroutine, die gestartet werden soll. Dieser Parameter kann der Name eines Labels, einer Funktion oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a> sein. Direkt geschriebene Label- oder Funktionsnamen müssen in Anführungszeichen gesetzt werden. Wenn Sie eine Funktion angeben wollen, die den gleichen Namen hat wie ein Label, sollten Sie sie via Verweis statt Namen übergeben. Zum Beispiel: <code>SetTimer Func("<i>FunkName</i>")</code>.</p>
+  <p id="OmitLabel">Wenn <em>Label</em> fehlt, wird sich SetTimer auf den Timer beziehen, der den aktuellen Thread gestartet, sofern vorhanden. Zum Beispiel könnte <code>SetTimer , "Off"</code> innerhalb einer Timer-Subroutine verwendet werden, um den Timer zu deaktivieren. <code>SetTimer , 1000</code> wiederum würde die <em>Periode</em> des aktuellen Timers aktualisieren.</p>
   <p><strong>Hinweis:</strong> Die Übergabe einer leeren Variable oder eines Ausdrucks, der zu einem leeren Wert führt, wird als Fehler eingestuft. Dieser Parameter darf weder leer sein noch fehlen.</p>
+  <p class="note"><strong>Hinweis:</strong> Die Übergabe einer leeren Variable oder eines Ausdrucks, der zu einem leeren Wert führt, wird als Fehler eingestuft. Dieser Parameter darf weder leer sein noch fehlen.</p>
   </dd>
 
   <dt>Periode|"On|Off|Delete"</dt>
@@ -60,7 +60,7 @@
 <ol>
   <li>Andere Anwendungen belasten die CPU ziemlich stark.</li>
   <li>Die Timer-Subroutine braucht länger als die angebende Periode oder es gibt zu viele konkurrierende Timer.</li>
-  <li>Der Timer wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, dazu zählen andere zeitgesteuerte Subroutinen, <a href="../Hotkeys.htm">Hotkey-Subroutinen</a> oder <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> (kann mit <a href="Critical.htm">Critical</a> verhindert werden). Falls das passiert und der unterbrechende Thread lange Zeit zum Beenden braucht, wird der unterbrochene Timer für diese Dauer deaktiviert. Allerdings werden alle anderen Timer weiterlaufen, indem sie den <a href="../misc/Threads.htm">Thread</a> unterbrechen, der den ersten Timer unterbrochen hat.</li>
+  <li>Der Timer wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, dazu zählen andere zeitgesteuerte Subroutinen, <a href="../Hotkeys.htm">Hotkey-Subroutinen</a> oder <a href="../objects/Menu.htm">benutzerdefinierte Menüpunkte</a> (kann mit <a href="Critical.htm">Critical</a> verhindert werden). Falls das passiert und der unterbrechende Thread lange Zeit zum Beenden braucht, wird der unterbrochene Timer für diese Dauer deaktiviert. Allerdings werden alle anderen Timer weiterlaufen, indem sie den <a href="../misc/Threads.htm">Thread</a> unterbrechen, der den ersten Timer unterbrochen hat.</li>
   <li>Ein Skript kann nicht unterbrochen werden, wenn man <a href="Critical.htm">Critical</a> oder <a href="Thread.htm">Thread "Interrupt/Priority"</a> verwendet. In solchen Zeiten werden Timer nicht laufen. Wenn das Skript später wieder unterbrochen werden kann, wird jeder überfällige Timer so bald wie möglich einmal ausgeführt und danach normal fortgesetzt.</li>
 </ol>
 <p>Zwar funktionieren Timer auch, wenn das Skript <a href="Suspend.htm">gesperrt</a> ist, allerdings werden sie nicht laufen, wenn <a href="Thread.htm">Thread "NoTimers"</a> im <a href="../misc/Threads.htm">aktuellen Thread</a> vorhanden ist oder wenn ein Thread <a href="Pause.htm">pausiert</a> wurde. Darüber hinaus werden sie nicht funktionieren, wenn der Benutzer in einem der Skriptmenüs navigiert (wie z. B. das Tray-Menü oder eine Menüleiste).</p>
@@ -73,7 +73,7 @@
 <p>Die <a href="KeyHistory.htm">KeyHistory</a>-Funktion zeigt, wie viele Timer vorhanden und wie viele zurzeit aktiviert sind.</p>
 
 <h3>Siehe auch</h3>
-<p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Funktion)</a>, <a href="Critical.htm">Critical</a>, <a href="IsLabel.htm">IsLabel</a>, <a href="Menu.htm">Menu</a></p>
+<p><a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread (Funktion)</a>, <a href="Critical.htm">Critical</a>, <a href="IsLabel.htm">IsLabel</a>, <a href="../objects/Menu.htm">Menu-Objekt</a></p>
 <h3>Beispiele</h3>
 <pre class="NoIndent" id="ExampleClose"><em>; Beispiel #1: Schließt unerwünschte Fenster, sobald sie auftauchen:</em>
 SetTimer "MailWarnungenSchließen", 250
@@ -148,15 +148,12 @@ class SecondCounter {
         this.timer := ObjBindMethod(this, "Tick")
     }
     Start() {
-        <em>; Bekannte Einschränkung: SetTimer benötigt einen reinen Variablenverweis.</em>
-        timer := this.timer
-        SetTimer timer, this.interval
+        SetTimer this.timer, this.interval
         ToolTip "Counter gestartet"
     }
     Stop() {
         <em>; Um den Timer auszuschalten, müssen wir dasselbe Objekt erneut übergeben:</em>
-        timer := this.timer
-        SetTimer timer, "Off"
+        SetTimer this.timer, "Off"
         ToolTip "Counter stoppt bei " this.count
     }
     <em>; In diesem Beispiel ruft der Timer diese Methode auf:</em>
@@ -167,8 +164,8 @@ class SecondCounter {
 <p>Tipps bezüglich des oberen Beispiels:</p>
 <ul>
   <li>Wir können auch <code>this.timer := this.Tick.<a href="../objects/Func.htm#Bind">Bind</a>(this)</code> verwenden. Wenn <code>this.timer</code> aufgerufen wird, wird es tatsächlich <code>this.Tick.<a href="../objects/Func.htm#Call">Call</a>(this)</code> aufrufen (außer dass <code>this.Tick</code> nicht neu berechnet wird). <a href="ObjBindMethod.htm">ObjBindMethod</a> hingegen erzeugt ein Objekt, das <code>this.Tick()</code> aufruft.</li>
-  <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt verwenden, anstelle von <code>this.timer</code>. Dadurch kann man temporäre Variablen vermeiden. Allerdings kann ObjBindMethod auch nützlich sein, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen wie Hotkeys, Menüpunkte, GUI-Steuerelemente aufgerufen werden sollen.</li>
-  <li>Beim Modifizieren des Timers, oder Löschen des Timers innerhalb einer Funktion/Methode, die von dem Timer aufgerufen wurde, kann man den <a href="#OmitLabel"><em>Label</em>-Parameter einfach weglassen</a>. Dadurch entfällt in einigen Fällen die Notwendigkeit, das ursprüngliche Objekt, welches an SetTimer übergeben wurde, zu behalten - man spart sich quasi eine temporäre Variable (z. B. <code>timer</code> im obigen Beispiel).</li>
+  <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt verwenden, anstelle von <code>this.timer</code>. Allerdings kann ObjBindMethod auch nützlich sein, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen wie Hotkeys, Menüpunkte, GUI-Steuerelemente aufgerufen werden sollen.</li>
+  <li>Beim Modifizieren des Timers, oder Löschen des Timers innerhalb einer Funktion/Methode, die von dem Timer aufgerufen wurde, kann man den <a href="#OmitLabel"><em>Label</em>-Parameter einfach weglassen</a>. Dadurch entfällt in einigen Fällen die Notwendigkeit, das ursprüngliche Objekt, welches an SetTimer übergeben wurde, zu behalten.</li>
 </ul>
 
 </body>
