@@ -1,0 +1,425 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Menu-Objekt</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Menu-Objekt</h1>
+<p>Dient zum Ändern und Anzeigen von Menüs. <a href="../commands/MenuCreate.htm">MenuCreate</a>, <a href="../commands/MenuFromHandle.htm">MenuFromHandle</a> und <a href="../Variables.htm#TrayMenu">A_TrayMenu</a> geben ein Objekt dieses Typs zurück.</p>
+
+<h4 id="Properties">Eigenschaften:</h4>
+<ul>
+  <li><a href="#ClickCount">ClickCount</a>: Ermittelt oder setzt die Anzahl der Klicks, die erforderlich sind, um den Standard-Menüpunkt des Tray-Menüs auszulösen.</li>
+  <li><a href="#Default">Default</a>: Ermittelt oder setzt den Standard-Menüpunkt.</li>
+  <li><a href="#Handle">Handle</a>: Ermittelt den Win32-Menü-Handle eines Menüs.</li>
+  <li><a href="#Standard">Standard</a>: Fügt die voreingestellten Menüpunkte hinzu oder entfernt sie.</li>
+</ul>
+<h4 id="Methods">Methoden:</h4>
+<ul>
+  <li><a href="#Add">Add</a>: Fügt einen Menüpunkt hinzu oder modifiziert ihn.</li>
+  <li><a href="#Check">Check</a>: Setzt ein sichtbares Häkchen neben einen Menüpunkt.</li>
+  <li><a href="#Delete">Delete</a>: Löscht einen Menüpunkt oder alle Menüpunkte.</li>
+  <li><a href="#Disable">Disable</a>: Zeigt einen Menüpunkt in einer grauen Farbe an, um kenntlich zu machen, dass der Benutzer ihn nicht anklicken kann.</li>
+  <li><a href="#Enable">Enable</a>: Erlaubt dem Benutzer, den Menüpunkt wieder anzuklicken, falls er zuvor deaktiviert (ergraut) war.</li>
+  <li><a href="#Insert">Insert</a>: Fügt einen neuen Menüpunkt vor dem angegebenen Menüpunkt ein.</li>
+  <li><a href="#Rename">Rename</a>: Benennt einen Menüpunkt um.</li>
+  <li><a href="#SetColor">SetColor</a>: Ändert die Hintergrundfarbe des Menüs.</li>
+  <li><a href="#SetIcon">SetIcon</a>: Bestimmt ein Symbol, das neben einen Menüpunkt angezeigt werden soll.</li>
+  <li><a href="#Show">Show</a>: Zeigt das Menü an.</li>
+  <li><a href="#ToggleCheck">ToggleCheck</a>: Schaltet das Häkchen neben einem Menüpunkt um.</li>
+  <li><a href="#ToggleEnable">ToggleEnable</a>: Aktiviert oder deaktiviert einen Menüpunkt.</li>
+  <li><a href="#Uncheck">Uncheck</a>: Entfernt das Häkchen (falls vorhanden) von einem Menüpunkt.</li>
+</ul>
+<h4>Allgemeines:</h4>
+<ul>
+  <li><a href="#MenuItemName">Menüpunktname</a></li>
+  <li><a href="#Win32_Menus">Win32-Menüs</a></li>
+  <li><a href="#Remarks">Bemerkungen</a></li>
+  <li><a href="#Related">Siehe auch</a></li>
+  <li><a href="#Examples">Beispiele</a></li>
+</ul>
+
+<div class="methodShort" id="Add">
+<h2>Add</h2>
+<p>Fügt einen Menüpunkt hinzu oder modifiziert ihn.</p>
+<pre class="Syntax">Menu.<span class="func">Add</span>(<span class="optional">Menüpunktname, Label-oder-Untermenü, Optionen</span>)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Der Text, der auf dem Menüpunkt angezeigt werden soll, oder die Position&amp; eines vorhandenen Menüpunkts, der modifiziert werden soll. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+  <dt>Label-oder-Untermenü</dt><dd><p>Ein Label- oder Funktionsname (oder ein Verweis zu einem <a href="Functor.htm">Funktionsobjekt</a>), der als neuer <a href="../misc/Threads.htm">Thread</a> ausgeführt werden soll, wenn der Menüpunkt ausgewählt wird, oder ein Verweis zu einem <strong>Menu</strong>-Objekt, das als Untermenü verwendet werden soll.</p>
+  <p>Fehlt <em>Label-oder-Untermenü</em>, wird <em>Menüpunktname</em> sowohl als Label- oder Funktionsname als auch als Menüpunktname verwendet.</p>
+  <p id="CallbackParams">Wenn eine Funktion angegeben ist, kann sie optional die folgenden Parameter definieren:</p>
+<pre class="Syntax"><i>FunkName</i>(PunktName, PunktPos, Menu)</pre></dd>
+  <dt>Optionen</dt><dd>
+  <p>Sofern vorhanden, muss <em>Optionen</em> eine Liste mit einer oder mehreren Optionen sein, die jeweils mit einem Leer- oder Tabulatorzeichen voneinander getrennt sind:</p>
+<table class="info">
+  <tr><td>P<em>n</em></td>
+  <td>Ersetzen Sie <em>n</em> mit der <a href="../misc/Threads.htm">Thread-Priorität</a> des Menüpunktes, z. B. <code>P1</code>. Fehlt diese Option beim Einfügen eines Menüpunktes, wird die Priorität den Standardwert von 0 haben. Fehlt er beim Aktualisieren eines Menüpunktes, wird die Priorität des Menüpunktes beibehalten. Verwenden Sie eine dezimale (nicht hexadezimale) Zahl als Priorität.</td></tr>
+  <tr><td>+Radio</td>
+  <td>Beim Markieren des Menüpunktes wird ein kleiner Kreis anstelle eines Häkchens verwendet.</td></tr>
+  <tr><td>+Right</td>
+  <td>Der Menüpunkt wird innerhalb der Menüleiste nach rechts ausgerichtet. Diese Option funktioniert nur bei <a href="../objects/Gui.htm#Menu">Menüleisten</a>, nicht bei Popup-Menüs oder Untermenüs.</td></tr>
+  <tr><td>+Break</td>
+  <td>Der Menüpunkt beginnt eine neue Spalte in einem Popup-Menü.</td></tr>
+  <tr><td>+BarBreak</td>
+  <td>Das gleiche wie oben, aber mit Trennlinien zwischen den Spalten.</td></tr>
+</table>
+<p>Das Pluszeichen (+) ist optional und kann mit einem Minuszeichen (-) ersetzt werden, um die Option zu entfernen, wie z. B. <code>-Radio</code>. Bei den Optionen ist die Groß- und Kleinschreibung egal.</p>
+<p>Wenn der <em>Label-oder-Untermenü</em>-Parameter weggelassen wird, können die Optionen eines vorhandenen Menüpunktes geändert werden, ohne dessen Label oder Untermenü zu beeinflussen.</p>
+  </dd>
+</dl>
+<h4>Bemerkungen</h4>
+<p>Diese Methode ist für mehrere Zwecke gedacht - sie kann einen Menüpunkt hinzufügen, einen Menüpunkt mit einem neuen Untermenü, Label oder einer neuen Funktion aktualisieren, oder einen normalen Menüpunkt in ein Untermenü umwandeln (oder umgekehrt). Wenn <em>Menüpunktname</em> noch nicht existiert, wird er zum Menü hinzugefügt. Ansonsten wird <em>Menüpunktname</em> mit dem neu angegebenen <em>Label-oder-Untermenü</em> und/oder <em>Optionen</em> aktualisiert.</p>
+<p>Um eine Trennlinie zum Menü hinzuzufügen, lässt man alle drei Parameter weg.</p>
+<p><em>Add</em> fügt neue Menüpunkte immer am unteren Ende des Menüs hinzu, während <a href="#Insert">Insert</a> einen Menüpunkt vor einem bestehenden benutzerdefinierten Menüpunkt einfügt.</p>
+</div>
+
+<div class="methodShort" id="Check">
+<h2>Check</h2>
+<p>Setzt ein sichtbares Häkchen neben <em>Menüpunktname</em> (wenn noch keines da ist).</p>
+<pre class="Syntax">Menu.<span class="func">Check</span>(Menüpunktname)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="ClickCount">
+<h2>ClickCount</h2>
+<p>Ermittelt oder setzt die Anzahl der Klicks, die erforderlich sind, um den Standard-Menüpunkt des Tray-Menüs auszulösen.</p>
+<pre class="Syntax">Menu.ClickCount := Anzahl</pre>
+<dl>
+  <dt>Anzahl</dt><dd><p>Geben Sie eine 1 an, um den Standard-Menüpunkt des Tray-Menüs mit einem einzigen Klick auslösen zu lassen. Geben Sie eine 2 an, um das Standardverhalten wiederherzustellen (Doppelklick).</p></dd>
+</dl>
+<p>Zum Beispiel: <code>A_TrayMenu.ClickCount := 1</code></p>
+</div>
+
+<div class="methodShort" id="Delete">
+<h2>Delete</h2>
+<p>Löscht einen Menüpunkt oder alle benutzerdefinierten Menüpunkte.</p>
+<pre class="Syntax">Menu.<span class="func">Delete</span>(<span class="optional">Menüpunktname</span>)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+</dl>
+<p>Wenn <em>Menüpunktname</em> fehlt, werden alle benutzerdefinierten Menüpunkte aus dem Menü gelöscht, um es komplett zu leeren, sofern es keine <em>voreingestellten</em> Menüpunkte enthält. Ein leeres Menü bleibt weiterhin bestehen; andere Menüs, die dieses leere Menü als Untermenü verwenden, werden demzufolge solche Untermenüs beibehalten. Allerdings werden die aktuellen <a href="#Win32_Menus">Win32-Menüs</a> von diesem Menü und seinen übergeordneten Menüs und Untermenüs zerstört, um später bei Bedarf neu erstellt werden zu können.</p>
+<p>Um eine Trennlinie zu löschen, identifiziert man sie anhand ihrer Position im Menü. Verwenden Sie z. B. <code>MeinMenu.Delete("3&amp;")</code>, wenn dem Trennzeichen zwei Menüpunkte vorangestellt sind.</p>
+<p>Voreingestellte Menüpunkte wie Exit können nicht gelöscht werden (zumindest nicht einzeln).</p>
+<p>Wenn der <em>Standard</em>-Menüpunkt gelöscht wird, ist der Effekt das gleiche wie, als hätte man <code>Menu.Default := ""</code> gesetzt.</p>
+</div>
+
+<div class="methodShort" id="Default">
+<h2>Default</h2>
+<p>Ermittelt oder setzt den Standard-Menüpunkt.</p>
+<pre class="Syntax">AktuellerStandard := Menu.Default</pre>
+<dl>
+  <dt>AktuellerStandard</dt><dd><p>Der Name des Standard-Menüpunkts, oder eine leere Zeichenkette, wenn es keinen gibt (oder wenn der Standard-Menüpunkt einer der voreingestellten Menüpunkte ist).</p></dd>
+</dl>
+<pre class="Syntax">Menu.Default := Menüpunktname</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p>
+  <p>Um das Standardverhalten des Menüs wiederherzustellen, weist man eine leere Zeichenkette zu. Beim Tray-Menü: Stellt den voreingestellten Standard-Menüpunkt wieder her - bei unkompilierten Skripten ist das OPEN und bei <a href="../Scripts.htm#ahk2exe">kompilierten Skripten</a> nichts (außer wenn die <em>MainWindow</em>-Option aktiv ist). Wenn der OPEN-Menüpunkt durch vorheriges Verwenden von <code><a href="#Standard">Menu.Standard</a> := false</code> nicht vorhanden ist, wird es keinen Standard-Menüpunkt geben; ein Doppelklick auf das Tray-Symbol wird demzufolge keine Wirkung haben. Bei anderen Menüs: Alle vorhandenen Standard-Menüpunkte werden nicht mehr in fetter Schrift dargestellt.</p></dd>
+</dl>
+<p>Wenn Sie den Standard-Menüpunkt setzen, wird er in fetter Schrift dargestellt (das Setzen des Standard-Menüpunkts in anderen Menüs, die nicht das Tray-Menü sind, ist rein kosmetischer Natur). Wenn der Benutzer das Tray-Symbol doppelt anklickt, wird der Standard-Menüpunkt gestartet. Wenn es keinen Standard-Menüpunkt gibt, hat ein Doppelklick keine Wirkung.</p>
+</div>
+
+<div class="methodShort" id="Disable">
+<h2>Disable</h2>
+<p>Zeigt <em>Menüpunktname</em> in einer grauen Farbe an, um kenntlich zu machen, dass der Benutzer ihn nicht anklicken kann.</p>
+<pre class="Syntax">Menu.<span class="func">Disable</span>(Menüpunktname)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="Enable">
+<h2>Enable</h2>
+<p>Erlaubt dem Benutzer, <em>Menüpunktname</em> wieder anzuklicken, falls er zuvor deaktiviert (ergraut) war.</p>
+<pre class="Syntax">Menu.<span class="func">Enable</span>(Menüpunktname)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="Insert">
+<h2>Insert</h2>
+<p>Fügt einen neuen Menüpunkt vor dem angegebenen Menüpunkt ein.</p>
+<pre class="Syntax">Menu.<span class="func">Insert</span>(<span class="optional">VorhandenerMenüpunktname, NeuerMenüpunktname, Label-oder-Untermenü, Optionen</span>)</pre>
+<dl>
+  <dt>VorhandenerMenüpunktname</dt><dd><p>Der Name eines vorhandenen Menüpunkts, oder eine Position&amp; zwischen 1 und <a href="#Examples">der aktuellen Anzahl der benutzerdefinierten Menüpunkte</a> plus 1 (nach den gleichen Regeln wie <a href="#MenuItemName">Menüpunktname</a>). Menüpunkte kann man auch anfügen, indem man <em>VorhandenerMenüpunktname</em> weglässt.</p></dd>
+  <dt>NeuerMenüpunktname</dt><dd><p>Der Text, der auf dem Menüpunkt angezeigt werden soll. Im Gegensatz zu <a href="#Add">Add</a> kann dieser Parameter keine Position sein.</p></dd>
+</dl>
+<p>Die übrigen Parameter verhalten sich wie bei der <a href="#Add">Add</a>-Methode, außer dass <em>Insert</em> einen neuen Menüpunkt erstellt, selbst wenn <em>NeuerMenüpunktname</em> mit dem Namen eines vorhandenen Menüpunkts übereinstimmen sollte.</p>
+<p>Da <a href="#Standard">voreingestellte</a> Menüpunkte nicht gezählt werden (<code>"1&amp;"</code> bezieht sich immer auf den ersten <em>benutzerdefinierten</em> Menüpunkt), kann ein Menüpunkt nicht unmittelbar vor den voreingestellten Menüpunkten eingefügt werden.</p>
+</div>
+
+<div class="methodShort" id="Rename">
+<h2>Rename</h2>
+<p>Benennt <em>Menüpunktname</em> in <em>NeuerName</em> um.</p>
+<pre class="Syntax">Menu.<span class="func">Rename</span>(Menüpunktname <span class="optional">, NeuerName</span>)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+  <dt>NeuerName</dt><dd><p>Der neue Name. Fehlt dieser Parameter oder ist leer, wird <em>Menüpunktname</em> in eine Trennlinie umgewandelt.</p></dd>
+</dl>
+<p>Das aktuelle Ziel-Label oder Untermenü des Menüpunkts bleibt unverändert.</p>
+<p>Um eine Trennlinie in einen normalen Menüpunkt umzuwandeln, gibt man die Position&amp; der Trennlinie und einen nicht-leeren Namen in <em>NeuerName</em> an, und weist dann mit der <em>Add</em>-Methode dem Menüpunkt ein Label oder Untermenü zu.</p>
+</div>
+
+<div class="methodShort" id="SetColor">
+<h2>SetColor</h2>
+<p>Ändert die Hintergrundfarbe des Menüs auf <em>Farbwert</em>.</p>
+<pre class="Syntax">Menu.<span class="func">SetColor</span>(<span class="optional">Farbwert, Untermenüs := true</span>)</pre>
+<dl>
+  <dt>Farbwert</dt><dd><p>Einer der 16 <a href="../misc/Colors.htm">HTML-Farbnamen</a>, ein hexadezimaler RGB-Farbwert als Zeichenkette (das 0x-Präfix ist optional), oder ein reiner numerischer RGB-Farbwert. Lassen Sie den <em>Farbwert</em>-Parameter leer (oder geben Sie eine leere Zeichenkette oder das Wort "Default" an), um die Standardfarbe des Menüs wiederherzustellen. Beispielwerte: <code>"Silver"</code>, <code>"FFFFAA"</code>, <code>0xFFFFAA</code>, <code>"Default"</code>.</p></dd>
+  <dt>Untermenüs</dt><dd><p>True, wenn die Farbe auf alle Untermenüs dieses Menüs angewendet werden soll, ansonsten False. Standardwert ist True.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="SetIcon">
+<h2>SetIcon</h2>
+<p>Bestimmt ein Symbol, das neben <em>Menüpunktname</em> angezeigt werden soll.</p>
+<pre class="Syntax">Menu.<span class="func">SetIcon</span>(Menüpunktname, Dateiname <span class="optional">, Symbolnummer, Symbolbreite</span>)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+  <dt>Dateiname</dt><dd><p>Der Pfad eines Symbols oder einer Bilddatei. Eine Liste von unterstützten Formaten finden Sie im <a href="../commands/GuiControls.htm#IconSupport">Abschnitt des Picture-Steuerelements</a>.</p>
+  <p>Man kann ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> anstelle eines Dateinamens verwenden. Zum Beispiel <code>"HICON:" handle</code>.</p>
+  <p>Lassen Sie den <em>Dateiname</em>-Parameter leer (oder geben Sie eine leere Zeichenkette oder <code>"*"</code> an), um das aktuelle Symbol des Menüpunkts zu entfernen.</p></dd>
+  <dt>Symbolnummer</dt><dd><p>Um anstelle der ersten Symbolgruppe eine andere aus der Datei zu verwenden, fügt man in <em>Symbolnummer</em> ihre Nummer ein (fehlt dieser Parameter, gilt standardmäßig 1). Wenn <em>Symbolnummer</em> negativ ist, wird sein absoluter Wert als Ressourcen-ID eines Symbols innerhalb einer ausführbaren Datei angesehen.</p></dd>
+  <dt>Symbolbreite</dt><dd><p>Die gewünschte Breite des Symbols. Wenn die angegebene Symbolgruppe in <em>Symbolnummer</em> mehrere Symbolgrößen enthält, wird das Symbol auf die nächstliegende Größe skaliert. Im Beispiel-Abschnitt finden Sie Anwendungsbeispiele.</p></dd>
+</dl>
+<p>Derzeit ist es notwendig, die tatsächliche Größe anzugeben, wenn die Transparenz des Symbols in Windows Vista oder höher erhalten bleiben soll. Zum Beispiel:</p>
+<pre>MeinMenu.SetIcon "Mein Menüpunkt", "Dateiname.png",, 0</pre>
+<p>Bekannte Einschränkung: In Windows XP und höher werden Symbole auf GUI-Menüleisten falsch positioniert.</p>
+<p>Man kann ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> anstelle eines Dateinamens verwenden. Zum Beispiel <code>"HBITMAP:" handle</code>.</p>
+</div>
+
+<div class="methodShort" id="Show">
+<h2>Show</h2>
+<p>Zeigt das Menü an, dessen Menüpunkte mit Pfeiltasten, Tastenkürzel (unterstrichene Buchstaben) oder mit dem Mauszeiger ausgewählt werden können.</p>
+<pre class="Syntax">Menu.<span class="func">Show</span>(<span class="optional">X, Y</span>)</pre>
+<dl>
+  <dt>X, Y</dt><dd><p>Die Koordinaten, wo das Menü angezeigt werden soll. Fehlt sowohl der X- als auch Y-Parameter, wird das Menü bei der aktuellen Position des Mauszeigers angezeigt. Fehlt nur einer dieser Parameter, wird stattdessen die Position des Mauszeigers verwendet. X und Y sind standardmäßig relativ zum Clientbereich des aktiven Fensters. Mit <code><a href="../commands/CoordMode.htm">CoordMode</a>, "Menu", <i>Modus</i></code> oder <code>A_CoordModeMenu := <i>Modus</i></code> kann dieses Standardverhalten überschrieben werden.</p></dd>
+</dl>
+<p>Mit Ausnahme der <a href="../objects/Gui.htm#Menu">GUI-Menüleiste</a> kann jedes Menü, einschließlich des Tray-Menüs, angezeigt werden.</p>
+</div>
+
+<div class="methodShort" id="ToggleCheck">
+<h2>ToggleCheck</h2>
+<p>Fügt ein Häkchen hinzu, wenn dort keines war; ansonsten wird es entfernt.</p>
+<pre class="Syntax">Menu.<span class="func">ToggleCheck</span>(Menüpunktname)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="ToggleEnable">
+<h2>ToggleEnable</h2>
+<p>Deaktiviert <em>Menüpunktname</em>, falls er zuvor aktiviert war; ansonsten wird er aktiviert.</p>
+<pre class="Syntax">Menu.<span class="func">ToggleEnable</span>(Menüpunktname)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="Uncheck">
+<h2>Uncheck</h2>
+<p>Entfernt das Häkchen (falls vorhanden) von einem Menüpunkt.</p>
+<pre class="Syntax">Menu.<span class="func">Uncheck</span>(Menüpunktname)</pre>
+<dl>
+  <dt>Menüpunktname</dt><dd><p>Name oder Position eines Menüpunkts. Siehe <a href="#MenuItemName">Menüpunktname</a>.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="Standard">
+<h2>Standard</h2>
+<p>Fügt die voreingestellten Menüpunkte hinzu oder entfernt sie.</p>
+<pre class="Syntax">Menu.Standard := MenüpunkteEinfügen</pre>
+<p><em>Standard</em> gibt einen logischen Wert (0 oder 1) zurück, der angibt, ob die voreingestellten Menüpunkte im Menü vorhanden sind. Wenn der Wert geändert wird, werden die voreingestellten Menüpunkte entweder aus dem Menü entfernt oder am unteren Ende des Menüs eingefügt.</p>
+<p>Diese Eigenschaft kann in Verbindung mit einem Tray-Menü oder jedem anderen Menü verwendet werden.</p>
+<p>Um die eigenen Menüpunkte vor den voreingestellten Menüpunkten zu setzen (nachdem eigene Menüpunkte bereits eingefügt wurden), ist es erforderlich, <code>A_TrayMenu.Standard := false</code> (wenn die voreingestellten Menüpunkte bereits vorhanden waren) und anschließend <code>A_TrayMenu.Standard := true</code> zu setzen.</p>
+<p>Es gibt keine einzige Menu-Methode, die die voreingestellten Menüpunkte wie "Pause Script" und "Suspend Hotkeys" einzeln bearbeiten kann. Außerdem können sie nicht anhand ihrer Position&amp; angesteuert werden, weil sie nicht gezählt werden.</p>
+</div>
+
+<div class="methodShort" id="Handle">
+<h2>Handle</h2>
+<p>Gibt ein Handle eines <a href="#Win32_Menus">Win32-Menüs</a> (ein Handle vom Typ <code>HMENU</code>) zurück, und konstruiert es, falls nötig.</p>
+<pre class="Syntax">Menu.Handle</pre>
+<p>Das zurückgegebene Handle verliert seine Gültigkeit, wenn das Win32-Menü zerstört wird. Sobald das Menü zerstört wurde, kann es passieren, dass das Betriebssystem den Handle-Wert einem Menü zuweist, das darauffolgend mit dem Skript oder einem anderen Programm erstellt wurde. Im Abschnitt <a href="Menu.htm#Win32_Menus">Win32-Menüs</a> sind Bedingungen aufgelistet, die das Menü zerstören könnten.</p>
+</div>
+
+<h2 id="MenuItemName">Menüpunktname</h2>
+<p>Name oder Position eines Menüpunkts. Es gelten einige allgemeine Regeln für diesen Parameter, der bei vielen Unterbefehlen zu finden ist:</p>
+<p>Um einen Buchstaben im Namen eines Menüpunktnamens zu unterstreichen, muss ein Und-Zeichen (&amp;) davor gesetzt werden. Sobald das Menü angezeigt wird, kann man so ein Menüpunkt durch Drücken der entsprechenden Taste aktivieren. Um ein direkt geschriebenes Und-Zeichen anzuzeigen, schreibt man zwei aufeinanderfolgende Und-Zeichen. Zum Beispiel: <code>"Speichern &amp;&amp; Beenden"</code></p>
+<p>Beim Verweisen auf ein vorhandenes Menü oder Menüpunkt spielt die Groß- und Kleinschreibung keine Rolle, aber das Und-Zeichen muss mit enthalten sein. Zum Beispiel: <code>"Ö&amp;ffnen"</code></p>
+<p>Die Namen der Menüpunkte können bis zu 260 Zeichen lang sein.</p>
+<p>Um einen vorhandenen Menüpunkt anhand seiner Position im Menü zu identifizieren, fügt man die Position des Menüpunkts ein, gefolgt von einem Und-Zeichen. Zum Beispiel wäre <code>"1&amp;"</code> der erste Menüpunkt. <a href="#Standard">Voreingestellte</a> Menüpunkte werden nicht gezählt. Wenn das Menü nur voreingestellte Menüpunkte enthält, bezieht sich <code>"1&amp;"</code> auf die nächste Position unterhalb der voreingestellten Menüpunkte.</p>
+
+<h2 id="Win32_Menus">Win32-Menüs</h2>
+<p>Windows stellt eine <a href="https://msdn.microsoft.com/de-de/library/ms646977">Reihe von Funktionen und Benachrichtigungen</a> zur Verfügung, um Menüs mit einheitlichem Aussehen und Verhalten zu erstellen, zu modifizieren und anzuzeigen. Wir bezeichnen ein Menü, das mit solchen Funktionen erstellt wurde, als <em>Win32-Menü</em>.</p>
+<p>Während Menüpunkte modifiziert oder zu einem Menü hinzugefügt werden, werden ihre Namen und andere Eigenschaften in das Menu-Objekt gespeichert. Ein Win32-Menü wird erstellt, wenn das Menü oder sein übergeordnetes Menü mit einem GUI verbunden wird oder wenn es angezeigt wird, entweder zum ersten Mal oder wenn das Menü seit seiner letzten Anzeige "zerstört" wurde. Folgende Punkte können dieses Win32-Menü zerstören, einschließlich seiner übergeordneten Menüs und Untermenüs:</p>
+<ul>
+  <li>Ein Menü löschen.</li>
+  <li>Das Untermenü eines Menüpunktes mit einem Label oder anderen Menü ersetzen.</li>
+  <li><a href="#Delete">Menu.Delete()</a> ohne Parameter aufrufen.</li>
+  <li><a href="#Standard">Menu.Standard := false</a> setzen (wenn die voreingestellten Menüpunkte vorhanden waren).</li>
+</ul>
+<p><a href="#Handle">Menu.Handle</a> gibt ein Handle eines Win32-Menüs (ein Handle vom Typ <code>HMENU</code>) zurück, und konstruiert es, falls nötig.</p>
+<p>Jegliche Änderungen am Menü, die extern durchgeführt werden (via Win32-Funktionen), spiegeln sich nicht im Menu-Objekt des Skripts wider, und gehen deshalb verloren, wenn das Menü zerstört wird.</p>
+<p>Jeder Menüpunkt bekommt eine ID, wenn er das erste Mal zu einem Menü hinzugefügt wird. Skripte können sich nicht auf ein Menüpunkt mit einer bestimmten ID verlassen, aber sie können die ID eines Menüpunktes via GetMenuItemID abrufen, wie im Beispiel unten gezeigt. Diese ID kann nicht in Verbindung mit dem Menu-Objekt verwendet werden, sondern nur in Verbindung mit den <a href="https://msdn.microsoft.com/de-de/library/ms646977">Win32-Funktionen</a>.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Ein Menü, das komplett leer ist - z. B. via <code>MeinMenu.Delete()</code> - kann nicht angezeigt werden. Wenn das Tray-Menü leer ist, wird das Anklicken des Tray-Symbols keine Wirkung haben (in solchen Fällen ist es üblicherweise besser, <a href="../commands/_NoTrayIcon.htm">#NoTrayIcon</a> zu verwenden).</p>
+<p>Wenn die Subroutine des Menüpunkts bereits läuft und der Benutzer diesen Menüpunkt wieder auswählt, wird ein neuer <a href="../misc/Threads.htm">Thread</a> erstellt, um die gleiche Subroutine nochmals auszuführen, und der vorherige Thread unterbrochen. Um solche Ereignisse stattdessen hinauszuzögern, fügt man <a href="../commands/Critical.htm">Critical</a> in die erste Zeile der Subroutine ein (allerdings wird das auch andere Threads, wie z. B. das Drücken eines Hotkeys, hinauszuzögern).</p>
+<p>Wann immer eine Subroutine über einen Menüpunkt gestartet wird, gelten zu Beginn die Standardeinstellungen bei Funktionen wie <a href="../commands/SendMode.htm">SendMode</a>. Diese Standardeinstellungen können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
+<p>Beim Erstellen eines Menüs, dessen Inhalt nicht immer gleich ist, empfiehlt es sich, alle Menüpunkte auf die gleiche Funktion verweisen und diese Funktion auf ihre <a href="#CallbackParams">Parameter</a> zurückgreifen zu lassen, um die zu ergreifenden Maßnahmen zu bestimmen.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Gui.htm">GUI</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="../commands/Thread.htm">Thread</a>, <a href="../commands/Critical.htm">Critical</a>, <a href="../commands/_NoTrayIcon.htm">#NoTrayIcon</a>, <a href="../commands/Gosub.htm">Gosub</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../commands/Return.htm">Return</a>, <a href="../commands/SetTimer.htm">SetTimer</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<pre class="NoIndent" id="Example1"><em>; BEISPIEL #1: Dieses Skript zeigt, wie ein neuer Menüpunkt an das Ende des Tray-Menüs eingefügt werden kann.</em>
+
+A_TrayMenu.Add()  <em>; Erstellt eine Trennlinie.</em>
+A_TrayMenu.Add("Menüpunkt1", "MenuHandler")  <em>; Erstellt einen neuen Menüpunkt.</em>
+return
+
+MenuHandler(PunktName, PunktPos, Menu) {
+    MsgBox "Sie haben " PunktName " (Position " PunktPos ") ausgewählt."
+}</pre>
+<pre class="NoIndent" id="Example2"><em>; BEISPIEL #2: Dieses Skript zeigt, wie ein aufklappbares Menü erstellt werden kann, das angezeigt werden soll, wenn der Benutzer WIN+Z drückt.</em>
+
+<em>; Erstellt ein aufklappbares Menü durch Hinzufügen von Menüpunkten.</em>
+MeinMenü := MenuCreate()
+MeinMenü.Add "Menüpunkt 1", "MenuHandler"
+MeinMenü.Add "Menüpunkt 2", "MenuHandler"
+MeinMenü.Add  <em>; Fügt eine Trennlinie ein.</em>
+
+<em>; Erstellt ein weiteres Menü, das als Untermenü für das obige Menü dienen soll.</em>
+Untermenü1 := MenuCreate()
+Untermenü1.Add "Menüpunkt A", "MenuHandler"
+Untermenü1.Add "Menüpunkt B", "MenuHandler"
+
+<em>; Erstellt ein Untermenü im ersten Menü (mit einem nach rechts gerichteten Pfeil). Sobald der Benutzer dieses Untermenü auswählt, wird das zweite Menü angezeigt.</em>
+MeinMenü.Add "Mein Untermenü", Untermenü1
+
+MeinMenü.Add  <em>; Fügt eine Trennlinie unterhalb des Untermenüs ein.</em>
+MeinMenü.Add "Menüpunkt 3", "MenuHandler"  <em>; Fügt einen weiteren Menüpunkt unterhalb des Untermenüs ein.</em>
+return  <em>; Ende des automatischen Ausführungsbereichs.</em>
+
+MenuHandler(Punkt) {
+    MsgBox "Sie haben " Punkt " ausgewählt."
+}
+
+#z::MeinMenü.Show  <em>; Drücken Sie WIN+Z, um das Menü anzuzeigen.</em></pre>
+<pre class="NoIndent" id="Example3"><em>; BEISPIEL #3: Dieses Skript zeigt einige der verschiedenen Menu-Befehle.</em>
+
+#SingleInstance
+tray := A_TrayMenu <em>; Für den praktischen Grund.</em>
+tray.add <em>; Trennlinie</em>
+tray.add "TestToggle&amp;Check"
+tray.add "TestToggleEnable"
+tray.add "TestDefault"
+tray.add "TestStandard"
+tray.add "TestDelete"
+tray.add "TestDeleteAll"
+tray.add "TestRename"
+tray.add "Test"
+return
+
+<em>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</em>
+
+TestToggle&amp;Check:
+tray.ToggleCheck "TestToggle&amp;Check"
+tray.Enable "TestToggleEnable" <em>; Aktiviert auch den nächsten Test, da es die Deaktivierung von sich selbst nicht rückgängig machen kann.</em>
+tray.add "TestDelete" <em>; Das gleiche wie oben.</em>
+return
+
+TestToggleEnable:
+tray.ToggleEnable "TestToggleEnable"
+return
+
+TestDefault:
+if tray.default = "TestDefault"
+    tray.default := ""
+else
+    tray.default := "TestDefault"
+return
+
+TestStandard:
+tray.Standard := !tray.Standard
+return
+
+TestDelete:
+tray.delete "TestDelete"
+return
+
+TestDeleteAll:
+tray.delete
+MsgBox "Das Skript wird eventuell jetzt beendet, da das Tray-Menü keine benutzerdefinierten Menüpunkte mehr enthält."
+return
+
+TestRename:
+if NeuerName &lt;&gt; "unbenannt"
+{
+    AlterName := "TestRename"
+    NeuerName := "unbenannt"
+}
+else
+{
+    AlterName := "unbenannt"
+    NeuerName := "TestRename"
+}
+tray.rename AlterName, NeuerName
+return
+
+Test(Punkt) {
+    MsgBox 'Sie haben "' Punkt '" ausgewählt.'
+}</pre>
+<pre class="NoIndent" id="Example4"><em>; BEISPIEL #4: Dieses Skript zeigt, wie Symbole in seinen Menüpunkten eingefügt werden können.</em>
+Dateimenü := MenuCreate()
+Dateimenü := MenuCreate()
+Dateimenü.Add("Skript-Symbol", "MenuHandler")
+Dateimenü.Add("Sperren-Symbol", "MenuHandler")
+Dateimenü.Add("Pause-Symbol", "MenuHandler")
+Dateimenü.SetIcon("Skript-Symbol", A_AhkPath, 2) <em>; 2. Symbolgruppe aus der Datei</em>
+Dateimenü.SetIcon("Sperren-Symbol", A_AhkPath, -206) <em>; Symbol mit Ressourcen-ID 206</em>
+Dateimenü.SetIcon("Pause-Symbol", A_AhkPath, -207) <em>; Symbol mit Ressourcen-ID 207</em>
+MeineMenüleiste := MenuCreate()
+MeineMenüleiste.Add("&amp;Datei", Dateimenü)
+Gui := GuiCreate()
+Gui.Menu := MeineMenüleiste
+Gui.Add("Button",, "Beendet dieses Beispiel").OnEvent("Click", "Exit_Click")
+Gui.Show
+
+MenuHandler() {
+    <em>; In diesem Beispiel machen die Menüpunkte nichts.</em>
+}
+
+Exit_Click() {
+    WinClose
+}</pre>
+<pre class="NoIndent" id="Example5"><em>; BEISPIEL #5: Anzahl der Menüpunkte und ID abrufen.</em>
+
+MeinMenü := MenuCreate()
+MeinMenü.Add "Menüpunkt 1", "nix"
+MeinMenü.Add "Menüpunkt 2", "nix"
+MeinMenü.Add "Menüpunkt B", "nix"
+
+<em>; Ermittelt die Anzahl von Menüpunkten in einem Menü.</em>
+menüpunkt_anzahl := DllCall("GetMenuItemCount", "ptr", MeinMenü.Handle)
+
+<em>; Ermittelt die ID des letzten Menüpunkts.</em>
+letzte_id := DllCall("GetMenuItemID", "ptr", MeinMenü.Handle, "int", menüpunkt_anzahl-1)
+
+MsgBox "MeinMenü hat " menüpunkt_anzahl " Menüpunkte, und sein letzter Menüpunkt hat die ID " letzte_id
+
+nix:
+return
+</pre>
+
+</body>
+</html>

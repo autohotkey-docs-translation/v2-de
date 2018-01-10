@@ -15,21 +15,15 @@
 
 <h2>Inhaltsverzeichnis</h2>
 <ul>
-  <li><a href="#Variables">Variablen</a></li>
-  <li><a href="#Expressions">Ausdrücke</a></li>
+  <li><a href="#Intro">Variablen</a></li>
+  <li><a href="#Expressions">Ausdrücke (Expressions)</a></li>
   <li><a href="#Operators">Operatoren innerhalb von Ausdrücken</a></li>
   <li><a href="#BuiltIn">Interne Variablen</a></li>
-  <li><a href="#env">Umgebungsvariablen vs. normale Variablen</a></li>
   <li><a href="#cap">Kapazität und Speicher einer Variable</a></li>
 </ul>
 <span id="Variables"></span><h2 id="Intro">Variablen</h2>
-<p id="Variable_types"><strong>Variablentypen</strong>: In AutoHotkey müssen die Typen der Variablen nicht explizit definiert werden. Stattdessen kann jede Variable eine Zeichenkette, einen Integer, Objektverweis oder eine Fließkommazahl enthalten. Darüber hinaus werden Zahlen automatisch in oder von Zeichenketten umgewandelt, falls notwendig. Mit der <a href="commands/Type.htm">Type</a>-Funktion kann der aktuelle Typ eines Wertes festgestellt werden.</p>
-<p id="Variable_scope"><strong>Gültigkeitsbereiche und Deklarationen von Variablen</strong>: Alle Variablen, außer <a href="Functions.htm#Locals">lokale Variablen</a> in Funktionen, sind global; das heißt, dass ihre Inhalte im jeden Bereich des Skripts gelesen oder geändert werden können. Im Normalfall müssen Variablen nicht deklariert werden (in <a href="Functions.htm#Global">Funktionen</a> gibt es Ausnahmen); Variablen stehen zur Verfügung, sobald sie verwendet werden (und enthalten zu Beginn eine leere Zeichenkette).</p>
-<p id="Variable_names"><strong>Variablennamen</strong>: Bei Variablennamen ist die Groß- und Kleinschreibung egal (zum Beispiel wäre <em>AktuellesDatum</em> das gleiche wie <em>aktuellesdatum</em>). Variablennamen können bis zu 253 Zeichen lang sein und dürfen nur aus Buchstaben, Zahlen, Unterstrichen und Nicht-ASCII-Zeichen bestehen. Variablennamen dürfen nicht mit einer Zahl beginnen.</p>
-<p id="Reserved_words"><strong>Reservierte Wörter:</strong> <code>and</code>, <code>contains</code>, <code>in</code>, <code>is</code>, <code>new</code>, <code>not</code> und <code>or</code>. Diese Wörter werden als <a href="#Operators">Operatoren</a> interpretiert und sind deshalb als Variablennamen ungeeignet, wenn sie in einem Ausdruck direkt geschrieben werden.</p>
-<p>Die Namen der Ablaufsteuerungsanweisungen sind auch reserviert, hauptsächlich um Fehler aufzuspüren. Dazu gehören: <code>Break</code>, <code>Catch</code>, <code>Continue</code>, <code>Else</code>, <code>Finally</code>, <code>For</code>, <code>Gosub</code>, <code>Goto</code>, <code>If</code>, <code>Loop</code>, <code>LoopFile</code>, <code>LoopParse</code>, <code>LoopRead</code>, <code>LoopReg</code>, <code>Return</code>, <code>Throw</code>, <code>Try</code>, <code>Until</code>, <code>While</code></p>
-<p>Funktionen, Klassen und Fenstergruppen benutzen dieselbe Validierung wie Variablen und sind deshalb von den gleichen Einschränkungen betroffen.</p>
-<p id="assigning"><strong>Speichern von Variablenwerten</strong>: Um eine Zeichenkette oder Zahl in eine Variable zu speichern, nutzt man den <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a> gefolgt von einer Zahl, einer in Anführungszeichen gesetzte Zeichenkette oder einem <a href="#Expressions">Ausdruck</a> beliebigen Typs. Zum Beispiel:</p>
+<p>Allgemeine Erläuterungen und Details zur Funktionsweise finden Sie unter <a href="Concepts.htm#variables">Variablen</a>.</p>
+<p id="assigning"><strong>Speichern von Variablenwerten</strong>: Um eine Zeichenkette oder Zahl in eine Variable zu speichern, nutzt man den <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a> gefolgt von einer Zahl, einer in Anführungszeichen gesetzte Zeichenkette oder einem <a href="Language.htm#expressions">Ausdruck</a> beliebigen Typs. Zum Beispiel:</p>
 <pre>MeineZahl := 123
 MeineZeichenkette := "Das ist eine direkt geschriebene Zeichenkette."
 KopieVonVar := Var</pre>
@@ -46,7 +40,8 @@ MsgBox Format("Var hat den Wert {1}.", Var)
 <pre>MsgBox("Die Summe von X und Y ist " . (X + Y))
 </pre>
 <p><strong>Vergleichen von Variablen</strong>: Bitte lesen Sie den folgenden Abschnitt, um zu erfahren, welche verschiedenen Arten von Vergleichen es gibt.</p>
-<h2 id="Expressions">Ausdrücke</h2>
+<h2 id="Expressions">Ausdrücke (Expressions)</h2>
+<p class="note">Eine strukturierte Übersicht und weitere Erläuterungen finden Sie unter <a href="Language.htm#expressions">Ausdrücke (Expressions)</a>.</p>
 <p>Ausdrücke sind nützlich, um eine oder mehrere Operationen in Verbindung mit mehreren Variablen, direkt geschriebenen Zeichenketten und/oder direkt geschriebenen Zahlen durchzuführen.</p>
 <p>Die Namen der Variablen dürfen innerhalb eines Ausdrucks nicht mit Prozentzeichen umschlossen werden (nur wenn es <a href="misc/Arrays.htm#pseudo">Pseudo-Arrays</a> und anderweitige <a href="#ref">Doppelverweise</a> sind). Direkt geschriebene Zeichenketten müssen demzufolge in Anführungszeichen gesetzt werden, um sie von Variablen zu unterscheiden. Zum Beispiel:</p>
 <pre>if (AktuelleEinstellung &gt; 100 or GefundeneFarbe &lt;&gt; "Blau")
@@ -71,18 +66,18 @@ SucheFortsetzen := true</pre>
 MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
 
 <h2 id="Operators">Operatoren innerhalb von Ausdrücken</h2>
-<p>Operatoren gleicher Priorität wie Multiplizieren (*) und Dividieren (/) werden von links nach rechts ausgewertet, sofern nicht anders unten angegeben. Ein Operator mit niedrigerer Priorität wie Addieren (+) wird <em>erst</em> ausgewertet, wenn ein höherer Operator wie Multiplizieren (*) ausgewertet wurde. Zum Beispiel würde 3 + 2 * 2 wie 3 + (2 * 2) ausgewertet werden. Mit runden Klammern können die Prioritäten überschrieben werden. Zum Beispiel: (3 + 2) * 2</p>
+<p class="note">Allgemeine Informationen über Operatoren finden Sie unter <a href="Language.htm#operators">Operatoren</a>.</p>
 <p>In einer mathematischen Operation werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte <strong>nicht</strong> als 0 gewertet, wenn nicht anders unten angegeben. Stattdessen wird es als Fehler behandelt, wodurch dieser Teil des Ausdrucks als leere Zeichenkette gewertet wird. Wenn die Variable X zum Beispiel leer wäre, würde der Ausdruck X+1 einen leeren Wert statt 1 zurückgeben.</p>
 
-<h3>Ausdrucksoperatoren (in absteigender Priorität)</h3>
+<h3 id="operators">Ausdrucksoperatoren (in absteigender Priorität)</h3>
 <table class="info">
   <tr id="ref">
     <td style="text-align:center; white-space:nowrap"><strong>%Ausdr%</strong></td>
     <td>
       <p>Wertet den Teilausdruck <em>Ausdr</em> aus und benutzt seinen Wert als Namen oder Teilnamen einer Variable oder Funktionen. Dadurch kann das Skript auf eine Variable oder Funktion verweisen, deren Name nicht direkt im Skript vorkommt, aber durch Auswerten von <em>Ausdr</em> ermittelt werden kann, was typischerweise eine andere Variable ist. Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
       <p><code>%Ausdr%()</code> führt einen <a href="Functions.htm#DynCall">dynamischen Funktionsaufruf</a> aus.</p>
-      <p><code>%Ausdr%</code> ruft dynamisch eine Variable via Name ab. Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der komplette oder teilweise vorhandene Name einer Variable sein, die abgerufen werden soll. Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und teilweise vorhandene <a href="#Variable_names">Variablennamen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
-      <p>Wenn die Variable noch nicht existieren sollte, wird eine leere Variable erstellt. Eine <a href="commands/Throw.htm#Exception">Ausnahme</a> wird ausgelöst, wenn der Name <a href="#Variable_names">ungültig</a> ist.</p>
+      <p><code>%Ausdr%</code> ruft dynamisch eine Variable via Name ab. Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der komplette oder teilweise vorhandene Name einer Variable sein, die abgerufen werden soll. Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und teilweise vorhandene <a href="Concepts.htm#names">Variablennamen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
+      <p>Wenn die Variable noch nicht existieren sollte, wird eine leere Variable erstellt. Eine <a href="commands/Throw.htm#Exception">Ausnahme</a> wird ausgelöst, wenn der Name <a href="Concepts.htm#names">ungültig</a> ist.</p>
       <p>Meistens wird das verwendet, um auf <a href="misc/Arrays.htm#pseudo">Pseudo-Array</a>-Elemente zu verweisen, wie z. B:</p>
       <pre>Loop 4
     MsgBox("IP-Adresse " A_Index " ist " <a href="#IPAddress">A_IPAddress</a>%<a href="commands/Loop.htm">A_Index</a>%)</pre>
@@ -125,7 +120,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><strong>Einstelliges Minuszeichen (-)</strong>: Invertiert das Vorzeichen des Operanden.</p>
       <p><strong>Einstelliges Pluszeichen (+)</strong>: <code>+N</code> ist das gleiche wie <code>-(-N)</code>. Dieser Operator hat keinen Effekt, wenn er auf eine reine Zahl angewendet wird, aber er ist nützlich, um numerische Zeichenketten in reine Zahlen zu konvertieren. Das Ergebnis ist, wie bei jedem anderen mathematischen Operator auch, ein leerer Wert (leere Zeichenkette), wenn der Operand weder eine Zahl noch eine numerische Zeichenkette ist.</p>
       <p><strong>Logisches NICHT (!)</strong>: Wenn der Operand leer oder 0 ist, wird das Ergebnis nach Anwenden des logischen NICHTs eine 1 sein, also "wahr". Ansonsten ist das Ergebnis eine 0 (falsch). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das Synonym zu <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
-      <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Handelt es sich bei den Operanden um eine Gleitkommazahl, wird er vor der Berechnung auf Integer-Größe gekürzt. Ist der Operand eine Zahl zwischen 0 und 4294967295 (0xffffffff), wird er als <u>vorzeichenloser</u> 32-Bit-Wert behandelt. Ansonsten wird er als <u>vorzeichenbehafteter</u> 64-Bit-Wert behandelt. Zum Beispiel wäre <code>~0xf0f</code> dann 0xfffff0f0 (4294963440).</p>
+      <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Handelt es sich bei den Operanden um eine Gleitkommazahl, wird er vor der Berechnung auf Integer-Größe gekürzt. Bei Verwendung von vorzeichenbehafteten 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden.</p>
       <p id="amp"><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ruft die Adresse des Inhalts von <em>MeineVar</em> im Speicher ab. Dieser Operator wird häufig in Verbindung mit <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> genutzt. Der Inhalt von <em>MeineVar</em> kann eine Zeichenkette, ein 64-Bit-Integer, eine 64-Bit-Gleitkommazahl oder ein Objekt sein.</p>
     </td>
   </tr>
@@ -318,7 +313,8 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
 <p id="CommaPerf"><strong>Performance</strong>: Ausdrücke, die mit einem Komma getrennt werden, sind performanter als einzeln geschriebene Ausdrücke, besonders wenn es darum geht, eine Variable in eine andere Variable zu speichern (z. B. <code>x := y, a := b</code>). Je mehr Ausdrücke zu einem einzigen Ausdruck zusammengefasst werden, desto höher ist die Performance; zum Beispiel könnte man ein Geschwindigkeitszuwachs von 35 % erreichen, wenn man fünf oder zehn einfache Ausdrücke zu einem Ausdruck kombiniert.</p>
 
 <h2 id="BuiltIn">Interne Variablen</h2>
-<p>Die folgenden Variablen sind fest in das Programm integriert und normal abrufbar. Solche Variablen sind schreibgeschützt, sofern nicht anders angegeben; das heißt, dass man ihren Inhalt nicht ändern kann.</p>
+<p>Die folgenden Variablen sind fest in das Programm integriert und normal abrufbar.</p>
+<p class="note">Allgemeine Informationen finden Sie unter <a href="Concepts.htm#built-in-variables">Interne Variablen</a>.</p>
 <h3>Inhaltsverzeichnis</h3>
 <ul>
   <li>Sonderzeichen: <a href="#Space">A_Space</a>, <a href="#Tab">A_Tab</a></li>
@@ -667,7 +663,7 @@ MsgBox Laufzeit " Millisekunden sind verstrichen."</pre>
   </tr>
   <tr id="Temp">
     <td>A_Temp</td>
-    <td>Der vollständige Pfadname des Ordners, der zum Speichern von temporären Dateien auserkoren wurde (z. B. C:\DOCUME~1\&lt;Benutzer&gt;\LOCALS~1\Temp). Folgende Standorte werden der Reihenfolge nach durchsucht, um den Pfadnamen zu ermitteln: 1) <a href="#env">Umgebungsvariable</a> TMP, TEMP oder USERPROFILE; 2) Windows-Verzeichnis.</td>
+    <td>Der vollständige Pfadname des Ordners, der zum Speichern von temporären Dateien auserkoren wurde (z. B. C:\DOCUME~1\&lt;Benutzer&gt;\LOCALS~1\Temp). Folgende Standorte werden der Reihenfolge nach durchsucht, um den Pfadnamen zu ermitteln: 1) <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> TMP, TEMP oder USERPROFILE; 2) Windows-Verzeichnis.</td>
   </tr>
   <tr id="OSVersion">
     <td>A_OSVersion</td>
@@ -703,11 +699,11 @@ MsgBox Laufzeit " Millisekunden sind verstrichen."</pre>
   <tr id="ProgramFiles">
     <td>A_ProgramFiles</td>
     <td>
-      <p>Der Programme-Ordner (z. B. <code>C:\Programme</code> oder <code>C:\Programme (x86)</code>). Die <a href="#env">Umgebungsvariable</a> <code>ProgramFiles</code> enthält in der Regel denselben Wert.</p>
+      <p>Der Programme-Ordner (z. B. <code>C:\Programme</code> oder <code>C:\Programme (x86)</code>). Die <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> <code>ProgramFiles</code> enthält in der Regel denselben Wert.</p>
       <p>Bei <a href="#Is64bitOS">64-Bit-Systemen</a> (nicht bei 32-Bit-Systemen) muss folgendes beachtet werden:</p>
       <ul>
         <li>Wenn die EXE-Datei, mit der das Skript ausgeführt wird, eine 32-Bit-Datei ist, enthält A_ProgramFiles den Pfadnamen des Ordners "Program Files (x86)".</li>
-        <li>Bei 32-Bit-Prozessen kann die <a href="#env">Umgebungsvariable</a> <code>ProgramW6432</code> abgerufen werden, um den Pfadnamen des 64-Bit-Ordners "Program Files" zu erhalten. Ab Windows 7 kann diese Umgebungsvariable auch bei 64-Bit-Prozessen abgerufen werden.</li>
+        <li>Bei 32-Bit-Prozessen kann die <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> <code>ProgramW6432</code> abgerufen werden, um den Pfadnamen des 64-Bit-Ordners "Program Files" zu erhalten. Ab Windows 7 kann diese Umgebungsvariable auch bei 64-Bit-Prozessen abgerufen werden.</li>
         <li>Die Umgebungsvariable <code>ProgramFiles(x86)</code> enthält den Pfadnamen des 32-Bit-Ordners "Program Files (x86)".</li>
       </ul>
     </td>
@@ -826,7 +822,7 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   </tr>
   <tr>
     <td>A_LoopFileName, etc.</td>
-    <td>Diese und andere verwandten Variablen sind nur für <a href="commands/LoopFile.htm">Dateimuster-Schleifen</a> relevant.</td>
+    <td>Diese und andere verwandten Variablen sind nur für <a href="commands/LoopFiles.htm">Dateimuster-Schleifen</a> relevant.</td>
   </tr>
   <tr>
     <td>A_LoopRegName, etc.</td>
@@ -834,7 +830,7 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   </tr>
   <tr>
     <td>A_LoopReadLine</td>
-    <td>Siehe <a href="commands/LoopReadFile.htm">Datei-lesende Schleife</a>.</td>
+    <td>Siehe <a href="commands/LoopRead.htm">Datei-lesende Schleife</a>.</td>
   </tr>
   <tr>
     <td>A_LoopField</td>
@@ -842,16 +838,12 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   </tr>
 </table>
 
-<h2 id="env">Umgebungsvariablen vs. normale Variablen</h2>
-<p>Umgebungsvariablen werden vom Betriebssystem verwaltet. Sie können sich eine Liste von Umgebungsvariablen anzeigen lassen, wenn Sie in der Windows-Konsole SET eingeben und ENTER drücken. Mit <a href="commands/EnvGet.htm">EnvGet</a> oder <a href="commands/EnvSet.htm">EnvSet</a> kann eine Umgebungsvariable abgerufen oder gesetzt werden.</p>
-<p>Mit <a href="commands/EnvSet.htm">EnvSet</a> kann eine neue Umgebungsvariable erstellt oder der Inhalt einer vorhandenen Umgebungsvariable geändert werden. Allerdings sind solche Ergänzungen und Änderungen privater Natur; das heißt, dass sie nur für das Skript sichtbar sind und im restlichen System ignoriert werden. Wenn ein Skript aber <a href="commands/Run.htm">Run</a> oder <a href="commands/Run.htm">RunWait</a> verwendet, um ein Programm (oder ein anderes Skript) zu starten, passiert Folgendes: Solche Programme erben die Umgebungsvariablen des übergeordneten Skripts, inklusive private Umgebungsvariablen.</p>
-
 <h2 id="cap">Kapazität und Speicher einer Variable</h2>
 <ul>
   <li>Wenn eine Zeichenkette in eine Variable gespeichert wird, die ihre Länge überschreitet, wird ihr zugewiesener Systemspeicher automatisch erweitert.</li>
   <li>Um den Speicher einer großen Variable freizugeben, weist man ihr nichts zu (z. B. <code>Var := ""</code>).</li>
   <li>Es können beliebig viele Variablen erstellt werden. Das Programm unterstützt mehrere Millionen Variablen, ohne dass es signifikant an Performance einbüßt.</li>
-  <li>Funktionen und Ausdrücke, die numerische Eingaben akzeptieren, unterstützen in der Regel 15-stellige Gleitkommawerte. Integer können vorzeichenbehaftete 64-Bit-Werte sein, die einen Bereich von -9223372036854775808 (-0x8000000000000000) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF) abdecken. Integer-Konstanten außerhalb dieses Bereichs werden nicht unterstützt und können zu inkonsistenten Ergebnissen führen. Arithmetische Operationen mit Integern werden bei Überlauf umgekehrt (z. B. 0x7FFFFFFFFFFFFFFF + 1 = -0x8000000000000000).</li>
+  <li>Funktionen und Ausdrücke, die numerische Eingaben akzeptieren, unterstützen in der Regel 15-stellige Gleitkommawerte. Integer können vorzeichenbehaftete 64-Bit-Werte sein, die einen Bereich von -9223372036854775808 (-0x8000000000000000) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF) abdecken. Integer-Konstanten außerhalb dieses Bereichs werden gekürzt. Ähnlich verhält es sich mit arithmetischen Operationen bei Integern, die bei einem Überlauf umgekehrt werden (z. B. 0x7FFFFFFFFFFFFFFF + 1 = -0x8000000000000000).</li>
 </ul>
 </body>
 </html>

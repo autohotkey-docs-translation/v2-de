@@ -34,9 +34,11 @@
 
 </dl>
 
-<p id="SendRaw"><strong>Raw-Modus</strong> - <em>SendRaw</em> oder <a href="#Raw">{Raw}</a>: Die Zeichen <code>^+!#{}</code> werden als direkt geschriebener Text interpretiert, anstatt z. B. <code>{Enter}</code> in ENTER, <code>^c</code> in STRG+C usw. zu übersetzen. Um den Raw-Modus bei SendInput, SendPlay oder SendEvent zu verwenden, gibt man <a href="#Raw">{Raw}</a> als erstes Element in der Zeichenkette an; zum Beispiel: <code>SendInput "{Raw}abc"</code>.</p>
+<p id="SendRaw"><strong>Raw-Modus</strong> - <em>SendRaw</em> oder <a href="#Raw">{Raw}</a>: Die Zeichen <code>^+!#{}</code> werden als direkt geschriebener Text interpretiert, anstatt z. B. <code>{Enter}</code> in ENTER, <code>^c</code> in STRG+C usw. zu übersetzen. Um den Raw-Modus bei SendInput, SendPlay, SendEvent oder ControlSend zu verwenden, gibt man <a href="#Raw">{Raw}</a> als erstes Element in der Zeichenkette an; zum Beispiel: <code>SendInput "{Raw}abc"</code>.</p>
 <p>Der <em>Raw-Modus</em> hat keinen Einfluss auf die Interpretation von <a href="../misc/EscapeChar.htm">Escapesequenzen</a> und <a href="../Variables.htm#Expressions">Ausdrücken</a>. Zum Beispiel würde <code>SendRaw "``100`%"</code> die Zeichenkette <code>`100%</code> senden. Bei <a href="ControlSend.htm">ControlSend</a> müssen zudem direkt geschriebene Kommas mit einem Escapezeichen versehen werden (<code>`,</code>).</p>
-<p id="specialchars"><strong>Normal-Modus</strong>: Wenn der Raw-Modus nicht aktiv ist, haben folgende Symbole eine besondere Bedeutung: <code>!+^#{}</code></p>
+<p id="SendText"><strong>Text-Modus</strong> - <code>{Text}</code>: Ähnlich wie der Raw-Modus, nur dass kein Versuch unternommen wird, Zeichen (außer <code>`r</code>, <code>`n</code>, <code>`t</code> und <code>`b</code>) in Tastencodes umzuwandeln; stattdessen wird für alle übrigen Zeichen die <a href="#fallback">Fallback</a>-Methode angewandt. Dieser Modus verbessert die Zuverlässigkeit von SendEvent, SendInput und ControlSend, da die Zeichen wesentlich weniger vom korrekten Modifikatorstatus abhängig sind. Der Text-Modus kann mit dem Blind-Modus kombiniert werden, um das Loslassen von Modifikatortasten zu vermeiden: <code>Send "{Blind}{Text}Ihr Text"</code>. In einigen Anwendungen müssen die Modifikatortasten jedoch losgelassen werden.</p>
+<p><code>`n</code>, <code>`r</code> und <code>`r`n</code> werden in einen einzelnen ENTER-Tastendruck umgewandelt, im Gegensatz zum Normal- und Raw-Modus, die <code>`r`n</code> in zwei ENTER-Tastendrücke umwandeln. <code>`t</code> wird in Tab und <code>`b</code> in Backspace umgewandelt, alle anderen Zeichen werden ohne Umwandlung gesendet.</p>
+<p id="specialchars"><strong>Normal-Modus</strong>: Wenn der Raw- oder Text-Modus nicht aktiv ist, haben folgende Symbole eine besondere Bedeutung: <code>!+^#{}</code></p>
 <p>Die Modifikatoren <code>!+^#</code> beeinflussen nur die direkt darauffolgende Taste. Um die entsprechende Modifikatortaste separat zu senden, umschließt man den Tastennamen mit geschweiften Klammern. Um eine Taste einfach nur zu drücken (gedrückt halten) oder loszulassen, muss nach dem Tastennamen das Wort "down" oder "up" erfolgen, wie unten gezeigt.</p>
 <style>
 #modifierkeys td:not(:last-child) { white-space: nowrap; text-align: center }
@@ -84,7 +86,8 @@
   </tr>
   <tr>
     <td>{ }</td>
-    <td colspan="4" style="white-space: normal; text-align: left">Mit geschweiften Klammern werden <a href="#keynames">Tastennamen und andere Optionen</a> umschlossen, um spezielle Zeichen als direkt geschriebenen Text zu senden. Zum Beispiel wäre <code>{Tab}</code> die TAB-Taste und <code>{!}</code> ein direkt geschriebenes Ausrufezeichen.</td>
+    <td colspan="4" style="white-space: normal; text-align: left"><p>Mit geschweiften Klammern werden <a href="#keynames">Tastennamen und andere Optionen</a> umschlossen, um spezielle Zeichen als direkt geschriebenen Text zu senden. Zum Beispiel wäre <code>{Tab}</code> die TAB-Taste und <code>{!}</code> ein direkt geschriebenes Ausrufezeichen.</p>
+    <p>Umschließt man einen reinen ASCII-Buchstaben (a-z oder A-Z) mit geschweiften Klammern, wird stattdessen sein entsprechender virtueller Tastencode gesendet, auch wenn das Zeichen im aktuellen Tastaturlayout nicht vorhanden ist. Das heißt, dass <code>Send "a"</code> den Buchstaben "a" erzeugen würde, während <code>Send "{a}"</code> je nach Tastaturlayout ein "a" erzeugt oder nicht. Einzelheiten finden Sie unter <a href="#AZ">Bemerkungen</a>.</p></td>
   </tr>
 </table>
 <p class="note"><strong>Hinweis</strong>: Großbuchstaben werden durch Senden der UMSCHALT-Taste erzeugt, daher würde z. B. <code>A</code> in einigen Programmen eine andere Wirkung als <code>a</code> erzielen. Zum Beispiel würde <code>!A</code> ALT+UMSCHALT+A und <code>!a</code> ALT+a drücken. Im Zweifelsfall sollte man immer Kleinbuchstaben verwenden.</p>
@@ -299,9 +302,9 @@
     <p>Um Unicode-Zeichen zu generieren, gibt man eine Nummer zwischen 256 und 65535 an (ohne 0 davor). Allerdings wird das nicht von jeder Anwendung unterstützt. Alternativen dazu finden Sie im nächsten Abschnitt.</p></td>
   </tr>
   <tr id="Unicode">
-    <td><span id="sendu"></span>{U+nnnn}</td>
-    <td><p>Sendet ein Unicode-Zeichen - <em>nnnn</em> ist der hexadezimale Wert des Zeichens ohne 0x-Präfix. Diese Methode ist üblicherweise nicht notwendig, weil Send und ControlSend automatisch Unicode-Text unterstützt.</p>
-    <p>Wenn das Zeichen keinem virtuellen Tastencode zugeordnet ist, wird <a href="https://msdn.microsoft.com/de-de/library/ms646310">SendInput()</a> oder <a href="https://msdn.microsoft.com/de-de/library/ms646276">WM_CHAR</a> verwendet, um das Zeichen zu senden, und der aktuelle Send-Modus ignoriert.</p></td>
+    <td>{U+nnnn}</td>
+    <td><p id="sendu">Sendet ein Unicode-Zeichen - <em>nnnn</em> ist der hexadezimale Wert des Zeichens ohne 0x-Präfix. Diese Methode ist üblicherweise nicht notwendig, weil Send und ControlSend automatisch Unicode-Text unterstützt.</p>
+    <p><a href="https://msdn.microsoft.com/de-de/library/ms646310">SendInput()</a> oder <a href="https://msdn.microsoft.com/de-de/library/ms646276">WM_CHAR</a> wird zum Senden des Zeichens verwendet, außerdem wird der aktuelle Send-Modus ignoriert. Zeichen, die auf diese Weise gesendet werden, lösen in der Regel keine Tastenkürzel oder Hotkeys aus.</p></td>
   </tr>
   <tr id="vk">
     <td><p>{vkXX}<br>
@@ -310,7 +313,8 @@
     
     {vkXXscYYY}</p></td>
     <td><p>Sendet eine Tastatureingabe, die die virtuelle Taste XX und den Scancode YYY hat. Zum Beispiel: <code>Send "{vkFFsc159}"</code>. Wenn man den sc- oder vk-Bereich weglässt, wird der am besten geeignete Wert an seiner Stelle gesendet.</p>
-      <p>Die Werte für XX und YYY sind hexadezimal und können üblicherweise über den Menüpunkt <a href="KeyHistory.htm">View-&gt; Key history</a> im Hauptfenster abgerufen werden. Siehe auch: <a href="../KeyList.htm#SpecialKeys">Sondertasten</a></p></td>
+      <p>Die Werte für XX und YYY sind hexadezimal und können üblicherweise über den Menüpunkt <a href="KeyHistory.htm">View-&gt; Key history</a> im Hauptfenster abgerufen werden. Siehe auch: <a href="../KeyList.htm#SpecialKeys">Sondertasten</a></p>
+      <p class="warning"><strong>Warnung:</strong> Eine solche Kombination von vk und sc ist nur mit Send gültig.</p></td>
   </tr>
   <tr>
     <th>&nbsp;</th>
@@ -507,14 +511,18 @@
     <td><strong>{Raw}</strong></td>
     <td>Aktiviert den <a href="#SendRaw"><em>Raw-Modus</em></a>, wodurch die folgenden Zeichen als direkt geschriebener Text interpretiert werden: <code>^+!#{}</code>. Zwar muss <code>{Raw}</code> nicht am Anfang der Zeichenkette vorkommen, allerdings bleibt es, wenn es einmal angegeben wurde, für den Rest der Zeichenkette aktiv.</td>
   </tr>
+  <tr id="Text">
+    <td><strong>{Text}</strong></td>
+    <td>Aktiviert den <a href="#SendText"><em>Text-Modus</em></a>, um eine Kette von Zeichen statt Tastendrücke zu senden. Der Text-Modus bewirkt wie der Raw-Modus, dass die folgenden Zeichen als direkt geschriebener Text interpretiert werden: <code>^+!#{}</code>. Zwar muss <code>{Text}</code> nicht am Anfang der Zeichenkette vorkommen, allerdings bleibt es, wenn es einmal angegeben wurde, für den Rest der Zeichenkette aktiv.</td>
+  </tr>
 </table>
 
 <h2>Mehrfaches oder haltendes Drücken einer Taste</h2>
-<p><strong>Mehrfaches Drücken</strong>: Umschließen Sie den Namen der Taste und die Anzahl an Wiederholungen mit geschweiften Klammern. Zum Beispiel:</p>
+<p id="repeat"><strong>Mehrfaches Drücken</strong>: Umschließen Sie den Namen der Taste und die Anzahl an Wiederholungen mit geschweiften Klammern. Zum Beispiel:</p>
 <pre>Send "{DEL 4}"  <em>; Drückt viermal die ENTF-Taste.</em>
 Send "{S 30}"   <em>; Sendet 30 große S-Zeichen.</em>
 Send "+{TAB 4}"  <em>; Drückt viermal UMSCHALT+TAB.</em></pre>
-<p><strong>Halten oder Loslassen</strong>: Umschließen Sie den Namen der Taste und das Wort <strong>Down</strong> oder <strong>Up</strong> mit geschweiften Klammern. Zum Beispiel:</p>
+<p id="Down"><strong>Halten oder Loslassen</strong>: Umschließen Sie den Namen der Taste und das Wort <strong>Down</strong> oder <strong>Up</strong> mit geschweiften Klammern. Zum Beispiel:</p>
 <pre>Send "{b down}{b up}"
 Send "{TAB down}{TAB up}"
 Send "{Up down}"  <em>; Drückt die NACH-OBEN-Taste nach unten.</em>
@@ -527,10 +535,26 @@ Send "{Up up}"  <em>; Lässt die NACH-OBEN-Taste los.</em></pre>
     Sleep 30  <em>; Die Anzahl an Millisekunden zwischen den Tastatureingaben (oder verwende <a href="SetKeyDelay.htm">SetKeyDelay</a>).</em>
 }
 Send "{Tab up}"  <em>; Lässt die Taste los.</em></pre>
-<p>Das Wort <em>DownTemp</em> kann auch verwendet werden. Sein Effekt das gleiche wie <em>Down</em>, außer bei Modifikatortasten (STRG/UMSCHALT/ALT/WIN). <em>DownTemp</em> benachrichtigt nachfolgende Send-Funktionen, dass die Taste nicht permanent im gedrückten Zustand ist, und dass sie jederzeit losgelassen werden könnte. Zum Beispiel würde <code>Send "{Control DownTemp}"</code> und dann <code>Send "a"</code> ein normales "a" erzeugen, nicht einen STRG+A-Tastendruck.</p>
+<p>Standardmäßig lässt Send eine Modifikatortaste (STRG/UMSCHALT/ALT/WIN) nicht automatisch los, wenn diese Modifikatortaste via Send "nach unten gedrückt" wurde. <code>Send "a"</code> beispielsweise verhält sich eventuell ähnlich wie <code>Send "<a href="#blind">{Blind}</a>{Ctrl up}a{Ctrl down}"</code>, wenn der Benutzer die STRG-Taste physisch gedrückt hält, während <code>Send "{Ctrl Down}"</code> gefolgt von <code>Send "a"</code> einen STRG+A-Tastendruck erzeugen würde. <em>DownTemp</em> und <em>DownR</em> können genutzt werden, um dieses Verhalten zu überschreiben. <em>DownTemp</em> und <em>DownR</em> haben die gleiche Wirkung wie <em>Down</em>, mit Ausnahme der Modifikatortasten (STRG/UMSCHALT/ALT/WIN).</p>
+<p id="DownTemp"><strong>DownTemp</strong> benachrichtigt nachfolgende Send-Befehle, dass die Taste nicht permanent im gedrückten Zustand ist, und dass sie jederzeit losgelassen werden könnte. Zum Beispiel würde <code>Send "{Control DownTemp}"</code> und dann <code>Send "a"</code> ein normales "a" erzeugen, nicht einen STRG+A-Tastendruck. Jede Verwendung von Send kann dazu führen, dass der Modifikator permanent losgelassen wird, daher ist <em>DownTemp</em> nicht gerade ideal, um Modifikatortasten <a href="../misc/Remap.htm">neuzubelegen</a>.</p>
+<p id="DownR"><strong>DownR</strong> (das "R" bedeutet <a href="../misc/Remap.htm">Remapping</a> bzw. Neubelegen, was dessen Hauptzweck darstellt) teilt nachfolgenden Sendevorgängen mit, dass die Taste, wenn sie automatisch losgelassen wird, nach Beendigung des Sendevorgangs erneut gedrückt werden sollte. Zum Beispiel würde <code>Send "{Control DownR}"</code> und dann <code>Send "a"</code> ein normales "a" erzeugen, nicht einen STRG+A-Tastendruck, aber die STRG-Taste im gedrückten Zustand lassen, um sie für Tastaturkürzel zu verwenden. Mit anderen Worten hat <em>DownR</em> denselben Effekt wie, als würde man die Taste physisch drücken.</p>
+<p>Wenn ein Zeichen nicht zu einer virtuellen Taste im aktuellen Tastaturlayout gehört, kann es nicht "gedrückt" oder "losgelassen" werden. <code>Send {µ up}</code> beispielsweise hat keinen Einfluss auf die meisten Layouts, während <code>Send {µ down}</code> das gleiche wie <code>Send µ</code> ist.</p>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
-<p>Es gibt keine bestimmten Einschränkungen bezüglich der Zeichen, die gesendet werden können. Wenn ein Zeichen auf der aktuellen Tastaturbelegung nicht existiert, wird es durch Senden eines Unicode-Zeichenpackets oder einer <a href="#asc">ALT+nnnnn</a>-Kombination künstlich erzeugt, abhängig von der AutoHotkey-Version. In den Unicode-Versionen von AutoHotkey können Unicode-Zeichen direkt angegeben werden, bei allen anderen Versionen nur mithilfe der <a href="#sendu">{U+nnnn}-Schreibweise</a>.</p>
+<p id="characters"><strong>Zeichen vs. Tasten</strong>: Standardmäßig werden Zeichen, bevor sie gesendet werden, in Tastendrücke umgewandelt. Wenn diese Umwandlung nicht möglich ist (also wenn das aktuelle Tastaturlayout keine Taste oder Tastenkombination enthält, die dieses Zeichen erzeugen würde), wird das Zeichen mittels einer der folgenden Fallback-Methoden gesendet:</p>
+<ul id="fallback">
+  <li>SendEvent und SendInput nutzen <a href="http://msdn.microsoft.com/de-de/library/ms646310">SendInput()</a> mit dem <a href="https://msdn.microsoft.com/de-de/library/ms646271#keyeventf_unicode">KEYEVENTF_UNICODE-Flag</a>.</span></li>
+  <li>SendPlay nutzt die <a href="#asc">Alt+nnnnn</a>-Methode, die nur Unicode erzeugt, wenn es von der Zielanwendung unterstützt wird.</li>
+  <li>Controlsend sendet eine <a href="https://msdn.microsoft.com/de-de/library/ms646276">WM_CHAR</a>-Meldung.</li>
+</ul>
+<p class="warning"><strong>Hinweis:</strong> Zeichen, die mit einer der oben genannten Methoden gesendet werden, lösen in der Regel keine Tastenkürzel oder Hotkeys aus.</p>
+<p id="AZ">Jedes Zeichen im Bereich von <strong>a-z</strong> oder <strong>A-Z</strong> (reine ASCII-Buchstaben), das im aktuellen Tastaturlayout nicht vorhanden ist, kann eventuell als Zeichen oder als entsprechender virtueller Tastencode (vk41-vk5A) gesendet werden:</p>
+<ul>
+  <li>Wenn ein reiner Buchstabe (also ohne Modifikatoren oder geschweifte Klammern) gesendet wird, oder wenn der <a href="#Raw">Raw-Modus</a> aktiv ist, wird er als Zeichen gesendet. <code>Send {Raw}Regards</code> beispielsweise sendet den erwarteten Text, obwohl das Drücken der Taste "r" (vk52) ein anderes Zeichen erzeugen könnte (z. B. к im russischen Layout). <code>{Raw}</code> kann in diesem Fall weggelassen werden, es sei denn, eine Modifikatortaste wurde durch ein vorheriges Send aktiviert.</li>
+  <li>Wenn eine oder mehrere Modifikatortasten durch den Send-Befehl aktiviert wurden, oder wenn der Buchstabe in geschweiften Klammern gesetzt ist, werden sie als Tastencode gesendet (mit UMSCHALT modifiziert, wenn der Buchstabe großgeschrieben ist). Dadurch kann das Skript auf einfache Weise die vordefinierten Tastenkürzel aktivieren. <code>^c</code> und <code>{Ctrl down}c{Ctrl up}</code> beispielsweise aktivieren das Standard-Tastenkürzel  STRG+C, während <code>{c}</code> das gleiche wie <code>{vk43}</code> ist.</li>
+</ul>
+<p>Wenn der Buchstabe im aktuellen Tastaturlayout vorhanden ist, wird er immer als Tastencode gesendet, den das Layout mit diesem Buchstaben assoziiert (es sei denn, der <a href="#SendText">Text-Modus</a> wird genutzt, in diesem Fall wird das Zeichen auf andere Weise gesendet). Das heißt, dass der obige Abschnitt nur für nicht-lateinische Layouts wie z. B. Russisch relevant ist.</p>
+<p id="mask"><strong>Modifikatorstatus</strong>: Wenn mit Send der Status von WIN- oder ALT-Modifikatortasten geändert werden muss (z. B. wenn der Benutzer eine dieser Tasten gedrückt hält), werden eventuell zusätzliche Tastendrücke (standardmäßig STRG)hinzugefügt, um zu verhindern, dass das Startmenü oder das Fenstermenü angezeigt wird. Weitere Informationen finden Sie unter <a href="_MenuMaskKey.htm">#MenuMaskKey</a>.</p>
 <p><strong>BlockInput im Vergleich zu SendInput/SendPlay</strong>: Zwar kann man mit der <a href="BlockInput.htm">BlockInput</a>-Funktion verhindern, dass physische Benutzereingaben den simulierten Eingabeverlauf unterbrechen, allerdings sollte man dafür besser <a href="#SendInputDetail">SendInput</a> oder <a href="#SendPlayDetail">SendPlay</a> verwenden. SendInput/Play verhindert im Gegensatz zu BlockInput, dass die eingegebenen Tasten des Benutzers während des Sendens verworfen werden; stattdessen werden solche Tastendrücke zwischengespeichert, um sie anschließend zu senden.</p>
 <p>Beim Senden vieler Tastatureingaben kann ein <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a> hilfreich sein, um den Text besser lesbar und verwaltbar zu machen.</p>
 <p>Da das Betriebssystem das Simulieren von STRG+ALT+ENTF nicht erlaubt, kann so etwas wie <code>Send "^!{Delete}"</code> nicht funktionieren.</p>

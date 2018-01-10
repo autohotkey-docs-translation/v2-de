@@ -20,7 +20,7 @@
   <li><a href="#optional">Optionale Parameter</a></li>
   <li><a href="#return">Werte an den Aufrufer zurückgeben</a></li>
   <li><a href="#Variadic">Variadische Funktionen</a></li>
-  <li><a href="#Locals">Lokale Variablen</a></li>
+  <li><a href="#Local">Lokale Variablen</a></li>
   <li><a href="#DynCall">Dynamisches Aufrufen einer Funktion</a></li>
   <li><a href="#ShortCircuit">Logische Kurzschlussauswertung</a></li>
   <li><a href="#gosub">Verwenden von Subroutinen innerhalb einer Funktion</a></li>
@@ -47,7 +47,7 @@ Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisu
 
 <h2 id="param">Parameter</h2>
 <p>Die Parameter einer Funktion werden in die runden Klammern rechts neben dem Funktionsnamen eingefügt (zwischen dem Namen und der runden Startklammer sind keine Leerzeichen erlaubt). Wenn die Funktion keine Parameter akzeptiert, können die runden Klammern leer gelassen werden; zum Beispiel: <code>ErmittleAktuellenZeitstempel()</code>.</p>
-<p id="ByRef"><strong>ByRef-Parameter</strong>: Innerhalb der Funktion werden Parameter grundsätzlich wie <a href="#Locals">lokale Variablen</a> behandelt, es sei denn, sie werden wie im folgenden Beispiel als <em>ByRef</em>-Parameter definiert:</p>
+<p id="ByRef"><strong>ByRef-Parameter</strong>: Innerhalb der Funktion werden Parameter grundsätzlich wie <a href="#Local">lokale Variablen</a> behandelt, es sei denn, sie werden wie im folgenden Beispiel als <em>ByRef</em>-Parameter definiert:</p>
 <pre>Tauschen(ByRef Links, ByRef Rechts)
 {
     temp := Links
@@ -63,7 +63,7 @@ Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisu
 <p>Bekannte Einschränkungen:</p>
 <ul>
   <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">interne Variablen</a> an eine Funktion via Verweis zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
-  <li id="recurse">Eine Funktion kann sich selbst rekursiv aufrufen. Beachten Sie aber, dass, wenn sie sich selbst ihre eigenen <a href="#Locals">lokalen Variablen</a> oder ByRef-lose Parameter via <em>ByRef</em> übergibt, der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit selben Namen verweist, anstatt auf dem Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
+  <li id="recurse">Eine Funktion kann sich selbst rekursiv aufrufen. Beachten Sie aber, dass, wenn sie sich selbst ihre eigenen <a href="#Local">lokalen Variablen</a> oder ByRef-lose Parameter via <em>ByRef</em> übergibt, der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit selben Namen verweist, anstatt auf dem Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
   <li>Variablen, die innerhalb eines Funktionsparameters aufgelöst werden müssen (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können von links oder rechts befindlichen Parametern geändert werden, bevor sie an die Funktion übergeben werden. <code>Funk(Var, Var++)</code> würde beispielsweise unerwartet 0 und 1 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, auch dann, wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses unlogische Verhalten wird eventuell in einer zukünftigen Version geändert.</li>
   <li>ByRef wird nicht direkt unterstützt, wenn die Funktion von einem COM-Clienten aufgerufen wurde oder wenn eine COM-Methode aufgerufen wird. Stattdessen erhält oder muss das Skript ein <a href="commands/ComObject.htm#ByRef">Wrapper-Objekt</a> übergeben, das den <a href="commands/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
 </ul>
@@ -164,15 +164,17 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
   <li>Zwischen dem Sternchen (<code>*</code>) und dem Symbol, das die Parameterliste beendet, dürfen keine Leerraumzeichen stehen.</li>
 </ul>
 <h2 id="Locals">Lokale und globale Variablen</h2>
-<h3>Lokale Variablen</h3>
+<h3 id="Local">Lokale Variablen</h3>
 <p>Lokale Variablen sind funktionsspezifisch und nur innerhalb dieser Funktion sichtbar. Folglich kann eine lokale Variable, die denselben Namen hat wie eine globale Variable, etwas anderes als die globale Variable enthalten. Verschiedene Funktionen können bedenkenlos die gleichen Variablennamen benutzen.</p>
 <p>Alle lokalen Variablen, die nicht <a href="#static">statisch</a> sind, werden automatisch freigegeben (leer gemacht), wenn die Funktion ihr Ende erreicht hat.</p>
-<p>Variablen, die innerhalb einer Funktion abgerufen oder erstellt werden, sind standardmäßig lokal, aber es gibt folgende Ausnahmen:</p>
+<p>Interne Variablen wie <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a> sind nie lokal (sie sind von überall aus erreichbar) und können nicht neu deklariert werden.</p>
+<p id="AssumeLocal">Funktionen sind standardmäßig im <strong>Assume-Local</strong>-Modus. Variablen, die innerhalb einer Assume-Local-Funktion zugegriffen oder erstellt werden, sind standardmäßig lokal, mit Ausnahme von <a href="#SuperGlobal">superglobalen</a> Variablen wie <a href="Objects.htm#Custom_Classes">Klassen</a>.</p>
+<p>Siehe unten, wie das Standardverhalten überschrieben werden kann (indem man die Variable deklariert oder den Modus der Funktion ändert).</p>
+<p id="ForceLocal"><strong>Force-Local-Modus</strong>: Wenn die erste Zeile der Funktion das Wort "local" ist, werden alle Variablenverweise als lokal angesehen, es sei denn, sie werden <em>innerhalb</em> der Funktion als global deklariert. Im Gegensatz zum Standardmodus verhält sich der Force-Local-Modus wie folgt:</p>
 <ul>
-  <li><a href="#SuperGlobal">Superglobale</a> Variablen, inklusive <a href="Objects.htm#Custom_Classes">Klassen</a>.</li>
-  <li>Interne Variablen wie <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a>.</li>
+  <li>Superglobale Variablen (einschließlich Klassen) sind nur zugänglich, wenn sie innerhalb der Funktion deklariert werden.</li>
+  <li>Innerhalb einer Force-Local-Funktion kann nie die <em>LocalSameAsGlobal</em>-<a href="commands/_Warn.htm">Warnung</a> für Variablen ausgelöst wird.</li>
 </ul>
-<p>Siehe unten, wie das Standardverhalten überschrieben werden kann.</p>
 
 <h3 id="Global">Globale Variablen</h3>
 <p>Um innerhalb einer Funktion auf eine vorhandene globale Variable zu verweisen (oder eine neue zu erstellen), deklariert man die Variable als globale Variable, bevor man sie verwendet. Zum Beispiel:</p>
@@ -189,7 +191,7 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
     local x, y:=0, z  <em>; Lokale Variablen müssen in diesem Modus deklariert werden, weil sie sonst global behandelt werden.</em>
 }</pre>
 <p>Dieser Assume-Global-Modus kann auch von einer Funktion verwendet werden, um ein globales <a href="misc/Arrays.htm">Pseudo-Array</a> zu erstellen - z. B. eine Schleife, die Werte in <code>Array%A_Index%</code> speichert.</p>
-<p id="SuperGlobal"><strong>Superglobale Variablen</strong>: Geschieht eine globale Deklaration außerhalb einer Funktion, gilt sie standardmäßig für alle Funktionen. Dadurch wird verhindert, dass die Variablen in jeder Funktion neu deklariert werden müssen. Allerdings haben Funktionsparameter oder lokale Variablen, die denselben Namen haben wie globale Variablen, Vorrang vor globale Variablen. Variablen, die mit dem Schlüsselwort <a href="Objects.htm#Custom_Classes">class</a> erzeugt wurden, sind ebenfalls superglobal.</p>
+<p id="SuperGlobal"><strong>Superglobale Variablen</strong>: Geschieht eine globale Deklaration außerhalb einer Funktion, gilt sie standardmäßig für alle Funktionen (außer <a href="#ForceLocal">Force-Local</a>-Funktionen). Dadurch wird verhindert, dass die Variablen in jeder Funktion neu deklariert werden müssen. Allerdings haben Funktionsparameter oder lokale Variablen, die denselben Namen haben wie globale Variablen, Vorrang vor globale Variablen. Variablen, die mit dem Schlüsselwort <a href="Objects.htm#Custom_Classes">class</a> erzeugt wurden, sind auch superglobal.</p>
 <h3 id="static">Statische Variablen</h3>
 <p>Obwohl statische Variablen immer indirekt lokal sind, unterscheiden sie sich von lokalen Variablen, weil ihre Werte zwischen den Funktionsaufrufen erhalten bleiben. Zum Beispiel:</p>
 <pre>LogZuDatei(TextZuLog)
@@ -213,7 +215,20 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
     }
     return StatischesArray%Elementnummer%
 }</pre>
-<p>Im Assume-Static-Modus muss jede Variable, die nicht statisch sein soll, als lokal oder global deklariert werden.</p>
+<p>Im Assume-Static-Modus muss jede Variable, die nicht statisch sein soll, als lokal oder global deklariert werden (mit den gleichen Ausnahmen wie beim <a href="#AssumeLocal">Assume-Local-Modus</a>, sofern der <a href="#ForceLocal">Force-Local-Modus</a> nicht auch noch aktiv ist).</p>
+<p>Der <a href="#ForceLocal">Force-Local-Modus</a> kann mit dem Assume-Static-Modus kombiniert werden, indem man <code>local</code> und dann <code>static</code> angibt, wie unten gezeigt. Dies ermöglicht es der Funktion, Force-Local-Regeln zu verwenden, aber standardmäßig Variablen als statische Variablen zu erstellen.</p>
+<pre>global MeineVar := "Das ist global"
+ZeigeForceStatic()
+
+ZeigeForceStatic()
+{
+    local
+    static
+    MeineVar := "Das ist statisch"
+    ListVars
+    MsgBox
+}
+</pre>
 <h3>Mehr über lokale und globale Variablen</h3>
 <p>Mehrere Variablen können mithilfe eines Kommas auf derselben Zeile deklariert werden. Zum Beispiel:</p>
 <pre>global LogDateiname, MaxVersuche := 5
@@ -243,12 +258,12 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Der <a href="Variables.htm#ternary">ternäre Bedingungsoperator (?:)</a> wendet auch die Kurzschlussauswertung an, indem er nur die gewinnende Abzweigung auswertet.</p>
 <h2 id="gosub">Verwenden von Subroutinen innerhalb einer Funktion</h2>
 <p>Eine Funktion kann Subroutinen, aber keine <a href="#define">Definitionen</a> von anderen Funktionen enthalten. Sie können wie alle Subroutinen via <a href="commands/Gosub.htm">GoSub</a> gestartet und via <a href="commands/Return.htm">Return</a> beendet werden (in diesem Fall gilt das Return nicht für die Funktion, sondern für das GoSub).</p>
-<p id="GosubPublic">Wenn eine Funktion <a href="commands/Gosub.htm">GoSub</a> verwendet, um zu einer öffentlichen Subroutine zu springen (also eine, die außerhalb der geschweiften Funktionsklammern zu finden ist), sind alle externen Variablen global und die <a href="#Locals">lokalen Variablen</a> der Funktion erst wieder zugänglich, wenn die Subroutine ihr Ende erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
+<p id="GosubPublic">Wenn eine Funktion <a href="commands/Gosub.htm">GoSub</a> verwendet, um zu einer öffentlichen Subroutine zu springen (also eine, die außerhalb der geschweiften Funktionsklammern zu finden ist), sind alle externen Variablen global und die <a href="#Local">lokalen Variablen</a> der Funktion erst wieder zugänglich, wenn die Subroutine ihr Ende erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
 <p>Ein <a href="commands/Goto.htm">Goto</a> kann nicht verwendet werden, um innerhalb einer Funktion zu einer externen Subroutine zu springen, allerdings kann eine Funktion via <a href="commands/Gosub.htm">Gosub</a> zu einer externen Subroutine springen und von dort aus ein Goto durchführen.</p>
 <p>Ein <a href="commands/Goto.htm">Goto</a> ist trotz seines schlechten Rufes zum Beispiel nützlich, um innerhalb einer Funktion auf eine andere Position zu springen. Dies kann dazu beitragen, komplexe Funktionen zu vereinfachen, die mehrere Returns haben und vor einem Return aufgeräumt werden müssen.</p>
 <p>Eine Funktion kann Subroutinen enthalten, die extern aufgerufen werden, wie z. B. <a href="commands/SetTimer.htm">Timer</a> und <a href="objects/Menu.htm">Menüpunkte</a>. Dies ist eine übliche Vorgehensweise, um die Subroutinen in einer separaten Datei für <a href="commands/_Include.htm">#Include</a> zusammenzufassen. Dadurch wird verhindert, dass der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> des Skripts gestört wird. Allerdings gelten folgende Einschränkungen:</p>
 <ul>
-  <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Locals">lokalen</a> Variablen), wenn ihre Funktion jemals normal aufgerufen wird. Sonst könnte ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), die lokalen Variablen des unterbrochenen Threads ändern. Jedes Mal, wenn eine Funktion ihr Ende erreicht hat, werden alle lokalen Variablen leer gemacht, um ihren Speicher freizugeben.</li>
+  <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Local">lokalen</a> Variablen), wenn ihre Funktion jemals normal aufgerufen wird. Sonst könnte ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), die lokalen Variablen des unterbrochenen Threads ändern. Jedes Mal, wenn eine Funktion ihr Ende erreicht hat, werden alle lokalen Variablen leer gemacht, um ihren Speicher freizugeben.</li>
   <li>Wenn ein Subroutinen-<a href="misc/Threads.htm">Thread</a> in eine Funktion eindringt, werden alle Verweise auf <a href="misc/Arrays.htm">dynamische Variablen</a>, die von diesem Thread erstellt wurden, als <a href="#Global">globale Variablen</a> behandelt (einschließlich Funktionen, die Arrays erzeugen). <a href="misc/Labels.htm">Lokale Label</a> hingegen können nicht dynamisch verwiesen werden.</li>
 </ul>
 <h2 id="remarks">Return, Exit und allgemeine Bemerkungen</h2>
@@ -257,10 +272,10 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Eine Funktion kann den Wert von <a href="misc/ErrorLevel.htm">ErrorLevel</a> verändern, um einen leicht zu merkenden zusätzlichen Wert zurückzugeben.</p>
 <p>Um eine Funktion mit einem oder mehreren leeren Werten (leeren Zeichenketten) aufzurufen, verwendet man ein leeres Anführungszeichen-Paar. Zum Beispiel: <code>FindeFarbe(FarbName, "")</code>.</p>
 <p>Da das Aufrufen einer Funktion keinen neuen <a href="misc/Threads.htm">Thread</a> startet, werden Änderungen an Einstellungen wie <a href="commands/SendMode.htm">SendMode</a> und <a href="commands/SetTitleMatchMode.htm">SetTitleMatchMode</a> auch für den Aufrufer wirksam.</p>
-<p>Der Aufrufer kann nicht-existierende Variablen oder <a href="misc/Arrays.htm">Array</a>-Elemente an eine Funktion übergeben. Dies ist nützlich, wenn die Funktion den entsprechenden Parameter als <a href="#ByRef">ByRef</a> erwartet. Ruft man beispielsweise <code>ErmittleNächsteZeile(LeeresArray%i%)</code> auf, wird die Variable <code>LeeresArray%i%</code> automatisch als <a href="#Locals">lokale</a> oder globale Variable erstellt (abhängig davon, ob der Aufrufer sich in einer Funktion befindet und ob der <a href="#AssumeGlobal">Assume-Global-Modus</a> wirksam ist).</p>
-<p><a href="commands/ListVars.htm">ListVars</a> kann, wenn es in einer Funktion verwendet wird, die Namen und Inhalte von <a href="#Locals">lokalen Variablen</a> anzeigen. Dies kann dazu beitragen, ein Skript zu debuggen.</p>
+<p>Der Aufrufer kann nicht-existierende Variablen oder <a href="misc/Arrays.htm">Array</a>-Elemente an eine Funktion übergeben. Dies ist nützlich, wenn die Funktion den entsprechenden Parameter als <a href="#ByRef">ByRef</a> erwartet. Ruft man beispielsweise <code>ErmittleNächsteZeile(LeeresArray%i%)</code> auf, wird die Variable <code>LeeresArray%i%</code> automatisch als <a href="#Local">lokale</a> oder globale Variable erstellt (abhängig davon, ob der Aufrufer sich in einer Funktion befindet und ob der <a href="#AssumeGlobal">Assume-Global-Modus</a> wirksam ist).</p>
+<p><a href="commands/ListVars.htm">ListVars</a> kann, wenn es in einer Funktion verwendet wird, die Namen und Inhalte von <a href="#Local">lokalen Variablen</a> anzeigen. Dies kann dazu beitragen, ein Skript zu debuggen.</p>
 <h2>Stil- und Namenskonventionen</h2>
-<p>Komplexe Funktionen sind besser lesbar und verwaltbar, wenn ihre speziellen Variablen mit einem eindeutigen Präfix benannt werden. Die Parameter einer Funktion können beispielsweise mit einem führenden "p" oder "p_" benannt werden, damit sie auf den ersten Blick leicht zu erkennen sind, besonders um die Übersicht zu bewahren, wenn eine Funktion mehrere Dutzend <a href="#Locals">lokale Variablen</a> enthält. Ebenso kann das Präfix "r" oder "r_" für <a href="#ByRef">ByRef-Parameter</a> und "s" oder "s_" für <a href="#static">statische Variablen</a> verwendet werden.</p>
+<p>Komplexe Funktionen sind besser lesbar und verwaltbar, wenn ihre speziellen Variablen mit einem eindeutigen Präfix benannt werden. Die Parameter einer Funktion können beispielsweise mit einem führenden "p" oder "p_" benannt werden, damit sie auf den ersten Blick leicht zu erkennen sind, besonders um die Übersicht zu bewahren, wenn eine Funktion mehrere Dutzend <a href="#Local">lokale Variablen</a> enthält. Ebenso kann das Präfix "r" oder "r_" für <a href="#ByRef">ByRef-Parameter</a> und "s" oder "s_" für <a href="#static">statische Variablen</a> verwendet werden.</p>
 <p>Der <a href="commands/Block.htm#otb">One True Brace Style</a> (OTB) kann je nach Bedarf angewendet werden, um Funktionen zu definieren. Zum Beispiel:</p>
 <pre>Addieren(x, y) <strong>{</strong>
     return x + y
