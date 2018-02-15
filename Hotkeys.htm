@@ -101,9 +101,9 @@ return</pre>
     <td><p>Verhindert, dass die ursprünglichen Funktionen der Hotkey-Tasten blockiert werden (bzw. im System versteckt werden). Die Hotkeys im folgenden Beispiel bewirken, dass der Mausklick des Benutzers an das aktive Fenster gesendet wird, egal welche Aktionen ihnen zugewiesen ist:</p>
       <pre>~RButton::MsgBox "Sie haben die rechte Maustaste gedrückt."
 ~RButton &amp; C::MsgBox "Sie haben C gedrückt, während Sie die rechte Maustaste gedrückt hielten."</pre>
-      <p>Im Gegensatz zu den anderen Präfix-Symbolen darf das Tilde-Präfix in einigen <a href="commands/_IfWinActive.htm#variant">Varianten</a> eines Hotkeys vorkommen und in anderen nicht. Wenn ein Tildezeichen allerdings an die <a href="#prefix">Präfixtaste</a> einer beliebigen benutzerdefinierten Tastenkombination angefügt wurde, die weder ausgeschaltet noch gesperrt ist, wird das Verhalten dieser Präfixtaste bei <em>allen</em> Kombinationen beeinflusst.</p>
+      <p>Im Gegensatz zu den anderen Präfix-Symbolen darf das Tilde-Präfix in einigen <a href="commands/_If.htm#variant">Varianten</a> eines Hotkeys vorkommen und in anderen nicht. Wenn ein Tildezeichen allerdings an die <a href="#prefix">Präfixtaste</a> einer beliebigen benutzerdefinierten Tastenkombination angefügt wurde, die weder ausgeschaltet noch gesperrt ist, wird das Verhalten dieser Präfixtaste bei <em>allen</em> Kombinationen beeinflusst.</p>
       <p>Spezielle Hotkeys, die etwas mit <a href="#alttab">Alt-Tab</a> zu tun haben, ignorieren immer das Tilde-Präfix.</p>
-      <p>Wenn das Tilde-Präfix an eine benutzerdefinierte Modifikatortaste (<a href="#prefix">Präfixtaste</a>) angefügt wird, die selbst auch ein Hotkey ist, wird dieser Hotkey ausgelöst, sobald die Taste nach unten gedrückt wird, und nicht erst, nachdem die Taste losgelassen wurde. Zum Beispiel wird der oben genannte Hotkey <em>~RButton</em> bereits ausgelöst, wenn die Maustaste nach unten gedrückt wird. Vor v1.1.14 (bzw. ohne Tilde-Präfix) wurde der Hotkey erst ausgelöst, nachdem die Maustaste losgelassen wurde, sofern die Tastenkombination <em>RButton &amp; C</em> nicht aktiviert war.</p>
+      <p>Wenn das Tilde-Präfix an eine benutzerdefinierte Modifikatortaste (<a href="#prefix">Präfixtaste</a>) angefügt wird, die selbst auch ein Hotkey ist, wird dieser Hotkey ausgelöst, sobald die Taste nach unten gedrückt wird, und nicht erst, nachdem die Taste losgelassen wurde. Zum Beispiel wird der oben genannte Hotkey <em>~RButton</em> bereits ausgelöst, wenn die Maustaste nach unten gedrückt wird.</p>
       <p>Wenn das Tilde-Präfix nur an die benutzerdefinierte Tastenkombination angefügt wird, aber nicht an den kombinationslosen Hotkey, wird die ursprüngliche Funktion der Taste weiterhin blockiert. Zum Beispiel bewirkt das folgende Skript, dass die MENÜ-Taste, sobald sie gedrückt gehalten wird, nicht das Kontextmenü auslöst, sondern einen ToolTip anzeigt:</p>
       <pre>AppsKey::ToolTip "Drücke &lt; oder &gt; zum Durchschalten der Fenster."
 AppsKey Up::ToolTip
@@ -145,12 +145,12 @@ return</pre>
 <pre>RWin::return</pre>
 
 <h2 id="Context">Kontextabhängige Hotkeys</h2>
-<p>Die Direktiven <a href="commands/_IfWinActive.htm">#IfWinActive/Exist</a> und <a href="commands/_If.htm">#If</a> können benutzt werden, um Hotkeys je nach Bedingung unterschiedliche (oder überhaupt keine) Aktionen durchführen zu lassen. Zum Beispiel:</p>
-<pre>#IfWinActive ahk_class Notepad
+<p>Die <a href="commands/_If.htm">#If</a>-Direktive kann genutzt werden, um Hotkeys je nach Bedingung unterschiedliche (oder überhaupt keine) Aktionen durchführen zu lassen. Zum Beispiel:</p>
+<pre>#If WinActive("ahk_class Notepad")
 ^a::MsgBox "Sie haben STRG+A gedrückt, während der Texteditor aktiv ist. Drückt man STRG+A in irgendeinem anderen Fenster, wird die Tastenkombination selbst gesendet."
 #c::MsgBox "Sie haben WIN+C gedrückt, während der Texteditor aktiv ist."
 
-#IfWinActive
+#If
 #c::MsgBox "Sie haben WIN+C gedrückt, während ein beliebiges Fenster außer Texteditor aktiv ist."
 
 #If <a href="commands/_If.htm#Examples">MouseIsOver</a>("ahk_class Shell_TrayWnd")
@@ -222,7 +222,7 @@ return</pre>
 <p>Wenn der <a href="#Tilde">Tilde-Operator (~)</a> einmal in Verbindung mit einer <a href="#prefix">Präfixtaste</a> gebracht wurde, ändert er das Verhalten dieser Präfixtaste bei allen Kombinationen. Bei den beiden Hotkeys unten würden beispielsweise alle Rechtsklick-Ereignisse beim aktiven Fenster ankommen, obwohl nur eine der Definitionen das Tilde-Zeichen enthält:</p>
 <pre>~RButton &amp; LButton::MsgBox "Sie haben die linke Maustaste gedrückt, während Sie die Rechte gedrückt hielten."
 RButton &amp; WheelUp::MsgBox "Sie haben das Mausrad nach oben gedreht, während Sie die rechte Maustaste gedrückt hielten."</pre>
-<p>Die <a href="commands/Suspend.htm">Suspend</a>-Funktion kann vorübergehend alle Hotkeys deaktivieren, außer Hotkeys, die Sie gezielt ausgeschlossen haben. Mit <a href="commands/_IfWinActive.htm">#IfWinActive/Exist</a> kann man besser abstimmen, welche Hotkeys wann und wo aktiv sein sollen.</p>
+<p>Die <a href="commands/Suspend.htm">Suspend</a>-Funktion kann vorübergehend alle Hotkeys deaktivieren, außer Hotkeys, die Sie gezielt ausgeschlossen haben. Mit <a href="commands/_If.htm">#If</a> kann man besser abstimmen, welche Hotkeys wann und wo aktiv sein sollen.</p>
 <p>Mithilfe der <a href="commands/Hotkey.htm">Hotkey</a>-Funktion können Hotkeys dynamisch erstellt werden, während das Skript läuft. Die Hotkey-Funktion kann zudem bereits existierende Hotkeys einzeln bearbeiten, deaktivieren oder aktivieren.</p>
 <p>Aktuell unterstützen Joystick-Hotkeys keine Modifikatorpräfixe wie ^ (STRG) und # (WIN). Allerdings kann dieser Effekt mit <a href="commands/GetKeyState.htm">GetKeyState</a> nachgeahmt werden:</p>
 <pre>Joy2::
@@ -262,7 +262,7 @@ WheelUp::ShiftAltTab</pre>
 if WinExist("ahk_class #32771")  <em>; Setzt voraus, dass das Alt-Tab-Menü auf dem Bildschirm vorhanden ist.</em>
     Send "<strong>!</strong>{Escape}{Alt up}"
 return</pre>
-<p>Zurzeit müssen alle speziellen Alt-Tab-Aktionen direkt einem Hotkey wie oben zugewiesen werden (das heißt, dass sie nicht wie Funktionen behandelt werden können). Sie werden <span class="red">nicht von <a href="commands/_IfWinActive.htm">#IfWin</a> oder <a href="commands/_If.htm">#If</a> beeinflusst</span>.
+<p>Zurzeit müssen alle speziellen Alt-Tab-Aktionen direkt einem Hotkey wie oben zugewiesen werden (das heißt, dass sie nicht wie Funktionen behandelt werden können). Sie werden <span class="red">nicht von <a href="commands/_If.htm">#If</a> beeinflusst</span>.
 </p>
 <p>Benutzerdefinierte Alt-Tab-Aktionen können auch via Hotkeys erstellt werden. Das folgende Beispiel zeigt, wie man mit F1 das Menü öffnen und durchschalten kann und wie man mit F2 das ausgewählte Fenster aktivieren kann (oder wie man mit ESC das Menü schließen kann):</p>
 <pre>*F1::Send "{Alt down}{tab}" <em>; Sternchen ist in diesem Fall notwendig.</em>

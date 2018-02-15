@@ -22,7 +22,7 @@
   <dt>Key<br>
     
     Value</dt>
-  <dd><p>Die Namen der Variablen, in denen der Key und Value zu Beginn jeder Iteration (Wiederholung) gespeichert werden soll.</p>
+  <dd><p>Die Variablen, in denen die Werte gespeichert werden sollen, die der Enumerator zu Beginn jeder Iteration zurückgibt - das ist in der Regel der Key und Value jedes Key-Value-Paares innerhalb des Objekts. Die tatsächliche Beschaffenheit dieser Werte wird durch den Enumerator definiert (und der Typ des Enumerators wird durch das Zielobjekt definiert).</p>
   <p>Wenn die Schleife unterbrochen wird oder das Ende erreicht, werden die vorherigen Werte von diesen Variablen wiederhergestellt.</p></dd>
 
   <dt>Ausdruck</dt>
@@ -31,15 +31,16 @@
 </dl>
 
 <h3>Bemerkungen</h3>
-<p><i>Ausdruck</i> wird, bevor die Schleife beginnt, nur einmal ausgewertet. Ist sein Ergebnis kein Objekt, springt die Ausführung sofort auf die Zeile, welche nach dem Schleifenblock erfolgt; ansonsten wird die <code>_NewEnum</code>-Methode des Objekts aufgerufen, um ein <a href="../objects/Enumerator.htm"><i>Enumerator</i></a>-Objekt zu erzeugen. Zu Beginn jeder Iteration wird mit der <a href="../objects/Enumerator.htm#Next">Next</a>-Methode des Enumerators das nächste Key-Value-Paar abgerufen. Wenn Next eine 0 oder leere Zeichenkette zurückgibt, wird die Schleife beendet.</p>
+<p>Die Parameterliste kann optional mit runden Klammern umschlossen werden. Zum Beispiel: <code>for (Key in meinObjekt)</code></p>
+<p><i>Ausdruck</i> wird, bevor die Schleife beginnt, nur einmal ausgewertet. Die <code>_NewEnum</code>-Methode des resultierenden Objekts wird aufgerufen, um ein <a href="../objects/Enumerator.htm"><i>Enumerator</i></a>-Objekt abzurufen. Zu Beginn jeder Iteration wird mit der <a href="../objects/Enumerator.htm#Next">Next</a>-Methode des Enumerators das nächste Key-Value-Paar abgerufen. Wenn Next eine 0 oder leere Zeichenkette zurückgibt, wird die Schleife beendet.</p>
 <p>Das folgende Beispiel zeigt diesen Prozess, auch wenn es nicht das gleiche ist wie eine For-Schleife:</p>
 <pre>_enum := (<i>Ausdruck</i>)._NewEnum()
-if IsObject(_enum)
-    while _enum.Next(Key, Value)
-    {
-        ...
-    }
+while _enum.Next(Key, Value)
+{
+    ...
+}
 </pre>
+<p>Im Code oben wird eine Ausnahme ausgelöst, wenn <em>Ausdruck</em> oder _NewEnum kein Objekt zurückgibt oder wenn eine erforderliche Methode fehlt.</p>
 <p>Vorhandene Key-Value-Paare können geändert werden, während die Schleife läuft. Allerdings führt das Einfügen oder Entfernen von Keys dazu, dass einige Elemente übersprungen oder mehrfach enumeriert werden. Diesen Sachverhalt kann man umgehen, wenn man zuerst eine Liste mit Keys erstellt, die entfernt werden sollen, und danach eine zweite Schleife verwendet, um die Keys nach dem ersten Schleifendurchlauf zu entfernen. Beachten Sie, dass mit <code><a href="../objects/Object.htm#Delete">Object.Delete</a>(<i>ErsterKey</i>, <i>LetzterKey</i>)</code> eine bestimmte Auswahl von Keys entfernt werden können, ohne eine Schleife verwenden zu müssen.</p>
 <p>Nach einer For-Schleife erfolgt üblicherweise ein <a href="Block.htm">Block</a> mit mehreren Anweisungen, die den <em>Schleifenkörper</em> bilden. Hat die Schleife nur eine Anweisung, ist ein Block nicht notwendig (in diesem Fall zählt ein "if" und das dazugehörige "else" als eine Anweisung). Bei Bedarf kann man den "One True Brace Style" (OTB) verwenden. Dieser Style erlaubt es, dass die geschweifte Startklammer neben der Funktion vorkommen darf. Zum Beispiel: <code>for x, y in z {</code>.</p>
 <p>Wie bei allen Schleifen auch, können <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> verwendet werden.</p>

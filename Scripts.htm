@@ -42,7 +42,13 @@
 <p>Ohne Leerraumzeichen muss <code>/*</code> am Anfang der Zeile stehen, während <code>*/</code> nur am Anfang oder Ende einer Zeile stehen kann. Es ist auch möglich <code>*/</code> wegzulassen - in diesem Fall wird der Rest der Datei auskommentiert.</p>
 <h2 id="continuation">Eine lange Zeile in mehreren kurzen Zeilen aufteilen</h2>
 <p>Lange Zeilen können in mehreren kurzen Zeilen aufgeteilt werden, um sie besser lesbar und verwaltbar zu machen. Die Ausführungsgeschwindigkeit des Skripts wird dabei nicht reduziert, weil solche Zeilen bereits beim Starten des Skripts im Speicher zusammengeführt werden.</p>
-<p id="continuation-line"><strong>Methode #1</strong>: Eine Zeile, die mit einem Komma oder mit einem beliebigen <a href="Variables.htm#Operators">Ausdrucksoperator</a> (außer ++ und --) beginnt, wird automatisch mit der darüberliegenden Zeile zusammengeführt. Im folgenden Beispiel wird die zweite Zeile an die erste Zeile angefügt, weil sie mit einem Komma beginnt:</p>
+<p>Es gibt drei Methoden, die in der Regel kombiniert eingesetzt werden können:</p>
+<ul>
+  <li><a href="#continuation-line">Fortsetzungspräfix</a>: Beginnen Sie eine Zeile mit einem Ausdrucksoperator, um sie mit der vorherigen Zeile zu verbinden.</li>
+  <li><a href="#continuation-expr">Fortsetzung durch Umschließen</a>: Ein Teilausdruck, der mit (), [] oder {} umschlossen ist, kann in den meisten Fällen automatisch mehrere Zeilen umfassen.</li>
+  <li><a href="#continuation-section">Fortsetzungsbereich</a>: Markieren Sie eine Gruppe von Zeilen, die zusammengeführt werden sollen, inklusive Optionen, wie z. B. welcher Text (oder Code) zwischen den Zeilen eingefügt werden soll.</li>
+</ul>
+<p id="continuation-line"><strong>Fortsetzungspräfix</strong>: Eine Zeile, die mit einem Komma oder mit einem beliebigen <a href="Variables.htm#Operators">Ausdrucksoperator</a> (außer ++ und --) beginnt, wird automatisch mit der darüberliegenden Zeile zusammengeführt. Im folgenden Beispiel wird die zweite Zeile an die erste Zeile angefügt, weil sie mit einem Komma beginnt:</p>
 <pre>FileAppend "Das ist der Text, der angefügt wird.`n"   <em>; Kommentar hier möglich.</em>
     <strong>,</strong> A_ProgramFiles "\BeliebigeAnwendung\Log-Datei.txt"  <em>; Kommentar.</em></pre>
 <p>Die Zeilen im nächsten Beispiel werden zu einer einzelnen Zeile zusammengeführt, weil die letzten beiden Zeilen mit "and" oder "or" beginnen:</p>
@@ -54,12 +60,40 @@
     <strong>?</strong> false  <em>; Rote Produkte sind nicht verfügbar, daher ist der folgende Funktionsaufruf irrelevant.</em>
     <strong>:</strong> ProduktIstInFarbeVerfügbar(Produkt, Farbe)</pre>
 <p>Obwohl die Einrückungen in den oberen Beispielen optional sind, machen sie eventuell deutlich, welche Zeilen zusammengehören. Außerdem müssen keine Leerzeichen bei Zeilen eingefügt werden, die mit den Wörtern "AND" und "OR" beginnen; das Programm macht das automatisch. In den Beispielen oben können leere Zeilen oder <a href="Language.htm#comments">Kommentare</a> zwischen oder am Ende jeder Zeile eingefügt werden.</p>
-<p id="continuation-section"><strong>Methode #2</strong>: Diese Methode sollte verwendet werden, wenn sehr viele Zeilen zusammengeführt werden müssen oder wenn die Zeilen nicht für Methode #1 geeignet sind. Diese Methode kann sowohl bei <a href="Hotstrings.htm">automatisch-ersetzenden Hotstrings</a> als auch bei beliebigen <a href="Variables.htm#Expressions">Ausdrücken</a> angewendet werden. Zum Beispiel:</p>
+<p id="continuation-expr"><strong>Fortsetzung durch Umschließen</strong>: Enthält eine Zeile einen Ausdruck oder eine Funktions-/Eigenschaftsdefinition mit einer nicht geschlossenen Klammer <code>(</code>/<code>[</code>/<code>{</code>, wird sie mit nachfolgenden Zeilen verbunden, bis sich die Anzahl der Start- und Endklammern ausgleicht. Das heißt, dass ein Teilausdruck, der mit runden, eckigen oder geschweiften Klammern umschlossen ist, in den meisten Fällen automatisch mehrere Zeilen umfassen kann. Zum Beispiel:</p>
+<pre>
+meinArray := [  <em>; Die Startklammer muss auf dieser Zeile sein.</em>
+  "Element 1",
+  "Element 2",
+]
+MsgBox(
+    "Der Wert von Element 2 ist " meinArray[2],
+    "Titel",
+    "ok iconi"
+    )
+</pre>
+<p>Fortsetzungsausdrücke können beide Arten von <a href="Language.htm#comments">Kommentaren</a> enthalten.</p>
+<p>Fortsetzungsausdrücke können normale <a href="#continuation-section">Fortsetzungsbereiche</a> enthalten. Wenn also, wie bei jeder Zeile mit einem Ausdruck, eine Zeile mit einer runden Startklammer (<code>(</code>) beginnt, die nicht mit einem Escapezeichen versehen ist, wird sie als Anfang eines Fortsetzungsbereichs betrachtet, sofern auf derselben Zeile keine runde Endklammer (<code>)</code>) erfolgt.</p>
+<p>Mit dieser Methode allein ist es nicht möglich, in Anführungszeichen gesetzte Zeichenketten auf mehrere Zeilen zu strecken. Allerdings siehe oben.</p>
+<p>Eine geschweifte Klammer (<code>{</code>) am Ende einer Zeile bewirkt keine Fortsetzung, wenn das Programm feststellt, dass sie als Anfang eines Blocks (<a href="commands/Block.htm#otb">OTB-Style</a>) und nicht als Anfang einer <a href="Language.htm#object-literal">direkten Objekt-Schreibweise</a> interpretiert werden soll. Im Einzelnen (in absteigender Prioritätsreihenfolge):</p>
+<ul>
+  <li>Eine geschweifte Klammer wird niemals als Anfang eines Blocks interpretiert, wenn sie eine nicht geschlossene Klammer <code>(</code>/<code>[</code>/<code>{</code> davor hat, da dies zu einem ungültigen Ausdruck führen würde. Zum Beispiel wäre die geschweifte Klammer in <code>If ({</code> der Beginn einer direkten Objekt-Schreibweise.</li>
+  <li>Es ist nicht erlaubt, nach den Klammern <code>)</code> oder <code>]</code> eine direkte Objekt-Schreibweise zu beginnen. Wenn also die geschweifte Klammer nach diesen Symbolen erfolgt (ohne Leerraumzeichen), wird sie als Anfang eines Blocks interpretiert (z. B. für eine Funktions- oder Eigenschaftsdefinition). </li>
+  <li>Bei <a href="Language.htm#control-flow">Ablaufsteuerungsanweisungen</a>, die einen Körper benötigen (und daher OTB unterstützen), kann die geschweifte Klammer nur dann der Anfang einer direkten Objekt-Schreibweise sein, wenn sie ein Operator davor hat, wie z. B. <code>:= {</code> oder <code>for x <strong>in</strong> {</code>. Das heißt im Endeffekt, dass die geschweifte Klammer in <code>Loop {</code> immer einen Block beginnen würde und <code>If {</code> und <code>While {</code> immer falsch wären.</li>
+</ul>
+<p>Eine geschweifte Klammer kann ohne Probleme genutzt werden, um Funktionsaufrufe, Ausdrücke oder Ablaufsteuerungsanweisungen, die keinen Körper benötigen, auf der nächsten Zeile fortzusetzen. Zum Beispiel:</p>
+<pre>meineFn() {
+    return {
+        Key: "Wert"
+    }</em>
+}</pre>
+<p id="continuation-section"><strong>Fortsetzungsbereich</strong>: Diese Methode sollte verwendet werden, wenn sehr viele Zeilen zusammengeführt werden müssen oder wenn die Zeilen nicht für die anderen Methoden geeignet sind. Diese Methode kann sowohl bei <a href="Hotstrings.htm">automatisch-ersetzenden Hotstrings</a> als auch bei beliebigen <a href="Variables.htm#Expressions">Ausdrücken</a> angewendet werden. Zum Beispiel:</p>
 <pre><em>; BEISPIEL #1:</em>
 Var := "
 (
 Zeile 1 vom Text.
 Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) zwischen den Zeilen.
+Zusätzlich werden "Anführungszeichen" bei Bedarf <a href="#continuation_quotes">automatisch mit einem Escapezeichen versehen</a>.
 )"
 
 <em>; BEISPIEL #2:</em>
@@ -69,8 +103,10 @@ Eine Textzeile.
 Standardmäßig wird das CR-Zeichen (Enter) zwischen der vorherigen und dieser Zeile in die Datei geschrieben.
 	Diese Zeile wurde mit einem Tabulator eingerückt; standardmäßig wird dieser Tabulator auch in die Datei geschrieben.
 )", A_Desktop "\Meine Datei.txt"</pre>
-<p>In den oberen Beispielen sieht man oben und unten runde Klammern, die mehrere Zeilen eingrenzen. Auch <em>Fortsetzungsbereich</em> genannt. Beachten Sie, dass in der untersten Zeile nach der runden Endklammer der letzte Parameter von <a href="commands/FileAppend.htm">FileAppend</a> enthalten ist. Diese Anwendungsart ist optional; das wird in solchen Fällen getan, um das Komma nicht als direkt geschriebenes Komma, sondern als Parametertrennung zu behandeln.</p>
-<p id="continuation_defaults">Standardmäßig verhalten sich Anführungszeichen innerhalb eines Fortsetzungsbereiches so, als wären sie mit einem Escapezeichen versehen (d. h. sie werden als direkt geschriebene Zeichen interpretiert). Darüber hinaus werden führende Leer- und Tabulatorzeichen weggelassen, abhängig von der Einrückung der ersten Zeile innerhalb des Fortsetzungsbereiches. Enthält die erste Zeile eine Mischung aus Leer- und Tabulatorzeichen, wird nur der erste Zeichentyp als Einrückung behandelt. Wenn jede Zeile weniger eingerückt ist als die erste Zeile oder mit den falschen Zeichen eingerückt ist, werden alle führenden Leerraumzeichen auf dieser Zeile beibehalten. </p>
+<p>In den oberen Beispielen sieht man oben und unten runde Klammern, die mehrere Zeilen eingrenzen. Auch <em>Fortsetzungsbereich</em> genannt. Beachten Sie, dass jeglicher Code nach der runden Endklammer auch mit den anderen Zeilen verbunden ist (ohne Trennzeichen), allerdings sind die Start- und Endklammern nicht enthalten.</p>
+<p>Wenn die Zeile über dem Fortsetzungsbereich mit einem <a href="Concepts.htm#names">Namenszeichen</a> endet und der Bereich nicht innerhalb eines Anführungszeichens beginnt, wird automatisch ein einzelnes Leerzeichen eingefügt, um den Namen vom Inhalt des Fortsetzungsbereichs zu trennen.</p>
+<p id="continuation_quotes">Anführungszeichen werden automatisch mit einem Escapezeichen versehen (also als direkt geschriebene Zeichen interpretiert), wenn der Fortsetzungsbereich innerhalb einer in Anführungszeichen gesetzte Zeichenkette beginnt, wie in den Beispielen oben. Ansonsten verhalten sich Anführungszeichen wie gewohnt; das heißt, dass Fortsetzungsbereiche Ausdrücke mit in Anführungszeichen gesetzte Zeichenketten enthalten können.</p>
+<p id="continuation_defaults">Standardmäßig werden führende Leer- und Tabulatorzeichen weggelassen, abhängig von der Einrückung der ersten Zeile innerhalb des Fortsetzungsbereiches. Enthält die erste Zeile eine Mischung aus Leer- und Tabulatorzeichen, wird nur der erste Zeichentyp als Einrückung behandelt. Wenn jede Zeile weniger eingerückt ist als die erste Zeile oder mit den falschen Zeichen eingerückt ist, werden alle führenden Leerraumzeichen auf dieser Zeile beibehalten. </p>
 <p>Das Standardverhalten eines Fortsetzungsbereichs kann überschrieben werden, indem man eine oder mehrere der folgenden Optionen auf der rechten Seite der runden Startklammer einfügt. Mehrere Optionen müssen mit Leerzeichen voneinander getrennt werden. Zum Beispiel: <code>( LTrim Join|</code>.</p>
 <p id="Join"><strong>Join</strong>: Gibt an, wie die Zeilen verbunden werden sollen. Wenn diese Option fehlt, erfolgt nach jeder Zeile, außer der letzten, ein Zeilenumbruchszeichen (`n). Wenn nur das Wort <em>Join</em> angegeben ist, werden die Zeilen ohne Zeichen miteinander verbunden. Ansonsten können unmittelbar nach dem Wort <em>Join</em> bis zu 15 Zeichen erfolgen. Zum Beispiel würde <code>Join`s</code> bewirken, dass nach jeder Zeile, außer der letzten, ein Leerzeichen erfolgt ("`s" kennzeichnet ein direkt geschriebenes Leerzeichen - eine spezielle Escapesequenz, die nur von <em>Join</em> erkannt wird). <code>Join`r`n</code> würde hingegen CR+LF zwischen den Zeilen einfügen, während <code>Join|</code> einen senkrechten Strich zwischen den Zeilen einfügen würde. Damit die letzte Zeile auch mit einem Trennungszeichen endet, ist es erforderlich, direkt über der runden Endklammer des Bereichs eine leere Zeile einzufügen.</p>
 <p>Bekannte Einschränkung: Eine Join-Zeichenkette, die mit einem Doppelpunkt endet, darf nicht als letzte Option auf dieser Zeile angegeben werden. Dies würde dazu führen, dass <code>(Join:</code> beispielsweise als Label "(Join" behandelt oder dass <code>(LTrim Join:</code> nicht unterstützt wird, während <code>(Join: C</code> vollkommen in Ordnung wäre.</p>
@@ -78,7 +114,6 @@ Standardmäßig wird das CR-Zeichen (Enter) zwischen der vorherigen und dieser Z
 <p id="LTrim0"><strong>LTrim0</strong> (LTrim und eine 0): Verhindert, dass Leer- und Tabulatorzeichen am Anfang jeder Zeile automatisch entfernt werden.</p>
 <p id="RTrim0"><strong>RTrim0</strong> (RTrim gefolgt von einer 0): Verhindert, dass Leer- und Tabulatorzeichen am Ende jeder Zeile automatisch entfernt werden.</p>
 <p id="CommentOption"><strong>Comments</strong> (oder <strong>Comment</strong> oder <strong>Com</strong> oder <strong>C</strong>): Ermöglicht <a href="Language.htm#comments">Semikolon-Kommentare</a> innerhalb des Fortsetzungsbereichs (aber nicht <code>/*..*/</code>). Solche Kommentare (sowie alle links vorkommenden Leer- und Tabulatorzeichen) werden im Endergebnis entfernt, anstatt als direkt geschriebener Text behandelt zu werden. Jeder Kommentar kann auf der rechten Seite einer Zeile oder auf einer neuen Zeile vorkommen.</p>
-<p id="QuotesOption"><strong>Quotes</strong> (oder <strong>Q</strong>): Stellt die Fähigkeit wieder her, Zeichenketten in Anführungszeichen zu terminieren, wenn ein Ausdruck in einem Fortsetzungsbereich verwendet wird.</p>
 <p id="accent"><strong>`</strong> (umgekehrtes Häkchen): Behandelt umgekehrte Häkchen nicht als <a href="misc/EscapeChar.htm">Escapezeichen</a>, sondern als direkt geschriebene Zeichen. Dies hat auch den Effekt, dass Kommas und Prozentzeichen nicht direkt und individuell mit einem Escapezeichen versehen werden können, oder dass explizit angegebene Escapesequenzen wie `r und `t nicht umgewandelt werden.</p>
 <p id="non-continuation"><strong>)</strong>: Eine runde Endklammer in den Optionen des Fortsetzungsbereichs (außer als Parameter der <a href="#Join">Join</a>-Option) bewirkt, dass die Zeile nicht als Beginn eines Fortsetzungsbereichs, sondern als Ausdruck interpretiert wird. Auf diese Weise können Ausdrücke wie <code>(x.y)[z]()</code> funktionsfähig gemacht werden, ohne die runde Startklammer mit einem Escapezeichen versehen zu müssen.</p>
 <p><a href="misc/EscapeChar.htm">Escapesequenzen</a> wie `n (Zeilenumbruch) und `t (Tabulator) werden innerhalb des Fortsetzungsbereichs unterstützt, solange die <a href="#accent">Akzent-Option (`)</a> nicht vorhanden ist.</p>
