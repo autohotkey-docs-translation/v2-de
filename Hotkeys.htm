@@ -50,7 +50,7 @@ return</pre>
     <td><strong>#</strong></td>
     <td>
       <p>WIN-Taste (Windows-Logo-Taste).</p>
-      <p>In Windows Vista oder höher werden Hotkeys in Verbindung mit der WIN-Taste (z. B. #a) warten, bis die WIN-Taste losgelassen wird, bevor ein beliebiger Text mit einem "L" gesendet wird. Dadurch wird verhindert, dass ein <a href="commands/Send.htm">Send</a> in so einem Hotkey den PC unbeabsichtigt sperrt. Diese Änderung gilt für alle Sendemethoden, außer <a href="commands/Send.htm#SendPlayDetail">SendPlay</a> (weil es das nicht braucht) und <a href="commands/Send.htm#blind">Blind-Modus</a>.</p>
+      <p id="win-l">In Windows Vista oder höher werden Hotkeys in Verbindung mit der WIN-Taste (z. B. #a) warten, bis die WIN-Taste losgelassen wird, bevor ein beliebiger Text mit einem "L" gesendet wird. Dadurch wird verhindert, dass ein <a href="commands/Send.htm">Send</a> in so einem Hotkey den PC unbeabsichtigt sperrt. Diese Änderung gilt für alle Sendemethoden, außer <a href="commands/Send.htm#SendPlayDetail">SendPlay</a> (weil es das nicht braucht) und <a href="commands/Send.htm#blind">Blind-Modus</a>.</p>
       <p class="note"><strong>Hinweis:</strong> Das Drücken eines Hotkeys, der die WIN-Taste enthält, kann zu zusätzlichen simulierten Tastendrücken führen (standardmäßig STRG). Siehe <a href="commands/_MenuMaskKey.htm">#MenuMaskKey</a>.</p>
     </td>
   </tr>
@@ -123,8 +123,8 @@ AppsKey Up::ToolTip
   <tr id="keyup">
     <td>UP</td>
     <td><p>Das UP-Wort muss nach dem Namen eines Hotkeys erfolgen und bewirkt, dass der Hotkey erst ausgelöst wird, wenn die Taste losgelassen wird, und nicht, wenn sie bereits nach unten gedrückt wird. Das folgende Beispiel zeigt, wie LWin <a href="misc/Remap.htm">neubelegt</a> werden kann, um den Effekt von LControl nachzuahmen:</p>
-      <pre>*LWin::Send "{LControl Down}"
-*LWin <strong>Up</strong>::Send "{LControl Up}"
+      <pre>*LWin::Send "{LControl down}"
+*LWin <strong>Up</strong>::Send "{LControl up}"
 </pre>
       <p>Das UP-Wort kann auch bei normalen Hotkeys angewendet werden. Zum Beispiel: ^!r Up::MsgBox Sie haben STRG+ALT+R gedrückt und losgelassen. Dieses Wort funktioniert auch bei <a href="#combo">Kombinations-Hotkeys</a> (z. B. <em>F1 &amp; e Up::</em>)</p>      
       <p>Einschränkungen: UP funktioniert nicht in Verbindung mit <a href="KeyList.htm">Joystick-Tasten</a>; 2) Ein UP-Hotkey ohne entsprechendem Counterpart (normaler Hotkey oder DOWN-Hotkey) wird diese Taste komplett übernehmen, um zu verhindern, dass sie stecken bleibt. Eine Möglichkeit dies zu verhindern wäre es, ein <a href="#Tilde">Tilde-Präfix</a> anzufügen (z. B. <em><strong>~</strong>LControl up::</em>)</p>
@@ -183,7 +183,7 @@ AppsKey &amp; -::MsgBox "Hotkey aktiviert."
 <p><strong>Tastatur-Hook:</strong> Benutzerdefinierte Kombinationen, die Tastatur-Tasten enthalten, sowie Hotkeys, die die Präfixtaste als Suffix benutzen, verwenden immer den Tastatur-Hook. Zum Beispiel würde <code>a &amp; b::</code> bewirken, dass <code>^a::</code> immer den Hook einbeziehen wird.</p>
 
 <h2 id="Features">Sonstige Features</h2>
-<p><strong>NUM-, FESTSTELL- und ROLLEN-Taste</strong>: Diese Tasten können gezwungen werden, "AlwaysOn" (immer an) oder "AlwaysOff" (immer aus) zu sein. Zum Beispiel: <code><a href="commands/SetNumScrollCapsLockState.htm">SetNumlockState</a> "AlwaysOn"</code>.</p>
+<p><strong>NUM-, FESTSTELL- und ROLLEN-Taste</strong>: Diese Tasten können gezwungen werden, "AlwaysOn" (immer an) oder "AlwaysOff" (immer aus) zu sein. Zum Beispiel: <code><a href="commands/SetNumScrollCapsLockState.htm">SetNumLockState</a> "AlwaysOn"</code>.</p>
 <p><strong>Explorer-Tastenkürzel überschreiben</strong>: Die vordefinierten Windows-Hotkeys wie WIN+E (#e) und WIN+R (#r) können jeweils mit einer beliebigen benutzerdefinierten Aktion überschrieben werden. Siehe "<a href="misc/Override.htm">Überschreiben oder Deaktivieren von Hotkeys</a>" für Details.</p>
 <p id="alttab"><strong>Alt-Tab ersetzen</strong>: Hotkeys können eine alternative Methode für Alt-Tab bereitstellen. Zum Beispiel bewirken die folgenden zwei Hotkeys, dass die Alt-Tab-Prozedur mit der rechten Hand durchgeführt werden kann:</p>
 <pre>RControl &amp; RShift::AltTab  <em>; Halten Sie rechte STRG gedrückt und drücken Sie mehrmals rechte UMSCHALT, um durchzuschalten.</em>
@@ -287,7 +287,8 @@ return</pre>
             else
                 Run Format('explorer.exe "{1}"', pfad[1])
     }</pre>
-<p>Es dürfen nur Leerraumzeichen, Kommentare oder Direktiven zwischen den Hotkey-Labels oder dem Label und der Funktion vorkommen. Es werden keine Labels erstellt, wenn Hotkeys auf diese Weise definiert werden; allerdings endet der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> beim ersten Hotkey, selbst wenn ihm eine Funktion zugewiesen wurde.</p>
+<p id="function-details">Hotstrings können auch auf diese Weise definiert werden. Mehrere Hotkeys oder Hotstrings können übereinander gestapelt werden, um die gleiche Funktion aufzurufen.</p>
+<p>Es dürfen nur Leerraumzeichen, Kommentare oder Direktiven zwischen den Hotkey/Hotstring-Labels oder dem Label und der Funktion vorkommen. Hotkey/Hotstring-Labels, die auf diese Weise definiert werden, können nicht in Verbindung mit  <a href="commands/IsLabel.htm">IsLabel</a>, <a href="commands/Gosub.htm">Gosub</a> oder anderen Befehlen genutzt werden; allerdings endet der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> beim ersten Hotkey, selbst wenn ihm eine Funktion zugewiesen wurde.</p>
 <p>Das Verwenden einer Funktion hat den Vorteil, dass lokale Variablen verwendet werden können, um so Konflikte zu vermeiden, wenn zwei oder mehr Hotkeys die gleichen Variablennamen für unterschiedliche Zwecke verwenden. Außerdem fördert es selbstdokumentierende Hotkeys; im Code oben beschreibt der Funktionsname zum Beispiel den Hotkey.</p>
 <p>Mit der <a href="commands/Hotkey.htm">Hotkey</a>-Funktion kann einem Hotkey auch eine Funktion oder ein Funktionsobjekt zugewiesen werden.</p>
 

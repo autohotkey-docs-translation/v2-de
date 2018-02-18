@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Send/SendRaw/SendInput/SendPlay/SendEvent: Tasten &amp; Klicks senden</title>
+<title>Send[Raw|Input|Play|Event]: Tasten &amp; Klicks senden</title>
 <meta name="description" content="Senden Sie Tastatureingaben und Mausklicks an einem beliebigen Fenster mit diesem kostenlosen Makro-Programm. SendInput ist generell die schnellste und zuverlässigste Methode.">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<h1>Send / SendRaw / SendInput / SendPlay / SendEvent: Tasten &amp; Klicks senden</h1>
+<h1>Send[Raw|Input|Play|Event]: Tasten &amp; Klicks senden</h1>
 
 <p>Sendet simulierte Tastatureingaben und Mausklicks zum <a href="WinActivate.htm">aktiven</a> Fenster.</p>
 
@@ -91,6 +91,18 @@
   </tr>
 </table>
 <p class="note"><strong>Hinweis</strong>: Großbuchstaben werden durch Senden der UMSCHALT-Taste erzeugt, daher würde z. B. <code>A</code> in einigen Programmen eine andere Wirkung als <code>a</code> erzielen. Zum Beispiel würde <code>!A</code> ALT+UMSCHALT+A und <code>!a</code> ALT+a drücken. Im Zweifelsfall sollte man immer Kleinbuchstaben verwenden.</p>
+<p id="blind"><strong>Blind-Modus</strong> - <code>{Blind}</code>: Der Blind-Modus gibt dem Skript mehr Kontrolle, indem er eine Reihe von Dingen deaktiviert, die normalerweise automatisch ausgeführt werden, damit die Dinge wie erwartet funktionieren. <code>{Blind}</code> muss das erste Element in der Zeichenkette sein, um den Blind-Modus zu aktivieren. Er hat folgende Auswirkungen:</p>
+<ul>
+  <li>Der Blind-Modus verhindert das Loslassen von ALT/STRG/UMSCHALT/WIN, wenn sie zu Beginn im gedrückten Zustand waren, es sei denn, der Modifikator ist <a href="#blind-exclude">ausgeschlossen</a>. Zum Beispiel würde der Hotkey <code>+s::Send "{Blind}abc"</code> ABC statt abc senden, weil der Benutzer die UMSCHALT-Taste gedrückt hält.</li>
+  <li>Modifikatortasten werden unterschiedlich wiederhergestellt, damit ein Send die Modifikatoren eines Hotkeys ausschalten kann, auch dann, wenn der Benutzer sie immer noch physisch gedrückt hält. <code>^space::Send "{Ctrl up}"</code> beispielsweise drückt die STRG-Taste wieder nach unten, wenn der Benutzer die STRG-Taste immer noch physisch gedrückt hält, während <code>^space::Send "{Blind}{Ctrl up}"</code> der STRG-Taste erlaubt, logisch oben zu sein, obwohl sie physisch nach unten gedrückt ist.</li>
+  <li><a href="SetStoreCapslockMode.htm">SetStoreCapslockMode</a> wird ignoriert; das heißt, dass der Status der FESTSTELL-Taste nicht geändert wird.</li>
+  <li><a href="_MenuMaskKey.htm">Menü-Maskierung</a> ist deaktiviert. Das heißt, dass Send die zusätzlichen Tastendrücke weglässt, die normalerweise Folgendes verhindern würden: 1) die Darstellung des Startmenüs während LWIN/RWIN-Eingaben; 2) die Aktivierung der Menüleiste während ALT-Eingaben. Der Blind-Modus verhindert jedoch nicht die Maskierung, die vom Tastatur-Hook nach Aktivierung einer Hook-Taste durchgeführt wird.</li>
+  <li>Send wartet nicht auf das Loslassen der WIN-Taste, auch wenn der Text einen "L"-Tastendruck enthält. Dies geschieht normalerweise, um zu verhindern, dass Send den System-Hotkey "Arbeitsplatz sperren" (WIN+L) auslöst. Weitere Informationen finden Sie unter <a href="../Hotkeys.htm#win-l">Hotkeys</a>.</li>
+</ul>
+<p id="blind-exclude">Nach dem Wort "Blind" können ein oder mehrere Modifikator-Symbole (<code>!#^+</code>) erfolgen, um diese Modifikatoren bei Bedarf automatisch loszulassen. <code>*^a::Send "{Blind^}b"</code> beispielsweise würde UMSCHALT+B statt STRG+UMSCHALT+B senden, wenn STRG+UMSCHALT+A gedrückt wurde. Mit <code>{Blind!#^+}</code> können alle Modifikatoren bei Bedarf losgelassen werden, aber aktiviert auch die anderen Effekte des Blind-Modus.</p>
+<p>Der Blind-Modus wird beim <a href="../misc/Remap.htm">Neubelegen einer Taste</a> automatisch verwendet. Zum Beispiel würde die Neubelegung <code>a::b</code> Folgendes erzeugen: 1) "b" wenn man "a" eingibt; 2) großes "B" wenn man ein großes "A" eingibt; und 3) STRG+B wenn man STRG+A eingibt. Wenn irgendwelche Modifikatoren bei der Originaltaste angegeben sind (einschließlich UMSCHALT, wenn die Originaltaste ein Großbuchstabe ist), werden diese wie oben beschrieben ausgeschlossen. Zum Beispiel würde <code>^a::b</code> ein normales "b" erzeugen, nicht STRG+B.</p>
+<p>SendRaw oder <a href="ControlSend.htm">ControlSendRaw</a> unterstützen kein <code>{Blind}</code>; verwenden Sie stattdessen <code>{Blind}{Raw}</code>.</p>
+<p>Desweiteren unterstützt <a href="#SendPlayDetail">SendPlay</a> den Blind-Modus nur unvollständig, besonders im Umgang mit Modifikatortasten (STRG, ALT, UMSCHALT und WIN).</p>
 <p><br>
 <strong id="SendInput">SendInput</strong> und <strong id="SendPlay">SendPlay</strong>: SendInput und SendPlay verwenden die gleiche Syntax wie Send, allerdings sind sie in der Regel schneller und zuverlässiger. Desweiteren puffern sie alle physischen Tastatur- oder Mausaktivitäten während des Sendens, um das Vermischen der Benutzereingaben mit den gesendeten Eingaben zu verhindern. Standardmäßig ist <em>Send</em> das Synonym für <em>SendEvent</em>; allerdings kann es via <a href="SendMode.htm">SendMode</a> zum Synonym für SendEvent oder <a href="#SendPlayDetail">SendPlay</a> gemacht werden. Um mehr Details über jeden Modus zu erfahren, siehe <a href="#SendInputDetail">SendInput</a> und <a href="#SendPlayDetail">SendPlay</a>.</p>
 <p id="SendEvent"><strong>SendEvent</strong>: SendEvent sendet Tastatureingaben mithilfe der keybd_event-Funktion von Windows (siehe MSDN für Details). Die Sendegeschwindigkeit von Tastatureingaben wird mit <a href="SetKeyDelay.htm">SetKeyDelay</a> bestimmt. Verwenden Sie <a href="SendMode.htm">SendMode</a>, um Send zum Synonym für SendInput oder SendPlay zu machen.</p>
@@ -194,7 +206,7 @@
   </tr>
   <tr>
     <td>{CapsLock}</td>
-    <td>FESTSTELL-Taste (in Win 2k/XP ist <a href="SetNumScrollCapsLockState.htm">SetCapsLockState</a> zuverlässiger). Das Senden von {CapsLock} benötigt möglicherweise vorher <a href="SetStoreCapslockMode.htm">SetStoreCapslockMode "Off"</a>.</td>
+    <td>FESTSTELL-Taste (in Win 2k/XP ist <a href="SetNumScrollCapsLockState.htm">SetCapsLockState</a> zuverlässiger). Das Senden von {CapsLock} benötigt möglicherweise vorher <a href="SetStoreCapslockMode.htm">SetStoreCapsLockMode "Off"</a>.</td>
   </tr>
   <tr>
     <td>{ScrollLock}</td>
@@ -221,8 +233,8 @@
     <td>Rechte STRG-Taste</td>
   </tr>
   <tr>
-    <td>{Control Down} oder {Ctrl Down}</td>
-    <td>Hält die STRG-Taste gedrückt, bis {Ctrl Up} gesendet wird. Um stattdessen die linke oder rechte Taste gedrückt zu halten, nutzt man {RCtrl Down} und {RCtrl Up}.</td>
+    <td>{Control down} oder {Ctrl down}</td>
+    <td>Hält die STRG-Taste gedrückt, bis {Ctrl up} gesendet wird. Um stattdessen die linke oder rechte Taste gedrückt zu halten, nutzt man {RCtrl down} und {RCtrl up}.</td>
   </tr>
   <tr>
     <th>&nbsp;</th>
@@ -241,8 +253,8 @@
     <td>ALTGR- oder rechte ALT-Taste, abhängig von der Tastaturbelegung.</td>
   </tr>
   <tr>
-    <td>{Alt Down}</td>
-    <td>Hält die ALT-Taste gedrückt, bis {Alt Up} gesendet wird. Um stattdessen die linke oder rechte Taste gedrückt zu halten, nutzt man {RAlt Down} und {RAlt Up}.</td>
+    <td>{Alt down}</td>
+    <td>Hält die ALT-Taste gedrückt, bis {Alt up} gesendet wird. Um stattdessen die linke oder rechte Taste gedrückt zu halten, nutzt man {RAlt down} und {RAlt up}.</td>
   </tr>
   <tr>
     <th>&nbsp;</th>
@@ -261,8 +273,8 @@
     <td>Rechte UMSCHALT-Taste</td>
   </tr>
   <tr>
-    <td>{Shift Down}</td>
-    <td>Hält die UMSCHALT-Taste gedrückt, bis {Shift Up} gesendet wird. Um stattdessen die linke oder rechte Taste gedrückt zu halten, nutzt man {RShift Down} und {RShift Up}.</td>
+    <td>{Shift down}</td>
+    <td>Hält die UMSCHALT-Taste gedrückt, bis {Shift up} gesendet wird. Um stattdessen die linke oder rechte Taste gedrückt zu halten, nutzt man {RShift down} und {RShift up}.</td>
   </tr>
   <tr>
     <th>&nbsp;</th>
@@ -277,12 +289,12 @@
     <td>Rechte WIN-Taste</td>
   </tr>
   <tr>
-    <td>{LWin Down}</td>
-    <td>Hält die linke WIN-Taste gedrückt, bis {LWin Up} gesendet wird.</td>
+    <td>{LWin down}</td>
+    <td>Hält die linke WIN-Taste gedrückt, bis {LWin up} gesendet wird.</td>
   </tr>
   <tr>
-    <td>{RWin Down}</td>
-    <td>Hält die rechte WIN-Taste gedrückt, bis {RWin Up} gesendet wird.</td>
+    <td>{RWin down}</td>
+    <td>Hält die rechte WIN-Taste gedrückt, bis {RWin up} gesendet wird.</td>
   </tr>
   <tr>
     <th>&nbsp;</th>
@@ -322,11 +334,11 @@
   </tr>
   <tr>
     <td>{Numpad0} - {Numpad9}</td>
-    <td>Ziffernblocktasten (wenn Numlock eingeschaltet ist). Zum Beispiel: {Numpad5} ist die Zahl 5.</td>
+    <td>Ziffernblocktasten (wenn NumLock eingeschaltet ist). Zum Beispiel: {Numpad5} ist die Zahl 5.</td>
   </tr>
   <tr>
     <td>{NumpadDot}</td>
-    <td>, (wenn Numlock eingeschaltet ist)</td>
+    <td>, (wenn NumLock eingeschaltet ist)</td>
   </tr>
   <tr>
     <td>{NumpadEnter}</td>
@@ -354,7 +366,7 @@
   </tr>
   <tr>
     <td>{NumpadDel}</td>
-    <td>ENTF-Taste (diese und die nachfolgenden Ziffernblocktasten sind nur verwendbar, wenn Numlock ausgeschaltet ist)</td>
+    <td>ENTF-Taste (diese und die nachfolgenden Ziffernblocktasten sind nur verwendbar, wenn NumLock ausgeschaltet ist)</td>
   </tr>
   <tr>
     <td>{NumpadIns}</td>
@@ -500,12 +512,9 @@
     <td>{WheelDown}, {WheelUp}, {WheelLeft}, {WheelRight}, {LButton}, {RButton}, {MButton}, {XButton1}, {XButton2}</td>
     <td>Sendet ein Maustastenereignis auf die aktuelle Mausposition (um die Position und weitere Optionen zu kontrollieren, siehe <a href="Click.htm">{Click}</a>). Die Verzögerung zwischen den Mausklicks wird durch <a href="SetMouseDelay.htm">SetMouseDelay</a> bestimmt. WheelLeft/Right funktionieren nicht in Betriebssystemen älter als Windows Vista.</td>
   </tr>
-  <tr id="blind">
+  <tr>
     <td><strong>{Blind}</strong></td>
-    <td><p>Wenn {Blind} das erste Element in der Zeichenkette ist, wird das Programm das Loslassen von ALT/STRG/UMSCHALT/WIN verhindern, sofern sie zu Beginn im gedrückten Zustand waren. Zum Beispiel würde der Hotkey <code>+s::Send "{Blind}abc"</code> ABC statt abc senden, weil der Benutzer die UMSCHALT-Taste gedrückt hält.</p>
-      <p>{Blind} bewirkt auch, dass <a href="SetStoreCapslockMode.htm">SetStoreCapslockMode</a> ignoriert wird; das heißt, dass der Status der Festelltaste nicht geändert wird. Zudem lässt {Blind} die zusätzlichen STRG-Tasten weg, die ansonsten gesendet werden würden; solche Tastatureingaben verhindern: 1) die Darstellung des Startmenüs während LWIN/RWIN-Eingaben; 2) die Aktivierung der Menüleiste während ALT-Eingaben.</p>
-      <p>Der Blind-Modus wird beim <a href="../misc/Remap.htm">Neubelegen einer Taste</a> automatisch verwendet. Zum Beispiel würde die Neubelegung a::b folgendes erzeugen: 1) "b" wenn man "a" eingibt; 2) großes B wenn man ein großes A eingibt; und 3) STRG+B wenn man STRG+A eingibt.</p>
-      <p>{Blind} wird nicht in Verbindung mit SendRaw und <a href="ControlSend.htm">ControlSendRaw</a> unterstützt. Desweiteren wird es nicht in Verbindung mit <a href="#SendPlayDetail">SendPlay</a> unterstützt, besonders im Umgang mit Modifikatortasten (STRG, ALT, UMSCHALT und WIN).</p></td>
+    <td>Aktiviert den <a href="#blind">Blind-Modus</a>, der dem Skript mehr Kontrolle gibt, indem er eine Reihe von Dingen deaktiviert, die normalerweise automatisch ausgeführt werden, damit die Dinge wie erwartet funktionieren. Die Zeichenkette <code>{Blind}</code> muss am Anfang der Zeichenkette stehen.</td>
   </tr>
   <tr id="Raw">
     <td><strong>{Raw}</strong></td>
@@ -582,7 +591,7 @@ Send "{Tab up}"  <em>; Lässt die Taste los.</em></pre>
 <p>Zwar kann SendPlay LWin- und RWin-Ereignisse senden, allerdings werden sie direkt zum aktiven Fenster gesendet, anstatt ihre interne Betriebssystemfunktion durchzuführen. Um das zu umgehen, nutzt man <a href="#SendEvent">SendEvent</a>. Zum Beispiel würde <code>SendEvent "#r"</code> das Ausführen-Dialogfenster des Startmenüs anzeigen.</p>
 
 <h2>Siehe auch</h2>
-<p><a href="SendMode.htm">SendMode</a>, <a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="SetStoreCapslockMode.htm">SetStoreCapslockMode</a>, <a href="../misc/EscapeChar.htm">Escapezeichen (z. B. `n)</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="BlockInput.htm">BlockInput</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="WinActivate.htm">WinActivate</a></p>
+<p><a href="SendMode.htm">SendMode</a>, <a href="SetKeyDelay.htm">SetKeyDelay</a>, <a href="SetStoreCapslockMode.htm">SetStoreCapsLockMode</a>, <a href="../misc/EscapeChar.htm">Escapesequenzen (z. B. `n)</a>, <a href="ControlSend.htm">ControlSend</a>, <a href="BlockInput.htm">BlockInput</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="WinActivate.htm">WinActivate</a></p>
 <h2>Beispiele</h2>
 <pre class="NoIndent">Send "Mit freundlichen Grüßen,{enter}John Smith"  <em>; Schreibt eine zweizeilige Signatur.</em>
 Send "!ds" <em>; Öffnet das Dateimenü und wählt Speichern aus (ALT+D, gefolgt von S).</em>

@@ -479,8 +479,8 @@ LadeOrdner(Gui, LV, ImageListID1, ImageListID2)
     if not Symbolnummer  <em>; Es gibt noch kein Symbol für diese Endung, also wird es geladen.</em>
     {
       <em>; Ermittelt das kleine Symbol in hoher Qualität, das mit dieser Dateiendung verbunden ist:</em>
-      if not DllCall("Shell32\SHGetFileInfoW", "str", Dateiname
-      , "uint", 0, "ptr", &amp;sfi, "uint", sfi_größe, "uint", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
+      if not DllCall("Shell32\SHGetFileInfoW", "Str", Dateiname
+      , "UInt", 0, "Ptr", &amp;sfi, "UInt", sfi_größe, "UInt", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
         Symbolnummer := 9999999  <em>; Setzt die Nummer außerhalb des gültigen Bereichs, um ein leeres Symbol anzuzeigen.</em>
       else <em>; Symbol erfolgreich geladen.</em>
       {
@@ -488,10 +488,10 @@ LadeOrdner(Gui, LV, ImageListID1, ImageListID2)
         hIcon := NumGet(sfi, 0)
         <em>; Fügt das HICON direkt in die Listen der kleinen und großen Symbolen ein.
         ; Unten wird +1 verwendet, um den 0-basierten Index in einen 1-basierten umzuwandeln:</em>
-        Symbolnummer := DllCall("ImageList_ReplaceIcon", "ptr", ImageListID1, "int", -1, "ptr", hIcon) + 1
-        DllCall("ImageList_ReplaceIcon", "ptr", ImageListID2, "int", -1, "ptr", hIcon)
+        Symbolnummer := DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID1, "Int", -1, "Ptr", hIcon) + 1
+        DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID2, "Int", -1, "Ptr", hIcon)
         <em>; Da es nun in die ImageLists kopiert wurde, sollte das Original zerstört werden:</em>
-        DllCall("DestroyIcon", "ptr", hIcon)
+        DllCall("DestroyIcon", "Ptr", hIcon)
         <em>; Cacht das Symbol, um Speicher zu sparen und Lade-Performance zu erhöhen:</em>
         SymbolArray[EndungsID] := Symbolnummer
       }

@@ -12,23 +12,23 @@
 <body>
 
 <h1>Loop Files</h1>
-
 <p>Ruft die angegebenen Dateien oder Ordner einzeln ab.</p>
 
 <pre class="Syntax"><span class="func">Loop Files</span> Dateimuster <span class="optional">, Modus</span></pre>
+
 <h3>Parameter</h3>
 <dl>
 
   <dt>Dateimuster</dt>
   <dd><p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie "C:\Temp\*.tmp". <em>Dateimuster</em> wird im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet, wenn kein absoluter Pfad angegeben ist.</p>
-    <p>Sowohl Sternchen als auch Fragezeichen werden als Platzhalter unterstützt. Eine Übereinstimmung erfolgt, wenn das Muster entweder im langen/normalen oder <a href="#LoopFileShortName">8.3-kurzen Dateinamen</a> erscheint.</p>
-    <p>Wenn dieser Parameter eine einzelne Datei oder ein Ordner ist (also ohne Platzhalter), und enthält <em>Rekursiv</em> eine 1 oder <em>Modus</em> ein <code>R</code>, werden mehrere Übereinstimmungen gefunden, wenn der angegebene Dateiname in mehreren Ordnern vorkommt.</p></dd>
+      <p>Sowohl Sternchen als auch Fragezeichen werden als Platzhalter unterstützt. Eine Übereinstimmung erfolgt, wenn das Muster entweder im langen/normalen oder <a href="#LoopFileShortName">8.3-kurzen Dateinamen</a> erscheint.</p>
+      <p>Wenn dieser Parameter eine einzelne Datei oder ein Ordner ist (also ohne Platzhalter), und enthält <em>Modus</em> ein <code>R</code>, werden mehrere Übereinstimmungen gefunden, wenn der angegebene Dateiname in mehreren Ordnern vorkommt.</p></dd>
 
   <dt>Modus</dt>
   <dd><p>Eine optionale Zeichenkette, die aus folgenden Buchstaben bestehen kann:</p>
-    <p><code>D</code>: Verzeichnisse (Ordner) einbeziehen.<br>
-    <code>F</code>: Dateien einbeziehen. Fehlt sowohl F als auch D, werden nur Dateien einbezogen, aber nicht Ordner.<br>
-    <code>R</code>: Unterverzeichnisse (Unterordner) werden auch mit einbezogen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Wenn R fehlt, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</p>
+      <p><code>D</code>: Verzeichnisse (Ordner) einbeziehen.<br>
+      <code>F</code>: Dateien einbeziehen. Fehlt sowohl F als auch D, werden nur Dateien einbezogen, aber nicht Ordner.<br>
+      <code>R</code>: Unterverzeichnisse (Unterordner) werden auch mit einbezogen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>Dateimuster</em> entsprechen. Wenn R fehlt, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</p></dd>
   </dd>
   
 </dl>
@@ -97,7 +97,8 @@
     <td>Die Größe in Megabytes der aktuell abgerufenen Datei, abgerundet auf den nächsten Integer.</td>
   </tr>
 </table>
-<h3>Bemerkungen</h3>
+
+<h2>Bemerkungen</h2>
 <p>Eine Dateimuster-Schleife ist nützlich, wenn Sie mehrere Dateien und/oder Ordner einzeln abarbeiten wollen.</p>
 <p>Alle übereinstimmenden Dateien werden abgerufen, einschließlich versteckte Dateien. Aber Betriebssystem-Features wie der DIR-Befehl ignorieren versteckte Dateien. Um zum Beispiel versteckte, system-spezifische und/oder schreibgeschützte Dateien innerhalb einer Schleife zu überspringen, fügt man folgende If-Anweisung ein:</p>
 <pre>if A_LoopFileAttrib ~= "[HRS]"  <em>; Überspringt jede Datei, die H (versteckt), R (schreibgeschützt) oder S (system-spezifisch) ist. Siehe <a href="../Variables.htm#regex">Tilde-Operator</a>.</em>
@@ -112,9 +113,11 @@ Loop Parse, Dateiliste, "`n"
 <p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Die Reihenfolge bei anderen Dateisystemen ist unbestimmt. Im Beispiel-Abschnitt unten wird gezeigt, wie die <a href="Sort.htm">Sort</a>-Funktion genutzt werden kann, um eine konsistente Reihenfolge zu gewährleisten.</p>
 <p>Dateien und Ordner mit einem kompletten Pfad länger als 259 Zeichen werden übersprungen, als wären sie nicht vorhanden. Solche Dateien sind selten, weil sie normalerweise nicht erstellt werden dürfen.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
-<h3>Siehe auch</h3>
+
+<h2>Siehe auch</h2>
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
-<h3>Beispiele</h3>
+
+<h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Beispiel #1:</em>
 Loop Files, A_ProgramFiles "\*.txt", "R"  <em>; Durchsucht Unterordner.</em>
 {
@@ -122,14 +125,12 @@ Loop Files, A_ProgramFiles "\*.txt", "R"  <em>; Durchsucht Unterordner.</em>
     if Result = "No"
         break
 }</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #2: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</em>
 OrdnerGrößeKB := 0
 Ordner := DirSelect()  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
 Loop Files, Ordner "\*.*", "R"
     OrdnerGrößeKB += A_LoopFileSizeKB
 MsgBox "Der Ordner " Ordner " hat eine Größe von " OrdnerGrößeKB " KB."</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #3: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</em>
 Dateiliste := "" <em>; Initialisiert sie als leere Variable.</em>
 Loop Files, "C:\*.*"
@@ -143,7 +144,6 @@ Loop Parse, Dateiliste, "`n"
     if Result = "No"
         break
 }</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #4: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</em>
 Dateiliste := ""
 Loop Files, A_MyDocuments "\Fotos\*.*", "FD"  <em>; Bezieht Dateien und Ordner mit ein.</em>
@@ -158,7 +158,6 @@ Loop Parse, Dateiliste, "`n"
     if Result = "No"
         break
 }</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien in das Ziel, die neuer sind als ihr Gegenstück:</em>
 KopiereWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuellmuster und KopieZiel für uns gesetzt.</em>
@@ -182,7 +181,6 @@ Loop Files, KopieQuellmuster
     }
 }
 Return</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Beispiel #6: Wandelt Dateinamen, die via Kommandozeilenparameter übergeben wurden, in lange Namen um,
 ; mit vollständigem Pfad und korrekter Groß-/Kleinschreibung, wie sie im Dateisystem vorkommen.</em>
 Loop A_Args.Length()  <em>; Geht jeden Parameter durch (bzw. die abgelegten Dateien):</em>
