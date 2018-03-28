@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>RegisterCallback</title>
+<title>CallbackCreate</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -11,36 +11,44 @@
 </head>
 <body>
 
-<h1>RegisterCallback</h1>
+<h1>CallbackCreate</h1>
 
 <p>Erstellt eine Maschinencode-Adresse, die ihren Aufruf zu einer <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
-<pre class="Syntax">Adresse := <span class="func">RegisterCallback</span>("Funktionsname" <span class="optional">, Optionen := "", Parameteranzahl := Formalanzahl, Ereignisinfo := Adresse</span>)</pre>
+<pre class="Syntax">Adresse := <span class="func">CallbackCreate</span>(Funktion <span class="optional">, Optionen := "", Parameteranzahl := Funktion.MinParams</span>)</pre>
 <h3>Parameter</h3>
 <dl>
 
   <dt>Adresse</dt>
-  <dd><p>Bei Erfolg gibt RegisterCallback eine numerische Adresse zurück, die mit <a href="DllCall.htm">DllCall</a> oder Ähnlichem aufgerufen werden kann. Bei Misserfolg gibt sie eine leere Zeichenkette zurück. Fehler treten auf, wenn <em>Funktionsname</em>: 1) nicht existiert; 2) zu viele oder zu wenig Parameter in Bezug auf <em>Parameteranzahl</em> akzeptiert; oder 3) einen beliebigen <a href="../Functions.htm#ByRef">ByRef-Parameter</a> akzeptiert.</p></dd>
+  <dd><p>Bei Erfolg gibt CallbackCreate eine numerische Adresse zurück, die mit <a href="DllCall.htm">DllCall</a> oder Ähnlichem aufgerufen werden kann. Bei <a href="#failure">Misserfolg</a> löst sie eine Ausnahme aus.</p></dd>
 
-  <dt>Funktionsname</dt>
+  <dt>Funktion</dt>
   <dd>
-    <p>Ein <a href="../Functions.htm">Funktion</a>sname, der in Anführungszeichen gesetzt werden muss, wenn er eine direkt geschriebene Zeichenkette ist. Diese Funktion wird automatisch aufgerufen, wann immer die <em>Adresse</em> aufgerufen wird. Die Funktion empfängt auch die Parameter, die an die <em>Adresse</em> übergeben wurden.</p>
-    <p>Anstelle eines Funktionsnamens kann ein <a href="../objects/Func.htm">Funktionsverweis</a> übergeben werden.</p>
+    <p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>. Diese Funktion wird automatisch aufgerufen, wann immer die <em>Adresse</em> aufgerufen wird. Die Funktion empfängt auch die Parameter, die an die <em>Adresse</em> übergeben wurden.</p>
+    <p>Ein <a href="../Functions.htm#closures">Closure</a> oder <a href="../objects/Functor.htm#BoundFunc">Bound-Funktion</a> kann genutzt werden, um zwischen mehreren Callbacks zu unterscheiden, die alle die gleiche Skript-Funktion aufrufen.</p>
+    <p>Das Callback behält einen Verweis auf das Funktionsobjekt und gibt ihn frei, wenn das Skript <a href="#CallbackFree">CallbackFree</a> aufruft.</p>
   </dd>
 
   <dt>Optionen</dt>
-  <dd><p>Geben Sie null oder mehrere der folgenden Wörter an. Trennen Sie diese Optionen jeweils mit einem Leerzeichen (z.B. <code>"C Fast"</code>).</p>
+  <dd><p>Geben Sie null oder mehrere der folgenden Wörter oder Zeichen an. Trennen Sie diese Optionen jeweils mit einem Leerzeichen (z.B. <code>"C Fast"</code>).</p>
     <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass jedesmal ein neuer <a href="../misc/Threads.htm">Thread</a> startet, wenn <em>Funktionsname</em> aufgerufen wird. Zwar ist dies leistungsfähiger, allerdings sollte es nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wurde, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Denn <em>Funktionsname</em> kann globale Einstellungen eines Threads wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> jederzeit ändern. Weitere Informationen finden Sie bei den <a href="#Threads">Bemerkungen</a>.</p>
-    <p><strong>CDecl</strong> oder <strong>C</strong>: Passt die <em>Adresse</em> an die "C"-Aufrufkonvention an. Diese Option lässt man üblicherweise weg, weil die Standard-Aufrufkonvention in der Regel für Callbacks genügt.</p></dd>
+    <p><strong>CDecl</strong> oder <strong>C</strong>: Passt die <em>Adresse</em> an die "C"-Aufrufkonvention an. Diese Option lässt man üblicherweise weg, weil die Standard-Aufrufkonvention in der Regel für Callbacks genügt. 64-Bit-Versionen von AutoHotkey, die die x64-Aufrufkonvention verwenden, ignorieren diese Option.</p>
+    <p><strong>&amp;</strong>: Bewirkt, dass die Parameter nicht einzeln, sondern als Parameterliste in Form einer Adresse (ein einzelner Integer) an <em>Funktion</em> übergeben wird. Parameterwerte können mithilfe von <a href="NumGet.htm">NumGet</a> abgerufen werden. Wenn man die standardmäßige 32-Bit-Aufrufkonvention verwendet, muss <em>Parameteranzahl</em> die Größe der Parameterliste als DWORDs spezifizieren (die Anzahl der Bytes geteilt durch 4).</p>
+  </dd>
 
   <dt>Parameteranzahl</dt>
-  <dd><p>Die Anzahl der Parameter, die <em>Adresse</em>'s Aufrufer übergeben muss. Fehlt dieser Parameter, gilt standardmäßig die Anzahl der Pflichtparameter, die in der <a href="../Functions.htm#define">Definition</a> von <em>Funktionsname</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p></dd>
-
-  <dt>EventInfo</dt>
-  <dd><p>Ein Integer, den <em>Funktionsname</em> in <a href="../Variables.htm#EventInfo">A_EventInfo</a> sieht, wenn es über diese <em>Adresse</em> aufgerufen wird. Diese Option ist nützlich, wenn <em>Funktionsname</em> von mehr als einer <em>Adresse</em> aufgerufen wird. Fehlt dieser Parameter, gilt standardmäßig die <em>Adresse</em>. Hinweis: Im Gegensatz zu anderen globalen Einstellungen wird das A_EventInfo des <a href="../misc/Threads.htm">aktuellen Threads</a> nicht vom <a href="#Fast">Fast-Modus</a> beeinflusst.</p>
-      <p>Wenn die skript-ausführende EXE-Datei im 32-Bit-Format ist, muss dieser Parameter ein Wert zwischen 0 und 4294967295 sein. Wenn die EXE-Datei im 64-Bit-Format ist, kann dieser Parameter ein 64-Bit-Integer sein. Zwar gibt <a href="../Variables.htm#EventInfo">A_EventInfo</a> üblicherweise einen vorzeichenlosen Integer zurück, allerdings bietet AutoHotkey keine volle Unterstützung für vorzeichenlose 64-Bit-Integer, demzufolge könnten einige Operationen bewirken, dass der Wert in den vorzeichenbehafteten Bereich rutscht.</p></dd>
+  <dd><p>Die Anzahl der Parameter, die <em>Adresse</em>'s Aufrufer übergeben muss. Fehlt dieser Parameter, gilt standardmäßig <code><i>Funktion</i>.<a href="../objects/Func.htm#MinParams">MinParams</a></code>, das üblicherweise der Anzahl von Pflichtparametern entspricht, die in der <a href="../Functions.htm#define">Definition</a> der <em>Funktion</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p></dd>
 
 </dl>
+
+<h3 id="failure">Misserfolg</h3>
+<p>Diese Funktion schlägt fehl, wenn:</p>
+<ul>
+  <li><em>Funktion</em> kein Objekt oder kein gültiger Funktionsname ist.</li>
+  <li><em>Funktion</em> eine <code>MinParams</code>-Eigenschaft hat, die die Anzahl der vom Callback bereitgestellten Parameter überschreitet.</li>
+  <li><em>Parameteranzahl</em> negativ ist.</li>
+  <li><em>Parameteranzahl</em> weggelassen wird und: 1) <em>Funktion</em> keine <code>MinParams</code>-Eigenschaft hat; oder 2) die <code>&amp;</code>-Option in Verbindung mit der standardmäßigen 32-Bit-Aufrufkonvention genutzt wird.</li>
+</ul>
 
 <h3>Die Parameter der Callback-Funktion</h3>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen ist, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt, so dass die Funktion von mehr als einem Aufrufer aufgerufen werden kann.</p>
@@ -68,19 +76,14 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 <pre>MeineZeichenkette := StrGet(MeinParameter)</pre>
 <p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, kann man die einzelnen Elemente durch Befolgen der Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" extrahieren.</p>
 
-<p id="Indirect"><strong>Parameter via Adresse abrufen:</strong> Wenn die Funktion als <a href="../Functions.htm#Variadic">variadisch</a> deklariert ist, wird der letzte Parameter die <i>Adresse</i> des ersten Callback-Parameters erhalten, der einem Skript-Parameter nicht zugewiesen wurde. Zum Beispiel:</p>
+<p id="Indirect"><strong>Parameter via Adresse abrufen:</strong> Wenn die <code>&amp;</code>-Option genutzt wird, erhält die Funktion die <i>Adresse</i> des ersten Callback-Parameters. Zum Beispiel:</p>
 <pre>
-callback := RegisterCallback("DieFunktion", "F", 3)  <em>; Größe der Parameterliste muss angegeben werden.</em>
-DieFunktion("DieFunktion wurde direkt aufgerufen.")  <em>; Ruft DieFunktion direkt auf.</em>
-DllCall(callback, float, 10.5, int64, 42)        <em>; Ruft DieFunktion via Callback auf.</em>
-DieFunktion(params*) {
-    if IsObject(params)
-        MsgBox params[1]
-    else
-        MsgBox <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
+callback := CallbackCreate("DieFunk", "F&amp;", 3)  <em>; Größe der Parameterliste muss bei 32-Bit angegeben werden.</em>
+DllCall(callback, float, 10.5, int64, 42)
+DieFunk(params) {
+    MsgBox <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
 }</pre>
-<p>Die meisten Callbacks verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>Parameteranzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen.</p>
-<p>Bei <em>Cdecl</em> oder 64-Bit-Aufrufkonventionen hat <em>Parameteranzahl</em> nur Einfluss darauf, wievielen Skriptparametern Werte zugewiesen werden können. Wenn dieser Parameter fehlt, werden alle optionalen Parameter ihren Standardwert bekommen und aus den Berechnungen für die Adresse, gespeichert in <em>params</em>, ausgeschlossen.</p>
+<p>Die meisten Callbacks in 32-Bit-Programmen verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>Parameteranzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen. Beim Verwenden von <em>Cdecl</em> oder der 64-Bit-Aufrufkonvention hat <em>Parameteranzahl</em> keine Wirkung.</p>
 
 <h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
 <p>Wenn die Funktion ein <a href="Return.htm">Return</a> verwendet, dessen Parameter entweder fehlt oder einen leeren Wert wie "" hat (oder überhaupt kein Return verwendet), wird eine 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-bit kürzt Rückgabewerte auf 32 Bit, während AutoHotkey 64-bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
@@ -90,9 +93,10 @@ DieFunktion(params*) {
 <p>Der <a href="#Fast">Fast-Modus</a> erbt hingegen die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Desweiteren werden jegliche Änderungen, die die Funktion bei globalen Einstellungen gemacht hat (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>), auch für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn bekannt ist, in welchen Threads die Funktion aufgerufen wird.</p>
 <p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), fügt man <a href="Critical.htm">Critical</a> in die erste Zeile ein. Allerdings ist dies nicht effektiv, wenn die Funktion indirekt via eingehende Meldung kleiner als 0x312 aufgerufen wird (das Erhöhen von Critical's <a href="Critical.htm#Interval">Intervall</a> könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="PostMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
 
-<h3>Speicher</h3>
-<p>Jede Verwendung von RegisterCallback bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das RegisterCallback unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
-<pre>DllCall("GlobalFree", "Ptr", Adresse, "Ptr")</pre>
+<h3 id="CallbackFree">Speicher</h3>
+<p>Jede Verwendung von CallbackCreate bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das CallbackCreate unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
+<pre>CallbackFree(Adresse)</pre>
+<p>Dadurch wird auch sichergestellt, dass der vom Callback erstellte Verweis zum Funktionsobjekt des Skripts freigegeben wird.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
@@ -100,9 +104,9 @@ DieFunktion(params*) {
 <h3>Beispiele</h3>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt eine Zusammenfassung aller Fenster auf höchster Ebene an.</em>
 
-<em>; Aus Performance- und Speichergründen wird RegisterCallback() nur einmal für einen bestimmten Callback aufgerufen:</em>
+<em>; Aus Performance- und Speichergründen wird CallbackCreate nur einmal für einen bestimmten Callback aufgerufen:</em>
 if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird:</em>
-    EnumAdresse := <strong>RegisterCallback</strong>("EnumWindowsProc", "Fast")
+    EnumAdresse := <strong>CallbackCreate</strong>("EnumWindowsProc", "Fast")
 
 DetectHiddenWindows True  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
 
@@ -133,18 +137,17 @@ Text := Gui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hintergru
 <em>; 64-Bit-Skripte müssen SetWindowLongPtr statt SetWindowLong aufrufen:</em>
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
-WindowProcNeu := <strong>RegisterCallback</strong>("WindowProc", ""  <em>; Mit "" wird der Fast-Modus beim Setzen der Unterklasse verhindert.</em>
-    , <strong>4</strong>, Text.Hwnd)  <em>; Es muss die genaue Parameteranzahl angegeben werden, wenn der EventInfo-Parameter vorhanden ist.</em>
+WindowProcNeu := <strong>CallbackCreate</strong>("WindowProc")  <em>; Vermeide den Fast-Modus beim Setzen der Unterklasse.</em>
 WindowProcAlt := DllCall(SetWindowLong, Ptr, Gui.Hwnd, Int, -4  <em>; -4 ist GWL_WNDPROC</em>
-    , Ptr, WindowProcNeu, Ptr)  <em>; Wert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
+    , Ptr, WindowProcNeu, Ptr)  <em>; Rückgabewert muss auf Ptr oder UPtr anstatt auf Int gesetzt werden.</em>
 
 Gui.Show
 
 WindowProc(hwnd, uMsg, wParam, lParam)
 {
     Critical
-    global Texthintergrundfarbe, Pinsel, WindowProcAlt
-    if (uMsg = 0x138 &amp;&amp; lParam = A_EventInfo)  <em>; 0x138 ist WM_CTLCOLORSTATIC.</em>
+    global Text, Texthintergrundfarbe, Pinsel, WindowProcAlt
+    if (uMsg = 0x138 &amp;&amp; lParam = Text.Hwnd)  <em>; 0x138 ist WM_CTLCOLORSTATIC.</em>
     {
         DllCall("SetBkColor", UInt, wParam, Ptr, Texthintergrundfarbe)
         return Pinsel  <em>; Gibt HBRUSH zurück, um dem OS mitzuteilen, dass wir HDC geändert haben.</em>

@@ -264,6 +264,22 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: <code>not x := y</code> würde als <code>not (x := y)</code> ausgewertet werden. <code>++Var := X</code> würde als <code>++(Var := X)</code> ausgewertet werden; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> würde als <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code> ausgewertet werden.</p>
     </td>
   </tr>
+  <tr id="fat-arrow">
+    <td><strong>() =&gt;</strong> <em>Ausdr</em></td>
+    <td>
+      <p><strong>Fat-Arrow-Funktion</strong>. Definiert eine einfache anonyme <a href="Functions.htm">Funktion</a> und gibt ein <a href="objects/Func.htm">Func</a>- oder <a href="Functions.htm#closures">Closure</a>-Objekt zurück. Schreiben Sie die <a href="Functions.htm#param">Parameterliste</a> der Funktion links neben den Operator. Wenn die Funktion aufgerufen wird (über den zurückgegebenen Verweis), wertet sie den Teilausdruck <em>Ausdr</em> aus und gibt das Ergebnis zurück.</p>
+      <p>Die folgenden beiden Beispiele sind identisch, außer dass die Funktion im zweiten Fall via Name aufgerufen oder verwiesen werden kann:</p>
+      <pre>sumfn := (a, b) =&gt; a + b</pre>
+      <pre>Sum(a, b) {
+    return a + b
+}
+sumfn := Func("Sum")</pre>
+      <p>Besteht die Parameterliste nur aus einem einzigen Parameternamen, können die runden Klammern weggelassen werden.</p>
+      <p>Variablenverweise in <em>Ausdr</em> werden im Kontext der anonymen Funktion, die im <a href="Functions.htm#AssumeLocal">Assume-Local</a>-Modus ist, aufgelöst. Wenn sich der Ausdruck innerhalb einer anderen Funktion befindet, kann <em>Ausdr</em> auf die lokalen Variablen dieser Funktion nach den gleichen Regeln wie jede andere <a href="Functions.htm#nested">verschachtelte Funktion</a> verweisen.</p>
+      <p>Die Funktion selbst wird wie jede andere Funktion erstellt, wenn das Skript geladen wird. Wenn <em>Ausdr</em> jedoch auf die lokalen Variablen einer äußeren Funktion verweist, wird jedes Mal, wenn der Fat-Arrow-Ausdruck ausgewertet wird, ein neues <a href="Functions.htm#closures">Closure</a> erzeugt und zurückgegeben.</p>
+    </td>
+    
+  </tr>
   <tr id="comma">
     <td style="text-align:center"><strong>,</strong></td>
     <td><p><strong>Komma (Mehrfachanweisung)</strong>. Kommas können genutzt werden, um mehrere Teilausdrücke auf einer Zeile zu schreiben. Diese Vorgehensweise wird häufig angewendet, um mehrere Zuweisungen oder Funktionsaufrufe zu gruppieren. Zum Beispiel: <code>x:=1<strong>,</strong> y+=2<strong>,</strong> ++index, func()</code>. Solche Anweisungen werden von links nach rechts ausgeführt.</p>
@@ -801,7 +817,6 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
     <td><p>Enthält zusätzliche Informationen über die folgenden Ereignisse:</p>
       <ul>
         <li><a href="Hotkeys.htm#Wheel">Mausrad-Hotkeys</a> (WheelDown/Up/Left/Right)</li>
-        <li><a href="commands/RegisterCallback.htm">RegisterCallback</a></li>
       </ul>
 <p>Hinweis: Jeder <a href="misc/Threads.htm">Thread</a> verwaltet seinen eigenen Wert für A_EventInfo (im Gegensatz zu Variablen wie A_ThisHotkey). Das heißt beispielsweise, dass auch dann noch die ursprünglichen/richtigen Werte in diesen Variablen enthalten sind, wenn ein Thread zwischendurch von einem anderen Thread unterbrochen werden musste.</p>
       <p><strong>Lesen/Schreiben:</strong> A_EventInfo kann auch vom Skript gesetzt werden, aber akzeptiert werden nur vorzeichenlose Integer innerhalb eines Pointer-Bereichs (32-Bit oder 64-Bit, je nach Version von AutoHotkey).</p></td>

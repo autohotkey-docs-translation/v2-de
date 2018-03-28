@@ -23,7 +23,7 @@
   <li><a href="#Local">Lokale Variablen</a></li>
   <li><a href="#DynCall">Dynamisches Aufrufen einer Funktion</a></li>
   <li><a href="#ShortCircuit">Logische Kurzschlussauswertung</a></li>
-  <li><a href="#gosub">Verwenden von Subroutinen innerhalb einer Funktion</a></li>
+  <li><a href="#nested">Verschachtelte Funktionen</a></li>
   <li><a href="#remarks">Return, Exit und allgemeine Bemerkungen</a></li>
   <li><a href="#include">Skripte mittels #Include auf die gleichen Funktionen zugreifen lassen</a></li>
   <li><a href="#lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek</a></li>
@@ -69,7 +69,6 @@ Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisu
 </ul>
 <h2 id="optional">Optionale Parameter</h2>
 <p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden. Um das zu tun, fügt man <code>:=</code> an, gefolgt vom Standardwert des Parameters, der Folgendes sein kann: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Gleitkommazahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie "fox" oder "".</p>
-<p>Die Verwendung von <code>=</code> (ohne Doppelpunkt) ist aus Gründen der Abwärtskompatibilität erlaubt, aber nicht empfohlen, da es in AutoHotkey v2 nicht mehr zugelassen ist. Unabhängig davon, welcher Operator verwendet wird, müssen Standardwerte, die Zeichenketten sind, immer in Anführungszeichen gesetzt werden.</p>
 <p>Die folgende Funktion hat einen Z-Parameter, der als optional gekennzeichnet ist:</p>
 <pre>Add(X, Y, Z := 0) {
     return X + Y + Z
@@ -144,7 +143,6 @@ MsgBox Verbinden("`n", "eins", "zwei", "drei")</pre>
 <ul>
   <li>Der "variadische" Parameter kann nur am Ende der formalen Parameterliste erfolgen.</li>
   <li><a href="misc/RegExCallout.htm">RegEx-Callouts</a> können nicht variadisch sein; der "variadische" Parameter wird zwar toleriert, aber bleibt leer.</li>
-  <li><a href="commands/RegisterCallback.htm">Callbacks</a> übergeben überschüssige Parameter nicht via Array, sondern <a href="commands/RegisterCallback.htm#Indirect">via Adresse</a>.</li>
 </ul>
 <h3 id="VariadicCall">Variadische Funktionsaufrufe</h3>
 <p>Variadische Funktionen können mithilfe eines Arrays eine variable Anzahl von Parametern <i>akzeptieren</i>, während variadische Funktionsaufrufe verwendet werden können, um eine variable Anzahl von Parametern an eine <i>beliebige</i> Funktion mithilfe derselben Syntax zu übergeben:</p>
@@ -166,13 +164,18 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
 <h2 id="Locals">Lokale und globale Variablen</h2>
 <h3 id="Local">Lokale Variablen</h3>
 <p>Lokale Variablen sind funktionsspezifisch und nur innerhalb dieser Funktion sichtbar. Folglich kann eine lokale Variable, die denselben Namen hat wie eine globale Variable, etwas anderes als die globale Variable enthalten. Verschiedene Funktionen können bedenkenlos die gleichen Variablennamen benutzen.</p>
-<p>Alle lokalen Variablen, die nicht <a href="#static">statisch</a> sind, werden automatisch freigegeben (leer gemacht), wenn die Funktion ihr Ende erreicht hat.</p>
+<p>Alle lokalen Variablen, die nicht <a href="#static">statisch</a> sind, werden automatisch freigegeben (leer gemacht), wenn die Funktion ihr Ende erreicht hat, mit Ausnahme von Variablen, die an ein <a href="#closures">Closure</a> gebunden sind.</p>
 <p>Interne Variablen wie <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a> sind nie lokal (sie sind von überall aus erreichbar) und können nicht neu deklariert werden.</p>
-<p id="AssumeLocal">Funktionen sind standardmäßig im <strong>Assume-Local</strong>-Modus. Variablen, die innerhalb einer Assume-Local-Funktion zugegriffen oder erstellt werden, sind standardmäßig lokal, mit Ausnahme von <a href="#SuperGlobal">superglobalen</a> Variablen wie <a href="Objects.htm#Custom_Classes">Klassen</a>.</p>
+<p id="AssumeLocal">Funktionen sind standardmäßig im <strong>Assume-Local</strong>-Modus. Variablen, die innerhalb einer Assume-Local-Funktion zugegriffen oder erstellt werden, sind standardmäßig lokal, aber es gibt folgende Ausnahmen:</p>
+<ul>
+  <li><a href="#SuperGlobal">Superglobale</a> Variablen, inklusive <a href="Objects.htm#Custom_Classes">Klassen</a>.</li>
+  <li>Innerhalb einer <a href="#nested">verschachtelten Funktion</a> kann man auf nicht-dynamische lokale und statische Variablen zugreifen, die von einer äußeren Funktion erzeugt wurden.</li>
+</ul>
 <p>Siehe unten, wie das Standardverhalten überschrieben werden kann (indem man die Variable deklariert oder den Modus der Funktion ändert).</p>
 <p id="ForceLocal"><strong>Force-Local-Modus</strong>: Wenn die erste Zeile der Funktion das Wort "local" ist, werden alle Variablenverweise als lokal angesehen, es sei denn, sie werden <em>innerhalb</em> der Funktion als global deklariert. Im Gegensatz zum Standardmodus verhält sich der Force-Local-Modus wie folgt:</p>
 <ul>
   <li>Superglobale Variablen (einschließlich Klassen) sind nur zugänglich, wenn sie innerhalb der Funktion deklariert werden.</li>
+  <li>Wenn die Funktion innerhalb einer anderen Funktion definiert ist, kann man nicht auf die lokalen und statischen Variablen der äußeren Funktion zugreifen.</li>
   <li>Innerhalb einer Force-Local-Funktion kann nie die <em>LocalSameAsGlobal</em>-<a href="commands/_Warn.htm">Warnung</a> für Variablen ausgelöst wird.</li>
 </ul>
 
@@ -256,16 +259,87 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
     break   <em>; Nichts zu durchsuchen oder Übereinstimmung gefunden.</em></pre>
 <p>Wie die Beispiele oben zeigen, sollten umfangreiche (zeitaufwendige) Funktionen in der Regel auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen werden, um die Performance zu erhöhen. Diese Technik kann auch genutzt werden, um das Aufrufen einer Funktion zu verhindern, wenn ihr ein Wert übergeben wurde, den sie für unpassend hält (z. B. eine leere Zeichenkette).</p>
 <p>Der <a href="Variables.htm#ternary">ternäre Bedingungsoperator (?:)</a> wendet auch die Kurzschlussauswertung an, indem er nur die gewinnende Abzweigung auswertet.</p>
-<h2 id="gosub">Verwenden von Subroutinen innerhalb einer Funktion</h2>
-<p>Eine Funktion kann Subroutinen, aber keine <a href="#define">Definitionen</a> von anderen Funktionen enthalten. Sie können wie alle Subroutinen via <a href="commands/Gosub.htm">GoSub</a> gestartet und via <a href="commands/Return.htm">Return</a> beendet werden (in diesem Fall gilt das Return nicht für die Funktion, sondern für das GoSub).</p>
+
+<h2 id="nested">Verschachtelte Funktionen</h2>
+<p>Eine <em>verschachtelte</em> Funktion ist eine Funktion, die in einer anderen Funktion definiert ist. Zum Beispiel:</p>
+<pre>
+außen(x) {
+    innen(y) {
+        MsgBox(y, x)
+    }
+    innen("eins")
+    innen("zwei")
+}
+außen("Titel")
+</pre>
+<p>Der Zugriff auf eine verschachtelte Funktion kann nicht außerhalb der äußeren Funktion erfolgen, aber überall innerhalb dieser Funktion, einschließlich innerhalb weiterer verschachtelten Funktionen.</p>
+<p>Standardmäßig kann eine verschachtelte Funktion auf nicht-dynamische lokale und statische Variablen der äußeren Funktion zugreifen, aber nicht auf ByRef-Parameter oder dynamisch erzeugte Variablen. <a href="#Global">Globale</a> Deklarationen in der äußeren Funktion gelten auch für verschachtelte Funktionen, außer wenn sie mit dem <a href="#ForceLocal">Force-Local</a>-Modus überschrieben werden.</p>
+<p>Wenn eine Funktion als <a href="#ForceLocal">Force-Local</a> oder <a href="#AssumeGlobal">Assume-Global</a> deklariert ist, sind alle lokalen oder statischen Variablen, die <em>außerhalb</em> dieser Funktion erstellt wurden, für die Funktion selbst oder eine ihrer verschachtelten Funktionen nicht direkt zugänglich.</p>
+<p>Funktionen sind standardmäßig im <a href="#AssumeLocal">Assume-Local</a>-Modus, was auch für verschachtelte Funktionen gilt, sogar innerhalb einer <a href="#AssumeStatic">Assume-Static</a>-Funktion. Wenn die äußere Funktion jedoch im <a href="#AssumeGlobal">Assume-Global</a>-Modus ist, verhalten sich verschachtelte Funktionen so, als gelte standardmäßig Assume-Global, außer dass sie auf die lokalen und statischen Variablen der äußeren Funktion zugreifen können.</p>
+<p>Eine verschachtelte Assume-Static-Funktion kann immer noch auf die Variablen der äußeren Funktion zugreifen, es sei denn, sie ist zusätzlich <a href="#ForceLocal">Force-Local</a>.</p>
+<p>Dynamische Variablenverweise innerhalb einer verschachtelten Funktion können nur dann in den Variablen der äußeren Funktion aufgelöst werden, wenn die verschachtelte Funktion (oder eine ihrer eigenen verschachtelten Funktionen) auch einen nicht-dynamischen Verweis zu der Variable enthält.</p>
+<p><a href="commands/Func.htm">Func</a> kann genutzt werden, um einen Verweis zu einer verschachtelten Funktion abzurufen, die auch dann noch aufgerufen werden kann, nachdem die äußere Funktion ihr Ende erreicht hat. Verschachtelte Funktionen können auch via Name an interne Funktionen wie <a href="commands/SetTimer.htm">SetTimer</a> und <a href="commands/Sort.htm">Sort</a> übergeben werden.</p>
+
+<h3 id="closures">Closures</h3>
+<p>Ein <em>Closure</em> ist eine verschachtelte Funktion, die an eine Reihe von <em>freien Variablen</em> gebunden ist. Freie Variablen sind lokale Variablen der äußeren Funktion, auf die verschachtelte Funktionen zugreifen können. Closures ermöglichen es, dass eine oder mehrere verschachtelte Funktionen ihre Variablen mit der äußeren Funktion teilen, selbst wenn die äußere Funktion bereits ihr Ende erreicht hat.</p>
+<p>Um ein Closure zu erstellen, übergibt man den Namen einer verschachtelten Funktion an <a href="commands/Func.htm">Func</a>. Zum Beispiel:</p>
+<pre>
+Begrüßer_erstellen(f)
+{
+    begrüße(Subjekt)  <em>; Dies wird wegen f ein Closure sein.</em>
+    {
+        MsgBox Format(f, Subjekt)
+    }
+    return Func("begrüße")  <em>; Erstellt und gibt ein Closure zurück.</em>
+}
+
+g := Begrüßer_erstellen("Hallo, {}!")
+g.call(A_UserName)
+g.call("Welt")
+</pre>
+<p>Ein Closure kann auch erstellt werden, wenn man den Namen einer verschachtelten Funktion an eine interne Funktion wie <a href="commands/SetTimer.htm">SetTimer</a> oder <a href="commands/Hotkey.htm">Hotkey</a> übergibt. Zum Beispiel:</p>
+<pre>
+app_hotkey(hotkey, app_titel, app_pfad)
+{
+    aktivieren()  <em>; Dies wird wegen app_titel und app_pfad ein Closure sein.</em>
+    {
+        if WinExist(app_titel)
+            WinActivate
+        else
+            Run app_pfad
+    }
+    Hotkey hotkey, "aktivieren"
+}
+<em>; Win+N aktiviert oder startet Notepad.</em>
+app_hotkey "#n", "ahk_class Notepad", "notepad.exe"
+<em>; Win+W aktiviert oder startet WordPad.</em>
+app_hotkey "#w", "ahk_class WordPadClass", "wordpad.exe"
+</pre>
+<p>Wenn eine Funktion freie Variablen erzeugt (also wenn verschachtelten Funktionen auf eine ihrer lokalen Variablen zugreifen), werden alle verschachtelten Funktionen dieser Funktion zu Closures. Das kommt daher, dass eine verschachtelte Funktion eine beliebig andere verschachtelte Funktion aufrufen oder für sie via Name ein Closure erstellen kann.</p>
+<p>Jedes Mal, wenn ein Funktionsname in ein Closure aufgelöst wird, wird ein <em>neues</em> Closure erstellt, selbst wenn ein Closure bereits mit dem gleichen Satz freier Variablen erstellt wurde. Übergeben Sie ein Closure nicht via Name an <a href="commands/SetTimer.htm">SetTimer</a>, <a href="commands/OnClipboardChange.htm">OnClipboardChange</a>, <a href="commands/OnExit.htm">OnExit</a>, <a href="commands/OnMessage.htm">OnMessage</a> oder <a href="objects/GuiOnEvent.htm">Gui.OnEvent</a>, wenn dieses Closure später entfernt werden muss, da dies die Rückgabe des gleichen Objekts erfordert. Zum Beispiel:</p>
+<pre>
+timertest() {
+    x := "tack!"
+    tick() {
+        MsgBox x               <em>; x macht dies zu einem Closure.</em>
+        <em>;SetTimer t, "Delete"  ; Dies würde ein Zirkelbezug bewirken.</em>
+    }
+    SetTimer "tick", 1000      <em>; Erstellt einen Timer.</em>
+    SetTimer "tick", "Delete"  <em>; Schlägt fehl.</em>
+    t := Func("tick")
+    SetTimer t, 1000           <em>; Erstellt einen zweiten Timer.</em>
+    SetTimer t, "Delete"       <em>; Löscht den zweiten Timer.</em>
+}
+timertest()
+</pre>
+<p id="circular-closure">Es ist ratsam, einen Verweis zu einem Closure nicht in einer der freien Variablen des Closure zu speichern, da dies einen <a href="Objects.htm#Circular_References">Zirkelbezug</a> erzeugt, der unterbrochen werden muss, bevor das Closure freigegeben werden kann, z. B. indem man die Variable leert.</p>
+
+<h3 id="gosub">Verwenden von Subroutinen innerhalb einer Funktion</h3>
+<p>Eine Funktion kann auch Subroutinen enthalten, die zwar mehr Einschränkungen aufweisen als verschachtelte Funktionen, aber eventuell schneller ausgeführt werden können. Sie können wie alle Subroutinen via <a href="commands/Gosub.htm">GoSub</a> gestartet und via <a href="commands/Return.htm">Return</a> beendet werden (in diesem Fall gilt das Return nicht für die Funktion, sondern für das GoSub).</p>
 <p id="GosubPublic">Wenn eine Funktion <a href="commands/Gosub.htm">GoSub</a> verwendet, um zu einer öffentlichen Subroutine zu springen (also eine, die außerhalb der geschweiften Funktionsklammern zu finden ist), sind alle externen Variablen global und die <a href="#Local">lokalen Variablen</a> der Funktion erst wieder zugänglich, wenn die Subroutine ihr Ende erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
 <p>Ein <a href="commands/Goto.htm">Goto</a> kann nicht verwendet werden, um innerhalb einer Funktion zu einer externen Subroutine zu springen, allerdings kann eine Funktion via <a href="commands/Gosub.htm">Gosub</a> zu einer externen Subroutine springen und von dort aus ein Goto durchführen.</p>
 <p>Ein <a href="commands/Goto.htm">Goto</a> ist trotz seines schlechten Rufes zum Beispiel nützlich, um innerhalb einer Funktion auf eine andere Position zu springen. Dies kann dazu beitragen, komplexe Funktionen zu vereinfachen, die mehrere Returns haben und vor einem Return aufgeräumt werden müssen.</p>
-<p>Eine Funktion kann Subroutinen enthalten, die extern aufgerufen werden, wie z. B. <a href="commands/SetTimer.htm">Timer</a> und <a href="objects/Menu.htm">Menüpunkte</a>. Dies ist eine übliche Vorgehensweise, um die Subroutinen in einer separaten Datei für <a href="commands/_Include.htm">#Include</a> zusammenzufassen. Dadurch wird verhindert, dass der <a href="Scripts.htm#auto">automatische Ausführungsbereich</a> des Skripts gestört wird. Allerdings gelten folgende Einschränkungen:</p>
-<ul>
-  <li>Solche Subroutinen sollten nur <a href="#static">statische</a> und <a href="#Global">globale</a> Variablen verwenden (keine <a href="#Local">lokalen</a> Variablen), wenn ihre Funktion jemals normal aufgerufen wird. Sonst könnte ein Subroutinen-<a href="misc/Threads.htm">Thread</a>, der den Thread eines Funktionsaufrufs unterbricht (oder umgekehrt), die lokalen Variablen des unterbrochenen Threads ändern. Jedes Mal, wenn eine Funktion ihr Ende erreicht hat, werden alle lokalen Variablen leer gemacht, um ihren Speicher freizugeben.</li>
-  <li>Wenn ein Subroutinen-<a href="misc/Threads.htm">Thread</a> in eine Funktion eindringt, werden alle Verweise auf <a href="misc/Arrays.htm">dynamische Variablen</a>, die von diesem Thread erstellt wurden, als <a href="#Global">globale Variablen</a> behandelt (einschließlich Funktionen, die Arrays erzeugen). <a href="misc/Labels.htm">Lokale Label</a> hingegen können nicht dynamisch verwiesen werden.</li>
-</ul>
+
 <h2 id="remarks">Return, Exit und allgemeine Bemerkungen</h2>
 <p>Wenn der Ausführungsablauf die geschweifte Endklammer der Funktion vor einem <a href="commands/Return.htm">Return</a> erreicht hat, endet die Funktion und gibt eine leere Zeichenkette zurück. Es wird auch ein leerer Wert zurückgegeben, wenn die Funktion den Parameter von <a href="commands/Return.htm">Return</a> explizit weglässt.</p>
 <p>Wenn eine Funktion ein <a href="commands/Exit.htm">Exit</a> zum Beenden des <a href="misc/Threads.htm">aktuellen Threads</a> verwendet, erhält ihr Aufrufer überhaupt keinen Rückgabewert. Das <code>Var</code> in <code>Var := Addieren(2, 3)</code> bliebe beispielsweise unverändert, wenn <code>Add()</code> via Exit beendet wird. Das gleiche passiert, wenn die Funktion einen Laufzeitfehler verursacht, wie z. B. das <a href="commands/Run.htm">Ausführen</a> einer nicht-existierenden Datei (nur wenn <a href="commands/Run.htm#UseErrorLevel">UseErrorLevel</a> nicht aktiv ist).</p>
@@ -361,6 +435,10 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
     <th style="width:150px">Funktion</th>
     <th>Beschreibung</th>
   </tr>
+  <tr id="CallbackCreate">
+    <td><a href="commands/CallbackCreate.htm">CallbackCreate</a></td>
+    <td>Erstellt eine Maschinencode-Adresse, die, wenn sie aufgerufen wird, den Aufruf an eine Funktion im Skript weiterleitet.</td>
+  </tr>
   <tr id="Chr">
     <td><a href="commands/Chr.htm">Chr</a></td>
     <td>Gibt eine Zeichenkette zurück (üblicherweise ein einzelnes Zeichen), deren Zeichencode mit der angegebenen Nummer übereinstimmt.</td>
@@ -432,10 +510,6 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
   <tr id="StrPutGet">
     <td><a href="commands/StrPutGet.htm">StrPut</a></td>
     <td>Schreibt eine Zeichenkette auf eine Speicheradresse unter Beachtung des angegebenen Zeichensatzes.</td>
-  </tr>
-  <tr id="RegisterCallback">
-    <td><a href="commands/RegisterCallback.htm">RegisterCallback</a></td>
-    <td>Erstellt eine Maschinencode-Adresse, die, wenn sie aufgerufen wird, den Aufruf an eine Funktion im Skript weiterleitet.</td>
   </tr>
   <tr id="TreeView">
     <td><a href="commands/TreeView.htm#BuiltIn">TreeView</a></td>
