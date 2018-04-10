@@ -220,23 +220,23 @@ return
 
 F1 up::<strong>DllCall</strong>("SystemParametersInfo", UInt, 0x71, UInt, 0, Ptr, OrigMausTempo, UInt, 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
 
-<pre class="NoIndent"><em>; Beispiel: ; Beispiel: Überwacht das aktive Fenster und zeigt die Position der vertikalen Scrollleiste
+<pre class="NoIndent"><em>; Beispiel: Überwacht das aktive Fenster und zeigt die Position der vertikalen Scrollleiste
 ; im seinem fokussierten Steuerelement an (in Echzeit).</em>
 
 SetTimer "BeobachteScrollleiste", 100
-return
 
-BeobachteScrollleiste:
-AktivesFenster := WinExist("A")
-if !AktivesFenster  <em>; Kein aktives Fenster.</em>
-    return
-FokussiertesSteuerelement := ControlGetFocus()  <em>; Alle Parameter weglassen, um das Zuletzt Gefundene Fenster zu benutzen.</em>
-if !FokussiertesSteuerelement  <em>; Kein fokussiertes Steuerelement.</em>
-    return
-<em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
-UnterelementHWND := ControlGetHwnd(FokussiertesSteuerelement)
-ToolTip(<strong>DllCall</strong>("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1))  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
-return</pre>
+BeobachteScrollleiste()
+{
+    AktivesFenster := WinExist("A")
+    if !AktivesFenster  <em>; Kein aktives Fenster.</em>
+        return
+    FokussiertesSteuerelement := ControlGetFocus()  <em>; Alle Parameter weglassen, um das Zuletzt Gefundene Fenster zu benutzen.</em>
+    if !FokussiertesSteuerelement  <em>; Kein fokussiertes Steuerelement.</em>
+        return
+    <em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
+    UnterelementHWND := ControlGetHwnd(FokussiertesSteuerelement)
+    ToolTip(<strong>DllCall</strong>("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1))  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
+}</pre>
 
 <pre class="NoIndent" id="file"><em>; Beispiel: ; Dieses Skript schreibt etwas Text in eine Datei und liest ihn wieder in den Speicher.
 ; Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern.
@@ -282,37 +282,37 @@ OnExit(Func("SystemCursor").bind("Show"))  <em>; Stellt sicher, dass der Mauszei
 
 SystemCursor(cmd)  <em>; cmd = "Show|Hide|Toggle"</em>
 {
-  static vision := true, c := {}
-  static system_cursors := "32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650"
-  VarSetCapacity(h_cursor, 4444, 1)
-  if (cmd = "Reload" or !c.Length())  <em>; Neuladen bei Bedarf oder beim ersten Aufruf.</em>
-  {
-    VarSetCapacity(AndMask, 32*4, 0xFF)
-    VarSetCapacity(XorMask, 32*4, 0)
-    For i, resID in StrSplit(system_cursors, ",")
+    static vision := true, c := {}
+    static system_cursors := "32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650"
+    VarSetCapacity(h_cursor, 4444, 1)
+    if (cmd = "Reload" or !c.Length())  <em>; Neuladen bei Bedarf oder beim ersten Aufruf.</em>
     {
-      h_cursor := DllCall("LoadCursor", Ptr, 0, Ptr, resID)
-      <em>; System-Mauszeiger:</em>
-      c[i] := {r: resID}
-      <em>; Handles von Standardzeigern:</em>
-      c[i][1] := DllCall("CopyImage", Ptr, h_cursor, UInt, 2, Int, 0, Int, 0, UInt, 0)
-      <em>; Leere Mauszeiger:</em>
-      c[i][0] := DllCall("CreateCursor", Ptr, 0, Int, 0, Int, 0, Int, 32, Int, 32, Ptr, &amp;AndMask, Ptr, &amp;XorMask)
+        VarSetCapacity(AndMask, 32*4, 0xFF)
+        VarSetCapacity(XorMask, 32*4, 0)
+        For i, resID in StrSplit(system_cursors, ",")
+        {
+            h_cursor := DllCall("LoadCursor", Ptr, 0, Ptr, resID)
+            <em>; System-Mauszeiger:</em>
+            c[i] := {r: resID}
+            <em>; Handles von Standardzeigern:</em>
+            c[i][1] := DllCall("CopyImage", Ptr, h_cursor, UInt, 2, Int, 0, Int, 0, UInt, 0)
+            <em>; Leere Mauszeiger:</em>
+            c[i][0] := DllCall("CreateCursor", Ptr, 0, Int, 0, Int, 0, Int, 32, Int, 32, Ptr, &amp;AndMask, Ptr, &amp;XorMask)
+        }
     }
-  }
-  if (cmd = "Show")
-    vision := true
-  else if (cmd = "Hide")
-    vision := false
-  else if (cmd = "Toggle")
-    vision := !vision
-  else
-    return
-  For i, cursor in c
-  {
-    h_cursor := DllCall("CopyImage", Ptr, cursor[vision], UInt, 2, Int, 0, Int, 0, UInt, 0)
-    DllCall("SetSystemCursor", Ptr, h_cursor, UInt, cursor.r)
-  }
+    if (cmd = "Show")
+        vision := true
+    else if (cmd = "Hide")
+        vision := false
+    else if (cmd = "Toggle")
+        vision := !vision
+    else
+        return
+    For i, cursor in c
+    {
+        h_cursor := DllCall("CopyImage", Ptr, cursor[vision], UInt, 2, Int, 0, Int, 0, UInt, 0)
+        DllCall("SetSystemCursor", Ptr, h_cursor, UInt, cursor.r)
+    }
 }</pre>
 
 <pre class="NoIndent" id="ExStruct"><em>; Struktur-Beispiel: Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die

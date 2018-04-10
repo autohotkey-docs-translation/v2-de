@@ -44,11 +44,10 @@ Gui.SetFont("s" k_FontSize " "  k_FontStyle, k_FontName)
 Gui.MarginY := 0, Gui.MarginX := 0
 
 <em>;---- Infobereichsmenü ändern:</em>
-fn := Func("k_ShowHide").bind(Gui, k_MenuItemHide, k_MenuItemShow)
-A_TrayMenu.Add k_MenuItemHide, fn
+A_TrayMenu.Delete
+A_TrayMenu.Add k_MenuItemHide, Func("k_ShowHide").bind(Gui, k_MenuItemHide, k_MenuItemShow)
 A_TrayMenu.Add "&amp;Exit", "k_MenuExit"
 A_TrayMenu.Default := k_MenuItemHide
-A_TrayMenu.Standard := false
 
 <em>;---- Für jede Taste einen Button hinzufügen:</em>
 
@@ -68,21 +67,21 @@ k_oL := [ [, , , , , , , , , , , , , "Backspace"]
 
 <em>; Jede Taste in der Liste mit benutzerdefinierten Tastennamen durchgehen:</em>
 For n, k_Row in k_cL
-  For i, k_CustomKeyName in k_Row
-  {
-    k_OfficialKeyName := k_oL[n][i]
-    <em>; Objektmaße anhand der ausgewählten Schriftgröße berechnen:</em>
-    opt := "h" k_FontSize * 3 " w" k_FontSize * (StrLen(k_CustomKeyName) + 2) " x+m" 
-    if i = 1
-      opt .= " y+m xm"
-    <em>; Wenn der Benutzer eine Taste drückt, klicke den entsprechenden Button auf dem Bildschirm:</em>
-    fn := Func("k_KeyPress").bind(Gui.Add("Button", opt, k_CustomKeyName))
-    <em>; Wenn die Taste einen offiziellen Tastennamen hat, nutze ihn:</em>
-    if k_OfficialKeyName
-      Hotkey("~*" k_OfficialKeyName, fn)
-    else
-      Hotkey("~*" Trim(k_CustomKeyName), fn)
-  }
+    For i, k_CustomKeyName in k_Row
+    {
+        k_OfficialKeyName := k_oL[n][i]
+        <em>; Objektmaße anhand der ausgewählten Schriftgröße berechnen:</em>
+        opt := "h" k_FontSize * 3 " w" k_FontSize * (StrLen(k_CustomKeyName) + 2) " x+m" 
+        if i = 1
+            opt .= " y+m xm"
+        <em>; Wenn der Benutzer eine Taste drückt, klicke den entsprechenden Button auf dem Bildschirm:</em>
+        fn := Func("k_KeyPress").bind(Gui.Add("Button", opt, k_CustomKeyName))
+        <em>; Wenn die Taste einen offiziellen Tastennamen hat, nutze ihn:</em>
+        if k_OfficialKeyName
+            Hotkey("~*" k_OfficialKeyName, fn)
+        else
+            Hotkey("~*" Trim(k_CustomKeyName), fn)
+    }
 
 <em>;---- Tastatur am unteren Rand des Bildschirms positionieren
 ; (unter Berücksichtigung der Taskleistenposition):</em>
@@ -102,32 +101,32 @@ Gui.Show("x" k_xPos " y" k_yPos " NA")
 <em>;---- Funktionsdefinitionen:</em>
 k_KeyPress(BtnCtrl)
 { 
-  BtnCtrl.Opt("Default") <em>; Die zuletzt gedrückte Taste hervorheben.</em>
-  ControlClick(, "ahk_id " BtnCtrl.Hwnd,,,, "D")
-  KeyWait(SubStr(A_ThisHotkey, 3))
-  ControlClick(, "ahk_id " BtnCtrl.Hwnd,,,, "U")
+    BtnCtrl.Opt("Default") <em>; Die zuletzt gedrückte Taste hervorheben.</em>
+    ControlClick(, "ahk_id " BtnCtrl.Hwnd,,,, "D")
+    KeyWait(SubStr(A_ThisHotkey, 3))
+    ControlClick(, "ahk_id " BtnCtrl.Hwnd,,,, "U")
 }
 
 k_ShowHide(GuiObj, HideText, ShowText)
 {
-  static isVisible := true
-  if isVisible
-  {
-    GuiObj.Hide
-    A_TrayMenu.Rename HideText, ShowText
-    isVisible := false
-  }
-  else
-  {
-    GuiObj.Show
-    A_TrayMenu.Rename ShowText, HideText
-    isVisible := true
-  }
+    static isVisible := true
+    if isVisible
+    {
+        GuiObj.Hide
+        A_TrayMenu.Rename HideText, ShowText
+        isVisible := false
+    }
+    else
+    {
+        GuiObj.Show
+        A_TrayMenu.Rename ShowText, HideText
+        isVisible := true
+    }
 }
 
 k_MenuExit()
 {
-  ExitApp
+    ExitApp
 }
 </pre>
 </body>

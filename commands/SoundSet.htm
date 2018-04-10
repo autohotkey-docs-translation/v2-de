@@ -85,52 +85,52 @@ InfoText := Gui.Add("Text", "w400 h400", "Soundkarteninfos werden ermittelt...")
 LV := Gui.Add("ListView", "wp hp xp yp", "Komponententyp|Kontrolltyp|Einstellung|Mixer")
 LV.Visible := false
 LV.ModifyCol(4, "Integer")
-Gui.Show
+Gui.Show()
 
 Loop  <em>; Ruft von jedem Mixer, der im System vorkommt, dessen Fähigkeiten ab.</em>
 {
-  Mixer := A_Index
-  Einstellung := SoundGet(,, Mixer)
-  if ErrorLevel = "Can't Open Specified Mixer"  <em>; Jeder anderer Fehler kennzeichnet, dass der Mixer vorhanden ist.</em>
-    break
-  <em>; Ruft von jedem Komponententyp, der in diesem Mixer vorkommt, dessen Instanzen und Kontrolltypen ab:</em>
-  For i, Komponente in StrSplit(Komponententypen, ",")
-  {
-    <em>; Zuerst überprüfen, ob dieser Komponententyp auch im Mixer vorkommt:</em>
-    Einstellung := SoundGet(Komponente,, Mixer)
-    if ErrorLevel = "Mixer Doesn't Support This Component Type"
-      continue  <em>; Startet für den nächsten Komponententyp eine neue Iteration.</em>
-    Loop  <em>; Ruft von jeder Instanz dieses Komponententyps dessen Kontrolltypen ab.</em>
+    Mixer := A_Index
+    Einstellung := SoundGet(,, Mixer)
+    if ErrorLevel = "Can't Open Specified Mixer"  <em>; Jeder anderer Fehler kennzeichnet, dass der Mixer vorhanden ist.</em>
+        break
+    <em>; Ruft von jedem Komponententyp, der in diesem Mixer vorkommt, dessen Instanzen und Kontrolltypen ab:</em>
+    For i, Komponente in StrSplit(Komponententypen, ",")
     {
-      Instanz := A_Index
-      <em>; Zuerst überprüfen, ob diese Instanz dieser Instanz auch im Mixer vorkommt:</em>
-      Einstellung := SoundGet(Komponente ":" Instanz,, Mixer)
-      <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
-      if ErrorLevel = "Mixer Doesn't Have That Many of That Component Type"
-      || ErrorLevel = "Invalid Control Type or Component Type"
-        break  <em>; Keine weiteren Instanzen von diesem Komponententyp.</em>
-      <em>; Ermittelt die aktuelle Einstellung von jedem Kontrolltyp, der in dieser Instanz von dieser Komponente vorkommt:</em>
-      For i, Kontrolle in StrSplit(Kontrolltypen, ",")
-      {
-        Einstellung := SoundGet(Komponente ":" Instanz, Kontrolle, Mixer)
-        <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
-        if ErrorLevel = "Component Doesn't Support This Control Type"
-        || ErrorLevel = "Invalid Control Type or Component Type"
-          continue
-        if ErrorLevel  <em>; Irgendein unerwarteter Fehler, der demzufolge in den Ergebnissen angezeigt wird.</em>
-          Einstellung := ErrorLevel
-        KomponentenZeichenkette := Komponente
-        if Instanz &gt; 1
-          KomponentenZeichenkette .= ":" Instanz
-        if Einstellung is "float"
-          Einstellung := Format("{:0.2f}", Einstellung)  <em>; Begrenzt die maximale Dezimalstellenanzahl eines Prozentwertes auf 2.</em>
-        LV.Add(, KomponentenZeichenkette, Kontrolle, Einstellung, Mixer)
-      }  <em>; Für jeden Kontrolltyp.</em>
-    }  <em>; Für jede Komponenteninstanz.</em>
-  }  <em>; Für jeden Komponententyp.</em>
+        <em>; Zuerst überprüfen, ob dieser Komponententyp auch im Mixer vorkommt:</em>
+        Einstellung := SoundGet(Komponente,, Mixer)
+        if ErrorLevel = "Mixer Doesn't Support This Component Type"
+            continue  <em>; Startet für den nächsten Komponententyp eine neue Iteration.</em>
+        Loop  <em>; Ruft von jeder Instanz dieses Komponententyps dessen Kontrolltypen ab.</em>
+        {
+            Instanz := A_Index
+            <em>; Zuerst überprüfen, ob diese Instanz dieser Instanz auch im Mixer vorkommt:</em>
+            Einstellung := SoundGet(Komponente ":" Instanz,, Mixer)
+            <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
+            if ErrorLevel = "Mixer Doesn't Have That Many of That Component Type"
+            || ErrorLevel = "Invalid Control Type or Component Type"
+                break  <em>; Keine weiteren Instanzen von diesem Komponententyp.</em>
+            <em>; Ermittelt die aktuelle Einstellung von jedem Kontrolltyp, der in dieser Instanz von dieser Komponente vorkommt:</em>
+            For i, Kontrolle in StrSplit(Kontrolltypen, ",")
+            {
+                Einstellung := SoundGet(Komponente ":" Instanz, Kontrolle, Mixer)
+                <em>; Das Überprüfen beider folgenden Fehler erlaubt diesem Skript, auf ältere Betriebssysteme zu laufen:</em>
+                if ErrorLevel = "Component Doesn't Support This Control Type"
+                || ErrorLevel = "Invalid Control Type or Component Type"
+                    continue
+                if ErrorLevel  <em>; Irgendein unerwarteter Fehler, der demzufolge in den Ergebnissen angezeigt wird.</em>
+                    Einstellung := ErrorLevel
+                KomponentenZeichenkette := Komponente
+                if Instanz &gt; 1
+                    KomponentenZeichenkette .= ":" Instanz
+                if Einstellung is "float"
+                    Einstellung := Format("{:0.2f}", Einstellung)  <em>; Begrenzt die maximale Dezimalstellenanzahl eines Prozentwertes auf 2.</em>
+                LV.Add(, KomponentenZeichenkette, Kontrolle, Einstellung, Mixer)
+            }  <em>; Für jeden Kontrolltyp.</em>
+        }  <em>; Für jede Komponenteninstanz.</em>
+    }  <em>; Für jeden Komponententyp.</em>
 }  <em>; Für jeden Mixer.</em>
 
-Loop LV.GetCount("Col")  <em>; Passt die Größe jeder Spalte automatisch am Inhalt an.</em>
+Loop(LV.GetCount("Col"))  <em>; Passt die Größe jeder Spalte automatisch am Inhalt an.</em>
     LV.ModifyCol(A_Index, "AutoHdr")
 
 InfoText.Visible := false

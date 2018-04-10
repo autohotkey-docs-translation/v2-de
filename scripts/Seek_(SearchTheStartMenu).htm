@@ -102,46 +102,46 @@ config.ScriptTitle := "Seek - Startmenü durchsuchen"
 <em>; Hilfe anzeigen:</em>
 if A_Args[1] ~= "^(--help|-help|/h|-h|/\?|-\?)$"
 {
-  MsgBox("
-  (
-    Die Navigation im Startmenü kann umständlich sein, besonders wenn viele
-    Programme im Laufe der Zeit installiert wurden. Mit 'Seek' kann ein Schlüsselwort
-    unabhängig von der Groß- und Kleinschreibung angegeben werden, um
-    übereinstimmende Programme und Verzeichnisse im Startmenü herauszufiltern,
-    damit das gewünschte Programm aus der Liste einfach geöffnet werden
-    kann. Dadurch entfällt das unnötige Durchsuchen des Startmenüs.
+    MsgBox("
+    (
+        Die Navigation im Startmenü kann umständlich sein, besonders wenn viele
+        Programme im Laufe der Zeit installiert wurden. Mit 'Seek' kann ein Schlüsselwort
+        unabhängig von der Groß- und Kleinschreibung angegeben werden, um
+        übereinstimmende Programme und Verzeichnisse im Startmenü herauszufiltern,
+        damit das gewünschte Programm aus der Liste einfach geöffnet werden
+        kann. Dadurch entfällt das unnötige Durchsuchen des Startmenüs.
 
-    Optionen:
-      -cache Die zwischengespeicherte Verzeichnisauflistung verwenden, falls
-       verfügbar (Standardmodus, wenn keine Optionen angegeben sind)
-      -scan  Ein Verzeichnis-Scan erzwingen, um die aktuellste
-       Verzeichnisauflistung zu erhalten
-      -scex  Scannen &amp; Beenden (nützlich, um den möglicherweise zeitraubenden
-       Verzeichnis-Scan im Hintergrund durchzuführen)
-      -help  Diese Hilfe anzeigen
-  )", config.ScriptTitle)
-  ExitApp
+      Optionen:
+        -cache Die zwischengespeicherte Verzeichnisauflistung verwenden, falls
+         verfügbar (Standardmodus, wenn keine Optionen angegeben sind)
+        -scan  Ein Verzeichnis-Scan erzwingen, um die aktuellste
+         Verzeichnisauflistung zu erhalten
+        -scex  Scannen &amp; Beenden (nützlich, um den möglicherweise zeitraubenden
+         Verzeichnis-Scan im Hintergrund durchzuführen)
+        -help  Diese Hilfe anzeigen
+    )", config.ScriptTitle)
+    ExitApp
 }
 
 <em>; Überprüfen, ob die wichtigen Umgebungsvariablen vorhanden und gültig sind:</em>
 if !FileExist(A_Temp) <em>; Pfad nicht vorhanden.</em>
 {
-  MsgBox
-  (
-    "Diese wichtige Umgebungsvariable ist entweder nicht definiert oder ungültig:
-    
-        TMP = " A_Temp "
+    MsgBox
+    (
+        "Diese wichtige Umgebungsvariable ist entweder nicht definiert oder ungültig:
         
-    Bitte dieses Problem beheben, bevor Seek fortgesetzt werden kann."
-  ), config.ScriptTitle
-  ExitApp
+            TMP = " A_Temp "
+            
+        Bitte dieses Problem beheben, bevor Seek fortgesetzt werden kann."
+    ), config.ScriptTitle
+    ExitApp
 }
 
 <em>; Startmenü ohne GUI scannen:</em>
 if A_Args[1] = "-scex"
 {
-  SaveFileList(config)
-  return
+    SaveFileList(config)
+    return
 }
 
 <em>; GUI-Fenster erstellen:</em>
@@ -150,7 +150,7 @@ G := GuiCreate(, config.ScriptTitle)
 <em>; Eingabefeld hinzufügen, damit der Benutzer den Suchtext eingeben kann:</em>
 E_Search := G.Add("Edit", "W600")
 if config.TrackKeyPhrase
-  E_Search.Value := IniRead(config.saveFile, "LastSession", "SearchText")
+    E_Search.Value := IniRead(config.saveFile, "LastSession", "SearchText")
 
 <em>; Meine Lieblingszeile hinzufügen:</em>
 G.Add("Text", "X625 Y10", "Wonach suchen Sie, mein Freund?")
@@ -193,231 +193,231 @@ G.Show("Center")
 
 <em>; Erneutes Scannen erzwingen, wenn -scan aktiv ist oder Cache-Datei der Auflistung fehlt:</em>
 if (A_Args[1] = "-scan" or !FileExist(config.saveFile))
-  ScanStartMenu(config, E_Search, T_Info, LB, B_1, B_2, B_3)
+    ScanStartMenu(config, E_Search, T_Info, LB, B_1, B_2, B_3)
 
 <em>; Trefferliste abrufen und setzen:</em>
 FindMatches(config, LB, B_1, B_2, E_Search)
 
 <em>; Aktuellste Auswahl aus Cache-Datei abrufen und Element auswählen:</em>
 if config.TrackKeyPhrase
-  if (LastSelection := IniRead(config.saveFile, "LastSession", "Selection"))
-    LB.Choose(LastSelection)
+    if (LastSelection := IniRead(config.saveFile, "LastSession", "Selection"))
+        LB.Choose(LastSelection)
 
 <em>; Funktionsdefinitionen ---
 
 ; Startmenü scannen und Dateiauflistung in eine Cache-Datei speichern:</em>
 ScanStartMenu(config, E_Search, T_Info, LB, B_1, B_2, B_3)
 {
-  <em>; Benutzer informieren, dass gescannt wird:</em>
-  T_Info.Value := "Scanne Verzeichnisse..."
+    <em>; Benutzer informieren, dass gescannt wird:</em>
+    T_Info.Value := "Scanne Verzeichnisse..."
 
-  <em>; Auswahlfeld beim Scannen deaktivieren:</em>
-  LB.Enabled := false
-  B_1.Enabled := false
-  B_2.Enabled := false
-  B_3.Enabled := false
+    <em>; Auswahlfeld beim Scannen deaktivieren:</em>
+    LB.Enabled := false
+    B_1.Enabled := false
+    B_2.Enabled := false
+    B_3.Enabled := false
 
-  <em>; Ermittelt und speichert die Startmenüdateien:</em>
-  SaveFileList(config)
-  
-  <em>; Benutzer informieren, dass der Scan fertig ist:</em>
-  T_Info.Value := "Scan abgeschlossen."
-  
-  <em>; Auswahlfeld aktivieren:</em>
-  LB.Enabled := true
-  B_1.Enabled := true
-  B_2.Enabled := true
-  B_3.Enabled := true
-  
-  <em>; Mit dem Suchtext die neue Auflistung filtern:</em>
-  FindMatches(config, LB, B_1, B_2, E_Search)
+    <em>; Ermittelt und speichert die Startmenüdateien:</em>
+    SaveFileList(config)
+    
+    <em>; Benutzer informieren, dass der Scan fertig ist:</em>
+    T_Info.Value := "Scan abgeschlossen."
+    
+    <em>; Auswahlfeld aktivieren:</em>
+    LB.Enabled := true
+    B_1.Enabled := true
+    B_2.Enabled := true
+    B_3.Enabled := true
+    
+    <em>; Mit dem Suchtext die neue Auflistung filtern:</em>
+    FindMatches(config, LB, B_1, B_2, E_Search)
 }
 
 <em>; Ermittelt und speichert die Startmenüdateien:</em>
 SaveFileList(config)
 {
-  <em>; Verzeichnispfade definieren, die abgerufen werden sollen:</em>
-  LocationArray := [A_StartMenu, A_StartMenuCommon]
+    <em>; Verzeichnispfade definieren, die abgerufen werden sollen:</em>
+    LocationArray := [A_StartMenu, A_StartMenuCommon]
 
-  <em>; Benutzerdefinierte Pfade in dem Scan einbeziehen:</em>
-  if FileExist(config.SeekMyDir)
-    Loop Read, config.SeekMyDir
+    <em>; Benutzerdefinierte Pfade in dem Scan einbeziehen:</em>
+    if FileExist(config.SeekMyDir)
+        Loop Read, config.SeekMyDir
+        {
+            if !FileExist(A_LoopReadLine)
+                MsgBox
+                (
+                    "Verarbeite Ihre benutzerdefinierte Verzeichnisliste...
+                    
+                    '" A_LoopReadLine "' existiert nicht und wird beim Scannen ignoriert.
+                    Bitte überprüfe [ " config.SeekMyDir " ]."
+                ), config.ScriptTitle, 8192
+            else
+                LocationArray.Push(A_LoopReadLine)
+        }
+
+    <em>; Verzeichnisauflistung scannen und Unterordner einbeziehen.
+    ; Versteckte Dateien werden ausgeschlossen:</em>
+    IniDelete(config.saveFile, "LocationList")
+    For i, Location in LocationArray
     {
-      if !FileExist(A_LoopReadLine)
-        MsgBox
-        (
-          "Verarbeite Ihre benutzerdefinierte Verzeichnisliste...
-          
-          '" A_LoopReadLine "' existiert nicht und wird beim Scannen ignoriert.
-          Bitte überprüfe [ " config.SeekMyDir " ]."
-        ), config.ScriptTitle, 8192
-      else
-        LocationArray.Push(A_LoopReadLine)
+        <em>; Platz mithilfe von relativen Pfaden sparen:</em>
+        IniWrite(Location, config.saveFile, "LocationList", "L" i)
+        A_WorkingDir := Location
+        Loop Files, "*", config.ScanMode "R"
+            if !InStr(FileGetAttrib(A_LoopFilePath), "H") <em>; Versteckte Dateien ausschließen.</em>
+                FileList .= "%L" i "%\" A_LoopFilePath "`n"
     }
-
-  <em>; Verzeichnisauflistung scannen und Unterordner einbeziehen.
-  ; Versteckte Dateien werden ausgeschlossen:</em>
-  IniDelete(config.saveFile, "LocationList")
-  For i, Location in LocationArray
-  {
-    <em>; Platz mithilfe von relativen Pfaden sparen:</em>
-    IniWrite(Location, config.saveFile, "LocationList", "L" i)
-    A_WorkingDir := Location
-    Loop Files, "*", config.ScanMode "R"
-      if !InStr(FileGetAttrib(A_LoopFilePath), "H") <em>; Versteckte Dateien ausschließen.</em>
-        FileList .= "%L" i "%\" A_LoopFilePath "`n"
-  }
-  IniDelete(config.saveFile, "FileList")
-  IniWrite(FileList, config.saveFile, "FileList")
+    IniDelete(config.saveFile, "FileList")
+    IniWrite(FileList, config.saveFile, "FileList")
 }
 
 <em>; Treffer suchen und im Auswahlfeld anzeigen:</em>
 FindMatches(config, LB, B_1, B_2, E_Search)
 {
-  FileArray := []
-  SearchText := E_Search.Value
-  <em>; Treffer auf Basis des Suchtextes filtern:</em>
-  if SearchText
-  {
-    Loop
+    FileArray := []
+    SearchText := E_Search.Value
+    <em>; Treffer auf Basis des Suchtextes filtern:</em>
+    if SearchText
     {
-      Location := IniRead(config.saveFile, "LocationList", "L" A_Index)
-      if !Location
-        break
-      L%A_Index% := Location
-    }
-    Loop Parse, IniRead(config.saveFile, "FileList"), "`n"
-    {
-      Line := A_LoopField
-      if RegExMatch(Line, "%(L\d+)%", m) <em>; %L_n% mit Standortpfaden ersetzen.</em>&gt;
-        Line := StrReplace(Line, "%" m[1] "%", %m[1]%)
-      if SearchText &lt;&gt; E_Search.Value
-      {
-        <em>; Benutzer hat Suchtext geändert.
-        ; Es hat keinen Sinn, die Suche mit dem alten Suchtext fortzusetzen, also abbrechen.</em>
-        return
-      }
-      else
-      {
-        <em>; Treffer zur Liste hinzufügen:</em>
-        SplitPath(Line, Name)
-        MatchFound := true
-        Loop Parse, SearchText, "`s"
+        Loop
         {
-          if !InStr(Name, A_LoopField)
-          {
-            MatchFound := false
-            break
-          }
+            Location := IniRead(config.saveFile, "LocationList", "L" A_Index)
+            if !Location
+                break
+            L%A_Index% := Location
         }
-        if MatchFound
-          FileArray.Push(Line)
-      }
+        Loop Parse, IniRead(config.saveFile, "FileList"), "`n"
+        {
+            Line := A_LoopField
+            if RegExMatch(Line, "%(L\d+)%", m) <em>; %L_n% mit Standortpfaden ersetzen.</em>&gt;
+                Line := StrReplace(Line, "%" m[1] "%", %m[1]%)
+            if SearchText &lt;&gt; E_Search.Value
+            {
+                <em>; Benutzer hat Suchtext geändert.
+                ; Es hat keinen Sinn, die Suche mit dem alten Suchtext fortzusetzen, also abbrechen.</em>
+                return
+            }
+            else
+            {
+                <em>; Treffer zur Liste hinzufügen:</em>
+                SplitPath(Line, Name)
+                MatchFound := true
+                Loop Parse, SearchText, "`s"
+                {
+                    if !InStr(Name, A_LoopField)
+                    {
+                        MatchFound := false
+                        break
+                    }
+                }
+                if MatchFound
+                    FileArray.Push(Line)
+            }
+        }
     }
-  }
 
-  <em>; Trefferliste aktualisieren:</em>
-  LB.Delete(), LB.Add(FileArray)
+    <em>; Trefferliste aktualisieren:</em>
+    LB.Delete(), LB.Add(FileArray)
 
-  if !FileArray.Length()
-  {
-    <em>; Keine Treffer gefunden. Auswahlfeld deaktivieren:</em>
-    LB.Enabled := false
-    B_1.Enabled := false
-    B_2.Enabled := false
-  }
-  else
-  {
-    <em>; Treffer gefunden. Auswahlfeld aktivieren:</em>
-    LB.Enabled := true
-    B_1.Enabled := true
-    B_2.Enabled := true
-    <em>; Den ersten Treffer auswählen, wenn kein anderer ausgewählt wurde:</em>
-    if LB.Text = ""
-      LB.Choose(1, 1)
-  }
+    if !FileArray.Length()
+    {
+        <em>; Keine Treffer gefunden. Auswahlfeld deaktivieren:</em>
+        LB.Enabled := false
+        B_1.Enabled := false
+        B_2.Enabled := false
+    }
+    else
+    {
+        <em>; Treffer gefunden. Auswahlfeld aktivieren:</em>
+        LB.Enabled := true
+        B_1.Enabled := true
+        B_2.Enabled := true
+        <em>; Den ersten Treffer auswählen, wenn kein anderer ausgewählt wurde:</em>
+        if LB.Text = ""
+            LB.Choose(1, 1)
+    }
 }
 
 <em>; Benutzer hat 'Öffnen' angeklickt oder ENTER gedrückt:</em>
 OpenTarget(config, LB)
 {
-  <em>; Ausgewählter Treffer existiert nicht (Datei oder Verzeichnis nicht gefunden):</em>
-  if !FileExist(LB.Text)
-  {
-    MsgBox
-    (
-      LB.Text " existiert nicht.
-      
-      Das bedeutet, dass der Verzeichnis-Cache veraltet ist. Du kannst
-      unten auf 'Startmenü scannen' klicken, um deine Verzeichnisauflistung
-      zu aktualisieren."
-    ), config.ScriptTitle, 8192
-    return
-  }
+    <em>; Ausgewählter Treffer existiert nicht (Datei oder Verzeichnis nicht gefunden):</em>
+    if !FileExist(LB.Text)
+    {
+        MsgBox
+        (
+            LB.Text " existiert nicht.
+            
+            Das bedeutet, dass der Verzeichnis-Cache veraltet ist. Du kannst
+            unten auf 'Startmenü scannen' klicken, um deine Verzeichnisauflistung
+            zu aktualisieren."
+        ), config.ScriptTitle, 8192
+        return
+    }
 
-  <em>; Überprüfen, ob der ausgewählte Treffer eine Datei oder ein Verzeichnis ist:</em>
-  fileAttrib := FileGetAttrib(LB.Text)
-  if InStr(fileAttrib, "D") <em>; ist ein Verzeichnis</em>
-    OpenFolder(config, LB)
-  else if fileAttrib <em>; ist eine Datei</em>
-    Run(LB.Text)
-  else
-  {
-    MsgBox
-    (
-      LB.Text " ist weder ein Verzeichnis noch eine Datei.
-      
-      Das sollte nicht passieren. Die Suche kann nicht fortgesetzt werden. Beende..."
-    )
-  }
-  WinClose
+    <em>; Überprüfen, ob der ausgewählte Treffer eine Datei oder ein Verzeichnis ist:</em>
+    fileAttrib := FileGetAttrib(LB.Text)
+    if InStr(fileAttrib, "D") <em>; ist ein Verzeichnis</em>
+        OpenFolder(config, LB)
+    else if fileAttrib <em>; ist eine Datei</em>
+        Run(LB.Text)
+    else
+    {
+        MsgBox
+        (
+            LB.Text " ist weder ein Verzeichnis noch eine Datei.
+            
+            Das sollte nicht passieren. Die Suche kann nicht fortgesetzt werden. Beende..."
+        )
+    }
+    WinClose
 }
 
 <em>; Benutzer hat 'Verzeichnis öffnen' angeklickt:</em>
 OpenFolder(config, LB)
 {
-  Path := LB.Text
-  <em>; Wenn der Benutzer eine Datei statt ein Verzeichnis auswählt, wird der
-  ; Verzeichnispfad extrahiert (Ich benutze DriveGetStatus anstelle von FileGetAttrib,
-  ; um das Szenario zu erlauben, wo LB.Text ungültig ist, aber der Verzeichnis-
-  ; pfad von LB.Text gültig ist):</em>
-  if DriveGetStatus(Path) &lt;&gt; "Ready" <em>; kein Verzeichnis</em>
-  {
-    SplitPath(Path,, Dir)
-    Path := Dir
-  }
+    Path := LB.Text
+    <em>; Wenn der Benutzer eine Datei statt ein Verzeichnis auswählt, wird der
+    ; Verzeichnispfad extrahiert (Ich benutze DriveGetStatus anstelle von FileGetAttrib,
+    ; um das Szenario zu erlauben, wo LB.Text ungültig ist, aber der Verzeichnis-
+    ; pfad von LB.Text gültig ist):</em>
+    if DriveGetStatus(Path) &lt;&gt; "Ready" <em>; kein Verzeichnis</em>
+    {
+        SplitPath(Path,, Dir)
+        Path := Dir
+    }
 
-  <em>; Überprüfen, ob Verzeichnis existiert:</em>
-  if !FileExist(Path)
-  {
-    MsgBox
-    (
-      Path " existiert nicht.
-      
-      Das bedeutet, dass der Verzeichnis-Cache veraltet ist. Sie können
-      unten auf 'Startmenü scannen' klicken, um Ihre Verzeichnisauflistung
-      zu aktualisieren."
-    ), config.ScriptTitle, 8192
-    return
-  }
+    <em>; Überprüfen, ob Verzeichnis existiert:</em>
+    if !FileExist(Path)
+    {
+        MsgBox
+        (
+            Path " existiert nicht.
+            
+            Das bedeutet, dass der Verzeichnis-Cache veraltet ist. Sie können
+            unten auf 'Startmenü scannen' klicken, um Ihre Verzeichnisauflistung
+            zu aktualisieren."
+        ), config.ScriptTitle, 8192
+        return
+    }
 
-  <em>; Verzeichnis öffnen:</em>
-  if FileExist(config.dirExplorer)
-    Run(Format('"{1}" "{2}"', config.dirExplorer, Path)) <em>; Mit benutzerdefiniertem Dateiexplorer öffnen.</em>
-  else
-    Run(Path) <em>; Mit Standardexplorer öffnen.</em>
+    <em>; Verzeichnis öffnen:</em>
+    if FileExist(config.dirExplorer)
+        Run(Format('"{1}" "{2}"', config.dirExplorer, Path)) <em>; Mit benutzerdefiniertem Dateiexplorer öffnen.</em>
+    else
+        Run(Path) <em>; Mit Standardexplorer öffnen.</em>
 }
 
 
 Gui_Close(config, E_Search, LB)
 {
-  <em>; Suchtext zwischenspeichern:</em>
-  if config.TrackKeyPhrase
-  {
-    IniWrite(E_Search.Value, config.saveFile, "LastSession", "SearchText")
-    IniWrite(LB.Text, config.saveFile, "LastSession", "Selection")
-  }
-  ExitApp
+    <em>; Suchtext zwischenspeichern:</em>
+    if config.TrackKeyPhrase
+    {
+        IniWrite(E_Search.Value, config.saveFile, "LastSession", "SearchText")
+        IniWrite(LB.Text, config.saveFile, "LastSession", "Selection")
+    }
+    ExitApp
 }
 </pre>
 </body>

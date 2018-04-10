@@ -64,7 +64,7 @@ Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisu
 <ul>
   <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">interne Variablen</a> an eine Funktion via Verweis zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
   <li id="recurse">Eine Funktion kann sich selbst rekursiv aufrufen. Beachten Sie aber, dass, wenn sie sich selbst ihre eigenen <a href="#Local">lokalen Variablen</a> oder ByRef-lose Parameter via <em>ByRef</em> übergibt, der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit selben Namen verweist, anstatt auf dem Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
-  <li>Variablen, die innerhalb eines Funktionsparameters aufgelöst werden müssen (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können von links oder rechts befindlichen Parametern geändert werden, bevor sie an die Funktion übergeben werden. <code>Funk(Var, Var++)</code> würde beispielsweise unerwartet 0 und 1 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, auch dann, wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses unlogische Verhalten wird eventuell in einer zukünftigen Version geändert.</li>
+  <li>Variablen, die innerhalb eines Funktionsparameters aufgelöst werden müssen (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können von links oder rechts befindlichen Parametern geändert werden, bevor sie an die Funktion übergeben werden. <code>MeineFunk(Var, Var++)</code> würde beispielsweise unerwartet 0 und 1 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, auch dann, wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses unlogische Verhalten wird eventuell in einer zukünftigen Version geändert.</li>
   <li>ByRef wird nicht direkt unterstützt, wenn die Funktion von einem COM-Clienten aufgerufen wurde oder wenn eine COM-Methode aufgerufen wird. Stattdessen erhält oder muss das Skript ein <a href="commands/ComObject.htm#ByRef">Wrapper-Objekt</a> übergeben, das den <a href="commands/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
 </ul>
 <h2 id="optional">Optionale Parameter</h2>
@@ -75,11 +75,11 @@ Addieren 2, 3  <em>; Runde Klammern können weggelassen werden, wenn die Anweisu
 }</pre>
 <p>Ruft man die Funktion mit <strong>drei</strong> Parametern auf, wird der Standardwert von Z ignoriert. Ruft man aber die Funktion nur mit <strong>zwei</strong> Parametern auf, wird der Z-Variable automatisch eine 0 zugewiesen.</p>
 <p id="missing">Es ist nicht möglich, optionale Parameter in der Mitte der Parameterliste zu platzieren. Alle Parameter auf der rechten Seite des ersten optionalen Parameters müssen in diesem Fall auch optional sein. Allerdings könne optionale Parameter in der Mitte der Parameterliste weggelassen werden, wenn die Funktion aufgerufen wird. Zum Beispiel:</p>
-<pre>Funk(1,, 3)
-Funk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin optional sein muss.</em>
+<pre>MeineFunk(1,, 3)
+MeineFunk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin optional sein muss.</em>
     MsgBox X ", " Y ", " Z
 }</pre>
-<p id="OptionalByRef"> <a href="#ByRef">ByRef-Parameter</a> können auch optional sein; zum Beispiel: <code>Funk(ByRef p1 := "")</code>. Jedes Mal, wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt; das heißt, dass die Funktion sich so verhalten wird, als wäre das Schlüsselwort "ByRef" nicht vorhanden.</p>
+<p id="OptionalByRef"> <a href="#ByRef">ByRef-Parameter</a> können auch optional sein; zum Beispiel: <code>MeineFunk(ByRef p1 := "")</code>. Jedes Mal, wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt; das heißt, dass die Funktion sich so verhalten wird, als wäre das Schlüsselwort "ByRef" nicht vorhanden.</p>
 
 <h2 id="return">Werte an den Aufrufer zurückgeben</h2>
 <p>Wie in der <a href="#intro">Einführung</a> bereits erwähnt, kann eine Funktion einen Wert via <a href="commands/Return.htm">Return</a> an ihren Aufrufer zurückgeben.</p>
@@ -87,7 +87,7 @@ Funk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin optio
 MsgBox returnTest()
 
 returnTest() {
-  return 123
+    return 123
 }
 </pre>
 <p>Wenn Sie noch mehr Ergebnisse aus einer Funktion zurückgeben möchten, können Sie auch <a href="#ByRef">ByRef</a> nutzen:</p>
@@ -95,12 +95,12 @@ returnTest() {
 returnByRef(A,B,C)
 MsgBox A "," B "," C
 
-returnByRef(ByRef Wert1, ByRef Wert2, ByRef Wert3)
+returnByRef(ByRef val1, ByRef val2, ByRef val3)
 {
-  Wert1 := "A"
-  Wert2 := 100
-  Wert3 := 1.1
-  return
+    val1 := "A"
+    val2 := 100
+    val3 := 1.1
+    return
 }
 </pre>
 <p>Mithilfe von Objekten und Arrays können mehrere Werte oder sogar benannte Werte zurückgegeben werden:</p>
@@ -115,19 +115,19 @@ Test3 := returnObject()
 MsgBox Test3.id "," Test3.val
 
 returnArray1() {
-  Test := [123,"ABC"]
-  return Test
+    Test := [123,"ABC"]
+    return Test
 }
 
 returnArray2() {
-  x := 456
-  y := "EFG"
-  return [x, y]
+    x := 456
+    y := "EFG"
+    return [x, y]
 }
 
 returnObject() {
-  Test := {id: 789, val: "HIJ"}
-  return Test
+    Test := {id: 789, val: "HIJ"}
+    return Test
 }
 </pre>
 <h2 id="Variadic">Variadische Funktionen</h2>
@@ -158,7 +158,7 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
 </ul>
 <p>Bekannte Einschränkungen:</p>
 <ul>
-  <li>Nur der am weitesten rechts befindliche Parameter kann auf diese Weise erweitert werden. Zum Beispiel wird <code>Funktion(x, y*)</code> unterstützt, aber nicht <code>Funktion(x*, y)</code>.</li>
+  <li>Nur der am weitesten rechts befindliche Parameter kann auf diese Weise erweitert werden. Zum Beispiel wird <code>MeineFunk(x, y*)</code> unterstützt, aber nicht <code>MeineFunk(x*, y)</code>.</li>
   <li>Zwischen dem Sternchen (<code>*</code>) und dem Symbol, das die Parameterliste beendet, dürfen keine Leerraumzeichen stehen.</li>
 </ul>
 <h2 id="Locals">Lokale und globale Variablen</h2>
@@ -351,9 +351,9 @@ timertest()
 <h2>Stil- und Namenskonventionen</h2>
 <p>Komplexe Funktionen sind besser lesbar und verwaltbar, wenn ihre speziellen Variablen mit einem eindeutigen Präfix benannt werden. Die Parameter einer Funktion können beispielsweise mit einem führenden "p" oder "p_" benannt werden, damit sie auf den ersten Blick leicht zu erkennen sind, besonders um die Übersicht zu bewahren, wenn eine Funktion mehrere Dutzend <a href="#Local">lokale Variablen</a> enthält. Ebenso kann das Präfix "r" oder "r_" für <a href="#ByRef">ByRef-Parameter</a> und "s" oder "s_" für <a href="#static">statische Variablen</a> verwendet werden.</p>
 <p>Der <a href="commands/Block.htm#otb">One True Brace Style</a> (OTB) kann je nach Bedarf angewendet werden, um Funktionen zu definieren. Zum Beispiel:</p>
-<pre>Addieren(x, y) <strong>{</strong>
+<pre>Addieren(x, y) {
     return x + y
-<strong>}</strong></pre>
+}</pre>
 <h2 id="include">Skripte mittels #Include auf die gleichen Funktionen zugreifen lassen</h2>
 <p>Die <a href="commands/_Include.htm">#Include</a>-Direktive kann verwendet werden (<em>auch am Anfang eines Skripts</em>), um Funktionen aus einer externen Datei zu laden.</p>
 <p>Erklärung: Wenn der Ausführungsablauf des Skripts eine Funktionsdefinition erreicht, wird sie übersprungen (dies passiert sofort) und die Ausführung bei der Zeile nach der geschweiften Endklammer fortgesetzt. Die Ausführung kann demzufolge nie in eine Funktionsdefinition geraten. Eine oder mehrere Funktionsdefinitionen im obersten Bereich eines Skripts haben keinen Einfluss auf den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a>.</p>

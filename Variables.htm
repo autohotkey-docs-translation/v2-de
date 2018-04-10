@@ -120,7 +120,12 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><strong>Einstelliges Pluszeichen (+)</strong>: <code>+N</code> ist das gleiche wie <code>-(-N)</code>. Dieser Operator hat keinen Effekt, wenn er auf eine reine Zahl angewendet wird, aber er ist nützlich, um numerische Zeichenketten in reine Zahlen zu konvertieren. Das Ergebnis ist, wie bei jedem anderen mathematischen Operator auch, ein leerer Wert (leere Zeichenkette), wenn der Operand weder eine Zahl noch eine numerische Zeichenkette ist.</p>
       <p><strong>Logisches NICHT (!)</strong>: Wenn der Operand leer oder 0 ist, wird das Ergebnis nach Anwenden des logischen NICHTs eine 1 sein, also "wahr". Ansonsten ist das Ergebnis eine 0 (falsch). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das Synonym zu <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
       <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Handelt es sich bei den Operanden um eine Gleitkommazahl, wird er vor der Berechnung auf Integer-Größe gekürzt. Bei Verwendung von vorzeichenbehafteten 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden.</p>
-      <p id="amp"><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ruft die Adresse des Inhalts von <em>MeineVar</em> im Speicher ab. Dieser Operator wird häufig in Verbindung mit <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> genutzt. Der Inhalt von <em>MeineVar</em> kann eine Zeichenkette, ein 64-Bit-Integer, eine 64-Bit-Gleitkommazahl oder ein Objekt sein.</p>
+      <p id="amp"><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ruft die Adresse des Inhalts von <em>MeineVar</em> im Speicher ab, wobei <em>MeineVar</em> eine benutzerdefinierte Variable ist. Der Inhalt von <em>MeineVar</em> kann eine Zeichenkette, ein 64-Bit-Integer, eine 64-Bit-Gleitkommazahl oder ein Objekt sein. Dieser Operator wird häufig in Verbindung mit <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> genutzt.</p>
+      <p>Der Adressoperator kann in Verbindung mit anderen Zeichenketten genutzt werden, wie z. B. <code>&amp;"Zeichenkette"</code>, <code>&amp;(x . y)</code> oder <code>&amp;A_LoopField</code>, allerdings gelten folgende Einschränkungen:</p>
+      <ul>
+        <li>Der adressierte Speicher sollte niemals verändert werden, z. B. wenn man ihn an einen DllCall-Ausgabeparameter übergibt.</li>
+        <li>Eine Adresse, die von einem temporären Wert stammt (auch die Rückgabewerte von internen Variablen), darf nur solange als gültig angesehen werden, bis die Auswertung des Ausdrucks oder die <a href="Language.htm#function-call-statements">Funktionsaufrufanweisung</a> abgeschlossen ist. Danach wird der Speicher eventuell für etwas anderes benutzt.</li>
+      </ul>
     </td>
   </tr>
   <tr id="MulDiv">
@@ -267,22 +272,24 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
   <tr id="fat-arrow">
     <td><strong>() =&gt;</strong> <em>Ausdr</em></td>
     <td>
-      <p><strong>Fat-Arrow-Funktion</strong>. Definiert eine einfache anonyme <a href="Functions.htm">Funktion</a> und gibt ein <a href="objects/Func.htm">Func</a>- oder <a href="Functions.htm#closures">Closure</a>-Objekt zurück. Schreiben Sie die <a href="Functions.htm#param">Parameterliste</a> der Funktion links neben den Operator. Wenn die Funktion aufgerufen wird (über den zurückgegebenen Verweis), wertet sie den Teilausdruck <em>Ausdr</em> aus und gibt das Ergebnis zurück.</p>
-      <p>Die folgenden beiden Beispiele sind identisch, außer dass die Funktion im zweiten Fall via Name aufgerufen oder verwiesen werden kann:</p>
-      <pre>sumfn := (a, b) =&gt; a + b</pre>
+      <p><strong>Fat-Arrow-Funktion</strong>. Definiert eine einfache <a href="Functions.htm">Funktion</a> und gibt ein <a href="objects/Func.htm">Func</a>- oder <a href="Functions.htm#closures">Closure</a>-Objekt zurück. Schreiben Sie die <a href="Functions.htm#param">Parameterliste</a> der Funktion (optional mit einem Funktionsnamen davor) links neben den Operator. Wenn die Funktion aufgerufen wird (über den zurückgegebenen Verweis), wertet sie den Teilausdruck <em>Ausdr</em> aus und gibt das Ergebnis zurück.</p>
+      <p>Die folgenden zwei Beispiele sind funktionsgemäß identisch:</p>
+      <pre>sumfn := Sum(a, b) =&gt; a + b</pre>
       <pre>Sum(a, b) {
     return a + b
 }
 sumfn := Func("Sum")</pre>
-      <p>Besteht die Parameterliste nur aus einem einzigen Parameternamen, können die runden Klammern weggelassen werden.</p>
-      <p>Variablenverweise in <em>Ausdr</em> werden im Kontext der anonymen Funktion, die im <a href="Functions.htm#AssumeLocal">Assume-Local</a>-Modus ist, aufgelöst. Wenn sich der Ausdruck innerhalb einer anderen Funktion befindet, kann <em>Ausdr</em> auf die lokalen Variablen dieser Funktion nach den gleichen Regeln wie jede andere <a href="Functions.htm#nested">verschachtelte Funktion</a> verweisen.</p>
-      <p>Die Funktion selbst wird wie jede andere Funktion erstellt, wenn das Skript geladen wird. Wenn <em>Ausdr</em> jedoch auf die lokalen Variablen einer äußeren Funktion verweist, wird jedes Mal, wenn der Fat-Arrow-Ausdruck ausgewertet wird, ein neues <a href="Functions.htm#closures">Closure</a> erzeugt und zurückgegeben.</p>
+      <p>In beiden Fällen wird die Funktion zum Zeitpunkt des Skriptstarts <strong>bedingungslos</strong> definiert, allerdings wird der Funktionsverweis nur in <em>sumfn</em> gespeichert, wenn die Zuweisung ausgewertet wird.</p>
+      <p>Wenn der Funktionsname fehlt und die Parameterliste nur aus einem einzigen Parameternamen besteht, können die runden Klammern weggelassen werden. Das folgende Beispiel definiert eine anonyme Funktion mit einem Parameter <code>a</code> und speichert ihren Verweis in die Variable <code>double</code>:</p>
+      <pre>double := a =&gt; a * 2</pre>
+      <p>Das Auflösen von Variablenverweisen in <em>Ausdr</em> erfolgt wie bei der entsprechenden Vollfunktionsdefinition. Zum Beispiel könnte <em>Ausdr</em> auf die lokalen Variablen einer äußeren Funktion verweisen (wie in jeder <a href="Functions.htm#nested">verschachtelten Funktion</a>), woraufhin ein neues <a href="Functions.htm#closures">Closure</a> erzeugt wird, das jedes Mal seinen Wert zurückgibt, wenn der Fat-Arrow-Ausdruck ausgewertet wird. Die Funktion ist <a href="Functions.htm#AssumeLocal">Assume-Local</a>, wenn sie innerhalb einer anderen Funktion ist, ansonsten ist sie <a href="Functions.htm#AssumeGlobal">Assume-Global</a>.</p>
+      <p>Gibt man der Funktion einen Namen, kann sie rekursiv oder von anderen verschachtelten Funktionen aufgerufen werden, ohne dass in der Funktion selbst ein Verweis zum <a href="Functions.htm#closures">Closure</a> gespeichert werden muss (und dadurch ein problematischer <a href="Objects.htm#Circular_References">Zirkelbezug</a> entsteht). So ein Name kann auch beim Debuggen helfen, vor allem in Bezug auf <a href="objects/Func.htm#Name">Func.Name</a> oder wenn der Name im Aufrufstapel des Debuggers angezeigt wird.</p>
     </td>
     
   </tr>
   <tr id="comma">
     <td style="text-align:center"><strong>,</strong></td>
-    <td><p><strong>Komma (Mehrfachanweisung)</strong>. Kommas können genutzt werden, um mehrere Teilausdrücke auf einer Zeile zu schreiben. Diese Vorgehensweise wird häufig angewendet, um mehrere Zuweisungen oder Funktionsaufrufe zu gruppieren. Zum Beispiel: <code>x:=1<strong>,</strong> y+=2<strong>,</strong> ++index, func()</code>. Solche Anweisungen werden von links nach rechts ausgeführt.</p>
+    <td><p><strong>Komma (Mehrfachanweisung)</strong>. Kommas können genutzt werden, um mehrere Teilausdrücke auf einer Zeile zu schreiben. Diese Vorgehensweise wird häufig angewendet, um mehrere Zuweisungen oder Funktionsaufrufe zu gruppieren. Zum Beispiel: <code>x:=1<strong>,</strong> y+=2<strong>,</strong> ++index, MeineFunk()</code>. Solche Anweisungen werden von links nach rechts ausgeführt.</p>
       <p class="note"><strong>Hinweis</strong>: Eine Zeile, die mit einem Komma (oder einem anderen Operator) beginnt, wird automatisch mit der darüberliegenden Zeile <a href="Scripts.htm#continuation">verbunden</a>. Siehe auch: <a href="#CommaPerf">Komma-Performance</a>.</p>
       <p>Das Komma wird auch benutzt, um die Parameter eines Funktionsaufrufs oder einer Ablaufsteuerungsanweisung voneinander zu trennen. Um eine Mehrfachanweisung in eine Parameterliste einzufügen, umschließt man sie mit einem zusätzlichen Paar von runden Klammern. <code>MeineFn((x, y))</code> beispielsweise wertet x und y aus, aber übergibt nur y als einzigen Parameter von MeineFn.</p>
     </td>
@@ -837,6 +844,11 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
     <td>A_LastError</td>
     <td><p><strong>Lesen/Schreiben:</strong> Diese Variable ist üblicherweise das Ergebnis der Systemfunktion GetLastError(), nachdem das Skript bestimmte Funktionen aufgerufen hat, oder das HRESULT des letzten Aufrufs eines COM-Objekts. Weitere Informationen finden Sie unter <a href="commands/DllCall.htm#LastError">DllCall</a> oder <a href="commands/Run.htm#LastError">Run/RunWait</a>.</p>
     <p>Das Speichern eines Wertes in A_LastError bewirkt zudem, dass die Systemfunktion SetLastError() aufgerufen wird.</p></td>
+  </tr>
+  <tr id="TrueFalse">
+    <td>True<br />False</td>
+    <td><p>Enthalten 1 und 0. Sie können verwendet werden, um ein Skript besser lesbar zu machen. Siehe <a href="Concepts.htm#boolean">Logische (boolesche) Werte</a>, um mehr zu erfahren.</p>
+    </td>
   </tr>
 </table>
 <h3 id="loop">Loop</h3>

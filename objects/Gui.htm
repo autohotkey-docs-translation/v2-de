@@ -23,7 +23,7 @@
   <li><a href="#Hwnd">Hwnd</a>: Ermittelt das HWND (Window Handle) des GUI-Fensters.</li>
   <li><a href="#MarginX">MarginX</a>: Ermittelt oder setzt die Größe von horizontalen Abständen zwischen den Rändern und danach erstellten Steuerelementen.</li>
   <li><a href="#MarginY">MarginY</a>: Ermittelt oder setzt die Größe von vertikalen Abständen zwischen den Rändern und danach erstellten Steuerelementen.</li>
-  <li><a href="#Menu">Menu</a>: Fügt eine Menüleiste hinzu oder entfernt sie.</li>
+  <li><a href="#MenuBar">MenuBar</a>: Ermittelt oder setzt die Menüleiste des Fensters.</li>
   <li><a href="#Name">Name</a>: Ermittelt oder setzt einen benutzerdefinierten Namen für das GUI-Fenster.</li>
   <li><a href="#Pos">Pos</a>: Ermittelt die Position und Größe des GUI-Fensters.</li>
   <li><a href="#Title">Title</a>: Ermittelt oder setzt den Titel des GUI-Fensters.</li>
@@ -131,7 +131,7 @@ Gui.Show</pre>
 <dl>
   <dt>Optionen</dt><dd><p>Wenn man die Optionen X, Y, W und H weglässt, wird das Fenster seine vorherige Größe und Position beibehalten. Falls keine vorherige Position vorhanden ist, wird das Fenster automatisch auf eine der beiden Koordinatenachsen zentriert, wenn die unten erwähnten Optionen X und/oder Y fehlen. Falls eine vorherige Größe nicht wiederhergestellt werden kann, wird die Fenstergröße automatisch an den vorhandenen Steuerelementen angepasst.</p>
   <p>Folgende Zeichenketten können in den <em>Optionen</em> angegeben werden (jede Zahl muss im dezimalen Format sein):</p>
-  <p><strong>Wn</strong>: Geben Sie für <strong>n</strong> die Breite (in Pixel) des Client-Fensterbereichs an (das ist der Bereich ohne Rahmen, Titelleiste und <a href="#Menu">Menüleiste</a> des Fensters).</p>
+  <p><strong>Wn</strong>: Geben Sie für <strong>n</strong> die Breite (in Pixel) des Client-Fensterbereichs an (das ist der Bereich ohne Rahmen, Titelleiste und <a href="#MenuBar">Menüleiste</a> des Fensters).</p>
   <p><strong>Hn</strong>: Geben Sie für <strong>n</strong> die Höhe des Client-Fensterbereichs an (in Pixel).</p>
   <p><strong>Xn</strong>: Geben Sie für <strong>n</strong> die X-Position des Fensters auf dem Bildschirm an (in Pixel). Position 0 ist die erste linke sichtbare Pixelspalte auf dem Bildschirm.</p>
   <p><strong>Yn</strong>: Geben Sie für <strong>n</strong> die Y-Position des Fensters auf dem Bildschirm an (in Pixel). Position 0 ist die erste obere sichtbare Pixelzeile auf dem Bildschirm.</p>
@@ -175,7 +175,7 @@ Gui.<span class="func">Cancel</span>()</pre>
 <h2>Destroy</h2>
 <p>Bewirkt, dass das Fenster und seine Steuerelemente entfernt, und die benutzten Systemressourcen wie z. B. Arbeitsspeicher freigegeben werden.</p>
 <pre class="Syntax">Gui.<span class="func">Destroy</span>()</pre>
-<p>Hinweis: Falls das Skript später das Fenster neu erstellt, beginnen alle Fenstereigenschaften wie Farbe und Schriftart wieder mit ihren Standardwerten (als hätte das Fenster nie existiert). Selbst wenn man <code>Gui.Destroy()</code> nicht verwendet - alle GUI-Fenster werden automatisch entfernt, sobald das Skript beendet wird.</p>
+<p>Selbst wenn man <code>Gui.Destroy()</code> nicht verwendet - das Fenster wird automatisch zerstört, sobald das Gui-Objekt gelöscht wird (weitere Details finden Sie unter <a href="#deleted">Allgemeine Bemerkungen</a>). Sobald das Skript beendet wird, werden alle GUI-Fenster automatisch zerstört.</p>
 </div>
 
 <div class="methodShort" id="SetFont">
@@ -229,11 +229,11 @@ Gui.SetFont(, "Verdana")  <em>; Bevorzugte Schriftart.</em></pre></dd>
 <p><em>ErmittelteFarbe</em> ist ein 6-stelliger RGB-Wert der aktuellen Farbe, welche zuvor von dieser Eigenschaft gesetzt worden ist.</p>
 <p><em>NeueFarbe</em> ist eine der 16 <a href="../misc/Colors.htm">HTML-Hauptfarben</a>, ein hexadezimaler RGB-Farbwert (das 0x-Präfix ist optional), ein reiner numerischer RGB-Farbwert, oder das Wort Default für dessen Standardfarbe. Beispielwerte: <code>"Silver"</code>, <code>"FFFFAA"</code>, <code>0xFFFFAA</code>, <code>"Default"</code>.</p>
 <p>Standardmäßig ist die Hintergrundfarbe des Fensters die vordefinierte Farbe eines Buttons.</p>
-<p>Die Farbe der <a href="#Menu">Menüleiste</a> und ihre Untermenüs können wie folgt geändert werden: <code>MeineMenüleiste.<a href="Menu.htm#SetColor">SetColor</a> "White"</code>.</p>
+<p>Die Farbe der <a href="#MenuBar">Menüleiste</a> und ihre Untermenüs können wie folgt geändert werden: <code>MeineMenüleiste.<a href="Menu.htm#SetColor">SetColor</a> "White"</code>.</p>
 <p>Mit <a href="../commands/WinSet.htm#TransColor">WinSetTransColor</a> kann der Hintergrund transparent gemacht werden. Wenn Sie dies jedoch tun, ohne zuvor eine benutzerdefinierte Fensterfarbe via <a href="#BackColor">Gui.BackColor</a> zugewiesen zu haben, werden die Buttons ebenfalls transparent. Um das zu verhindern, weist man zunächst eine benutzerdefinierte Farbe zu und macht diese dann transparent. Zum Beispiel:</p>
 <pre>Gui.BackColor := "EEAA99"
 WinSetTransColor("EEAA99")</pre>
-<p>Die folgenden Zeilen können hinzugefügt werden, um den Rahmen und die Titelleiste eines Fensters zu entfernen, das <strong>bereits</strong> transparent gemacht wurde: <code>Gui.Opt("-Caption")</code></p>
+<p>Um zusätzlich den Rahmen und die Titelleiste von einem Fenster mit transparentem Hintergrund zu entfernen, nutzt man Folgendes: <code>Gui.Opt("-Caption")</code></p>
 <p>Weiter unten finden Sie das Beispiel einer Bildschirmanzeige (OSD), die zeigt, wie diese Methode praktisch eingesetzt werden kann.</p>
 </div>
 
@@ -285,7 +285,7 @@ WinSetTransColor(BeliebigeFarbe " 150")
 Gui.Show()</pre>
   <p id="MaximizeBox"><strong>MaximizeBox</strong>: Aktiviert die Titelleistenschaltfläche zum Maximieren des Fensters. <em>Resize</em> enthält diese Option auch (weiter unten zu finden).</p>
   <p id="MinimizeBox"><strong>MinimizeBox</strong> (standardmäßig vorhanden): Aktiviert die Titelleistenschaltfläche zum Minimieren des Fensters.</p>
-  <p id="MinSize"><strong>MinSize</strong> und <strong>MaxSize</strong>: Bestimmen die minimale und/oder maximale Größe des Fensters. Diese Optionen sind zum Beispiel relevant, wenn man den Benutzer daran hindern will, das Fenster uneingeschränkt zu verkleinern oder zu vergrößern. Geben Sie <em>MinSize</em> und/oder <em>MaxSize</em> ohne Suffix an, um die aktuelle Größe des Fensters als Grenzwert zu nutzen (wenn das Fenster keine aktuelle Größe hat, wird die gesetzte Größe des ersten <a href="#Show">Gui.Show</a> verwendet). Alternativ können Sie auch die Breite, ein X und dann die Höhe anfügen; zum Beispiel: <code>Gui.Opt("+Resize +MinSize640x480")</code>. Diese Größen (in Pixel) beziehen sich auf den Clientbereich des Fensters (das ist der Bereich ohne Rahmen, Titelleiste und <a href="#Menu">Menüleiste</a>). Geben Sie dezimale Zahlen an, nicht hexadezimale.</p>
+  <p id="MinSize"><strong>MinSize</strong> und <strong>MaxSize</strong>: Bestimmen die minimale und/oder maximale Größe des Fensters. Diese Optionen sind zum Beispiel relevant, wenn man den Benutzer daran hindern will, das Fenster uneingeschränkt zu verkleinern oder zu vergrößern. Geben Sie <em>MinSize</em> und/oder <em>MaxSize</em> ohne Suffix an, um die aktuelle Größe des Fensters als Grenzwert zu nutzen (wenn das Fenster keine aktuelle Größe hat, wird die gesetzte Größe des ersten <a href="#Show">Gui.Show</a> verwendet). Alternativ können Sie auch die Breite, ein X und dann die Höhe anfügen; zum Beispiel: <code>Gui.Opt("+Resize +MinSize640x480")</code>. Diese Größen (in Pixel) beziehen sich auf den Clientbereich des Fensters (das ist der Bereich ohne Rahmen, Titelleiste und <a href="#MenuBar">Menüleiste</a>). Geben Sie dezimale Zahlen an, nicht hexadezimale.</p>
   <p>Man kann eine der Größenangaben weglassen, um diese unverändert zu lassen (z. B. <code>+MinSize640x</code> oder <code>+MinSizex480</code>). Desweiteren kann man Min/MaxSize mehrmals angeben, um die aktuelle Fenstergröße für eine Größenangabe und eine eindeutige Größe für die andere Größenangabe zu verwenden. Zum Beispiel würde <code>+MinSize +MinSize640x</code> die aktuelle Fensterhöhe als Minimalhöhe und 640 Pixel als Minimalbreite definieren.</p>
   <p>Lässt man <em>MinSize</em> und <em>MaxSize</em> komplett weg, gelten die Standardwerte des Betriebssystems (ähnlich wie <code>Gui.Opt("-MinSize -MaxSize")</code>, welches auch die Standardwerte wiederherstellen würde). Hinweis: Der Benutzer kann ein Fenster nur größer oder kleiner machen, wenn die Option <a href="#Resize">+Resize</a> vorhanden ist.</p>
   <p id="OwnDialogs"><strong>OwnDialogs</strong>: <code>Gui.Opt("+OwnDialogs")</code> bewirkt, dass alle nachfolgenden <a href="../commands/MsgBox.htm">MsgBox</a>-, <a href="../commands/InputBox.htm">InputBox</a>-, <a href="../commands/FileSelect.htm">FileSelect</a>- oder <a href="../commands/DirSelect.htm">DirSelect</a>-Dialogfenster im aktuellen <a href="../misc/Threads.htm">Thread</a> (z. B. eine ereignis-behandelnde Funktion eines Button-Steuerelements) als Unterfenster des aktuellen Fensters definiert werden. Solche Dialogfenster sind dabei modal. Das heißt, dass der Benutzer erst wieder mit dem GUI-Fenster interagieren kann, wenn das Dialogfenster geschlossen wird. <a href="../commands/ToolTip.htm">ToolTip</a>s können hingegen nicht modal sein, selbst wenn sie als Unterfenster definiert werden. Sie werden immer im Vordergrund sein. In beiden Fällen werden untergeordnete Dialogfenster automatisch zerstört, sobald ihr GUI-Fenster <a href="#Destroy">zerstört</a> wird.</p>
@@ -312,25 +312,27 @@ Gui.Opt("+Owner")  <em>; Definiert das GUI als Unterfenster vom <a href="../Vari
 <p>Hinweis: Dieser Unterbefehl funktioniert nur, wenn das Fenster weder minimiert noch versteckt ist.</p>
 </div>
 
-<div class="methodShort" id="Menu">
-<h2>Menu</h2>
-<p>Stattet das Fenster mit einer Menüleiste aus.</p>
-<pre class="Syntax">Gui.Menu := Menüleiste</pre>
-<p><em>Menüleiste</em> ist ein <a href="../objects/Menu.htm">Menu-Objekt</a>, das mit der <a href="../commands/MenuCreate.htm">MenuCreate</a>-Funktion erstellt wurde. Zum Beispiel:</p>
+<div class="methodShort" id="MenuBar">
+<h2>MenuBar</h2>
+<p>Ermittelt oder setzt die Menüleiste des Fensters.</p>
+<pre class="Syntax">Gui.MenuBar := Menüleiste</pre>
+<pre class="Syntax">Menüleiste := Gui.MenuBar</pre>
+<p><em>Menüleiste</em> ist ein <a href="../objects/Menu.htm">MenuBar-Objekt</a>, das mit der <a href="../commands/MenuBarCreate.htm">MenuCreate</a>-Funktion erstellt wurde. Zum Beispiel:</p>
 <pre>Dateimenü := MenuCreate()
-Dateimenü.Add "Ö&amp;ffnen<a href="../misc/EscapeChar.htm">`t</a>Ctrl+F", "MenüDateiÖffnen"  <em>; Siehe untere Bemerkungen zu Ctrl+F.</em>
-Dateimenü.Add "&amp;Beenden", "MenuHandler"
+Dateimenü.Add "Ö&amp;ffnen`tCtrl+F", () =&gt; FileSelect()  <em>; Siehe untere Bemerkungen zu Ctrl+F.</em>
+Dateimenü.Add "&amp;Beenden", () =&gt; ExitApp()
 Hilfsmenü := MenuCreate()
-Hilfsmenü.Add "Inf&amp;o", "MenuHandler"
-Menüleiste := MenuCreate()
-Menüleiste.Add "&amp;Datei", Dateimenü  <em>; Fügt die oben erstellten Untermenüs hinzu.</em>
-Menüleiste.Add "&amp;?", Hilfsmenü
-<strong>Gui.Menu := Menüleiste</strong></pre>
+Hilfsmenü.Add "Inf&amp;o", () =&gt; MsgBox("Nicht implementiert")
+Menüs := MenuBarCreate()
+Menüs.Add "&amp;Datei", Dateimenü  <em>; Fügt die zwei oben erstellten Untermenüs hinzu.</em>
+Menüs.Add "&amp;?", Hilfsmenü
+Gui := GuiCreate()
+<strong>Gui.MenuBar := Menüs</strong>
+Gui.Show "w300 h200"</pre>
 <p>Auf der ersten Zeile oben sieht man <code>Ö&amp;ffnen</code> in Kombination mit <code>Ctrl+F</code> (mit einem Tabulatorzeichen dazwischen). Diese Schreibweise ermöglicht dem Benutzer, ein Tastenkürzel zu drücken, um den Menüpunkt zu aktivieren, ohne eine langwierige Navigation über sich ergehen zu lassen. Tastenkürzel, die die Standard-Modifikatoren Ctrl, Alt und Shift enthalten, werden automatisch als <em>Keyboard Accelerator</em> für das GUI registriert. Keyboard Accelerators ohne Modifikatoren können nur durch ungewöhnliche Mitteln wie IME oder ALT+NNNN ausgelöst werden.</p>
 <p>Wenn eine bestimmte Tastenkombination nicht wie erwartet automatisch funktioniert, gäbe es die Alternative, einen <a href="../commands/_If.htm">kontextabhängigen Hotkey</a> zu verwenden. Beachten Sie aber, dass solche Hotkeys üblicherweise nicht durch <a href="../commands/Send.htm">Send</a> ausgelöst werden können und dass es zu Komplikationen mit anderen Skripten kommen kann.</p>
-<p>Mit <code>Gui.Menu := ""</code> (also eine leere Zeichenkette zuweisen) kann die aktuelle Menüleiste des Fensters entfernt werden.</p>
-<p>Ein Menü, das als Menüleiste verwendet wurde, sollte später nicht als Popup-Menü oder Untermenü benutzt werden. Menüleisten benötigen intern ein anderes Format (allerdings gilt diese Einschränkung nicht für ihre Untermenüs). Umgehen Sie dieses Problem einfach, indem Sie zweimal das gleiche Menü erstellen und eines davon der Menüleiste zuweisen.</p>
-<p>Das Anwenden von destruktiven <a href="Menu.htm">Menu-Methoden</a> wie Delete auf eine Menüleiste (und in einigen Fällen auf ihre Untermenüs) ist wirkungslos und verursacht eine Fehlermeldung (sofern sie nicht mit <a href="../commands/Try.htm">Try</a> unterdrückt wird). Führen Sie die folgenden Schritte durch, um solche Änderungen vornehmen zu können: 1) entfernen Sie die Menüleiste mit <code>Gui.Menu := ""</code>; 2) führen Sie die gewünschte Änderungen durch; 3) fügen Sie die Menüleiste via <code>Gui.Menu := MeineMenüleiste</code> wieder hinzu.</p></div>
+<p>Mit <code>Gui.MenuBar := ""</code> (also eine leere Zeichenkette zuweisen) kann die aktuelle Menüleiste des Fensters entfernt werden.</p>
+</div>
 
 <div class="methodShort" id="Minimize">
 <h2>Minimize</h2>
@@ -412,7 +414,7 @@ Menüleiste.Add "&amp;?", Hilfsmenü
 <p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um das HWND und <a href="GuiControl.htm">GuiControl-Objekt</a> von jedem Steuerelement innerhalb einer GUI schrittweise durchzugehen.</p>
   <p>Diese Methode wird in der Regel nicht direkt, sondern über die <a href="../commands/For.htm">For-Schleife</a> aufgerufen. Zum Beispiel:</p>
   <pre>For Hwnd, GuiCtrlObj in GuiObj
-  MsgBox "Steuerelement #" A_Index " ist " GuiCtrlObj.ClassNN</pre>
+    MsgBox "Steuerelement #" A_Index " ist " GuiCtrlObj.ClassNN</pre>
 </div>
 
 <h2 id="Navigate">Navigation mit der Tastatur</h2>
@@ -433,6 +435,8 @@ Gui.Show()</pre>
 <h2 id="GenRemarks">Allgemeine Bemerkungen</h2>
 <p>Mit dem <a href="GuiControl.htm">GuiControl-Objekt</a> können bestimmte Steuerelemente in einem GUI-Fenster bearbeitet werden.</p>
 <p>Jedes GUI-Fenster kann bis zu 11.000 Steuerelemente enthalten. Aber Vorsicht: Bei mehr als 5.000 Steuerelementen kann es vorkommen, dass bestimmte Typen von Steuerelementen instabil werden.</p>
+<p id="deleted">Das GUI-Fenster wird automatisch <a href="#Destroy">zerstört</a>, sobald das Gui-Objekt gelöscht wird, oder anders gesagt, wenn dessen <a href="../Objects.htm#Reference_Counting">Referenzzählung</a> Null erreicht hat. Dies geschieht jedoch in der Regel nicht, wenn das Fenster sichtbar ist, da <a href="#Show">Show</a> die Referenzzählung automatisch um 1 erhöht. Während das Fenster sichtbar ist, kann der Benutzer mit dem Fenster interagieren und Ereignisse auslösen, die vom Skript behandelt werden. Wenn das Fenster vom Benutzer geschlossen oder mit <a href="#Hide">Hide/Cancel</a>, <a href="#Show">Show</a> oder <a href="#Submit">Submit</a> versteckt wird, wird dieser zusätzliche Verweis freigegeben.</p>
+<p>Um ein GUI-Fenster "künstlich am Leben" zu erhalten, ohne <a href="#Show">Show</a> aufzurufen oder den Verweis zum Gui-Objekt aufrecht zu erhalten, kann das Skript die Referenzzählung des Objekts mithilfe von <a href="../commands/ObjAddRef.htm">ObjAddRef</a> um 1 erhöhen (in diesem Fall muss <a href="../commands/ObjAddRef.htm">ObjRelease</a> aufgerufen werden, wenn das Fenster nicht mehr benötigt wird). Dies kann z. B. der Fall sein, wenn ein verstecktes GUI-Fenster zum <a href="../commands/OnMessage.htm">Überwachen von Meldungen</a> genutzt wird, oder wenn das Fenster mithilfe von "externen" Mitteln wie <a href="../commands/WinShow.htm">WinShow</a> angezeigt wird (über dieses oder ein anderes Skript).</p>
 <p>Wenn das Skript aus irgendeinem Grund nicht <a href="../Scripts.htm#persistent">persistent</a> ist, wird es beendet, nachdem das letzte sichtbare GUI-Fenster geschlossen wurde; entweder, wenn der letzte Threads endet, oder sofort, wenn keine Threads laufen.</p>
 
 <h2 id="Related">Siehe auch</h2>
@@ -459,8 +463,8 @@ Gui.Show()
 
 Gui_Close(Gui)
 {
-  Gespeichert := Gui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
-  MsgBox("Sie haben '" Gespeichert.Vorname " " Gespeichert.Nachname "' eingegeben.")
+    Gespeichert := Gui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
+    MsgBox("Sie haben '" Gespeichert.Vorname " " Gespeichert.Nachname "' eingegeben.")
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Tab-Steuerelement:</em>
@@ -482,8 +486,8 @@ Gui.Show()
 
 Gui_Close(Gui)
 {
-  Gespeichert := Gui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
-  MsgBox("Ihre Eingaben sind:`n" Gespeichert.MeineCheckBox "`n" Gespeichert.MeinRadio "`n" Gespeichert.MeinEdit)
+    Gespeichert := Gui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
+    MsgBox("Ihre Eingaben sind:`n" Gespeichert.MeineCheckBox "`n" Gespeichert.MeinRadio "`n" Gespeichert.MeinEdit)
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: ListBox mit Dateien aus einem Verzeichnis:</em>
@@ -499,13 +503,13 @@ Gui.Show()
 
 StarteDatei(Gui)
 {
-  Gespeichert := Gui.Submit()
-  if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n" Gespeichert.Datei,, 4) = "No"
-    return
-  try <em>; Ansonsten versuchen zu starten:</em>
-    Run(Gespeichert.Datei)
-  catch Error
-    MsgBox(Error.Extra)
+    Gespeichert := Gui.Submit()
+    if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n" Gespeichert.Datei,, 4) = "No"
+        return
+    try <em>; Ansonsten versuchen zu starten:</em>
+        Run(Gespeichert.Datei)
+    catch Error
+        MsgBox(Error.Extra)
 }</pre>
 
 <pre class="NoIndent" id="ExToolTip"><em>; Beispiel: Zeigt eine kontextabhängige Hilfe an (via ToolTip), wenn man den Mauszeiger über ein bestimmtes Steuerelement bewegt:</em>
@@ -522,31 +526,31 @@ Gui.Show()
 
 WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
 {
-  global  
-  static AltesHwnd
-  if (Hwnd &lt;&gt; AltesHwnd)
-  {
-    Text := "", <a href="../commands/ToolTip.htm">ToolTip</a>() <em>; Vorheriges Tooltip ausschalten.</em>
-    AktSteuerelement := GuiCtrlFromHwnd(Hwnd)
-    if AktSteuerelement
+    global  
+    static AltesHwnd
+    if (Hwnd &lt;&gt; AltesHwnd)
     {
-      Text := %AktSteuerelement.Name%_TT
-      SetTimer("ZeigeToolTip", -1000)
+        Text := "", <a href="../commands/ToolTip.htm">ToolTip</a>() <em>; Vorheriges Tooltip ausschalten.</em>
+        AktSteuerelement := GuiCtrlFromHwnd(Hwnd)
+        if AktSteuerelement
+        {
+            Text := %AktSteuerelement.Name%_TT
+            SetTimer("ZeigeToolTip", -1000)
+        }
+        AltesHwnd := Hwnd
     }
-    AltesHwnd := Hwnd
-  }
 }
 
 ZeigeToolTip()
 {
-  global
-  ToolTip(Text)
-  SetTimer("ToolTip", -3000) <em>; Tooltip entfernen.</em>
+    global
+    ToolTip(Text)
+    SetTimer("ToolTip", -3000) <em>; Tooltip entfernen.</em>
 }
 
 Gui_Close()
 {
-  ExitApp()
+    ExitApp()
 }</pre>
 
 <pre class="NoIndent" id="OSD"><em>; Beispiel: Bildschirmanzeige (OSD) mittels transparentem Fenster:</em>
@@ -558,14 +562,14 @@ Gui.SetFont("s32")  <em>; Setzt eine große Schriftgröße (32 Punkte).</em>
 KoordText := Gui.Add("Text", "cLime", "XXXXX YYYYY")  <em>; XX &amp; YY dienen zum automatischen Anpassen der Fenstergröße.
 ; Macht alle Pixel dieser Farbe unsichtbar und den Text selbst transparent (150):</em>
 WinSetTransColor(Gui.BackColor " 150")
-fn := Func("AktualisiereOSD").bind(KoordText), SetTimer(fn, 200)
+SetTimer(Func("AktualisiereOSD").bind(KoordText), 200)
 AktualisiereOSD(KoordText)  <em>; Aktualisierung sofort durchzuführen, anstatt auf den Timer zu warten.</em>
 Gui.Show("x0 y400 NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster sein Aktivzustand verliert.</em>
 
 AktualisiereOSD(GuiCtrl)
 {
-  MouseGetPos(MausX, MausY)
-  GuiCtrl.Value := "X" MausX ", Y" MausY
+    MouseGetPos(MausX, MausY)
+    GuiCtrl.Value := "X" MausX ", Y" MausY
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Eine animierte Fortschrittsleiste auf einem Hintergrundbild.</em>
@@ -581,15 +585,15 @@ Gui.Show()
 
 AnimiereLeiste(ProgressCtrl, TextCtrl)
 {
-  Loop Files, A_WinDir "\*.*"
-  {
-    if A_Index &gt; 100
-      break
-    ProgressCtrl.Value := A_Index
-    TextCtrl.Value := A_LoopFileName
-    Sleep 50
-  }
-  TextCtrl.Value := "Animation beendet."
+    Loop Files, A_WinDir "\*.*"
+    {
+        if A_Index &gt; 100
+            break
+        ProgressCtrl.Value := A_Index
+        TextCtrl.Value := A_LoopFileName
+        Sleep 50
+    }
+    TextCtrl.Value := "Animation beendet."
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Einfacher Bildbetrachter:</em>
@@ -604,22 +608,22 @@ Gui.Show()
 
 LadeNeuesBild(Gui, RadioCtrl, PicCtrl)
 {
-  Datei := FileSelect(,, "Bild auswählen:", "Bilder (*.gif; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)")
-  if Datei = ""
-    return
-  if RadioCtrl.Value = 1  <em>; Bild mit aktueller Größe anzeigen.</em>
-  {
-    Breite := 0
-    Höhe := 0
-  }
-  else <em>; Zweites Optionsfeld ausgewählt: Größe des Bildes an Bildschirmgröße anpassen.</em>
-  {
-    Breite := A_ScreenWidth - 28  <em>; Minus 28, um Platz für Rahmen und Innenabstand zu schaffen.</em>
-    Höhe := -1  <em>; "Seitenverhältnis beibehalten" erscheint sinnvoll.</em>
-  }
-  PicCtrl.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
-  Gui.Title := Datei
-  Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
+    Datei := FileSelect(,, "Bild auswählen:", "Bilder (*.gif; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)")
+    if Datei = ""
+        return
+    if RadioCtrl.Value = 1  <em>; Bild mit aktueller Größe anzeigen.</em>
+    {
+        Breite := 0
+        Höhe := 0
+    }
+    else <em>; Zweites Optionsfeld ausgewählt: Größe des Bildes an Bildschirmgröße anpassen.</em>
+    {
+        Breite := A_ScreenWidth - 28  <em>; Minus 28, um Platz für Rahmen und Innenabstand zu schaffen.</em>
+        Höhe := -1  <em>; "Seitenverhältnis beibehalten" erscheint sinnvoll.</em>
+    }
+    PicCtrl.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
+    Gui.Title := Datei
+    Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
 }</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Einfacher Texteditor mit Menüleiste.</em>
@@ -661,98 +665,98 @@ Gui.Show()  <em>; Zeigt das Fenster an.</em>
 
 MenüDateiNeu()
 {
-  HauptEdit.Value := ""  <em>; Eingabefeld leeren.</em>
-  Dateimenü.Disable("3&amp;")  <em>; Ergraut &amp;Speichern.</em>
-  Gui.Title := "Unbenannt"
+    HauptEdit.Value := ""  <em>; Eingabefeld leeren.</em>
+    Dateimenü.Disable("3&amp;")  <em>; Ergraut &amp;Speichern.</em>
+    Gui.Title := "Unbenannt"
 }
 
 MenüDateiÖffnen()
 {
-  Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
-  AusgewählterDateiname := FileSelect(3,, "Datei öffnen", "Text-Dokumente (*.txt)")
-  if AusgewählterDateiname = "" <em>; Keine Datei ausgewählt.</em>
-    return
-  AktuellerDateiname := leseInhalt(AusgewählterDateiname)
+    Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
+    AusgewählterDateiname := FileSelect(3,, "Datei öffnen", "Text-Dokumente (*.txt)")
+    if AusgewählterDateiname = "" <em>; Keine Datei ausgewählt.</em>
+        return
+    AktuellerDateiname := leseInhalt(AusgewählterDateiname)
 }
 
 MenüDateiSpeichern()
 {
-  speichereInhalt(AktuellerDateiname)
+    speichereInhalt(AktuellerDateiname)
 }
 
 MenüDateiSpeichernUnter()
 {
-  Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
-  AusgewählterDateiname := FileSelect("S16",, "Datei speichern", "Text-Dokumente (*.txt)")
-  if AusgewählterDateiname = "" <em>; Keine Datei ausgewählt.</em>
-    return
-  AktuellerDateiname := speichereInhalt(AusgewählterDateiname)
+    Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
+    AusgewählterDateiname := FileSelect("S16",, "Datei speichern", "Text-Dokumente (*.txt)")
+    if AusgewählterDateiname = "" <em>; Keine Datei ausgewählt.</em>
+        return
+    AktuellerDateiname := speichereInhalt(AusgewählterDateiname)
 }
 
 MenüDateiBeenden()  <em>; Benutzer hat "Exit" im Dateimenü ausgewählt.</em>
 {
-  WinClose()
+    WinClose()
 }
 
 MenüHilfeÜber()
 {
-  Über := GuiCreate("+owner" Gui.Hwnd)  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
-  Gui.Opt("+Disabled")  <em>; Deaktiviert das Hauptfenster.</em>
-  Über.Add("Text",, "Beliebiger Text.")
-  Über.Add("Button", "Default", "OK").OnEvent("Click", "Über_Close")
-  Über.OnEvent("Close", "Über_Close")
-  Über.OnEvent("Escape", "Über_Close")
-  Über.Show()
+    Über := GuiCreate("+owner" Gui.Hwnd)  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
+    Gui.Opt("+Disabled")  <em>; Deaktiviert das Hauptfenster.</em>
+    Über.Add("Text",, "Beliebiger Text.")
+    Über.Add("Button", "Default", "OK").OnEvent("Click", "Über_Close")
+    Über.OnEvent("Close", "Über_Close")
+    Über.OnEvent("Escape", "Über_Close")
+    Über.Show()
 }
 
 leseInhalt(Dateiname)
 {
-  Dateiinhalt := FileRead(Dateiname)  <em>; Liest den Inhalt der Datei und speichert ihn in die Variable.</em>
-  if ErrorLevel
-  {
-    MsgBox("'" Dateiname "' konnte nicht geöffnet werden.")
-    return
-  }
-  HauptEdit.Value := Dateiinhalt  <em>; Fügt den Text in das Steuerelement ein.</em>
-  Dateimenü.Enable("3&amp;")  <em>; Aktiviert &amp;Speichern.</em>
-  Gui.Title := Dateiname  <em>; Zeigt den Dateinamen in der Titelleiste an.</em>
-  return Dateiname
+    Dateiinhalt := FileRead(Dateiname)  <em>; Liest den Inhalt der Datei und speichert ihn in die Variable.</em>
+    if ErrorLevel
+    {
+        MsgBox("'" Dateiname "' konnte nicht geöffnet werden.")
+        return
+    }
+    HauptEdit.Value := Dateiinhalt  <em>; Fügt den Text in das Steuerelement ein.</em>
+    Dateimenü.Enable("3&amp;")  <em>; Aktiviert &amp;Speichern.</em>
+    Gui.Title := Dateiname  <em>; Zeigt den Dateinamen in der Titelleiste an.</em>
+    return Dateiname
 }
 
 speichereInhalt(Dateiname)
 {
-  if FileExist(Dateiname)
-  {
-    FileDelete(Dateiname)
-    if ErrorLevel
+    if FileExist(Dateiname)
     {
-      MsgBox("Überschreiben der Datei '" Dateiname "' fehlgeschlagen.")
-      return
+        FileDelete(Dateiname)
+        if ErrorLevel
+        {
+            MsgBox("Überschreiben der Datei '" Dateiname "' fehlgeschlagen.")
+            return
+        }
     }
-  }
-  FileAppend(HauptEdit.Value, Dateiname)  <em>; Speichert den Inhalt in eine Datei.
-  ; Bei Erfolg den Dateinamen in der Titelleiste anzeigen (falls es mit DateiSpeichernUnter aufgerufen wurde):</em>
-  Gui.Title := Dateiname
-  return Dateiname
+    FileAppend(HauptEdit.Value, Dateiname)  <em>; Speichert den Inhalt in eine Datei.
+    ; Bei Erfolg den Dateinamen in der Titelleiste anzeigen (falls es mit DateiSpeichernUnter aufgerufen wurde):</em>
+    Gui.Title := Dateiname
+    return Dateiname
 }
 
 Über_Close()
 {
-  Gui.Opt("-Disabled")  <em>; Reaktiviert das Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
-  Über.Destroy()  <em>; Zerstört das Über-Fenster.</em>
+    Gui.Opt("-Disabled")  <em>; Reaktiviert das Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
+    Über.Destroy()  <em>; Zerstört das Über-Fenster.</em>
 }
 
 Gui_DropFiles(Gui, DateiArray)  <em>; Ziehen &amp; Ablegen unterstützen.</em>
 {
-  AktuellerDateiname := leseInhalt(DateiArray[1])  <em>; Nur die erste Datei nehmen (sofern mehrere Dateien vorhanden sind).</em>
+    AktuellerDateiname := leseInhalt(DateiArray[1])  <em>; Nur die erste Datei nehmen (sofern mehrere Dateien vorhanden sind).</em>
 }
 
 Gui_Size(Gui, MinMax, Breite, Höhe)
 {
-  if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
-    return
-  <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Die Größe des Eingabefeldes muss entsprechend angepasst werden.</em>
-  HauptEdit.Move("W" Breite-20 " H" Höhe-20)
+    if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
+        return
+    <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Die Größe des Eingabefeldes muss entsprechend angepasst werden.</em>
+    HauptEdit.Move("W" Breite-20 " H" Höhe-20)
 }</pre>
 
 </body>

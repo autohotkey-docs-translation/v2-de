@@ -48,7 +48,7 @@ LV.OnEvent("DoubleClick", "LV_DoubleClick")
 
 <em>; Sammelt eine Liste mit Dateien von einem Ordner und fügt sie in die ListView ein:</em>
 Loop Files, A_MyDocuments "\*.*"
-  <a href="#Add">LV.Add</a>(, A_LoopFileName, A_LoopFileSizeKB)
+    <a href="#Add">LV.Add</a>(, A_LoopFileName, A_LoopFileSizeKB)
 
 <a href="#ModifyCol">LV.ModifyCol</a>()  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
 LV.ModifyCol(2, "Integer")  <em>; Kennzeichnet aus Sortierungsgründen die Spalte 2 als Integer.</em>
@@ -58,8 +58,8 @@ Gui.Show()
 
 LV_DoubleClick(LV, Reihennummer)
 {
-  Reihentext := <a href="#GetText">LV.GetText</a>(Reihennummer)  <em>; Ermittelt den Text vom ersten Feld der Reihe.</em>
-  ToolTip "Sie haben die Reihennummer " Reihennummer " doppelt angeklickt. Text: '" Reihentext "'")
+    Reihentext := <a href="#GetText">LV.GetText</a>(Reihennummer)  <em>; Ermittelt den Text vom ersten Feld der Reihe.</em>
+    ToolTip("Sie haben die Reihennummer " Reihennummer " doppelt angeklickt. Text: '" Reihentext "'")
 }</pre>
 <h2 id="Options">Optionen und Styles für den <em>Optionen</em>-Parameter</h2>
 <p><strong>Background</strong>: Geben Sie das Wort Background an und fügen Sie direkt danach einen Farbnamen (siehe <a href="../misc/Colors.htm">Farbtabelle</a>) oder einen RGB-Wert (das 0x-Präfix ist optional) ein. Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Fehlt diese Option, gilt als Hintergrundfarbe die Standard-Hintergrundfarbe des Betriebssystems. Mit <code>BackgroundDefault</code> oder <code>-Background</code> kann die Standard-Hintergrundfarbe des Betriebssystems erzwungen werden (in der Regel weiß). Mit <code>LV.Opt("+BackgroundDefault")</code> kann beispielsweise die Standardfarbe wiederhergestellt werden.</p>
@@ -363,10 +363,10 @@ Gui.Show</pre>
 <pre>Gui.Add("Button", "Hidden Default", "OK").OnEvent("Click", "LV_Enter")
 ...
 LV_Enter() {
-  global
-  if Gui.FocusedCtrl != LV
-    return
-  MsgBox("Sie haben ENTER gedrückt. Die fokussierte Reihennummer ist " LV.GetNext(0, "Focused"))
+    global
+    if Gui.FocusedCtrl != LV
+        return
+    MsgBox("Sie haben ENTER gedrückt. Die fokussierte Reihennummer ist " LV.GetNext(0, "Focused"))
 }</pre>
 <p>Neben der Möglichkeit, mit der Tastatur von Reihe zu Reihe zu navigieren, könnte der Benutzer auch eine inkrementelle Suche durchführen, indem er die ersten Zeichen eines Feldes aus der ersten Spalte eingibt. Dabei springt die Auswahl auf die nächst passende Reihe.</p>
 <p>Zwar kann man ein Text mit beliebiger Länge in den Feldern einer ListView speichern, allerdings werden nur die ersten 260 Zeichen angezeigt.</p>
@@ -430,157 +430,157 @@ Gui.Show
 
 LadeOrdner(Gui, LV, ImageListID1, ImageListID2)
 {
-  static SymbolArray := []
-  Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das folgende Dialogfenster zu schließen, bevor er das Hauptfenster benutzen kann.</em>
-  Ordner := DirSelect(, 3, "Wähle einen Ordner aus, das eingelesen werden soll:")
-  if not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
-    return
+    static SymbolArray := []
+    Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das folgende Dialogfenster zu schließen, bevor er das Hauptfenster benutzen kann.</em>
+    Ordner := DirSelect(, 3, "Wähle einen Ordner aus, das eingelesen werden soll:")
+    if not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
+        return
 
-  <em>; Überprüft, ob das letzte Zeichen im Ordnernamen ein umgekehrter Schrägstrich ist, das bei Root-Verzeichnissen
-  ; wie C:\ vorkommt. Ist dies der Fall, muss es entfernt werden, um später einen doppelten Schrägstrich zu verhindern.</em>
-  if SubStr(Ordner, -1, 1) = "\"
-    Ordner := SubStr(Ordner, 1, -1)  <em>; Entfernt den Schrägstrich am Ende.</em>
+    <em>; Überprüft, ob das letzte Zeichen im Ordnernamen ein umgekehrter Schrägstrich ist, das bei Root-Verzeichnissen
+    ; wie C:\ vorkommt. Ist dies der Fall, muss es entfernt werden, um später einen doppelten Schrägstrich zu verhindern.</em>
+    if SubStr(Ordner, -1, 1) = "\"
+        Ordner := SubStr(Ordner, 1, -1)  <em>; Entfernt den Schrägstrich am Ende.</em>
 
-  <em>; Berechnet die notwendige Puffergröße für die SHFILEINFO-Struktur.</em>
-  sfi_größe := A_PtrSize + 688
-  VarSetCapacity(sfi, sfi_größe)
+    <em>; Berechnet die notwendige Puffergröße für die SHFILEINFO-Struktur.</em>
+    sfi_größe := A_PtrSize + 688
+    VarSetCapacity(sfi, sfi_größe)
 
   <em>; Sammelt eine Liste mit Dateinamen vom ausgewählten Ordner und fügt sie in die ListView ein:</em>
-  LV.Opt("-Redraw")  <em>; Verbessert die Performance durch Deaktivieren der Neuzeichnung während des Ladens.</em>
-  Loop Files, Ordner "\*.*"
-  {
-    Dateiname := A_LoopFilePath  <em>; Muss in eine schreibbare Variable gespeichert werden, damit sie unten verwendet werden kann.
+    LV.Opt("-Redraw")  <em>; Verbessert die Performance durch Deaktivieren der Neuzeichnung während des Ladens.</em>
+    Loop Files, Ordner "\*.*"
+    {
+        Dateiname := A_LoopFilePath  <em>; Muss in eine schreibbare Variable gespeichert werden, damit sie unten verwendet werden kann.
 
-    ; Erstellt eine eindeutige Endungs-ID, um Zeichen in einem Variablennamen zu vermeiden, die illegal sind,
-    ; wie z. B. Bindestriche. Zudem ist diese Methode leistungsfähiger, weil das Finden eines Elements
-    ; in einem Array keine Such-Schleife erfordert.</em>
-    SplitPath(Dateiname,,, Dateiendung)  <em>; Ermittelt die Dateiendung.</em>
-    if Dateiendung ~= "^(EXE|ICO|ANI|CUR)$"
-    {
-      EndungsID := Dateiendung  <em>; Spezial-ID als Platzhalter.</em>
-      Symbolnummer := 0  <em>; Markiert es als "nicht gefunden", damit jeder Typ ein einzigartiges Symbol haben kann.</em>
-    }
-    else  <em>; Sonstige Endung/Dateityp, also ihre eindeutige ID berechnen.</em>
-    {
-      EndungsID := 0  <em>; Initialisieren, um Endungen zu behandeln, die kürzer sind als andere.</em>
-      Loop(7)     <em>; Limitiert die Endung auf 7 Zeichen, so dass sie in einem 64-Bit-Wert passt.</em>
-      {
-        Endungszeichen := SubStr(Dateiendung, A_Index, 1)
-        if not Endungszeichen  <em>; Keine weiteren Zeichen.</em>
-          break
-        <em>; Erlangt eine eindeutige ID durch Zuweisen von unterschiedlichen Bit-Positionen für jedes Zeichen:</em>
-        EndungsID := EndungsID | (Ord(Endungszeichen) &lt;&lt; (8 * (A_Index - 1)))
-      }
-      <em>; Überprüft, ob diese Dateiendung bereits ein Symbol in den ImageLists hat. Ist dies der Fall,
+        ; Erstellt eine eindeutige Endungs-ID, um Zeichen in einem Variablennamen zu vermeiden, die illegal sind,
+        ; wie z. B. Bindestriche. Zudem ist diese Methode leistungsfähiger, weil das Finden eines Elements
+        ; in einem Array keine Such-Schleife erfordert.</em>
+        SplitPath(Dateiname,,, Dateiendung)  <em>; Ermittelt die Dateiendung.</em>
+        if Dateiendung ~= "^(EXE|ICO|ANI|CUR)$"
+        {
+            EndungsID := Dateiendung  <em>; Spezial-ID als Platzhalter.</em>
+            Symbolnummer := 0  <em>; Markiert es als "nicht gefunden", damit jeder Typ ein einzigartiges Symbol haben kann.</em>
+        }
+        else  <em>; Sonstige Endung/Dateityp, also ihre eindeutige ID berechnen.</em>
+        {
+            EndungsID := 0  <em>; Initialisieren, um Endungen zu behandeln, die kürzer sind als andere.</em>
+            Loop(7)     <em>; Limitiert die Endung auf 7 Zeichen, so dass sie in einem 64-Bit-Wert passt.</em>
+            {
+                Endungszeichen := SubStr(Dateiendung, A_Index, 1)
+                if not Endungszeichen  <em>; Keine weiteren Zeichen.</em>
+                    break
+                <em>; Erlangt eine eindeutige ID durch Zuweisen von unterschiedlichen Bit-Positionen für jedes Zeichen:</em>
+                EndungsID := EndungsID | (Ord(Endungszeichen) &lt;&lt; (8 * (A_Index - 1)))
+            }
+            <em>; Überprüft, ob diese Dateiendung bereits ein Symbol in den ImageLists hat. Ist dies der Fall,
             ; können mehrere Aufrufe verhindert werden, was die Lade-Performance deutlich verbessert,
             ; besonders bei einem Ordner mit mehreren hundert Dateien:</em>
-      Symbolnummer := SymbolArray[EndungsID]
-    }
-    if not Symbolnummer  <em>; Es gibt noch kein Symbol für diese Endung, also wird es geladen.</em>
-    {
-      <em>; Ermittelt das kleine Symbol in hoher Qualität, das mit dieser Dateiendung verbunden ist:</em>
-      if not DllCall("Shell32\SHGetFileInfoW", "Str", Dateiname
-      , "UInt", 0, "Ptr", &amp;sfi, "UInt", sfi_größe, "UInt", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
-        Symbolnummer := 9999999  <em>; Setzt die Nummer außerhalb des gültigen Bereichs, um ein leeres Symbol anzuzeigen.</em>
-      else <em>; Symbol erfolgreich geladen.</em>
-      {
-        <em>; Extrahiert das hIcon-Element aus der Struktur:</em>
-        hIcon := NumGet(sfi, 0)
-        <em>; Fügt das HICON direkt in die Listen der kleinen und großen Symbolen ein.
-        ; Unten wird +1 verwendet, um den 0-basierten Index in einen 1-basierten umzuwandeln:</em>
-        Symbolnummer := DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID1, "Int", -1, "Ptr", hIcon) + 1
-        DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID2, "Int", -1, "Ptr", hIcon)
-        <em>; Da es nun in die ImageLists kopiert wurde, sollte das Original zerstört werden:</em>
-        DllCall("DestroyIcon", "Ptr", hIcon)
-        <em>; Cacht das Symbol, um Speicher zu sparen und Lade-Performance zu erhöhen:</em>
-        SymbolArray[EndungsID] := Symbolnummer
-      }
-    }
+            Symbolnummer := SymbolArray[EndungsID]
+        }
+        if not Symbolnummer  <em>; Es gibt noch kein Symbol für diese Endung, also wird es geladen.</em>
+        {
+            <em>; Ermittelt das kleine Symbol in hoher Qualität, das mit dieser Dateiendung verbunden ist:</em>
+            if not DllCall("Shell32\SHGetFileInfoW", "Str", Dateiname
+            , "UInt", 0, "Ptr", &amp;sfi, "UInt", sfi_größe, "UInt", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
+                Symbolnummer := 9999999  <em>; Setzt die Nummer außerhalb des gültigen Bereichs, um ein leeres Symbol anzuzeigen.</em>
+            else <em>; Symbol erfolgreich geladen.</em>
+            {
+                <em>; Extrahiert das hIcon-Element aus der Struktur:</em>
+                hIcon := NumGet(sfi, 0)
+                <em>; Fügt das HICON direkt in die Listen der kleinen und großen Symbolen ein.
+                ; Unten wird +1 verwendet, um den 0-basierten Index in einen 1-basierten umzuwandeln:</em>
+                Symbolnummer := DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID1, "Int", -1, "Ptr", hIcon) + 1
+                DllCall("ImageList_ReplaceIcon", "Ptr", ImageListID2, "Int", -1, "Ptr", hIcon)
+                <em>; Da es nun in die ImageLists kopiert wurde, sollte das Original zerstört werden:</em>
+                DllCall("DestroyIcon", "Ptr", hIcon)
+                <em>; Cacht das Symbol, um Speicher zu sparen und Lade-Performance zu erhöhen:</em>
+                SymbolArray[EndungsID] := Symbolnummer
+            }
+        }
 
-    <em>; Erstellt die neue Reihe in der ListView und weist ihr die oben ermittelte Symbolnummer zu:</em>
-    <a href="#Add">LV.Add</a>("Icon" . Symbolnummer, A_LoopFileName, A_LoopFileDir, A_LoopFileSizeKB, Dateiendung)
-  }
-  LV.Opt("+Redraw")  <em>; Reaktiviert die Neuzeichnung (es wurde oben deaktiviert).</em>
-  LV.ModifyCol  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
-  LV.ModifyCol(3, 65) <em>; Macht die Spalte "Größe" etwas breiter, um die Spaltenüberschrift komplett sichtbar zu machen.</em>
+        <em>; Erstellt die neue Reihe in der ListView und weist ihr die oben ermittelte Symbolnummer zu:</em>
+        <a href="#Add">LV.Add</a>("Icon" . Symbolnummer, A_LoopFileName, A_LoopFileDir, A_LoopFileSizeKB, Dateiendung)
+    }
+    LV.Opt("+Redraw")  <em>; Reaktiviert die Neuzeichnung (es wurde oben deaktiviert).</em>
+    LV.ModifyCol  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
+    LV.ModifyCol(3, 65) <em>; Macht die Spalte "Größe" etwas breiter, um die Spaltenüberschrift komplett sichtbar zu machen.</em>
 }
 
 LeereListe(LV)
 {
-  <a href="#Delete">LV.Delete</a>  <em>; Leert die ListView, aber hält das Symbol-Cache aus praktischen Gründen intakt.</em>
+    <a href="#Delete">LV.Delete</a>  <em>; Leert die ListView, aber hält das Symbol-Cache aus praktischen Gründen intakt.</em>
 }
 
 WechsleAnsicht(LV)
 {
-  static Symbolansicht
-  if not Symbolansicht
-    LV.Opt("+Icon")         <em>; Wechselt zur Symbolansicht.</em>
-  else
-    LV.Opt("+Report")       <em>; Wechselt wieder zur Detail-Ansicht.</em>
-  Symbolansicht := not Symbolansicht  <em>; Kehrt den Wert für die nächste Benutzung um.</em>
+    static Symbolansicht
+    if not Symbolansicht
+        LV.Opt("+Icon")         <em>; Wechselt zur Symbolansicht.</em>
+    else
+        LV.Opt("+Report")       <em>; Wechselt wieder zur Detail-Ansicht.</em>
+    Symbolansicht := not Symbolansicht  <em>; Kehrt den Wert für die nächste Benutzung um.</em>
 }
 
 StarteDatei(LV, Reihennummer, Verb := "")
 {
-  Dateiname := <a href="#GetText">LV.GetText</a>(Reihennummer, 1) <em>; Ermittelt den Text des ersten Feldes.</em>
-  Dateiverz := LV.GetText(Reihennummer, 2)  <em>; Ermittelt den Text des zweiten Feldes.</em>
-  Dateipfad := Dateiverz "\" Dateiname
-  Verb .= Verb ? " " : ""
-  try
-    Run(Verb Dateipfad)
-  catch Error
-    MsgBox(Error.Extra "`n" Dateipfad)
+    Dateiname := <a href="#GetText">LV.GetText</a>(Reihennummer, 1) <em>; Ermittelt den Text des ersten Feldes.</em>
+    Dateiverz := LV.GetText(Reihennummer, 2)  <em>; Ermittelt den Text des zweiten Feldes.</em>
+    Dateipfad := Dateiverz "\" Dateiname
+    Verb .= Verb ? " " : ""
+    try
+        Run(Verb Dateipfad)
+    catch Error
+        MsgBox(Error.Extra "`n" Dateipfad)
 }
 
 ZeigeKontextmenü(LV, Element, IstRechtsklick, X, Y)  <em>; Als Reaktion auf Rechtsklick oder MENÜ-Taste.</em>
 {
-  <em>; Erstellt Funktionsverweise für die Menü-Ereignisse:</em>
-  KontextÖffnen := Func("KontextÖffnen").bind(LV, Element)
-  KontextEigenschaften := Func("KontextEigenschaften").bind(LV, Element)
-  KontextReihenLeeren := Func("KontextReihenLeeren").bind(LV)
+    <em>; Erstellt Funktionsverweise für die Menü-Ereignisse:</em>
+    KontextÖffnen := Func("KontextÖffnen").bind(LV, Element)
+    KontextEigenschaften := Func("KontextEigenschaften").bind(LV, Element)
+    KontextReihenLeeren := Func("KontextReihenLeeren").bind(LV)
  
-  <em>; Erstellt ein aufklappbares Menü, das als Kontextmenü verwendet wird:</em>
-  Kontextmenü := <a href="MenuCreate.htm">MenuCreate</a>()
-  Kontextmenü.<a href="../objects/Menu.htm#Add">Add</a>("Öffnen", KontextÖffnen)
-  Kontextmenü.Add("Eigenschaften", KontextEigenschaften)
-  Kontextmenü.Add("Aus ListView entfernen", KontextReihenLeeren)
-  Kontextmenü.<a href="../objects/Menu.htm#Default">Default</a> := "Öffnen"  <em>; Zeigt "Öffnen" in fetter Schrift an, um zu kennzeichnen, dass ein Doppelklick das gleiche bewirkt.
-  ; Zeigt das Menü bei den Koordinaten X und Y an. Diese Koordinaten
-  ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
-  Kontextmenü.<a href="../objects/Menu.htm#Show">Show</a>(X, Y)
+    <em>; Erstellt ein aufklappbares Menü, das als Kontextmenü verwendet wird:</em>
+    Kontextmenü := <a href="MenuCreate.htm">MenuCreate</a>()
+    Kontextmenü.<a href="../objects/Menu.htm#Add">Add</a>("Öffnen", KontextÖffnen)
+    Kontextmenü.Add("Eigenschaften", KontextEigenschaften)
+    Kontextmenü.Add("Aus ListView entfernen", KontextReihenLeeren)
+    Kontextmenü.<a href="../objects/Menu.htm#Default">Default</a> := "Öffnen"  <em>; Zeigt "Öffnen" in fetter Schrift an, um zu kennzeichnen, dass ein Doppelklick das gleiche bewirkt.
+    ; Zeigt das Menü bei den Koordinaten X und Y an. Diese Koordinaten
+    ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
+    Kontextmenü.<a href="../objects/Menu.htm#Show">Show</a>(X, Y)
 }
 
 KontextÖffnen(LV, Reihennummer)  <em>; Der Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
 {
-  StarteDatei(LV, Reihennummer)
+    StarteDatei(LV, Reihennummer)
 }
 
 KontextEigenschaften(LV, Reihennummer)  <em>; Der Benutzer hat "Eigenschaften" im Kontextmenü ausgewählt.</em>
 {
-  StarteDatei(LV, Reihennummer, "properties")
+    StarteDatei(LV, Reihennummer, "properties")
 }
 
 KontextReihenLeeren(LV)  <em>; Der Benutzer hat "Leeren" im Kontextmenü ausgewählt.</em>
 {
-  Reihennummer := 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang zu beginnen.</em>
-  Loop
-  {
-    <em>; Da das Löschen einer Reihe die Reihennummer aller anderen Reihen darüber reduziert,
-    ; sollten sie um 1 subtrahiert werden, so dass die Suche die gleiche Reihennummer einbezieht,
-    ; die zuvor gefunden wurde (falls die benachbarten Reihen ausgewählt sind):</em>
-    Reihennummer := LV.GetNext(Reihennummer - 1)
-    if not Reihennummer  <em>; Oben wurde eine 0 zurückgegeben, also keine weiteren ausgewählten Reihen.</em>
-      break
-    LV.Delete(Reihennummer)  <em>; Entfernt die Reihe aus der ListView.</em>
-  }
+    Reihennummer := 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang zu beginnen.</em>
+    Loop
+    {
+        <em>; Da das Löschen einer Reihe die Reihennummer aller anderen Reihen darüber reduziert,
+        ; sollten sie um 1 subtrahiert werden, so dass die Suche die gleiche Reihennummer einbezieht,
+        ; die zuvor gefunden wurde (falls die benachbarten Reihen ausgewählt sind):</em>
+        Reihennummer := LV.GetNext(Reihennummer - 1)
+        if not Reihennummer  <em>; Oben wurde eine 0 zurückgegeben, also keine weiteren ausgewählten Reihen.</em>
+            break
+        LV.Delete(Reihennummer)  <em>; Entfernt die Reihe aus der ListView.</em>
+    }
 }
 
 Gui_Size(LV, Gui, MinMax, Breite, Höhe)  <em>; Vergrößert/verkleinert die ListView, wenn sich die Fenstergröße ändert.</em>
 {
-  if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
-    return
-  <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Passt die Größe der ListView an den neuen Werten an.</em>
-  LV.Move("W" Breite-20 " H" Höhe-40)
+    if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
+        return
+    <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Passt die Größe der ListView an den neuen Werten an.</em>
+    LV.Move("W" Breite-20 " H" Höhe-40)
 }</pre>
 
 </body>

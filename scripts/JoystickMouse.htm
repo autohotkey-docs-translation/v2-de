@@ -70,100 +70,108 @@ JoyInfo := GetKeyState(JoystickNumber "JoyInfo")
 if InStr(JoyInfo, "P")  <em>; Joystick hat einen Rundblickschalter (POV), also als Mausrad verwenden.</em>
     SetTimer "MouseWheel", WheelDelay
 
-return  <em>; Ende des automatischen Ausführungsbereichs.</em>
-
-
-<em>; Die unteren Subroutinen verwenden nicht KeyWait, weil ansonsten der
+<em>; Die unteren Funktionen verwenden nicht KeyWait, weil ansonsten der
 ; WatchJoystick-Quasi-Thread unter dem Warten-auf-Tastendruck-Thread eingefangen wird,
 ; wodurch das Ziehen des Mauszeigers mit dem Joystick unterdrückt wird.</em>
 
-ButtonLeft:
-SetMouseDelay, -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick "Left",,, 1, 0, "D"  <em>; Hält die linke Maustaste gedrückt.</em>
-SetTimer "WaitForLeftButtonUp", 10
-return
-
-ButtonRight:
-SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick "Right",,, 1, 0, "D"  <em>; Hält die rechte Maustaste gedrückt.</em>
-SetTimer "WaitForRightButtonUp", 10
-return
-
-ButtonMiddle:
-SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick "Middle",,, 1, 0, "D"  <em>; Hält die mittlere Maustaste gedrückt.</em>
-SetTimer "WaitForMiddleButtonUp", 10
-return
-
-WaitForLeftButtonUp:
-if GetKeyState(JoystickPrefix . ButtonLeft)
-    return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
-; Ansonsten wurde die Taste losgelassen.</em>
-SetTimer , "Off"
-SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
-MouseClick "Left",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
-return
-
-WaitForRightButtonUp:
-if GetKeyState(JoystickPrefix . ButtonRight)
-    return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
-; Ansonsten wurde die Taste losgelassen.</em>
-SetTimer , "Off"
-MouseClick "Right",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
-return
-
-WaitForMiddleButtonUp:
-if GetKeyState(JoystickPrefix . ButtonMiddle)
-    return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
-; Ansonsten wurde die Taste losgelassen.</em>
-SetTimer , "Off"
-MouseClick "Middle",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
-return
-
-WatchJoystick:
-MouseNeedsToBeMoved := false  <em>; Standardwert setzen.</em>
-joyx := GetKeyState(JoystickNumber "JoyX")
-joyy := GetKeyState(JoystickNumber "JoyY")
-if joyx &gt; JoyThresholdUpper
-{
-    MouseNeedsToBeMoved := true
-    DeltaX := Round(joyx - JoyThresholdUpper)
-}
-else if joyx &lt; JoyThresholdLower
-{
-    MouseNeedsToBeMoved := true
-    DeltaX := Round(joyx - JoyThresholdLower)
-}
-else
-    DeltaX := 0
-if joyy &gt; JoyThresholdUpper
-{
-    MouseNeedsToBeMoved := true
-    DeltaY := Round(joyy - JoyThresholdUpper)
-}
-else if joyy &lt; JoyThresholdLower
-{
-    MouseNeedsToBeMoved := true
-    DeltaY := Round(joyy - JoyThresholdLower)
-}
-else
-    DeltaY := 0
-if MouseNeedsToBeMoved
+ButtonLeft()
 {
     SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
-    MouseMove DeltaX * JoyMultiplier, DeltaY * JoyMultiplier * YAxisMultiplier, 0, "R"
+    MouseClick "Left",,, 1, 0, "D"  <em>; Hält die linke Maustaste gedrückt.</em>
+    SetTimer "WaitForLeftButtonUp", 10
+    
+    WaitForLeftButtonUp()
+    {
+        if GetKeyState(A_ThisHotkey)
+            return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
+        ; Ansonsten wurde die Taste losgelassen.</em>
+        SetTimer , "Off"
+        SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+        MouseClick "Left",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
+    }
 }
-return
 
-MouseWheel:
-JoyPOV := GetKeyState(JoystickNumber "JoyPOV")
-if JoyPOV = -1  <em>; Kein Winkel.</em>
-    return
-if (JoyPOV &gt; 31500 or JoyPOV &lt; 4500)  <em>; Nach vorne</em>
-    Send "{WheelUp}"
-else if JoyPOV &gt;= 13500 and JoyPOV &lt;= 22500  <em>; Nach hinten</em>
-    Send "{WheelDown}"
-return
+ButtonRight()
+{
+    SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+    MouseClick "Right",,, 1, 0, "D"  <em>; Hält die rechte Maustaste gedrückt.</em>
+    SetTimer "WaitForRightButtonUp", 10
+    
+    WaitForRightButtonUp()
+    {
+        if GetKeyState(A_ThisHotkey)
+            return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
+        ; Ansonsten wurde die Taste losgelassen.</em>
+        SetTimer , "Off"
+        MouseClick "Right",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
+    }
+}
+
+ButtonMiddle()
+{
+    SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+    MouseClick "Middle",,, 1, 0, "D"  <em>; Hält die mittlere Maustaste gedrückt.</em>
+    SetTimer "WaitForMiddleButtonUp", 10
+    
+    WaitForMiddleButtonUp()
+    {
+        if GetKeyState(A_ThisHotkey)
+            return  <em>; Falls die Taste weiterhin gedrückt gehalten wird, warten.
+        ; Ansonsten wurde die Taste losgelassen.</em>
+        SetTimer , "Off"
+        MouseClick "Middle",,, 1, 0, "U"  <em>; Lässt die Maustaste los.</em>
+    }
+
+}
+
+WatchJoystick()
+{
+    global
+    MouseNeedsToBeMoved := false  <em>; Standardwert setzen.</em>
+    joyx := GetKeyState(JoystickNumber "JoyX")
+    joyy := GetKeyState(JoystickNumber "JoyY")
+    if joyx &gt; JoyThresholdUpper
+    {
+        MouseNeedsToBeMoved := true
+        DeltaX := Round(joyx - JoyThresholdUpper)
+    }
+    else if joyx &lt; JoyThresholdLower
+    {
+        MouseNeedsToBeMoved := true
+        DeltaX := Round(joyx - JoyThresholdLower)
+    }
+    else
+        DeltaX := 0
+    if joyy &gt; JoyThresholdUpper
+    {
+        MouseNeedsToBeMoved := true
+        DeltaY := Round(joyy - JoyThresholdUpper)
+    }
+    else if joyy &lt; JoyThresholdLower
+    {
+        MouseNeedsToBeMoved := true
+        DeltaY := Round(joyy - JoyThresholdLower)
+    }
+    else
+        DeltaY := 0
+    if MouseNeedsToBeMoved
+    {
+        SetMouseDelay -1  <em>; Flüssigerer Bewegungsablauf.</em>
+        MouseMove DeltaX * JoyMultiplier, DeltaY * JoyMultiplier * YAxisMultiplier, 0, "R"
+    }
+}
+
+MouseWheel()
+{
+    global
+    JoyPOV := GetKeyState(JoystickNumber "JoyPOV")
+    if JoyPOV = -1  <em>; Kein Winkel.</em>
+        return
+    if (JoyPOV &gt; 31500 or JoyPOV &lt; 4500)  <em>; Nach vorne</em>
+        Send "{WheelUp}"
+    else if JoyPOV &gt;= 13500 and JoyPOV &lt;= 22500  <em>; Nach hinten</em>
+        Send "{WheelDown}"
+}
 </pre>
 </body>
 </html>

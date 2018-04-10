@@ -81,8 +81,8 @@ if ErrorLevel <em>; Die PID ist noch vorhanden.</em>
 Gui := GuiCreate(, "Priorität setzen")
 Gui.Add("Text",, "
 (
-  Drücke ESCAPE zum Abbrechen, oder klicke doppelt auf einen
-  neuen Prioritätslevel für das folgende Fenster:
+    Drücke ESCAPE zum Abbrechen, oder klicke doppelt auf einen
+    neuen Prioritätslevel für das folgende Fenster:
 )")
 Gui.Add("Text", "wp", WinGetTitle("A"))
 LB := Gui.Add("ListBox", "r5", "Normal||High|Low|BelowNormal|AboveNormal")
@@ -96,16 +96,16 @@ return
 
 SetzePriorität(LB, PID)
 {
-  if ProcessSetPriority(LB.Text, PID)
-    MsgBox("Erfolg: Die Priorität wurde auf '" LB.Text "' gesetzt."
-  else
-    MsgBox "Fehler: Die Priorität konnte nicht auf '" LB.Text "' gesetzt werden."
-  WinClose
+    if ProcessSetPriority(LB.Text, PID)
+        MsgBox "Erfolg: Die Priorität wurde auf '" LB.Text "' gesetzt."
+    else
+        MsgBox "Fehler: Die Priorität konnte nicht auf '" LB.Text "' gesetzt werden."
+    WinClose
 }
 
 Gui_Close(Gui)
 {
-  Gui.Destroy
+    Gui.Destroy
 }</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ListEx"><em>; Beispiel #4: Ermittelt eine Liste von allen laufenden Prozessen via DllCall und zeigt sie dann in einer Message Box an.</em>
@@ -135,19 +135,19 @@ c := 0  <em>; Zähler für die Prozess-IDs</em>
 DllCall("Psapi.dll\EnumProcesses", "Ptr", &amp;a, "UInt", s, "UIntP", r)
 Loop r // 4  <em>; Parst das Array mit Identifikatoren als DWORDs (32 Bit):</em>
 {
-   id := NumGet(a, A_Index * 4, "UInt")
-   <em>; Öffnet Prozess mit: PROCESS_VM_READ (0x0010) | PROCESS_QUERY_INFORMATION (0x0400)</em>
-   h := DllCall("OpenProcess", "UInt", 0x0010 | 0x0400, "Int", false, "UInt", id, "Ptr")
-   if !h
-      continue
-   VarSetCapacity(n, s, 0)  <em>; Ein Puffer, in dem der Basisname des Moduls gespeichert wird:</em>
-   e := DllCall("Psapi.dll\GetModuleBaseName", "Ptr", h, "Ptr", 0, "Str", n, "UInt", s//2)
-   if !e    <em>; Fallback-Methode für 64-Bit-Prozesse, wenn sie im 32-Bit-Modus sind:</em>
-      if e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Str", n, "UInt", s//2)
-         SplitPath n, n
-   DllCall("CloseHandle", "Ptr", h)  <em>; Schließt diesen Prozess-Handle, um Speicher freizugeben.</em>
-   if (n &amp;&amp; e)  <em>; Wenn Image nicht null ist, füge es zur Liste hinzu:</em>
-      l .= n "`n", c++
+    id := NumGet(a, A_Index * 4, "UInt")
+    <em>; Öffnet Prozess mit: PROCESS_VM_READ (0x0010) | PROCESS_QUERY_INFORMATION (0x0400)</em>
+    h := DllCall("OpenProcess", "UInt", 0x0010 | 0x0400, "Int", false, "UInt", id, "Ptr")
+    if !h
+        continue
+    VarSetCapacity(n, s, 0)  <em>; Ein Puffer, in dem der Basisname des Moduls gespeichert wird:</em>
+    e := DllCall("Psapi.dll\GetModuleBaseName", "Ptr", h, "Ptr", 0, "Str", n, "UInt", s//2)
+    if !e    <em>; Fallback-Methode für 64-Bit-Prozesse, wenn sie im 32-Bit-Modus sind:</em>
+        if e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Str", n, "UInt", s//2)
+            SplitPath n, n
+    DllCall("CloseHandle", "Ptr", h)  <em>; Schließt diesen Prozess-Handle, um Speicher freizugeben.</em>
+    if (n &amp;&amp; e)  <em>; Wenn Image nicht null ist, füge es zur Liste hinzu:</em>
+        l .= n "`n", c++
 }
 DllCall("FreeLibrary", "Ptr", hModule)  <em>; Entlädt die Bibliothek, um Speicher freizugeben.</em>
 <em>;l := Sort(l)  ; Heben Sie die Kommentierung in dieser Zeile auf, um die Liste alphabetisch zu sortieren.</em>

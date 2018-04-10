@@ -22,35 +22,38 @@
 
 ~MButton &amp; LButton::
 CapsLock &amp; LButton::
-CoordMode "Mouse"  <em>; Auf Bildschirm-/absolute Koordinaten wechseln.</em>
-MouseGetPos EWD_MouseStartX, EWD_MouseStartY, EWD_MouseWin
-WinGetPos EWD_OriginalPosX, EWD_OriginalPosY,,, "ahk_id " EWD_MouseWin
-if !WinGetMinMax("ahk_id " EWD_MouseWin)  <em>; Nur, wenn das Fenster nicht maximiert ist.</em>
-    SetTimer "EWD_WatchMouse", 10 <em>; Den Mauszeiger verfolgen, wenn er vom Benutzer gezogen wird.</em>
-return
+EWD_MoveWindow()
+{
+    CoordMode "Mouse"  <em>; Auf Bildschirm-/absolute Koordinaten wechseln.</em>
+    MouseGetPos EWD_MouseStartX, EWD_MouseStartY, EWD_MouseWin
+    WinGetPos EWD_OriginalPosX, EWD_OriginalPosY,,, "ahk_id " EWD_MouseWin
+    if !WinGetMinMax("ahk_id " EWD_MouseWin)  <em>; Nur, wenn das Fenster nicht maximiert ist.</em>
+        SetTimer "EWD_WatchMouse", 10 <em>; Den Mauszeiger verfolgen, wenn er vom Benutzer gezogen wird.</em>
 
-EWD_WatchMouse:
-if !GetKeyState("LButton", "P")  <em>; Taste wurde losgelassen, daher ist das Ziehen abgeschlossen.</em>
-{
-    SetTimer , "Off"
-    return
-}
-if GetKeyState("Escape", "P")  <em>; Escape wurde gedrückt, daher wird das Ziehen abgebrochen.</em>
-{
-    SetTimer , "Off"
-    WinMove EWD_OriginalPosX, EWD_OriginalPosY,,, "ahk_id " EWD_MouseWin
-    return
-}
-<em>; Ansonsten das Fenster neu positionieren, damit es den Mauskoordinaten entspricht,
+    EWD_WatchMouse()
+    {
+        if !GetKeyState("LButton", "P")  <em>; Taste wurde losgelassen, daher ist das Ziehen abgeschlossen.</em>
+        {
+            SetTimer , "Off"
+            return
+        }
+        if GetKeyState("Escape", "P")  <em>; Escape wurde gedrückt, daher wird das Ziehen abgebrochen.</em>
+        {
+            SetTimer , "Off"
+            WinMove EWD_OriginalPosX, EWD_OriginalPosY,,, "ahk_id " EWD_MouseWin
+            return
+        }
+        <em>; Ansonsten das Fenster neu positionieren, damit es den Mauskoordinaten entspricht,
 ; bedingt durch das Ziehen des Mauszeigers:</em>
-CoordMode "Mouse"
-MouseGetPos EWD_MouseX, EWD_MouseY
-WinGetPos EWD_WinX, EWD_WinY,,, "ahk_id " EWD_MouseWin
-SetWinDelay -1   <em>; Fenster wird schneller/flüssiger verschoben.</em>
-WinMove EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY,,, "ahk_id " EWD_MouseWin
-EWD_MouseStartX := EWD_MouseX  <em>; Für den nächsten Timer-Aufruf auf diese Subroutine aktualisieren.</em>
-EWD_MouseStartY := EWD_MouseY
-return
+        CoordMode "Mouse"
+        MouseGetPos EWD_MouseX, EWD_MouseY
+        WinGetPos EWD_WinX, EWD_WinY,,, "ahk_id " EWD_MouseWin
+        SetWinDelay -1   <em>; Fenster wird schneller/flüssiger verschoben.</em>
+        WinMove EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY,,, "ahk_id " EWD_MouseWin
+        EWD_MouseStartX := EWD_MouseX  <em>; Für den nächsten Timer-Aufruf auf diese Subroutine aktualisieren.</em>
+        EWD_MouseStartY := EWD_MouseY
+    }
+}
 </pre>
 </body>
 </html>
