@@ -82,7 +82,7 @@ var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox var[]
 
-<em>; ComVar: Erstellt ein Objekt, mit dem man ein Wert via ByRef übergeben kann.
+<em>; ComVar: Erstellt ein Objekt, mit dem ein Wert via ByRef übergeben werden kann.
 ;   ComVar[] bekommt den Wert.
 ;   ComVar[] := Val setzt den Wert.
 ;   ComVar.ref bekommt ein ByRef-Objekt, das eine COM-Funktion nutzen kann.</em>
@@ -97,17 +97,14 @@ ComVar(Type:=0xC)
     <em>; Speichert das Array und ein Objekt, mit dem das VARIANT-ByRef übergeben werden kann.</em>
     return { ref: ComObject(0x4000|Type, arr_data), _: arr, base: base }
 }
-
 ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Skript auf ein unbekanntes Feld zugreift.</em>
     if !p.Length  <em>; Keine Namen/Parameter, also cv[]</em>
         return cv._[0]
 }
-
 ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Skript ein unbekanntes Feld setzt.</em>
     if !p.Length  <em>; Keine Namen/Parameter, also cv[]:=v</em>
         return cv._[0] := v
 }
-
 ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
     ; Notwendig, damit das interne Array freigegeben werden kann.</em>
     DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))

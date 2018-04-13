@@ -51,7 +51,8 @@ Gui.Show  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
 <p id="Checked"><strong>Checked</strong>: Ermöglicht eine CheckBox auf der linken Seite jeden Elements. Beim <a href="#Add">Hinzufügen</a> eines Elements kann das Wort <em>Check</em> in die Optionen eingefügt werden, damit die CheckBox zu Beginn markiert ist. Der Benutzer kann entweder die CheckBox anklicken oder die Leertaste drücken, um ein Element zu markieren oder demarkieren. Um herauszufinden, welches Element aktuell in der TreeView markiert ist, ruft man <a href="#GetNext">TV.GetNext</a> oder <a href="#Get">TV.Get</a> auf.</p>
 <p><strong>HScroll</strong>: Geben Sie <code>-HScroll</code> (minus HScroll) an, um das horizontale Scrollen im Steuerelement zu deaktivieren (zusätzlich wird das Steuerelement keine horizontale Scrollbalken anzeigen).</p>
 <p id="ImageList"><strong>ImageList</strong>: Mit dieser Option können Symbole in eine ListView eingefügt werden. Geben Sie das Wort <em>ImageList</em> an und fügen Sie direkt danach eine ImageListID ein, die von <a href="ListView.htm#IL_Create">IL_Create</a> zurückgegeben wird. Diese Option funktioniert nur beim Erstellen einer TreeView (allerdings hat <a href="#SetImageList">TV.SetImageList</a> diese Einschränkung nicht). Hier ein funktionierendes Beispiel:</p>
-<pre>ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für anfänglich 10 Symbole.</em>
+<pre>Gui := GuiCreate()
+ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für anfänglich 10 Symbole.</em>
 Loop 10  <em>; Lädt die ImageList mit einigen vordefinierten Systemsymbolen.</em>
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
 TV := Gui.Add("TreeView", <strong>"ImageList" . ImageListID</strong>)
@@ -172,7 +173,7 @@ MeinTree_Edit(TV, Element)
 Loop
 {
     ElementID := TV.GetNext(ElementID, "Full")  <em>; Ersetzen Sie "Full" mit "Checked", um alle markierten Elemente zu finden.</em>
-    if not ElementID <em>; Keine weiteren Elemente verfügbar.</em>
+    if not ElementID  <em>; Keine weiteren Elemente verfügbar.</em>
         break
     Elementtext := TV.GetText(ElementID)
     MsgBox('Das nächste Element ist ' ElementID ', das den Text "' Elementtext '" beinhaltet.')
@@ -261,7 +262,7 @@ TreeViewBreite := 280
 ListViewBreite := A_ScreenWidth/2 - TreeViewBreite - 30
 
 <em>; Erstellt das GUI-Fenster und zeigt das Quellverzeichnis (Stammordner) in der Titelleiste:</em>
-Gui := GuiCreate("+Resize", Stammordner)  <em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder zu skalieren:</em>
+Gui := GuiCreate("+Resize", Stammordner)  <em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen.</em>
 
 <em>; Erstellt eine ImageList und fügt einige vordefinierte Systemsymbole ein:</em>
 ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(5)
@@ -276,7 +277,7 @@ SB := Gui.Add("<a href="GuiControls.htm#StatusBar">StatusBar</a>")
 <a href="GuiControls.htm#SB_SetParts">SB.SetParts</a>(60, 85)  <em>; Erstellt drei Bereiche in der Leiste (der dritte Bereich füllt die restliche Breite).</em>
 
 <em>; Fügt Ordner und deren Unterordner in die Baumstruktur ein. Zeigt ein Ladebildschirm an, wenn es etwas länger dauert:</em>
-M := GuiCreate("ToolWindow -SysMenu", "Loading the tree..."), M.Show()
+M := GuiCreate("ToolWindow -SysMenu", "Lade Baumstruktur ..."), M.Show()
 VerzListe := SetzeUnterordnerInBaum(TV, Stammordner, {})
 M.Hide()
 
@@ -310,10 +311,10 @@ SetzeUnterordnerInBaum(TV, Ordner, VerzListe, OberelementID := 0)
 
 TV_ItemSelect(VerzListe, SB, LV, TV, Element)  <em>; Diese Funktion wird aufgerufen, wenn ein neues Element ausgewählt wird.</em>
 {
-    <em>; Fügt die Dateien in die ListView ein:</em>
-    LV.Delete()  <em>; Leert alle Reihen.</em>
-    LV.Opt("-Redraw")  <em>; Verbessert die Lade-Performance durch Deaktivieren der Neuzeichnung.</em>
-    Gesamtgröße := 0  <em>; Für die Schleife unten initialisieren.</em>
+    <em>; Dateien in die ListView einfügen:</em>
+    LV.Delete  <em>; Alle Reihen leeren.</em>
+    LV.Opt("-Redraw")  <em>; Verbessert die Performance durch Deaktivieren der Neuzeichnung während des Ladens.</em>
+    Gesamtgröße := 0  <em>; Vorher für die untere Schleife initialisieren.</em>
     Loop Files, VerzListe[Element] "\*.*"  <em>; Der Einfachheit halber werden die Ordner weggelassen, um nur die Dateien in der Listview anzuzeigen.</em>
     {
         LV.Add(, A_LoopFileName, A_LoopFileTimeModified)
@@ -322,7 +323,7 @@ TV_ItemSelect(VerzListe, SB, LV, TV, Element)  <em>; Diese Funktion wird aufgeru
     LV.Opt("+Redraw")
 
     <em>; Aktualisiert die drei Bereiche der Statusleiste, um Infos über den aktuell ausgewählten Ordner anzuzeigen:</em>
-    <a href="GuiControls.htm#SB_SetText">SB.SetText</a>(LV.GetCount() " Dateien", 1)
+    <a href="GuiControls.htm#SB_SetText">SB.SetText</a>(LV.GetCount " Dateien", 1)
     SB.SetText(Round(Gesamtgröße / 1024, 1) " KB", 2)
     SB.SetText(VerzListe[Element], 3)
 }

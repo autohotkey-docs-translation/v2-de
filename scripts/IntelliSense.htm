@@ -44,12 +44,12 @@ SetKeyDelay 0
 if I_HelpHotkey &lt;&gt; ""
     Hotkey I_HelpHotkey, "I_HelpHotkey"
 
-<em>; Infobereichssymbol ändern (falls ein Symbol im Konfigurationsbereich angegeben wurde):</em>
+<em>; Tray-Symbol ändern (falls ein Symbol im Konfigurationsbereich angegeben wurde):</em>
 if I_Icon &lt;&gt; ""
     if FileExist(I_Icon)
         TraySetIcon I_Icon
 
-<em>; Standort von AutoHotkey ermitteln:</em>
+<em>; Den Standort von AutoHotkey ermitteln:</em>
 ahk_dir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir")
 if ErrorLevel  <em>; Nichts gefunden, so in anderen häufigen Standorten nachschauen.</em>
 {
@@ -68,12 +68,12 @@ if ErrorLevel  <em>; Nichts gefunden, so in anderen häufigen Standorten nachsch
 
 ahk_help_file := ahk_dir "\AutoHotkey.chm"
 
-<em>; Befehlssyntax lesen:</em>
+<em>; Befehlssyntax lesen; die Datei kann in AHK Basic gefunden werden, ist aber veraltet:</em>
 Loop Read, ahk_dir "\Extras\Editors\Syntax\Commands.txt"
 {
     I_FullCmd := A_LoopReadLine
 
-    <em>; Anweisungen haben ein erstes Leerzeichen anstelle eines ersten Kommas.</em>
+    <em>; Direktiven haben ein erstes Leerzeichen anstelle eines ersten Kommas.</em>
     <em>; So wird je nachdem verwendet, was zuerst als Endzeichen im Befehlsnamen vorkommt:</em>
     I_cPos := InStr(I_FullCmd, ",")
     I_sPos := InStr(I_FullCmd, "`s")
@@ -84,7 +84,7 @@ Loop Read, ahk_dir "\Extras\Editors\Syntax\Commands.txt"
 
     if I_EndPos
         I_CurrCmd := SubStr(I_FullCmd, 1, I_EndPos - 1)
-    else  <em>; Eine Anweisung/ein Befehl ohne Parameter.</em>
+    else  <em>; Eine Direktive/ein Befehl ohne Parameter.</em>
         I_CurrCmd := A_LoopReadLine
     
     I_CurrCmd := StrReplace(I_CurrCmd, "[")
@@ -174,7 +174,7 @@ if !InStr(WinGetTitle("A"), I_Editor)
 ToolTip  <em>; Syntaxhelfer deaktivieren, da er zurzeit nicht benötigt wird.</em>
 
 SetTitleMatchMode 1  <em>; Falls es 3 ist. Diese Einstellung gilt nur für diesen Thread.</em>
-if !WinExist("AutoHotkey Help")
+if !WinExist("Hilfe für AutoHotkey")
 {
     if !FileExist(ahk_help_file)
     {
@@ -182,13 +182,13 @@ if !WinExist("AutoHotkey Help")
         return
     }
     Run ahk_help_file
-    WinWait "AutoHotkey Help"
+    WinWait "Hilfe für AutoHotkey"
 }
 
 if I_ThisCmd = ""  <em>; Stattdessen wird die aktuellste Benutzereingabe verwendet.</em>
     I_ThisCmd := I_Word
 
-<em>; Die obere Funktion bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:</em>
+<em>; Der obere Befehl bestimmt das "zuletzt gefundene" Fenster, das unten verwendet wird:</em>
 WinActivate
 WinWaitActive
 I_ThisCmd := StrReplace(I_ThisCmd, "#", "{#}")  <em>; Führende # ersetzen, falls vorhanden.</em>

@@ -50,15 +50,15 @@ LV.OnEvent("DoubleClick", "LV_DoubleClick")
 Loop Files, A_MyDocuments "\*.*"
     <a href="#Add">LV.Add</a>(, A_LoopFileName, A_LoopFileSizeKB)
 
-<a href="#ModifyCol">LV.ModifyCol</a>()  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
+<a href="#ModifyCol">LV.ModifyCol</a>  <em>; Passt die Breiten der Spalten an den Inhalt der Reihen an.</em>
 LV.ModifyCol(2, "Integer")  <em>; Kennzeichnet aus Sortierungsgründen die Spalte 2 als Integer.</em>
 
 <em>; Zeigt das Fenster an.</em>
-Gui.Show()
+Gui.Show
 
 LV_DoubleClick(LV, Reihennummer)
 {
-    Reihentext := <a href="#GetText">LV.GetText</a>(Reihennummer)  <em>; Ermittelt den Text vom ersten Feld der Reihe.</em>
+    Reihentext := <a href="#GetText">LV.GetText</a>(Reihennummer)  <em>; Ermittelt den Text aus dem ersten Feld der Reihe.</em>
     ToolTip("Sie haben die Reihennummer " Reihennummer " doppelt angeklickt. Text: '" Reihentext "'")
 }</pre>
 <h2 id="Options">Optionen und Styles für den <em>Optionen</em>-Parameter</h2>
@@ -389,7 +389,8 @@ LV.<a href="#ModifyCol">ModifyCol</a>  <em>; Es gibt keine Parameter in diesem M
 <p>&nbsp;</p>
 <pre class="NoIndent"><em>; HAUPTBEISPIEL
 ; Das folgende Skript ist aufwendiger als das Beispiel ganz oben.
-; Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen.</em>
+; Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu.
+; Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen.</em>
 
 <em>; Erstellt ein GUI-Fenster:</em>
 Gui := GuiCreate("+Resize")  <em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen.</em>
@@ -445,7 +446,7 @@ LadeOrdner(Gui, LV, ImageListID1, ImageListID2)
     sfi_größe := A_PtrSize + 688
     VarSetCapacity(sfi, sfi_größe)
 
-  <em>; Sammelt eine Liste mit Dateinamen vom ausgewählten Ordner und fügt sie in die ListView ein:</em>
+    <em>; Sammelt eine Liste mit Dateinamen vom ausgewählten Ordner und fügt sie in die ListView ein:</em>
     LV.Opt("-Redraw")  <em>; Verbessert die Performance durch Deaktivieren der Neuzeichnung während des Ladens.</em>
     Loop Files, Ordner "\*.*"
     {
@@ -512,12 +513,12 @@ LeereListe(LV)
 
 WechsleAnsicht(LV)
 {
-    static Symbolansicht
-    if not Symbolansicht
+    static IconView
+    if not IconView
         LV.Opt("+Icon")         <em>; Wechselt zur Symbolansicht.</em>
     else
         LV.Opt("+Report")       <em>; Wechselt wieder zur Detail-Ansicht.</em>
-    Symbolansicht := not Symbolansicht  <em>; Kehrt den Wert für die nächste Benutzung um.</em>
+    IconView := not IconView  <em>; Kehrt den Wert für die nächste Benutzung um.</em>
 }
 
 StarteDatei(LV, Reihennummer, Verb := "")
@@ -569,7 +570,7 @@ KontextReihenLeeren(LV)  <em>; Der Benutzer hat "Leeren" im Kontextmenü ausgew�
         ; sollten sie um 1 subtrahiert werden, so dass die Suche die gleiche Reihennummer einbezieht,
         ; die zuvor gefunden wurde (falls die benachbarten Reihen ausgewählt sind):</em>
         Reihennummer := LV.GetNext(Reihennummer - 1)
-        if not Reihennummer  <em>; Oben wurde eine 0 zurückgegeben, also keine weiteren ausgewählten Reihen.</em>
+        if not Reihennummer  <em>; Oben wurde null zurückgegeben, also gibt es keine weiteren ausgewählten Reihen.</em>
             break
         LV.Delete(Reihennummer)  <em>; Entfernt die Reihe aus der ListView.</em>
     }
@@ -579,7 +580,7 @@ Gui_Size(LV, Gui, MinMax, Breite, Höhe)  <em>; Vergrößert/verkleinert die Lis
 {
     if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
         return
-    <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Passt die Größe der ListView an den neuen Werten an.</em>
+    <em>; Ansonsten wurde die Fenstergröße geändert oder maximiert. Passt die Größe der ListView an den neuen Werten an.</em>
     LV.Move("W" Breite-20 " H" Höhe-40)
 }</pre>
 

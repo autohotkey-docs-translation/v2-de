@@ -26,13 +26,13 @@ k_FontSize := 10
 k_FontName := "Verdana"  <em>; Kann leer sein, um die Standardschriftart des Systems zu verwenden.</em>
 k_FontStyle := "Bold"    <em>; Alternatives Beispiel: Italic Underline</em>
 
-<em>; Namen der Infobereichsmenüpunkte:</em>
+<em>; Namen der Tray-Menüpunkte:</em>
 k_MenuItemHide := "&amp;Bildschirmtastatur verstecken"
 k_MenuItemShow := "&amp;Bildschirmtastatur anzeigen"
 
 <em>; Um die Tastatur auf einen nicht-primären Anzeigegerät anzuzeigen, verwendet man
-; eine Zahl wie z. B. 2 für die folgende Variable. Lasst sie leer, um den
-; primären Monitor zu verwenden:</em>
+; eine Zahl wie z. B. 2 für die folgende Variable. Lasst sie leer, um das
+; primäre Anzeigegerät zu verwenden:</em>
 k_Monitor := ""
 
 <em>;---- Ende des Konfigurationsbereichs. Hier danach keine Änderungen durchführen,
@@ -40,10 +40,10 @@ k_Monitor := ""
 
 <em>;---- Ein GUI-Fenster für die Bildschirmtastatur erstellen:</em>
 Gui := GuiCreate("-Caption +ToolWindow +AlwaysOnTop +Disabled")
-Gui.SetFont("s" k_FontSize " "  k_FontStyle, k_FontName)
+Gui.SetFont("s" k_FontSize " " k_FontStyle, k_FontName)
 Gui.MarginY := 0, Gui.MarginX := 0
 
-<em>;---- Infobereichsmenü ändern:</em>
+<em>;---- Tray-Menü ändern:</em>
 A_TrayMenu.Delete
 A_TrayMenu.Add k_MenuItemHide, Func("k_ShowHide").bind(Gui, k_MenuItemHide, k_MenuItemShow)
 A_TrayMenu.Add "&amp;Exit", "k_MenuExit"
@@ -51,7 +51,7 @@ A_TrayMenu.Default := k_MenuItemHide
 
 <em>;---- Für jede Taste einen Button hinzufügen:</em>
 
-<em>; Das Tastaturlayout, das du siehst:</em>
+<em>; Das Tastaturlayout, das Sie sehen:</em>
 k_cL := [ ["``", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Back "]
         , ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\  "]
         , ["Caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"]
@@ -83,13 +83,13 @@ For n, k_Row in k_cL
             Hotkey("~*" Trim(k_CustomKeyName), fn)
     }
 
-<em>;---- Tastatur am unteren Rand des Bildschirms positionieren
-; (unter Berücksichtigung der Taskleistenposition):</em>
+<em>;---- Tastatur am unteren Rand des Bildschirms positionieren (unter Berücksichtigung
+; der Position der Taskleiste):</em>
 Gui.Show("Hide") <em>; Notwendig, um die berechnete Breite und Höhe des Fensters zu erhalten.
 ; X-Position des Fensters berechnen:</em>
 MonitorGetWorkArea(k_Monitor, WL,, WR, WB)
 k_xPos := (WR - WL - Gui.Pos.W) / 2 <em>; Position berechnen, um sie horizontal zu zentrieren.
-; Das Folgende wird durchgeführt, falls sich das Fenster nicht auf dem primären Monitor befindet
+; Das Folgende wird durchgeführt, falls sich das Fenster nicht auf dem primären Anzeigegerät befindet
 ; oder wenn die Taskleiste auf der linken Seite des Bildschirms verankert ist:</em>
 k_xPos += WL
 <em>; Y-Position des Fensters berechnen:</em>

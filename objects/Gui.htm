@@ -530,22 +530,16 @@ WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
     static AltesHwnd
     if (Hwnd &lt;&gt; AltesHwnd)
     {
-        Text := "", <a href="../commands/ToolTip.htm">ToolTip</a>() <em>; Vorheriges Tooltip ausschalten.</em>
+        Text := "", <a href="../commands/ToolTip.htm">ToolTip</a>() <em>; Schließt alle offenen Tooltips.</em>
         AktSteuerelement := GuiCtrlFromHwnd(Hwnd)
         if AktSteuerelement
         {
             Text := %AktSteuerelement.Name%_TT
-            SetTimer("ZeigeToolTip", -1000)
+            SetTimer () =&gt; ToolTip(Text), -1000
+            SetTimer () =&gt; ToolTip(), -4000 <em>; Entfernt das ToolTip.</em>
         }
         AltesHwnd := Hwnd
     }
-}
-
-ZeigeToolTip()
-{
-    global
-    ToolTip(Text)
-    SetTimer("ToolTip", -3000) <em>; Tooltip entfernen.</em>
 }
 
 Gui_Close()
@@ -564,7 +558,7 @@ KoordText := Gui.Add("Text", "cLime", "XXXXX YYYYY")  <em>; XX &amp; YY dienen z
 WinSetTransColor(Gui.BackColor " 150")
 SetTimer(Func("AktualisiereOSD").bind(KoordText), 200)
 AktualisiereOSD(KoordText)  <em>; Aktualisierung sofort durchzuführen, anstatt auf den Timer zu warten.</em>
-Gui.Show("x0 y400 NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster sein Aktivzustand verliert.</em>
+Gui.Show("x0 y400 NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster seinen Aktivzustand verliert.</em>
 
 AktualisiereOSD(GuiCtrl)
 {
@@ -643,15 +637,15 @@ Dateimenü.Add("Speichern &amp;unter...", "MenüDateiSpeichernUnter")
 Dateimenü.Add() <em>; Trennlinie.</em>
 Dateimenü.Add("E&amp;xit", "MenüDateiBeenden")
 Hilfsmenü := MenuCreate()
-Hilfsmenü.Add("&amp;Über", "MenüHilfeÜber")
+Hilfsmenü.Add("Inf&amp;o", "MenüHilfeÜber")
 
 <em>; Fügt die Untermenüs in die Menüleiste ein:</em>
-MeineMenüleiste := MenuCreate()
+MeineMenüleiste := MenuBarCreate()
 MeineMenüleiste.Add("&amp;Datei", Dateimenü)
-MeineMenüleiste.Add("&amp;Hilfe", Hilfsmenü)
+MeineMenüleiste.Add("&amp;?", Hilfsmenü)
 
 <em>; Heftet die Menüleiste an das Fenster an:</em>
-Gui.Menu := MeineMenüleiste
+Gui.MenuBar := MeineMenüleiste
 
 <em>; Erstellt das Haupt-Eingabefeld:</em>
 HauptEdit := Gui.Add("Edit", "WantTab W600 R20")
@@ -743,7 +737,7 @@ speichereInhalt(Dateiname)
 Über_Close()
 {
     Gui.Opt("-Disabled")  <em>; Reaktiviert das Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
-    Über.Destroy()  <em>; Zerstört das Über-Fenster.</em>
+    Über.Destroy()  <em>; Entfernt das Über-Fenster.</em>
 }
 
 Gui_DropFiles(Gui, DateiArray)  <em>; Ziehen &amp; Ablegen unterstützen.</em>

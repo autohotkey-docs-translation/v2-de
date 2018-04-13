@@ -56,7 +56,7 @@
     <td>A_LoopFileShortPath</td>
     <td><p>Der aktuell abgerufene 8.3-kurze Pfad und Name der Datei oder des Ordners. Zum Beispiel: C:\MEINED~1\ADRESS~1.TXT. Enthält <em>Dateimuster</em> einen relativen anstelle eines absoluten Pfades, wird der Pfad in dieser Variable auch relativ sein.</p>
       <p>Das folgende Beispiel zeigt, was <em>Dateimuster</em> enthalten muss, um den kompletten 8.3-Pfad und -Name einer Datei oder eines Ordners abzurufen:</p>
-<pre>Loop Files, "C:\Meine Dokumente\Adressliste.txt"
+<pre>Loop Files, "C:\Meine Dokumente\Adressenliste.txt"
     KurzerPfadname := A_LoopFileShortPath</pre>
         <p class="note"><strong>Hinweis</strong>: Diese Variable wird <strong>leer</strong> sein, wenn die Datei keinen kurzen Namen hat. Dies könnte beispielsweise passieren, wenn NtfsDisable8dot3NameCreation in der Registry angegeben ist. Sie wird auch leer sein, wenn <em>Dateimuster</em> einen relativen Pfad enthält und der Schleifenkörper <a href="SetWorkingDir.htm">SetWorkingDir</a> verwendet, um von dem eigentlichen Arbeitsverzeichnis der Schleife wegzuschalten.</p></td>
   </tr>
@@ -127,12 +127,12 @@ Loop Files, A_ProgramFiles "\*.txt", "R"  <em>; Durchsucht Unterordner.</em>
 }</pre>
 <pre class="NoIndent"><em>; Beispiel #2: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</em>
 OrdnerGrößeKB := 0
-Ordner := DirSelect()  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
-Loop Files, Ordner "\*.*", "R"
+WelcherOrdner := DirSelect()  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
+Loop Files, WelcherOrdner "\*.*", "R"
     OrdnerGrößeKB += A_LoopFileSizeKB
-MsgBox "Der Ordner " Ordner " hat eine Größe von " OrdnerGrößeKB " KB."</pre>
+MsgBox "Der Ordner " WelcherOrdner " hat eine Größe von " OrdnerGrößeKB " KB."</pre>
 <pre class="NoIndent"><em>; Beispiel #3: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</em>
-Dateiliste := "" <em>; Initialisiert sie als leere Variable.</em>
+Dateiliste := ""  <em>; Initialisiert sie als leere Variable.</em>
 Loop Files, "C:\*.*"
     Dateiliste .= A_LoopFileName "`n"
 Dateiliste := Sort(Dateiliste, "R")  <em>; Die R-Option sortiert in umgekehrter Richtung. Siehe <a href="Sort.htm">Sort</a> für weitere Optionen.</em>
@@ -146,7 +146,7 @@ Loop Parse, Dateiliste, "`n"
 }</pre>
 <pre class="NoIndent"><em>; Beispiel #4: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</em>
 Dateiliste := ""
-Loop Files, A_MyDocuments "\Fotos\*.*", "FD"  <em>; Bezieht Dateien und Ordner mit ein.</em>
+Loop Files, A_MyDocuments "\Fotos\*.*", "FD"  <em>; Bezieht Dateien und Ordner mit ein</em>
     Dateiliste .= A_LoopFileTimeModified "`t" A_LoopFileName "`n"
 Dateiliste := Sort(Dateiliste)  <em>; Sortiert nach Datum.</em>
 Loop Parse, Dateiliste, "`n"
@@ -158,7 +158,8 @@ Loop Parse, Dateiliste, "`n"
     if Result = "No"
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien in das Ziel, die neuer sind als ihr Gegenstück:</em>
+<pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück,
+; in das Ziel:</em>
 KopiereWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuellmuster und KopieZiel für uns gesetzt.</em>
 Loop Files, KopieQuellmuster
@@ -175,7 +176,7 @@ Loop Files, KopieQuellmuster
     }
     if kopiere_es
     {
-        FileCopy A_LoopFilePath, KopieZiel "\" A_LoopFileName, 1   <em>; Kopiert und überschreibt sie bei Bedarf.</em>
+        FileCopy A_LoopFilePath, KopieZiel "\" A_LoopFileName, 1   <em>; Kopiert und überschreibt sie bei Bedarf</em>
         if ErrorLevel
             MsgBox '"' A_LoopFilePath '" konnte nicht nach "' KopieZiel '\' A_LoopFileName '" kopiert werden.'
     }
@@ -183,12 +184,12 @@ Loop Files, KopieQuellmuster
 Return</pre>
 <pre class="NoIndent"><em>; Beispiel #6: Wandelt Dateinamen, die via Kommandozeilenparameter übergeben wurden, in lange Namen um,
 ; mit vollständigem Pfad und korrekter Groß-/Kleinschreibung, wie sie im Dateisystem vorkommen.</em>
-Loop A_Args.Length()  <em>; Geht jeden Parameter durch (bzw. die abgelegten Dateien):</em>
+Loop A_Args.Length()  <em>; Für jeden Parameter (oder für jede auf ein Skript gezogene Datei):</em>
 {
-    ÜbergebenerPfad := A_Args[A_Index]
-    Loop Files, ÜbergebenerPfad, "FD"  <em>; Dateien und Verzeichnisse einbeziehen.</em>
+    EingabePfad := A_Args[A_Index]
+    Loop Files, EingabePfad, "FD"  <em>; Dateien und Verzeichnisse einbeziehen.</em>
         LangerPfad := A_LoopFilePath
-    MsgBox "Der Groß-/Kleinschreibung-sensitive lange Pfadname der Datei`n" ÜbergebenerPfad "`nist:`n" LangerPfad
+    MsgBox "Der lange Pfadname mit korrekter Groß-/Kleinschreibung der Datei`n" EingabePfad "`nist:`n" LangerPfad
 }</pre>
 
 </body>

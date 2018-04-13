@@ -34,7 +34,7 @@
 <pre>Joy1::<a href="../commands/Send.htm">Send</a> "{Left}"  <em>; Taste #1 zum Senden der linken Pfeiltaste bringen.</em>
 Joy2::<a href="../commands/Click.htm">Click</a>  <em>; Taste #2 zum Senden der linken Maustaste bringen.</em>
 Joy3::Send "a{Esc}{Space}{Enter}"  <em>; Taste #3 zum Senden des Buchstabens "a" bringen, gefolgt von Escape, Leerzeichen und Enter.</em>
-Joy4::Send "Mit freundlichen Grüßen,{Enter}John Smith"  <em>; Taste #4 zum Senden einer zweizeiligen Signatur bringen.</em></pre>
+Joy4::Send "Mit freundlichen Grüßen,{Enter}Max Mustermann"  <em>; Taste #4 zum Senden einer zweizeiligen Signatur bringen.</em></pre>
 <p>Damit eine Taste mehr als eine Funktion senden kann, setzt man die erste Funktion <em>unterhalb</em> des Tastennamens und macht die letzte Zeile zu einem <a href="../commands/Return.htm">Return</a>. Zum Beispiel:</p>
 <pre>Joy5::
 Run "notepad"
@@ -59,18 +59,18 @@ return
 
 AufDritteTasteWarten()
 {
-    if <a href="../commands/GetKeyState.htm">GetKeyState</a>("Joy3")  <em>; Die Taste ist noch unten, also warte.</em>
+    if <a href="../commands/GetKeyState.htm">GetKeyState</a>("Joy3")  <em>; Die Taste ist noch unten, also weiter warten.</em>
         return
     <em>; Ansonsten wurde die Taste losgelassen.</em>
-    Send "{LButton up}"   <em>; Lässt die linke Maustaste los.</em>
+    Send "{LButton up}"  <em>; Lässt die linke Maustaste los.</em>
     SetTimer , "Off"
 }
 </pre>
 <br>
-<p><strong>Auto-Wiederholung einer Tasteneingabe</strong>: Bei einigen Programmen oder Spielen kann es erforderlich sein, dass eine Taste wiederholend gesendet werden muss (als würden Sie sie auf der Tastatur gedrückt halten). Das folgende Beispiel zeigt, wie man dies erreichen kann. Es sendet wiederholend die Leertaste, während Sie die zweite Taste des Joysticks gedrückt halten.</p>
+<p><strong>Auto-Wiederholung einer Tasteneingabe</strong>: Bei einigen Programmen oder Spielen kann es erforderlich sein, dass eine Taste wiederholend gesendet werden muss (als würden Sie sie auf der Tastatur gedrückt halten). Das folgende Beispiel zeigt, wie man dies erreichen kann. Es sendet wiederholend die Leertaste, während Sie die zweite Taste des Joysticks gedrückt halten:</p>
 <pre>Joy2::
 Send "{Space down}"   <em>; Drückt die Leertaste nach unten.</em>
-SetTimer "WaitForJoy2", <strong>30</strong>  <em>; Reduzieren Sie die Nummer <strong>30</strong> auf 20 oder 10, um Tasten schneller zu senden. Erhöhen Sie die Nummer, um Tasten langsamer zu senden.</em>
+SetTimer "AufJoy2Warten", <strong>30</strong>  <em>; Reduzieren Sie die Nummer <strong>30</strong> auf 20 oder 10, um Tasten schneller zu senden. Erhöhen Sie die Nummer, um Tasten langsamer zu senden.</em>
 return
 
 AufJoy2Warten()
@@ -81,7 +81,7 @@ AufJoy2Warten()
         SetTimer , "Off"  <em>; Stoppt die Überwachung der Taste.</em>
         return
     }
-    <em>; Da oben kein "return" erfolgt ist, wird die Taste noch gedrückt gehalten.</em>
+    <em>; Da oben kein "Return" erfolgt ist, wird die Taste noch gedrückt gehalten.</em>
     Send "{Space down}"  <em>; Sendet eine weitere Leertaste.</em>
 }</pre>
 <p><strong>Kontextabhängige Joystick-Tasten</strong>: Die <a href="../commands/_If.htm">#If</a>-Direktive kann genutzt werden, um bestimmte Joystick-Tasten je nach Bedingung (z. B. Typ des aktiven Fensters) unterschiedliche (oder gar keine) Aktionen durchzuführen zu lassen.</p>
@@ -90,32 +90,33 @@ AufJoy2Warten()
 <p>Damit ein Skript auf die Bewegung einer Joystick-Achse oder des Rundblickschalters reagieren kann, verwendet man <a href="../commands/SetTimer.htm">SetTimer</a> und <a href="../commands/GetKeyState.htm">GetKeyState</a>. Das folgende Beispiel bringt die X- und Y-Achsen des Joysticks dazu, sich wie die Pfeiltasten auf einer Tastatur zu verhalten (links, rechts, oben und unten):</p>
 <pre><a href="../commands/SetTimer.htm">SetTimer</a> "Achsenüberwachung", 5
 
-Achsenüberwachung:
-JoyX := <a href="../commands/GetKeyState.htm">GetKeyState</a>("JoyX")  <em>; Ermittelt die Position der X-Achse.</em>
-JoyY := GetKeyState("JoyY")  <em>; Ermittelt die Position der Y-Achse.</em>
-VorherGedrückteTaste := GedrückteTaste  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
+Achsenüberwachung()
+{
+    JoyX := <a href="../commands/GetKeyState.htm">GetKeyState</a>("JoyX")  <em>; Ermittelt die Position der X-Achse.</em>
+    JoyY := GetKeyState("JoyY")  <em>; Ermittelt die Position der Y-Achse.</em>
+    VorherGedrückteTaste := GedrückteTaste  <em>; VorherGedrückteTaste enthält nun die Taste, die vorher unten war (falls vorhanden).</em>
 
-if JoyX &gt; 70
-    GedrückteTaste := "Right"
-else if JoyX &lt; 30
-    GedrückteTaste := "Left"
-else if JoyY &gt; 70
-    GedrückteTaste := "Down"
-else if JoyY &lt; 30
-    GedrückteTaste := "Up"
-else
-    GedrückteTaste := ""
+    if JoyX &gt; 70
+        GedrückteTaste := "Right"
+    else if JoyX &lt; 30
+        GedrückteTaste := "Left"
+    else if JoyY &gt; 70
+        GedrückteTaste := "Down"
+    else if JoyY &lt; 30
+        GedrückteTaste := "Up"
+    else
+        GedrückteTaste := ""
 
-if GedrückteTaste = VorherGedrückteTaste  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
-    return  <em>; Nichts tun.</em>
+    if GedrückteTaste = VorherGedrückteTaste  <em>; Die korrekte Taste ist bereits unten (oder keine Taste notwendig).</em>
+        return  <em>; Nichts tun.</em>
 
-<em>; Ansonsten vorherige Taste loslassen und neue Taste drücken:</em>
-SetKeyDelay -1  <em>; Verhindert Verzögerungen zwischen den Tastatureingaben.</em>
-if VorherGedrückteTaste   <em>; Es gibt eine vorherige Taste zum Loslassen.</em>
-    Send "{" VorherGedrückteTaste " up}"  <em>; Lässt sie los.</em>
-if GedrückteTaste   <em>; Es gibt eine Taste zum nach unten Drücken.</em>
-    Send "{" GedrückteTaste " down}"  <em>; Drückt sie nach unten.</em>
-return</pre>
+    <em>; Ansonsten vorherige Taste loslassen und neue Taste drücken:</em>
+    SetKeyDelay -1  <em>; Verhindert Verzögerungen zwischen den Tastatureingaben.</em>
+    if VorherGedrückteTaste   <em>; Es gibt eine vorherige Taste zum Loslassen.</em>
+        Send "{" VorherGedrückteTaste " up}"  <em>; Lässt sie los.</em>
+    if GedrückteTaste   <em>; Es gibt eine Taste zum nach unten Drücken.</em>
+        Send "{" GedrückteTaste " down}"  <em>; Drückt sie nach unten.</em>
+}</pre>
 <p>&nbsp;</p>
 <p>Das folgende Beispiel bringt den Rundblickschalter des Joysticks dazu, sich wie die Pfeiltasten auf der Tastatur zu verhalten; das heißt, dass der Rundblickschalter Pfeiltasteneingaben senden wird (links, rechts, oben und unten):</p>
 <pre>SetTimer "POVÜberwachung", 5
@@ -129,7 +130,7 @@ POVÜberwachung()
     ; Um sie alle zu unterstützen, nutzt man einen Bereich:</em>
     if POV &lt; 0   <em>; Kein Winkel zu melden</em>
         GedrückteTaste := ""
-    else if POV &gt; 31500                 <em>; 315 bis 360 Grad: Nach vorne gerichtet</em>
+    else if POV &gt; 31500                <em>; 315 bis 360 Grad: Nach vorne gerichtet</em>
         GedrückteTaste := "Up"
     else if POV &gt;= 0 and POV &lt;= 4500      <em>; 0 bis 45 Grad: Nach vorne gerichtet</em>
         GedrückteTaste := "Up"
