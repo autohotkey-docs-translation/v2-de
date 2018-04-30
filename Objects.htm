@@ -154,7 +154,7 @@ obj.item[x] := y</pre>
 <p>Objekte, die mit <code>[]</code>, <code>{}</code> oder dem <code>new</code>-Operator erstellt wurden, erlauben den Einsatz von Zeichenketten, Integern und Objekten als Keys, aber mit folgenden Einschränkungen:</p>
 <p>Der Wert des Keys wird beibehalten, aber nicht seine <em>Typenidentität</em>. Das heißt, dass Integer als Zeichenketten abgespeichert werden könnten oder umgekehrt, solange der Wert der gleiche bleibt (einschließlich der Formatierung von numerischen Zeichenketten). Im Einzelnen:</p>
 <ul>
-  <li>Integer-Keys werden unter Verwendung des nativen vorzeichenbehafteten Integer-Typs gespeichert, sofern möglich. Integer, die kleiner als -2147483648 oder größer als 2147483647 sind, werden in der 32-Bit-Version von AutoHotkey als Zeichenketten und in der 64-Bit-Version als Integer abgespeichert. (64-Bit-Integer können hingegen in jeder Version als Wert abgespeichert werden.)</li>
+  <li>Integer-Keys werden als Integer gespeichert (AutoHotkey nutzt 64-Bit-Integer).</li>
   <li>Wenn eine Zeichenkette in einen Integer (vom nativen vorzeichenbehafteten Integertyp) und dann wieder in eine Zeichenkette ohne Datenverlust umgewandelt werden kann, wird sie als Integer abgespeichert. Das heißt, dass <code>x[16]</code> und <code>x["16"]</code> identisch sind, aber nicht <code>x["0016"]</code> oder <code>x["0x10"]</code>. Allerdings wären <code>x[0x10]</code> und <code>x["16"]</code> auch identisch, da direkt geschriebene Nummern während der Ladezeit in reine Zahlen umgewandelt werden.</li>
   <li>Gleitkommazahlen werden nicht als Keys unterstützt - stattdessen werden sie in Zeichenketten umgewandelt. Um Widersprüche zu vermeiden und die Verständlichkeit zu verbessern, sollte man vermeiden, direkt geschriebene Gleitkommazahlen als Keys zu verwenden.</li>
 </ul>
@@ -558,6 +558,7 @@ Default_Set_AutomaticVarInit(ByRef var, key, value)
 {
     if (var = "")
         var := Object(key, value)
+    return var
 }</pre>
 
 <h4 id="Pseudo_Properties">Pseudo-Eigenschaften</h4>
@@ -590,7 +591,7 @@ MsgBox A_AhkPath.length() " == " StrLen(A_AhkPath)</pre>
 empty_var.foo := "bar"
 x := (1 + 1).is("integer")
 
-Default__Warn(nonobj, p1="", p2="", p3="", p4="")
+Default__Warn(nonobj, p1:="", p2:="", p3:="", p4:="")
 {
     ListLines
     MsgBox "Ein objektloser Wert wurde unsachgemäß aufgerufen.`n`nSpeziell: " nonobj

@@ -13,7 +13,7 @@
 
 <h1>WinWaitClose</h1>
 
-<p>Wartet, bis das angegebene Fenster nicht mehr existiert.</p>
+<p>Wartet, bis keine passenden Fenster mehr gefunden werden.</p>
 
 <pre class="Syntax"><span class="func">WinWaitClose</span> <span class="optional">Fenstertitel, Fenstertext, Sekunden, Titelausnahme, Textausnahme</span></pre>
 <h3>Parameter</h3>
@@ -26,7 +26,7 @@
   <dd><p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p></dd>
 
   <dt>Sekunden</dt>
-  <dd><p>Wieviele Sekunden gewartet werden sollen, bevor eine Zeitüberschreitung erfolgt und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt wird. Lassen Sie diesen Parameter weg oder leer, um unendlich lang zu warten. Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p></dd>
+  <dd><p>Wie viele Sekunden gewartet werden sollen, bevor eine Zeitüberschreitung erfolgt und eine 0 zurückgegeben wird. Lassen Sie diesen Parameter weg oder leer, um unendlich lang zu warten. Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p></dd>
 
   <dt>Titelausnahme</dt>
   <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
@@ -36,10 +36,22 @@
 
 </dl>
 
-<h3>ErrorLevel</h3>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn die Funktion die Zeit überschritten hat, ansonsten auf 0.</p>
+<h3>Rückgabewert</h3>
+<p>Der Rückgabewert ist eine 0, wenn die Funktion das Zeitlimit überschritten hat, ansonsten eine 1.</p>
+
 <h3>Bemerkungen</h3>
-<p>Sobald keine Instanzen des angegebenen Fensters mehr existieren, wird die Funktion das Warten abbrechen, anstatt die restlichen <em>Sekunden</em> abzuwarten. Dabei wird sofort <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt und das Skript fortgesetzt.</p>
+<p>Wenn keine passenden Fenster vorhanden sind, wartet die Funktion nicht, bis <em>Sekunden</em> abgelaufen sind. Stattdessen wird sie sofort eine 1 zurückgeben und die Ausführung des Skripts fortgesetzt. Umgekehrt kann die Funktion auch nach dem Schließen eines passenden Fensters weiter warten, bis keine passenden Fenster mehr gefunden werden.</p>
+<p>Da <code>"A"</code> mit dem jeweils aktiven Fenster übereinstimmt, wartet <code>WinWaitClose "A"</code> normalerweise unendlich lange. Um stattdessen auf das Schließen des aktuell aktiven Fensters zu warten, gibt man dessen Titel oder eindeutige ID wie im folgenden Beispiel an:</p>
+<pre>WinWaitClose "ahk_id " WinExist("A")</pre>
+<p>WinWaitClose aktualisiert das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a>, wenn es ein passendes Fenster findet. Dies kann zum Beispiel genutzt werden, um das Fenster zu identifizieren oder anzusteuern, nachdem die Funktion das Zeitlimit überschritten hat. Zum Beispiel:</p>
+<pre>
+GuiCreate("", "Testfenster " Random()).Show("w300 h50")  <em>; Zeigt ein Testfenster.</em>
+if !WinWaitClose("Test",, 5)  <em>; Wartet 5 Sekunden, bis es jemand schließt.</em>
+{
+    MsgBox "Fenster noch nicht geschlossen: " WinGetTitle()
+    WinClose  <em>; Schließt das gefundene Fenster von WinWaitClose.</em>
+}
+</pre>
 <p>Während die Funktion in einem Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkey</a>, <a href="../objects/Menu.htm">benutzerdefinierte Menüeinträge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
 <p>Wenn ein anderer <a href="../misc/Threads.htm">Thread</a> die Inhalte der Variablen ändert, die als Parameter für diese Funktion verwenden wurden, wird die Funktion die Änderung nicht sehen -- sie wird weiter den Titel und Text verwenden, die ursprünglich in den Variablen vorhanden waren, als die Funktion anfing zu warten.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>

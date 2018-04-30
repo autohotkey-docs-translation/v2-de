@@ -85,27 +85,23 @@ Gui.Add("Text",, "
     neuen Prioritätslevel für das folgende Fenster:
 )")
 Gui.Add("Text", "wp", WinGetTitle("A"))
-LB := Gui.Add("ListBox", "r5", "Normal||High|Low|BelowNormal|AboveNormal")
-SetzePriorität := Func("SetzePriorität").bind(LB, WinGetPID("A"))
+LB := Gui.Add("ListBox", "r5 vLB", "Normal||High|Low|BelowNormal|AboveNormal")
+SetzePriorität := Func("SetzePriorität").bind(WinGetPID("A"))
 LB.OnEvent("DoubleClick", SetzePriorität)
 Gui.Add("Button", "default", "OK").OnEvent("Click", SetzePriorität)
-Gui.OnEvent("Escape", "Gui_Close")
-Gui.OnEvent("Close", "Gui_Close")
-Gui.Show
+Gui.OnEvent("Escape", () =&gt; Gui.Destroy())
+Gui.OnEvent("Close", () =&gt; Gui.Destroy())
+Gui.Show()
 return
 
-SetzePriorität(LB, PID)
+SetzePriorität(this, PID)
 {
+    LB := this.Gui.Control["LB"]
     if ProcessSetPriority(LB.Text, PID)
         MsgBox "Erfolg: Die Priorität wurde auf '" LB.Text "' gesetzt."
     else
         MsgBox "Fehler: Die Priorität konnte nicht auf '" LB.Text "' gesetzt werden."
-    WinClose
-}
-
-Gui_Close(Gui)
-{
-    Gui.Destroy
+    WinClose()
 }</pre>
 <p>&nbsp;</p>
 <pre class="NoIndent" id="ListEx"><em>; Beispiel #4: Ermittelt eine Liste von allen laufenden Prozessen via DllCall und zeigt sie dann in einer Message Box an.</em>

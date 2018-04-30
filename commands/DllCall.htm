@@ -46,7 +46,7 @@
 <td>Str</td>
 <td><p>Eine Zeichenkette wie "Blau" oder MeineVar. Wenn die aufgerufene Funktion die Zeichenkette ändert und das Argument eine reine Variable ist, wird der Inhalt der Variable aktualisiert. Der folgende Aufruf würde z. B. den Inhalt von <em>MeineVar</em> in Großbuchstaben umwandeln: <code>DllCall("CharUpper", "Str", <i>MeineVar</i>)</code>.</p>
   <p>Wenn die Funktion jedoch darauf ausgelegt ist, eine Zeichenkette zu speichern, die größer als die aktuelle Kapazität einer Variable ist, müssen Sie vor dem Funktionsaufruf sicherstellen, dass die Variable groß genug ist. Um das zu erreichen, ruft man <code><a href="VarSetCapacity.htm">VarSetCapacity</a>(MeineVar, 123)</code> auf, dabei ist 123 die Länge, die <em>MeineVar</em> maximal enthalten soll.</p>
-  <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der eine Zahl ergibt (z. B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ErrorLevel auf -2 gesetzt.</p>
+  <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der eine Zahl ergibt (z. B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst.</p>
   <p>Die <a href="#asterisk">Sternchenvariable</a> "Str*" wird zwar unterstützt, aber nur selten eingesetzt. Diese Variable kann in Verbindung mit Funktionen genutzt werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten.</p>
   <p class="note"><strong>Hinweis</strong>: Wenn Sie eine Zeichenkette an eine Funktion übergeben, müssen Sie darauf achten, welchen <a href="../Compat.htm#DllCall"><i>Typ</i> von Zeichenkette</a> die Funktion erwartet.</p></td>
 </tr>
@@ -116,7 +116,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lassen Sie die Anführungszeich
     <p>Wenn Sie für ein vorzeichenloses Argument einen negativen Integer angeben, wechselt der Integer in den vorzeichenlosen Bereich. Wenn Sie beispielsweise vorhaben, -1 als UInt zu senden, würde es zu 0xFFFFFFFF werden.</p>
     <p><em>Vorzeichenlose</em> 64-Bit-Integer, die eine Funktion erzeugt, werden nicht unterstützt. Um daher mit Zahlen zu hantieren, die größer gleich 0x8000000000000000 sind, lässt man das U-Präfix weg und interpretiert jeden negativen Wert, den die Funktion zurückgibt, als großen Integer. Zum Beispiel würde eine Funktion, die -1 als Int64 zurückgibt, eigentlich 0xFFFFFFFFFFFFFFFF zurückgeben, wenn sie ein UInt64 überhaupt zurückgeben kann.</p></td>
 </tr>
-</TABLE>
+</table>
 <p class="note"><strong>Hinweis</strong>: Wenn man ein Argument- oder Rückgabetyp ohne Leerzeichen oder Sternchen angibt, können die Anführungszeichen weggelassen werden. Zum Beispiel kann <code>Str</code> anstelle von <code>"Str"</code> und <code>CDecl</code> anstelle von <code>"CDecl"</code> verwendet werden. Wenn der Buchstabe P anstelle des Sternchens verwendet wird, können die Anführungszeichen auch weggelassen werden. Zum Beispiel: <code>UIntP</code>.</p>
 
 <h3 id="error">Fehler</h3>
@@ -132,7 +132,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lassen Sie die Anführungszeich
 
 <h3 id="except">Ausnahmen und A_LastError</h3>
 <p>Trotz der internen Ausnahmebehandlung ist es immer noch möglich, dass DllCall ein Skript zum Absturz bringen kann. Dieses Problem kann auftreten, wenn eine Funktion etwas Unangebrachtes zurückgibt, wie z. B. einen fehlerhaften Pointer oder eine nicht-terminierte Zeichenkette, statt eine Ausnahme auszulösen. Die Ursache dafür muss nicht immer die Funktion selbst sein. Auch das Skript könnte ihr einen ungeeigneten Wert (z. B. einen fehlerhaften Pointer oder ein <a href="#str">"Str"</a> mit unzureichender Kapazität) übergeben. Ein Skript kann auch abstürzen, wenn man einen ungeeigneten Argument- oder Rückgabetyp angegeben hat, z. B. wenn man einen gewöhnlichen Integer, den eine Funktion zurückgibt, als <a href="#asterisk">Sternchenvariable</a> oder <a href="#str">Str</a> typisiert.</p>
-<p id="LastError">Die interne Variable <strong>A_LastError</strong> enthält den Rückgabewert der Systemfunktion GetLastError(), die sofort nach einem Funktionsaufruf aufgerufen wird (hat keine messbaren Auswirkungen auf die Performance). A_LastError ist eine Nummer zwischen 0 und 4294967295. A_LastError ist wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a> eine interne Variable, die pro Thread gesetzt wird; das heißt, dass die Inhalte solcher Variablen nicht geändert werden, selbst wenn der aktuelle Thread zwischendurch von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen wird. A_LastError wird aber auch von <a href="Run.htm#LastError">Run/RunWait</a> und von einigen anderen internen Funktionen gesetzt.</p>
+<p id="LastError">Die interne Variable <strong>A_LastError</strong> enthält den Rückgabewert der Systemfunktion GetLastError(), die sofort nach einem Funktionsaufruf aufgerufen wird (hat keine messbaren Auswirkungen auf die Performance). A_LastError ist eine Nummer zwischen 0 und 4294967295. Desweiteren wird A_LastError pro Thread gesetzt; das heißt, dass der Inhalt dieser Variable nicht geändert wird, selbst wenn der aktuelle Thread zwischendurch von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen wird. Allerdings wird A_LastError auch von <a href="Run.htm#LastError">Run/RunWait</a> und von einigen anderen internen Funktionen gesetzt.</p>
 
 <h3 id="load">Performance</h3>
 <p>Um die Performance beim wiederholenden Aufrufen einer DLL-Datei drastisch zu verbessern, kann man sie im Voraus laden (<em>das ist für eine <a href="#std">Standard-DLL</a> wie User32 nicht notwendig, da sie immer im Speicher vorhanden ist</em>). Diese Vorgehensweise verhindert, dass DllCall jedes Mal intern LoadLibrary und FreeLibrary aufrufen muss. Zum Beispiel:</p>
@@ -276,7 +276,7 @@ MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " TestZeichenkett
 
 <pre class="NoIndent" id="HideCursor"><em>; Beispiel: Versteckt den Mauszeiger, wenn man WIN+C drückt. Um den Mauszeiger wieder sichtbar zu machen, drückt man nochmals WIN+C.</em>
 
-OnExit(Func("SystemCursor").bind("Show"))  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>
+OnExit () =&gt; SystemCursor("Show")  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>
 
 #c::SystemCursor("Toggle")  <em>; Drückt man WIN+C, wird der Mauszeiger jeweils ein- oder ausgeschaltet.</em>
 

@@ -45,42 +45,53 @@ Gui.MarginY := 0, Gui.MarginX := 0
 
 <em>;---- Tray-Menü ändern:</em>
 A_TrayMenu.Delete
-A_TrayMenu.Add k_MenuItemHide, Func("k_ShowHide").bind(Gui, k_MenuItemHide, k_MenuItemShow)
-A_TrayMenu.Add "&amp;Exit", "k_MenuExit"
+A_TrayMenu.Add k_MenuItemHide, () =&gt; k_ShowHide(Gui, k_MenuItemHide, k_MenuItemShow)
+A_TrayMenu.Add "&amp;Exit", () =&gt; ExitApp()
 A_TrayMenu.Default := k_MenuItemHide
 
 <em>;---- Für jede Taste einen Button hinzufügen:</em>
 
-<em>; Das Tastaturlayout, das Sie sehen:</em>
-k_cL := [ ["``", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Back "]
-        , ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\  "]
-        , ["Caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter"]
-        , ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift  "]
-        , ["Ctrl", "Win", "Alt", "Space ", "Alt", "Win", "Menu", "Ctrl"] ]
+<em>; ; Das Tastaturlayout:</em>
+k_Layout := [
+    ["^", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "ß", "´", "Backspace:3"],
+    ["Tab:3", "Q", "W", "E", "R", "T", "Z", "U", "I", "O", "P", "Ü", "+", "#"],
+    ["CapsLock:3", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Ö", "Ä", "Enter:2"],
+    ["LShift:3", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "-", "Shift:3"],
+    ["LCtrl:2", "LWin:2", "LAlt:2", "Space:2", "RAlt:2", "RWin:2", "AppsKey:2", "RCtrl:2"]
+]
 
-<em>; AutoHotkey's offizielle Tastennamen für die Tasten oben (leer lassen wenn identisch):</em>
-k_oL := [ [, , , , , , , , , , , , , "Backspace"]
-        , []
-        , ["CapsLock"]
-        , ["LShift", , , , , , , , , , , "RShift"]
-        , ["LCtrl", "LWin", "LAlt", , "RAlt", "RWin", "AppsKey", "RCtrl"] ]
-
-<em>; Jede Taste in der Liste mit benutzerdefinierten Tastennamen durchgehen:</em>
-For n, k_Row in k_cL
-    For i, k_CustomKeyName in k_Row
+<em>; Durchläuft die Tasten des Tastaturlayouts:</em>
+for n, k_Row in k_Layout
+    for i, k_Key in k_Row
     {
-        k_OfficialKeyName := k_oL[n][i]
-        <em>; Objektmaße anhand der ausgewählten Schriftgröße berechnen:</em>
-        opt := "h" k_FontSize * 3 " w" k_FontSize * (StrLen(k_CustomKeyName) + 2) " x+m" 
-        if i = 1
-            opt .= " y+m xm"
-        <em>; Wenn der Benutzer eine Taste drückt, klicke den entsprechenden Button auf dem Bildschirm:</em>
-        fn := Func("k_KeyPress").bind(Gui.Add("Button", opt, k_CustomKeyName))
-        <em>; Wenn die Taste einen offiziellen Tastennamen hat, nutze ihn:</em>
-        if k_OfficialKeyName
-            Hotkey("~*" k_OfficialKeyName, fn)
+        k_KeyWidthMultiplier := 1
+        <em>; Ermittelt den benutzerdefinierten Multiplikator für die Tastenbreite:</em>
+        if RegExMatch(k_Key, "(.+):(\d)", m)
+        {
+            k_Key := m[1]
+            k_KeyWidthMultiplier := m[2]
+        }
+        <em>; Ermittelt den lokalisierten Tastennamen:</em>
+        k_KeyNameText := GetKeyNameText(k_Key, 0, 1)
+        <em>; Windows-Tastennamen beginnen mit links oder rechts, also ersetzen:</em>
+        if (k_Key = "LWin" || k_Key = "RWin")
+            k_KeyNameText := "Win"
+         <em>; Tastenname kürzen:</em>
+        if (StrLen(k_Key) &gt; 1)
+            k_KeyNameText := Trim(SubStr(k_KeyNameText, 1, 5))
         else
-            Hotkey("~*" Trim(k_CustomKeyName), fn)
+            k_KeyNameText := k_Key
+        <em>; In Großbuchstaben umwandeln:</em>
+        k_KeyNameText := StrUpper(k_KeyNameText)
+        <em>; Objektmaße anhand der ausgewählten Schriftgröße berechnen:</em>
+        k_KeyHeight := k_FontSize * 3
+        opt := "h" k_KeyHeight " w" k_KeyHeight * k_KeyWidthMultiplier " -Wrap x+m" 
+        if (i = 1)
+            opt .= " y+m xm"
+        <em>; Button hinzufügen:</em>
+        Btn := Gui.Add("Button", opt, k_KeyNameText)
+        <em>; Wenn der Benutzer eine Taste drückt, klicke den entsprechenden Button auf dem Bildschirm:</em>
+        Hotkey("~*" k_Key, Func("k_KeyPress").bind(Btn))
     }
 
 <em>;---- Tastatur am unteren Rand des Bildschirms positionieren (unter Berücksichtigung
@@ -124,10 +135,12 @@ k_ShowHide(GuiObj, HideText, ShowText)
     }
 }
 
-k_MenuExit()
+GetKeyNameText(Key, Extended := false, DoNotCare := false)
 {
-    ExitApp
-}
-</pre>
+   Params := (GetKeySC(Key) &lt;&lt; 16) | (Extended &lt;&lt; 24) | (DoNotCare &lt;&lt; 25)
+   VarSetCapacity(KeyNameText, 64, 0)
+   DllCall("User32.dll\GetKeyNameText", "Int", Params, "Str", KeyNameText, "Int", 32)
+   return KeyNameText
+}</pre>
 </body>
 </html>

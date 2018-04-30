@@ -1,15 +1,3 @@
-/*
-indexData[x][0] -> keyword
-indexData[x][1] -> path
-indexData[x][2] -> (optional) type of keyword:
-0 - directive
-1 - built-in var
-2 - built-in function
-3 - control flow statement
-4 - operator
-5 - declaration
-*/
-
 indexData = [
   ["#ClipboardTimeout","commands/_ClipboardTimeout.htm",0],
   ["#ErrorStdOut","commands/_ErrorStdOut.htm",0],
@@ -454,6 +442,7 @@ indexData = [
   ["Finden einer Datei","commands/LoopFiles.htm"],
   ["Finden einer Zeichenkette","commands/InStr.htm"],
   ["Finden eines Fensters","commands/WinExist.htm"],
+  ["Float","commands/Float.htm",2],
   ["floating point (check if it is one)","commands/is.htm"],["Fließkomma (ob es dies ist)","commands/is.htm"],
   ["Floor","commands/Math.htm#Floor",2],
   ["focus","commands/ControlFocus.htm"],["Fokus","commands/ControlFocus.htm"],
@@ -545,6 +534,7 @@ indexData = [
   ["InstallKeybdHook","commands/_InstallKeybdHook.htm"],
   ["InstallMouseHook","commands/_InstallMouseHook.htm"],
   ["InStr","commands/InStr.htm",2],
+  ["Integer","commands/Integer.htm",2],
   ["Integer (ob es dies ist)","commands/is.htm"],
   ["Interrupt","commands/Thread.htm"],
   ["is (Wert is Typ)","commands/is.htm"],
@@ -831,6 +821,7 @@ indexData = [
   ["StatusBarGetText","commands/StatusBarGetText.htm",2],
   ["StatusBarWait","commands/StatusBarWait.htm",2],
   ["StrGet","commands/StrPutGet.htm",2],
+  ["String","commands/String.htm",2],
   ["string (search for)","commands/InStr.htm"],["Zeichenkette (danach suchen)","commands/InStr.htm"],
   ["Zeichenkette: InStr","commands/InStr.htm"],
   ["Zeichenkette: SubStr","commands/SubStr.htm"],

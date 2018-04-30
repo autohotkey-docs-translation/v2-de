@@ -62,7 +62,7 @@ Geben Sie an, welches Programm zum Öffnen eines Ordners benutzt werden soll. We
 nicht gefunden werden kann oder fehlt (also wenn die
 Variable 0 oder leer ist), wird der Standard-Explorer benutzt.
 */</em>
-config := {dirExplorer: "E:\utl\xplorer2_lite\xplorer2.exe"}
+global config := {dirExplorer: "E:\utl\xplorer2_lite\xplorer2.exe"}
 
 <em>/*
 Eine benutzerdefinierte Liste von Verzeichnissen, die zusätzlich
@@ -101,7 +101,7 @@ config.ScanMode := "FD"
 config.ScriptTitle := "Seek - Startmenü durchsuchen"
 
 <em>; Hilfe anzeigen:</em>
-if A_Args[1] ~= "^(--help|-help|/h|-h|/\?|-\?)$"
+if (A_Args[1] ~= "^(--help|-help|/h|-h|/\?|-\?)$")
 {
     MsgBox("
     (
@@ -139,9 +139,9 @@ if !FileExist(A_Temp) <em>; Pfad nicht vorhanden.</em>
 }
 
 <em>; Startmenü ohne GUI scannen:</em>
-if A_Args[1] = "-scex"
+if (A_Args[1] = "-scex")
 {
-    SaveFileList(config)
+    SaveFileList()
     return
 }
 
@@ -149,93 +149,84 @@ if A_Args[1] = "-scex"
 G := GuiCreate(, config.ScriptTitle)
 
 <em>; Eingabefeld hinzufügen, damit der Benutzer den Suchtext eingeben kann:</em>
-E_Search := G.Add("Edit", "W600")
+G.Add("Edit", "W600 vE_Search").OnEvent("Change", "FindMatches")
 if config.TrackKeyPhrase
-    E_Search.Value := IniRead(config.saveFile, "LastSession", "SearchText")
+    G.Control["E_Search"].Value := IniRead(config.saveFile, "LastSession", "SearchText")
 
 <em>; Meine Lieblingszeile hinzufügen:</em>
 G.Add("Text", "X625 Y10", "Wonach suchen Sie, mein Freund?")
 
 <em>; Statusleiste hinzufügen, um den Benutzer etwas mitzuteilen:</em>
-T_Info := G.Add("Text", "X10 Y31 R1 W764")
+G.Add("Text", "X10 Y31 R1 W764 vT_Info")
 
 <em>; Auswahlfeld hinzufügen, in der die Suchergebnisse angezeigt werden sollen:</em>
-LB := G.Add("ListBox", "X10 Y53 R28 W764 HScroll Disabled")
+G.Add("ListBox", "X10 Y53 R28 W764 HScroll Disabled vLB").OnEvent("DoubleClick", "OpenTarget")
 
 <em>; Diese Buttons hinzufügen, aber erstmal deaktivieren:</em>
-B_1 := G.Add("Button", "Default X10 Y446 Disabled", "Öffnen")
-B_2 := G.Add("Button", "X59 Y446 Disabled", "Verzeichnis öffnen")
-B_3 := G.Add("Button", "X340 Y446", "Startmenü scannen")
+G.Add("Button", "Default X10 Y446 Disabled vB1", "Öffnen").OnEvent("Click", "OpenTarget")
+G.Add("Button", "X59 Y446 Disabled vB2", "Verzeichnis öffnen").OnEvent("Click", "OpenFolder")
+G.Add("Button", "X340 Y446 vB3", "Startmenü scannen").OnEvent("Click", "ScanStartMenu")
 
 <em>; Beenden-Button hinzufügen:</em>
-B_4 := G.Add("Button", "X743 Y446", "Beenden")
-
-<em>; Funktionsverweise für Ereignis-Callbacks erstellen:</em>
-FindMatches := Func("FindMatches").bind(config, LB, B_1, B_2)
-OpenTarget := Func("OpenTarget").bind(config, LB)
-OpenFolder := Func("OpenFolder").bind(config, LB)
-ScanStartMenu := Func("ScanStartMenu").bind(config, E_Search, T_Info, LB, B_1, B_2, B_3)
-Gui_Close := Func("Gui_Close").bind(config, E_Search, LB)
-
-<em>; Steuerelementereignisse hinzufügen:</em>
-E_Search.OnEvent("Change", FindMatches)
-LB.OnEvent("DoubleClick", OpenTarget)
-B_1.OnEvent("Click", OpenTarget)
-B_2.OnEvent("Click", OpenFolder)
-B_3.OnEvent("Click", ScanStartMenu)
-B_4.OnEvent("Click", Gui_Close)
+G.Add("Button", "X743 Y446", "Beenden").OnEvent("Click", () =&gt; Gui_Close(G))
 
 <em>; Fensterereignisse hinzufügen:</em>
-G.OnEvent("Close", Gui_Close)
-G.OnEvent("Escape", Gui_Close)
+G.OnEvent("Close", "Gui_Close")
+G.OnEvent("Escape", "Gui_Close")
 
 <em>; Eingabefenster anzeigen:</em>
 G.Show("Center")
 
 <em>; Erneutes Scannen erzwingen, wenn -scan aktiv ist oder Cache-Datei der Auflistung fehlt:</em>
 if (A_Args[1] = "-scan" or !FileExist(config.saveFile))
-    ScanStartMenu(config, E_Search, T_Info, LB, B_1, B_2, B_3)
+    ScanStartMenu(G.Control["LB"])
 
 <em>; Trefferliste abrufen und setzen:</em>
-FindMatches(config, LB, B_1, B_2, E_Search)
+FindMatches(G.Control["LB"])
 
 <em>; Aktuellste Auswahl aus Cache-Datei abrufen und Element auswählen:</em>
 if config.TrackKeyPhrase
     if (LastSelection := IniRead(config.saveFile, "LastSession", "Selection"))
-        LB.Choose(LastSelection)
+        G.Control["LB"].Choose(LastSelection)
 
 <em>; Funktionsdefinitionen ---
 
 ; Startmenü scannen und Dateiauflistung in eine Cache-Datei speichern:</em>
-ScanStartMenu(config, E_Search, T_Info, LB, B_1, B_2, B_3)
+ScanStartMenu(this)
 {
+    T_Info := this.Gui.Control["T_Info"]
+    LB := this.Gui.Control["LB"]
+    B1 := this.Gui.Control["B1"]
+    B2 := this.Gui.Control["B2"]
+    B3 := this.Gui.Control["B3"]
+
     <em>; Benutzer informieren, dass gescannt wird:</em>
     T_Info.Value := "Scanne Verzeichnisse..."
 
     <em>; Auswahlfeld beim Scannen deaktivieren:</em>
     LB.Enabled := false
-    B_1.Enabled := false
-    B_2.Enabled := false
-    B_3.Enabled := false
+    B1.Enabled := false
+    B2.Enabled := false
+    B3.Enabled := false
 
     <em>; Ermittelt und speichert die Startmenüdateien:</em>
-    SaveFileList(config)
+    SaveFileList()
     
     <em>; Benutzer informieren, dass der Scan fertig ist:</em>
     T_Info.Value := "Scan abgeschlossen."
     
     <em>; Auswahlfeld aktivieren:</em>
     LB.Enabled := true
-    B_1.Enabled := true
-    B_2.Enabled := true
-    B_3.Enabled := true
+    B1.Enabled := true
+    B2.Enabled := true
+    B3.Enabled := true
     
     <em>; Mit dem Suchtext die neue Auflistung filtern:</em>
-    FindMatches(config, LB, B_1, B_2, E_Search)
+    FindMatches(this)
 }
 
 <em>; Ermittelt und speichert die Startmenüdateien:</em>
-SaveFileList(config)
+SaveFileList()
 {
     <em>; Verzeichnispfade definieren, die abgerufen werden sollen:</em>
     LocationArray := [A_StartMenu, A_StartMenuCommon]
@@ -273,9 +264,13 @@ SaveFileList(config)
 }
 
 <em>; Treffer suchen und im Auswahlfeld anzeigen:</em>
-FindMatches(config, LB, B_1, B_2, E_Search)
+FindMatches(this)
 {
     FileArray := []
+    E_Search := this.Gui.Control["E_Search"]
+    LB := this.Gui.Control["LB"]
+    B1 := this.Gui.Control["B1"]
+    B2 := this.Gui.Control["B2"]
     SearchText := E_Search.Value
     <em>; Treffer auf Basis des Suchtextes filtern:</em>
     if SearchText
@@ -292,7 +287,7 @@ FindMatches(config, LB, B_1, B_2, E_Search)
             Line := A_LoopField
             if RegExMatch(Line, "%(L\d+)%", m) <em>; %L_n% mit Standortpfaden ersetzen.</em>
                 Line := StrReplace(Line, "%" m[1] "%", %m[1]%)
-            if SearchText &lt;&gt; E_Search.Value
+            if (SearchText &lt;&gt; E_Search.Value)
             {
                 <em>; Benutzer hat Suchtext geändert.
                 ; Es hat keinen Sinn, die Suche mit dem alten Suchtext fortzusetzen, also abbrechen.</em>
@@ -324,24 +319,25 @@ FindMatches(config, LB, B_1, B_2, E_Search)
     {
         <em>; Keine Treffer gefunden. Auswahlfeld deaktivieren:</em>
         LB.Enabled := false
-        B_1.Enabled := false
-        B_2.Enabled := false
+        B1.Enabled := false
+        B2.Enabled := false
     }
     else
     {
         <em>; Treffer gefunden. Auswahlfeld aktivieren:</em>
         LB.Enabled := true
-        B_1.Enabled := true
-        B_2.Enabled := true
+        B1.Enabled := true
+        B2.Enabled := true
         <em>; Den ersten Treffer auswählen, wenn kein anderer ausgewählt wurde:</em>
-        if LB.Text = ""
+        if (LB.Text = "")
             LB.Choose(1, 1)
     }
 }
 
 <em>; Benutzer hat 'Öffnen' angeklickt oder ENTER gedrückt:</em>
-OpenTarget(config, LB)
+OpenTarget(this)
 {
+    LB := this.Gui.Control["LB"]
     <em>; Ausgewählter Treffer existiert nicht (Datei oder Verzeichnis nicht gefunden):</em>
     if !FileExist(LB.Text)
     {
@@ -359,7 +355,7 @@ OpenTarget(config, LB)
     <em>; Überprüfen, ob der ausgewählte Treffer eine Datei oder ein Verzeichnis ist:</em>
     fileAttrib := FileGetAttrib(LB.Text)
     if InStr(fileAttrib, "D") <em>; ist ein Verzeichnis</em>
-        OpenFolder(config, LB)
+        OpenFolder(this)
     else if fileAttrib <em>; ist eine Datei</em>
         Run(LB.Text)
     else
@@ -375,14 +371,14 @@ OpenTarget(config, LB)
 }
 
 <em>; Benutzer hat 'Verzeichnis öffnen' angeklickt:</em>
-OpenFolder(config, LB)
+OpenFolder(this)
 {
-    Path := LB.Text
+    Path := this.Gui.Control["LB"].Text
     <em>; Wenn der Benutzer eine Datei statt ein Verzeichnis auswählt, wird der
     ; Verzeichnispfad extrahiert (Ich benutze DriveGetStatus anstelle von FileGetAttrib,
     ; um das Szenario zu erlauben, wo LB.Text ungültig ist, aber der Verzeichnis-
     ; pfad von LB.Text gültig ist):</em>
-    if DriveGetStatus(Path) &lt;&gt; "Ready" <em>; kein Verzeichnis</em>
+    if (DriveGetStatus(Path) &lt;&gt; "Ready") <em>; kein Verzeichnis</em>
     {
         SplitPath(Path,, Dir)
         Path := Dir
@@ -410,16 +406,15 @@ OpenFolder(config, LB)
 }
 
 
-Gui_Close(config, E_Search, LB)
+Gui_Close(this)
 {
     <em>; Suchtext zwischenspeichern:</em>
     if config.TrackKeyPhrase
     {
-        IniWrite(E_Search.Value, config.saveFile, "LastSession", "SearchText")
-        IniWrite(LB.Text, config.saveFile, "LastSession", "Selection")
+        IniWrite(this.Control["E_Search"].Value, config.saveFile, "LastSession", "SearchText")
+        IniWrite(this.Control["LB"].Text, config.saveFile, "LastSession", "Selection")
     }
     ExitApp
-}
-</pre>
+}</pre>
 </body>
 </html>

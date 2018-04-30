@@ -28,7 +28,7 @@
 <dl>
 
   <dt>Tastenname</dt>
-  <dd><p>Name der Taste zum Aktivieren des Hotkeys, einschließlich <a href="../Hotkeys.htm#Symbols">Modifikatorzeichen</a>. Zum Beispiel wäre <code>#c</code> der Hotkey WIN+C.</p>
+  <dd><p>Name der Taste zum Aktivieren des Hotkeys, einschließlich <a href="../Hotkeys.htm#Symbols">Modifikatorzeichen</a>. Zum Beispiel wäre <code>#c</code> der Hotkey <kbd>Win</kbd>+<kbd>C</kbd>.</p>
     <p>Wenn <em>Tastenname</em> bereits als Hotkey existiert, wird dieser Hotkey mit den anderen Parameterwerten der Funktion aktualisiert.</p>
     <p><em>Tastenname</em> kann auch der Name eines vorhandenen Hotkey-Labels sein (z. B. ein Doppelpunkt-Label), was dazu führen würde, dass dieser Hotkey mit den anderen Parameterwerten der Funktion aktualisiert wird.</p>
     <p>Wenn der angegebene Hotkey bereits <em>existiert</em>, spielt die Groß- und Kleinschreibung bei <em>Tastenname</em> keine Rolle. Allerdings müssen die Namen der Tasten mit den Tastennamen im vorhandenen Hotkey übereinstimmen (zum Beispiel wäre hierbei das Esc nicht das gleiche wie Escape). Zudem ist es egal, wie die <a href="../Hotkeys.htm#Symbols">Modifikatorzeichen</a> (z. B. ^!+#) angeordnet sind. Mit <a href="GetKey.htm">GetKeyName</a> kann die Standardschreibweise eines Tastennamens abgerufen werden.</p>
@@ -204,27 +204,14 @@ Gui.Add("Edit", "yp x100 w100 vPräfix", "Space")
 Gui.Add("Text", "xm", "Suffix-Hotkey:")
 Gui.Add("Edit", "yp x100 w100 vSuffix", "f &amp; j")
 Gui.Add("Button", "Default", "Registrieren").OnEvent("Click", "RegistriereHotkey")
-Gui.OnEvent("Close", "Gui_Close")
-Gui.OnEvent("Escape", "Gui_Close")
+Gui.OnEvent("Close", () =&gt; ExitApp())
+Gui.OnEvent("Escape", () =&gt; ExitApp())
 Gui.Show()
 
-RegistriereHotkey(BtnCtrl) {
-    Gespeichert := BtnCtrl.Gui.Submit(false)
-    fn := Func("HotkeySollteAuslösen").Bind(Gespeichert.Präfix)
-    Hotkey("If", fn)
-    Hotkey(Gespeichert.Suffix, "HotkeyAuslösen")
-}
-
-HotkeySollteAuslösen(Präfix) {
-    return GetKeyState(Präfix)
-}
-
-HotkeyAuslösen() {
-    MsgBox(A_ThisHotkey)
-}
-
-Gui_Close() {
-    ExitApp()
+RegistriereHotkey(this) {
+    Gespeichert := this.Gui.Submit(false)
+    Hotkey "If", () =&gt; GetKeyState(Gespeichert.Präfix)
+    Hotkey Gespeichert.Suffix, () =&gt; MsgBox(A_ThisHotkey)
 }</pre>
 
 </body>

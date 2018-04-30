@@ -27,11 +27,12 @@
 
 </dl>
 
-<h3>ErrorLevel</h3>
-<p>Nach Ablauf der Wartezeit wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Ansonsten wird ErrorLevel auf 0 gesetzt, wenn die Zwischenablage Daten enthält.</p>
+<h3>Rückgabewert</h3>
+<p>Der Rückgabewert ist eine 0, wenn die Funktion das Zeitlimit überschritten hat, ansonsten eine 1 (also wenn die Zwischenablage Daten enthält).</p>
+
 <h3>Bemerkungen</h3>
 <p>Es ist besser, diese Funktion zu nutzen, anstatt mit einer selbstgemachten Schleife zu überprüfen, ob die Zwischenablage leer ist. Da diese Funktion nie die Zwischenablage öffnet, ist sie zum einen performanter und zum anderen besser darin, mit keiner anderen Anwendung in Konflikt zu geraten, die ebenfalls auf die Zwischenablage zugreift.</p>
-<p>Diese Funktion behandelt alles, was in Text umgewandelt werden kann (z. B. HTML), als Text. Dateien, die man zum Beispiel in einem Explorerfenster via STRG+C kopiert, werden ebenfalls als Text behandelt. Solche Dateien werden automatisch in ihre Dateinamen umgewandelt (mit vollständigem Pfad), wenn im Skript auf die Clipboard-Variable verwiesen wird. Weitere Informationen finden Sie unter <a href="../misc/Clipboard.htm">Clipboard</a>.</p>
+<p>Diese Funktion behandelt alles, was in Text umgewandelt werden kann (z. B. HTML), als Text. Dateien, die man zum Beispiel in einem Explorerfenster via <kbd>Strg</kbd>+<kbd>C</kbd> kopiert, werden ebenfalls als Text behandelt. Solche Dateien werden automatisch in ihre Dateinamen umgewandelt (mit vollständigem Pfad), wenn im Skript auf die Clipboard-Variable verwiesen wird. Weitere Informationen finden Sie unter <a href="../misc/Clipboard.htm">Clipboard</a>.</p>
 <p>Wenn der letzte Parameter eine 1 ist, wird die Funktion zufriedengestellt, wenn Daten beliebiger Art in der Zwischenablage erscheinen. Dieser Sachverhalt kann in Verbindung mit <a href="../misc/Clipboard.htm#ClipboardAll">ClipboardAll</a> genutzt werden, um textlose Elemente wie z. B. Bilder zu speichern.</p>
 <p>Während die Funktion in einem Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkey</a>, <a href="../objects/Menu.htm">benutzerdefinierte Menüeinträge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
 <h3>Siehe auch</h3>
@@ -39,8 +40,7 @@
 <h3>Beispiel</h3>
 <pre class="NoIndent">clipboard := "" <em>; Leert die Zwischenablage</em>
 Send "^c"
-ClipWait 2
-if ErrorLevel
+if !ClipWait(2)
 {
     MsgBox "Der Versuch, Text in die Zwischenablage zu kopieren, ist fehlgeschlagen."
     return
