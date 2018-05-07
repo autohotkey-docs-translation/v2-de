@@ -20,7 +20,7 @@
 <dl>
 
   <dt>Ergebnis</dt>
-  <dd><p>DllCall gibt den aktuellen Rückgabewert der Funktion zurück. Unterstützt die Funktion keinen Rückgabewert, übergibt sie einen undefinierten Integer-Wert. Wenn die Funktion aufgrund eines <a href="#error">Fehlers</a> nicht aufgerufen werden kann, ist der Rückgabewert leer (eine leere Zeichenkette).</p></dd>
+  <dd><p>DllCall gibt den aktuellen Rückgabewert der Funktion zurück. Unterstützt die Funktion keinen Rückgabewert, übergibt sie einen undefinierten Integer-Wert.</p></dd>
 
   <dt>[DllDatei\]Funktion</dt>
   <dd><p>Der Name einer DLL- oder EXE-Datei, gefolgt von einem umgekehrten Schrägstrich und dem Namen der Funktion. Zum Beispiel: <code>"MeineDLL\MeineFunktion"</code> (standardmäßig gilt die Dateierweiterung ".dll", wenn sie weggelassen wird). Wenn kein absoluter Pfad angegeben ist, wird <em>DllDatei</em> in einem der Pfade aus der PATH-Umgebungsvariable oder im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
@@ -132,7 +132,7 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lassen Sie die Anführungszeich
 
 <h3 id="except">Ausnahmen und A_LastError</h3>
 <p>Trotz der internen Ausnahmebehandlung ist es immer noch möglich, dass DllCall ein Skript zum Absturz bringen kann. Dieses Problem kann auftreten, wenn eine Funktion etwas Unangebrachtes zurückgibt, wie z. B. einen fehlerhaften Pointer oder eine nicht-terminierte Zeichenkette, statt eine Ausnahme auszulösen. Die Ursache dafür muss nicht immer die Funktion selbst sein. Auch das Skript könnte ihr einen ungeeigneten Wert (z. B. einen fehlerhaften Pointer oder ein <a href="#str">"Str"</a> mit unzureichender Kapazität) übergeben. Ein Skript kann auch abstürzen, wenn man einen ungeeigneten Argument- oder Rückgabetyp angegeben hat, z. B. wenn man einen gewöhnlichen Integer, den eine Funktion zurückgibt, als <a href="#asterisk">Sternchenvariable</a> oder <a href="#str">Str</a> typisiert.</p>
-<p id="LastError">Die interne Variable <strong>A_LastError</strong> enthält den Rückgabewert der Systemfunktion GetLastError(), die sofort nach einem Funktionsaufruf aufgerufen wird (hat keine messbaren Auswirkungen auf die Performance). A_LastError ist eine Nummer zwischen 0 und 4294967295. Desweiteren wird A_LastError pro Thread gesetzt; das heißt, dass der Inhalt dieser Variable nicht geändert wird, selbst wenn der aktuelle Thread zwischendurch von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen wird. Allerdings wird A_LastError auch von <a href="Run.htm#LastError">Run/RunWait</a> und von einigen anderen internen Funktionen gesetzt.</p>
+<p>Die interne Variable <a href="../Variables.htm#LastError">A_LastError</a> enthält das Ergebnis der Systemfunktion GetLastError().</p>
 
 <h3 id="load">Performance</h3>
 <p>Um die Performance beim wiederholenden Aufrufen einer DLL-Datei drastisch zu verbessern, kann man sie im Voraus laden (<em>das ist für eine <a href="#std">Standard-DLL</a> wie User32 nicht notwendig, da sie immer im Speicher vorhanden ist</em>). Diese Vorgehensweise verhindert, dass DllCall jedes Mal intern LoadLibrary und FreeLibrary aufrufen muss. Zum Beispiel:</p>

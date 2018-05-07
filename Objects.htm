@@ -143,10 +143,7 @@ x := "", y := ""             <em>; Wenn die Zeile darüber fehlen würde, könnt
   <li>Bei Anweisungen wie <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code> ist der logische Wert eines Objekts immer <i>True</i>.</li>
   <li>Eine Objektadresse kann mithilfe des <code>&amp;</code>-Operators abgerufen werden. So eine Adresse identifiziert eindeutig das Objekt - von seiner Erstellung bis zur letzten <a href="#Refs">Freigabe</a> seines Verweises.</li>
 </ul>
-<p>Ein Objekt wird als leere Zeichenkette behandelt, wenn es in einem Kontext verwendet wird, wo ein Objekt nicht erwartet wird. Zum Beispiel würde <code>MsgBox meinObjekt</code> eine leere MsgBox anzeigen und <code>meinObjekt + 1</code> eine leere Zeichenkette zurückgeben. Verlassen Sie sich nicht auf dieses Verhalten, weil es noch geändert werden könnte.</p>
-<p>Wenn unmittelbar nach einem Methodenaufruf ein Zuweisungsoperator erfolgt, werden die runden Klammern als eckige Klammern behandelt, demzufolge wäre dies das gleiche wie, als würde man Parameter für eine Eigenschaft setzen. Zum Beispiel sind die folgenden Zeilen funktionsgemäß identisch:</p>
-<pre>obj.item(x) := y
-obj.item[x] := y</pre>
+<p>Ein Objekt wird normalerweise als leere Zeichenkette behandelt, wenn es in einem Kontext verwendet wird, wo ein Objekt nicht erwartet wird. Zum Beispiel würde <code>MsgBox(meinObjekt)</code> eine leere MsgBox anzeigen. Verlassen Sie sich nicht auf dieses Verhalten, weil es noch geändert werden könnte. In einigen Fällen wird eventuell eine Ausnahme ausgelöst, z. B. bei <code>meinObjekt + 1</code> oder <code>Round(meinObjekt)</code>.</p>
 <p id="cassign">Verbundzuweisungen wie <code>x.y += 1</code> und <code>--arr[1]</code> werden unterstützt.</p>
 <p>Parameter können beim Abrufen oder Setzen von Eigenschaften weggelassen werden. Zum Beispiel <code>x[,2]</code>. Skripte können damit Standardwerte für Parameter in <a href="#Custom_Classes_property">Eigenschaften</a> und <a href="#Meta_Functions">Meta-Funktionen</a> definieren. Der Methodenname kann man zudem komplett weglassen, wie z. B. in <code>x[](a)</code>. Skripte können damit einen Standardwert für den ersten Parameter der __Call-<a href="#Meta_Functions">Meta-Funktion</a> definieren, um zu verhindern, dass er ohne Wert weitergereicht wird. Wenn man den Eigenschafts- oder Methodennamen beim Aufrufen eines COM-Objekts weglässt, wird sein "Standardelement" aufgerufen.</p>
 
@@ -340,6 +337,7 @@ Methode()
 <p>Beim Definieren oder Aufrufen einer Eigenschaft können Parameter übergeben werden, indem man sie auf der rechten Seite des Eigenschaftsnamens in eckigen Klammern setzt. Abgesehen von den eckigen Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
 <p>Der Rückgabewert von <em>get</em> oder <em>set</em> ist das Ergebnis eines Teilausdrucks, der die Eigenschaft aufgerufen hat. Zum Beispiel würde <code>Wert := obj.Eigenschaft := 42</code> den Rückgabewert von <em>set</em> in <code>Wert</code> speichern.</p>
 <p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_base">base.Eigenschaft</a></code> benutzen, um auf die via eigene Base-Klasse definierte Eigenschaft zugreifen zu können. Wenn <em>get</em> oder <em>set</em> nicht definiert ist, kann es von einer Base-Klasse behandelt werden. Wenn <em>set</em> nicht definiert ist und nicht von einer Meta-Funktion oder Base-Klasse behandelt wird, führt das Zuweisen eines Wertes dazu, dass dieser Wert in das Objekt gespeichert wird, wodurch die Eigenschaft deaktiviert wird.</p>
+<p>Der Versuch, eine Eigenschaft <em>aufzurufen</em>, wie bei <code>obj.Eigenschaft()</code>, bewirkt, als hätte es die Eigenschaft nie gegeben.</p>
 <p>Intern sind <em>get</em> und <em>set</em> zwei unterschiedliche Methoden, die sich untereinander keine Variablen teilen können (es sei denn, man speichert sie in <code>this</code>).</p>
 <p><a href="#Meta_Functions">Meta-Funktionen</a> bieten eine breitere Auswahl an Möglichkeiten für den kontrollierten Zugriff auf Eigenschaften und Methoden eines Objekts, allerdings sind sie komplizierter und fehleranfälliger.</p>
 
@@ -408,7 +406,8 @@ class <i>Klassenname</i> {
 </ul>
 <p>Wenn die Operation immer noch nicht behandelt wurde,</p>
 <ul>
-  <li><i>Get</i> und <i>Call</i>: Gebe eine leere Zeichenkette zurück.</li>
+  <li><i>Call</i>: Löse eine Ausnahme "Unbekannte Methode" aus.</li>
+  <li><i>Get</i>: Gebe eine leere Zeichenkette zurück.</li>
   <li><i>Set</i>: Wenn nur ein Key-Parameter angegeben wurde, speichere den Key und Wert in das Zielobjekt und gebe den zugewiesenen Wert zurück. Wenn mehrere Parameter angegeben wurden, erstelle ein neues Objekt und speichere es, und verwende dabei den ersten Parameter als Key; rufe dann das neue Objekt auf, um die restlichen Parameter zu behandeln. (Siehe <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a>.)</li>
 
 </ul>
