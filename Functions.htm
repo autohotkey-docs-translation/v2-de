@@ -62,7 +62,7 @@ Addieren 2, 3  <em>; Runde Klammern können am Anfang einer Zeile weggelassen we
 <p>Mit der <a href="#IsByRef">IsByRef</a>-Funktion kann festgestellt werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
 <p>Bekannte Einschränkungen:</p>
 <ul>
-  <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">interne Variablen</a> an eine Funktion via Verweis zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
+  <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">interne Variablen</a> an eine Funktion via Referenz zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
   <li id="recurse">Eine Funktion kann sich selbst rekursiv aufrufen. Beachten Sie aber, dass, wenn sie sich selbst ihre eigenen <a href="#Local">lokalen Variablen</a> oder ByRef-lose Parameter via <em>ByRef</em> übergibt, der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit selben Namen verweist, anstatt auf dem Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
   <li>Variablen, die innerhalb eines Funktionsparameters aufgelöst werden müssen (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können von links oder rechts befindlichen Parametern geändert werden, bevor sie an die Funktion übergeben werden. <code>MeineFunk(Var, Var++)</code> würde beispielsweise unerwartet 0 und 1 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, auch dann, wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses unlogische Verhalten wird eventuell in einer zukünftigen Version geändert.</li>
   <li>ByRef wird nicht direkt unterstützt, wenn die Funktion von einem COM-Clienten aufgerufen wurde oder wenn eine COM-Methode aufgerufen wird. Stattdessen erhält oder muss das Skript ein <a href="commands/ComObject.htm#ByRef">Wrapper-Objekt</a> übergeben, das den <a href="commands/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
@@ -172,7 +172,7 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
   <li>Innerhalb einer <a href="#nested">verschachtelten Funktion</a> kann man auf nicht-dynamische lokale und statische Variablen zugreifen, die von einer äußeren Funktion erzeugt wurden.</li>
 </ul>
 <p>Siehe unten, wie das Standardverhalten überschrieben werden kann (indem man die Variable deklariert oder den Modus der Funktion ändert).</p>
-<p id="ForceLocal"><strong>Force-Local-Modus</strong>: Wenn die erste Zeile der Funktion das Wort "local" ist, werden alle Variablenverweise als lokal angesehen, es sei denn, sie werden <em>innerhalb</em> der Funktion als global deklariert. Im Gegensatz zum Standardmodus verhält sich der Force-Local-Modus wie folgt:</p>
+<p id="ForceLocal"><strong>Force-Local-Modus</strong>: Wenn die erste Zeile der Funktion das Wort "local" ist, werden alle Variablenreferenzen als lokal angesehen, es sei denn, sie werden <em>innerhalb</em> der Funktion als global deklariert. Im Gegensatz zum Standardmodus verhält sich der Force-Local-Modus wie folgt:</p>
 <ul>
   <li>Superglobale Variablen (einschließlich Klassen) sind nur zugänglich, wenn sie innerhalb der Funktion deklariert werden.</li>
   <li>Wenn die Funktion innerhalb einer anderen Funktion definiert ist, kann man nicht auf die lokalen und statischen Variablen der äußeren Funktion zugreifen.</li>
@@ -277,8 +277,8 @@ außen("Titel")
 <p>Wenn eine Funktion als <a href="#ForceLocal">Force-Local</a> oder <a href="#AssumeGlobal">Assume-Global</a> deklariert ist, sind alle lokalen oder statischen Variablen, die <em>außerhalb</em> dieser Funktion erstellt wurden, für die Funktion selbst oder eine ihrer verschachtelten Funktionen nicht direkt zugänglich.</p>
 <p>Funktionen sind standardmäßig im <a href="#AssumeLocal">Assume-Local</a>-Modus, was auch für verschachtelte Funktionen gilt, sogar innerhalb einer <a href="#AssumeStatic">Assume-Static</a>-Funktion. Wenn die äußere Funktion jedoch im <a href="#AssumeGlobal">Assume-Global</a>-Modus ist, verhalten sich verschachtelte Funktionen so, als gelte standardmäßig Assume-Global, außer dass sie auf die lokalen und statischen Variablen der äußeren Funktion zugreifen können.</p>
 <p>Eine verschachtelte Assume-Static-Funktion kann immer noch auf die Variablen der äußeren Funktion zugreifen, es sei denn, sie ist zusätzlich <a href="#ForceLocal">Force-Local</a>.</p>
-<p>Dynamische Variablenverweise innerhalb einer verschachtelten Funktion können nur dann in den Variablen der äußeren Funktion aufgelöst werden, wenn die verschachtelte Funktion (oder eine ihrer eigenen verschachtelten Funktionen) auch einen nicht-dynamischen Verweis zu der Variable enthält.</p>
-<p><a href="commands/Func.htm">Func</a> kann genutzt werden, um einen Verweis zu einer verschachtelten Funktion abzurufen, die auch dann noch aufgerufen werden kann, nachdem die äußere Funktion ihr Ende erreicht hat. Verschachtelte Funktionen können auch via Name an interne Funktionen wie <a href="commands/SetTimer.htm">SetTimer</a> und <a href="commands/Sort.htm">Sort</a> übergeben werden.</p>
+<p>Dynamische Variablenreferenzen innerhalb einer verschachtelten Funktion können nur dann in den Variablen der äußeren Funktion aufgelöst werden, wenn die verschachtelte Funktion (oder eine ihrer eigenen verschachtelten Funktionen) auch eine nicht-dynamische Referenz zu der Variable enthält.</p>
+<p><a href="commands/Func.htm">Func</a> kann genutzt werden, um eine Referenz zu einer verschachtelten Funktion zu ermitteln. Solche verschachtelten Funktionen können auch dann noch aufgerufen werden, wenn die äußeren Funktionen ihr Ende bereits erreicht haben. Verschachtelte Funktionen können auch via Name an interne Funktionen wie <a href="commands/SetTimer.htm">SetTimer</a> und <a href="commands/Sort.htm">Sort</a> übergeben werden.</p>
 
 <h3 id="closures">Closures</h3>
 <p>Ein <em>Closure</em> ist eine verschachtelte Funktion, die an eine Reihe von <em>freien Variablen</em> gebunden ist. Freie Variablen sind lokale Variablen der äußeren Funktion, auf die verschachtelte Funktionen zugreifen können. Closures ermöglichen es, dass eine oder mehrere verschachtelte Funktionen ihre Variablen mit der äußeren Funktion teilen, selbst wenn die äußere Funktion bereits ihr Ende erreicht hat.</p>
@@ -332,7 +332,7 @@ timertest() {
 }
 timertest()
 </pre>
-<p id="circular-closure">Es ist ratsam, einen Verweis zu einem Closure nicht in einer der freien Variablen des Closure zu speichern, da dies einen <a href="Objects.htm#Circular_References">Zirkelbezug</a> erzeugt, der unterbrochen werden muss, bevor das Closure freigegeben werden kann, z. B. indem man die Variable leert.</p>
+<p id="circular-closure">Es ist ratsam, eine Referenz zu einem Closure nicht in eine der freien Variablen des Closure zu speichern, da dies einen <a href="Objects.htm#Circular_References">Zirkelbezug</a> erzeugt, der unterbrochen werden muss, bevor das Closure freigegeben werden kann, z. B. indem man die Variable leert.</p>
 
 <h3 id="gosub">Verwenden von Subroutinen innerhalb einer Funktion</h3>
 <p>Eine Funktion kann auch Subroutinen enthalten, die zwar mehr Einschränkungen aufweisen als verschachtelte Funktionen, aber eventuell schneller ausgeführt werden können. Sie können wie alle Subroutinen via <a href="commands/Gosub.htm">GoSub</a> gestartet und via <a href="commands/Return.htm">Return</a> beendet werden (in diesem Fall gilt das Return nicht für die Funktion, sondern für das GoSub).</p>
@@ -457,11 +457,11 @@ timertest()
   </tr>
   <tr id="Format">
     <td><a href="commands/Format.htm">Format</a></td>
-    <td>Formatiert eine variable Anzahl von Eingabewerten, basierend auf eine Formatzeichenkette.</td>
+    <td>Formatiert eine beliebige Anzahl von Eingabewerten auf Basis einer Formatzeichenkette.</td>
   </tr>
   <tr id="Func">
     <td><a href="commands/Func.htm">Func</a></td>
-    <td>Ermittelt einen Verweis auf die angegebene Funktion.</td>
+    <td>Ruft eine Referenz zu der angegebenen Funktion ab.</td>
   </tr>
   <tr id="GetKeyName">
     <td><a href="commands/GetKey.htm">GetKeyName/VK/SC</a></td>

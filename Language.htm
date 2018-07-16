@@ -121,7 +121,7 @@ MsgBox "Diese Zeile ist nicht auskommentiert."
 <pre>MsgBox Format("Sie verwenden AutoHotkey v{1} {2}-Bit.", A_AhkVersion, A_PtrSize*8)
 </pre>
 <p>Um einer Variable einen Wert zuzuweisen, nutzt man den <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> <code>:=</code>, wie z. B. in <code>MeineVar := "Beliebiger Text"</code>.</p>
-<p><em>Prozentzeichen</em> innerhalb eines Ausdrucks werden genutzt, um <a href="#dynamic-variables">dynamische Variablenverweise</a> und <a href="Functions.htm#DynCall">dynamische Funktionsaufrufe</a> zu erzeugen, allerdings werden sie selten benötigt.</p>
+<p><em>Prozentzeichen</em> innerhalb eines Ausdrucks werden genutzt, um <a href="#dynamic-variables">dynamische Variablenreferenzen</a> und <a href="Functions.htm#DynCall">dynamische Funktionsaufrufe</a> zu erzeugen, allerdings werden sie selten benötigt.</p>
 
 <h3 id="operators">Operatoren</h3>
 <p><em>Operatoren</em> haben die Form eines Symbols oder einer Gruppe von Symbolen, wie z. B. <code>+</code> oder <code>:=</code>, oder eines der Wörter <code>and</code>, <code>or</code>, <code>not</code>, <code>new</code>, <code>is</code>, <code>in</code> oder <code>contains</code>. Sie nehmen einen, zwei oder drei Eingabewerte und geben einen Ausgabewert zurück. Ein Wert oder Teilausdruck, der als Eingabe für einen Operator dient, wird als <em>Operand</em> bezeichnet.</p>
@@ -274,7 +274,7 @@ return
 </pre>
 <p>Beachten Sie, dass aufgrund der Tatsache, dass Label wirkungslos sind, wenn sie während einer normalen Ausführung erreicht werden, das Mitteilungsfenster in diesem Beispiel zweimal angezeigt wird: einmal beim Ausführen der Subroutine und nochmals, nachdem die Subroutine ihr Return erreicht hat. Deshalb ist wichtig zu wissen, dass es nicht möglich ist, eine Subroutine innerhalb einer anderen Subroutine zu definieren, da der "Körper" der inneren Subroutine automatisch ausgeführt und dann via <em>Return</em> beendet wird, wodurch die äußere Subroutine beendet wird.</p>
 <p>Subroutinen sollten in der Regel getrennt von allen anderen Codeblöcken definiert werden, aber sie können auch <a href="Functions.htm#gosub">innerhalb einer Funktion definiert</a> werden, um der Subroutine den Zugriff auf die statischen Variablen dieser Funktion (und lokale Variablen, aber nur während der Ausführung der Funktion) zu ermöglichen.</p>
-<p class="warning"><strong>Hinweis:</strong> Subroutinen, die innerhalb einer Funktion definiert sind, haben gewisse Einschränkungen hinsichtlich der Verwendung von lokalen Variablen und <a href="#dynamic-variables">dynamischen Variablenverweisen</a>. Weitere Informationen finden Sie unter <a href="Functions.htm#gosub">Verwenden von Subroutinen innerhalb einer Funktion</a>.
+<p class="warning"><strong>Hinweis:</strong> Subroutinen, die innerhalb einer Funktion definiert sind, haben gewisse Einschränkungen hinsichtlich der Verwendung von lokalen Variablen und <a href="#dynamic-variables">dynamischen Variablenreferenzen</a>. Weitere Informationen finden Sie unter <a href="Functions.htm#gosub">Verwenden von Subroutinen innerhalb einer Funktion</a>.
 </p>
 
 <h3 id="user-defined-functions">Benutzerdefinierte Funktionen</h3>
@@ -289,7 +289,7 @@ return
 </pre>
 <p>Wie bei Funktionsaufrufen auch, darf zwischen dem Funktionsnamen und der runden Startklammer kein Leerzeichen stehen.</p>
 <p>Der Zeilenumbruch zwischen der runden Endklammer und der geschweiften Startklammer ist optional. Es kann eine beliebige Anzahl von Leerraumzeichen oder Kommentaren zwischen den beiden sein.</p>
-<p><a href="Functions.htm#ByRef">ByRef</a> zeigt an, dass der Parameter einen Variablenverweis akzeptiert, wodurch dieser Parameter ein Alias für jede Variable sein kann, die der Aufrufer übergibt. Wenn der Aufrufer keine Variable übergibt, verhält sich der Parameter wie eine normale lokale Variable. ByRef-Parameter können auch optional sein.</p>
+<p><a href="Functions.htm#ByRef">ByRef</a> zeigt an, dass der Parameter eine Variablenreferenz akzeptiert, wodurch dieser Parameter ein Alias für jede Variable sein kann, die der Aufrufer übergibt. Wenn der Aufrufer keine Variable übergibt, verhält sich der Parameter wie eine normale lokale Variable. ByRef-Parameter können auch optional sein.</p>
 <p>Um einen <a href="Functions.htm#optional">optionalen</a> Parameter anzugeben, fügt man nach dem Parameternamen <code>:=</code> an, gefolgt von einer direkt geschriebenen, in Anführungszeichen gesetzte Zeichenkette, einer Zahl, <code>True</code> oder <code>False</code>.</p>
 <p>Die Funktion kann <a href="Functions.htm#return">einen Wert via Return zurückgeben</a>. Wenn sie das nicht tut, gibt sie standardmäßig eine leere Zeichenkette zurück.</p>
 <p>Eine Funktion kann nicht innerhalb einer anderen Funktion definiert werden. Ansonsten spielt die Position einer Funktionsdefinition keine Rolle; jede im Skript definierte Funktion kann von überall her aufgerufen werden.</p>
@@ -318,15 +318,15 @@ return
 <h2 id="misc">Verschiedenes</h2>
 
 <h3 id="dynamic-variables">Dynamische Variablen</h3>
-<p>Ein <em>dynamischer Variablenverweis</em> nimmt einen Textwert und interpretiert ihn als Namen einer Variable.</p>
-<p>Die gebräuchlichste Form des dynamischen Variablenverweises wird als <em><em>Doppelreferenzierung</em></em> bezeichnet. Bevor man eine Doppelreferenzierung durchführen kann, muss der Name der Zielvariable in einer zweiten Variable gespeichert sein. Diese zweite Variable kann genutzt werden, um der Zielvariable indirekt einen Wert via Doppelreferenzierung zuzuweisen. Zum Beispiel:</p>
+<p>Eine <em>dynamische Variablenreferenz</em> nimmt einen Textwert und interpretiert ihn als Namen einer Variable.</p>
+<p>Die bekannteste Form einer dynamischen Variablenreferenz nennt sich <em>Doppelreferenzierung</em> oder <em>double-deref</em>. Bevor man eine Doppelreferenzierung durchführen kann, muss der Name der Zielvariable in einer zweiten Variable gespeichert sein. Diese zweite Variable kann genutzt werden, um der Zielvariable indirekt einen Wert via Doppelreferenzierung zuzuweisen. Zum Beispiel:</p>
 <pre>Ziel := 42
 ZweiteVar := "Ziel"
-MsgBox  ZweiteVar   <em>; Normaler (einfacher) Variablenverweis =&gt; Ziel</em>
+MsgBox  ZweiteVar   <em>; Normale (einfache) Variablenreferenz =&gt; Ziel</em>
 MsgBox %ZweiteVar%  <em>; Doppelreferenzierung =&gt; 42</em>
 </pre>
 <p>Momentan muss <code>ZweiteVar</code> im zweiten Fall immer einen Variablennamen enthalten; beliebige Ausdrücke werden nicht unterstützt.</p>
-<p>Ein dynamischer Variablenverweis kann auch einen oder mehrere direkt geschriebene Texte und den Inhalt einer oder mehrerer Variablen zu einem einzigen Variablennamen zusammenfügen. Dazu schreibt man einfach die Bestandteile des Namens und die mit Prozentzeichen umschlossenen Variablen der Reihe nach ohne Leerzeichen auf. Zum Beispiel: <code>MeinArray%A_Index%</code> oder <code>MeinRaster%X%_%Y%</code>. Mit dieser Methode kann man auf <em>Pseudo-Arrays</em> zugreifen, wie unten beschrieben.</p>
+<p>Eine dynamische Variablenreferenz kann auch einen oder mehrere direkt geschriebene Texte und den Inhalt einer oder mehrerer Variablen zu einem einzigen Variablennamen zusammenfügen. Dazu schreibt man einfach die Bestandteile des Namens und die mit Prozentzeichen umschlossenen Variablen der Reihe nach ohne Leerzeichen auf. Zum Beispiel: <code>MeinArray%A_Index%</code> oder <code>MeinRaster%X%_%Y%</code>. Mit dieser Methode kann man auf <em>Pseudo-Arrays</em> zugreifen, wie unten beschrieben.</p>
 
 <h4 id="pseudo-arrays">Pseudo-Arrays</h4>
 <p>Ein <em>Pseudo-Array</em> ist eigentlich nur ein Haufen einzelner Variablen, deren Namensmuster es aber möglich machen, sie wie Elemente eines Arrays zu verwenden. Zum Beispiel:</p>

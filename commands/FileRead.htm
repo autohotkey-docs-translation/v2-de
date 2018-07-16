@@ -24,18 +24,18 @@
   </dd>
   
   <dt>Optionen</dt>
-  <dd><p>Keine oder mehrere der folgenden Zeichenketten. Die Optionen müssen jeweils mit einem Leer- oder Tabulatorzeichen getrennt werden. Zum Beispiel: <code>"`n m5000 UTF-8"</code></p>
+  <dd><p>Null oder mehr der folgenden Zeichenketten. Die Optionen müssen jeweils mit einem Leer- oder Tabulatorzeichen voneinander getrennt werden. Zum Beispiel: <code>"`n m5000 UTF-8"</code></p>
     <p><strong>Codierung</strong>: Geben Sie einen beliebigen Codierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (außer die leere Zeichenkette), um diese Codierung zu benutzen, falls die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Fehlt diese Option, gilt standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a>.</p>
     <p><strong>RAW</strong>: Geben Sie das Wort RAW (Groß-/Kleinschreibung ist egal) an, um den Inhalt der Datei als <a href="#Binary">rohe Binärdaten</a> zu lesen. Diese Option überschreibt jede zuvor festgelegte Codierung und umgekehrt.</p>
-    <p><strong>m1024</strong>: Fehlt diese Option, wird die gesamte Datei geladen, sofern genügend Arbeitsspeicher verfügbar ist. Ist dies nicht der Fall, wird eine Fehlermeldung angezeigt und der Thread beendet (aber mit <a href="Try.htm">Try</a> kann das verhindert werden). Ansonsten kann 1024 mit einer dezimalen oder hexadezimalen Anzahl an Bytes ersetzt werden. Wenn die Datei die angegebene Größe überschreitet, wird nur der führende Teil geladen.</p>
-    <p class="note"><strong>Hinweis</strong>: Dieses Verhalten kann dazu führen, dass die letzte Zeile nur mit einem einzelnen CR-Zeichen (`r) endet, statt mit dem CR-LF-Paar (`r`n).</p>
-    <p><strong>`n</strong> (ein LF-Zeichen): Ersetzt alle CR-LF-Paare (`r`n) mit einem LF-Zeichen (`n). Allerdings verschlechtert sich dadurch die Performance und wird normalerweise nicht benötigt. Zum Beispiel wäre ein Text, der `r`n enthält, bereits im richtigen Format, um in ein <a href="StrReplace.htm">Gui-Edit-Steuerelement</a> eingefügt werden zu können. Die folgende <a href="LoopParse.htm">Parsende Schleife</a> wird immer korrekt funktionieren, egal ob eine Zeile mit `r`n oder `n endet: <code>Loop Parse, MeineDateiinhalte, "`n", "`r"</code>.</p>
+    <p><strong>m1024</strong>: Fehlt diese Option, wird die gesamte Datei geladen. Wenn der Arbeitsspeicher dafür nicht ausreicht, wird eine Fehlermeldung angezeigt und der Thread beendet (aber mit <a href="Try.htm">Try</a> kann das verhindert werden). Ansonsten können Sie 1024 mit einer dezimalen oder hexadezimalen Anzahl von Bytes ersetzen. Wenn die Datei die angegebene Größe überschreitet, wird nur ihr führender Teil geladen.</p>
+    <p class="note"><strong>Hinweis</strong>: Dies kann dazu führen, dass die letzte Zeile nur mit einem einzelnen CR-Zeichen (`r) endet, statt mit dem CR-LF-Paar (`r`n).</p>
+    <p><strong>`n</strong> (ein LF-Zeichen): Ersetzt alle CR-LF-Paare (`r`n) mit einem LF-Zeichen (`n). Diese Übersetzung reduziert jedoch die Performance und ist in der Regel nicht notwendig. Zum Beispiel wäre ein Text, der `r`n enthält, bereits im richtigen Format, um in ein <a href="StrReplace.htm">Gui-Edit-Steuerelement</a> eingefügt werden zu können. Die folgende <a href="LoopParse.htm">Parsende Schleife</a> wird korrekt funktionieren, egal ob eine Zeile mit `r`n oder `n endet: <code>Loop Parse, InhaltMeinerDatei, "`n", "`r"</code>.</p>
   </dd>
   
 </dl>
 
 <h3>ErrorLevel</h3>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Datei erfolgreich geladen wurde, und auf 1, falls eines der folgenden Probleme auftrat: 1) Datei nicht vorhanden; 2) Datei ist gesperrt oder nicht zugreifbar; 3) Das System hat nicht genügend Arbeitsspeicher, um die Datei zu laden.</p>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Datei erfolgreich geladen wurde. Ansonsten wird ErrorLevel auf 1 gesetzt, wenn ein Problem aufgetreten ist. Probleme sind zum Beispiel: 1) Datei existiert nicht; 2) Datei ist gesperrt oder nicht zugreifbar; 3) Das System hat nicht genügend Arbeitsspeicher, um die Datei zu laden.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
 <h3 id="Binary">Lesen von Binärdaten</h3>
@@ -43,13 +43,13 @@
 <p>Diese Option ist in der Regel zum Lesen von binären Daten erforderlich, weil standardmäßig alle gelesenen Bytes aus der Datei als Text interpretiert werden und von der Codierung der Quelldatei (wie in den Optionen angegeben oder via <a href="../Variables.htm#FileEncoding">A_FileEncoding</a>) in die <a href="../Compat.htm#Format">native Codierung</a> des Skripts, UTF-16, umgewandelt sein könnte. Wenn die Daten kein UTF-16-Text sind, ändert diese Umwandlung die Daten auf unerwünschte Weise.</p>
 <p>Wenn die Daten UTF-16-Text enthalten, sollte man beachten, dass viele Funktionen davon ausgehen, dass die Daten bei der ersten binären Null enden (sofern eine vorhanden ist). MsgBox zeigt beispielsweise nur Zeichen bis zur erste binäre Null an. Allerdings ist der komplette Inhalt weiterhin vorhanden und kann durch erweiterte Methoden wie <a href="NumGet.htm">NumGet</a> abgerufen werden.</p>
 <p>Ein Beispiel für die RAW-Option finden Sie im Abschnitt <a href="../misc/Clipboard.htm#Save">Speichern und Wiederherstellen der Zwischenablage</a>.</p>
-<p>Schließlich kann <a href="FileOpen.htm">FileOpen</a> mit <a href="../objects/File.htm#RawRead">File.RawRead</a> oder <a href="../objects/File.htm#ReadNum">File.Read<i>Num</i></a> dazu verwendet werden, binäre Daten einzulesen, ohne dabei erst die komplette Datei in den Speicher einlesen zu müssen.</p>
+<p>Mit <a href="FileOpen.htm">FileOpen</a> in Verbindung mit <a href="../objects/File.htm#RawRead">File.RawRead</a> oder <a href="../objects/File.htm#ReadNum">File.Read<i>Num</i></a> können binäre Daten erfasst werden, ohne die komplette Datei in den Speicher einlesen zu müssen.</p>
 
 <h3>Bemerkungen</h3>
-<p>Besteht das Ziel darin, einen großen Dateibereich in den Speicher zu laden, ist FileRead besser geeignet als eine <a href="LoopRead.htm">Datei-lesende Schleife</a>.</p>
+<p>FileRead ist deutlich performanter als eine <a href="LoopRead.htm">Datei-lesende Schleife</a>, wenn es darum geht, alles oder einen großen Teil einer Datei in den Speicher zu laden.</p>
 <p>Eine Datei größer als 4 GB bewirkt, dass eine Ausnahme ausgelöst wird. Wenn aber die <strong>*m</strong>-Option vorhanden ist, wird nur der führende Teil der Datei geladen. Eine Ausnahme wird auch ausgelöst, wenn das Programm unfähig ist, genügend Speicher für die angeforderte Datenmenge bereitzustellen.</p>
-<p>Gibt es Bedenken, ob die Datei zu viel Speicher verwendet, kann die Dateigröße vorher mit <a href="FileGetSize.htm">FileGetSize</a> überprüft werden.</p>
-<p><a href="FileOpen.htm">FileOpen</a> unterstützt mehr Funktionen als FileRead, wie z. B. das Lesen oder Schreiben von Daten innerhalb der Datei, ohne dabei die gesamte Datei in den Speicher laden zu müssen. Siehe <a href="../objects/File.htm">File-Objekt</a> für eine Liste von Funktionen.</p>
+<p>Wenn Sie Bedenken haben, dass die Datei zu viel Arbeitsspeicher verbraucht, können Sie zunächst ihre Größe mit <a href="FileGetSize.htm">FileGetSize</a> überprüfen.</p>
+<p>Die <a href="FileOpen.htm">FileOpen</a>-Funktion bietet eine weitaus fortschrittlichere Funktionalität als FileRead. Sie kann zum Beispiel Daten an einer bestimmten Stelle in der Datei lesen oder schreiben, ohne zuerst die gesamte Datei in den Arbeitsspeicher lesen zu müssen. Eine Liste aller Features finden Sie unter <a href="../objects/File.htm">File-Objekt</a>.</p>
 
 <h3>Siehe auch</h3>
 <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="LoopRead.htm">Datei-lesende Schleife</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="IniRead.htm">IniRead</a>, <a href="Sort.htm">Sort</a>, <a href="Download.htm">Download</a></p>
