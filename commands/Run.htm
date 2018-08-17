@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>Run[Wait]</title>
+<title>Run / RunWait - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die Funktionen Run und RunWait starten ein externes Programm. RunWait wartet, bis das Programm endet, bevor es fortfährt." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -20,7 +21,7 @@
 
 <pre class="Syntax"><span class="func">Run</span> Ziel <span class="optional">, Arbeitsverz, "Max|Min|Hide", AusgabeVarPID</span>
 ExitCode := <span class="func">RunWait</span>(Ziel <span class="optional">, Arbeitsverz, "Max|Min|Hide", AusgabeVarPID</span>)</pre>
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
 
   <dt>Ziel</dt>
@@ -38,15 +39,16 @@ ExitCode := <span class="func">RunWait</span>(Ziel <span class="optional">, Arbe
       <p class="note"><strong>Hinweis</strong>: Einige Anwendungen (z. B. Calc.exe) ignorieren den angeforderten Anfangsstatus, wodurch Max/Min/Hide nicht funktionieren werden.</p></dd>
 
   <dt>AusgabeVarPID</dt>
-  <dd><p>Name der Variable, in der die eindeutige <a href="Process.htm">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte - dies passiert üblicherweise nur, wenn ein Systemverb, ein Dokument oder eine Verknüpfung gestartet wird, anstatt eine ausführbare Datei. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> überprüft werden (ansonsten wäre die PID ungültig, weil der Prozess nach RunWait nicht mehr existiert).</p>
+  <dd><p>Name der Variable, in der die eindeutige <a href="../misc/WinTitle.htm#ahk_pid">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte - dies passiert üblicherweise nur, wenn ein Systemverb, ein Dokument oder eine Verknüpfung gestartet wird, anstatt eine ausführbare Datei. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> überprüft werden (ansonsten wäre die PID ungültig, weil der Prozess nach RunWait nicht mehr existiert).</p>
       <p>Nachdem die Run-Funktion eine PID ermittelt hat, kann es sein, dass Fenster, die vom Prozess erstellt werden, noch nicht verfügbar sind. Verwenden Sie <code><a href="WinWait.htm">WinWait</a> "ahk_pid " AusgabeVarPID</code>, Um wenigstens auf eines dieser Fenster zu warten.</p></dd>
 
 </dl>
 
-<h3>Rückgabewert</h3>
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>RunWait wird, im Gegensatz zu Run, warten, bis das <em>Ziel</em> geschlossen oder beendet wird, und gibt dann den Exitcode des Programms zurück (ein vorzeichenfähiger 32-Bit-Integer). Einige Programme geben sofort einen Exitcode zurück, obwohl sie noch laufen; solche Programme erzeugen einen weiteren Prozess.</p> 
 
-<h3>Fehlerbehandlung</h3>
+<h2>Fehlerbehandlung</h2>
 <p>Wenn <em>Ziel</em> nicht gestartet werden kann, wird eine Ausnahme ausgelöst (eine Fehlermeldung angezeigt) und der aktuelle Thread beendet, es sei denn, der Fehler wurde via <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a>-Anweisung abgefangen. Zum Beispiel:</p>
 <pre>try
     Run "NichtExistierendeDatei"
@@ -54,7 +56,7 @@ catch
     MsgBox "Datei existiert nicht."
 </pre>
 <p>Die interne Variable <a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
-<h3>Bemerkungen</h3>
+<h2>Bemerkungen</h2>
 <p>Startet man ein Programm via <a href="../Variables.htm#ComSpec">Comspec</a> (cmd.exe) - z. B. um die Ein- oder Ausgabe des Programms umzuleiten - sollte, sofern Leerzeichen im Pfad oder Namen enthalten sind, die komplette Zeichenkette mit äußeren Hochkommas umschlossen werden. Im folgenden Beispiel werden die äußeren Hochkommas in rot und alle inneren Anführungszeichen in schwarz dargestellt:</p>
 <pre>Run A_ComSpec <span class="style3">'</span> /c "C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">'</span></pre>
 <p>Die Performance kann etwas verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, wie z. B. <code>Run 'C:\Windows\Notepad.exe "C:\Meine Dokumente\Test.txt"'</code> anstelle von <code>Run "C:\Meine Dokumente\Test.txt"</code>.</p>
@@ -97,7 +99,7 @@ Run "::{645ff040-5081-101b-9f08-00aa002f954e}"  <em>; Öffnet den Papierkorb.</e
 </table>
 <p>Während RunWait im Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> per <a href="../Hotkeys.htm">Hotkey</a>, <a href="../objects/Menu.htm">benutzerdefinierte Menüeinträge</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
 
-<h3 id="RunAs">Als Administrator ausführen</h3>
+<h2 id="RunAs">Als Administrator ausführen</h2>
 <p>Bei einer ausführbaren Datei ist das Verb <em>*RunAs</em> das gleiche wie, als würde man <em>Als Administrator ausführen</em> im Rechtsklickmenü der Datei auswählen. Zum Beispiel würde der folgende Code versuchen, das aktuelle Skript mit Administratorrechten neu zustarten:</p>
 <pre>full_command_line := DllCall("GetCommandLine", "str")
 
@@ -125,10 +127,10 @@ MsgBox "A_IsAdmin: " A_IsAdmin "`nCommand line: " full_command_line</pre>
 </ul>
 <p>Wenn UAC aktiviert ist, wird der AutoHotkey-Installer das Verb <em>RunAs</em> bei <em>.ahk</em>-Dateien registrieren, wodurch <code>Run "*RunAs skript.ahk"</code> ein Skript als Administrator starten kann - mit der vordefinierten ausführbaren Datei.</p>
 
-<h3>Siehe auch</h3>
-<p><a href="RunAs.htm">RunAs</a>, <a href="Process.htm">Process</a>, <a href="Exit.htm">Exit</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DllCall.htm">DllCall</a></p>
+<h2>Siehe auch</h2>
+<p><a href="RunAs.htm">RunAs</a>, <a href="Process.htm">Process-Funktionen</a>, <a href="Exit.htm">Exit</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DllCall.htm">DllCall</a></p>
 
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <pre class="NoIndent">Run "Notepad.exe", "C:\Meine Dokumente", "max"
 
 Run "mailto:someone@domain.com?subject=Das ist die Betreffzeile.&amp;body=Das ist der Haupttext der Nachricht."

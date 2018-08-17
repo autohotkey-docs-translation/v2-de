@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>DirSelect</title>
+<title>DirSelect - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die DirSelect-Funktion zeigt ein Standard-Dialogfenster an, mit dem der Benutzer einen Ordner auswählen kann." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -15,13 +16,9 @@
 
 <p>Zeigt ein Standard-Dialogfenster an, mit dem der Benutzer einen Ordner auswählen kann.</p>
 
-<pre class="Syntax">AusgabeVar := <span class="func">DirSelect</span>(<span class="optional">Startordner, Optionen, Anzeigetext</span>)</pre>
-<h3>Parameter</h3>
+<pre class="Syntax">AusgewählterOrdner := <span class="func">DirSelect</span>(<span class="optional">Startordner, Optionen, Anzeigetext</span>)</pre>
+<h2>Parameter</h2>
 <dl>
-
-  <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der der ausgewählte Ordner gespeichert werden soll. Diese Variable wird leer gemacht, wenn der Benutzer das Dialogfenster abbricht (bzw. keinen Ordner auswählen möchte). Wenn der Benutzer ein Root-Verzeichnis auswählt (z. B. C:\), endet der Wert in <em>AusgabeVar</em> mit einem umgekehrten Schrägstrich. Falls das unerwünscht ist, kann der Schrägstrich wie folgt entfernt werden:</p>
-      <pre>Ordner := RegExReplace(DirSelect(), "\\$")  <em>; Entfernt den umgekehrten Schrägstrich am Ende, falls vorhanden.</em></pre></dd>
 
   <dt>Startordner</dt>
   <dd><p>Wenn dieser Parameter fehlt oder leer ist, beginnt die Navigation standardmäßig beim Benutzerordner "Eigene Dokumente" (oder eventuell Arbeitsplatz/Computer). Ein <a href="../misc/CLSID-List.htm">CLSID</a>-Ordner wie <code>"::{20d04fe0-3aea-1069-a2d8-08002b30309d}"</code> (Arbeitsplatz/Computer) kann angegeben werden, um die Navigation bei einem bestimmten Spezialordner zu beginnen.</p>
@@ -37,33 +34,38 @@
       <p><strong>1</strong> (Standard): Stellt einen Button zur Verfügung, mit dem der Benutzer neue Ordner erstellen kann.</p>
       <p><strong>Addieren Sie 2</strong> zu der oberen Zahl, um ein Eingabefeld zur Verfügung zu stellen, wo der Benutzer den Namen eines Ordners eintragen kann. Gibt man zum Beispiel für diesen Parameter eine 3 an, wird sowohl ein Eingabefeld als auch der Button "Neuer Ordner" zur Verfügung gestellt.</p>
       <p id="NewDialog"><strong>Addieren Sie 4</strong> zu der oberen Zahl, um die BIF_NEWDIALOGSTYLE-Eigenschaft zu entfernen. Das Addieren von 4 stellt sicher, dass DirSelect auch dann funktioniert, wenn das aktuelle System des Benutzers eine Vorinstallationsumgebung wie WinPE oder BartPE ist. Dies hat aber den Nachteil, dass der Button "Neuer Ordner" nicht angezeigt wird, zumindest nicht unter Windows XP.</p>
-      <p>Wenn der Benutzer den Namen eines ungültigen Ordners in das Eingabefeld einträgt, wird <em>AusgabeVar</em> auf einen Wert gesetzt, der nicht den eingetragenen Text, sondern den im Navigationsbereich ausgewählten Ordner repräsentiert, zumindest unter Windows XP.</p></dd>
+      <p>Wenn der Benutzer den Namen eines ungültigen Ordners in das Eingabefeld einträgt, wird <em>AusgewählterOrdner</em> auf einen Wert gesetzt, der nicht den eingetragenen Text, sondern den im Navigationsbereich ausgewählten Ordner repräsentiert, zumindest unter Windows XP.</p></dd>
 
   <dt>Anzeigetext</dt>
   <dd><p>Ein im Fenster angezeigter Text, der dem Benutzer mitteilt, was zu tun ist. Fehlt dieser Parameter oder ist er leer, wird standardmäßig <code>"Select Folder - " <a href="../Variables.htm#ScriptName">A_ScriptName</a></code> (der Name des aktuellen Skripts) angezeigt.</p></dd>
 
 </dl>
 
-<h3>ErrorLevel</h3>
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+<p>Diese Funktion gibt den vollständigen Pfad und Namen des vom Benutzer ausgewählten Ordner zurück. Wenn der Benutzer das Dialogfenster abbricht (bzw. keinen Ordner auswählen möchte), wird eine leere Zeichenkette zurückgegeben. Wenn der Benutzer ein Root-Verzeichnis auswählt (z. B. C:\), endet der Rückgabewert mit einem umgekehrten Schrägstrich. Falls das unerwünscht ist, kann der Schrägstrich wie folgt entfernt werden:</p>
+<pre>Ordner := RegExReplace(DirSelect(), "\\$")  <em>; Entfernt den umgekehrten Schrägstrich am Ende, falls vorhanden.</em></pre>
+
+<h2>ErrorLevel</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Benutzer das Dialogfenster geschlossen hat, ohne einen Ordner ausgewählt zu haben (z. B. durch Drücken des Buttons "Abbrechen"), oder wenn das Betriebssystem sich weigert, das Dialogfenster anzuzeigen (selten). Ansonsten wird es auf 0 gesetzt.</p>
-<h3>Bemerkungen</h3>
+<h2>Bemerkungen</h2>
 <p>Ein GUI-Fenster kann via <a href="../objects/Gui.htm#OwnDialogs">+OwnDialogs</a>-Option ein modales Ordnerauswahlfenster anzeigen. Ein modales Dialogfenster verhindert, während es angezeigt wird, dass der Benutzer mit dem GUI-Fenster interagieren kann.</p>
 <p>Bekannte Einschränkung: Startet man ein <a href="SetTimer.htm">Timer</a>, während ein Ordnerauswahlfenster angezeigt wird, werden alle darin durchgeführten Aktionen, die der Benutzer versucht auszulösen, bis zum Ende des Timers hinausgezögert. Um das zu umgehen, verzichtet man entweder auf Timer mit komplexen Subroutinen, die eine lange Zeit in Anspruch nehmen, oder man deaktiviert alle Timer, während das Dialogfenster angezeigt wird:</p>
 <pre><a href="Thread.htm">Thread</a> "NoTimers"
-AusgabeVar := DirSelect(,, 3)
+AusgewählterOrdner := DirSelect(,, 3)
 Thread "NoTimers", false</pre>
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="FileSelect.htm">FileSelect</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="InputBox.htm">InputBox</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="../objects/Gui.htm">GUI</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="DirCopy.htm">DirCopy</a>, <a href="DirMove.htm">DirMove</a>, <a href="SplitPath.htm">SplitPath</a></p>
 <p>Das Betriebssystem bietet zudem Standard-Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schriftart oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="DllCall.htm">DllCall</a> angezeigt werden, siehe dazu <a href="http://www.autohotkey.com/forum/topic17230.html">www.autohotkey.com/forum/topic17230.html</a>.</p>
-<h3>Beispiel</h3>
-<pre class="NoIndent">AusgabeVar := DirSelect(, 3)
-if AusgabeVar = ""
+<h2>Beispiel</h2>
+<pre class="NoIndent">AusgewählterOrdner := DirSelect(, 3)
+if AusgewählterOrdner = ""
     MsgBox "Keinen Ordner ausgewählt."
 else
-    MsgBox "Ordner '" AusgabeVar "' ausgewählt."
+    MsgBox "Ordner '" AusgewählterOrdner "' ausgewählt."
 
 <em>; <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel:</em>
-AusgabeVar := DirSelect("::{20d04fe0-3aea-1069-a2d8-08002b30309d}")  <em>; Arbeitsplatz/Computer</em></pre>
+AusgewählterOrdner := DirSelect("::{20d04fe0-3aea-1069-a2d8-08002b30309d}")  <em>; Arbeitsplatz/Computer</em></pre>
 
 </body>
 </html>

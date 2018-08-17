@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>DriveEject - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die DriveEject-Funktion öffnet oder schließt ein bestimmtes CD- oder DVD-Laufwerk." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>DriveEject</h1>
+
+<p>Öffnet oder schließt ein bestimmtes CD- oder DVD-Laufwerk.</p>
+
+<pre class="Syntax"><span class="func">DriveEject</span> <span class="optional">Laufwerk, Schließen := false</span></pre>
+
+<h2>Parameter</h2>
+<dl>
+    <dt>Laufwerk</dt>
+    <dd>Der Laufwerksbuchstabe, gefolgt von einem Doppelpunkt und einem optionalen umgekehrten Schrägstrich (UNC-Netzwerkpfade und zugeordnete Laufwerke wären auch möglich). Fehlt dieser Parameter, gilt das Standard-CD/DVD-Laufwerk.</dd>
+    <dt>Schließen</dt>
+    <dd>Geben Sie <em>True</em> an, um das Laufwerk zu schließen. Geben Sie <em>False</em> an oder lassen Sie diesen Parameter weg, um das Laufwerk zu öffnen.</dd>
+</dl>
+
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#boolean">Integer (logisch)</a></p>
+<p>Diese Funktion gibt bei Erfolg eine 1 (true) und bei Misserfolg eine 0 (false) zurück.</p>
+
+<h2>ErrorLevel</h2>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt. Befindet sich das Laufwerk bereits in richtiger Position (offen oder geschlossen), wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 0 gesetzt.</p>
+
+<h2>Bemerkungen</h2>
+<p>Während diese Funktion das Laufwerk ein- oder ausfährt, wartet das Skript.</p>
+<p>Diese Funktion wird eventuell nicht funktionieren, wenn das angegebene Laufwerk ein Netzwerk- oder Nicht-CD/DVD-Laufwerk ist. Wenn es in solchen Fällen oder aus einem anderen Grund fehlschlägt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt. Um andere Medien- oder Gerätetypen auszufahren, siehe das <a href="#ex2">DllCall-Beispiel</a> ganz unten.</p>
+<p>Um den vorherigen Zustand des Laufwerks zu ermitteln, misst man einfach die Zeit, die die Funktion zum Ausführen benötigt. Der folgende Hotkey beispielsweise schaltet das Laufwerk jeweils in den entgegengesetzten Zustand (offen oder geschlossen):</p>
+<pre>#c::
+DriveEject()
+<em>; Wenn die Funktion schnell ausgeführt wurde, war das Laufwerk wahrscheinlich schon ausgefahren.
+; In diesem Fall kann es eingefahren werden:</em>
+if (A_TimeSinceThisHotkey &lt; 1000)  <em>; Passen Sie diese Zeit an, falls notwendig.</em>
+    DriveEject(, true)
+return</pre>
+
+<h2>Siehe auch</h2>
+<p><a href="DriveGetStatusCD.htm">DriveGetStatusCD</a>, <a href="Drive.htm">Drive-Funktionen</a></p>
+
+<h2>Beispiele</h2>
+
+<h3 id="ex1">Beispiel #1</h3>
+<p>Schließt das Standard-CD/DVD-Laufwerk:</p>
+<pre class="NoIndent">DriveEject(, true)</pre>
+
+<h3 id="ex2">Beispiel #2</h3>
+<p>Dieses Beispiel ist eine alternative Methode, um neben CD/DVD noch andere Typen von Medien/Geräten ausfahren zu können. Fügen Sie in die erste Zeile den gewünschten Laufwerksbuchstaben ein (alle anderen Zeilen können ignoriert werden):</p>
+<pre class="NoIndent">Laufwerksbuchstabe := "I:"  <em>; Tragen Sie hier das Laufwerk ein, das ausgefahren werden soll.</em>
+
+hVolume := DllCall("CreateFile"
+    , Str, "\\.\" . Laufwerksbuchstabe
+    , UInt, 0x80000000 | 0x40000000  <em>; GENERIC_READ | GENERIC_WRITE</em>
+    , UInt, 0x1 | 0x2  <em>; FILE_SHARE_READ | FILE_SHARE_WRITE</em>
+    , UInt, 0
+    , UInt, 0x3  <em>; OPEN_EXISTING</em>
+    , UInt, 0, UInt, 0)
+if (hVolume &lt;&gt; -1)
+{
+    DllCall("DeviceIoControl"
+        , UInt, hVolume
+        , UInt, 0x2D4808   <em>; IOCTL_STORAGE_EJECT_MEDIA</em>
+        , UInt, 0, UInt, 0, UInt, 0, UInt, 0
+        , UIntP, dwBytesReturned  <em>; Unbenutzt.</em>
+        , UInt, 0)
+    DllCall("CloseHandle", UInt, hVolume)
+}</pre>
+
+</body>
+</html>

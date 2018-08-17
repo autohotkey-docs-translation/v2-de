@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>Input</title>
+<title>Input - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die Input-Funktion wartet darauf, dass der Benutzer eine Zeichenkette eingibt." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -17,14 +18,8 @@
 
 <pre class="Syntax">Text := <span class="func">Input</span>(<span class="optional">Optionen, Endtasten, Vergleichsliste</span>)</pre>
 
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
-
-  <dt>Text (Rückgabewert)</dt>
-  <dd><p>Der vom Benutzer eingegebene Text (standardmäßig werden künstlich erzeugte Eingaben auch erfasst).</p>
-      <p>Der Text besteht aus Zeichen, die von Tastatureingaben erzeugt werden, abhängig von der Tastaturbelegung/Sprache des aktiven Fensters. Tastatureingaben, die keine Zeichen erzeugen (wie z. B. <kbd>Bild↑</kbd> und <kbd>Pos1</kbd>), werden dementsprechend nicht gespeichert (allerdings können sie via <em>Endtasten</em>-Parameter erkannt werden).</p>
-      <p class="warning"><strong>Hinweis:</strong> Die <kbd>Esc</kbd>-Taste wird in das ASCII-ESC-Zeichen <code>Chr(27)</code> umgewandelt. Um das zu verhindern, fügt man <code>{Esc}</code> in <em>Endtasten</em> ein, damit Input durch Drücken von <kbd>Esc</kbd> beendet wird.</p>
-      <p>Leerraumzeichen wie z. B. <kbd>Tab</kbd> (`t) werden als direkt geschriebener Text gespeichert. <kbd>Enter</kbd> als LF-Zeichen (`n).</p></dd>
 
   <dt>Optionen</dt>
   <dd><p><u>Eine Zeichenkette mit null oder mehreren der folgenden Buchstaben (in beliebiger Reihenfolge, optional mit Leerzeichen getrennt):</u></p>
@@ -34,19 +29,19 @@
       <p><strong>L</strong>: Längenbegrenzung (z. B. <code>L5</code>). Die maximal erlaubte Länge der Eingabe. Erreicht der Text diese Länge, wird der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Max gesetzt. Wenn der Text stattdessen mit einem Element aus der <em>Vergleichsliste</em> übereinstimmt, wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Match gesetzt. Fehlt die Zahl, wird die Länge auf 16.383 Zeichen begrenzt (der höchste zulässige Wert).</p>
       <p><strong>M</strong>: Tastenkombinationen wie <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> werden erkannt und in echte ASCII-Zeichen umgewandelt, falls möglich. Das folgende Beispiel zeigt, wie <kbd>Strg</kbd>+<kbd>C</kbd> erkannt werden kann:</p>
       <pre>StrgC := Chr(3) <em>; Speichert das Zeichen für STRG+C in die Variable StrgC.</em>
-AusgabeVar := Input("L1 M")
-if (AusgabeVar = StrgC)
+Text := Input("L1 M")
+if (Text = StrgC)
     MsgBox "Sie haben STRG+C gedrückt."
 ExitApp</pre>
       <p class="note"><strong>Hinweis</strong>: <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> sind die Zeichen von <a href="Chr.htm">Chr(1)</a> bis <a href="Chr.htm">Chr(26)</a>. Außerdem ist es möglich, dass die <strong>M</strong>-Option einige Tastenkürzel wie <kbd>Strg</kbd>+<kbd>←</kbd> dazu bringen kann, sich während eines Inputs falsch zu verhalten.</p>
-      <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Anzahl an Sekunden, die gewartet werden sollen, bevor der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Timeout gesetzt wird. Hat der Input die Zeit überschritten, wird <em>AusgabeVar</em> auf das gesetzt, was auch immer der Benutzer gerade eingegeben hat. Dieser Wert kann eine Gleitkommazahl wie z. B. <code>2.5</code> sein.</p>
+      <p><strong>T</strong>: Zeitlimit (z. B. <code>T3</code>). Die Anzahl an Sekunden, die gewartet werden sollen, bevor der Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort Timeout gesetzt wird. Hat der Input die Zeit überschritten, gibt sie alles zurück, was auch immer der Benutzer gerade eingegeben hat. Dieser Wert kann eine Gleitkommazahl wie z. B. <code>2.5</code> sein.</p>
       <p id="vis"><strong>V</strong>: Sichtbar. Normalerweise wird die Eingabe des Benutzers blockiert (unsichtbar für das Betriebssystem). Verwenden Sie diese Option, um die Tastatureingaben des Benutzers direkt an das aktive Fenster senden zu lassen.</p>
       <p id="asterisk"><strong>*</strong>: Platzhalter (überall finden). Normalerweise muss alles, was der Benutzer eingibt, exakt mit einem Element aus der <em>Vergleichsliste</em> übereinstimmen, damit der Input fortfahren kann. Verwenden Sie diese Option, um im gesamten Eingabetext eine Übereinstimmung häufiger finden zu können.</p>
       <p id="E"><strong>E</strong>: Behandelt Einzelzeichen-Endungstasten als Zeichencode anstatt als Tastencode. Diese Änderung ermöglicht konsistentere Ergebnisse, wenn das Tastaturlayout des aktiven Fensters sich vom Tastaturlayout des Skripts unterscheidet. Es verhindert auch Tastenkombinationen, die die angegebenen Endungszeichen bei der Eingabe eigentlich nicht erzeugen können; wenn <code>@</code> beispielsweise eine Endungstaste wäre, würde sie auf einem US-Layout via <kbd>Umschalt</kbd>+<kbd>2</kbd> ausgelöst werden, aber nicht via <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>2</kbd> (wenn die E-Option verwendet wird). Wenn zusätzlich noch die <strong>C</strong>-Option angegeben ist, unterscheidet das Endungszeichen zwischen Groß- und Kleinschreibung.</p>
       </dd>
 
   <dt>Endtasten</dt>
-  <dd><p>Eine Liste mit null oder mehreren Tasten, die den Input beenden können, sobald eine von denen gedrückt wird (die <em>Endtaste</em> selbst wird nicht in <em>AusgabeVar</em> geschrieben). Ein auf diese Weise beendeter Input setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort EndKey, gefolgt von einem Doppelpunkt und den Namen der <em>Endtaste</em>. Beispiele: <code>EndKey:.</code>, <code>EndKey:Escape</code>.</p>
+  <dd><p>Eine Liste mit null oder mehreren Tasten, die den Input beenden können, sobald eine von denen gedrückt wird (die <em>Endtaste</em> selbst wird im Rückgabewert weggelassen). Ein auf diese Weise beendeter Input setzt <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort EndKey, gefolgt von einem Doppelpunkt und den Namen der <em>Endtaste</em>. Beispiele: <code>EndKey:.</code>, <code>EndKey:Escape</code>.</p>
       <p>Die <em>Endtasten</em>-Liste verwendet ein Format, das Ähnlichkeit zum verwendeten Format der <a href="Send.htm">Send</a>-Funktion hat. Zum Beispiel würde <code>{Enter}.{Esc}</code> bewirken, dass <kbd>Enter</kbd>, <kbd>.</kbd> oder <kbd>Esc</kbd> den Input beenden können. Damit die geschweiften Klammern selbst Endtasten sein können, gibt man <code>{{}</code> und/oder <code>{}}</code> an.</p>
       <p>Um <kbd>Strg</kbd>, <kbd>Alt</kbd> oder <kbd>Umschalt</kbd> als Endtasten zu verwenden, gibt man die linke und/oder rechte Version der Taste an, nicht die neutrale Version. Zum Beispiel müsste <code>{LControl}{RControl}</code> anstelle von <code>{Control}</code> angegeben werden.</p>
       <p>Zwar werden Tastenkombinationen wie <kbd>Alt</kbd>+<kbd>C</kbd> (!c) nicht unterstützt, allerdings können bestimmte Zeichen, die eine gedrückte <kbd>Umschalt</kbd>-Taste erfordern - also Satzzeichen wie z. B. <code>?!:@&amp;{}</code> - verwendet werden. Andere Zeichen in Verbindung mit der oben beschriebenen <strong>E</strong>-Option werden unterstützt. Wenn sowohl die <strong>E</strong>- als auch <strong>M</strong>-Option vorhanden sind, werden Tastenkombinationen von <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> unterstützt, indem man die entsprechenden ASCII-Steuerzeichen in <em>Endtasten</em> einfügt.</p>
@@ -61,7 +56,14 @@ ExitApp</pre>
 
 </dl>
 
-<h3>ErrorLevel</h3>
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+<p>Diese Funktion gibt den vom Benutzer eingegebenen Text zurück (standardmäßig werden künstlich erzeugte Eingaben auch erfasst).</p>
+<p>Der Text besteht aus Zeichen, die von Tastatureingaben erzeugt werden, abhängig von der Tastaturbelegung/Sprache des aktiven Fensters. Tastatureingaben, die keine Zeichen erzeugen (wie z. B. <kbd>Bild↑</kbd> und <kbd>Pos1</kbd>), werden dementsprechend nicht zurückgegeben (allerdings können sie via <em>Endtasten</em>-Parameter erkannt werden).</p>
+<p class="warning"><strong>Hinweis:</strong> Die <kbd>Esc</kbd>-Taste wird in das ASCII-ESC-Zeichen <code>Chr(27)</code> umgewandelt. Um das zu verhindern, fügt man <code>{Esc}</code> in <em>Endtasten</em> ein, damit Input durch Drücken von <kbd>Esc</kbd> beendet wird.</p>
+<p>Leerraumzeichen wie z. B. <kbd>Tab</kbd> (`t) werden als direkt geschriebener Text zurückgegeben. <kbd>Enter</kbd> als LF-Zeichen (`n).</p>
+
+<h2>ErrorLevel</h2>
 <table class="info">
   <tr>
     <td style="width:15%">NewInput</td>
@@ -87,27 +89,27 @@ ExitApp</pre>
     <td>EndKey:<em>Name</em></td>
     <td>
       <p>Eine der <em>Endtasten</em> wurde zum Beenden des Inputs gedrückt. In diesem Fall wird <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort EndKey gesetzt, gefolgt von einem Doppelpunkt und den Namen der Endtaste ohne geschweifte Klammern, z. B. <code>EndKey:Enter</code>, <code>EndKey:Escape</code>, etc.</p>
-      <p>Beachten Sie, dass <em>Name</em> der "normalisierte" Name der Taste ist, egal wie sie in <em>Endtasten</em> geschrieben wurde. Zum Beispiel würde sowohl <code>{Esc}</code> als auch <code>{vk1B}</code> <code>EndKey:Escape</code> erzeugen. Mit <a href="GetKey.htm">GetKeyName</a> kann der normalisierte Name abgerufen werden.</p>
+      <p>Beachten Sie, dass <em>Name</em> der "normalisierte" Name der Taste ist, egal wie sie in <em>Endtasten</em> geschrieben wurde. Zum Beispiel würde sowohl <code>{Esc}</code> als auch <code>{vk1B}</code> <code>EndKey:Escape</code> erzeugen. Mit <a href="GetKeyName.htm">GetKeyName</a> kann der normalisierte Name abgerufen werden.</p>
       <p>Wenn die <a href="#E">E-Option</a> verwendet wurde, wird <em>Name</em> das aktuell eingegebene Zeichen sein (falls zutreffend). Ansonsten wird der Name auf Basis des aktiven Tastaturlayouts vom Skript bestimmt. Einzelzeichentastennamen ohne E-Option sind in der Regel kleingeschrieben, weil der UMSCHALT-Status ignoriert wird.</p>
     </td>
   </tr>
 </table>
 
-<h3>Bemerkungen</h3>
+<h2>Bemerkungen</h2>
 <p>Verwendet man diese Funktion, während ein Input in einem anderen <a href="../misc/Threads.htm">Thread</a> bereits am Laufen ist, wird dieser Input beendet und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf das Wort NewInput gesetzt. Danach wird ein neuer Input eingeleitet (sofern Parameter angegeben sind).</p>
 <p>Während ein Input am Laufen ist, können neue <a href="../misc/Threads.htm">Threads</a> wie <a href="../objects/Menu.htm">benutzerdefinierte Menüelemente</a> oder <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a> erstellt werden. Zudem sind Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> auch dann noch aktiv, wenn der Input <a href="#vis">sichtbar</a> ist. Wenn der Input nicht sichtbar ist, können nur <a href="_UseHook.htm">Hook-Hotkeys</a> ausgelöst werden.</p>
 <p>Wenn ein Skript diese Funktion zum ersten Mal verwendet, wird der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> installiert (falls noch nicht geschehen). Jedes Mal, wenn das Skript eine <a href="Suspend.htm">Suspend</a>- oder <a href="Hotkey.htm">Hotkey</a>-Funktion erreicht, wird überprüft, ob der Tastatur-Hook noch von Hotkeys oder Hotstrings beansprucht wird. Ist dies nicht der Fall, wird der Hook wieder deinstalliert.</p>
 <p>Verwenden Sie mehrere Sprachen oder Tastaturbelegungen, greift der Input auf die Tastaturbelegung des aktiven Fensters zurück, anstatt auf die des Skripts (egal ob die Eingabe <a href="#vis">sichtbar</a> ist oder nicht).</p>
 <p>Zwar sind <a href="../Hotstrings.htm">Hotstrings</a> nicht so flexibel wie eine Input-Funktion, allerdings sind sie leichter zu handhaben.</p>
 
-<h3 id="InputEnd">InputEnd</h3>
+<h2 id="InputEnd">InputEnd</h2>
 <p>Terminiert alle laufenden Input-Funktionen in einem anderen <a href="../misc/Threads.htm">Thread</a>.</p>
 <pre class="Syntax"><span class="func">InputEnd</span> </pre>
 <p>Gibt True zurück, wenn ein Input am Laufen war, ansonsten False.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a></p>
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Wartet darauf, dass der Benutzer eine Taste drückt.  Tasten, die keine sichtbaren Zeichen erzeugen (z. B.
 ; Modifikatortasten, Funktionstasten, Pfeiltasten), sind als Endtasten aufgelistet, so dass auch
 ; sie erkannt werden können.</em>
@@ -117,7 +119,6 @@ if InStr(ErrorLevel, "EndKey:")
 else
     Einzeltaste := Einzelzeichen
 MsgBox Einzeltaste</pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Dies ist ein funktionierendes Hotkey-Beispiel.  Da der Hotkey den Tilde-Präfix (~) hat,
 ; wird seine Tastatureingabe selbst an das aktive Fenster übergeben.
 ; Schreibt man daher [btw (oder einen anderen

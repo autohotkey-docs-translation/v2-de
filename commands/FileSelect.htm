@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>FileSelect</title>
+<title>FileSelect - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die FileSelect-Funktion zeigt ein Standard-Dialogfenster an, mit dem der Benutzer eine oder mehrere Dateien öffnen oder speichern kann." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -15,12 +16,9 @@
 
 <p>Zeigt ein Standard-Dialogfenster an, mit dem der Benutzer eine oder mehrere Dateien öffnen oder speichern kann.</p>
 
-<pre class="Syntax">AusgabeVar := <span class="func">FileSelect</span>(<span class="optional">Optionen, RootVerz\Dateiname, Anzeigetext, Filter</span>)</pre>
-<h3>Parameter</h3>
+<pre class="Syntax">AusgewählteDatei := <span class="func">FileSelect</span>(<span class="optional">Optionen, RootVerz\Dateiname, Anzeigetext, Filter</span>)</pre>
+<h2>Parameter</h2>
 <dl>
-
-  <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der die vom Benutzer ausgewählten Dateinamen gespeichert werden sollen. Diese Variable wird leer gemacht, wenn der Benutzer das Dialogfenster abbricht (bzw. keine Datei auswählen möchte).</p></dd>
 
   <dt>Optionen</dt>
   <dd><p>Fehlt dieser Parameter, wird das Dialogfenster ohne den unten genannten Optionen angezeigt.</p>
@@ -56,28 +54,31 @@
 
 </dl>
 
-<h3>ErrorLevel</h3>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Benutzer das Dialogfenster geschlossen hat, ohne eine Datei ausgewählt zu haben (z. B. durch Drücken des Buttons "Abbrechen"), oder wenn das Betriebssystem sich weigert, das Dialogfenster anzuzeigen (selten). Ansonsten wird es auf 0 gesetzt.</p>
-<h3>Bemerkungen</h3>
-<p>Wenn der Benutzer nichts ausgewählt hat (zum Beispiel weil er auf ABBRECHEN gedrückt hat), wird <em>AusgabeVar</em> leer gemacht.</p>
-<p>Wenn die Mehrfachauswahl nicht aktiv ist, wird <em>AusgabeVar</em> auf einen Wert gesetzt, der den vollständigen Pfad und Namen der vom Benutzer ausgewählten Datei repräsentiert.</p>
-<p>Wenn die M-Option (Mehrfachauswahl) aktiv ist, wird <em>AusgabeVar</em> auf eine Liste von Elementen gesetzt, die alle, außer das letzte, mit einem Zeilenumbruchszeichen (`n) enden. Das erste Element in der Liste ist der Pfad, den alle ausgewählten Dateien enthalten (dieser Pfad wird nur mit einem umgekehrten Schrägstrich enden, wenn es sich um ein Hauptverzeichnis wie C:\ handelt). Die anderen Elemente sind die ausgewählten Dateien (ohne Pfad). Zum Beispiel:</p>
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+<p>Wenn die Mehrfachauswahl nicht aktiv ist, wird diese Funktion den vollständigen Pfad und Namen der vom Benutzer ausgewählten Datei zurückgeben.</p>
+<p>Wenn die M-Option (Mehrfachauswahl) aktiv ist, wird diese Funktion eine Liste von Elementen zurückgeben, die alle, außer das letzte, mit einem Zeilenumbruchszeichen (`n) enden. Das erste Element in der Liste ist der Pfad, den alle ausgewählten Dateien enthalten (dieser Pfad wird nur mit einem umgekehrten Schrägstrich enden, wenn es sich um ein Hauptverzeichnis wie C:\ handelt). Die anderen Elemente sind die ausgewählten Dateien (ohne Pfad). Zum Beispiel:</p>
 <pre>C:\Meine Dokumente\Neuer Ordner [dieser Pfad gilt für alle folgenden Dateien]
 test1.txt [das sind die reinen Dateinamen: keine Pfadangabe]
 test2.txt
 ... etc.</pre>
 <p>Das Beispiel ganz unten zeigt, wie diese Dateien einzeln extrahiert werden können.</p>
-<p>Bei aktiver Mehrfachauswahl ist die Gesamtlänge aller ausgewählten Dateinamen auf 64 KB begrenzt. Dieser Grenzwert genügt in der Regel für mehrere tausend Dateien. Sollte dieser Wert dennoch überschritten werden, wird <em>AusgabeVar</em> leer gemacht.</p>
+<p>Bei aktiver Mehrfachauswahl ist die Gesamtlänge aller ausgewählten Dateinamen auf 64 KB begrenzt. Dieser Grenzwert genügt in der Regel für mehrere tausend Dateien. Sollte dieser Wert dennoch überschritten werden, wird eine leere Zeichenkette zurückgegeben.</p>
+<p>In beiden Fällen wird, wenn der Benutzer das Dialogfenster abbricht (bzw. keine Datei auswählen möchte), eine leere Zeichenkette zurückgegeben.</p>
+
+<h2>ErrorLevel</h2>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Benutzer das Dialogfenster geschlossen hat, ohne eine Datei ausgewählt zu haben (z. B. durch Drücken des Buttons "Abbrechen"), oder wenn das Betriebssystem sich weigert, das Dialogfenster anzuzeigen (selten). Ansonsten wird es auf 0 gesetzt.</p>
+<h2>Bemerkungen</h2>
 <p>Ein GUI-Fenster kann via <a href="../objects/Gui.htm#OwnDialogs">+OwnDialogs</a>-Option ein modales Dateiauswahlfenster anzeigen. Ein modales Dialogfenster verhindert, während es angezeigt wird, dass der Benutzer mit dem GUI-Fenster interagieren kann.</p>
 <p>Bekannte Einschränkung: Startet man ein <a href="SetTimer.htm">Timer</a>, während ein Dateiauswahlfenster angezeigt wird, werden alle darin durchgeführten Aktionen, die der Benutzer versucht auszulösen, bis zum Ende des Timers hinausgezögert. Um das zu umgehen, verzichtet man entweder auf Timer mit komplexen Subroutinen, die eine lange Zeit in Anspruch nehmen, oder man deaktiviert alle Timer, während das Dialogfenster angezeigt wird:</p>
 <pre><a href="Thread.htm">Thread</a> "NoTimers"
-AusgabeVar := FileSelect()
+AusgewählteDatei := FileSelect()
 Thread "NoTimers", false</pre>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="DirSelect.htm">DirSelect</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="InputBox.htm">InputBox</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="../objects/Gui.htm">GUI</a>, <a href="../misc/CLSID-List.htm">CLSID-Liste</a>, <a href="LoopParse.htm">Parsende Schleife</a>, <a href="SplitPath.htm">SplitPath</a></p>
 <p>Das Betriebssystem bietet zudem Standard-Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schriftart oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="DllCall.htm">DllCall</a> angezeigt werden, siehe dazu <a href="http://www.autohotkey.com/forum/topic17230.html">www.autohotkey.com/forum/topic17230.html</a>.</p>
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <pre class="NoIndent">AusgewählteDatei := FileSelect(3, , "Datei öffnen", "Text-Dokumente (*.txt; *.doc)")
 if AusgewählteDatei = ""
     MsgBox "Der Benutzer hat nichts ausgewählt."
@@ -86,7 +87,7 @@ else
 
 
 <em>; <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel (benötigt XP/2003 oder niedriger):</em>
-AusgabeVar := FileSelect(, "::{645ff040-5081-101b-9f08-00aa002f954e}")  <em>; Papierkorb.</em>
+AusgewählteDatei := FileSelect(, "::{645ff040-5081-101b-9f08-00aa002f954e}")  <em>; Papierkorb.</em>
 
 <em>; Mehrfachauswahl-Beispiel:</em>
 Dateien := FileSelect("M3")  <em>; M3 = Mehrfachauswahl vorhandener Dateien.</em>

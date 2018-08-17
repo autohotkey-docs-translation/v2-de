@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>ListView (GUI)</title>
-<meta name="description" content="Erstellen Sie auf einfache Weise ListView-Steuerelemente mit dieser kostenlosen Skriptsprache. Umfasst Kontextmenüs, Reihen-/Spaltensymbole und klickbare Spaltenüberschriften zum Sortieren.">
+<title>ListView (GUI) - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="In seiner bekanntesten Form zeigt das ListView-Steuerelement eine tabellarische Ansicht mit Reihen und Spalten an. Diese Seite enthält die Methoden, um es zu modifizieren." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -282,7 +282,7 @@ IstMarkiert := (Elementstatus &gt;&gt; 12) - 1  <em>; Setzt IstMarkiert auf True
       <dt>ImageListID</dt>
       <dd>Die zurückgegebene Nummer von <a href="ListView.htm#IL_Create">IL_Create</a>.</dd>
       <dt>Symboltyp</dt>
-      <dd>Fehlt der zweite Parameter, werden die Symbole in der ImageList automatisch als große oder kleine Symbole erkannt. Verwenden Sie ansonsten eine 0 für große Symbole, eine 1 für kleine Symbole und eine 2 für Statussymbole (Statussymbole werden nur via <a href="PostMessage.htm">SendMessage</a> unterstützt).</dd>
+      <dd>Fehlt der zweite Parameter, werden die Symbole in der ImageList automatisch als große oder kleine Symbole erkannt. Verwenden Sie ansonsten eine 0 für große Symbole, eine 1 für kleine Symbole und eine 2 für Statussymbole (Statussymbole werden nur via <a href="SendMessage.htm">SendMessage</a> unterstützt).</dd>
     </dl>
 <p>Diese Methode wird normalerweise aufgerufen, bevor man Reihen in die ListView einfügt.</p>
     <p>Eine ListView kann bis zu zwei ImageLists haben: für kleine Symbole und/oder große Symbole. Damit könnte ein Skript den Benutzer zwischen den Symbolansichten wechseln zu lassen. Um mehr als eine ImageList in die ListView einzufügen, ruft man LV.SetImageList ein zweites Mal auf und übergibt die ImageListID der zweiten Liste. Eine ListView mit einer ImageList für große und kleine Symbole sollte sicherstellen, dass beide Listen die Symbole in gleicher Reihenfolge enthalten. Das liegt daran, dass mit der gleichen ID-Nummer sowohl auf die großen als auch auf die kleinen Versionen eines bestimmten Symbols verwiesen wird.</p>
@@ -373,12 +373,14 @@ LV_Enter() {
 <p>Die maximale Anzahl an Reihen ist nur durch den verfügbaren Systemspeicher begrenzt. Siehe <a href="#Count">Count</a>-Option, wie man die Performance beim Hinzufügen von Reihen erheblich verbessern kann.</p>
 <p>Es ist möglich, ein Bild hinter einer ListView zu verwenden (quasi zum Einrahmen der ListView). Um das zu tun, erstellt man das <a href="GuiControls.htm#Picture">Picture-Steuerelement</a> nach der Listview und fügt <code>0x4000000</code> (WS_CLIPSIBLINGS) in den <em>Optionen</em> des Picture-Steuerelements ein.</p>
 <p>Ein Skript kann mehr als eine ListView pro Fenster erstellen.</p>
-<p>Spalten sollten am besten nicht direkt mit <a href="PostMessage.htm">SendMessage</a> eingefügt oder entfernt werden. Dies liegt daran, dass das Programm mehrere <a href="#Integer">Sortier-Einstellungen</a> für jede Spalte verwaltet, die dann nicht mehr synchron wären. Verwenden Sie stattdessen die <a href="#bifCol">internen Spaltenmethoden</a>.</p>
+<p>Spalten sollten am besten nicht direkt mit <a href="SendMessage.htm">SendMessage</a> eingefügt oder entfernt werden. Dies liegt daran, dass das Programm mehrere <a href="#Integer">Sortier-Einstellungen</a> für jede Spalte verwaltet, die dann nicht mehr synchron wären. Verwenden Sie stattdessen die <a href="#bifCol">internen Spaltenmethoden</a>.</p>
 <p>Ein <a href="../objects/GuiControl.htm">GuiControl-Objekt</a> kann z. B. genutzt werden, um eine ListView größer/kleiner zu machen, zu verstecken, oder um die Schriftart einer ListView zu ändern.</p>
-<p>Mit <a href="Control.htm#GetList">ControlGetList</a> können Texte aus externen ListViews (das sind solche, die nicht zum Skript gehören) extrahiert werden.</p>
+<p>Mit <a href="ControlGetList.htm">ControlGetList</a> können Texte aus externen ListViews (das sind solche, die nicht zum Skript gehören) extrahiert werden.</p>
 <h2>Siehe auch</h2>
 <p><a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm">Andere Steuerelementarten</a>, <a href="GuiCreate.htm">GuiCreate</a>, <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu-Ereignis</a>, <a href="../objects/GuiControl.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../misc/Styles.htm#ListView">Style-Tabelle von ListView</a></p>
 <h2 id="Examples">Beispiele</h2>
+
+<h3 id="ex1">Beispiel #1: Verschiedenes</h3>
 <pre class="NoIndent"><em>; Das folgende Beispiel zeigt, wie mit einer 0 als Reihennummer alle Reihen aus- oder abgewählt werden können:</em>
 LV.<a href="#Modify">Modify</a>(0, "Select")   <em>; Wählt alle aus.</em>
 LV.Modify(0, "-Select")  <em>; Wählt alle ab.</em>
@@ -386,13 +388,10 @@ LV.Modify(0, "-Check")  <em>; Demarkiert alle <a href="#Checked">Checkboxes</a>.
 
 <em>; Passt die Breite der Spalten an den Inhalt der Reihen an:</em>
 LV.<a href="#ModifyCol">ModifyCol</a>  <em>; Es gibt keine Parameter in diesem Modus.</em></pre>
-<p>&nbsp;</p>
-<pre class="NoIndent"><em>; HAUPTBEISPIEL
-; Das folgende Skript ist aufwendiger als das Beispiel ganz oben.
-; Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu.
-; Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen.</em>
 
-<em>; Erstellt ein GUI-Fenster:</em>
+<h3 id="ex2">Beispiel #2</h3>
+<p>Das folgende Skript ist aufwendiger als das Beispiel ganz oben. Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen:</p>
+<pre class="NoIndent"><em>; Erstellt ein GUI-Fenster:</em>
 Gui := GuiCreate("+Resize")  <em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen.</em>
 
 <em>; Erstellt einige Buttons:</em>

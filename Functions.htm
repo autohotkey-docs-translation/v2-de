@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>Funktionen</title>
+<title>Funktionen - Definition &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Erfahren Sie mehr über Funktionen im Allgemeinen, Parameter, Rückgabewerte, interne Funktionen, variadische Funktionen, etc." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -59,7 +60,7 @@ Addieren 2, 3  <em>; Runde Klammern können am Anfang einer Zeile weggelassen we
 <p><em>ByRef</em> kann als Ergänzung zu <a href="commands/Return.htm">Return</a> verwendet werden, um mehr als einen Wert zurückzugeben. Um das zu erreichen, definiert man eine Funktion mit ByRef-Parametern, damit der Aufrufer Variablen übergeben kann (üblicherweise leer), in der die Funktion einen Wert speichern kann.</p>
 <p>Die Übergabe langer Zeichenketten an eine Funktion via <em>ByRef</em> ist performanter und verhindert, dass die Zeichenketten doppelten Speicherplatz verbrauchen, weil von ihnen eine Kopie erstellt werden muss. Auch die Rückgabe von langen Zeichenketten an den Aufrufer via <em>ByRef</em> ist in der Regel performanter als so etwas wie <code>Return LangeZeichenkette</code>.</p>
 <p>Übergibt man eine schreibgeschützte Variable an einen ByRef-Parameter, verhält sich die Funktion so, als wäre das Schlüsselwort "ByRef" nicht vorhanden. <code>Tauschen(A_Index, i)</code> beispielsweise speichert den Wert von <i>A_Index</i> in <i>i</i>, allerdings wird der Wert von <i>Links</i> wieder verworfen, wenn die <i>Tauschen</i>-Funktion fertig ist.</p>
-<p>Mit der <a href="#IsByRef">IsByRef</a>-Funktion kann festgestellt werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
+<p>Mit der <a href="commands/IsByRef.htm">IsByRef</a>-Funktion kann festgestellt werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
 <p>Bekannte Einschränkungen:</p>
 <ul>
   <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">interne Variablen</a> an eine Funktion via Referenz zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
@@ -244,8 +245,8 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p><em>Var</em> in <code>%Var%()</code> kann einen Funktionsnamen oder ein <a href="objects/Functor.htm">Funktionsobjekt</a> enthalten. Wenn die Funktion nicht existiert, wird stattdessen die __Call-Meta-Funktion des <a href="Objects.htm#Default_Base_Object">Standard-Base-Objekts</a> aufgerufen (und wenn diese Methode undefiniert ist, wird wie immer die __Call-Meta-Funktion aufgerufen).</p>
 <p>Wenn die Funktion aus einem der folgenden Gründe nicht aufgerufen werden kann, wird eine <a href="commands/Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst:</p>
 <ul>
-  <li>Es wurde eine nicht-existierende Funktion aufgerufen. Um das zu verhindern, benutzt man <code>if <a href="#IsFunc">IsFunc</a>(VarMitFunkName)</code>. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">interne Funktionen</a>) muss explizit im Skript angegeben sein (zum Beispiel über <a href="commands/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Bibliotheksfunktion</a>).</li>
-  <li>Es wurden zu wenig Parameter übergeben. Um das zu verhindern, überprüft man den Rückgabewert von <a href="#IsFunc">IsFunc</a> (das ist die Anzahl der Pflichtparameter plus 1). Hinweis: Zu viel übergebene Parameter werden toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
+  <li>Es wurde eine nicht-existierende Funktion aufgerufen. Um das zu verhindern, benutzt man <code>if <a href="commands/IsFunc.htm">IsFunc</a>(VarMitFunkName)</code>. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">interne Funktionen</a>) muss explizit im Skript angegeben sein (zum Beispiel über <a href="commands/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Bibliotheksfunktion</a>).</li>
+  <li>Es wurden zu wenig Parameter übergeben. Um das zu verhindern, überprüft man den Rückgabewert von <a href="commands/IsFunc.htm">IsFunc</a> (das ist die Anzahl der Pflichtparameter plus 1). Hinweis: Zu viel übergebene Parameter werden toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
 </ul>
 <p>Beachten Sie, dass ein dynamischer Aufruf etwas langsamer ist als ein normaler Aufruf, weil normale Aufrufe aufgelöst (nachgeschlagen) werden, bevor das Skript seine Ausführung beginnt.</p>
 <h2 id="ShortCircuit">Logische Kurzschlussauswertung</h2>
@@ -373,211 +374,6 @@ timertest()
 <p>Alle optionalen Parameter am Ende der Parameterliste einer internen Funktion können komplett weggelassen werden. <code>WinExist("Unbenannt - Editor")</code> ist zum Beispiel gültig, weil die anderen drei Parameter als leere Werte behandelt werden.</p>
 <p>Eine interne Funktion gilt als überschrieben, wenn im Skript eine Funktion mit demselben Namen definiert ist. Zum Beispiel könnte man anstelle der normalen WinExist-Funktion eine selbstdefinierte Funktion verwenden. Allerdings kann danach die originale Funktion nicht mehr aufgerufen werden.</p>
 <p>Externe Funktionen, die sich in DLL-Dateien befinden, können via <a href="commands/DllCall.htm">DllCall</a> aufgerufen werden.</p>
-<p>Um mehr Details zu einer bestimmten internen Funktion zu erhalten, klickt man einfach auf einen der unteren Namen.</p>
-<h3>Häufig verwendete Funktionen</h3>
-<table class="info">
-  <tr>
-    <th style="width:150px">Funktion</th>
-    <th>Beschreibung</th>
-  </tr>
-  <tr id="DirExist">
-    <td><a href="commands/FileExist.htm">DirExist</a></td>
-    <td>Überprüft, ob ein Ordner vorhanden ist, und gibt seine Attribute zurück.</td>
-  </tr>
-  <tr id="FileExist">
-    <td><a href="commands/FileExist.htm">FileExist</a></td>
-    <td>Überprüft, ob eine Datei oder ein Ordner vorhanden ist, und gibt ihre/seine Attribute zurück.</td>
-  </tr>
-  <tr id="GetKeyState">
-    <td><a href="commands/GetKeyState.htm">GetKeyState</a></td>
-    <td>Gibt True (1) zurück, wenn die angegebene Taste unten ist, und False (0), wenn sie oben ist.</td>
-  </tr>
-  <tr id="InStr">
-    <td><a href="commands/InStr.htm">InStr</a></td>
-    <td>Sucht von links nach rechts das erste Vorkommen einer Zeichenkette.</td>
-  </tr>
-  <tr id="RegExMatch">
-    <td><a href="commands/RegExMatch.htm">RegExMatch</a></td>
-    <td>Überprüft, ob ein Muster (regulärer Ausdruck) in einer Zeichenkette vorkommt.</td>
-  </tr>
-  <tr id="RegExReplace">
-    <td><a href="commands/RegExReplace.htm">RegExReplace</a></td>
-    <td>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb einer Zeichenkette.</td>
-  </tr>
-  <tr id="StrLen">
-    <td><a href="commands/StrLen.htm">StrLen</a></td>
-    <td>Ermittelt die Anzahl der Zeichen, die in einer Zeichenkette enthalten sind.</td>
-  </tr>
-  <tr id="StrReplace">
-    <td><a href="commands/StrReplace.htm">StrReplace</a></td>
-    <td>Ersetzt Vorkommen der angegebenen Teilzeichenkette mit einer neuen Zeichenkette.</td>
-  </tr>
-  <tr id="StrSplit">
-    <td><a href="commands/StrSplit.htm">StrSplit</a></td>
-    <td>Teilt eine Zeichenkette in mehreren Teilzeichenketten auf, basierend auf die angegebenen Trennzeichen.</td>
-  </tr>
-  <tr id="SubStr">
-    <td><a href="commands/SubStr.htm">SubStr</a></td>
-    <td>Ermittelt ein oder mehrere Zeichen von der angegebenen Position innerhalb einer Zeichenkette.</td>
-  </tr>
-  <tr id="WinActive">
-    <td><a href="commands/WinActive.htm">WinActive</a></td>
-    <td>Überprüft, ob das angegebene Fenster existiert und zurzeit aktiv (im Vordergrund) ist, und gibt dessen Eindeutige ID (HWND) zurück.</td>
-  </tr>
-  <tr id="WinExist">
-    <td><a href="commands/WinExist.htm">WinExist</a></td>
-    <td>Überprüft, ob ein passendes Fenster existiert, und gibt die Eindeutige ID (HWND) des ersten passenden Fensters zurück.</td>
-  </tr>
-</table>
-<h3>Verschiedene Funktionen</h3>
-<table class="info">
-  <tr>
-    <th style="width:150px">Funktion</th>
-    <th>Beschreibung</th>
-  </tr>
-  <tr id="CallbackCreate">
-    <td><a href="commands/CallbackCreate.htm">CallbackCreate</a></td>
-    <td>Erstellt eine Maschinencode-Adresse, die, wenn sie aufgerufen wird, den Aufruf an eine Funktion im Skript weiterleitet.</td>
-  </tr>
-  <tr id="Chr">
-    <td><a href="commands/Chr.htm">Chr</a></td>
-    <td>Gibt eine Zeichenkette zurück (üblicherweise ein einzelnes Zeichen), deren Zeichencode mit der angegebenen Nummer übereinstimmt.</td>
-  </tr>
-  <tr id="DllCall">
-    <td><a href="commands/DllCall.htm">DllCall</a></td>
-    <td>Ruft eine Funktion aus einer DLL-Datei auf, wie z. B. eine API-Funktion von Windows.</td>
-  </tr>
-  <tr id="Exception">
-    <td><a href="commands/Throw.htm#Exception">Exception</a></td>
-    <td>Erstellt ein Objekt, das genutzt werden kann, um eine benutzerdefinierte Ausnahme auszulösen.</td>
-  </tr>
-  <tr id="FileOpen">
-    <td><a href="commands/FileOpen.htm">FileOpen</a></td>
-    <td>Ermöglicht eine objektorientierte Dateibearbeitung.</td>
-  </tr>
-  <tr id="Format">
-    <td><a href="commands/Format.htm">Format</a></td>
-    <td>Formatiert eine beliebige Anzahl von Eingabewerten auf Basis einer Formatzeichenkette.</td>
-  </tr>
-  <tr id="Func">
-    <td><a href="commands/Func.htm">Func</a></td>
-    <td>Ruft eine Referenz zu der angegebenen Funktion ab.</td>
-  </tr>
-  <tr id="GetKeyName">
-    <td><a href="commands/GetKey.htm">GetKeyName/VK/SC</a></td>
-    <td>Ermittelt den Namen/Text, virtuellen Tastencode oder Scancode einer Taste.</td>
-  </tr>
-  <tr id="IsByRef">
-    <td><a href="commands/IsByRef.htm">IsByRef</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn die angegebene Variable für einen bestimmten ByRef-Parameter bereitgestellt wurde.</td>
-  </tr>
-  <tr id="IsFunc">
-    <td><a href="commands/IsFunc.htm">IsFunc</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn die angegebene Funktion im Skript vorkommt.</td>
-  </tr>
-  <tr id="IsLabel">
-    <td><a href="commands/IsLabel.htm">IsLabel</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn das angegebene Label im Skript vorkommt.</td>
-  </tr>
-  <tr id="IsObject">
-    <td><a href="commands/IsObject.htm">IsObject</a></td>
-    <td>Gibt eine Nummer ungleich 0 zurück, wenn der angegebene Wert ein Objekt ist.</td>
-  </tr>
-  <tr id="ListView">
-    <td><a href="commands/ListView.htm#BuiltIn">ListView</a></td>
-    <td>Funktion zum Hinzufügen, Einfügen, Modifizieren oder Löschen von ListView-Reihen/Spalten, oder zum Abrufen ihrer Daten.</td>
-  </tr>
-  <tr id="NumGet">
-    <td><a href="commands/NumGet.htm">NumGet</a></td>
-    <td>Gibt eine binäre Nummer zurück, die auf der angegebenen Adresse + Offset zu finden ist.</td>
-  </tr>
-  <tr id="NumPut">
-    <td><a href="commands/NumPut.htm">NumPut</a></td>
-    <td>Speichert eine binäre Nummer auf die angegebene Adresse + Offset.</td>
-  </tr>
-  <tr id="OnMessage">
-    <td><a href="commands/OnMessage.htm">OnMessage</a></td>
-    <td>Überwacht eine Meldung/ein Ereignis.</td>
-  </tr>
-  <tr id="Ord">
-    <td><a href="commands/Ord.htm">Ord</a></td>
-    <td>Gibt den Ordinalwert (numerischen Zeichencode) des ersten Zeichens in der angegebenen Zeichenkette zurück.</td>
-  </tr>
-  <tr id="StrGet">
-    <td><a href="commands/StrPutGet.htm">StrGet</a></td>
-    <td>Liest eine Zeichenkette auf einer Speicheradresse unter Beachtung des angegebenen Zeichensatzes.</td>
-  </tr>
-  <tr id="StrPut">
-    <td><a href="commands/StrPutGet.htm">StrPut</a></td>
-    <td>Schreibt eine Zeichenkette auf eine Speicheradresse unter Beachtung des angegebenen Zeichensatzes.</td>
-  </tr>
-  <tr id="TreeView">
-    <td><a href="commands/TreeView.htm#BuiltIn">TreeView</a></td>
-    <td>Funktionen zum Hinzufügen, Modifizieren oder Löschen von TreeView-Elementen, oder zum Abrufen ihrer Daten.</td>
-  </tr>
-  <tr id="Trim">
-    <td><a href="commands/Trim.htm">Trim</a></td>
-    <td>Entfernt Zeichen vom Anfang und/oder Ende einer Zeichenkette.</td>
-  </tr>
-  <tr id="VarSetCapacity">
-    <td><a href="commands/VarSetCapacity.htm">VarSetCapacity</a></td>
-    <td>Vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei.</td>
-  </tr>
-</table>
-<h3 id="Math">Mathematik</h3>
-<table class="info">
-  <tr>
-    <th style="width:150px">Funktion</th>
-    <th>Beschreibung</th>
-  </tr>
-  <tr id="Abs">
-    <td><a href="commands/Math.htm#Abs">Abs</a></td>
-    <td>Gibt den absoluten Wert von <em>Zahl</em> zurück.</td>
-  </tr>
-  <tr id="Ceil">
-    <td><a href="commands/Math.htm#Ceil">Ceil</a></td>
-    <td>Gibt <em>Zahl</em> zurück, welche auf den nächsten Integer aufgerundet ist (ohne .00-Suffix).</td>
-  </tr>
-  <tr id="Exp">
-    <td><a href="commands/Math.htm#Exp">Exp</a></td>
-    <td>Gibt <em>e</em> zurück (ungefähr 2.71828182845905), potenziert mit <em>N</em>.</td>
-  </tr>
-  <tr id="Floor">
-    <td><a href="commands/Math.htm#Floor">Floor</a></td>
-    <td>Gibt <em>Zahl</em> zurück, welche auf den nächsten Integer abgerundet ist (ohne .00-Suffix).</td>
-  </tr>
-  <tr id="Log">
-    <td><a href="commands/Math.htm#Log">Log</a></td>
-    <td>Gibt den Logarithmus (Basis 10) von <em>Zahl</em> zurück.</td>
-  </tr>
-  <tr id="Ln">
-    <td><a href="commands/Math.htm#Ln">Ln</a></td>
-    <td>Gibt den Logarithmus (Basis e) von <em>Zahl</em> zurück.</td>
-  </tr>
-  <tr>
-    <td><span id="Max"></span><span id="Min"></span><a href="commands/Math.htm#Max">Max</a> / <a href="commands/Math.htm#Min">Min</a></td>
-    <td>Gibt den höchsten/niedrigsten Wert von einer oder mehreren Zahlen zurück.</td>
-  </tr>
-  <tr id="Mod">
-    <td><a href="commands/Math.htm#Mod">Mod</a></td>
-    <td>Gibt den Rest zurück, wenn <em>Dividend</em> durch <em>Divisor</em> geteilt wird.</td>
-  </tr>
-  <tr id="Round">
-    <td><a href="commands/Math.htm#Round">Round</a></td>
-    <td>Gibt <em>Zahl</em> zurück, welche auf <em>N</em> Dezimalstellen gerundet ist.</td>
-  </tr>
-  <tr id="Sqrt">
-    <td><a href="commands/Math.htm#Sqrt">Sqrt</a></td>
-    <td>Gibt die Quadratwurzel von <em>Zahl</em> zurück.</td>
-  </tr>
-  <tr>
-    <td><span id="Sin"></span><span id="Cos"></span><span id="Tan"></span><a href="commands/Math.htm#Sin">Sin</a> / <a href="commands/Math.htm#Cos">Cos</a> / <a href="commands/Math.htm#Tan">Tan</a></td>
-    <td>Gibt den trigonometrischen Sinus/Kosinus/Tangens von <em>Zahl</em> zurück.</td>
-  </tr>
-  <tr>
-    <td><span id="ASin"></span><span id="ACos"></span><span id="ATan"></span><a href="commands/Math.htm#ASin">ASin</a> / <a href="commands/Math.htm#ACos">ACos</a> / <a href="commands/Math.htm#ATan">ATan</a></td>
-    <td>Gibt den Arkussinus/Arkuskosinus/Arkustangens als Bogenmaß zurück.</td>
-  </tr>
-</table>
+<p>Eine Liste aller internen Funktionen finden Sie unter <a href="commands/index.htm">Alphabetischer Funktionsindex</a>.</p>
 </body>
 </html>

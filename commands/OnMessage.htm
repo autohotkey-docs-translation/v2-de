@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>OnMessage</title>
+<title>OnMessage - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die OnMessage-Funktion bestimmt eine Funktion oder ein Funktionsobjekt, die automatisch aufgerufen werden sollen, wenn das Skript die angegebene Meldung empfängt." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -16,7 +17,7 @@
 <p>Bestimmt eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../objects/Functor.htm">Funktionsobjekt</a>, die automatisch aufgerufen werden sollen, wenn das Skript die angegebene Meldung empfängt.</p>
 
 <pre class="Syntax"><span class="func">OnMessage</span> Meldenummer <span class="optional">, Funktion, MaxThreads</span></pre>
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
 
   <dt>Meldenummer</dt>
@@ -32,7 +33,7 @@
 
 </dl>
 
-<h3 id="Usage">Verwendung</h3>
+<h2 id="Usage">Verwendung</h2>
 
 <p>Beliebig viele Funktionen oder <a href="../objects/Functor.htm">Funktionsobjekte</a> können eine <em>Meldenummer</em> überwachen.</p>
 <p>Beide folgenden Zeilen registrieren ein Funktionsobjekt, das <strong>nach</strong> allen zuvor registrierten Funktionen aufgerufen wird:</p>
@@ -43,14 +44,14 @@
 <p>Um die Registrierung eines Funktionsobjekts rückgängig zu machen, fügt man 0 in <em>MaxThreads</em> ein:</p>
 <pre class="Syntax"><span class="func">OnMessage</span> Meldenummer, Funktion, 0</pre>
 
-<h3 id="Failure">Misserfolg</h3>
+<h2 id="Failure">Misserfolg</h2>
 <p>Es wird eine Ausnahme ausgelöst, wenn <em>Funktion</em>:</p>
 <ol>
   <li>kein Objekt oder Name einer benutzerdefinierten Funktion ist; oder</li>
   <li>mehr als vier Parameter akzeptieren muss.</li>
 </ol>
 
-<h3>Die Parameter der Funktion</h3>
+<h2>Die Parameter der Funktion</h2>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die zum Überwachen von einer oder mehreren Meldungen zugeteilt wurde, akzeptiert bis zu vier Parameter:</p>
 <pre>MeineMeldeüberwachung(wParam, lParam, msg, hwnd)
 {
@@ -66,18 +67,18 @@ Parameter #4: HWND (eindeutige ID) des Fensters oder Steuerelements, zu dem die 
     wParam := -(~wParam) - 1</pre>
 <p>Sie können eine oder mehrere Parameter vom Ende der Liste weglassen, wenn Sie die entsprechende Information nicht benötigen. Zum Beispiel würde eine Funktion, definiert als <code>MeineMeldeüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineMeldeüberwachung()</code>, gar keine von  ihnen.</p>
 
-<h3>Weitere verfügbare Informationen für die Funktion</h3>
+<h2>Weitere verfügbare Informationen für die Funktion</h2>
 <p>Neben den oben genannten Parametern kann die Funktion auch auf die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> zurückgreifen, die 0 enthalten wird, wenn die Meldung via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</p>
 <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> einer überwachenden Funktion ist zu Beginn das übergeordnete Fenster, zu dem die Meldung gesendet wurde (selbst wenn sie zu einem Steuerelement gesendet wurde). Ist das Fenster versteckt, aber kein GUI-Fenster (z. B. das Hauptfenster des Skripts), muss zuvor <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> aktiviert werden. Zum Beispiel:</p>
 <pre>DetectHiddenWindows True
 MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des Fensters, zu dem die Meldung gesendet wurde.</em></pre>
 
-<h3>Was die Funktion per <em>Return</em> zurückgeben sollte</h3>
+<h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
 <p>Verwendet eine überwachende Funktion <a href="Return.htm">Return</a> ohne Parameter oder mit einem leeren Wert wie "" (oder verwendet sie überhaupt kein Return), wird die eingehende Meldung beim Erreichen des Funktionsendes normal fortgesetzt. Das gleiche passiert, wenn man das Ende der Funktion via <a href="Exit.htm">Exit</a> erzwingt oder einen Laufzeitfehler verursacht (der beispielsweise durch <a href="Run.htm">Ausführen</a> einer nicht-existierenden Datei ausgelöst werden kann). Vewendet man als Rückgabewert hingegen einen Integer, wird dieser Wert sofort als Antwort gesendet; das heißt, dass das Programm die Meldung nicht weiter fortsetzen wird. Zum Beispiel könnte eine Funktion, die WM_LBUTTONDOWN (0x201) überwacht, einen Integer zurückgeben, um das Zielfenster daran zu hindern, benachrichtigt zu werden, dass ein Mausklick erfolgt ist. In vielen Fällen (z. B. als eine Meldung, empfangen via <a href="PostMessage.htm">PostMessage</a>) ist es egal, welcher Integer zurückgegeben wird; aber im Zweifelsfall ist eine 0 am sichersten.</p>
 <p>Der Bereich von gültigen Rückgabewerten ist abhängig davon, ob die skript-ausführende EXE-Datei 32- oder 64-Bit ist. Bei einem 32-Bit-Skript (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 4</code>) müssen die Rückgabewerte in einem Bereich von -2<sup>31</sup> und 2<sup>32</sup>-1 sein, und bei einem 64-Bit-Skript  (<code><a href="../Variables.htm#PtrSize">A_PtrSize</a> = 8</code>) in einem Bereich von -2<sup>63</sup> und 2<sup>63</sup>-1.</p>
 <p>Mehrere Funktionen, die eine bestimmte Meldungsnummer überwachen, werden nacheinander aufgerufen, bis eine von denen einen nicht-leeren Wert zurückgibt.</p>
 
-<h3 id="Remarks">Allgemeine Bemerkungen</h3>
+<h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>Im Gegensatz zu einem normalen Funktionsaufruf wird die überwachende Funktion, wenn sie eine neue Meldung empfängt, als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen. Aus diesem Grund starten Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> innerhalb der Funktion mit ihren Standardwerten. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
 <p>Meldungen, die via SendMessage (statt PostMessage) zu einem Steuerelement gesendet wurden, werden nicht überwacht, weil das Betriebssystem diese Meldungen direkt auf das Steuerelement überträgt, ohne dass jemand etwas mitbekommt. Für system-generierte Meldungen ist das selten ein Problem, weil die meisten von ihnen via PostMessage gesendet werden.</p>
 <p>Skripte mit aktiver Meldungsüberwachung sind automatisch <a href="../Scripts.htm#persistent">persistent</a>; das heißt, dass das Skript nur mit einem <a href="ExitApp.htm">ExitApp</a> beendet werden kann.</p>
@@ -88,9 +89,9 @@ MeldÜbergeordFenster := WinExist()  <em>; Dies speichert die eindeutige ID des 
 <p>Seien Sie vorsichtig, wenn Sie Systemmeldungen (solche unter 0x400) überwachen. Kommt eine überwachende Funktion beispielsweise nicht schnell genug zum Ende, kann die Antwort auf die Meldung länger dauern als vom System erwartet, was zu Nebeneffekten führen könnte. Unerwünschtes Verhalten kann auch auftreten, wenn eine überwachende Funktion die Meldung durch Zurückgeben eines Integers nicht weiter fortsetzen lässt, während das System etwas anderes erwartet.</p>
 <p>Zeigt das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> an, werden Meldungen, die via PostMessage zu einem Steuerelement gesendet werden, nicht überwacht. Zeigt das Skript beispielsweise eine MsgBox an und klickt der Benutzer innerhalb eines GUI-Fensters auf einen Button, wird die WM_LBUTTONDOWN-Meldung direkt zum Button gesendet, ohne dass die überwachende Funktion aufgerufen wird.</p>
 <p>Zwar kann ein externes Programm direkt via PostThreadMessage() oder anderen API-Funktionen Meldungen zu einem Skript-Thread senden, allerdings könnten dabei Meldungen verloren gehen, wenn das Skript ein Dialogfenster wie <a href="MsgBox.htm">MsgBox</a> anzeigt. Stattdessen ist es besser, Meldungen zum Hauptfenster des Skripts oder zu einem seiner GUI-Fenster zu senden.</p>
-<h3>Siehe auch</h3>
-<p><a href="CallbackCreate.htm">CallbackCreate</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">Post/SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall</a></p>
-<h3>Beispiele</h3>
+<h2>Siehe auch</h2>
+<p><a href="CallbackCreate.htm">CallbackCreate</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Critical.htm">Critical</a>, <a href="DllCall.htm">DllCall</a></p>
+<h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie Mausklicks innerhalb eines GUI-Fensters überwacht werden können.
 ; Verwandtes Thema: <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu</a>-Ereignis</em>
 

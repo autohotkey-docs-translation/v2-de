@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>RegRead</title>
+<title>RegRead - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die RegRead-Funktion liest einen Wert aus der Registry." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -15,13 +16,10 @@
 
 <p>Liest einen Wert aus der Registry.</p>
 
-<pre class="Syntax">AusgabeVar := <span class="func">RegRead</span>(<span class="optional">KeyName, Wertname</span>)
+<pre class="Syntax">Wert := <span class="func">RegRead</span>(<span class="optional">KeyName, Wertname</span>)
 </pre>
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
-
-  <dt>AusgabeVar</dt>
-  <dd><p>Name der Variable, in der der abgerufene Wert gespeichert werden soll. Falls der Wert nicht abgerufen werden kann, wird die Variable leer gemacht und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p></dd>
 
   <dt>KeyName</dt>
   <dd><p>Der vollständige Name des Registry-Keys.</p>
@@ -29,38 +27,42 @@
   <p><em>KeyName</em> kann nur weggelassen werden, wenn eine <a href="LoopReg.htm">Registry-Schleife</a> läuft - in diesem Fall gilt standardmäßig der Key des aktuellen Schleifenelements. Wenn das Element ein Subkey ist, wird standardmäßig der vollständige Name dieses Subkeys benutzt. Wenn das Element ein Wert ist, gilt für <em>Wertname</em> standardmäßig der Name dieses Wertes, was aber überschrieben werden kann.</p></dd>
 
   <dt>Wertname</dt>
-  <dd><p>Der Name des Wertes, der abgerufen werden soll. Fehlt dieser Parameter ist er leer, wird der Standardwert des Keys abgerufen (außer wie oben erwähnt). Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt. Wenn es keinen Standardwert gibt (also wenn das RegEdit-Tool "Wert nicht festgelegt" anzeigt), wird <em>AusgabeVar</em> leer gemacht und ErrorLevel auf 1 gesetzt.</p></dd>
+  <dd><p>Der Name des Wertes, der abgerufen werden soll. Fehlt dieser Parameter ist er leer, wird der Standardwert des Keys abgerufen (außer wie oben erwähnt). Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt. Wenn es keinen Standardwert gibt (also wenn das RegEdit-Tool "Wert nicht festgelegt" anzeigt), wird eine leere Zeichenkette zurückgegeben und ErrorLevel auf 1 gesetzt.</p></dd>
 
 </dl>
-<h3>ErrorLevel</h3>
+
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt einen Wert des angegebenen Registry-Keys zurück. Wenn der Wert nicht abgerufen werden kann, wird eine leere Zeichenkette zurückgegeben und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 1 gesetzt.</p>
+
+<h2>ErrorLevel</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 (z. B. nicht-existierender Key oder Wert) oder bei Erfolg auf 0 gesetzt.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
-<h3>Bemerkungen</h3>
+<h2>Bemerkungen</h2>
 <p>Zurzeit werden nur die folgenden Werttypen unterstützt: REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD und REG_BINARY.</p>
 <p>REG_DWORD-Werte werden immer als positive Dezimalzahlen ausgedrückt.</p>
 <p>Beim Lesen eines REG_BINARY-Keys ist das Ergebnis eine Zeichenkette mit hexadezimalen Zeichen. Zum Beispiel würde ein REG_BINARY-Wert von 01,a9,ff,77 als Zeichenkette 01A9FF77 gelesen werden.</p>
-<p>Beim Lesen eines REG_MULTI_SZ-Keys endet jede Komponente mit einem Zeilenumbruchszeichen (`n). Gibt es keine Komponenten, wird <em>AusgabeVar</em> leer gemacht. In <a href="FileSelect.htm">FileSelect</a> finden Sie ein Beispiel, wie einzelne Komponenten aus <em>AusgabeVar</em> extrahieren werden können.</p>
+<p>Beim Lesen eines REG_MULTI_SZ-Keys endet jede Komponente mit einem Zeilenumbruchszeichen (`n). Sind keine Komponenten vorhanden, wird eine leere Zeichenkette zurückgegeben. Auf <a href="FileSelect.htm">FileSelect</a>-Seite finden Sie ein Beispiel, wie einzelne Komponenten aus dem Rückgabewert extrahiert werden können.</p>
 <p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Keys und -Werte abgerufen und bearbeitet werden.</p>
 <p>In den Bemerkungen zur <a href="LoopReg.htm#remote">Registry-Schleife</a> finden Sie Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript oder umgekehrt gelesen und geschrieben werden.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="RegDelete.htm">RegDelete</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniRead.htm">IniRead</a></p>
-<h3>Beispiel</h3>
+<h2>Beispiel</h2>
 <pre class="NoIndent"><em>; Beispiel: Ermittelt den Pfad des Programm-Ordners.
 
 ; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners
 ; zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
 <a href="SetRegView.htm">SetRegView</a> 64
 
-AusgabeVar := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "ProgramFilesDir")
-MsgBox "Programme sind in: " AusgabeVar
+ProgramFilesDir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "ProgramFilesDir")
+MsgBox "Programme sind in: " ProgramFilesDir
 
 <em>; Ein anderer Weg, um den Pfad des Programm-Ordners zu ermitteln:</em>
-AusgabeVar := EnvGet(<a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles")
-MsgBox "Programme sind in: " AusgabeVar
+ProgramFilesDir := EnvGet(<a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles")
+MsgBox "Programme sind in: " ProgramFilesDir
 </pre>
-<p>&nbsp;</p>
 <pre class="NoIndent"><em>; Das folgende Beispiel ermittelt den TYP eines Registry-Wertes (z. B. REG_SZ oder REG_DWORD).</em>
 MsgBox RegKeyTyp("HKCU", "Environment", "TEMP")
 return

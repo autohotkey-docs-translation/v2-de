@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>MonitorGet</title>
+<title>MonitorGet - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die MonitorGet-Funktion überprüft, ob ein bestimmtes Anzeigegerät vorhanden ist, und ruft bei Bedarf dessen Abgrenzungskoordinaten ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -13,80 +14,43 @@
 
 <h1>MonitorGet</h1>
 
-<p>Ermittelt die Bildschirmauflösung und Multi-Monitor-Informationen.</p>
+<p>Überprüft, ob ein bestimmtes Anzeigegerät vorhanden ist, und ruft bei Bedarf dessen Abgrenzungskoordinaten ab.</p>
 
-<pre class="Syntax">Vorhanden := <span class="func">MonitorGet</span>(<span class="optional">N, Links, Oben, Rechts, Unten</span>)
-Vorhanden := <span class="func">MonitorGetWorkArea</span>(<span class="optional">N, Links, Oben, Rechts, Unten</span>)
-Anzahl    := <span class="func">MonitorGetCount</span>()
-Primär    := <span class="func">MonitorGetPrimary</span>()
-Name      := <span class="func">MonitorGetName</span>(<span class="optional">N</span>)</pre>
+<pre class="Syntax">IstVorhanden := <span class="func">MonitorGet</span>(<span class="optional">N, Links, Oben, Rechts, Unten</span>)</pre>
 
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
-
-  <dt>N</dt>
-  <dd><p>Eine Monitornummer zwischen 1 und dem Rückgabewert von <code>MonitorGetCount()</code>. Wenn dieser Parameter fehlt, gilt standardmäßig der primäre Monitor.</p></dd>
-
-  <dt>Links</dt>
-  <dt>Oben</dt>
-  <dt>Rechts</dt>
-  <dt>Unten</dt>
-  <dd><p>Ausgabevariablen für die unten beschriebenen Abgrenzungskoordinaten.</p></dd>
-
-  <dt>Vorhanden</dt>
-  <dt>Anzahl</dt>
-  <dt>Primär</dt>
-  <dt>Name</dt>
-  <dd><p>Ausgabevariable oder Rückgabewert der Funktion, wie unten beschrieben.</p></dd>
-
+    <dt>N</dt>
+    <dd>Eine Monitornummer zwischen 1 und dem Rückgabewert von <a href="MonitorGetCount.htm">MonitorGetCount</a>. Wenn dieser Parameter fehlt, gilt standardmäßig der primäre Monitor.</dd>
+    
+    <dt>Links</dt>
+    <dt>Oben</dt>
+    <dt>Rechts</dt>
+    <dt>Unten</dt>
+    <dd>Die Ausgabevariablen, in denen die Abgrenzungskoordinaten in Pixel gespeichert werden sollen. Sie werden leer gemacht, wenn die Funktion eine 0 (false) zurückgibt.</dd>
 </dl>
 
-<h3>MonitorGet</h3>
-<p>Überprüft, ob ein Monitor mit der Nummer <strong>N</strong> vorhanden ist, und ermittelt bei Bedarf seine Abgrenzungskoordinaten. Die Informationen werden in bis zu vier Variablen als Parameter übergeben. Falls <strong>N</strong> zu hoch ist oder die Informationen aufgrund eines Problems nicht abgerufen werden können, werden alle Variablen leer gemacht und der Rückgabewert auf False gesetzt. Zum Beispiel:</p>
-<pre>if MonitorGet(2, Links, Oben, Rechts, Unten)
-    MsgBox "Links: " Links " -- Oben: " Oben " -- Rechts: " Rechts " -- Unten: " Unten
-else
-    MsgBox "Monitor 2 existiert nicht oder es ist ein Fehler aufgetreten."</pre>
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#boolean">Integer (logisch)</a></p>
+<p>Diese Funktion gibt 1 (true) zurück, wenn das angegebene Anzeigegerät existiert, oder 0 (false), wenn nicht oder wenn ein Fehler aufgetreten ist.</p>
 
-<h3>MonitorGetWorkArea</h3>
-<p>Das Gleiche wie oben, nur dass der Bereich durch die Taskleiste und andere registrierte Desktop-Toolbars reduziert ist.</p>
-
-<h3>MonitorGetCount</h3>
-<p>Ermittelt die Gesamtanzahl der Anzeigegeräte. Im Gegensatz zum SM_CMONITORS-Unterbefehl von <a href="SysGet.htm">SysGet</a> enthält der Rückgabewert alle Monitore, selbst solche, die nicht zum Desktop gehören.</p>
-
-<h3>MonitorGetPrimary</h3>
-<p>Ermittelt die Nummer des primären Anzeigegeräts, die in einem Single-Anzeigegerät-System eine 1 sein wird.</p>
-
-<h3>MonitorGetName</h3>
-<p>Ermittelt den im Betriebssystem benutzten Namen eines Monitors mit der Nummer <strong>N</strong>.</p>
-
-<h3>Bemerkungen</h3>
+<h2>Bemerkungen</h2>
 <p>Die internen Variablen <a href="../Variables.htm#Screen">A_ScreenWidth</a> und <a href="../Variables.htm#Screen">A_ScreenHeight</a> enthalten die Breite und Höhe des primären Anzeigegeräts (in Pixel).</p>
 <p>Mit <a href="SysGet.htm">SysGet</a> können die Abgrenzungskoordinaten von allen Bildschirmen ermittelt werden. Das folgende Beispiel zeigt, wie die Breite und Höhe des virtuellen Bildschirms abgerufen werden kann:</p>
 <pre>MsgBox SysGet(78) " x " SysGet(79)</pre>
 
-<h3>Siehe auch</h3>
-<p><a href="DllCall.htm">DllCall</a>, <a href="WinGet.htm">WinGet</a>, <a href="SysGet.htm">SysGet</a></p>
+<h2>Siehe auch</h2>
+<p><a href="MonitorGetWorkArea.htm">MonitorGetWorkArea</a>, <a href="SysGet.htm">SysGet</a>, <a href="Monitor.htm">Monitor-Funktionen</a></p>
 
-<h3>Beispiele</h3>
-<pre class="NoIndent"><em>; Ein funktionierendes Skript, das Informationen über jeden Bildschirm anzeigt:</em>
-Bildschirmanzahl := MonitorGetCount()
-PrimärerBildschirm := MonitorGetPrimary()
-MsgBox "Bildschirmanzahl:`t" Bildschirmanzahl "`nPrimärer Bildschirm:`t" PrimärerBildschirm
-Loop Bildschirmanzahl
-{
-    MonitorGet A_Index, L, O, R, U
-    MonitorGetWorkArea A_Index, AL, AO, AR, AU
-    MsgBox
-    (
-        "Bildschirm:`t#" A_Index "
-        Name:`t" MonitorGetName(A_Index) "
-        Links:`t" L " (" AL " effektiv)
-        Oben:`t" O " (" AO " effektiv)
-        Rechts:`t" R " (" AR " effektiv)
-        Unten:`t" U " (" AU " effektiv)"
-    )
-}</pre>
+<h2>Beispiele</h2>
+<p><a href="Monitor.htm#ex1">Beispiel #1</a> auf der Seite der <a href="Monitor.htm">Monitor-Funktionen</a> veranschaulicht diese Funktion.</p>
+
+<h3 id="ex1">Beispiel #1</h3>
+<p>Zeigt die Abgrenzungskoordinaten von Monitor #2 in einem Mitteilungsfenster an:</p>
+<pre class="NoIndent">if MonitorGet(2, Links, Oben, Rechts, Unten)
+    MsgBox "Links: " Links " -- Oben: " Oben " -- Rechts: " Rechts " -- Unten: " Unten
+else
+    MsgBox "Monitor 2 existiert nicht oder es ist ein Fehler aufgetreten."</pre>
 
 </body>
 </html>

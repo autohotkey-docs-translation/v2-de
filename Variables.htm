@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>Variablen und Ausdrücke</title>
+<title>Variablen und Ausdrücke - Definition &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Erfahren Sie mehr über Variablen, Ausdrücke, Operatoren, interne Variablen und Kapazität und Speicher von Variablen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -201,11 +202,13 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
     <td style="text-align:center"><strong>=<br>
       
       ==<br>
-    
-    &lt;&gt; !=</strong></td>
+      
+      !=<br>
+      
+      !==</strong></td>
     <td>
-      <p><strong>Gleich (=)</strong>, <strong>Groß-/Kleinschreibung-sensitiv gleich (==)</strong> und <strong>ungleich (&lt;&gt; oder !=)</strong>. Die Operatoren <strong>!=</strong> und <strong>&lt;&gt;</strong> sind funktional identisch. Die Operatoren <strong>==</strong> und <strong>=</strong> verhalten sich gleich, wenn beide Eingabewerte numerisch sind. Wenn dies nicht der Fall ist, wird <strong>==</strong> immer Groß-/Kleinschreibung-sensitiv sein und <strong>=</strong> immer nicht-Groß-/Kleinschreibung-sensitiv sein (die Methode der Nicht-Sensitivität ist abhängig von <a href="commands/StringCaseSense.htm">StringCaseSense</a>). Die Operatoren <strong>&lt;&gt;</strong> und <strong>!=</strong> berücksichtigen hingegen <a href="commands/StringCaseSense.htm">StringCaseSense</a>.</p>
-      <p>Mit dem <strong>==</strong>-Operator können Zeichenketten verglichen werden, die binäre Nullen enthalten. Alle anderen Vergleichsoperatoren, außer <strong>~=</strong>, vergleichen Zeichenketten nur bis zur ersten binären Null.</p>
+      <p><strong>nicht-Groß-/Kleinschreibung-sensitiv gleich (=) / ungleich (!=)</strong> und <strong>Groß-/Kleinschreibung-sensitiv gleich (==) / ungleich (!==)</strong>. Die Operatoren <strong>==</strong> und <strong>=</strong> verhalten sich gleich, wenn beide Eingabewerte numerisch sind. Wenn dies nicht der Fall ist, wird <strong>==</strong> immer Groß-/Kleinschreibung-sensitiv sein und <strong>=</strong> immer nicht-Groß-/Kleinschreibung-sensitiv sein (die Methode der Nicht-Sensitivität ist abhängig von <a href="commands/StringCaseSense.htm">StringCaseSense</a>). Die Operatoren <strong>!=</strong> und <strong>!==</strong> verhalten sich identisch zu ihren Counterparts ohne <strong>!</strong>, außer dass das Ergebnis invertiert ist.</p>
+      <p>Mit den Operatoren <strong>==</strong> und <strong>!==</strong> können Zeichenketten verglichen werden, die binäre Nullen enthalten. Alle anderen Vergleichsoperatoren, außer <strong>~=</strong>, vergleichen Zeichenketten nur bis zur ersten binären Null.</p>
     </td>
   </tr>
   <tr>
@@ -219,22 +222,30 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
     <td style="text-align:center"><strong>NOT</strong></td>
     <td><strong>Logisches NICHT</strong>. Abgesehen von seiner geringeren Priorität ist dieser Operator funktional identisch zum <strong>!</strong>-Operator. <code>not (x = 3 or y = 3)</code> wäre zum Beispiel das gleiche wie <code><strong>!</strong>(x = 3 or y = 3)</code>.</td>
   </tr>
-  <tr id="and">
-    <td style="text-align:center"><strong>AND<br>
-    
-    &amp;&amp;</strong></td>
-    <td><p>Beide Operatoren sind ein <strong>logisches UND</strong>. Zum Beispiel: <code>x &gt; 3 and x &lt; 10</code>.</p>
-      <p>Wenn das x in dem Ausdruck <code>x and y</code> <a href="#Boolean">wahr</a> ist, wird y zurückgegeben. Ansonsten wird x zurückgegeben und y überhaupt nicht ausgewertet - es wird die <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a> angewendet, um die Performance zu verbessern. Obwohl das Ergebnis nicht auf eine logische 0 oder 1 begrenzt ist, kann es, wie jeder anderer Ausdruck auch, als <a href="#Boolean">logischer</a> Wert interpretiert werden. Das Ergebnis ist nur dann wahr, wenn beide Eingabewerte wahr sind.</p>
-      <p>Eine Zeile, die mit AND/OR/&amp;&amp;/|| (oder einem anderen Operator) beginnt, wird automatisch mit der darüberliegenden Zeile <a href="Scripts.htm#continuation">verbunden</a>.</p>
-      </td>
-  </tr>
-  <tr id="or">
-    <td style="text-align:center"><strong>OR<br>
-    
-    ||</strong></td>
-    <td><p>Beide Operatoren sind ein <strong>logisches ODER</strong>. Zum Beispiel: <code>x &lt;= 3 or x &gt;= 10</code>.</p>
-      <p>In dem Ausdruck <em>x or y</em> ist y das Ergebnis, wenn x <a href="#Boolean">False</a> ist. Ansonsten wird x zurückgegeben und y überhaupt nicht ausgewertet - es wird die <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a> angewendet, um die Performance zu verbessern. Obwohl das Ergebnis nicht auf eine logische 0 oder 1 begrenzt ist, kann es, wie jeder anderer Ausdruck auch, als <a href="#Boolean">logischer</a> Wert interpretiert werden. Tatsächlich kann das Ergebnis nur True sein, wenn einer der beiden Eingabewerte auch True ist.</p></td>
-  </tr>
+    <tr id="and">
+      <td style="text-align:center"><strong>AND<br>
+      
+      &amp;&amp;</strong></td>
+      <td><p>Beide Operatoren sind ein <strong>logisches UND</strong>. Zum Beispiel: <code>x &gt; 3 and x &lt; 10</code>.</p>
+        <p>In einem Ausdruck, wo <strong>alle</strong> Operanden in <em>True</em> aufgelöst werden, wird der <strong>letzte</strong> Operand, der in <em>True</em> aufgelöst wird, zurückgegeben. Ansonsten wird der <strong>erste</strong> Operand, der in <em>False</em> aufgelöst wird, zurückgegeben. Erst wenn alle Operanden tatsächlich wahr sind, wird das Ergebnis wahr sein. Boolesche Ausdrücke werden einer <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a> unterzogen (von links nach rechts), um die Performance zu verbessern.</p>
+        <pre>A := 1, B := {}, C := 20, D := True, E := "Zeichenkette" <em>; <strong>Alle</strong> Operanden sind wahr und werden ausgewertet</em>
+MsgBox(A &amp;&amp; B &amp;&amp; C &amp;&amp; D &amp;&amp; E) <em>; Der <strong>letzte</strong> wahre Operand wird zurückgegeben ("Zeichenkette")</em></pre>
+        <pre>A := 1, B := "", C := 0, D := False, E := "Zeichenkette" <em>; B, C und D sind falsch</em>
+MsgBox(A &amp;&amp; B &amp;&amp; ++C &amp;&amp; D &amp;&amp; E) <em>; Der <strong>erste</strong> falsche Operand wird zurückgegeben (""). C, D und E werden nicht ausgewertet und C wird nie inkrementiert</em></pre>
+        <p>Eine Zeile, die mit <code>AND</code> oder <code>&amp;&amp;</code> (oder einem anderen Operator) beginnt, wird automatisch mit der darüberliegenden Zeile <a href="Scripts.htm#continuation">verbunden</a>.</p></td>
+    </tr>
+    <tr id="or">
+      <td style="text-align:center"><strong>OR<br>
+      
+      ||</strong></td>
+      <td><p>Beide Operatoren sind ein <strong>logisches ODER</strong>. Zum Beispiel: <code>x &lt;= 3 or x &gt;= 10</code>.</p>
+        <p>In einem Ausdruck, wo <strong>mindestens</strong> ein Operand in <em>True</em> aufgelöst wird, wird der <strong>letzte</strong> Operand, der in <em>True</em> aufgelöst wird, zurückgegeben. Ansonsten wird der <strong>letzte</strong> Operand, der in <em>False</em> aufgelöst wird, zurückgegeben. Erst wenn mindestens ein Operand tatsächlich wahr ist, wird das Ergebnis wahr sein. Boolesche Ausdrücke werden einer <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a> unterzogen (von links nach rechts), um die Performance zu verbessern.</p>
+        <pre>A := "", B := False, C := 0, D := "Zeichenkette", E := 20 <em>; <strong>Mindestens</strong> ein Operand ist wahr. Alle Operanden bis einschließlich D werden ausgewertet</em>
+MsgBox(A || B || C || D || ++E) <em>; Der <strong>erste</strong> wahre Operand wird zurückgegeben ("Zeichenkette"). E wird nicht ausgewertet und wird nie inkrementiert</em></pre>
+        <pre>A := "", B := False, C := 0 <em>; <strong>Alle</strong> Operanden sind falsch und werden ausgewertet</em>
+MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurückgegeben (0)</em></pre>
+        <p>Eine Zeile, die mit <code>OR</code> oder <code>||</code> (oder einem anderen Operator) beginnt, wird automatisch mit der darüberliegenden Zeile <a href="Scripts.htm#continuation">verbunden</a>.</p></td>
+    </tr>
   <tr id="ternary">
     <td style="text-align:center"><strong>?:</strong></td>
     <td><p><strong>Ternärer Operator</strong>. Dieser Operator ist eine Kurzschreibweise zum Durchführen einer <a href="commands/IfExpression.htm">if-else-Anweisung</a>. Der Operator wertet die Bedingung auf der linken Seite aus, um festzustellen, welche der beiden Verzweigungen als Endergebnis dienen soll. <code>Var := x&gt;y ? 2 : 3</code> würde beispielsweise eine 2 in <em>Var</em> speichern, falls x größer als y ist; ansonsten wird eine 3 gespeichert. Zur Verbesserung der Performance wird nur die gewinnende Verzweigung ausgewertet (siehe <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a>).</p></td>
@@ -286,7 +297,7 @@ sumfn := Func("Sum")</pre>
       <p>Das Auflösen von Variablenreferenzen in <em>Ausdr</em> erfolgt wie bei der entsprechenden Vollfunktionsdefinition. Zum Beispiel könnte <em>Ausdr</em> auf die lokalen Variablen einer äußeren Funktion verweisen (wie in jeder <a href="Functions.htm#nested">verschachtelten Funktion</a>), woraufhin ein neues <a href="Functions.htm#closures">Closure</a> erzeugt wird, das jedes Mal seinen Wert zurückgibt, wenn der Fat-Arrow-Ausdruck ausgewertet wird. Die Funktion ist <a href="Functions.htm#AssumeLocal">Assume-Local</a>, wenn sie innerhalb einer anderen Funktion ist, ansonsten ist sie <a href="Functions.htm#AssumeGlobal">Assume-Global</a>.</p>
       <p>Gibt man der Funktion einen Namen, kann sie rekursiv oder von anderen verschachtelten Funktionen aufgerufen werden, ohne dass in der Funktion selbst eine Referenz zum <a href="Functions.htm#closures">Closure</a> gespeichert werden muss (und dadurch ein problematischer <a href="Objects.htm#Circular_References">Zirkelbezug</a> entsteht). So ein Name kann auch beim Debuggen helfen, vor allem in Bezug auf <a href="objects/Func.htm#Name">Func.Name</a> oder wenn der Name im Aufrufstapel des Debuggers angezeigt wird.</p>
     </td>
-    
+
   </tr>
   <tr id="comma">
     <td style="text-align:center"><strong>,</strong></td>
@@ -346,7 +357,7 @@ sumfn := Func("Sum")</pre>
   <li>Inaktive Zeit des Benutzers: <a href="#TimeIdle">A_TimeIdle</a>, <a href="#TimeIdlePhysical">A_TimeIdlePhysical</a>, <a href="#TimeIdleKeyboard">A_TimeIdleKeyboard</a>, <a href="#TimeIdleMouse">A_TimeIdleMouse</a></li>
   <li>Hotkeys, Hotstrings und benutzerdefinierte Menüpunkte: <a href="#ThisHotkey">A_ThisHotkey</a>, <a href="#EndChar">A_EndChar</a>, <a href="#h">(...mehr...)</a></li>
   <li>Betriebssystem und Benutzerinformationen: <a href="#OSVersion">A_OSVersion</a>, <a href="#Screen">A_ScreenWidth</a>, <a href="#Screen">A_ScreenHeight</a>, <a href="#os">(...mehr...)</a></li>
-  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/Clipboard.htm#ClipboardAll">ClipboardAll</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a></li>
+  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="misc/Clipboard.htm">Clipboard</a>, <a href="misc/ErrorLevel.htm">ErrorLevel</a></li>
   <li>Loop: <a href="#Index">A_Index</a>, <a href="#loop">(...mehr...)</a></li>
 </ul>
 <h3>Sonderzeichen</h3>
@@ -417,11 +428,12 @@ sumfn := Func("Sum")</pre>
     <td>A_AhkPath</td>
     <td><p>Bei nicht-kompilierten Skripten: Der vollständige Pfad der EXE-Datei, mit der das aktuelle Skript gerade ausgeführt wird. Zum Beispiel: C:\Program Files\AutoHotkey\AutoHotkey.exe</p>
     <p>Bei <a href="Scripts.htm#ahk2exe">kompilierten Skripten</a>: Das gleiche wie oben, allerdings wird das AutoHotkey-Verzeichnis mithilfe des Registry-Eintrags <em>HKLM\SOFTWARE\AutoHotkey\InstallDir</em> ermittelt. Wenn dieser Eintrag nicht gefunden wird, ist A_AhkPath leer.</p></td>
-  </tr><!--tr id="IsUnicode">
+  </tr>
+  <tr id="IsUnicode">
     <td>A_IsUnicode</td>
-    <td>Contains 1 if strings are Unicode (16-bit) and an empty string (which is considered <a href="#Boolean">false</a>) if strings are ANSI (8-bit). The format of strings depends on the version of AutoHotkey.exe which is used to run the script, or if it is compiled, which bin file was used to compile it.</td>
-  </tr-->
-  
+    <td><p>Enthält eine 1, wenn Zeichenketten im Unicode-Format (16-Bit) sind, oder eine leere Zeichenkette (das als <a href="#Boolean">falsch</a> angesehen wird), wenn Zeichenketten im ANSI-Format (8-Bit) sind. Das Format der Zeichenketten ist abhängig davon, mit welcher AutoHotkey-Version das Skript ausgeführt wird oder mit welcher BIN-Datei es kompiliert wurde.</p>
+    <p>Derzeit basieren alle EXE-Dateien von AutoHotkey v2 auf Unicode (16-Bit), demzufolge enthält diese Variable immer eine 1.</p></td>
+  </tr>
   <tr id="IsCompiled">
     <td>A_IsCompiled</td>
     <td>Enthält eine 1, wenn das Skript als <a href="Scripts.htm#ahk2exe">kompilierte EXE-Datei</a> ausgeführt wird, oder eine leere Zeichenkette (das als <a href="#Boolean">falsch</a> angesehen wird), wenn das nicht der Fall ist.</td>
@@ -538,11 +550,11 @@ MsgBox Laufzeit " Millisekunden sind verstrichen."</pre>
   </tr>
   <tr id="DetectHiddenWindows">
     <td>A_DetectHiddenWindows</td>
-    <td><strong>Liest/Schreibt</strong> den aktuellen Modus (On oder Off) von <a href="commands/DetectHiddenWindows.htm">DetectHiddenWindows</a>.</td>
+    <td><strong>Liest/Schreibt</strong> den aktuellen Modus von <a href="commands/DetectHiddenWindows.htm">DetectHiddenWindows</a>; 1 (eingeschaltet) oder 0 (ausgeschaltet).</td>
   </tr>
   <tr id="DetectHiddenText">
     <td>A_DetectHiddenText</td>
-    <td><strong>Liest/Schreibt</strong> den aktuellen Modus (On or Off) von <a href="commands/DetectHiddenText.htm">DetectHiddenText</a>.</td>
+    <td><strong>Liest/Schreibt</strong> den aktuellen Modus von <a href="commands/DetectHiddenText.htm">DetectHiddenText</a>; 1 (eingeschaltet) oder 0 (ausgeschaltet).</td>
   </tr>
   <tr id="StringCaseSense">
     <td>A_StringCaseSense</td>
@@ -562,7 +574,7 @@ MsgBox Laufzeit " Millisekunden sind verstrichen."</pre>
   </tr>
   <tr id="StoreCapslockMode">
     <td>A_StoreCapsLockMode</td>
-    <td><strong>Liest/Schreibt</strong> den aktuellen Modus (On oder Off) von <a href="commands/SetStoreCapslockMode.htm">SetStoreCapsLockMode</a>.</td>
+    <td><strong>Liest/Schreibt</strong> den aktuellen Modus von <a href="commands/SetStoreCapslockMode.htm">SetStoreCapsLockMode</a>; 1 (eingeschaltet) oder 0 (ausgeschaltet).</td>
   </tr>
   <tr id="KeyDelay">
     <td>A_KeyDelay<br>
@@ -618,7 +630,7 @@ MsgBox Laufzeit " Millisekunden sind verstrichen."</pre>
     <td>A_AllowMainWindow</td>
     <td><p><strong>Liest/Schreibt</strong> eine 1, wenn das Hauptfenster des Skripts über das Tray-Symbol geöffnet werden kann, oder 0, wenn nicht.</p>
     <p>Bei <a href="Scripts.htm#ahk2exe">kompilierten Skripten</a> wird diese Variable standardmäßig auf 0 gesetzt, kann aber durch Zuweisung eines Wertes überschrieben werden. Setzt man diese Variable auf 1, werden außerdem die Menüpunkte im View-Menü des Hauptfensters, wie z. B. "Lines most recently executed", das den Quellcode des Skripts und andere Informationen anzeigt, aktiviert.</p>
-    <p>Die folgenden Funktionen können immer das Hauptfenster anzeigen, sofern sie beim Ausführen des Skripts erreicht werden: <a href="commands/ListLines.htm">ListLines</a>, <a href="commands/ListVars.htm">ListVars</a>, <a href="commands/ListHotkeys.htm">ListHotkeys</a>, und <a href="commands/KeyHistory.htm">KeyHistory</a>.</p>
+    <p>Die folgenden Funktionen können immer das Hauptfenster anzeigen, sofern sie beim Ausführen des Skripts erreicht werden: <a href="commands/ListLines.htm">ListLines</a>, <a href="commands/ListVars.htm">ListVars</a>, <a href="commands/ListHotkeys.htm">ListHotkeys</a> und <a href="commands/KeyHistory.htm">KeyHistory</a>.</p>
     <p>Wenn das Skript nicht kompiliert ist, enthält diese Variable immer eine 1; jegliche Versuche, sie zu ändern, werden ignoriert.</p></td>
   </tr>
   <tr id="IconHidden">
@@ -832,10 +844,6 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   <tr>
     <td>Clipboard</td>
     <td><strong>Liest/Schreibt</strong> den Inhalt der system-internen Zwischenablage. Siehe <a href="misc/Clipboard.htm">Clipboard</a> für mehr Details.</td>
-  </tr>
-  <tr>
-    <td>ClipboardAll</td>
-    <td><strong>Liest nur</strong> den gesamten Inhalt der Zwischenablage (einschließlich Formatierung und Text). Siehe <a href="misc/Clipboard.htm#ClipboardAll">ClipboardAll</a>.</td>
   </tr>
   <tr>
     <td>ErrorLevel</td>

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>WinGetList - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die WinGetList-Funktion gibt die eindeutigen ID-Nummern von allen vorhandenen Fenstern zurück, die den angegebenen Kriterien entsprechen." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>WinGetList</h1>
+
+<p>Gibt die eindeutigen ID-Nummern von allen vorhandenen Fenstern zurück, die den angegebenen Kriterien entsprechen.</p>
+
+<pre class="Syntax">Liste := <span class="func">WinGetList</span>(<span class="optional">Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+
+<h2>Parameter</h2>
+<dl>
+    <dt>Fenstertitel</dt>
+    <dd>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie auf der Seite <a href="../misc/WinTitle.htm">Fenstertitel-Parameter &amp; Zuletzt Gefundenes Fenster</a>.</dd>
+    <dt>Fenstertext</dt>
+    <dd>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</dd>
+    <dt>Titelausnahme</dt>
+    <dd>Ignoriert Fenster, deren Titel diesen Wert enthalten.</dd>
+    <dt>Textausnahme</dt>
+    <dd>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</dd>
+</dl>
+
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#objects">Array</a></p>
+<p>Diese Funktion gibt ein Array zurück, das die <a href="../misc/WinTitle.htm#ahk_id">Window Handles (HWND)</a> von allen vorhandenen Fenstern enthält, die den angegebenen Parametern entsprechen. Wenn keine passenden Fenster gefunden werden, wird ein leeres Array zurückgegeben.</p>
+<p>Wenn zum Beispiel der Rückgabewert in eine Variable namens <code>Liste</code> gespeichert wird und zwei Fenster vorhanden sind, enthält <code>Liste[1]</code> die ID des ersten Fensters, <code>Liste[2]</code> die ID des zweiten Fensters und <code>Liste.<a href="../objects/Object.htm#Count">Count</a>()</code> gibt die Zahl 2 zurück.</p>
+<p>Die Fenster werden von oben nach unten abgerufen (entsprechend der Tatsache, wie sie auf dem Desktop gestapelt sind).</p>
+
+<h2>Bemerkungen</h2>
+<p>Um alle Fenster des gesamten Systems abzurufen, lässt man alle vier Titel-/Text-Parameter weg.</p>
+<p>Die ID des Fensters, das sich unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
+<p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+
+<h2>Siehe auch</h2>
+<p><a href="WinGetCount.htm">WinGetCount</a>, <a href="Win.htm">Win-Funktionen</a>, <a href="Control.htm">Control-Funktionen</a></p>
+
+<h2>Beispiele</h2>
+
+<h3 id="ex1">Beispiel #1</h3>
+<p>Besucht alle Fenster des gesamten Systems und zeigt Informationen zu jedem Fenster an:</p>
+<pre class="NoIndent">id := WinGetList(,, "Program Manager")
+Loop id.Count()
+{
+    diese_ID := id[A_Index]
+    WinActivate "ahk_id " diese_ID
+    diese_Klasse := WinGetClass("ahk_id " diese_ID)
+    dieser_Titel := WinGetTitle("ahk_id " diese_ID)
+    Result := MsgBox(
+    (
+        "Gehe alle Fenster durch
+        " A_Index " von " id.Count() "
+        ahk_id " diese_ID "
+        ahk_class " diese_Klasse "
+        " dieser_Titel "
+
+        Weiter?"
+    ),, 4)
+    if (Result = "No")
+        break
+}</pre>
+
+</body>
+</html>

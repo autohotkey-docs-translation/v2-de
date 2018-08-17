@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>FileRead</title>
+<title>FileRead - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die FileRead-Funktion ruft den Inhalt einer Datei ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -13,10 +14,10 @@
 
 <h1>FileRead</h1>
 
-<p>Liest den Inhalt einer Datei in eine <a href="../Variables.htm">Variable</a>.</p>
+<p>Ruft den Inhalt einer Datei ab.</p>
 
 <pre class="Syntax">Text := <span class="func">FileRead</span>(Dateiname <span class="optional">, Optionen</span>)</pre>
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
 
   <dt>Dateiname</dt>
@@ -34,27 +35,31 @@
   
 </dl>
 
-<h3>ErrorLevel</h3>
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+<p>Diese Funktion gibt den Inhalt der angegebenen Datei zurück. Wenn die Datei "in Benutzung", nicht vorhanden oder leer ist, wird eine leere Zeichenkette zurückgegeben.</p>
+
+<h2>ErrorLevel</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Datei erfolgreich geladen wurde. Ansonsten wird ErrorLevel auf 1 gesetzt, wenn ein Problem aufgetreten ist. Probleme sind zum Beispiel: 1) Datei existiert nicht; 2) Datei ist gesperrt oder nicht zugreifbar; 3) Das System hat nicht genügend Arbeitsspeicher, um die Datei zu laden.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
-<h3 id="Binary">Lesen von Binärdaten</h3>
+<h2 id="Binary">Lesen von Binärdaten</h2>
 <p>Bei Benutzung der <code>RAW</code>-Option ist der Rückgabewert eine Zeichenkette, die den rohen, unbearbeiteten Inhalt der Datei enthält. Da die <a href="../Compat.htm#Format">native Codierung</a> UTF-16 ist, enthält die Zeichenkette immer eine gerade Anzahl an Bytes. Um die Anzahl der gelesenen Bytes zu erhalten (aufgerundet auf eine gerade Zahl), multipliziert man den Rückgabewert von <a href="StrLen.htm">StrLen</a> mit 2.</p>
 <p>Diese Option ist in der Regel zum Lesen von binären Daten erforderlich, weil standardmäßig alle gelesenen Bytes aus der Datei als Text interpretiert werden und von der Codierung der Quelldatei (wie in den Optionen angegeben oder via <a href="../Variables.htm#FileEncoding">A_FileEncoding</a>) in die <a href="../Compat.htm#Format">native Codierung</a> des Skripts, UTF-16, umgewandelt sein könnte. Wenn die Daten kein UTF-16-Text sind, ändert diese Umwandlung die Daten auf unerwünschte Weise.</p>
 <p>Wenn die Daten UTF-16-Text enthalten, sollte man beachten, dass viele Funktionen davon ausgehen, dass die Daten bei der ersten binären Null enden (sofern eine vorhanden ist). MsgBox zeigt beispielsweise nur Zeichen bis zur erste binäre Null an. Allerdings ist der komplette Inhalt weiterhin vorhanden und kann durch erweiterte Methoden wie <a href="NumGet.htm">NumGet</a> abgerufen werden.</p>
-<p>Ein Beispiel für die RAW-Option finden Sie im Abschnitt <a href="../misc/Clipboard.htm#Save">Speichern und Wiederherstellen der Zwischenablage</a>.</p>
+<p>Ein Beispiel für die RAW-Option finden Sie im Abschnitt <a href="ClipboardAll.htm#ex2">Speichern und Wiederherstellen der Zwischenablage</a>.</p>
 <p>Mit <a href="FileOpen.htm">FileOpen</a> in Verbindung mit <a href="../objects/File.htm#RawRead">File.RawRead</a> oder <a href="../objects/File.htm#ReadNum">File.Read<i>Num</i></a> können binäre Daten erfasst werden, ohne die komplette Datei in den Speicher einlesen zu müssen.</p>
 
-<h3>Bemerkungen</h3>
+<h2>Bemerkungen</h2>
 <p>FileRead ist deutlich performanter als eine <a href="LoopRead.htm">Datei-lesende Schleife</a>, wenn es darum geht, alles oder einen großen Teil einer Datei in den Speicher zu laden.</p>
 <p>Eine Datei größer als 4 GB bewirkt, dass eine Ausnahme ausgelöst wird. Wenn aber die <strong>*m</strong>-Option vorhanden ist, wird nur der führende Teil der Datei geladen. Eine Ausnahme wird auch ausgelöst, wenn das Programm unfähig ist, genügend Speicher für die angeforderte Datenmenge bereitzustellen.</p>
 <p>Wenn Sie Bedenken haben, dass die Datei zu viel Arbeitsspeicher verbraucht, können Sie zunächst ihre Größe mit <a href="FileGetSize.htm">FileGetSize</a> überprüfen.</p>
 <p>Die <a href="FileOpen.htm">FileOpen</a>-Funktion bietet eine weitaus fortschrittlichere Funktionalität als FileRead. Sie kann zum Beispiel Daten an einer bestimmten Stelle in der Datei lesen oder schreiben, ohne zuerst die gesamte Datei in den Arbeitsspeicher lesen zu müssen. Eine Liste aller Features finden Sie unter <a href="../objects/File.htm">File-Objekt</a>.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="../objects/File.htm">File-Objekt</a>, <a href="LoopRead.htm">Datei-lesende Schleife</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="IniRead.htm">IniRead</a>, <a href="Sort.htm">Sort</a>, <a href="Download.htm">Download</a></p>
 
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <pre class="NoIndent" id="ex1"><em>; Beispiel #1: Liest die Textdatei in AusgabeVar.</em>
 MeinText := FileRead("C:\Meine Dokumente\Meine Datei.txt")</pre>
 <pre class="NoIndent" id="ex2"><em>; Beispiel #2: Sortiert schnell den Inhalt einer Datei.</em>

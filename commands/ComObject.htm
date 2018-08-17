@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>ComObject</title>
+<title>ComObject - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die ComObject-Funktion wrappt ein Wert, SafeArray oder COM-Objekt, um es für das Skript oder für eine COM-Methode nutzbar zu machen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -19,7 +20,7 @@
 <p><strong>Erweitert:</strong> Wrappt oder entwrappt einen unbearbeiteten <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>-Pointer, um ihn für das Skript nutzbar zu machen.</p>
 <pre class="Syntax">ComObject := <span class="func">ComObject</span>(DispPtr)</pre>
 
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
 
   <dt>VarTyp</dt>
@@ -36,7 +37,8 @@
 
 </dl>
 
-<h3 id="Returns">Rückgabewert</h3>
+<h2 id="Returns">Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
 <p>Gibt einen Wrapper-Objekt zurück, das einen <a href="ComObjType.htm">Variantentyp</a> und Wert, oder einen Pointer enthält.</p>
 <p>Dieses Objekt hat zwei Nutzen:</p>
 <ol>
@@ -44,7 +46,7 @@
   <li>Ein Skript kann deutlich besser mit einem COM-Objekt oder SafeArray interagieren (via <a href="../Objects.htm#Usage_Objects">Objektsyntax</a>), wenn es gewrappt wurde. Die meisten Skripte müssen dies nicht manuell tun, weil <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjArray.htm">ComObjArray</a> und andere COM-Methoden, die ein Objekt zurückgeben, automatisch ein Wrapper-Objekt erstellen.</li>
 </ol>
 
-<h3 id="ByRef">ByRef</h3>
+<h2 id="ByRef">ByRef</h2>
 <p>Wenn der <a href="ComObjType.htm"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, kann mit leeren eckigen Klammern <code>[]</code> der verwiesene Wert gelesen oder geschrieben werden.</p>
 <p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder Puffer mit ausreichender Kapazität sein, um einen Wert des angegebenen Typs enthalten zu können. Zum Beispiel könnte man wie folgt eine Variable erstellen, in der eine VBScript-Funktion etwas schreiben kann:</p>
 <pre>VarSetCapacity(var, 24, 0)
@@ -54,16 +56,16 @@ vref[] := "Eingabewert"
 sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ByRefEx">unteren Beispiel</a> initialisiert werden.</em>
 MsgBox vref[]</pre>
 
-<h3 id="Remarks">Allgemeine Bemerkungen</h3>
+<h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>Wenn mit dieser Funktion ein <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointer gewrappt wurde, wird das Wrapper-Objekt absofort dafür verantwortlich sein, den Pointer bei Bedarf automatisch freizugeben. Wenn man <em>VarTyp</em> weglässt, wird das Objekt <a href="ComObjQuery.htm">aufgefordert</a>, sein IDispatch-Interface zurückzugeben, sofern verfügbar; wenn es das macht, wird <em>DispPtr</em> sofort freigegeben. Wenn das Skript daraufhin beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiterzuverwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
 <p>Den aktuellen <em>VarTyp</em> eines Wrapper-Objekts kann man mithilfe von <a href="ComObjType.htm">ComObjType</a> ermitteln.</p>
 <p>Den aktuellen <em>Wert</em> eines Wrapper-Objekts kann man mithilfe von <a href="ComObjValue.htm">ComObjValue</a> ermitteln.</p>
 <p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte getrennt voneinander, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
 
-<h3 id="Related">Siehe auch</h3>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
 
-<h3>Beispiele</h3>
+<h2>Beispiele</h2>
 <pre class="NoIndent" id="ByRefEx">
 <em>; Einleitung - ScriptControl benötigt eine 32-Bit-Version von AutoHotkey.</em>
 code := "

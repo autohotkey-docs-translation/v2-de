@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>VarSetCapacity</title>
+<title>VarSetCapacity - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die VarSetCapacity-Funktion vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Normalerweise ist das nur bei ungewöhnlichen Fällen wie DllCall notwendig." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -16,7 +17,7 @@
 <p>Vergrößert die Aufnahmekapazität einer Variable oder gibt deren Speicher frei. Normalerweise ist das nur bei ungewöhnlichen Fällen wie <a href="DllCall.htm">DllCall</a> notwendig.</p>
 
 <pre class="Syntax">Kapazitätserstattung := <span class="func">VarSetCapacity</span>(ZielVar <span class="optional">, Kapazitätsbedarf, Füllbyte</span>)</pre>
-<h3>Parameter</h3>
+<h2>Parameter</h2>
 <dl>
 
   <dt>ZielVar</dt>
@@ -36,16 +37,25 @@
 
 </dl>
 
-<h3>Rückgabewert</h3>
-<p>Diese Funktion gibt die Anzahl an Bytes zurück, die die Variable nun enthalten kann und größer gleich <em>Kapazitätserstattung</em> sein wird. Falls <em>VarName</em> keine gültige Variable ist (z. B. direkt geschriebene Zeichenkette oder Zahl), wird eine 0 zurückgegeben. Wenn das System nicht genügend Speicher hat, um die Veränderung vorzunehmen (sehr selten), wird eine Fehlermeldung angezeigt und die aktuelle Kapazität zurückgegeben - dieses Verhalten wird wahrscheinlich in einer zukünftigen Version geändert.</p>
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt die Anzahl an Bytes zurück, die die Variable nun enthalten kann und größer gleich <em>Kapazitätserstattung</em> sein wird.</p>
 
-<h3>Bemerkungen</h3>
+<h2>Misserfolg</h2>
+<p>Es wird eine Ausnahme ausgelöst, sobald eine der folgenden Bedingungen zutrifft:</p>
+<ul>
+  <li><em>VarName</em> ist keine gültige Variablenreferenz. Es ist nicht möglich, eine <a href="../Objects.htm#Usage_Objects">Objekteigenschaft</a> oder <a href="../Variables.htm#BuiltIn">interne Variable</a> via Referenz zu übergeben, demzufolge ist es ungültig, so eine an diese Funktion zu übergeben.</li>
+  <li>Das System hat nicht genügend Speicher, um die Änderung vorzunehmen (sehr selten).</li>
+  <li><em>Kapazitätsbedarf</em> ist kleiner als -1 oder (bei 32-Bit) größer gleich 2**31 (2 GB).</li>
+</ul>
+
+<h2>Bemerkungen</h2>
 <p>Diese Funktion ist nicht nur für <a href="DllCall.htm#str">DllCall</a> nützlich, sondern kann auch die Performance erhöhen, wenn man eine Zeichenkette via stufenweiser Verkettung zusammensetzt. Diese Methode verhindert mehrere automatische Größenanpassungen, sofern Ihnen die finale Länge der Zeichenkette bekannt ist. In so einem Fall muss <em>Kapazitätsbedarf</em> nicht genau sein: Der Performance-Gewinn gilt auch dann noch, wenn die Kapazität zu niedrig ist, außerdem beginnt die Variable sich automatisch zu erweitern, wenn die Kapazität erschöpft ist. Bei einer zu hohen Kapazität ist ein Teil des Speichers verschwendet, aber nur vorübergehend, da der gesamte Speicher nach der Operation mithilfe von <code>VarSetCapacity(Var, 0)</code> oder <code>Var := ""</code> wieder freigegeben werden kann.</p>
 
-<h3>Siehe auch</h3>
+<h2>Siehe auch</h2>
 <p><a href="DllCall.htm">DllCall</a>, <a href="NumPut.htm">NumPut</a>, <a href="NumGet.htm">NumGet</a></p>
 
-<h3>Beispiel</h3>
+<h2>Beispiel</h2>
 <pre class="NoIndent"><em>; Stellt sicher, dass MeineVar genügend Spielraum hat.</em>
 VarSetCapacity(MeineVar, 10240000)  <em>; ~10 MB</em>
 Loop

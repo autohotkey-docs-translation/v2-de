@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
 <head>
-<title>Clipboard und ClipboardAll</title>
+<title>Clipboard - Definition &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Clipboard ist eine interne Variable, die den aktuellen Inhalt der Windows-Zwischenablage widerspiegelt." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -9,11 +10,12 @@
 <script src="../static/content.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
 </head>
-
 <body>
-<h1>Clipboard und <a href="#ClipboardAll">ClipboardAll</a></h1>
 
-<p><em>Clipboard</em> ist eine interne <a href="../Variables.htm">Variable</a>, die den aktuellen Inhalt der Windows-Zwischenablage enthält, falls dieser in Textform ist. <em><a href="#ClipboardAll">ClipboardAll</a></em> hingegen gibt ein Objekt zurück, das alles von der Zwischenablage enthält, wie z. B. Bilder und Formatierung.</p>
+<h1>Clipboard</h1>
+
+<p><em>Clipboard</em> ist eine <a href="../Concepts.htm#built-in-variables">interne Variable</a>, die den aktuellen Inhalt der Windows-Zwischenablage widerspiegelt, wenn dieser Inhalt als Text wiedergegeben werden kann.</p>
+
 <p id="CopiedFiles">Jede Textzeile in <em>Clipboard</em> endet normalerweise mit einem CR- und LF-Zeichen, die im Skript als <code>`r`n</code> ausgedrückt werden können. Dateien (die beispielsweise mit <kbd>Strg</kbd>+<kbd>C</kbd> kopiert wurden) gelten als Text: Sie werden automatisch in ihren Dateinamen umgewandelt (mit vollständigem Pfad), sobald <em>Clipboard</em> im Skript verwendet wird. Das folgende Beispiel zeigt, wie die Dateien einzeln extrahiert werden können:</p>
 <pre><a href="../commands/LoopParse.htm">Loop Parse</a>, Clipboard, "`n", "`r"
 {
@@ -22,73 +24,33 @@
         break
 }</pre>
 <p>Mit der <a href="../commands/Sort.htm">Sort</a>-Funktion können die Dateinamen in alphabetischer Reihenfolge sortiert werden. Um die Dateinamen aus der Zwischenablage in eine Datei zu schreiben, nutzt man <code><a href="../commands/FileAppend.htm">FileAppend</a> Clipboard "`r`n", "C:\Meine Datei.txt"</code>. Mit <a href="../commands/_ClipboardTimeout.htm">#ClipboardTimeout</a> kann man einstellen, wie lange das Skript versuchen soll, die Zwischenablage zu öffnen (wenn die Zwischenablage zum Beispiel von einer anderen Anwendung blockiert wird).</p>
-<strong>Einfache Beispiele:</strong>
-<pre>Clipboard := "eigener Text"   <em>; Ersetzt die Zwischenablage mit neuem Inhalt.</em>
-Clipboard := ""  <em>; Leert die Zwischenablage.</em>
-Clipboard := Clipboard   <em>; Wandelt jede kopierte Datei, HTML oder anders formatierter Text in Klartext um.</em>
-Clipboard := Clipboard " angefügter Text."   <em>; Fügt etwas Text an die Zwischenablage.</em>
-Clipboard := StrReplace(Clipboard, "ABC", "DEF")   <em>; Ersetzt alle Vorkommen von ABC mit DEF (und wandelt die Zwischenablage in Klartext um).</em></pre>
 
-<p><strong>ClipWait verwenden, um die Zuverlässigkeit des Skripts zu verbessern:</strong></p>
+<p>Mit <a href="../commands/ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind):</p>
 <pre>Clipboard := ""  <em>; Beginnt leer, damit ClipWait erkennt, wenn der Text angekommen ist.</em>
 Send "^c"
 <a href="../commands/ClipWait.htm">ClipWait</a>  <em>; Wartet, bis die Zwischenablage Text enthält.</em>
 MsgBox "STRG+C hat folgenden Inhalt in die Zwischenablage kopiert:`n`n" Clipboard</pre>
 
-<h2 id="ClipboardAll">ClipboardAll <span class="headnote">(alles in der Zwischenablage speichern und wiederherstellen)</span></h2>
-<p>Erstellt ein Objekt, dass alles von der Zwischenablage enthält (z. B. Bilder und Formatierung).</p>
-<pre class="Syntax">ClipGesichert := <span class="func">ClipboardAll</span>(<span class="optional">Daten, Größe</span>)</pre>
 
-<h3>Parameter</h3>
-<p>Wenn beide Parameter fehlen, werden die aktuellen Inhalte der Zwischenablage abgerufen. Ansonsten können bis zu zwei Parameter benutzt werden, um ein Objekt zu erstellen, das die angegebenen Binärdaten der Zwischenablage enthält.</p>
-<dl>
-  <dt>Daten</dt>
-  <dd><p>Eine Zeichenkette mit Binärdaten, oder ein reiner Integer, der die Adresse von Binärdaten ist. Die Daten müssen in einem bestimmten Format sein, das in der Regel ein vorheriger Aufruf von ClipboardAll hervorbringt. Siehe FileAppend unten.</p></dd>
-  <dt>Größe</dt>
-  <dd><p>Die Anzahl der Bytes, die die Daten enthalten. Dieser Parameter ist optional, wenn <em>Daten</em> eine Zeichenkette ist.</p></dd>
-</dl>
-
-<h3 id="clipboardall-object">ClipboardAll-Objekt</h3>
-<p>Der Rückgabewert ist ein ClipboardAll-Objekt, das drei Eigenschaften hat:</p>
-<dl>
-  <dt>Data</dt>
-  <dd><p>Eine Zeichenkette mit rohen Binärdaten, die die Inhalte der Zwischenablage repräsentiert. Diese wird in der Regel an <a href="../commands/FileAppend.htm">FileAppend</a> oder <a href="../objects/File.htm#RawWrite">File.RawWrite</a> übergeben, um sie in eine Datei zu schreiben.</p></dd>
-  <dt>Ptr</dt>
-  <dd><p>Die Adresse der Daten, die im Objekt enthalten sind. Diese Adresse ist solange gültig, bis das Objekt freigegeben wird.</p></dd>
-  <dt>Size</dt>
-  <dd><p>Die Größe der rohen Binärdaten, in Bytes.</p></dd>
-</dl>
-
-<h3 id="Save">Speichern und Wiederherstellen der Zwischenablage</h3>
-<p><em>ClipboardAll</em> enthält alles von der Zwischenablage (z. B. Bilder und Formatierung). Diese Variable wird häufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vorübergehend für eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wie folgt wiederhergestellt werden:</p>
-<pre>ClipSicherung := ClipboardAll()   <em>; Speichert die gesamte Zwischenablage in eine beliebige Variable.
-; ... hier kann man kurzzeitig die Zwischenablage nutzen, um z. B. schnell eine große Textmenge einzufügen ...</em>
-Clipboard := ClipSicherung   <em>; Originale Zwischenablage wiederherstellen. Beachten Sie, dass <i>Clipboard</i> verwendet wurde (nicht <i>ClipboardAll</i>).</em>
-ClipSicherung := ""  <em>; Speicher freigeben, falls die Zwischenablage sehr groß war.</em></pre>
-<p><em>ClipboardAll</em> könnte auch in einer Datei gespeichert werden:</p>
-<pre><em>; Option 1: Lösche eine eventuell vorhandene Datei und benutze dann FileAppend im RAW-Modus.</em>
-<a href="../commands/FileDelete.htm">FileDelete</a> "C:\Firmenlogo.clip"
-<a href="../commands/FileAppend.htm">FileAppend</a> ClipboardAll().Data, "C:\Firmenlogo.clip", "RAW" <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em>
-
-<em>; Option 2: Benutze FileOpen im Überschreibmodus und File.RawWrite.</em>
-<a href="../commands/FileOpen.htm">FileOpen</a>("C:\Firmenlogo.clip", "w").<a href="../objects/File.htm#RawWrite">RawWrite</a>(ClipboardAll().Data)</pre>
-<p>Das folgende Beispiel zeigt, wie die Datei später wieder in die Zwischenablage (oder in eine Variable) geladen werden kann:</p>
-<pre>Clipboard := ClipboardAll(<a href="../commands/FileRead.htm">FileRead</a>("C:\Firmenlogo.clip", "RAW"))</pre>
-
-<h3>Hinweise</h3>
-<p>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert.</p>
-<p>Eine Variable, die Daten von der Zwischenablage enthält, kann wie folgt in eine andere Variable kopiert werden: <code>ClipSicherung2 := ClipSicherung</code>.</p>
-<p>Mit <a href="../commands/ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
-<p>Binärdaten, die von der <code>Data</code>-Eigenschaft zurückgegeben werden, bestehen intern aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die nächsten 4 Bytes die Datenblockgröße und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enthält (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschließend enden die Daten mit einem Formattyp (4 Byte groß), wobei jedoch eine 0 enthalten ist.</p>
-<p>Bekannte Einschränkung: Sobald <em>ClipboardAll</em> abgerufen wird, während Zellen von MS Excel enthalten sind, kann es passieren, dass in Excel ein Dialogfenster mit "Keine Drucker" angezeigt wird.</p>
-<p>Zwischenablage-Programme, die mit AutoHotkey v1 programmiert wurden:</p>
+<h2>Siehe auch</h2>
 <ul>
-  <li>Deluxe Clipboard: Ermöglicht eine unbegrenzte Anzahl an privaten, benannten Zwischenablagen, um einen markierten Text zu kopieren, auszuschneiden, einzufügen, anzuhängen oder auszuschneiden und anzuhängen. <a href="http://www.autohotkey.com/forum/topic2665.html">www.autohotkey.com/forum/topic2665.html</a></li>
-  <li>ClipStep: Kontrolliert mehrere Zwischenablagen nur mithilfe von <kbd>Strg</kbd>+<kbd>X</kbd>/<kbd>C</kbd>/<kbd>V</kbd>. <a href="http://www.autohotkey.com/forum/topic4836.html">www.autohotkey.com/forum/topic4836.html</a></li>
+  <li><a href="../commands/ClipboardAll.htm">ClipboardAll</a>: Um alles in der Zwischenablage anzusteuern (z. B. Bilder und Formatierung).</li>
+  <li><a href="../commands/OnClipboardChange.htm">OnClipboardChange</a>: Um Änderungen der Zwischenablage zu erkennen und auf diese zu reagieren.</li>
 </ul>
 
-<h2 id="OnClipboardChange">OnClipboardChange</h2>
-<p>Skripte können mithilfe von <a href="../commands/OnClipboardChange.htm">OnClipboardChange</a> Änderungen in der Zwischenablage erkennen.</p>
+<h2>Beispiele</h2>
+
+<pre class="NoIndent">Clipboard := "eigener Text"   <em>; Ersetzt die Zwischenablage mit neuem Inhalt.</em>
+Clipboard := ""  <em>; Leert die Zwischenablage.</em>
+Clipboard := Clipboard   <em>; Wandelt jede kopierte Datei, HTML oder anders formatierter Text in Klartext um.</em>
+Clipboard := Clipboard " angefügter Text."   <em>; Fügt etwas Text an die Zwischenablage.</em>
+Clipboard := StrReplace(Clipboard, "ABC", "DEF")   <em>; Ersetzt alle Vorkommen von ABC mit DEF (und wandelt die Zwischenablage in Klartext um).</em></pre>
+
+<p><strong>Zwischenablage-Programme, die mit AutoHotkey v1 programmiert wurden:</strong></p>
+<ul>
+  <li><a href="http://www.autohotkey.com/forum/topic2665.html">Deluxe Clipboard</a>: Ermöglicht eine unbegrenzte Anzahl an privaten, benannten Zwischenablagen, um einen markierten Text zu kopieren, auszuschneiden, einzufügen, anzuhängen oder auszuschneiden und anzuhängen.</li>
+  <li><a href="http://www.autohotkey.com/forum/topic4836.html">ClipStep</a>: Kontrolliert mehrere Zwischenablagen nur mithilfe von <kbd>Strg</kbd>+<kbd>X</kbd>/<kbd>C</kbd>/<kbd>V</kbd>. </li>
+</ul>
 
 </body>
 </html>
