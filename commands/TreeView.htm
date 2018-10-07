@@ -31,6 +31,8 @@
 </ul>
 <h2 id="Intro">Einführung und einfaches Beispiel</h2>
 <p>Eine Baum-Ansicht zeigt eine Hierarchie von Elementen an, indem untergeordnete Elemente unter ihren übergeordneten Elementen eingerückt werden. Das bekannteste Beispiel dafür ist der Navigationsbereich des Explorers.</p>
+<p>Eine typische TreeView sieht wie folgt aus:</p>
+<img src="../static/ctrl_treeview.png" alt="TreeView" />
 <p>Die Syntax zur Erstellung einer TreeView ist:</p>
 <pre class="Syntax" id="GuiAdd">TV := Gui.<span class="func">Add</span>("TreeView", Optionen)</pre>
 <p>Das folgende Skript zeigt, wie eine einfache Hierarchie von Elementen erstellt und angezeigt werden kann:</p>
@@ -55,7 +57,7 @@ Gui.Show  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
 ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für anfänglich 10 Symbole.</em>
 Loop 10  <em>; Lädt die ImageList mit einigen vordefinierten Systemsymbolen.</em>
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
-TV := Gui.Add("TreeView", <strong>"ImageList" . ImageListID</strong>)
+TV := Gui.Add("TreeView", "ImageList" . ImageListID)
 <a href="#Add">TV.Add</a>("Elementname", 0, "Icon4")  <em>; Fügt ein Element in die TreeView ein und gibt ihm ein Ordnersymbol.</em>
 Gui.Show</pre>
 <p><strong>Lines</strong>: Geben Sie <code>-Lines</code> (minus Lines) an, um die Verbindungslinien zwischen den Ober- und Unterelementen zu entfernen. Das Entfernen solcher Linien verhindert allerdings auch, dass die Plus-/Minuszeichen bei den Top-Level-Elementen angezeigt werden.</p>
@@ -79,21 +81,28 @@ MeinTree_Edit(TV, Element)
   <pre class="Syntax">EindeutigeID := TV.<span class="func">Add</span>(Name, <span class="optional">OberelementID, Optionen</span>)</pre>
   <dl>
     <dt>Name</dt>
-    <dd>Der Anzeigetext des Elements, das auch numerisch sein kann (einschließlich numerische <a href="../Variables.htm#Expressions">Ausdrücke</a>).</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Der Anzeigetext des Elements, das auch numerisch sein kann (einschließlich numerische <a href="../Variables.htm#Expressions">Ausdrücke</a>).</p>
+    </dd>
     <dt>OberelementID</dt>
-    <dd>Die ID-Nummer des neuen Oberelements (lass es weg oder verwende 0, um ein Top-Level-Element einzufügen).</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Die ID-Nummer des neuen Oberelements (lass es weg oder verwende 0, um ein Top-Level-Element einzufügen).</p>
+    </dd>
     <dt>Optionen</dt>
     <dd>
-  <p>Enthält null oder mehrere Wörter aus der unteren Liste (Groß-/Kleinschreibung ist egal). Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Um eine Option zu entfernen, muss ein Minuszeichen davor gesetzt werden. Um eine Option hinzuzufügen, lässt man das Vorzeichen weg oder setzt ein Pluszeichen davor.</p>
-  <p id="Bold"><strong>Bold</strong>: Zeigt den Namen des Elements in fetter Schrift an. Mit <code>TV.Modify(ElementID, "-Bold")</code> kann das Element wieder normalisiert werden.</p>
-  <p id="Check"><strong>Check</strong>: Zeigt ein Häkchen neben dem Element an (wenn die TreeView <a href="#Checked">CheckBoxen</a> hat). Mit <code>TV.Modify(ElementID, "-Check")</code> kann das Häkchen wieder entfernt werden. Direkt nach dem Wort <em>Check</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall wäre <code>"Check"</code> das gleiche wie <code>"Check" <strong>.</strong> VarEnhältEins</code> (der hier verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>).</p>
-  <p id="Expand"><strong>Expand</strong>: Klappt das Element auf, um seine Unterelemente anzuzeigen (falls vorhanden). Mit <code>TV.Modify(ElementID, "-Expand")</code> kann das Element wieder zugeklappt werden. Wenn es keine Unterelemente gibt, wird <a href="#Modify">TV.Modify</a> eine 0 anstelle der Element-ID zurückgeben. <a href="#Add">TV.Add</a> hingegen kennzeichnet das Element als aufgeklappt, für den Fall, dass später Unterelemente hinzugefügt werden. Im Gegensatz zu "Select" (siehe unten) bewirkt das Aufklappen eines Elements nicht, dass sein Oberelement auch automatisch mit aufgeklappt wird. Direkt nach dem Wort <em>Expand</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall wäre <code>"Expand"</code> das gleiche wie <code>"Expand" <strong>.</strong> VarEnhältEins</code>.</p>
-  <p><strong>First | Sort | N</strong>: Diese Optionen gelten nur für <a href="#Add">TV.Add</a>. Sie bestimmen die Position des neuen Elements relativ zu seinen Nachbarelementen (<em>Nachbarelemente</em> sind alle Elemente auf gleicher Ebene). Fehlen diese Optionen, wird das neue Element als letztes/unterstes Nachbarelement eingefügt. Verwenden Sie ansonsten <em>First</em>, um das Element als erstes/oberstes Nachbarelement einzufügen, oder <em>Sort</em>, um das Element in Bezug auf seinen Nachbarelementen in alphabetischer Reihenfolge einzufügen. Gibt man einen reinen Integer-Wert an (<strong>N</strong>), wird er als ID-Nummer des Nachbarelements angesehen, wo danach das neue Element eingefügt werden soll (wenn Integer N nur als einzige Option vorhanden ist, muss er nicht in Anführungszeichen gesetzt werden).</p>
-  <p><strong>Icon</strong>: Geben Sie das Wort <em>Icon</em> und direkt danach eine Symbolnummer an, um ein Symbol auf der linken Seite des Elementnamens anzuzeigen. Fehlt diese Option, wird das erste Symbol in der <a href="#ImageList">ImageList</a> verwendet. Um ein leeres Symbol darzustellen, fügt man eine Nummer ein, die größer ist als die Anzahl der Symbole in der ImageList. Wenn das Steuerelement keine ImageList hat, werden weder Symbole angezeigt noch Speicher für so eins reserviert.</p>
-  <p id="Select"><strong>Select</strong>: Wählt das Element aus. Da jeweils nur ein einziges Element ausgewählt sein kann, wird jedes zuvor ausgewählte Element automatisch abgewählt. Darüber hinaus wird jedes Oberelement des neu ausgewählten Elements aufgeklappt, falls erforderlich. Mit <a href="#GetSelection">TV.GetSelection</a> kann die aktuelle Auswahl herausgefunden werden.</p>
-  <p><strong>Sort</strong>: Bei <a href="#Modify">TV.Modify</a> wird diese Option die Unterelemente des angegebenen Elements in alphabetischer Reihenfolge sortieren. Mit <code>TV.Modify(0, "Sort")</code> können stattdessen alle Top-Level-Elemente sortiert werden. Wenn es keine Unterelemente gibt, wird eine 0 anstelle der ID des modifizierten Elements zurückgegeben.</p>
-  <p><strong>Vis</strong>: Sorgt dafür, dass das Element durch Scrollen der TreeView und/oder Aufklappen seiner Oberelemente sichtbar bleibt, falls erforderlich.</p>
-  <p><strong>VisFirst</strong>: Das gleiche wie oben, außer dass die TreeView zusätzlich gescrollt wird, so dass das Element ganz oben erscheint, wenn möglich. Diese Option ist in Verbindung mit <a href="#Modify">TV.Modify</a> in der Regel effektiver als mit <a href="#Add">TV.Add</a>.</p>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Enthält null oder mehrere Wörter aus der unteren Liste (Groß-/Kleinschreibung ist egal). Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Um eine Option zu entfernen, muss ein Minuszeichen davor gesetzt werden. Um eine Option hinzuzufügen, lässt man das Vorzeichen weg oder setzt ein Pluszeichen davor.</p>
+      <p id="Bold"><strong>Bold</strong>: Zeigt den Namen des Elements in fetter Schrift an. Mit <code>TV.Modify(ElementID, "-Bold")</code> kann das Element wieder normalisiert werden.</p>
+      <p id="Check"><strong>Check</strong>: Zeigt ein Häkchen neben dem Element an (wenn die TreeView <a href="#Checked">CheckBoxen</a> hat). Mit <code>TV.Modify(ElementID, "-Check")</code> kann das Häkchen wieder entfernt werden. Direkt nach dem Wort <em>Check</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall wäre <code>"Check"</code> das gleiche wie <code>"Check" <strong>.</strong> VarEnhältEins</code> (der hier verwendete Punkt ist ein <a href="../Variables.htm#concat">Verkettungsoperator</a>).</p>
+      <p id="Expand"><strong>Expand</strong>: Klappt das Element auf, um seine Unterelemente anzuzeigen (falls vorhanden). Mit <code>TV.Modify(ElementID, "-Expand")</code> kann das Element wieder zugeklappt werden. Wenn es keine Unterelemente gibt, wird <a href="#Modify">TV.Modify</a> eine 0 anstelle der Element-ID zurückgeben. <a href="#Add">TV.Add</a> hingegen kennzeichnet das Element als aufgeklappt, für den Fall, dass später Unterelemente hinzugefügt werden. Im Gegensatz zu "Select" (siehe unten) bewirkt das Aufklappen eines Elements nicht, dass sein Oberelement auch automatisch mit aufgeklappt wird. Direkt nach dem Wort <em>Expand</em> kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen. In diesem Fall wäre <code>"Expand"</code> das gleiche wie <code>"Expand" <strong>.</strong> VarEnhältEins</code>.</p>
+      <p><strong>First | Sort | N</strong>: Diese Optionen gelten nur für <a href="#Add">TV.Add</a>. Sie bestimmen die Position des neuen Elements relativ zu seinen Nachbarelementen (<em>Nachbarelemente</em> sind alle Elemente auf gleicher Ebene). Fehlen diese Optionen, wird das neue Element als letztes/unterstes Nachbarelement eingefügt. Verwenden Sie ansonsten <em>First</em>, um das Element als erstes/oberstes Nachbarelement einzufügen, oder <em>Sort</em>, um das Element in Bezug auf seinen Nachbarelementen in alphabetischer Reihenfolge einzufügen. Gibt man einen reinen Integer-Wert an (<strong>N</strong>), wird er als ID-Nummer des Nachbarelements angesehen, wo danach das neue Element eingefügt werden soll (wenn Integer N nur als einzige Option vorhanden ist, muss er nicht in Anführungszeichen gesetzt werden).</p>
+      <p><strong>Icon</strong>: Geben Sie das Wort <em>Icon</em> und direkt danach eine Symbolnummer an, um ein Symbol auf der linken Seite des Elementnamens anzuzeigen. Fehlt diese Option, wird das erste Symbol in der <a href="#ImageList">ImageList</a> verwendet. Um ein leeres Symbol darzustellen, fügt man eine Nummer ein, die größer ist als die Anzahl der Symbole in der ImageList. Wenn das Steuerelement keine ImageList hat, werden weder Symbole angezeigt noch Speicher für so eins reserviert.</p>
+      <p id="Select"><strong>Select</strong>: Wählt das Element aus. Da jeweils nur ein einziges Element ausgewählt sein kann, wird jedes zuvor ausgewählte Element automatisch abgewählt. Darüber hinaus wird jedes Oberelement des neu ausgewählten Elements aufgeklappt, falls erforderlich. Mit <a href="#GetSelection">TV.GetSelection</a> kann die aktuelle Auswahl herausgefunden werden.</p>
+      <p><strong>Sort</strong>: Bei <a href="#Modify">TV.Modify</a> wird diese Option die Unterelemente des angegebenen Elements in alphabetischer Reihenfolge sortieren. Mit <code>TV.Modify(0, "Sort")</code> können stattdessen alle Top-Level-Elemente sortiert werden. Wenn es keine Unterelemente gibt, wird eine 0 anstelle der ID des modifizierten Elements zurückgegeben.</p>
+      <p><strong>Vis</strong>: Sorgt dafür, dass das Element durch Scrollen der TreeView und/oder Aufklappen seiner Oberelemente sichtbar bleibt, falls erforderlich.</p>
+      <p><strong>VisFirst</strong>: Das gleiche wie oben, außer dass die TreeView zusätzlich gescrollt wird, so dass das Element ganz oben erscheint, wenn möglich. Diese Option ist in Verbindung mit <a href="#Modify">TV.Modify</a> in der Regel effektiver als mit <a href="#Add">TV.Add</a>.</p>
     </dd>
   </dl>
   <p>&nbsp;Hinweis: Beim Hinzufügen von sehr vielen Elementen kann man die Performance verbessern, indem man <code>TV.Opt("-Redraw")</code> vor der Operation und <code>TV.Opt("+Redraw")</code> nach der Operation verwendet.</p>
@@ -104,11 +113,20 @@ MeinTree_Edit(TV, Element)
   <pre class="Syntax">AktuelleElementID := TV.<span class="func">Modify</span>(ElementID <span class="optional">, Optionen, NeuerName</span>)</pre>
   <dl>
     <dt>ElementID</dt>
-    <dd>Ein Element, das modifiziert werden soll. Sollte nur dieser Parameter vorhanden sein, wird das Element <a href="#Select">ausgewählt</a>.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Ein Element, das modifiziert werden soll. Sollte nur dieser Parameter vorhanden sein, wird das Element <a href="#Select">ausgewählt</a>.</p>
+    </dd>
     <dt>Optionen</dt>
-    <dd>Siehe obere Liste.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Siehe obere Liste.</p>
+    </dd>
     <dt>NeuerName</dt>
-    <dd>Der neue Name des Elements. Fehlt dieser Parameter, bleibt der aktuelle Name unverändert.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Der neue Name des Elements. Fehlt dieser Parameter, bleibt der aktuelle Name unverändert.</p>
+    </dd>
   </dl>
 </div>
 <div class="methodShort" id="Delete">
@@ -117,7 +135,10 @@ MeinTree_Edit(TV, Element)
   <pre class="Syntax">TV.<span class="func">Delete</span>(<span class="optional">ElementID</span>)</pre>
   <dl>
     <dt>ElementID</dt>
-    <dd>Ein Element, das gelöscht werden soll. Fehlt dieser Parameter, werden <strong>alle</strong> Elemente in der TreeView gelöscht.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Ein Element, das gelöscht werden soll. Fehlt dieser Parameter, werden <strong>alle</strong> Elemente in der TreeView gelöscht.</p>
+    </dd>
   </dl>
 </div>
 <h3 id="bifGet">Daten aus einer TreeView abrufen</h3>
@@ -138,7 +159,10 @@ MeinTree_Edit(TV, Element)
   <pre class="Syntax">OberelementID := TV.<span class="func">GetParent</span>(ElementID)</pre>
   <dl>
     <dt>ElementID</dt>
-    <dd>&nbsp;Ein Element, das überprüft werden soll. Top-Level-Elemente haben keine Oberelemente und geben daher eine 0 zurück.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Ein Element, das überprüft werden soll. Top-Level-Elemente haben keine Oberelemente und geben daher eine 0 zurück.</p>
+    </dd>
   </dl>
 </div>
 <div class="methodShort" id="GetChild">
@@ -147,7 +171,10 @@ MeinTree_Edit(TV, Element)
   <pre class="Syntax">ErsteUnterelementID := TV.<span class="func">GetChild</span>(OberelementID)</pre>
   <dl>
     <dt>OberelementID</dt>
-    <dd>Ein Oberelement, das überprüft werden soll.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Ein Oberelement, das überprüft werden soll.</p>
+    </dd>
   </dl>
 </div>
 <div class="methodShort" id="GetPrev">
@@ -156,7 +183,10 @@ MeinTree_Edit(TV, Element)
   <pre class="Syntax">VorherigeElementID := TV.<span class="func">GetPrev</span>(ElementID)</pre>
   <dl>
     <dt>ElementID</dt>
-    <dd>Ein Element, das überprüft werden soll.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Ein Element, das überprüft werden soll.</p>
+    </dd>
   </dl>
 </div>
 <div class="methodShort" id="GetNext">
@@ -165,9 +195,15 @@ MeinTree_Edit(TV, Element)
   <pre class="Syntax">NächsteElementID := TV.<span class="func">GetNext</span>(<span class="optional">ElementID := 0, ElementTyp := ""</span>)</pre>
   <dl>
     <dt>ElementID</dt>
-    <dd>Ein Element, das überprüft werden soll. Wenn dieser Parameter eine 0 ist oder fehlt, wird die ID-Nummer des ersten/obersten Elements in der TreeView zurückgegeben.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Ein Element, das überprüft werden soll. Wenn dieser Parameter eine 0 ist oder fehlt, wird die ID-Nummer des ersten/obersten Elements in der TreeView zurückgegeben.</p>
+    </dd>
     <dt>ElementTyp</dt>
-    <dd>Fehlt dieser Parameter, wird die ID-Nummer des Nachbarelements, das sich unter dem angegebenen Element befindet, zurückgegeben. Ansonsten kann "Full" oder "F" angegeben werden, um das nächste Element ohne Rücksicht auf dessen Verhältnis zum angegebenen Element abzurufen; oder "Check", "Checked" oder "C", um nur das Element zu ermitteln, das ein Häkchen hat.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Fehlt dieser Parameter, wird die ID-Nummer des Nachbarelements, das sich unter dem angegebenen Element befindet, zurückgegeben. Ansonsten kann "Full" oder "F" angegeben werden, um das nächste Element ohne Rücksicht auf dessen Verhältnis zum angegebenen Element abzurufen; oder "Check", "Checked" oder "C", um nur das Element zu ermitteln, das ein Häkchen hat.</p>
+    </dd>
   </dl>
   &nbsp;Das folgende Beispiel durchläuft die gesamte Baumstruktur, Element für Element:<pre>ElementID := 0  <em>; Beginnt die Suche beim ersten Element.</em>
 Loop
@@ -185,7 +221,10 @@ Loop
   <pre class="Syntax">ErmittelterText := TV.<span class="func">GetText</span>(ElementID)</pre>
   <dl>
     <dt>ElementID</dt>
-    <dd>Die ID-Nummer des Elements, dessen Text abgerufen werden soll. <em>ErmittelterText</em> hat eine maximale Länge von 8191.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Die ID-Nummer des Elements, dessen Text abgerufen werden soll. <em>ErmittelterText</em> hat eine maximale Länge von 8191.</p>
+    </dd>
   </dl>
 </div>
 <div class="methodShort" id="Get">
@@ -194,9 +233,15 @@ Loop
   <pre class="Syntax">AktuelleElementID := TV.<span class="func">Get</span>(ElementID, Attribut)</pre>
   <dl>
     <dt>ElementID</dt>
-    <dd>Ein Element, das überprüft werden soll.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Ein Element, das überprüft werden soll.</p>
+    </dd>
     <dt>Attribut</dt>
-    <dd>Geben Sie "E", "Expand" oder "Expanded" an, um festzustellen, ob das Element gerade <a href="#Expand">aufgeklappt</a> ist (also wenn seine Unterelemente angezeigt werden); oder "C", "Check" oder "Checked", um festzustellen, ob das Element ein <a href="#Check">Häkchen</a> hat; oder "B" oder "Bold", um festzustellen, ob das Element gerade in <a href="#Bold">fetter</a> Schrift dargestellt wird.</dd>
+    <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Geben Sie "E", "Expand" oder "Expanded" an, um festzustellen, ob das Element gerade <a href="#Expand">aufgeklappt</a> ist (also wenn seine Unterelemente angezeigt werden); oder "C", "Check" oder "Checked", um festzustellen, ob das Element ein <a href="#Check">Häkchen</a> hat; oder "B" oder "Bold", um festzustellen, ob das Element gerade in <a href="#Bold">fetter</a> Schrift dargestellt wird.</p>
+    </dd>
   </dl>
   <p><strong>Tipp</strong>: Da eine IF-Anweisung jeden Wert ungleich 0 als "wahr" ansieht, sind <code>if TV.Get(ElementID, "Checked") = ElementID</code> und <code>if TV.Get(ElementID, "Checked")</code> funktionsgemäß identisch.</p>
 </div>
@@ -207,9 +252,15 @@ Loop
   <pre class="Syntax">VorherigeImageListID := TV.<span class="func">SetImageList</span>(ImageListID <span class="optional">, Symboltyp</span>)</pre>
     <dl>
       <dt>ImageListID</dt>
-      <dd>Die zurückgegebene Nummer von <a href="ListView.htm#IL_Create">IL_Create</a>.</dd>
+      <dd>
+        <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+        <p>Die zurückgegebene Nummer von <a href="ListView.htm#IL_Create">IL_Create</a>.</p>
+      </dd>
       <dt>Symboltyp</dt>
-      <dd>Fehlt dieser Parameter, gilt standardmäßig 0. Verwenden Sie ansonsten eine 2 für Statussymbole (Statussymbole werden nur via <a href="SendMessage.htm">SendMessage</a> unterstützt).</dd>
+      <dd>
+        <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+        <p>Fehlt dieser Parameter, gilt standardmäßig 0. Verwenden Sie ansonsten eine 2 für Statussymbole (Statussymbole werden nur via <a href="SendMessage.htm">SendMessage</a> unterstützt).</p>
+      </dd>
     </dl>
     <p>
       Jede nicht mehr benötigte ImageList kann mit <a href="ListView.htm#IL_Destroy">IL_Destroy</a> zerstört werden.</p>

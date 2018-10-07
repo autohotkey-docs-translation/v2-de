@@ -53,7 +53,8 @@ tocData = [
     ["EnvGet","commands/EnvGet.htm"],
     ["EnvSet","commands/EnvSet.htm"],
     ["OnClipboardChange","commands/OnClipboardChange.htm"],
-    ["SysGet","commands/SysGet.htm"]
+    ["SysGet","commands/SysGet.htm"],
+    ["SysGetIPAddresses","commands/SysGetIPAddresses.htm"],
   ]],
   ["Externe Bibliotheken","",
   [
@@ -289,7 +290,7 @@ tocData = [
     ["Funktionsobjekte","objects/Functor.htm"],
     ["Gui-Objekt","objects/Gui.htm"],
     ["GuiControl-Objekt","objects/GuiControl.htm"],
-    ["RegExMatch-Objekt","commands/RegExMatch.htm#MatchObject"],
+    ["RegExMatch-Objekt","commands/RegExMatch.htm#MatchObject"]
   ]],
   ["Prozess","commands/Process.htm",
   [
@@ -306,6 +307,7 @@ tocData = [
   [
     ["Loop Reg","commands/LoopReg.htm"],
     ["RegDelete","commands/RegDelete.htm"],
+    ["RegDeleteKey","commands/RegDeleteKey.htm"],
     ["RegRead","commands/RegRead.htm"],
     ["RegWrite","commands/RegWrite.htm"],
     ["SetRegView","commands/SetRegView.htm"]
@@ -321,7 +323,7 @@ tocData = [
     ["SoundBeep","commands/SoundBeep.htm"],
     ["SoundGet","commands/SoundGet.htm"],
     ["SoundPlay","commands/SoundPlay.htm"],
-    ["SoundSet","commands/SoundSet.htm"],
+    ["SoundSet","commands/SoundSet.htm"]
   ]],
   ["Zeichenkette","",
   [
@@ -360,6 +362,7 @@ tocData = [
       ["ControlFocus","commands/ControlFocus.htm"],
       ["ControlGetChecked","commands/ControlGetChecked.htm"],
       ["ControlGetChoice","commands/ControlGetChoice.htm"],
+      ["ControlGetClassNN","commands/ControlGetClassNN.htm"],
       ["ControlGetCurrentCol","commands/ControlGetCurrentCol.htm"],
       ["ControlGetCurrentLine","commands/ControlGetCurrentLine.htm"],
       ["ControlGetEnabled","commands/ControlGetEnabled.htm"],

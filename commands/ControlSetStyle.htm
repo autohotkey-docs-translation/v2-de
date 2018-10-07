@@ -16,13 +16,14 @@
 
 <p>Ändert den Style oder erweiterten Style eines bestimmten Steuerelements.</p>
 
-<pre class="Syntax"><span class="func">ControlSetStyle</span> Wert <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>
-<span class="func">ControlSetExStyle</span> Wert <span class="optional">, Steuerelement, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<pre class="Syntax"><span class="func">ControlSetStyle</span> Wert, Steuerelement <span class="optional">, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>
+<span class="func">ControlSetExStyle</span> Wert, Steuerelement <span class="optional">, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
 
 <h2>Parameter</h2>
 <dl>
     <dt>Wert</dt>
     <dd>
+        <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
         <p>Verwenden Sie einen positiven Integer, um den Style des Fensters komplett zu überschreiben; also um den Style auf den angegebenen <em>Wert</em> zu setzen.</p>
         <p>Mit einem Pluszeichen (+), Minuszeichen (-) oder Zirkumflex (^) können Styles als numerische Zeichenketten jeweils hinzugefügt, entfernt oder umgeschaltet werden. Der neue Style-Wert wird wie folgt berechnet (<em>AktuellerStyle</em> kann mit <a href="ControlGetStyle.htm">ControlGetStyle/ControlGetExStyle</a> oder <a href="WinGetStyle.htm">WinGetStyle/WinGetExStyle</a> abgerufen werden):</p>
         <table class="info">
@@ -56,17 +57,29 @@
     </dd>
     <dt>Steuerelement</dt>
     <dd>
-        <p>Kann entweder das ClassNN (Klassenname und Instanznummer des Steuerelements) oder der Text des Steuerelements sein, das beides mit Windows Spy ermittelt werden kann. Verwendet man Text, ist das Übereinstimmungsverhalten abhängig von <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>. Wenn dieser Parameter leer ist, wird das oberste Steuerelement des Fensters benutzt.</p>
-        <p>Um ein Steuerelement via HWND (Windows Handle) anzusteuern, lässt man den <em>Steuerelement</em>-Parameter leer und übergibt <code>"ahk_id " SteuerelementHwnd</code> als <em>Fenstertitel</em>-Parameter (funktioniert auch bei versteckten Steuerelementen, selbst wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> ausgeschaltet ist). Das HWND eines Steuerelements wird üblicherweise per <a href="ControlGetHwnd.htm">ControlGetHwnd</a>, <a href="MouseGetPos.htm">MouseGetPos</a> oder <a href="DllCall.htm">DllCall</a> abgerufen.</p>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
+        <p>ClassNN, Text oder HWND des Steuerelements, oder ein Objekt mit einer <code>Hwnd</code>-Eigenschaft. Einzelheiten finden Sie unter <a href="Control.htm#Parameter">Der Steuerelement-Parameter</a>.</p>
     </dd>
     <dt>Fenstertitel</dt>
-    <dd>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie auf der Seite <a href="../misc/WinTitle.htm">Fenstertitel-Parameter &amp; Zuletzt Gefundenes Fenster</a>.</dd>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie auf der Seite <a href="../misc/WinTitle.htm">Fenstertitel-Parameter &amp; Zuletzt Gefundenes Fenster</a>.</p>
+    </dd>
     <dt>Fenstertext</dt>
-    <dd>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</dd>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
+    </dd>
     <dt>Titelausnahme</dt>
-    <dd>Ignoriert Fenster, deren Titel diesen Wert enthalten.</dd>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p>
+    </dd>
     <dt>Textausnahme</dt>
-    <dd>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</dd>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p>
+    </dd>
 </dl>
 
 <h2>Rückgabewert</h2>
@@ -80,7 +93,6 @@
 <h2>Bemerkungen</h2>
 <p>Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles.</p>
 <p>Die Änderungen einiger Styles werden erst wirksam, wenn das komplette Fenster via <a href="WinRedraw.htm">WinRedraw</a> neu gezeichnet wurde.</p>
-<p><a href="MouseGetPos.htm">MouseGetPos</a> kann genutzt werden, um das ClassNN oder HWND des Steuerelements unterhalb des Mauszeigers zu ermitteln.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2>Siehe auch</h2>

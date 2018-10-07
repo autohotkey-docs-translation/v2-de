@@ -9,6 +9,11 @@
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
 <script src="../static/content.js" type="text/javascript"></script>
 <script src="../static/ga.js" type="text/javascript"></script>
+<style>
+td.nowrap {
+  white-space: nowrap
+}
+</style>
 </head>
 <body>
 
@@ -21,11 +26,16 @@
 <dl>
 
   <dt>KeyName</dt>
-  <dd><p>Der vollständige Name des Registry-Keys.</p>
-  <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um eine <a href="#remote">Remote-Registry</a> anzusteuern, setzt man vor dem Rootkey den Computernamen und einen Schrägstrich. Zum Beispiel: \\workstation01\HKEY_LOCAL_MACHINE</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Der vollständige Name des Registry-Keys.</p>
+    <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um eine <a href="#remote">Remote-Registry</a> anzusteuern, setzt man vor dem Rootkey den Computernamen und einen Schrägstrich. Zum Beispiel: \\workstation01\HKEY_LOCAL_MACHINE</p>
+  </dd>
   
   <dt>Modus</dt>
-  <dd><p>Keine oder mehrere der folgenden Buchstaben:</p>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Keine oder mehrere der folgenden Buchstaben:</p>
     <p><code>K</code>: Keys einbeziehen.<br>
     <code>V</code>: Werte einbeziehen. Werte werden auch einbezogen, wenn K und V fehlen.<br>
     <code>R</code>: Subkeys werden einbezogen. Wenn R fehlt, werden Keys und Werte innerhalb der Subkeys von <em>Key</em> nicht mit einbezogen.</p>
@@ -35,7 +45,7 @@
 </dl>
 
 <h2>Bemerkungen</h2>
-<p>Eine Registry-Schleife ist nützlich, wenn Sie mehrere Werte und Subkeys einzeln abarbeiten wollen. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> innerhalb der Schleife verwendet werden kann, ohne sie unterbrechen zu müssen.</p>
+<p>Eine Registry-Schleife ist nützlich, wenn Sie mehrere Werte und Subkeys einzeln abarbeiten wollen. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> und <a href="RegDeleteKey.htm">RegDeleteKey</a> innerhalb der Schleife verwendet werden kann, ohne sie unterbrechen zu müssen.</p>
 <p id="vars">Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben:</p>
 <table class="info">
   <tr>
@@ -58,16 +68,20 @@
 <p>Innerhalb einer Registry-Schleife können bei folgenden Funktionen die Parameter weggelassen werden, um zu kennzeichnen, dass der aktuell ermittelte Eintrag abgearbeitet werden soll:</p>
 <table class="info">
   <tr>
-    <td style="width:21%"><a href="RegRead.htm">RegRead</a>, AusgabeVar</td>
-    <td>Liest den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird Errorlevel auf 1 gesetzt und <em>AusgabeVar</em> leer gemacht.</td>
+    <td class="nowrap"><code>Wert := <a href="RegRead.htm">RegRead</a>()</code></td>
+    <td>Liest den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird Errorlevel auf 1 gesetzt und eine leere Zeichenkette zurückgegeben.</td>
   </tr>
   <tr>
-    <td><a href="RegWrite.htm">RegWrite</a> [, Wert]</td>
+    <td class="nowrap"><code><a href="RegWrite.htm">RegWrite</a> Wert</code><br><code><a href="RegWrite.htm">RegWrite</a></code></td>
     <td>Schreibt in den aktuellen Eintrag. Fehlt <em>Wert</em>, wird der Eintrag je nach seinem Typ auf 0 gesetzt oder leer gemacht. Wenn der aktuelle Eintrag ein Key ist, wird ErrorLevel auf 1 gesetzt und nichts weiter passieren.</td>
   </tr>
   <tr>
-    <td><a href="RegDelete.htm">RegDelete</a></td>
-    <td>Löscht den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird er gelöscht, zusammen mit seinen Subkeys und Werten.</td>
+    <td class="nowrap"><code><a href="RegDelete.htm">RegDelete</a></code></td>
+    <td>Löscht den aktuellen Eintrag, wenn er ein Wert ist. Wenn der aktuelle Eintrag ein Key ist, wird sein Wert stattdessen gelöscht.</td>
+  </tr>
+  <tr>
+    <td class="nowrap"><code><a href="RegDeleteKey.htm">RegDeleteKey</a></code></td>
+    <td>Löscht den aktuellen Eintrag, wenn er ein Key ist. Wenn der aktuelle Eintrag ein Wert ist, wird der Key, der diesen Wert <em>enthält</em>, gelöscht, inklusive aller Subkeys und Werte.</td>
   </tr>
 </table>
 <p id="remote">Beim Zugriff auf eine Remote-Registry (über den <em>KeyName</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
@@ -81,7 +95,7 @@
 </ul>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 <h2>Siehe auch</h2>
-<p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="SetRegView.htm">SetRegView</a></p>
+<p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a>, <a href="SetRegView.htm">SetRegView</a></p>
 
 <h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Beispiel: Löscht den Link-Verlauf des Internet Explorer.</em>

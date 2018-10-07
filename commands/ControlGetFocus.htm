@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ControlGetFocus - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die ControlGetFocus-Funktion ermittelt, welches Steuerelement des Zielfensters den Eingabefokus hat, falls vorhanden." />
+<meta name="description" content="Die ControlGetFocus-Funktion ermittelt, welches Steuerelement des Zielfensters den Tastaturfokus hat, falls vorhanden." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -14,46 +14,56 @@
 
 <h1>ControlGetFocus</h1>
 
-<p>Ermittelt, welches Steuerelement des Zielfensters den Eingabefokus hat, falls vorhanden.</p>
+<p>Ermittelt, welches Steuerelement des Zielfensters den Tastaturfokus hat, falls vorhanden.</p>
 
-<pre class="Syntax">ClassNN := <span class="func">ControlGetFocus</span>(<span class="optional">Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
+<pre class="Syntax">HWND := <span class="func">ControlGetFocus</span>(<span class="optional">Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
 <h2>Parameter</h2>
 <dl>
 
   <dt>Fenstertitel</dt>
-  <dd><p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie auf der Seite <a href="../misc/WinTitle.htm">Fenstertitel-Parameter &amp; Zuletzt Gefundenes Fenster</a>.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie auf der Seite <a href="../misc/WinTitle.htm">Fenstertitel-Parameter &amp; Zuletzt Gefundenes Fenster</a>.</p>
+  </dd>
 
   <dt>Fenstertext</dt>
-  <dd><p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem mitgelieferten Windows Spy Tool aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
+  </dd>
 
   <dt>Titelausnahme</dt>
-  <dd><p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Ignoriert Fenster, deren Titel diesen Wert enthalten.</p>
+  </dd>
 
   <dt>Textausnahme</dt>
-  <dd><p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Ignoriert Fenster, deren Textelemente diesen Wert enthalten.</p>
+  </dd>
 
 </dl>
 
 <h2>Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt das ClassNN des Steuerelements zurück; also den Klassennamen des Steuerelements, gefolgt von dessen Reihenfolgennummer innerhalb des übergeordneten Fensters, z. B. Button12.</p>
-<p>Wenn ein Problem auftrat oder wenn keines der Steuerelemente im Zielfenster den Tastaturfokus hat, ist der Rückgabewert leer.</p>
+<p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt den <a href="../misc/WinTitle.htm#ahk_id">Window Handle (HWND)</a> des fokussierten Steuerelements zurück.</p>
+<p>Wenn ein Problem auftrat oder wenn keines der Steuerelemente im Zielfenster den Tastaturfokus hat, ist der Rückgabewert eine 0.</p>
 
 <h2>ErrorLevel</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Tastaturfokus nicht ermittelt werden konnte, ansonsten auf 0. Ein ErrorLevel von 1 bedeutet in der Regel, dass das Fenster nicht existiert.</p>
 
 <h2>Bemerkungen</h2>
 <p>Das abgerufene Steuerelement ist auch das Steuerelement, das den Tastaturfokus hat; solche Steuerelemente sind die Anlaufstelle für jegliche Tastatureingaben des Benutzers.</p>
-<p>Das Fenster muss aktiv sein, damit ein Steuerelement fokussiert sein kann, aber auch in einem aktiven Fenster kann manchmal ein fokussiertes Steuerelement fehlen. Wenn das Zielfenster gefunden wurde, aber keines seiner Steuerelemente den Tastaturfokus hat, wird ErrorLevel auf 0 gesetzt und der Rückgabewert leer gemacht.</p>
+<p>Das Fenster muss aktiv sein, damit ein Steuerelement fokussiert sein kann, aber auch in einem aktiven Fenster kann manchmal ein fokussiertes Steuerelement fehlen. Wenn das Zielfenster gefunden wurde, aber keines seiner Steuerelemente den Tastaturfokus hat, ist sowohl ErrorLevel als auch der Rückgabewert eine 0.</p>
 <p>Fenstertitel und -texte unterscheiden zwischen Groß- und Kleinschreibung. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 <h2>Siehe auch</h2>
 <p><a href="ControlFocus.htm">ControlFocus</a>, <a href="Control.htm">Control-Funktionen</a></p>
 <h2>Beispiel</h2>
-<pre class="NoIndent">Fokussiert := ControlGetFocus("Unbenannt - Editor")
-if ErrorLevel
-    MsgBox "Das Zielfenster existiert nicht."
-else
-    MsgBox "Steuerelement mit Tastaturfokus = " Fokussiert</pre>
+<pre class="NoIndent">FokusHwnd := ControlGetFocus("A")
+FokusClassNN := ControlGetClassNN(FokusHwnd)
+MsgBox 'Steuerelement mit Fokus = {Hwnd: ' FokusHwnd ', ClassNN: "' FokusClassNN '"}'</pre>
 
 </body>
 </html>

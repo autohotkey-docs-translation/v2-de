@@ -23,33 +23,51 @@
 <dl>
 
   <dt>Zeichenkette</dt>
-  <dd><p>Eine beliebige Zeichenkette. Zahlen werden auch akzeptiert.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Eine beliebige Zeichenkette. Wenn eine Zahl angegeben ist, wird sie automatisch in eine Zeichenkette umgewandelt.</p>
+    <p><em>Zeichenkette</em> wird standardmäßig in der <a href="../Concepts.htm#string-encoding">nativen Codierung</a> vermutet.</p>
+  </dd>
 
   <dt>Adresse</dt>
-  <dd><p>Die Adresse, auf die die Zeichenkette geschrieben werden soll.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die Adresse, auf die die Zeichenkette geschrieben werden soll.</p>
+  </dd>
 
   <dt>Länge</dt>
-  <dd><p>Die maximale Anzahl der zu schreibenden Zeichen, einschließlich des Null-Terminators, falls notwendig.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die maximale Anzahl der zu schreibenden Zeichen, einschließlich des Null-Terminators, falls notwendig.</p>
+    <p>Wenn <em>Länge</em> 0 oder kleiner als die nach der Konvertierung voraussichtliche Länge (oder die Länge der Quellzeichenkette, wenn die Konvertierung nicht erforderlich ist) ist, wird eine Ausnahme ausgelöst.</p>
+  </dd>
 
   <dt>Codierung</dt>
-  <dd><p>Die Zielcodierung; zum Beispiel: <code>"UTF-8"</code>, <code>"UTF-16"</code> oder <code>"CP936"</code>. Sind <em>Adresse</em> und <em>Länge</em> nicht angegeben, müssen numerische Identifikatoren mit "CP" vorangestellt werden. Geben Sie eine leere Zeichenkette oder <code>"CP0"</code> an, um den Standard-ANSI-Zeichensatz des Systems zu nutzen.</p></dd>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Die Zielcodierung; zum Beispiel: <code>"UTF-8"</code>, <code>"UTF-16"</code> oder <code>"CP936"</code>. Sind <em>Adresse</em> und <em>Länge</em> nicht angegeben, müssen numerische Identifikatoren mit "CP" vorangestellt werden. Geben Sie eine leere Zeichenkette oder <code>"CP0"</code> an, um den Standard-ANSI-Zeichensatz des Systems zu nutzen.</p>
+  </dd>
 
 </dl>
 
 <h2>Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Diese Funktion gibt die Anzahl der geschriebenen Zeichen zurück. Wenn keine <i>Adresse</i> angegeben wurde, wird die erforderliche Puffergröße in Zeichen zurückgegeben. Wenn ein Fehler aufgetreten ist, wird 0 zurückgegeben. Wenn <em>Länge</em> kleiner als die Länge der umgewandelten Zeichenkette ist, scheitert die Funktion und gibt 0 zurück. Wenn <em>Länge</em> gleich die Länge der umgewandelten Zeichenkette ist, wird die Zeichenkette nicht null-terminiert; ansonsten beinhaltet die zurückgegebene Anzahl den Null-Terminator.</p>
+<p>Diese Funktion gibt die Anzahl der geschriebenen Zeichen zurück. Wenn keine <i>Adresse</i> angegeben wurde, wird die erforderliche Puffergröße in Zeichen zurückgegeben. Wenn <em>Länge</em> gleich die Länge der umgewandelten Zeichenkette ist, ist die Zeichenkette nicht null-terminiert; in jedem anderen Fall wird der Null-Terminator dazugezählt.</p>
+
+<h2>Fehlerbehandlung</h2>
+<p>Es wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn ungültige Parameter erkannt werden oder die Konvertierung nicht durchgeführt werden kann.</p>
 
 <h2>Bemerkungen</h2>
-<p>Beachten Sie, dass der <i>Zeichenkette</i>-Parameter immer in der <a href="../Compat.htm#Format">nativen Codierung</a> von der aktuell verwendeten Version von AutoHotkey ist, wohingegen <i>Codierung</i> die Codierung der Zeichenkette spezifiziert, die auf die angegebene <i>Adresse</i> geschrieben wird. Wenn keine <em>Codierung</em> angegeben ist, wird die Zeichenkette gemessen oder kopiert, ohne dass eine Umwandlung stattfindet.</p>
+<p>Beachten Sie, dass der <i>Zeichenkette</i>-Parameter immer in der <a href="../Concepts.htm#string-encoding">nativen Codierung</a> von der aktuell verwendeten Version von AutoHotkey ist, wohingegen <i>Codierung</i> die Codierung der Zeichenkette spezifiziert, die auf die angegebene <i>Adresse</i> geschrieben wird. Wenn keine <em>Codierung</em> angegeben ist, wird die Zeichenkette gemessen oder kopiert, ohne dass eine Umwandlung stattfindet.</p>
 <p>Wenn eine Umwandlung zwischen den Zeichensätzen notwendig ist, könnte die erforderliche Puffergröße von der Größe der Quellzeichenkette abweichen.</p>
 <p>Es ist möglich, <em>Länge</em> oder <em>Codierung</em> direkt nach <em>Adresse</em> anzugeben, aber in diesem Fall darf <em>Codierung</em> nicht numerisch sein:</p>
-<pre>StrPut Zkette, Adresse, "cp0"     <em>; OK</em>
-StrPut Zkette, Adresse, Länge, 0 <em>; OK</em>
-StrPut Zkette, Adresse, 0         <em>; Fehler</em></pre>
+<pre>
+StrPut Zkette, Adresse, "cp0"  <em>; Zeichensatz 0, unbestimmte Puffergröße</em>
+StrPut Zkette, Adresse, n, 0   <em>; Maximal n Zeichen, Zeichensatz 0</em>
+StrPut Zkette, Adresse, 0      <em>; Nicht unterstützt</em></pre>
 
 <h2>Siehe auch</h2>
-<p><a href="StrGet.htm">StrGet</a>, <a href="../Compat.htm">Skript-Kompatibilität</a>, <a href="FileEncoding.htm">FileEncoding</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a></p>
+<p><a href="../Concepts.htm#string-encoding">Zeichenkettencodierung</a>, <a href="StrGet.htm">StrGet</a>, <a href="../Compat.htm">Skript-Kompatibilität</a>, <a href="FileEncoding.htm">FileEncoding</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a></p>
 
 <h2>Beispiele</h2>
 

@@ -21,20 +21,29 @@
 <dl>
 
   <dt>[DllDatei\]Funktion</dt>
-  <dd><p>Der Name einer DLL- oder EXE-Datei, gefolgt von einem umgekehrten Schrägstrich und dem Namen der Funktion. Zum Beispiel: <code>"MeineDLL\MeineFunktion"</code> (standardmäßig gilt die Dateierweiterung ".dll", wenn sie weggelassen wird). Wenn kein absoluter Pfad angegeben ist, wird <em>DllDatei</em> in einem der Pfade aus der PATH-Umgebungsvariable oder im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
+  <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+      <p>Der Name einer DLL- oder EXE-Datei, gefolgt von einem umgekehrten Schrägstrich und dem Namen der Funktion. Zum Beispiel: <code>"MeineDLL\MeineFunktion"</code> (standardmäßig gilt die Dateierweiterung ".dll", wenn sie weggelassen wird). Wenn kein absoluter Pfad angegeben ist, wird <em>DllDatei</em> in einem der Pfade aus der PATH-Umgebungsvariable oder im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
       <p id="std"><em>DllDatei</em> kann weggelassen werden, wenn eine Funktion aus der User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll aufgerufen wird. Zum Beispiel würde <code>"User32\IsWindowVisible"</code> das gleiche Ergebnis liefern wie <code>"IsWindowVisible"</code>.</p>
       <p>Wenn eine Funktion nicht über den angegebenen Namen gefunden werden kann, wird automatisch ein W (Unicode) angefügt. Zum Beispiel wäre <code>"MessageBox"</code>  das gleiche wie <code>"MessageBoxW"</code>.</p>
       <p>Um die Performance beim <em>wiederholenden</em> Aufrufen einer DLL-Datei drastisch zu verbessern, <a href="#load">lädt man sie im Voraus</a>.</p>
-      <p>Dieser Parameter kann auch ein reiner Integer sein, der als Adresse einer Funktion, die aufgerufen werden soll, interpretiert wird. Quellen solcher Adressen sind unter anderem <a href="#COM">COM</a> und <a href="CallbackCreate.htm">CallbackCreate</a>.</p></dd>
+      <p>Dieser Parameter kann auch ein reiner Integer sein, der als Adresse einer Funktion, die aufgerufen werden soll, interpretiert wird. Quellen solcher Adressen sind unter anderem <a href="#COM">COM</a> und <a href="CallbackCreate.htm">CallbackCreate</a>.</p>
+  </dd>
 
   <dt>Typ1, Arg1</dt>
-  <dd><p>Jedes dieser Paare repräsentiert einen einzelnen Parameter, der an die Funktion übergeben werden soll. Die Anzahl der Paare ist unbegrenzt. Geben Sie für <em>Typ</em> einen Typ aus der unteren <a href="#types">Typentabelle</a> an. Geben Sie für <em>Arg</em> einen Wert an, der an die Funktion übergeben werden soll.</p></dd>
+  <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Jedes dieser Paare repräsentiert einen einzelnen Parameter, der an die Funktion übergeben werden soll. Die Anzahl der Paare ist unbegrenzt. Geben Sie für <em>Typ</em> einen Typ aus der unteren <a href="#types">Typentabelle</a> an. Geben Sie für <em>Arg</em> einen Wert an, der an die Funktion übergeben werden soll.</p>
+  </dd>
 
   <dt>Cdecl Rückgabetyp</dt>
-  <dd><p id="cdecl">Das Wort <em>Cdecl</em> wird normalerweise weggelassen, weil die meisten Funktionen auf die Standard-Aufrufkonvention statt C-Aufrufkonvention zurückgreifen (Funktionen wie wsprintf, die eine unterschiedliche Anzahl von Argumenten akzeptieren, sind so eine Ausnahme). Beachten Sie, dass die meisten objektorientierten C++-Funktionen die <i>thiscall</i>-Konvention nutzen, die in AutoHotkey nicht unterstützt wird.</p>
+  <dd>
+      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p id="cdecl">Das Wort <em>Cdecl</em> wird normalerweise weggelassen, weil die meisten Funktionen auf die Standard-Aufrufkonvention statt C-Aufrufkonvention zurückgreifen (Funktionen wie wsprintf, die eine unterschiedliche Anzahl von Argumenten akzeptieren, sind so eine Ausnahme). Beachten Sie, dass die meisten objektorientierten C++-Funktionen die <i>thiscall</i>-Konvention nutzen, die in AutoHotkey nicht unterstützt wird.</p>
       <p>Das Wort <em>Cdecl</em> sollte vor dem Rückgabetyp (falls vorhanden) stehen. Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Zum Beispiel: <code>"Cdecl Str"</code>.</p>
       <p>In der 64-Bit-Version von AutoHotkey kann <i>Cdecl</i> zwar angegeben werden, aber bleibt wirkungslos, weil 64-Bit-Code keine separate C-Aufrufkonvention hat.</p>
-      <p><em>Rückgabetyp</em>: Wenn die Funktion einen vorzeichenfähigen 32-Bit-Integer (Int), BOOL oder nichts zurückgibt, kann <em>Rückgabetyp</em> weggelassen werden. Ansonsten können Sie einen Argumenttyp aus der <a href="#types">Typentabelle</a> angeben. Das <a href="#asterisk">Sternchen-Suffix</a> wird ebenfalls unterstützt.</p></dd>
+      <p><em>Rückgabetyp</em>: Wenn die Funktion einen vorzeichenfähigen 32-Bit-Integer (Int), BOOL oder nichts zurückgibt, kann <em>Rückgabetyp</em> weggelassen werden. Ansonsten können Sie einen Argumenttyp aus der <a href="#types">Typentabelle</a> angeben. Das <a href="#asterisk">Sternchen-Suffix</a> wird ebenfalls unterstützt.</p>
+  </dd>
 
 </dl>
 
@@ -182,7 +191,7 @@ MsgBox "Sie haben den Button #" WelcherButton " gedrückt."</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Ersetzt das Desktop-Hintergrundbild mit der angegebenen Bitmap-Datei (.bmp).</em>
 
-DllCall("SystemParametersInfo", UInt, 0x14, UInt, 0, Str, <i>A_WinDir <strong>.</strong> "\winnt.bmp"</i>, UInt, 2)</pre>
+DllCall("SystemParametersInfo", UInt, 0x14, UInt, 0, Str, A_WinDir <strong>.</strong> "\winnt.bmp", UInt, 2)</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Ruft die API-Funktion "IsWindowVisible" auf, um herauszufinden, ob ein Fenster des Texteditors sichtbar ist.</em>
 
@@ -202,10 +211,11 @@ MsgBox Format("{:010}", 432)
 
 <pre class="NoIndent" id="QPC"><em>; Beispiel: Zeigt, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</em>
 
+DllCall("QueryPerformanceFrequency", "Int64*", freq)
 DllCall("QueryPerformanceCounter", "Int64*", CounterDavor)
 Sleep 1000
 DllCall("QueryPerformanceCounter", "Int64*", CounterDanach)
-MsgBox "Die Differenz zwischen den Zeiten beträgt " . CounterDanach - CounterDavor</pre>
+MsgBox "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - CounterDavor) / freq * 1000 " ms"</pre>
 
 <pre class="NoIndent"><em>; Beispiel: Ein Hotkey, der vorübergehend die Geschwindigkeit des Mauszeigers verringert, um eine genauere Positionierung zu ermöglichen.
 ; Halten Sie die F1-Taste gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie sie los, um die originale Geschwindigkeit wiederherzustellen.</em>
@@ -222,22 +232,18 @@ return
 
 F1 up::<strong>DllCall</strong>("SystemParametersInfo", UInt, 0x71, UInt, 0, Ptr, OrigMausTempo, UInt, 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
 
-<pre class="NoIndent"><em>; Beispiel: Überwacht das aktive Fenster und zeigt die Position der vertikalen Scrollleiste
-; im seinem fokussierten Steuerelement an (in Echzeit).</em>
+<pre class="NoIndent"><em>; Beispiel: Überwacht das fokussierte Steuerelement und zeigt die Position seiner
+; vertikalen Scrollleiste an (in Echzeit).</em>
 
 SetTimer "BeobachteScrollleiste", 100
 
 BeobachteScrollleiste()
 {
-    AktivesFenster := WinExist("A")
-    if !AktivesFenster  <em>; Kein aktives Fenster.</em>
-        return
-    FokussiertesSteuerelement := ControlGetFocus()  <em>; Alle Parameter weglassen, um das Zuletzt Gefundene Fenster zu benutzen.</em>
-    if !FokussiertesSteuerelement  <em>; Kein fokussiertes Steuerelement.</em>
+    FokusHwnd := ControlGetFocus("A")
+    if !FokusHwnd  <em>; Kein fokussiertes Steuerelement.</em>
         return
     <em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
-    UnterelementHWND := ControlGetHwnd(FokussiertesSteuerelement)
-    ToolTip(<strong>DllCall</strong>("GetScrollPos", "Ptr", UnterelementHWND, "Int", 1))  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
+    ToolTip(<strong>DllCall</strong>("GetScrollPos", "Ptr", FokusHwnd, "Int", 1))  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 }</pre>
 
 <pre class="NoIndent" id="file"><em>; Beispiel: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher.
