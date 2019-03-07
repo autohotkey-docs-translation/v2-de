@@ -159,7 +159,7 @@ tocData = [
   [
     ["DirSelect","commands/DirSelect.htm"],
     ["FileSelect","commands/FileSelect.htm"],
-    ["Gui-Steuerelementarten","commands/GuiControls.htm"],
+    ["Gui-Steuerelemente","commands/GuiControls.htm"],
     ["Gui-Objekt","objects/Gui.htm"],
     ["GuiControl-Objekt","objects/GuiControl.htm"],
     ["GuiCreate","commands/GuiCreate.htm"],
@@ -176,7 +176,7 @@ tocData = [
     ["MenuFromHandle","commands/MenuFromHandle.htm"],
     ["MsgBox","commands/MsgBox.htm"],
     ["OnMessage","commands/OnMessage.htm"],
-    ["Standard-Windows-Schriftarten","misc/FontsStandard.htm"],
+    ["Standard-Windows-Schriften","misc/FontsStandard.htm"],
     ["Styles für Fenster/Steuerelement","misc/Styles.htm"],
     ["ToolTip","commands/ToolTip.htm"],
     ["TraySetIcon","commands/TraySetIcon.htm"],

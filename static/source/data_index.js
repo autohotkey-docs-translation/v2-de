@@ -494,7 +494,7 @@ indexData = [
   ["GroupClose","commands/GroupClose.htm",2],
   ["GroupDeactivate","commands/GroupDeactivate.htm",2],
   ["Gui (ein GUI erstellen)","commands/GuiCreate.htm"],
-  ["Gui-Steuerelementarten","commands/GuiControls.htm"],
+  ["Gui-Steuerelemente","commands/GuiControls.htm"],
   ["Gui-Ereignisse","objects/GuiOnEvent.htm"],
   ["Gui-Objekt", "objects/Gui.htm"],
   ["Gui-Style-Liste","misc/Styles.htm"],

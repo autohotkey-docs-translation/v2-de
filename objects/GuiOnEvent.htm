@@ -65,8 +65,8 @@
 
 <h2 id="Threads">Threads</h2>
 <p>Jedes Ereignis-Callback wird in einem neuen <a href="../misc/Threads.htm">Thread</a> aufgerufen, daher starten Einstellungen wie <a href="../commands/SendMode.htm">SendMode</a> mit ihren Standardwerten. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
-<p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> eines GUI-<a href="../misc/Threads.htm">Thread</a>s ist zu Beginn das GUI-Fenster selbst. Dadurch können Fenster- und Steuerelementfunktionen -- z. B. <a href="../commands/WinGetStyle.htm">WinGetStyle</a>, <a href="../commands/WinSetTransparent.htm">WinSetTransparent</a>, und <a href="../commands/ControlGetFocus.htm">ControlGetFocus</a> -- ohne Fenstertitel- und Fenstertextparameter benutzt werden, sofern man das GUI-Fenster selbst bearbeiten möchte (sogar wenn es versteckt ist).</p>
-<p>Jedes Ereignis ist, sofern nicht anders angegeben, pro Objekt auf einen einzelnen Thread limitiert. Während ein Thread eines Ereignisses läuft, kann dasselbe Ereignis keine neuen Threads starten - es wird in der Regel einfach verworfen. Um das zu verhindern, fügt man <a href="../commands/Critical.htm">Critical</a> als erste Zeile in das Callback ein (beachte aber, dass andere <a href="../misc/Threads.htm">Threads</a> wie Hotkey-Ereignisse dadurch auch zwischengespeichert/aufgeschoben werden).</p>
+<p>Jedes Mal, wenn ein GUI-<a href="../misc/Threads.htm">Thread</a> gestartet wird, wird das GUI-Fenster selbst als <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenes Fenster</a> für diesen Thread festgelegt. Dadurch können bei fenster- oder steuerelementspezifischen Funktionen -- z. B. <a href="../commands/WinGetStyle.htm">WinGetStyle</a>, <a href="../commands/WinSetTransparent.htm">WinSetTransparent</a>, und <a href="../commands/ControlGetFocus.htm">ControlGetFocus</a> -- die Fenstertitel- und Fenstertext-Parameter weggelassen werden, damit diese Funktionen mit dem GUI-Fenster selbst agieren können (sogar wenn es versteckt ist).</p>
+<p>Jedes Ereignis ist, sofern nicht anders angegeben, pro Objekt auf einen einzelnen Thread limitiert. Während ein Thread eines Ereignisses läuft, kann dasselbe Ereignis keine neuen Threads starten - es wird in der Regel einfach verworfen. Um das zu verhindern, setzt man <a href="../commands/Critical.htm">Critical</a> auf die erste Zeile des Callbacks (allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a>, wie z. B. das Drücken eines Hotkeys, hinausgezögert).</p>
 
 <h2 id="Destroying_the_GUI">GUI zerstören</h2>
 <p>Wenn ein GUI zerstört wird, werden alle Ereignis-Callbacks freigegeben. Wenn demzufolge das GUI beim Senden eines Ereignisses zerstört wird, werden nachfolgende Ereignis-Callbacks nicht aufgerufen. Aus Gründen der Übersichtlichkeit sollten Callbacks <a href="#Callback_Return_Value">einen nicht-leeren Wert zurückgeben</a>, nachdem das GUI zerstört wurde.</p>
@@ -105,17 +105,17 @@
 <pre class="Syntax">Gui_<span class="func">Close</span>(GuiObj)</pre>
 <p>Standardmäßig wird das Fenster automatisch versteckt, sobald das Callback ausgeführt wurde, oder wenn keine Callbacks registriert sind. Ein Callback kann das verhindern, indem es eine 1 (oder <code>True</code>) zurückgibt; dadurch wird auch verhindert, dass die restlichen Callbacks aufgerufen werden. Das Callback kann das Fenster via <a href="Gui.htm#Cancel">Gui.Hide</a> sofort verstecken, oder das Fenster via <a href="Gui.htm#Destroy">Gui.Destroy</a> zerstören.</p>
 <p>Das folgende Beispiel zeigt, wie man eine GUI dazu bringen kann, den Benutzer zu fragen, ob das Fenster geschlossen werden soll:</p>
-<pre>MeinGui := GuiCreate()
-MeinGui.AddText("", "Drücken Sie Alt+F4 oder die X-Schaltfläche in der Titelleiste.")
-MeinGui.OnEvent("Close", "MeinGui_Close")
-MeinGui_Close(thisGui) {  <em>; Dieser Parameter ist optional.</em>
+<pre>MeineGui := GuiCreate()
+MeineGui.AddText("", "Drücken Sie Alt+F4 oder die X-Schaltfläche in der Titelleiste.")
+MeineGui.OnEvent("Close", "MeineGui_Close")
+MeineGui_Close(thisGui) {  <em>; Dieser Parameter ist optional.</em>
     if MsgBox("Wollen Sie die GUI wirklich verstecken?",, "y/n") = "No"
         return true  <em>; true = 1</em>
 }
-MeinGui.Show</pre>
+MeineGui.Show</pre>
 
 <h3 id="ContextMenu">ContextMenu</h3>
-<p>Startet immer dann, wenn der Benutzer innerhalb des Fensters (außer Titelleiste und Menüleiste) einen Rechtsklick macht. Es startet auch, wenn der Benutzer die <kbd>Menü</kbd>-Taste oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> drückt.</p>
+<p>Wird gestartet, wenn der Benutzer mit der rechten Maustaste auf eine beliebige Stelle im Fenster klickt (außer Titelleiste und Menüleiste). Es startet auch, wenn der Benutzer die <kbd>Menü</kbd>-Taste oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> drückt.</p>
 <pre class="Syntax">Gui_<span class="func">ContextMenu</span>(GuiObj, GuiCtrlObj, Element, IstRechtklick, X, Y)</pre>
 <dl><dt>GuiCtrlObj</dt><dd><p>Das <a href="GuiControl.htm">GuiControl-Objekt</a> des Steuerelements, welches das Ereignis empfangen hat (leer, wenn dies nicht der Fall ist).</p></dd>
   <dt>Element</dt><dd>
@@ -152,10 +152,10 @@ MeinGui.Show</pre>
 <h3 id="Escape">Esc</h3>
 <p>Startet, wenn der Benutzer die <kbd>Esc</kbd>-Taste drückt, während das GUI-Fenster aktiv ist.</p>
 <pre class="Syntax">Gui_<span class="func">Escape</span>(GuiObj)</pre>
-<p>Standardmäßig hat das Drücken der <kbd>Esc</kbd>-Taste keine Wirkung. Bekannte Einschränkung: Sollte die Interaktion mit dem ersten Steuerelement im Fenster deaktiviert sein (wahrscheinlich abhängig vom Typ des Steuerelements), wird das Escape-Ereignis nicht gestartet. Dieser Effekt könnte auch durch andere Umstände ausgelöst werden.</p>
+<p>Standardmäßig hat das Drücken der <kbd>Esc</kbd>-Taste keine Wirkung. Bekannte Einschränkung: Wenn die Interaktion mit dem ersten Steuerelement im Fenster deaktiviert ist (möglicherweise abhängig vom Typ des Steuerelements), wird das Escape-Ereignis nicht gestartet. Es gibt eventuell noch andere Faktoren, die diesen Effekt hervorrufen.</p>
 
 <h3 id="Size">Size</h3>
-<p>Startet, wenn das Fenster kleiner/größer gemacht, minimiert, maximiert oder wiederhergestellt wird.</p>
+<p>Wird gestartet, wenn das Fenster kleiner/größer gemacht, minimiert, maximiert oder wiederhergestellt wird.</p>
 <pre class="Syntax">Gui_<span class="func">Size</span>(GuiObj, MinMax, Breite, Höhe)</pre>
 <dl>
   <dt>MinMax</dt><dd><p>Eines der folgenden Werte:</p>
@@ -272,7 +272,7 @@ TreeView_<span class="func">ItemSelect</span>(GuiCtrlObj, Element)</pre>
 
 
 <h2 id="Other_Events">Andere Ereignisse</h2>
-<p>Andere Arten von GUI-Ereignissen können via <a href="GuiOnNotify.htm">OnNotify</a>, <a href="GuiOnCommand.htm">OnCommand</a> oder <a href="../commands/OnMessage.htm">OnMessage</a> erkannt und verarbeitet werden. Zum Beispiel könnte ein Skript eine kontextabhängige Hilfe via ToolTip anzeigen, wenn der Benutzer den Mauszeiger über bestimmte Steuerelemente im Fenster bewegt. Siehe dazu das <a href="Gui.htm#ExToolTip">GUI-ToolTip-Beispiel</a>.</p>
+<p>Andere Arten von GUI-Ereignissen können via <a href="GuiOnNotify.htm">OnNotify</a>, <a href="GuiOnCommand.htm">OnCommand</a> oder <a href="../commands/OnMessage.htm">OnMessage</a> erkannt und verarbeitet werden. Ein Skript kann beispielsweise via ToolTip eine kontextabhängige Hilfe anzeigen, wenn der Benutzer den Mauszeiger über bestimmte Steuerelemente im Fenster bewegt. Siehe dazu das <a href="Gui.htm#ExToolTip">GUI-ToolTip-Beispiel</a>.</p>
 
 
 </body>
