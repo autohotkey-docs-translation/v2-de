@@ -150,7 +150,7 @@ OnMessage(NotificationMsg, "ReceiveData")
 ; Dadurch wird verhindert, dass die Verbindung abgefragt werden muss, daher verringert sich der Ressourcenverbrauch.</em>
 FD_READ := 1     <em>; Wird empfangen, falls lesbare Daten verfügbar sind.</em>
 FD_CLOSE := 32   <em>; Wird empfangen, falls die Verbindung unterbrochen wurde.</em>
-if DllCall("Ws2_32\WSAAsyncSelect", UInt, socket, UInt, ScriptMainWindowId, UInt, NotificationMsg, Int, FD_READ|FD_CLOSE)
+if DllCall("Ws2_32\WSAAsyncSelect", "UInt", socket, "UInt", ScriptMainWindowId, "UInt", NotificationMsg, "Int", FD_READ|FD_CLOSE)
 {
     MsgBox "WSAAsyncSelect() meldet Winsock-Fehler " DllCall("Ws2_32\WSAGetLastError")
     ExitApp
@@ -164,7 +164,7 @@ ConnectToAddress(IPAddress, Port)
 ; Gibt bei Misserfolg eine -1 (INVALID_SOCKET) und bei Erfolg die Sockel-ID zurück.</em>
 {
     VarSetCapacity(wsaData, 400)
-    result := DllCall("Ws2_32\WSAStartup", UShort, 0x0002, UInt, &amp;wsaData) <em>; Winsock 2.0 (0x0002) anfordern</em>
+    result := DllCall("Ws2_32\WSAStartup", "UShort", 0x0002, "UInt", &amp;wsaData) <em>; Winsock 2.0 (0x0002) anfordern</em>
     <em>; Da WSAStartup() wahrscheinlich die erste aufgerufene Winsock-Funktion des Skripts ist,</em>
     <em>; wird ErrorLevel überprüft, ob Winsock 2.0 verfügbar ist:</em>
     if ErrorLevel
@@ -181,7 +181,7 @@ ConnectToAddress(IPAddress, Port)
     AF_INET := 2
     SOCK_STREAM := 1
     IPPROTO_TCP := 6
-    socket := DllCall("Ws2_32\socket", Int, AF_INET, Int, SOCK_STREAM, Int, IPPROTO_TCP)
+    socket := DllCall("Ws2_32\socket", "Int", AF_INET, "Int", SOCK_STREAM, "Int", IPPROTO_TCP)
     if socket = -1
     {
         MsgBox "socket() meldet Winsock-Fehler " DllCall("Ws2_32\WSAGetLastError")
@@ -192,11 +192,11 @@ ConnectToAddress(IPAddress, Port)
     SizeOfSocketAddress := 16
     VarSetCapacity(SocketAddress, SizeOfSocketAddress)
     InsertInteger(2, SocketAddress, 0, AF_INET)   <em>; sin_family</em>
-    InsertInteger(DllCall("Ws2_32\htons", UShort, Port), SocketAddress, 2, 2)   <em>; sin_port</em>
-    InsertInteger(DllCall("Ws2_32\inet_addr", AStr, IPAddress), SocketAddress, 4, 4)   <em>; sin_addr.s_addr</em>
+    InsertInteger(DllCall("Ws2_32\htons", "UShort", Port), SocketAddress, 2, 2)   <em>; sin_port</em>
+    InsertInteger(DllCall("Ws2_32\inet_addr", "AStr", IPAddress), SocketAddress, 4, 4)   <em>; sin_addr.s_addr</em>
 
     <em>; Verbindungsversuch:</em>
-    if DllCall("Ws2_32\connect", UInt, socket, UInt, &amp;SocketAddress, Int, SizeOfSocketAddress)
+    if DllCall("Ws2_32\connect", "UInt", socket, "UInt", &amp;SocketAddress, "Int", SizeOfSocketAddress)
     {
         MsgBox "connect() meldet Winsock-Fehler " DllCall("Ws2_32\WSAGetLastError") . ". Läuft WinLIRC überhaupt?"
         return -1
@@ -216,7 +216,7 @@ ReceiveData(wParam, lParam)
     ReceivedDataSize := 4096  <em>; Hoher Wert, falls viele Daten zwischengespeichert werden, weil eine Verzögerung beim Verarbeiten der vorherigen Daten auftreten kann.</em>
 
     VarSetCapacity(ReceivedData, ReceivedDataSize, 0)  <em>; Mit einer 0 im letzten Parameter wird die Zeichenkette terminiert, damit sie für recv() verwendet werden kann.</em>
-    ReceivedDataLength := DllCall("Ws2_32\recv", UInt, socket, Str, ReceivedData, Int, ReceivedDataSize, Int, 0)
+    ReceivedDataLength := DllCall("Ws2_32\recv", "UInt", socket, "Str", ReceivedData, "Int", ReceivedDataSize, "Int", 0)
     if ReceivedDataLength = 0  <em>; Die Verbindung wurde ordnungsgemäß unterbrochen, vielleicht weil WinLIRC beendet wurde.</em>
         ExitApp  <em>; Die OnExit-Subroutine wird für uns WSACleanup() aufrufen.</em>
     if ReceivedDataLength = -1
@@ -270,7 +270,7 @@ InsertInteger(pInteger, ByRef pDest, pOffset := 0, pSize := 4)
 ; wird nur die Anzahl an Bytes in pSize beginnend bei pOffset geändert.</em>
 {
     Loop pSize  <em>; Jeden Byte im Integer als unbearbeitete Binärdaten in die Struktur kopieren.</em>
-        DllCall("RtlFillMemory", UInt, &amp;pDest + pOffset + A_Index-1, UInt, 1, UChar, pInteger &gt;&gt; 8*(A_Index-1) &amp; 0xFF)
+        DllCall("RtlFillMemory", "UInt", &amp;pDest + pOffset + A_Index-1, "UInt", 1, "UChar", pInteger &gt;&gt; 8*(A_Index-1) &amp; 0xFF)
 }
 
 

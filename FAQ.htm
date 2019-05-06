@@ -18,6 +18,7 @@
 <p><strong><a href="#general-troubleshooting">Allgemeine Problembehandlung</a></strong></p>
 <ul>
   <li><a href="#install">Was kann ich tun, wenn AutoHotkey nicht installiert wird?</a></li>
+  <li><a href="#rightclick">Wie stelle ich die Kontextmenüoptionen für .ahk-Dateien wieder her?</a></li>
   <li><a href="#autoexec">Warum werden einige Zeilen in meinem Skript nie ausgeführt?</a></li>
   <li><a href="#vista">Warum funktioniert mein Skript nicht in Windows <em>xxx</em>, obwohl es in einer vorherigen Version lief?</a></li>
   <li><a href="#uac">Wie umgehe ich Probleme, die von der Benutzerkontensteuerung (UAC) erzeugt werden?</a></li>
@@ -34,7 +35,7 @@
   <li><a href="#Download">Wo finde ich den offiziellen Build, oder ältere Versionen?</a></li>
   <li><a href="#USB">Kann ich AHK von einem USB-Laufwerk ausführen?</a></li>
   <li><a href="#output">Wie kann die Ausgabe einer Befehlszeilenoperation abgefragt werden?</a></li>
-  <li><a href="#close">Wie kann ein Skript andere Skripte schließen, pausieren oder sperren?</a></li>
+  <li><a href="#close">Wie kann ein Skript andere Skripte schließen, pausieren, sperren oder neu laden?</a></li>
   <li><a href="#repeat">Wie kann eine sich wiederholende Aktion gestoppt werden, ohne das Skript beenden zu müssen?</a></li>
   <li><a href="#help">Wie kann die kontextabhängige Hilfe für AutoHotkey-Funktionen in einem beliebigen Editor verwendet werden?</a></li>
   <li><a href="#load">Wie kann man feststellen, dass eine Webseite fertig geladen ist?</a></li>
@@ -72,6 +73,20 @@
 <li>Installieren Sie AutoHotkey mithilfe der <a href="Program.htm#install">Kommandozeilenoptionen</a>. Sobald Sie die Setup-Dateien manuell aus der Installer-EXE extrahiert haben, können Sie entweder <code>setup.exe /S</code> oder <code>AutoHotkeyU32.exe Installer.ahk /S</code> verwenden.</li>
 </ul>
 <p><strong>Sonstiges:</strong> Die obigen Vorschläge decken die häufigsten Probleme. Weitere Unterstützung finden Sie im Forum.</p>
+
+<h3 id="rightclick">Wie stelle ich die Kontextmenüoptionen für .ahk-Dateien wieder her?</h3>
+<p>Normalerweise, wenn AutoHotkey installiert ist, sollte ein Rechtsklick auf eine AutoHotkey-Skriptdatei (.ahk) die folgenden Optionen bieten:</p>
+<ul>
+  <li>Run Script</li>
+  <li>Compile Script (abhängig von der Installationsoption <em>Install script compiler</em>)</li>
+  <li>Edit Script</li>
+  <li>Run as administrator (wenn UAC bei der Installation von AutoHotkey aktiviert war)</li>
+  <li>Run with UI Access (wenn <a href="Program.htm#Installer_uiAccess">die Option</a> während der Installation aktiviert wurde)</li>
+</ul>
+<p>Manchmal werden diese Optionen durch Einstellungen im Profil des aktuellen Benutzers überschrieben, z. B. wenn <em>Öffnen mit</em> verwendet wurde, um das Standardprogramm zum Öffnen von .ahk-Dateien zu ändern. Um das zu beheben, können Sie den folgenden Registry-Key löschen:</p>
+<pre class="no-highlight">HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.ahk\UserChoice</pre>
+<p>Oder <a href="misc/remove-userchoice.reg" download="remove-userchoice.reg">diesen Registry-Patch</a> ausführen.</p>
+<p>Es ist eventuell auch notwendig, die Standardwerte in der Registry zu reparieren, indem Sie entweder AutoHotkey neu installieren oder das AutoHotkey-Setup (aus dem Startmenü) ausführen und <em>apply</em> oben im Fenster auswählen.</p>
 
 <h3 id="autoexec">Warum werden einige Zeilen in meinem Skript nie ausgeführt?</h3>
 <p>Jede Zeile, die unmittelbar beim Starten des Skripts ausgeführt werden soll, muss ganz oben im Skript vorkommen und vor dem ersten <a href="Hotkeys.htm">Hotkey</a>, <a href="Hotstrings.htm">Hotstring</a> oder <a href="commands/Return.htm">Return</a> stehen. Siehe <a href="Scripts.htm#auto">automatischer Ausführungsbereich</a> für weitere Details.</p>
@@ -186,14 +201,15 @@ Send "{<i>TASTE</i> up}"</pre>
 AusgabeVar := FileRead("C:\Meine Temp-Datei.txt")
 FileDelete "C:\Meine Temp-Datei.txt"</pre>
 <p>Wenn Sie temporäre Dateien vermeiden wollen (besonders wenn die Ausgabe groß ist), sollten Sie die <a href="commands/Run.htm#StdOut">Shell.Exec()</a>-Methode verwenden, die in den Beispielen der <a href="commands/Run.htm">Run</a>-Funktion zu finden ist.</p>
-<h3 id="close">Wie kann ein Skript andere Skripte schließen, pausieren oder sperren?</h3>
+<h3 id="close">Wie kann ein Skript andere Skripte schließen, pausieren, sperren oder neu laden?</h3>
 <p>Zunächst ein Beispiel, das ein anderes Skript schließt:</p>
 <pre>DetectHiddenWindows True  <em>; Ermöglicht die Erkennung des versteckten Hauptfensters eines Skripts.</em>
 SetTitleMatchMode 2  <em>; Verhindert, dass unten der vollständige Pfad der Datei angegeben werden muss.</em>
 WinClose "Skript-Dateiname.ahk - AutoHotkey"  <em>; Verwenden Sie hier den Namen Ihres Skripts (Groß-/Kleinschreibung-sensitiv).</em></pre>
-<p>Um ein anderes Skript zu <a href="commands/Suspend.htm">sperren</a> oder zu <a href="commands/Pause.htm">pausieren</a>, ersetzt man die letzte Zeile oben mit einer der folgenden Zeilen:</p>
+<p>zum <a href="commands/Suspend.htm">Sperren</a>, <a href="commands/Pause.htm">Pausieren</a> oder <a href="commands/Reload.htm">Neuladen</a> eines anderen Skripts müssen Sie die letzte Zeile oben mit eine der folgenden Zeilen ersetzen:</p>
 <pre>PostMessage 0x111, 65305,,, "Skript-Dateiname.ahk - AutoHotkey"  <em>; Suspend (Sperren).</em>
-PostMessage 0x111, 65306,,, "Skript-Dateiname.ahk - AutoHotkey"  <em>; Pause.</em></pre>
+PostMessage 0x111, 65306,,, "Skript-Dateiname.ahk - AutoHotkey"  <em>; Pause.</em>
+PostMessage 0x111, 65303,,, "Skript-Dateiname.ahk - AutoHotkey"  <em>; Reload (Neuladen).</em></pre>
 <h3 id="repeat">Wie kann eine sich wiederholende Aktion gestoppt werden, ohne das Skript beenden zu müssen?</h3>
 <p>Um bei Tastendruck das ganze Skript zu pausieren oder fortzusetzen, weist man der <a href="commands/Pause.htm">Pause</a>-Funktion einen Hotkey zu. Zum Beispiel:</p>
 <pre>^!p::Pause  <em>; Drücken Sie STRG+ALT+P, um die Pause zu starten. Drücken Sie es nochmal, um die Pause zu beenden.</em></pre>

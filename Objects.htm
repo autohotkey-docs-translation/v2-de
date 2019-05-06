@@ -18,6 +18,8 @@ ul.list_of_p li { margin: 1em 0; }
 
 <h1>Objekte</h1>
 
+<p class="warning"><strong>Hinweis:</strong> AutoHotkey v2.0-alpha durchläuft gerade einen Paradigmenwechsel. Diese Version der Dokumentation bezieht sich auf v2.0-a101.</p>
+
 <p>Ein <i>Objekt</i> ist in AutoHotkey ein abstrakter Datentyp, das drei Grundfunktionen bereitstellt:</p>
 <ul>
   <li>GET - Abrufen eines Wertes.</li>
@@ -79,8 +81,10 @@ MeinArray := Array(Element1, Element2, ..., ElementN)</pre>
 <a href="commands/For.htm">For</a> index, wert in MeinArray
     MsgBox "Element " index " ist '" wert "'"
 </pre>
+<p class="warning"><strong>Hinweis:</strong> Eine zukünftige Alpha-Version wird <code>[]</code>, <code>Array()</code> und variadische Funktionen ändern, um einen separaten Array-Typ mit eingeschränkten Möglichkeiten bereitzustellen. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>.</p>
 
 <span id="Arrays"></span><h3 id="Usage_Associative_Arrays">Assoziative Arrays</h3>
+<p class="warning"><strong>Hinweis:</strong> Die folgenden Informationen gelten für v2.0-a101 und sind für zukünftige Alpha-Versionen eventuell nicht mehr relevant. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>.</p>
 <p>Ein assoziatives Array ist ein Objekt, das mehrere eindeutige Keys (Schlüssel) und mehrere Values (Werte) enthält, die jeweils miteinander verbunden sind. Keys können Zeichenketten, Integer oder Objekte sein. Values beliebige Typen. Ein assoziatives Array kann wie folgt erstellt werden:</p>
 <pre>MeinArray := {KeyA: ValueA, KeyB: ValueB, ..., KeyZ: WertZ}
 MeinArray := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
@@ -96,25 +100,26 @@ MeinArray := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <a href="commands/For.htm">For</a> key, value in MeinArray
     MsgBox key ' = ' value</pre>
 <p>Assoziative Arrays können lückenhaft gefüllt werden - zum Beispiel enthält <code>{1: "a", 1000: "b"}</code> nur zwei Key-Value-Paare, nicht 1000.</p>
-<p id="same_thing">Aktuell sind einfache Arrays und assoziative Arrays funktionsgemäß identisch. Solange man aber <code>[]</code> als einfaches lineares Array behandelt, wird sichergestellt, dass dessen Rolle eindeutig bleibt, und die Chance erhöht, dass Ihr Skript auch mit einer zukünftigen Version von AutoHotkey noch funktionieren wird, wo der Unterschied zwischen einfachem und assoziativem Array eventuell erkennbar sein muss.</p>
 
 <h3 id="Usage_Objects">Objekte</h3>
-<p>Bei allen Objekttypen kann die Schreibweise <code>Objekt.DirektGeschriebenerKey</code> benutzt werden, um auf eine Eigenschaft, ein Array oder eine Methode zuzugreifen. Hierbei ist <em>DirektGeschriebenerKey</em> ein Identifikator oder Integer und <em>Objekt</em> ein beliebiger Ausdruck. Identifikatoren sind Zeichenketten ohne Anführungszeichen, die aus alphanumerischen Zeichen, Unterstrich und ASCII-fremden Zeichen bestehen können. Zum Beispiel wäre <code>match.Pos</code> das gleiche wie <code>match["Pos"]</code>, oder <code>arr.1</code> das gleiche wie <code>arr[1]</code>. Es darf kein Leerzeichen nach dem Punkt erfolgen.</p>
+<p>Ein Objekt kann <em>Eigenschaften</em>, <em>Methoden</em> und <em>Elemente</em> haben (z. B. Array-Elemente). Der Zugriff auf Elemente erfolgt über <code>[]</code>, wie in den vorherigen Abschnitten gezeigt. Der Zugriff auf Eigenschaften und Methoden erfolgt durch Anfügen eines Punktes und einem Identifikator (einfach ein <a href="Concepts.htm#names">Name</a>).</p>
+<p class="warning"><strong>Hinweis:</strong> Aktuell sind Eigenschaften und Methoden als assoziative Array-Elemente definiert, infolgedessen kann die Syntax untereinander getauscht werden. Dies wird jedoch in einer zukünftigen Alpha-Version geändert. Es ist wichtig, je nach Situation die richtige Syntax zu verwenden.</p>
 <p><strong>Beispiele:</strong></p>
-<p>Abrufen einer Eigenschaft:</p>
+<p>Abrufen oder Setzen einer Eigenschaft mit dem direkt geschriebenen Namen <em>Eigenschaft</em>:</p>
 <pre>Wert := Objekt.Eigenschaft</pre>
-<p>Setzen einer Eigenschaft:</p>
 <pre>Objekt.Eigenschaft := Wert</pre>
-<p>Aufrufen einer Methode:</p>
+<p>Abrufen oder Setzen einer Eigenschaft mit einem Namen, der via Ausdruck oder Variable ermittelt wird:</p>
+<pre>Wert := Objekt.%Ausdruck%</pre>
+<pre>Objekt.%Ausdruck% := Wert</pre>
+<p>Aufrufen einer Methode mit dem direkt geschriebenen Namen <em>Methode</em>:</p>
 <pre>Rückgabewert := Objekt.Methode(Parameter)</pre>
-<p>Aufrufen einer Methode mit einem errechneten Methodennamen:</p>
-<pre>Rückgabewert := Object[Methodenname](Parameter)</pre>
+<p>Aufrufen einer Methode mit einem Namen, der via Ausdruck oder Variable ermittelt wird:</p>
+<pre>Rückgabewert := Objekt.%Ausdruck%(Parameter)</pre>
+<p class="warning"><strong>Hinweis:</strong> <code>Objekt[Ausdruck](Parameter)</code> kann auch genutzt werden, wird aber in einer zukünftigen Version nicht mehr funktionieren.</p>
 <p>Einige Eigenschaften von COM-Objekten und benutzerdefinierten Objekten können Parameter akzeptieren:</p>
 <pre>Wert := Objekt.Eigenschaft[Parameter]
 Objekt.Eigenschaft[Parameter] := Wert</pre>
 <p><strong>Siehe auch</strong>: <a href="objects/Object.htm">Objekt</a>, <a href="objects/File.htm">File-Objekt</a>, <a href="objects/Func.htm">Func-Objekt</a>, <a href="commands/ComObjCreate.htm">COM-Objekt</a></p>
-<p><b>Bekannte Einschränkung:</b></p>
-<ul><li>Zurzeit wird <code><span class="dull">x</span>.y[z]<span class="dull">()</span></code> als <code><span class="dull">x</span>["y", z]<span class="dull">()</span></code> behandelt, aber nicht unterstützt. Als Übergangslösung kann <code><span class="red">(</span><span class="dull">x.y</span><span class="red">)</span>[z]()</code> benutzen werden, um <code>x.y</code> zuerst auswerten zu lassen und dann das Ergebnis als Ziel des Methodenaufrufs zu verwenden. Beachten Sie, dass <code>x.y[z].Call()</code> diese Einschränkung nicht hat, weil es genauso wie <code>(x.y[z]).Call()</code> ausgewertet wird.</li></ul>
 
 <h3 id="Usage_Freeing_Objects">Freigeben von Objekten</h3>
 <p>Skripte geben Objekte nicht explizit frei. Sobald die letzte Referenz zu einem Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Eine Referenz, die in einer Variable gespeichert ist, wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
@@ -136,19 +141,24 @@ x := "", y := ""             <em>; Wenn die Zeile darüber fehlen würde, könnt
 
 <h3 id="Usage_Remarks">Bemerkungen</h3>
 
-<h4>Syntax</h4>
-<p>Alle Objekttypen unterstützen sowohl die Arraysyntax (eckige Klammern) als auch die Objektsyntax (Punkte).</p>
-<p>Darüber hinaus können Objektreferenzen selbst auch in Ausdrücken verwendet werden:</p>
+<h4>Objekte als Werte</h4>
+<p>Objektreferenzen selbst können in Ausdrücken verwendet werden:</p>
 <ul>
   <li>Eine Objektreferenz und irgendein anderer Wert, die via <code>=</code>, <code>==</code>, <code>!=</code> oder <code>!==</code> verglichen werden, werden nur als gleich angesehen, wenn beide Werte auf dasselbe Objekt verweisen.</li>
   <li>Bei Anweisungen wie <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code> ist der boolesche Wert eines Objekts immer <i>True</i>.</li>
   <li>Eine Objektadresse kann mithilfe des <code>&amp;</code>-Operators abgerufen werden. So eine Adresse identifiziert eindeutig das Objekt - von seiner Erstellung bis zur letzten <a href="#Refs">Freigabe</a> seiner Referenz.</li>
 </ul>
 <p>Ein Objekt wird normalerweise als leere Zeichenkette behandelt, wenn es in einem Kontext verwendet wird, wo ein Objekt nicht erwartet wird. Zum Beispiel würde <code>MsgBox(meinObjekt)</code> eine leere MsgBox anzeigen. Verlassen Sie sich nicht auf dieses Verhalten, weil es noch geändert werden könnte. In einigen Fällen wird eventuell eine Ausnahme ausgelöst, z. B. bei <code>meinObjekt + 1</code> oder <code>Round(meinObjekt)</code>.</p>
+
+<h4>Syntax</h4>
 <p id="cassign">Verbundzuweisungen wie <code>x.y += 1</code> und <code>--arr[1]</code> werden unterstützt.</p>
-<p>Parameter können beim Abrufen oder Setzen von Eigenschaften weggelassen werden. Zum Beispiel <code>x[,2]</code>. Skripte können damit Standardwerte für Parameter in <a href="#Custom_Classes_property">Eigenschaften</a> und <a href="#Meta_Functions">Meta-Funktionen</a> definieren. Der Methodenname kann man zudem komplett weglassen, wie z. B. in <code>x[](a)</code>. Skripte können damit einen Standardwert für den ersten Parameter der __Call-<a href="#Meta_Functions">Meta-Funktion</a> definieren, um zu verhindern, dass er ohne Wert weitergereicht wird. Wenn man den Eigenschafts- oder Methodennamen beim Aufrufen eines COM-Objekts weglässt, wird sein "Standardelement" aufgerufen.</p>
+<p>Parameter können beim Abrufen oder Setzen von Eigenschaften weggelassen werden. Zum Beispiel <code>x.y[,2]</code> oder <code>x[,2]</code>. Skripte können damit Standardwerte für Parameter in <a href="#Custom_Classes_property">Eigenschaften</a> und <a href="#Meta_Functions">Meta-Funktionen</a> definieren.</p>
+<p>Der Methodenname kann man zudem komplett weglassen, wie z. B. in <code>x[](a)</code>. Dieser Sachverhalt kann genutzt werden, um einen Standardwert für den ersten Parameter der __Call-<a href="#Meta_Functions">Meta-Funktion</a> zu definieren.</p>
+<p class="warning"><strong>Hinweis:</strong> Die Vorgehensweise, mittels eckigen Klammern den Methodennamen mit einem Ausdruck zu ersetzen, wird in zukünftigen Alpha-Versionen nicht mehr unterstützt. Um ein Funktionsobjekt mit dem Beispielnamen <em>x</em> aufzurufen, nutzt man <code>x.Call()</code> oder <code>%x%()</code>.</p>
+<p>Wenn man den Eigenschafts- oder Methodennamen beim Aufrufen eines COM-Objekts weglässt, wird sein "Standardelement" aufgerufen.</p>
 
 <h4>Keys</h4>
+<p class="warning"><strong>Hinweis:</strong> Die folgenden Informationen gelten für v2.0-a101 und sind für zukünftige Alpha-Versionen eventuell nicht mehr relevant. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>.</p>
 <p>Objekte, die mit <code>[]</code>, <code>{}</code> oder dem <code>new</code>-Operator erstellt wurden, erlauben den Einsatz von Zeichenketten, Integern und Objekten als Keys, aber mit folgenden Einschränkungen:</p>
 <p>Der Wert des Keys wird beibehalten, aber nicht seine <em>Typenidentität</em>. Das heißt, dass Integer als Zeichenketten abgespeichert werden könnten oder umgekehrt, solange der Wert der gleiche bleibt (einschließlich der Formatierung von numerischen Zeichenketten). Im Einzelnen:</p>
 <ul>
@@ -174,6 +184,7 @@ RückWert := MeinFunkVerw.<a href="objects/Func.htm#Call">Call</a>(<i>Parameter<
 <p>Weitere Eigenschaften von Funktionsreferenzen finden Sie unter <a href="objects/Func.htm">Func-Objekt</a>.</p>
 
 <span id="JaggedArrays"></span><h3 id="Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</h3>
+<p class="warning"><strong>Hinweis:</strong> Die folgenden Informationen gelten für v2.0-a101. Zukünftige Alpha-Versionen haben eventuell keine integrierte Unterstützung für mehrdimensionale Arrays. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>.</p>
 <p>AutoHotkey unterstützt "mehrdimensionale" Arrays, indem Arrays in andere Arrays gespeichert werden. Zum Beispiel repräsentieren die Reihen einer Tabelle die Felder eines Arrays, während die Felder selbst die Spalten der jeweiligen Reihe in Form eines Arrays enthalten. In diesem Fall kann der Inhalt der Spalte <code>y</code> von der Reihe <code>x</code> mit einer der folgenden Methoden gesetzt werden:</p>
 <pre>Tabelle[x][y] := Inhalt  <em>; A</em>
 Tabelle[x, y] := Inhalt  <em>; B</em></pre>
@@ -215,6 +226,7 @@ ZweiteFunk(Parameter) {
 }</pre>
 
 <h2 id="Custom_Objects">Benutzerdefinierte Objekte</h2>
+<p class="warning"><strong>Hinweis:</strong> Die folgenden Informationen gelten für v2.0-a101 und sind für zukünftige Alpha-Versionen eventuell nicht mehr zu 100% relevant. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>.</p>
 <p>Objekte, die das Skript erstellt hat, müssen nicht zwingend eine vordefinierte Struktur haben. Stattdessen kann jedes Objekt Eigenschaften und Methoden von seinem <code>base</code>-Objekt (auch bekannt als "Prototyp" oder "Klasse") erben. Einem Objekt können jederzeit Eigenschaften und Methoden hinzugefügt (oder entfernt) werden; solche Änderungen haben auf alle abgeleiteten Objekte eine Auswirkung. Für komplexere oder speziellere Situationen kann ein Base-Objekt mithilfe von <a href="#Meta_Functions"><i>Meta-Funktionen</i></a> das Standardverhalten von jedem abgeleiteten Objekt überschreiben.</p>
 <p><em>Base</em>-Objekte sind ganz normale Objekte, die wie folgt erstellt werden können:</p>
 <pre>class baseObject {
@@ -341,6 +353,39 @@ Methode()
 <p>Der Versuch, eine Eigenschaft <em>aufzurufen</em>, wie bei <code>obj.Eigenschaft()</code>, bewirkt, als hätte es die Eigenschaft nie gegeben.</p>
 <p>Intern sind <em>get</em> und <em>set</em> zwei unterschiedliche Methoden, die sich untereinander keine Variablen teilen können (es sei denn, man speichert sie in <code>this</code>).</p>
 <p><a href="#Meta_Functions">Meta-Funktionen</a> bieten eine breitere Auswahl an Möglichkeiten für den kontrollierten Zugriff auf Eigenschaften und Methoden eines Objekts, allerdings sind sie komplizierter und fehleranfälliger.</p>
+
+<h3 id="__Item">__Item-Eigenschaft</h3>
+<p>Die __Item-Eigenschaft wird indirekt aufgerufen, wenn der Index-Operator (Array-Syntax) in Verbindung mit dem Objekt verwendet wird. Zum Beispiel:</p>
+<pre>class Env {
+    __Item[name] {
+        get {
+            return EnvGet(name)
+        }
+        set {
+            return EnvSet(name, value)
+        }
+    }
+}
+
+Env["PATH"] .= ";" A_ScriptDir  <em>; Hat nur Einfluss auf dieses Skript und Unterprozesse.</em>
+MsgBox Env["PATH"]</pre>
+<p>Für Objekte vom Typ <a href="objects/Object.htm">Object</a> ist <code>__Item</code> quasi ein Standardeigenschaftsname (wenn so eine Eigenschaft definiert wurde). Das heißt:</p>
+<ul>
+  <li><code><i>object</i>[<i>params</i>]</code> ist äquivalent zu <code><i>object</i>.__Item[<i>params</i>]</code>, wenn Parameter vorhanden sind.</li>
+  <li><code><i>object</i>[]</code> ist äquivalent zu <code><i>object</i>.__Item</code>.</li>
+</ul>
+<p class="note"><strong>Hinweis:</strong> Wenn ein expliziter Eigenschaftsname mit leeren eckigen Klammern kombiniert wird, wie in <code>obj.prop[]</code>, wird dies als zwei separate Operationen behandelt: zuerst wird <code>obj.prop</code> abgerufen, danach indirekt die Standardeigenschaft des Ergebnisses aufgerufen. Dies ist Bestandteil der Sprachsyntax und somit objektunabhängig.</p>
+<p>Zum Beispiel:</p>
+<pre>
+obj := {}
+obj[] := {}              <em>; Äquivalent zu obj.__Item := {}</em>
+obj["Count"] := "Data"  
+obj["Delete"] := "Data" 
+MsgBox obj.Count()       <em>; 1 (nur obj.__Item)</em>
+MsgBox obj.Count = ""    <em>; 1 (true)</em>
+obj.Count := 0          
+MsgBox obj.Count()       <em>; Schlägt fehl (0 kann nicht aufgerufen werden)</em>
+</pre>
 
 <h3 id="Custom_NewDelete">Konstruktion und Destruktion</h3>
 <p>Immer wenn ein abgeleitetes Objekt mit dem Schlüsselwort <code>new</code> erstellt wird, wird die via Base-Objekt definierte <code>__New</code>-Methode aufgerufen. Diese Methode kann Parameter akzeptieren, das Objekt initialisieren und das Ergebnis des <code>new</code>-Operators durch Zurückgeben eines Wertes überschreiben. Zerstört man ein Objekt, wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>

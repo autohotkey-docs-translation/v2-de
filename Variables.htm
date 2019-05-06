@@ -75,9 +75,11 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
   <tr id="ref">
     <td style="text-align:center; white-space:nowrap"><strong>%Ausdr%</strong></td>
     <td>
-      <p>Wertet den Teilausdruck <em>Ausdr</em> aus und benutzt seinen Wert als Namen oder Teilnamen einer Variable oder Funktionen. Dadurch kann das Skript auf eine Variable oder Funktion verweisen, deren Name nicht direkt im Skript vorkommt, aber durch Auswerten von <em>Ausdr</em> ermittelt werden kann, was typischerweise eine andere Variable ist. Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
+      <p>Wertet den Teilausdruck <em>Ausdr</em> aus und benutzt seinen Wert als Namen oder Teilnamen einer Variable, Funktion, Eigenschaft oder Methode. Dadurch kann das Skript auf eine Variable, Funktion, Eigenschaft oder Methode verweisen, deren Name nicht direkt im Skript vorkommt, aber durch Auswerten von <em>Ausdr</em> ermittelt werden kann, was typischerweise eine andere Variable ist. Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
+      <p>Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und teilweise vorhandene <a href="Concepts.htm#names">Namen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
       <p><code>%Ausdr%()</code> führt einen <a href="Functions.htm#DynCall">dynamischen Funktionsaufruf</a> aus.</p>
-      <p><code>%Ausdr%</code> ruft dynamisch eine Variable via Name ab. Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der komplette oder teilweise vorhandene Name einer Variable sein, die abgerufen werden soll. Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und teilweise vorhandene <a href="Concepts.htm#names">Variablennamen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
+      <p><code>x.%Ausdr%</code> greift auf eine Eigenschaft des Objekts <em>x</em> zu und <code>x.%Expr%()</code> ruft eine Methode auf.</p>
+      <p>Ansonsten ruft <code>%Ausdr%</code> dynamisch eine Variable via Name ab. Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der komplette oder teilweise vorhandene Name einer Variable sein, die abgerufen werden soll.</p>
       <p>Wenn die Variable noch nicht existieren sollte, wird eine leere Variable erstellt. Eine <a href="commands/Throw.htm#Exception">Ausnahme</a> wird ausgelöst, wenn der Name <a href="Concepts.htm#names">ungültig</a> ist.</p>
       <p>Meistens wird das verwendet, um auf Elemente eines <a href="misc/Arrays.htm#pseudo">Pseudo-Arrays</a> zu verweisen.</p>
       <p>Obwohl diese Vorgehensweise historisch gesehen als "Doppel-Dereferenzierung" bekannt ist, ist dieser Begriff ungenau, wenn <em>Ausdr</em> keine Variable enthält (erste Dereferenzierung), und wenn die resultierende Variable, die das Ziel einer Zuweisung ist, nicht dereferenziert wird (zweite Dereferenzierung).</p>
@@ -102,8 +104,8 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
   <tr id="pow">
     <td style="text-align:center"><strong>**</strong></td>
     <td>
-      <p><strong>Potenz</strong>. Sowohl die Basis als auch der Exponent können einen Dezimalpunkt enthalten. Ist der Exponent negativ, wird das Ergebnis in eine Floating-Point-Zahl umgewandelt, auch dann, wenn Basis und Exponent Integer sind. Da dieser Operator eine höhere Priorität hat als ein unäres Minuszeichen, wird <code>-2**2</code> wie <code>-(2**2)</code> ausgewertet und daher -4 zurückgeben. Um also eine direkt geschriebene negative Zahl zu potenzieren, muss sie in runden Klammern gesetzt werden, z. B <code>(-2)**2</code> .</p>
-      <p class="note"><strong>Hinweis</strong>: Eine negative Basis in Verbindung mit einem gebrochenen Exponenten wie <code>(-2)**0.5</code> wird nicht unterstützt; Beim Versuch, dies zu tun, wird eine Ausnahme ausgelöst. Schreibweisen wie <code>(-2)**2</code> und <code>(-2)**2.0</code> werden aber unterstützt.</p>
+      <p><strong>Potenz</strong>. Anwendungsbeispiel: <code>Basis**Exponent</code>. Sowohl <em>Basis</em> als auch <em>Exponent</em> können einen Dezimalpunkt enthalten. Wenn <em>Exponent</em> negativ ist, wird das Ergebnis in eine Floating-Point-Zahl umgewandelt, auch dann, wenn <em>Basis</em> und <em>Exponent</em> Integer sind. Da ** eine höhere Priorität als ein unäres Minuszeichen hat, wird <code>-2**2</code> wie <code>-(2**2)</code> ausgewertet und daher -4 zurückgeben. Um also eine direkt geschriebene negative Zahl zu potenzieren, muss sie in runden Klammern gesetzt werden, z. B <code>(-2)**2</code> .</p>
+      <p class="note"><strong>Hinweis</strong>: Eine negative <em>Basis</em> in Verbindung mit einem gebrochenen <em>Exponenten</em> wie <code>(-2)**0.5</code> wird nicht unterstützt und führt dazu, dass eine Ausnahme ausgelöst wird. Schreibweisen wie <code>(-2)**2</code> und <code>(-2)**2.0</code> werden aber unterstützt. Wenn <em>Basis</em> und <em>Exponent</em> 0 sind, ist das Ergebnis undefiniert und führt dazu, dass eine Ausnahme ausgelöst wird.</p>
     </td>
   </tr>
   <tr id="unary">
@@ -120,7 +122,8 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><strong>Logisches NICHT (!)</strong>: Wenn dieser Operator bei einem Operanden angewendet wird, der leer oder 0 ist, ist das Ergebnis eine 1 (true). Ansonsten ist das Ergebnis eine 0 (false). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
       <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Handelt es sich bei den Operanden um eine Floating-Point-Zahl, wird er vor der Berechnung auf Integer-Größe gekürzt. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden.</p>
       <p id="amp"><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ruft die Adresse des Inhalts von <em>MeineVar</em> im Speicher ab, wobei <em>MeineVar</em> eine benutzerdefinierte Variable ist. Der Inhalt von <em>MeineVar</em> kann eine Zeichenkette, ein 64-Bit-Integer, eine 64-Bit-Floating-Point-Zahl oder ein Objekt sein. Dieser Operator wird häufig in Verbindung mit <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> genutzt.</p>
-      <p>Der Adressoperator kann in Verbindung mit anderen Zeichenketten genutzt werden, wie z. B. <code>&amp;"Zeichenkette"</code>, <code>&amp;(x . y)</code> oder <code>&amp;A_LoopField</code>, allerdings gelten folgende Einschränkungen:</p>
+      <p>Die Adresse verliert in der Regel ihre Gültigkeit, wenn <em>MeineVar</em> mit irgendeinem <a href=Variables.htm#AssignOp>Zuweisungsoperator</a> (inklusive ++ und --) neu zugewiesen wird oder als Ausgabevariable für eine interne Funktion verwendet wird. Die Adresse des Inhalts einer <a href=Functions.htm#Local>lokalen</a> Variablen einer Funktion verliert ihre Gültigkeit, wenn die Funktion ihr Ende erreicht hat. Die Adresse eines Objekts ist solange gültig, bis dessen letzte <a href=Objects.htm#Reference_Counting>Referenz</a> freigegeben wurde.</p> 
+	  <p>Der Adressoperator kann in Verbindung mit anderen Zeichenketten genutzt werden, wie z. B. <code>&amp;"Zeichenkette"</code>, <code>&amp;(x . y)</code> oder <code>&amp;A_LoopField</code>, allerdings gelten folgende Einschränkungen:</p>
       <ul>
         <li>Der adressierte Speicher sollte niemals geändert werden, z. B. wenn man ihn an einen DllCall-Ausgabeparameter übergibt.</li>
         <li>Eine Adresse, die von einem temporären Wert stammt (auch die Rückgabewerte von internen Variablen), darf nur solange als gültig angesehen werden, bis die Auswertung des Ausdrucks oder die <a href="Language.htm#function-call-statements">Funktionsaufrufanweisung</a> abgeschlossen ist. Danach wird der Speicher eventuell für etwas anderes benutzt.</li>
@@ -154,7 +157,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     <td style="text-align:center"><strong>&lt;&lt;<br>
     
     &gt;&gt;</strong></td>
-    <td><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong> und <strong>nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Jeder Floating-Point-Eingabewert wird vor der Berechnung auf einen Integer gekürzt. Die bitweise Verschiebung nach links (<strong>&lt;&lt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren. Die bitweise Verschiebung nach rechts (<strong>&gt;&gt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden; zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2.</td>
+    <td><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong> und <strong>nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Jeder Floating-Point-Eingabewert wird vor der Berechnung auf einen Integer gekürzt. Die bitweise Verschiebung nach links (<strong>&lt;&lt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren. Die bitweise Verschiebung nach rechts (<strong>&gt;&gt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden; zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2. Wenn <em>Wert2</em> kleiner als 0 oder größer als 63 ist (nach dem Kürzen), wird eine Ausnahme ausgelöst.</td>
   </tr>
   <tr id="bitwise">
     <td style="text-align:center"><strong>&amp;<br>
@@ -580,7 +583,7 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
   </tr>
   <tr id="StoreCapslockMode">
     <td>A_StoreCapsLockMode</td>
-    <td><strong>Liest/Schreibt</strong> den aktuellen Modus von <a href="commands/SetStoreCapslockMode.htm">SetStoreCapsLockMode</a>; 1 (eingeschaltet) oder 0 (ausgeschaltet).</td>
+    <td><strong>Liest/Schreibt</strong> den aktuellen Modus von <a href="commands/SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a>; 1 (eingeschaltet) oder 0 (ausgeschaltet).</td>
   </tr>
   <tr id="KeyDelay">
     <td>A_KeyDelay<br>
@@ -711,11 +714,15 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
 <table class="info">
   <tr id="ComSpec">
     <td>A_ComSpec</td>
-    <td>Enthält, wie die ComSpec-Umgebungsvariable auch, den Pfadnamen des Befehlszeileninterpreters (z. B. C:\Windows\system32\cmd.exe). Diese Variable wird oft in Verbindung mit <a href="commands/Run.htm">Run/RunWait</a> genutzt.</td>
+    <td>Enthält wie die ComSpec-Umgebungsvariable den Pfadnamen des Befehlszeileninterpreters. Diese Variable wird oft in Verbindung mit <a href="commands/Run.htm">Run/RunWait</a> genutzt. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Windows\system32\cmd.exe</pre>
+    </td>
   </tr>
   <tr id="Temp">
     <td>A_Temp</td>
-    <td>Der vollständige Pfadname des Ordners, der zum Speichern von temporären Dateien auserkoren wurde (z. B. C:\DOCUME~1\&lt;Benutzername&gt;\LOCALS~1\Temp). Folgende Standorte werden der Reihenfolge nach durchsucht, um den Pfadnamen zu ermitteln: 1) <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> TMP, TEMP oder USERPROFILE; 2) Windows-Verzeichnis.</td>
+    <td><p>Der vollständige Pfadname des Ordners zum Speichern von temporären Dateien. Folgende Standorte werden der Reihenfolge nach durchsucht, um den Pfadnamen zu ermitteln: 1) <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> TMP, TEMP oder USERPROFILE; 2) Windows-Verzeichnis. Zum Beispiel:</p>
+    <pre class="NoIndent no-highlight">C:\Users\&lt;Benutzer&gt;\AppData\Local\Temp</pre>
+  </td>
   </tr>
   <tr id="OSVersion">
     <td>A_OSVersion</td>
@@ -746,63 +753,96 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
   </tr>
   <tr id="WinDir">
     <td>A_WinDir</td>
-    <td>Das Windows-Verzeichnis. Zum Beispiel: C:\Windows</td>
+    <td>Das Windows-Verzeichnis. Zum Beispiel: <code>C:\Windows</code></td>
   </tr>
   <tr id="ProgramFiles">
     <td>A_ProgramFiles</td>
     <td>
-      <p>Das Verzeichnis der Programmdateien (z. B. <code>C:\Programme</code> oder <code>C:\Programme (x86)</code>). Die <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> <code>ProgramFiles</code> enthält in der Regel denselben Wert.</p>
+      <p>Das Verzeichnis der Programmdateien (z. B. <code>C:\Programme</code> oder <code>C:\Programme (x86)</code>). Die <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> <em>ProgramFiles</em> enthält in der Regel denselben Wert.</p>
       <p>Für <a href="#Is64bitOS">64-Bit-Systeme</a> (nicht 32-Bit-Systeme) gilt Folgendes:</p>
       <ul>
         <li>Wenn zum Ausführen des Skripts die 32-Bit-Version von AutoHotkey verwendet wird, enthält A_ProgramFiles den Pfadnamen des Ordners "Programme (x86)".</li>
-        <li>32-Bit-Prozesse können auf die <a href="Concepts.htm#environment-variables">Umgebungsvariable</a> <code>ProgramW6432</code> zurückgreifen, um den Pfadnamen des 64-Bit-Ordners "Programme" abzurufen. In Windows 7 und höher steht diese Variable auch für 64-Bit-Prozesse zur Verfügung.</li>
-        <li>Die Umgebungsvariable <code>ProgramFiles(x86)</code> enthält den Pfadnamen des 32-Bit-Ordners "Programme (x86)".</li>
+        <li>32-Bit-Prozesse können auf die Umgebungsvariable <em>ProgramW6432</em> zurückgreifen, um den Pfadnamen des 64-Bit-Ordners "Programme" abzurufen. In Windows 7 und höher steht diese Variable auch für 64-Bit-Prozesse zur Verfügung.</li>
+        <li>Die Umgebungsvariable <em>ProgramFiles(x86)</em> enthält den Pfadnamen des 32-Bit-Ordners "Programme (x86)".</li>
       </ul>
     </td>
   </tr>
   <tr id="AppData">
     <td>A_AppData</td>
-    <td>Der vollständige Pfadname des Ordners, der anwendungsspezifische Daten des aktuellen Benutzers enthält. Zum Beispiel: C:\Dokumente und Einstellungen\Benutzername\Anwendungsdaten</td>
+    <td>
+      <p>Der vollständige Pfadname des Ordners, der anwendungsspezifische Daten des aktuellen Benutzers enthält. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Users\&lt;Benutzer&gt;\AppData\Roaming</pre>
+    </td>
   </tr>
   <tr id="AppDataCommon">
     <td>A_AppDataCommon</td>
-    <td>Der vollständige Pfadname des Ordners, der anwendungsspezifische Daten aller Benutzer enthält.</td>
+    <td>
+      <p>Der vollständige Pfadname des Ordners, der anwendungsspezifische Daten aller Benutzer enthält. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\ProgramData</pre>
+    </td>
   </tr>
   <tr id="Desktop">
     <td>A_Desktop</td>
-    <td>Der vollständige Pfadname des Ordners, der die Desktop-Dateien des aktuellen Benutzers enthält.</td>
+    <td>
+      <p>Der vollständige Pfadname des Ordners, der die Desktop-Dateien des aktuellen Benutzers enthält. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Users\&lt;Benutzer&gt;\Desktop</pre>
+    </td>
   </tr>
   <tr id="DesktopCommon">
     <td>A_DesktopCommon</td>
-    <td>Der vollständige Pfadname des Ordners, der die Desktop-Dateien aller Benutzer enthält.</td>
+    <td>
+      <p>Der vollständige Pfadname des Ordners, der die Desktop-Dateien aller Benutzer enthält. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Users\Public\Desktop</pre>
+    </td>
   </tr>
   <tr id="StartMenu">
     <td>A_StartMenu</td>
-    <td>Der vollständige Pfadname des Ordners, der die Startmenü-Dateien des aktuellen Benutzers enthält.</td>
+    <td>
+      <p>Der vollständige Pfadname des Ordners, der die Startmenü-Dateien des aktuellen Benutzers enthält. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Users\&lt;Benutzer&gt;\AppData\Roaming\Microsoft\Windows\Start Menu</pre>
+    </td>
   </tr>
   <tr id="StartMenuCommon">
     <td>A_StartMenuCommon</td>
-    <td>Der vollständige Pfadname des Ordners, der die Startmenü-Dateien aller Benutzer enthält.</td>
+    <td>
+      <p>Der vollständige Pfadname des Ordners, der die Startmenü-Dateien aller Benutzer enthält. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\ProgramData\Microsoft\Windows\Start Menu</pre>
+    </td>
   </tr>
   <tr id="Programs">
     <td>A_Programs</td>
-    <td>Der vollständige Pfadname des Programme-Ordners im Startmenü des aktuellen Benutzers.</td>
+    <td>
+      <p>Der vollständige Pfadname des Programme-Ordners im Startmenü des aktuellen Benutzers. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Users\&lt;Benutzer&gt;\AppData\Roaming\Microsoft\Windows\Start Menu\Programs</pre>
+    </td>
   </tr>
   <tr id="ProgramsCommon">
     <td>A_ProgramsCommon</td>
-    <td>Der vollständige Pfadname des Programme-Ordners im Startmenü aller Benutzer.</td>
+    <td>
+      <p>Der vollständige Pfadname des Programme-Ordners im Startmenü aller Benutzer. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\ProgramData\Microsoft\Windows\Start Menu\Programs</pre>
+  </td>
   </tr>
   <tr id="Startup">
     <td>A_Startup</td>
-    <td>Der vollständige Pfadname des Autostart-Ordners im Startmenü des aktuellen Benutzers.</td>
+    <td>
+      <p>Der vollständige Pfadname des Autostart-Ordners im Startmenü des aktuellen Benutzers. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Users\&lt;Benutzer&gt;\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup</pre>
+  </td>
   </tr>
   <tr id="StartupCommon">
     <td>A_StartupCommon</td>
-    <td>Der vollständige Pfadname des Autostart-Ordners im Startmenü aller Benutzer.</td>
+    <td>
+      <p>Der vollständige Pfadname des Autostart-Ordners im Startmenü aller Benutzer. Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup</pre>
+  </td>
   </tr>
   <tr id="MyDocuments">
     <td>A_MyDocuments</td>
-    <td>Der vollständige Pfadname des Ordners "Eigene Dokumente", der beliebige Dateien (vorzugsweise Dokumente) des aktuellen Benutzers enthält. Wenn der Ordner die oberste Ebene eines Laufwerks ist, wird im Gegensatz zu anderen ähnlichen Variablen der umgekehrte Schrägstrich am Ende weggelassen. Zum Beispiel wäre M: anstelle von M:\ enthalten.</td>
+    <td>
+      <p>Der vollständige Pfadname des Ordners "Eigene Dokumente", der beliebige Dateien (vorzugsweise Dokumente) des aktuellen Benutzers enthält. Wenn der Ordner die oberste Ebene eines Laufwerks ist, wird im Gegensatz zu anderen ähnlichen Variablen der umgekehrte Schrägstrich am Ende weggelassen (zum Beispiel wäre <code>M:</code> anstelle von <code>M:\</code> enthalten). Zum Beispiel:</p>
+      <pre class="NoIndent no-highlight">C:\Users\&lt;Benutzer&gt;\Documents</pre>
+  </td>
   </tr>
   <tr id="IsAdmin">
     <td>A_IsAdmin</td>
