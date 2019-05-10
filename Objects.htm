@@ -62,14 +62,14 @@ MeinArray := Array(Element1, Element2, ..., ElementN)</pre>
 <pre>Wert := MeinArray[Index]</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>MeinArray[Index] := Wert</pre>
-<p>Einfügen beliebig vieler Elemente ab einem bestimmten Index:</p>
-<pre>MeinArray.<a href="objects/Object.htm#InsertAt">InsertAt</a>(Index, Wert, Wert2, ...)</pre>
-<p>Anfügen eines oder von mehreren Elementen:</p>
-<pre>MeinArray.<a href="objects/Object.htm#Push">Push</a>(Wert, Wert2, ...)</pre>
-<p>Entfernen eines Elements:</p>
-<pre>EntfernterWert := MeinArray.<a href="objects/Object.htm#RemoveAt">RemoveAt</a>(Index)</pre>
-<p>Entfernen des letzten Elements:</p>
-<pre>EntfernterWert := MeinArray.<a href="objects/Object.htm#Pop">Pop</a>()</pre>
+<p>Einfügen eines oder mehrerer Elemente ab einem bestimmten Index mittels <a href="objects/Object.htm#InsertAt">InsertAt</a>-Methode:</p>
+<pre>MeinArray.InsertAt(Index, Wert, Wert2, ...)</pre>
+<p>Anfügen eines oder mehrerer Elemente mittels <a href="objects/Object.htm#Push">Push</a>-Methode:</p>
+<pre>MeinArray.Push(Wert, Wert2, ...)</pre>
+<p>Entfernen eines Elements mittels <a href="objects/Object.htm#RemoveAt">RemoveAt</a>-Methode:</p>
+<pre>EntfernterWert := MeinArray.RemoveAt(Index)</pre>
+<p>Entfernen eines Elements mittels <a href="objects/Object.htm#Pop">Pop</a>-Methode:</p>
+<pre>EntfernterWert := MeinArray.Pop()</pre>
 <p><a href="objects/Object.htm#MinMaxIndex">MinIndex</a> und <a href="objects/Object.htm#MinMaxIndex">MaxIndex</a>/<a href="objects/Object.htm#Length">Length</a> geben, sofern das Array nicht leer ist, den niedrigsten und höchsten Index des Arrays zurück. Während der niedrigste Index fast immer 1 ist, wird MaxIndex üblicherweise die Anzahl der Elemente zurückgeben. Wenn keine Integer-Keys vorhanden sind, wird MaxIndex eine leere Zeichenkette und Length eine 0 zurückgeben. Um die Inhalte des Arrays zu durchlaufen, benutzt man entweder den Index oder eine For-Schleife. Zum Beispiel:</p>
 <pre>MeinArray := ["eins", "zwei", "drei"]
 
@@ -93,8 +93,8 @@ MeinArray := Object("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
 <pre>Value := MeinArray[Key]</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>MeinArray[Key] := Value</pre>
-<p>Entfernen eines Elements:</p>
-<pre>EntfernterWert := MeinArray.<a href="objects/Object.htm#Delete">Delete</a>(Key)</pre>
+<p>Entfernen eines Elements mittels <a href="objects/Object.htm#Delete">Delete</a>-Methode:</p>
+<pre>EntfernterWert := MeinArray.Delete(Key)</pre>
 <p>Enumerieren von Elementen:</p>
 <pre>MeinArray := {zehn: 10, zwanzig: 20, dreißig: 30}
 <a href="commands/For.htm">For</a> key, value in MeinArray
@@ -267,8 +267,8 @@ anderesObj.test()</pre>
 <p>Eine "Klasse" ist im Grunde eine Gruppe oder Kategorie von Dingen, die Eigenschaften oder Attribute gemeinsam nutzen. Da ein <a href="#Custom_Objects">Base</a>- oder <a href="#Custom_Prototypes">Prototyp</a>-Objekt Eigenschaften und Verhaltensweisen für eine Gruppe von Objekten definiert, kann es auch als <em>Klassen</em>objekt bezeichnet werden. Das folgende Beispiel zeigt, wie auf einfache Weise Base-Objekte mithilfe des Schlüsselworts "class" definiert werden können:</p>
 <pre>class Klassenname extends BaseKlassenname
 {
-    InstanzVar := Ausdruck
-    static KlassenVar := Ausdruck
+    InstanzVar := <i>Ausdruck</i>
+    static KlassenVar := <i>Ausdruck</i>
 
     class VerschachtelteKlasse
     {
@@ -282,13 +282,21 @@ anderesObj.test()</pre>
 
     Eigenschaft[]  <em>; Die eckigen Klammern sind optional</em>
     {
-        get {
-            return ...
+        <span class="dec">get</span> {
+            return <i>Eigenschaftswert</i>
         }
-        set {
-            return ... := value
+        <span class="dec">set</span> {
+            <i>Speichere oder verarbeite</i> <span class="biv">value</span>
         }
     }
+    
+    KurzeEigenschaft[]
+    {
+        <span class="dec">get</span> =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
+        <span class="dec">set</span> =&gt; <i>Ausdruck zum Speichern oder Verarbeiten von</i> <span class="biv">value</span>
+    }
+    
+    KürzereEigenschaft[] =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
 }
 </pre>
 <p>Dieses Beispiel konstruiert, nachdem das Skript geladen wurde, ein Objekt und speichert es in die <a href="Functions.htm#SuperGlobal">superglobale</a> Variable <i>Klassenname</i>. Um diese Klasse innerhalb einer <a href="Functions.htm#ForceLocal">Force-Local</a>-Funktion zu verweisen, ist eine Deklaration wie <code>global Klassenname</code> notwendig. Wenn <code>extends BaseKlassenname</code> vorhanden ist, muss der <i>BaseKlassenname</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>objekt</i>.__Class</code> gespeichert.</p>
@@ -335,35 +343,45 @@ Methode()
 </ul>
 <p><code>base</code> hat nur eine besondere Bedeutung, wenn danach ein Punkt <code>.</code> oder eine eckige Klammer <code>[]</code> erfolgt, demzufolge wird so etwas wie <code>obj := base, obj.Methode()</code> nicht funktionieren. Skripte können das spezielle Verhalten von <i>base</i> deaktivieren, indem sie dieser Sondervariable einen nicht-leeren Wert zuweisen; dies wird jedoch nicht empfohlen.</p>
 
+<p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann genutzt werden, um eine einzeilige Methode für die Rückgabe eines Ausdrucks zu definieren:</p>
+<pre>Methode() =&gt; <i>Ausdruck</i></pre>
+
 <h4 id="Custom_Classes_property">Eigenschaften</h4>
 <p>Eigenschaftsdefinitionen erlauben das Ausführen einer Methode, wann immer das Skript einen spezifischen Key abruft oder setzt.</p>
-<pre>Eigenschaft[]
+<pre>Eigenschaft[]  <em>; Die eckigen Klammern sind optional</em>
 {
-    get {
-        return ...
+    <span class="dec">get</span> {
+        return <i>Eigenschaftswert</i>
     }
-    set {
-        return ... := value
+    <span class="dec">set</span> {
+        <i>Speichere oder verarbeite</i> <span class="biv">value</span>
     }
-}</pre>
+}
+</pre>
 <p><em>Eigenschaft</em> ist der Name der Eigenschaft, mit dem sie aufgerufen werden kann. <code>obj.Eigenschaft</code> würde beispielsweise <em>get</em> aufrufen, und <code>obj.Eigenschaft := Wert</code> würde <em>set</em> aufrufen. Innerhalb von  <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das aufgerufen wird. Innerhalb von <em>set</em> enthält <code>value</code> den Wert, der zugewiesen wird.</p>
 <p>Beim Definieren oder Aufrufen einer Eigenschaft können Parameter übergeben werden, indem man sie auf der rechten Seite des Eigenschaftsnamens in eckigen Klammern setzt. Abgesehen von den eckigen Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
-<p>Der Rückgabewert von <em>get</em> oder <em>set</em> ist das Ergebnis eines Teilausdrucks, der die Eigenschaft aufgerufen hat. Zum Beispiel würde <code>Wert := obj.Eigenschaft := 42</code> den Rückgabewert von <em>set</em> in <code>Wert</code> speichern.</p>
+<p>Der Rückgabewert von <em>set</em> wird ignoriert. <code>Wert := obj.Eigenschaft := 42</code> beispielsweise wird immer <code>Wert := 42</code> zuweisen, egal was die Eigenschaft macht, es sei denn, sie löst eine Ausnahme aus oder beendet den Thread.</p>
 <p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_base">base.Eigenschaft</a></code> benutzen, um auf die via eigene Base-Klasse definierte Eigenschaft zugreifen zu können. Wenn <em>get</em> oder <em>set</em> nicht definiert ist, kann es von einer Base-Klasse behandelt werden. Wenn <em>set</em> nicht definiert ist und nicht von einer Meta-Funktion oder Base-Klasse behandelt wird, führt das Zuweisen eines Wertes dazu, dass dieser Wert in das Objekt gespeichert wird, wodurch die Eigenschaft deaktiviert wird.</p>
 <p>Der Versuch, eine Eigenschaft <em>aufzurufen</em>, wie bei <code>obj.Eigenschaft()</code>, bewirkt, als hätte es die Eigenschaft nie gegeben.</p>
 <p>Intern sind <em>get</em> und <em>set</em> zwei unterschiedliche Methoden, die sich untereinander keine Variablen teilen können (es sei denn, man speichert sie in <code>this</code>).</p>
 <p><a href="#Meta_Functions">Meta-Funktionen</a> bieten eine breitere Auswahl an Möglichkeiten für den kontrollierten Zugriff auf Eigenschaften und Methoden eines Objekts, allerdings sind sie komplizierter und fehleranfälliger.</p>
 
+<h4 id="Custom_Classes_property_short">Fat-Arrow-Eigenschaften</h4>
+<p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann genutzt werden, um einen <a href="#Custom_Classes_property">Eigenschaft</a>-Getter oder -Setter für die Rückgabe eines Ausdrucks zu definieren:</p>
+<pre>KurzeEigenschaft[]
+{
+    <span class="dec">get</span> =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
+    <span class="dec">set</span> =&gt; <i>Ausdruck zum Speichern oder Verarbeiten von</i> <span class="biv">value</span>
+}</pre>
+<p>Wenn man nur einen Getter definiert, können die geschweiften Klammern und <code>get</code> weggelassen werden:</p>
+<pre>KürzereEigenschaft[] =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i></pre>
+
 <h3 id="__Item">__Item-Eigenschaft</h3>
 <p>Die __Item-Eigenschaft wird indirekt aufgerufen, wenn der Index-Operator (Array-Syntax) in Verbindung mit dem Objekt verwendet wird. Zum Beispiel:</p>
 <pre>class Env {
     __Item[name] {
-        get {
-            return EnvGet(name)
-        }
-        set {
-            return EnvSet(name, value)
-        }
+        get =&gt; EnvGet(name)
+        set =&gt; EnvSet(name, value)
     }
 }
 
@@ -431,12 +449,11 @@ class <i>Klassenname</i> {
 <p>Meta-Funktionen definieren, was passieren soll, wenn ein Key angefordert, aber nicht im Zielobjekt gefunden wird. Wenn einem <code>obj.key</code> beispielsweise keinen Wert zugewiesen wurde, wird die <i>__Get</i>-Meta-Funktion aufgerufen. <code>obj.key := value</code> veranlasst hingegen den Aufruf von <i>__Set</i> und <code>obj.key()</code> den Aufruf von <i>__Call</i>. Diese Meta-Funktionen (oder Methoden) sollten in <code>obj.base</code>, <code>obj.base.base</code> oder so ähnlich definiert sein.</p>
 <p>Wenn das Skript einen nicht vorhandenen Key im Zielobjekt abruft (get), setzt (set) oder aufruft (call), wird das Base-Objekt wie folgt aufgerufen:</p>
 <ul class="list_of_p">
-  <li>Wenn dieses Base-Objekt die entsprechende Meta-Funktion definiert hat, rufe es auf. Wenn die Meta-Funktion etwas explizit via <code>return</code> zurückgibt, verwende den Rückgabewert als Ergebnis der Operation (was auch immer den Aufruf der Meta-Funktion verursacht hat) und übergebe die Kontrolle wieder an das Skript. Ansonsten mache weiter wie unten beschrieben.
-    <p><i>Set</i>: Wenn die Meta-Funktion eine Zuweisung behandelt hat, sollte sie den zugewiesenen Wert zurückgeben. Auf diese Weise können Zuweisungen verkettet werden, wie z. B. <code>a.x := b.y := z</code>. Der Rückgabewert könnte vom ursprünglichen Wert <code>z</code> abweichen (wenn beispielsweise Beschränkungen auferlegt wurden, welche Werte zugewiesen werden dürfen).</p></li>
+  <li>Wenn dieses Base-Objekt die entsprechende Meta-Funktion definiert hat, rufe es auf. Wenn die Meta-Funktion etwas explizit via <code>return</code> zurückgibt, übergebe die Kontrolle wieder an das Skript (oder was auch immer das Objekt indirekt aufgerufen hat). Ansonsten mache weiter wie unten beschrieben.
+    <p><i>Set</i>: Eigenschaftszuweisungen geben immer den zugewiesenen Wert zurück, daher wird der Rückgabewert von __Set ignoriert (aber ein explizites <code>return</code> ist eventuell trotzdem erforderlich)</p></li>
   <li>Suche nach einem passenden Key in den Feldern des Base-Objekts.</li>
   <li>Wenn ein Key, der zu einer Eigenschaft gehört, gefunden wurde und <em>get</em> oder <em>set</em> durchführt (falls zutreffend), rufe die Eigenschaft auf und kehre zurück. Wenn dies ein Methodenaufruf ist, rufe <em>get</em> auf.</li>
-  <li>Wenn kein einziger Key gefunden wurde, rufe das Base des Base-Objekts auf (wende dabei jeden dieser Schritte an, beginnend vom Anfang der Liste). Wenn wir noch nicht fertig sind, durchsuche dieses Base-Objekt nochmals nach einen passendem Key, falls ein Key via Meta-Funktion hinzugefügt wurde.
-    <p>Aufgrund der Abwärtskompatibilität wird dieser Schritt für <em>set</em>-Operationen durchgeführt, selbst wenn ein Key gefunden wurde (es sei denn, es ist eine Eigenschaft definiert, die <em>set</em> durchführt).</p></li>
+  <li>Wenn kein einziger Key gefunden wurde, rufe das Base des Base-Objekts auf (wende dabei jeden dieser Schritte an, beginnend vom Anfang der Liste). Wenn wir noch nicht fertig sind, durchsuche dieses Base-Objekt nochmals nach einen passendem Key, falls ein Key via Meta-Funktion hinzugefügt wurde.</li>
   <li>Wenn mehrere Parameter bei <i>get</i> oder <i>set</i> angegeben sind und ein Key gefunden wurde, überprüfe seinen Wert. Wenn dieser Wert ein Objekt ist, rufe es auf, um die restlichen Parameter zu behandeln, und tue nichts weiter.</li>
   <li>Wenn ein Key gefunden wurde, stoppe die Suche und gehe folgendermaßen vor:<br>
     <i>Get</i>: Gebe den Wert zurück.<br>
@@ -498,8 +515,7 @@ class Farbe
             ; Errechnet und speichert den neuen RGB-Wert.</em>
             this.RGB := (aWert &lt;&lt; Verschiebung) | (this.RGB &amp; ~(0xff &lt;&lt; Verschiebung))
 
-            <em>; 'Return' ist notwendig, um die Erstellung eines neuen Key-Value-Paares zu verhindern.
-            ; Dies bestimmt auch, was in dem 'x' in 'x := clr[name] := val' gespeichert wird:</em>
+            <em>; 'Return' ist notwendig, um die Erstellung eines neuen Key-Value-Paares zu verhindern.</em>
             return aWert
         }
         <em>; <span class="red">HINWEIS:</span> Ein 'return' hier würde this.gespeichertes_RGB und this.RGB unbrauchbar machen.</em>
@@ -640,7 +656,7 @@ Default__Warn(nonobj, p1:="", p2:="", p3:="", p4:="")
 {
     ListLines
     MsgBox "Ein objektloser Wert wurde unsachgemäß aufgerufen.`n`nSpeziell: " nonobj
-    return "" <em>; Überschreibt das Standardverhalten durch Rückgabe eines Wertes.</em>
+    return "" <em>; Überschreibt das Standardverhalten durch explizites Returning.</em>
 }</pre>
 
 <h2 id="Implementation">Implementierung</h2>

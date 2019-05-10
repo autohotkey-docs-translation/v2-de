@@ -118,6 +118,9 @@ Hotkey "#n", "On"   <em>; Schaltet denselben Hotkey wieder ein.</em>
 <p><a href="Hotkey.htm">Hotkey-Funktion</a>, <a href="../Hotkeys.htm">Hotkeys</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="Suspend.htm">Suspend</a>, <a href="WinActive.htm">WinActive</a>, <a href="WinExist.htm">WinExist</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a></p>
 
 <h2 id="Examples">Beispiele</h2>
+
+<h3 id="ex1">Beispiel #1</h3>
+<p>Anpassen der Lautstärke durch Drehen des Mausrades innerhalb der Taskleiste:</p>
 <pre class="NoIndent">
 <em>; Beispiel 0: WinActive.</em>
 #If WinActive("ahk_class Notepad")
@@ -127,7 +130,6 @@ Hotkey "#n", "On"   <em>; Schaltet denselben Hotkey wieder ein.</em>
 #If
 #c::MsgBox "Sie haben WIN+C in einem Fenster gedrückt, das nicht der Texteditor ist."
 
-<em>; Beispiel 1: Anpassen der Lautstärke durch Drehen des Mausrades innerhalb der Taskleiste.</em>
 #If MausIstÜber("ahk_class Shell_TrayWnd")
 WheelUp::Send "{Volume_Up}"
 WheelDown::Send "{Volume_Down}"
@@ -136,8 +138,11 @@ MausIstÜber(Fenstertitel) {
     MouseGetPos ,, Fenster
     return WinExist(Fenstertitel " ahk_id " Fenster)
 }
+</pre>
 
-<em>; Beispiel 2: Einfaches wort-löschendes Tastenkürzel für alle Eingabefelder.</em>
+<h3 id="ex2">Beispiel #2</h3>
+<p>Einfaches wort-löschendes Tastenkürzel für alle Eingabefelder:</p>
+<pre class="NoIndent">
 #If AktivesSteuerelementIstKlasse("Edit")
 ^BS::Send "^+{Left}{Del}"
 ^Del::Send "^+{Right}{Del}"
@@ -147,12 +152,17 @@ AktivesSteuerelementIstKlasse(Klasse) {
     FokusSteuerelementKlasse := WinGetClass("ahk_id " FokusSteuerelement)
     return (FokusSteuerelementKlasse=Klasse)
 }
+</pre>
 
-<em>; Beispiel 3: Kontextunabhängiger Hotkey.</em>
+<h3 id="ex3">Beispiel #3: Kontextunabhängiger Hotkey</h3>
+<pre class="NoIndent">
 #If
 Esc::ExitApp
+</pre>
 
-<em id="ex4">; Beispiel 4: Dynamische Hotkeys. <b>Benötigt Beispiel 1.</b></em>
+<h3 id="ex4">Beispiel #4: Dynamische Hotkeys</h3>
+<p>Dieses Beispiel benötigt <a href="#ex1">Beispiel #1</a>:</p>
+<pre class="NoIndent">
 NumpadAdd::
 Hotkey "If", 'MausIstÜber("ahk_class Shell_TrayWnd")'
 if (zweimalhoch := !zweimalhoch)

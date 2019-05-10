@@ -533,7 +533,7 @@ indexData = [
   ["HWND (eines Steuerelements)","commands/ControlGetHwnd.htm"],
   ["HWND (eines Fensters)","misc/WinTitle.htm#ahk_id"],
   ["icon, changing","commands/TraySetIcon.htm"],["Symbol ändern","commands/TraySetIcon.htm"],
-  ["ID-Nummer eines Fensters","commands/WinGet.htm"],
+  ["ID-Nummer eines Fensters","commands/WinExist.htm"],
   ["If","commands/IfExpression.htm",3,"E"],
   ["IL_Add","commands/ListView.htm#IL_Add",2],
   ["IL_Create","commands/ListView.htm#IL_Create",2],
