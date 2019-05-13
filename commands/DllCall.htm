@@ -105,11 +105,9 @@ str := StrGet(&amp;Puffer, "cp0")  <em>; Ermittelt ANSI-Zeichenkette vom Puffer.
 <tr id="ptr">
   <td>Ptr</td>
   <td><p>Ein <a href="../Variables.htm#PtrSize">pointer-großer</a> Integer, der je nach Dateiformat der skript-ausführenden EXE-Datei (32- oder 64-Bit) einem Int oder Int64 entspricht. <i>Ptr</i> sollte für Pointer verwendet werden, die auf Arrays oder Strukturen (wie RECT* oder LPPOINT) verweisen, und für fast alle Handles (wie HWND, HBRUSH oder HBITMAP). Handelt es sich bei dem Parameter um einen Pointer, der auf einen einzelnen numerischen Wert wie LPDWORD oder int* verweist, sollte grundsätzlich das Suffix * oder P anstelle von "Ptr" verwendet werden.</p>
+  <p>Wenn ein Objekt an einen Ptr-Parameter übergeben wird, wird der Wert der <code>Ptr</code>-Eigenschaft  des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird eine Ausnahme ausgelöst. In der Regel ist das Objekt ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt, das via <a href="BufferAlloc.htm">BufferAlloc</a> erstellt wurde.</p>
   <p><i>Ptr</i> kann auch mit dem Suffix * oder P kombiniert werden; diese Kombination sollte nur bei Funktionen verwendet werden, die einen Pointer über LPVOID* oder Ähnliches zurückgeben.</p>
   <p><i>UPtr</i> ist ebenfalls gültig, aber nur in einem 32-Bit-Build, da AutoHotkey keine vorzeichenlose 64-Bit-Integer unterstützt.</p>
-  <p>Wenn Ihr Skript mit älteren Versionen von AutoHotkey kompatibel sein muss, können Sie wie folgt einen Variablentyp nutzen:</p>
-  <pre>Ptr := A_PtrSize ? "Ptr" : "UInt" <em>; Wenn A_PtrSize nicht definiert ist, gilt stattdessen UInt.</em>
-DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lassen Sie die Anführungszeichen bei Ptr weg.</em></pre>
   <p class="note"><strong>Hinweis</strong>: Um einen <strong>NULL</strong>-Handle oder -Pointer zu übergeben, übergibt man den Integer 0.</p></td>
 </tr>
 <tr id="asterisk">
@@ -134,7 +132,8 @@ DllCall("DeleteFile", Ptr, &amp;Dateiname) <em>; Lassen Sie die Anführungszeich
 <p>DllCall löst eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> unter folgenden Bedingungen aus:</p>
 <ul>
   <li>Der <em>[DllDatei\]Funktion</em>-Parameter ist eine Floating-Point-Zahl. Es wird eine Zeichenkette oder ein positiver Integer benötigt.</li>
-  <li>Der <a href="#types">Rückgabetyp</a> oder einer der angegebenen <a href="#types">Argumenttypen</a> ist ungültig. Dieser Fehler kann auch auftreten, wenn ein <a href="../Variables.htm#Expressions">Ausdruck</a>, der eine Zahl ergibt, an ein Argument übergeben wird, das als Zeichenkette (<a href="#str">Str</a>) typisiert ist.</li>
+  <li>Der <a href="#types">Rückgabetyp</a> oder einer der angegebenen <a href="#types">Argumenttypen</a> ist ungültig.</li>
+  <li>Es wurde ein Wert unerwarteten Typs an ein Argument übergeben. Dies geschieht zum Beispiel, wenn ein <a href="../Variables.htm#Expressions">Ausdruck</a>, der als Zahl ausgewertet wird, an ein Zeichenkettenargument (<a href="#str">Str</a>) übergeben wird oder wenn ein Objekt an ein Argument übergeben wird, das <em>nicht</em> vom Typ <a href="#ptr">Ptr</a> ist.</li>
   <li>Die angegebene <em>DllDatei</em> konnte weder zugegriffen noch geladen werden. Wenn kein expliziter Pfad für <em>DllDatei</em> angegeben wurde, muss die Datei in einem der Pfade aus der PATH-Umgebungsvariable oder im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vorhanden sein. Dieser Fehler kann auch auftreten, wenn der Benutzer keine Zugriffsrechte für die Datei hat, oder wenn AutoHotkey im 32-Bit-Format und die DLL im 64-Bit-Format ist (oder umgekehrt).</li>
   <li>Die angegebene Funktion konnte innerhalb der DLL nicht gefunden werden.</li>
   <li>Eine fatale Ausnahme führte zum Abbruch der Funktion trotz erfolgreichen Aufrufs. <code>Exception.Extra</code> enthält den Ausnahmecode. 0xC0000005 wäre beispielsweise "Zugriffsverletzung". In solchen Fällen wird der Thread unterbrochen (wenn <a href="Try.htm">try</a> nicht verwendet wird), allerdings wird jede <a href="#asterisk">Sternchenvariablen</a> immer noch aktualisiert. Eine fatale Ausnahme wäre beispielsweise die Dereferenzierung eines ungültigen Pointers wie NULL (0). Aufgrund der Tatsache, dass eine <a href="#cdecl">Cdecl</a>-Funktion nie den im nächsten Abschnitt erwähnten Fehler erzeugen kann, löst sie stattdessen eine Ausnahme aus, wenn ihr zu wenig Argumente übergeben wurde.</li>
@@ -182,7 +181,8 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 </p>
 
 <h2>Siehe auch</h2>
-<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://msdn.microsoft.com/de-de/library/">MSDN Library</a></p>
+<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://msdn.microsoft.com/de-de/library/">MSDN Library</a></p>
+
 <h2>Beispiele</h2>
 <pre class="NoIndent"><em>; Beispiel: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</em>
 
@@ -224,13 +224,13 @@ F1::
 SPI_GETMOUSESPEED := 0x70
 SPI_SETMOUSESPEED := 0x71
 <em>; Ermittelt die aktuelle Geschwindigkeit, um sie später wiederherzustellen:</em>
-<strong>DllCall</strong>("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "UIntP", OrigMausTempo, "UInt", 0)
+DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "UIntP", OrigMausTempo, "UInt", 0)
 <em>; Verringert nun die Geschwindigkeit des Mauszeigers im vorletzten Parameter (im Bereich von 1 bis 20, 10 ist Standard):</em>
-<strong>DllCall</strong>("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", <strong>3</strong>, "UInt", 0)
+DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", <strong>3</strong>, "UInt", 0)
 KeyWait "F1"  <em>; Verhindert, dass das Auto-Wiederholungs-Feature der Tastatur DllCall wiederholt aufruft.</em>
 return
 
-F1 up::<strong>DllCall</strong>("SystemParametersInfo", "UInt", 0x71, "UInt", 0, "Ptr", OrigMausTempo, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
+F1 up::DllCall("SystemParametersInfo", "UInt", 0x71, "UInt", 0, "Ptr", OrigMausTempo, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
 
 <pre class="NoIndent"><em>; Beispiel: Überwacht das fokussierte Steuerelement und zeigt die Position seiner
 ; vertikalen Scrollleiste an (in Echzeit).</em>
@@ -243,7 +243,7 @@ BeobachteScrollleiste()
     if !FokusHwnd  <em>; Kein fokussiertes Steuerelement.</em>
         return
     <em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
-    ToolTip(<strong>DllCall</strong>("GetScrollPos", "Ptr", FokusHwnd, "Int", 1))  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
+    ToolTip DllCall("GetScrollPos", "Ptr", FokusHwnd, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 }</pre>
 
 <pre class="NoIndent" id="file"><em>; Beispiel: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher.
@@ -255,22 +255,22 @@ if Dateiname = ""
     return
 GENERIC_WRITE := 0x40000000  <em>; Öffnet eine Datei zum Schreiben.</em>
 CREATE_ALWAYS := 2  <em>; Erstellt eine neue Datei (überschreibt eine vorhandene Datei).</em>
-hFile := <strong>DllCall</strong>("CreateFile", "Str", Dateiname, "UInt", GENERIC_WRITE, "UInt", 0, "Ptr", 0, "UInt", CREATE_ALWAYS, "UInt", 0, "Ptr", 0, "Ptr")
+hFile := DllCall("CreateFile", "Str", Dateiname, "UInt", GENERIC_WRITE, "UInt", 0, "Ptr", 0, "UInt", CREATE_ALWAYS, "UInt", 0, "Ptr", 0, "Ptr")
 if !hFile
 {
     MsgBox "Kann '" Dateiname "' nicht zum Schreiben öffnen."
     return
 }
 TestZeichenkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
-<strong>DllCall</strong>("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", StrLen(TestZeichenkette), "UIntP", AktuellGeschriebeneBytes, "Ptr", 0)
-<strong>DllCall</strong>("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
+DllCall("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", StrLen(TestZeichenkette), "UIntP", AktuellGeschriebeneBytes, "Ptr", 0)
+DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
 GENERIC_READ := 0x80000000  <em>; Öffnet die Datei zum Lesen.</em>
 OPEN_EXISTING := 3  <em>; Dieser Modus bewirkt, dass die zu öffnende Datei bereits existieren muss.</em>
 FILE_SHARE_READ := 0x1 <em>; Dieser und der nächste Modus bestimmen, ob andere Prozesse die bereits geöffnete Datei öffnen können.</em>
 FILE_SHARE_WRITE := 0x2
-hFile := <strong>DllCall</strong>("CreateFile", "Str", Dateiname, "UInt", GENERIC_READ, "UInt", FILE_SHARE_READ|FILE_SHARE_WRITE, "Ptr", 0, "UInt", OPEN_EXISTING, "UInt", 0, "Ptr", 0)
+hFile := DllCall("CreateFile", "Str", Dateiname, "UInt", GENERIC_READ, "UInt", FILE_SHARE_READ|FILE_SHARE_WRITE, "Ptr", 0, "UInt", OPEN_EXISTING, "UInt", 0, "Ptr", 0)
 if !hFile
 {
     MsgBox "Kann '" Dateiname "' nicht zum Lesen öffnen."
@@ -278,8 +278,8 @@ if !hFile
 }
 <em>; Macht die Variable aus Testgründen leer, aber stellt sicher, das sie genügend Kapazität zur Verfügung hat:</em>
 ZuLesendeBytes := VarSetCapacity(TestZeichenkette, StrLen(TestZeichenkette))
-<strong>DllCall</strong>("ReadFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZuLesendeBytes, "UIntP", AktuellGeleseneBytes, "Ptr", 0)
-<strong>DllCall</strong>("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
+DllCall("ReadFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZuLesendeBytes, "UIntP", AktuellGeleseneBytes, "Ptr", 0)
+DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " TestZeichenkette</pre>
 
 <pre class="NoIndent" id="HideCursor"><em>; Beispiel: Versteckt den Mauszeiger, wenn man WIN+C drückt. Um den Mauszeiger wieder sichtbar zu machen, drückt man nochmals WIN+C.</em>
@@ -329,7 +329,7 @@ SystemCursor(cmd)  <em>; cmd = "Show|Hide|Toggle"</em>
 Run "Notepad"
 WinWait "Unbenannt - Editor"  <em>; Setzt auch das "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>" für das untere WinExist.</em>
 VarSetCapacity(Rect, 16)  <em>; RECT ist eine Struktur, die aus vier 32-Bit-Integern besteht (also 4*4=16).</em>
-<strong>DllCall</strong>("GetWindowRect", "Ptr", WinExist(), "Ptr", &amp;Rect)  <em>; WinExist gibt ein HWND zurück.</em>
+DllCall("GetWindowRect", "Ptr", WinExist(), "Ptr", &amp;Rect)  <em>; WinExist gibt ein HWND zurück.</em>
 L := NumGet(Rect, 0, "Int"), O := NumGet(Rect, 4, "Int")
 R := NumGet(Rect, 8, "Int"), U := NumGet(Rect, 12, "Int")
 MsgBox Format("Links {1} Oben {2} Rechts {3} Unten {4}", L, O, R, U)</pre>
@@ -340,11 +340,11 @@ MsgBox Format("Links {1} Oben {2} Rechts {3} Unten {4}", L, O, R, U)</pre>
 VarSetCapacity(Rect, 16, 0)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern und initialisiert sie alle mit Null.</em>
 <a href="NumPut.htm">NumPut</a>(A_ScreenWidth//2, Rect, 8, "Int")  <em>; Der dritte Integer in der Struktur ist "rect.right".</em>
 NumPut(A_ScreenHeight//2, Rect, 12, "Int") <em>; Der vierte Integer in der Struktur ist "rect.bottom".</em>
-hDC := <strong>DllCall</strong>("GetDC", "Ptr", 0, "Ptr")  <em>; Übergibt Null, um den Gerätekontext des Desktops abzurufen.</em>
-hBrush := <strong>DllCall</strong>("CreateSolidBrush", "UInt", 0x0000FF, "Ptr")  <em>; Erstellt einen roten Pinsel (0x0000FF ist im BGR-Format).</em>
-<strong>DllCall</strong>("FillRect", "Ptr", hDC, "Ptr", &amp;Rect, "Ptr", hBrush)  <em>; Füllt das angegebene Rechteck mit dem Pinsel von oben.</em>
-<strong>DllCall</strong>("ReleaseDC", "Ptr", 0, "Ptr", hDC)  <em>; Gibt Speicher frei.</em>
-<strong>DllCall</strong>("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
+hDC := DllCall("GetDC", "Ptr", 0, "Ptr")  <em>; Übergibt Null, um den Gerätekontext des Desktops abzurufen.</em>
+hBrush := DllCall("CreateSolidBrush", "UInt", 0x0000FF, "Ptr")  <em>; Erstellt einen roten Pinsel (0x0000FF ist im BGR-Format).</em>
+DllCall("FillRect", "Ptr", hDC, "Ptr", &amp;Rect, "Ptr", hBrush)  <em>; Füllt das angegebene Rechteck mit dem Pinsel von oben.</em>
+DllCall("ReleaseDC", "Ptr", 0, "Ptr", hDC)  <em>; Gibt Speicher frei.</em>
+DllCall("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
 
 <pre class="NoIndent"><em>; Struktur-Beispiel: Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig,
 ; wenn Sie ein zukünftiges Datum setzen, denn dadurch können geplante Tasks vorzeitig ausgeführt werden!</em>
@@ -376,7 +376,7 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
     Int := SubStr(YYYYMMDDHHMISS, 13, 2) <em>; SS (Sekunden)</em>
     NumPut(Int, Systemuhr, 12, "UShort")
 
-    return <strong>DllCall</strong>("SetSystemTime", "Ptr", &amp;Systemuhr)
+    return DllCall("SetSystemTime", "Ptr", &amp;Systemuhr)
 }</pre>
 
 <pre class="NoIndent"><em>/* <strong>Weitere Struktur-Beispiele:</strong>

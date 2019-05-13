@@ -14,29 +14,47 @@
 
 <h1>Object</h1>
 
-<p>In AutoHotkey ist der grundlegende Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. Standardmäßig unterstützen alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, folgende Dinge:</p>
-<p><strong>Methoden:</strong></p>
+<p class="warning"><strong>Hinweis:</strong> Diese Dokumentation umfasst sowohl das seit v2.0-a103 geltende Verhalten als auch einige geplante Änderungen. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>.</p>
+<p>In AutoHotkey ist der grundlegende Objektdatentyp ein assoziatives Array, dessen Verhalten <a href="../Objects.htm#Custom_Objects">individuell angepasst werden kann</a>. In dieser und älteren Versionen von AutoHotkey sind alle Objekte, die mit <code>{}</code>, <code>[]</code>, <code>Object()</code> und <code>Array()</code> erstellt wurden, standardmäßig vom gleichen Typ und unterstützen die gleichen Methoden und Eigenschaften.</p>
+<p>In einer zukünftigen Version wird dieses Objekt in verschiedene Typen aufgeteilt: Array, Map und Object. Skript-Autoren können mit der Vorbereitung beginnen, indem sie auf Methoden verzichten, die darauf basieren, wie das Objekt erstellt wurde oder wie es verwendet werden soll.</p>
+<ul>
+  <li><code>[]</code>, <code>Array()</code> und <a href="../Functions.htm#Variadic">variadische Funktionen</a> erstellen ein Array-Objekt. <a href="../commands/StrSplit.htm">StrSplit</a> und <a href="../Variables.htm#Args">A_Args</a> geben ebenfalls ein Array-Objekt zurück.</li>
+  <li>Wenn das Objekt als assoziatives Array vorgesehen ist, muss das Skript aktualisiert werden, wenn der Map-Typ eingeführt wird. Erstellen Sie das Objekt erst einmal mit <code>{}</code> oder <code>Object()</code> und verwenden Sie nur die Map-Methoden oder allgemeine Methoden.</li>
+  <li>Verwenden Sie beim Zugriff auf Eigenschaften immer <code>obj.<i>Identifikator</i></code> oder <code>obj.%<i>Ausdruck</i>%</code>, nicht <code>obj[<i>Ausdruck</i>]</code>. Letzteres sollte nur bei Elementen eines Arrays oder assoziativen Arrays angewendet werden.</li>
+  <li>Verwenden Sie beim Zugriff auf assoziativen Array-Elemente immer <code>obj[<i>Ausdruck</i>]</code>, nicht <code>obj.<i>DirektGeschrieben</i></code>.</li>
+</ul>
+<p>Weitere Änderungen an Skripten sind erforderlich. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>. Dieser Forum-Thread enthält ein Skript namens Object.ahk, das eine Vorschau auf die geplanten Änderungen liefert. Experimentieren Sie nach Belieben mit diesem Skript oder werfen Sie einen Blick auf dessen Dokumentation, um sich auf v2.0 vorzubereiten.</p>
+
+<p><strong>Allgemeine Methoden:</strong></p>
+<ul>
+	<li><a href="#Clone">Clone</a></li>
+	<li><a href="#NewEnum">_NewEnum</a></li>
+	<li>Veraltet: <a href="#SetCapacity">SetCapacity</a> / <a href="#GetCapacity">GetCapacity</a></li>
+	<li>Veraltet: <a href="#GetAddress">GetAddress</a></li>
+</ul>
+<p><strong>Array-Methoden:</strong></p>
 <ul>
   <li><a href="#InsertAt">InsertAt</a> / <a href="#RemoveAt">RemoveAt</a></li>
   <li><a href="#Push">Push</a> / <a href="#Pop">Pop</a></li>
-  <li><a href="#Delete">Delete</a></li>
-	<li><a href="#MinMaxIndex">MinIndex / MaxIndex</a> / <a href="#Length">Length</a> / <a href="#Count">Count</a></li>
-	<li><a href="#SetCapacity">SetCapacity</a> / <a href="#GetCapacity">GetCapacity</a></li>
-	<li><a href="#GetAddress">GetAddress</a></li>
-	<li><a href="#NewEnum">_NewEnum</a></li>
-	<li><a href="#HasKey">HasKey</a></li>
-	<li><a href="#Clone">Clone</a></li>
+  <li><a href="#Length">Länge</a></li>
+  <li>Veraltet: <a href="#MinMaxIndex">MinIndex / MaxIndex</a></li>
 </ul>
-<p><strong>Eigenschaften:</strong></p>
+<p><strong>Map-Methoden:</strong></p>
+<ul>
+  <li><a href="#Delete">Delete</a></li>
+	<li><a href="#Count">Count</a></li>
+	<li><a href="#HasKey">HasKey</a></li>
+</ul>
+<p><strong>Allgemeine Eigenschaften:</strong></p>
 <ul>
 	<li><a href="#Base">Base</a></li>
 </ul>
 <p><strong>Funktionen:</strong></p>
 <ul>
-	<li><a href="#RawGet">ObjRawGet</a></li>
-	<li><a href="#RawSet">ObjRawSet</a></li>
 	<li><a href="#GetBase">ObjGetBase</a></li>
 	<li><a href="#SetBase">ObjSetBase</a></li>
+	<li>Veraltet: <a href="#RawGet">ObjRawGet</a></li>
+	<li>Veraltet: <a href="#RawSet">ObjRawSet</a></li>
 </ul>
 <p>Jede Methode hat außerdem eine äquivalente Funktion, mit der jedes <a href="../Objects.htm#Custom_Objects">benutzerdefinierte Verhalten</a>, das vom Objekt implementiert wurde, umgangen werden kann. Diese Funktionen sollten nur für diesen Zweck verwendet werden. Um so eine Funktion aufzurufen, fügt man vor dem Methodennamen "Obj" an (bei _NewEnum muss der Unterstrich weggelassen werden) und übergibt das Zielobjekt als ersten Parameter. Zum Beispiel:</p>
 <pre>array := [1, 2, 3]
@@ -171,6 +189,7 @@ MsgBox x[1]           <em>; Leer</em></pre>
 </div>
 
 <div class="methodShort" id="MinMaxIndex"><h2>MinIndex / MaxIndex</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Methoden werden in zukünftigen Versionen nicht mehr verfügbar sein. Array-Objekte werden auf Index-Werte 1 bis Länge beschränkt. Map-Objekte unterstützen keine Array-ähnliche Funktionalität.</p>
 <pre class="Syntax">MinIndex := Object.<span class="func">MinIndex</span>()
 MaxIndex := Object.<span class="func">MaxIndex</span>()</pre>
 <p>Sofern Integer-Keys vorhanden sind, gibt MinIndex den niedrigsten und MaxIndex den höchsten Key zurück. Ansonsten wird eine leere Zeichenkette zurückgegeben.</p></div>
@@ -197,6 +216,7 @@ MsgBox ["A",    , "C"].Count()  <em>;  2</em>
 
 <div class="methodShort" id="SetCapacity"><h2>SetCapacity</h2>
 <p>Passt die Kapazität eines Objekts oder eines seiner Felder an.</p>
+<p class="warning"><strong>Veraltet:</strong> Diese Methode wird in zukünftigen Versionen nicht mehr verfügbar sein. Verwenden Sie für binäre Daten das <a href="Buffer.htm">Buffer</a>-Objekt.</p>
 <pre class="Syntax">Object.<span class="func">SetCapacity</span>(MaxElemente)
 Object.<span class="func">SetCapacity</span>(Key, Bytegröße)</pre>
 <dl>
@@ -223,18 +243,22 @@ Object.<span class="func">SetCapacity</span>(Key, Bytegröße)</pre>
 </div>
 
 <div class="methodShort" id="GetCapacity"><h2>GetCapacity</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Methode wird in zukünftigen Versionen nicht mehr verfügbar sein. Verwenden Sie für binäre Daten das <a href="Buffer.htm">Buffer</a>-Objekt.</p>
 <pre class="Syntax">MaxElemente := Object.<span class="func">GetCapacity</span>()
 Bytegröße := Object.<span class="func">GetCapacity</span>(Key)</pre>
 <p>Gibt die Kapazität eines Objekts oder eines seiner Felder zurück.</p>
 <p>Gibt eine leere Zeichenkette zurück, wenn das Feld nicht existiert oder keine Zeichenkette enthält.</p></div>
 
 <div class="methodShort" id="GetAddress"><h2>GetAddress</h2>
+<p class="warning"><strong>Veraltet:</strong> Diese Methode wird in zukünftigen Versionen nicht mehr verfügbar sein. Verwenden Sie für binäre Daten das <a href="Buffer.htm">Buffer</a>-Objekt.</p>
 <pre class="Syntax">Ptr := Object.<span class="func">GetAddress</span>(Key)</pre>
 <p>Gibt die aktuelle Adresse des Zeichenketten-Zwischenspeichers des Feldes zurück, wenn es einen hat. Wenn das Feld eine leere Zeichenkette enthält und eine Kapazität von Null hat, ist die Adresse nicht eindeutig und darf nicht geändert werden. Es wird eine Ausnahme ausgelöst, wenn das Feld eine reine Zahl oder ein Objekt enthält, oder nicht existiert.</p></div>
 
-<div class="methodShort" id="NewEnum"><h2>NewEnum</h2>
-<pre class="Syntax">Enum := Object._<span class="func">NewEnum</span>()</pre>
-<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um Key-Value-Paare des Objekts zu enumerieren. Diese Methode wird in der Regel nicht direkt, sondern über die <a href="../commands/For.htm">For-Schleife</a> aufgerufen.</p></div>
+<div class="methodShort" id="NewEnum"><h2>_NewEnum</h2>
+<pre class="Syntax">Enum := Object.<span class="func">_NewEnum</span>()</pre>
+<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um Key-Value-Paare des Objekts zu enumerieren. Diese Methode wird in der Regel nicht direkt, sondern über die <a href="../commands/For.htm">For-Schleife</a> aufgerufen.</p>
+<p class="warning"><strong>Hinweis:</strong> Das oben genannte gilt für v2.0-a103, aber es sind Änderungen an der Enumerationsschnittstelle geplant. Es wird eine Unterscheidung zwischen Array-Elemente, Eigenschaften und Methoden geben. Das Enumerieren von Eigenschaften oder Methoden erfordert einen expliziten Methodenaufruf, um den entsprechenden Enumerator zu erhalten. Einzelheiten finden Sie unter <a href="https://www.autohotkey.com/boards/viewtopic.php?f=37&amp;t=57591">Objects (Forum-Thread)</a>.</p>
+</div>
 
 <div class="methodShort" id="HasKey"><h2>HasKey</h2>
 <pre class="Syntax">Object.<span class="func">HasKey</span>(Key)</pre>
@@ -255,6 +279,7 @@ Bytegröße := Object.<span class="func">GetCapacity</span>(Key)</pre>
 
 <div class="methodShort" id="RawGet"><h2>ObjRawGet</h2>
 <p>Ermittelt den Wert, der einem bestimmten Key innerhalb von <em>Object</em> zugeordnet ist.</p>
+<p class="warning"><strong>Veraltet:</strong> Diese Funktion wird möglicherweise in einer zukünftigen Version entfernt oder ersetzt. Es wird eine Unterscheidung zwischen Array-Elemente, Eigenschaften und Methoden geben. Diese Funktion wird nicht mehr benötigt.</p>
 <pre class="Syntax">Value := <span class="func">ObjRawGet</span>(Object, Key)</pre>
 <p>Wenn <em>Object</em> den <em>Key</em> nicht enthält, ist der Rückgabewert eine leere Zeichenkette. Es werden keine <a href="../Objects.htm#Meta_Functions">Meta-Funktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Die Inhalte der Base-Objekte von <em>Object</em> werden nicht berücksichtigt. Da <a href="#Base">base</a> selbst <a href="../Objects.htm#base-key">standardmäßig</a> kein Key-Value-Paar sondern eine Eigenschaft ist, wird es normalerweise nicht zurückgegeben.</p>
 <p>Es wird eine Ausnahme ausgelöst, wenn <em>Object</em> vom falschen Typ ist.</p>
@@ -262,6 +287,7 @@ Bytegröße := Object.<span class="func">GetCapacity</span>(Key)</pre>
 
 <div class="methodShort" id="RawSet"><h2>ObjRawSet</h2>
 <p>Speichert oder überschreibt ein Key-Value-Paar im Objekt.</p>
+<p class="warning"><strong>Veraltet:</strong> Diese Funktion wird möglicherweise in einer zukünftigen Version entfernt oder ersetzt. Es wird eine Unterscheidung zwischen Array-Elemente, Eigenschaften und Methoden geben. Diese Funktion wird nicht mehr benötigt.</p>
 <pre class="Syntax"><span class="func">ObjRawSet</span> Object, Key, Value</pre>
 <p>Diese Funktion wurde bereitgestellt, um den Skripten die Möglichkeit zu bieten, die __Set-<a href="../Objects.htm#Meta_Functions">Meta-Funktion</a> und <a href="../Objects.htm#Custom_Classes_property">Eigenschaften</a> zu umgehen. Falls dies nicht notwendig ist, sollte stattdessen eine normale Zuweisung verwendet werden. Zum Beispiel: <code>Object[Key] := Value</code></p>
 <p>Da der Zweck darin besteht, Meta-Funktionen zu umgehen, ist dies nur eine Funktion, keine Methode. Das Aufrufen einer internen Methode ruft generell auch die __Call-Meta-Funktion auf.</p>

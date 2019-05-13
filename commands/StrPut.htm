@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>StrPut - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die StrPut-Funktion kopiert eine Zeichenkette auf eine Speicheradresse unter Beachtung eines bestimmten Zeichensatzes." />
+<meta name="description" content="Die StrPut-Funktion kopiert eine Zeichenkette in einen Speicherbereich oder Puffer unter Beachtung eines bestimmten Zeichensatzes." />
 <meta name="ahk:equiv-v1" content="commands/StrPutGet.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,10 +15,10 @@
 
 <h1>StrPut</h1>
 
-<p>Kopiert eine Zeichenkette auf eine Speicheradresse unter Beachtung eines bestimmten Zeichensatzes.</p>
+<p>Kopiert eine Zeichenkette in einen Speicherbereich oder Puffer unter Beachtung eines bestimmten Zeichensatzes.</p>
 
 <pre class="Syntax"><span class="func">StrPut</span> Zeichenkette <span class="optional">, Codierung := <i>Keine</i></span> 
-<span class="func">StrPut</span> Zeichenkette, Adresse <span class="optional">, Länge</span> <span class="optional">, Codierung := <i>Keine</i></span> 
+<span class="func">StrPut</span> Zeichenkette, Ziel <span class="optional">, Länge</span> <span class="optional">, Codierung := <i>Keine</i></span>
 </pre>
 <h2>Parameter</h2>
 <dl>
@@ -30,10 +30,12 @@
     <p><em>Zeichenkette</em> wird standardmäßig in der <a href="../Concepts.htm#string-encoding">nativen Codierung</a> vermutet.</p>
   </dd>
 
-  <dt>Adresse</dt>
+  <dt>Ziel</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die Adresse, auf die die Zeichenkette geschrieben werden soll.</p>
+    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Ein <a href="../objects/Buffer.htm">Buffer</a>-ähnliches Objekt oder eine Speicheradresse, in die die Zeichenkette geschrieben werden soll.</p>
+    <p>Obwohl ein beliebiges Objekt mit einer <a href="../objects/Buffer.htm#Ptr">Ptr</a>- und <a href="../objects/Buffer.htm#Size">Size</a>-Eigenschaft verwendet werden kann, ist diese Funktion für das native <a href="../objects/Buffer.htm">Buffer</a>-Objekt optimiert. Das Übergeben eines Objekts mit diesen Eigenschaften stellt sicher, dass die Funktion keinen Speicher in einen ungültigen Bereich schreibt, was zu Abstürzen oder anderem unvorhersehbaren Verhalten führen kann.</p>
+    <p class="warning"><strong>Hinweis:</strong> Wenn eine Umwandlung zwischen den Zeichensätzen notwendig ist, könnte die erforderliche Puffergröße von der Größe der Quellzeichenkette abweichen. In solchen Fällen können Sie StrPut mit zwei Parametern aufrufen, um die erforderliche Größe zu berechnen.</p>
   </dd>
 
   <dt>Länge</dt>
@@ -41,6 +43,8 @@
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>Die maximale Anzahl der zu schreibenden Zeichen, einschließlich des Null-Terminators, falls notwendig.</p>
     <p>Wenn <em>Länge</em> 0 oder kleiner als die nach der Konvertierung voraussichtliche Länge (oder die Länge der Quellzeichenkette, wenn die Konvertierung nicht erforderlich ist) ist, wird eine Ausnahme ausgelöst.</p>
+    <p class="warning"><strong>Hinweis:</strong> Die Angabe der Länge von <em>Zeichenkette</em> oder einer Teilzeichenkette kann zu Problemen führen, wenn <em>Codierung</em> angegeben ist, da bei der Konvertierung die Zeichenkette eventuell länger gemacht wird.</p>
+    <p class="warning"><strong>Hinweis:</strong> <em>Länge</em> wird in Zeichen gemessen, während Puffergrößen normalerweise in Bytes gemessen werden, ebenso wie der Rückgabewert von StrPut. Um die Puffergröße in Bytes anzugeben, muss ein <a href="../objects/Buffer.htm">Buffer</a>-ähnliches Objekt im <em>Ziel</em>-Parameter verwendet werden.</p>
   </dd>
 
   <dt>Codierung</dt>
@@ -53,33 +57,40 @@
 
 <h2>Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Diese Funktion gibt die Anzahl der geschriebenen Zeichen zurück. Wenn keine <i>Adresse</i> angegeben wurde, wird die erforderliche Puffergröße in Zeichen zurückgegeben. Wenn <em>Länge</em> gleich die Länge der umgewandelten Zeichenkette ist, ist die Zeichenkette nicht null-terminiert; in jedem anderen Fall wird der Null-Terminator dazugezählt.</p>
+<p>Diese Funktion gibt die Anzahl der geschriebenen Bytes zurück. Wenn keine <i>Adresse</i> angegeben wurde, wird die erforderliche Puffergröße in Bytes zurückgegeben. Wenn <em>Länge</em> exakt mit der Länge der umgewandelten Zeichenkette übereinstimmt, ist die Zeichenkette nicht null-terminiert; andernfalls beinhaltet die zurückgegebene Größe den Null-Terminator.</p>
 
 <h2>Fehlerbehandlung</h2>
 <p>Es wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn ungültige Parameter erkannt werden oder die Konvertierung nicht durchgeführt werden kann.</p>
 
 <h2>Bemerkungen</h2>
-<p>Beachten Sie, dass der <i>Zeichenkette</i>-Parameter immer in der <a href="../Concepts.htm#string-encoding">nativen Codierung</a> von der aktuell verwendeten Version von AutoHotkey ist, wohingegen <i>Codierung</i> die Codierung der Zeichenkette spezifiziert, die auf die angegebene <i>Adresse</i> geschrieben wird. Wenn keine <em>Codierung</em> angegeben ist, wird die Zeichenkette gemessen oder kopiert, ohne dass eine Umwandlung stattfindet.</p>
-<p>Wenn eine Umwandlung zwischen den Zeichensätzen notwendig ist, könnte die erforderliche Puffergröße von der Größe der Quellzeichenkette abweichen.</p>
+<p>Beachten Sie, dass der <i>Zeichenkette</i>-Parameter immer davon ausgeht, die <a href="../Concepts.htm#string-encoding">native Codierung</a> der aktuell genutzten Version von AutoHotkey zu verwenden, wohingegen <i>Codierung</i> die Codierung für die auf die <i>Adresse</i> geschriebene Zeichenkette spezifiziert. Wenn keine <em>Codierung</em> angegeben ist, wird die Zeichenkette gemessen oder kopiert, ohne dass eine Umwandlung stattfindet.</p>
 <p>Es ist möglich, <em>Länge</em> oder <em>Codierung</em> direkt nach <em>Adresse</em> anzugeben, aber in diesem Fall darf <em>Codierung</em> nicht numerisch sein:</p>
 <pre>
 StrPut Zkette, Adresse, "cp0"  <em>; Zeichensatz 0, unbestimmte Puffergröße</em>
 StrPut Zkette, Adresse, n, 0   <em>; Maximal n Zeichen, Zeichensatz 0</em>
-StrPut Zkette, Adresse, 0      <em>; Nicht unterstützt</em></pre>
+StrPut Zkette, Adresse, 0      <em>; Nicht unterstützt (maximal 0 Zeichen)</em></pre>
 
 <h2>Siehe auch</h2>
-<p><a href="../Concepts.htm#string-encoding">Zeichenkettencodierung</a>, <a href="StrGet.htm">StrGet</a>, <a href="../Compat.htm">Skript-Kompatibilität</a>, <a href="FileEncoding.htm">FileEncoding</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a></p>
+<p><a href="../Concepts.htm#string-encoding">Zeichenkettencodierung</a>, <a href="StrGet.htm">StrGet</a>, <a href="../Compat.htm">Skript-Kompatibilität</a>, <a href="FileEncoding.htm">FileEncoding</a>, <a href="DllCall.htm">DllCall</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="ex1">Beispiele</h2>
+<p>StrPut kann einmal aufgerufen werden, um die erforderliche Puffergröße für eine Zeichenkette in einer bestimmten Codierung zu berechnen, und danach nochmal, um die Zeichenkette zu codieren und sie in den Puffer zu schreiben. Um diesen Vorgang zu vereinfachen, können Sie eine der folgenden Funktionen in Ihre <a href="../Functions.htm#lib">Bibliothek</a> aufnehmen:</p>
+<pre class="NoIndent"><em>; Gibt ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt zurück, das die Zeichenkette enthält:</em>
+StrBuf(Zeichenkette, Codierung)
+{
+    <em>; Berechnet erforderliche Größe und weist Puffer zu.</em>
+    Puf := BufferAlloc(StrPut(Zeichenkette, Codierung))
+    <em>; Kopiert oder wandelt die Zeichenkette um.</em>
+    StrPut(Zeichenkette, Puf, Codierung)
+    return Puf
+}
 
-<h3 id="ex1">Beispiel #1</h3>
-<p>StrPut kann einmal aufgerufen werden, um die erforderliche Puffergröße für eine Zeichenkette in einer bestimmten Codierung zu berechnen, und danach nochmal, um die Zeichenkette zu codieren und sie in den Puffer zu schreiben. Wenn Sie öfters Variablen mit StrPut verwenden, sollten Sie folgende Funktion in Ihre <a href="../Functions.htm#lib">Bibliothek</a> aufnehmen:</p>
-<pre class="NoIndent">StrPutVar(Zeichenkette, ByRef Var, Codierung)
+<em>; Speichert die codierte Zeichenkette in eine Variable und gibt eine Byte-Anzahl zurück.
+; Hinweis: Buffer-Objekte sind empfehlenswerter als Variablen.</em>
+StrPutVar(Zeichenkette, ByRef Var, Codierung)
 {
     <em>; Kapazität gewährleisten.</em>
-    VarSetCapacity(Var, StrPut(Zeichenkette, Codierung)
-        <em>; StrPut gibt die Zeichenanzahl zurück, aber VarSetCapacity benötigt Bytes.</em>
-        * ((Codierung = "utf-16" || Codierung = "cp1200") ? 2 : 1) )
+    VarSetCapacity(Var, StrPut(Zeichenkette, Codierung))
     <em>; Kopiert oder wandelt die Zeichenkette um.</em>
     return StrPut(Zeichenkette, &amp;Var, Codierung)
 }</pre>

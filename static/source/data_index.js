@@ -247,6 +247,8 @@ indexData = [
   ["blocks (lines enclosed in braces)","commands/Block.htm"],["Blöcke (Zeilen innerhalb von Klammern)","commands/Block.htm"],
   ["BoundFunc-Objekt","objects/Functor.htm#BoundFunc"],
   ["Break","commands/Break.htm",3,"S"],
+  ["Buffer-Objekt","objects/Buffer.htm"],
+  ["BufferAlloc","commands/BufferAlloc.htm",2],
   ["buffering","commands/_MaxThreadsBuffer.htm"],["Puffern / Zwischenspeichern","commands/_MaxThreadsBuffer.htm"],
   ["built-in functions","Functions.htm#BuiltIn"],["Interne Funktionen","Functions.htm#BuiltIn"],
   ["built-in variables","Variables.htm#BuiltIn"],["Interne Variablen","Variables.htm#BuiltIn"],

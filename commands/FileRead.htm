@@ -31,7 +31,7 @@
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Null oder mehr der folgenden Zeichenketten. Die Optionen müssen jeweils mit einem Leer- oder Tabulatorzeichen voneinander getrennt werden. Zum Beispiel: <code>"`n m5000 UTF-8"</code></p>
     <p><strong>Codierung</strong>: Geben Sie einen beliebigen Codierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (außer die leere Zeichenkette), um diese Codierung zu benutzen, falls die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Fehlt diese Option, gilt standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a>.</p>
-    <p><strong>RAW</strong>: Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um den Inhalt der Datei als <a href="#Binary">rohe Binärdaten</a> zu lesen. Diese Option überschreibt jede zuvor festgelegte Codierung und umgekehrt.</p>
+    <p><strong>RAW</strong>: Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um den Inhalt der Datei als <a href="#Binary">rohe Binärdaten</a> zu lesen und ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt anstelle einer Zeichenkette zurückzugeben. Diese Option überschreibt jede zuvor festgelegte Codierung und umgekehrt.</p>
     <p><strong>m1024</strong>: Fehlt diese Option, wird die gesamte Datei geladen. Wenn der Arbeitsspeicher dafür nicht ausreicht, wird eine Fehlermeldung angezeigt und der Thread beendet (aber mit <a href="Try.htm">Try</a> kann das verhindert werden). Ansonsten können Sie 1024 mit einer dezimalen oder hexadezimalen Anzahl von Bytes ersetzen. Wenn die Datei die angegebene Größe überschreitet, wird nur ihr führender Teil geladen.</p>
     <p class="note"><strong>Hinweis</strong>: Dies kann dazu führen, dass die letzte Zeile nur mit einem einzelnen CR-Zeichen (`r) endet, statt mit dem CR-LF-Paar (`r`n).</p>
     <p><strong>`n</strong> (ein LF-Zeichen): Ersetzt alle CR-LF-Paare (`r`n) mit einem LF-Zeichen (`n). Diese Übersetzung reduziert jedoch die Performance und ist in der Regel nicht notwendig. Zum Beispiel wäre ein Text, der `r`n enthält, bereits im richtigen Format, um in ein <a href="StrReplace.htm">Gui-Edit-Steuerelement</a> eingefügt werden zu können. Die folgende <a href="LoopParse.htm">Parsende Schleife</a> wird korrekt funktionieren, egal ob eine Zeile mit `r`n oder `n endet: <code>Loop Parse, InhaltMeinerDatei, "`n", "`r"</code>.</p>
@@ -40,18 +40,28 @@
 </dl>
 
 <h2>Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt den Inhalt der angegebenen Datei zurück. Wenn die Datei "in Benutzung", nicht vorhanden oder leer ist, wird eine leere Zeichenkette zurückgegeben.</p>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../objects/Buffer.htm">Buffer</a></p>
+<p>Diese Funktion gibt den Inhalt der angegebenen Datei zurück. Der Rückgabewert ist ein Buffer-Objekt, wenn die RAW-Option aktiv ist und die Datei geöffnet werden kann, ansonsten ist es eine Zeichenkette. Wenn die Datei nicht existiert oder aus irgendeinen anderen Grund nicht geöffnet werden kann, wird eine leere Zeichenkette zurückgegeben.</p>
 
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Datei erfolgreich geladen wurde. Ansonsten wird ErrorLevel auf 1 gesetzt, wenn ein Problem aufgetreten ist. Probleme sind zum Beispiel: 1) Datei existiert nicht; 2) Datei ist gesperrt oder nicht zugreifbar; 3) Das System hat nicht genügend Arbeitsspeicher, um die Datei zu laden.</p>
+<p>Es wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn ungültige Optionen erkannt werden.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
 <h2 id="Binary">Lesen von Binärdaten</h2>
-<p>Bei Benutzung der <code>RAW</code>-Option ist der Rückgabewert eine Zeichenkette, die den rohen, unbearbeiteten Inhalt der Datei enthält. Da die <a href="../Compat.htm#Format">native Codierung</a> UTF-16 ist, enthält die Zeichenkette immer eine gerade Anzahl an Bytes. Um die Anzahl der gelesenen Bytes zu erhalten (aufgerundet auf eine gerade Zahl), multipliziert man den Rückgabewert von <a href="StrLen.htm">StrLen</a> mit 2.</p>
+<p>Bei Benutzung der <code>RAW</code>-Option ist der Rückgabewert ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt, das den rohen, unbearbeiteten Inhalt der Datei enthält. Die <a href="../objects/Buffer.htm#Size">Size</a>-Eigenschaft des Objekts gibt die Anzahl der gelesenen Bytes zurück. <a href="NumGet.htm">NumGet</a> oder <a href="StrGet.htm">StrGet</a> kann genutzt werden, um die Daten des Puffers abzurufen. Zum Beispiel:</p>
+<pre>buf := FileRead(A_AhkPath, "RAW")
+if StrGet(buf, 2, "cp0") == "MZ"  <em>; Scheinbar eine ausführbare Datei...</em>
+{
+    <em>; Computertyp im COFF-Dateiheader abrufen.</em>
+    computer := NumGet(buf, NumGet(buf, 0x3C, "uint") + 4, "ushort")
+    computer := computer=0x8664 ? "x64" : computer=0x014C ? "x86" : "unbekannt"
+    <em>; Computertyp und Dateigröße anzeigen.</em>
+    MsgBox "Diese ausführbare " machine "-Datei ist " buf.Size " Bytes groß."
+}
+buf := ""</pre>
 <p>Diese Option ist in der Regel zum Lesen von binären Daten erforderlich, weil standardmäßig alle gelesenen Bytes aus der Datei als Text interpretiert werden und von der Codierung der Quelldatei (wie in den Optionen angegeben oder via <a href="../Variables.htm#FileEncoding">A_FileEncoding</a>) in die <a href="../Compat.htm#Format">native Codierung</a> des Skripts, UTF-16, umgewandelt sein könnte. Wenn die Daten kein UTF-16-Text sind, ändert diese Umwandlung die Daten auf unerwünschte Weise.</p>
-<p>Wenn die Daten UTF-16-Text enthalten, sollte man beachten, dass viele Funktionen davon ausgehen, dass die Daten bei der ersten binären Null enden (sofern eine vorhanden ist). MsgBox zeigt beispielsweise nur Zeichen bis zur erste binäre Null an. Allerdings ist der komplette Inhalt weiterhin vorhanden und kann durch erweiterte Methoden wie <a href="NumGet.htm">NumGet</a> abgerufen werden.</p>
-<p>Ein Beispiel für die RAW-Option finden Sie im Abschnitt <a href="ClipboardAll.htm#ex2">Speichern und Wiederherstellen der Zwischenablage</a>.</p>
+<p>Ein weiteres Beispiel für die RAW-Option finden Sie im Abschnitt <a href="ClipboardAll.htm#ex2">Speichern und Wiederherstellen der Zwischenablage</a>.</p>
 <p>Mit <a href="FileOpen.htm">FileOpen</a> in Verbindung mit <a href="../objects/File.htm#RawRead">File.RawRead</a> oder <a href="../objects/File.htm#ReadNum">File.Read<i>Num</i></a> können binäre Daten erfasst werden, ohne die komplette Datei in den Speicher einlesen zu müssen.</p>
 
 <h2>Bemerkungen</h2>

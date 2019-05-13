@@ -140,11 +140,9 @@ returnObject() {
 }
 MsgBox Verbinden("`n", "eins", "zwei", "drei")</pre>
 <p>Wenn man eine variadische Funktion aufruft, werden alle überschüssigen Parameter in ein Objekt gespeichert, das im letzten Parameter der Funktion enthalten ist. Der erste überschüssige Parameter ist <code>params[1]</code>, der Zweite ist <code>params[2]</code> und so weiter. Da das Objekt ein <a href="objects/Object.htm">Standardobjekt</a> ist, kann <code>params.<a href="objects/Object.htm#Length">Length</a>()</code> angewendet werden, um die Parameteranzahl zu ermitteln.</p>
-<p>Hinweise:</p>
-<ul>
-  <li>Der "variadische" Parameter kann nur am Ende der formalen Parameterliste erfolgen.</li>
-  <li><a href="misc/RegExCallout.htm">RegEx-Callouts</a> können nicht variadisch sein; der "variadische" Parameter wird zwar toleriert, aber bleibt leer.</li>
-</ul>
+<p>Der Versuch, eine nicht-variadische Funktion mit mehr Parametern als möglich aufzurufen, wird als Fehler erkannt. Schreiben Sie <code>*</code> als letzten Parameter (ohne Parametername), um eine Funktion beliebig viele Parameter akzeptieren zu lassen, <em>ohne</em> ein Array zum Speichern der überschüssigen Parameter zu erstellen.</p>
+<p class="warning"><strong>Hinweis:</strong> Der "variadische" Parameter kann nur am Ende der formalen Parameterliste erfolgen.</p>
+
 <h3 id="VariadicCall">Variadische Funktionsaufrufe</h3>
 <p>Variadische Funktionen können mithilfe eines Arrays eine variable Anzahl von Parametern <i>akzeptieren</i>, während variadische Funktionsaufrufe verwendet werden können, um eine variable Anzahl von Parametern an eine <i>beliebige</i> Funktion mithilfe derselben Syntax zu übergeben:</p>
 <pre>Teilzeichenketten := ["eins", "zwei", "drei"]
@@ -241,14 +239,15 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> unmittelbar beim Starten des Skripts verarbeitet werden, kann eine Variable nicht mithilfe einer <a href="commands/IfExpression.htm">IF-Anweisung</a> deklariert werden. Das heißt, dass eine Deklaration innerhalb eines IF- oder ELSE-<a href="commands/Block.htm">Blocks</a> auf alle Zeilen zwischen der Deklaration und der geschweiften Endklammer der Funktion eine Auswirkung hat. Beachten Sie zudem, dass es zurzeit nicht möglich ist, eine dynamische Variable zu deklarieren, wie z. B. <code>global Array%i%</code>.</p>
 
 <h2 id="DynCall">Dynamisches Aufrufen einer Funktion</h2>
-<p>Eine Funktion (auch eine <a href="#BuiltIn">interne Funktion</a>) kann dynamisch via Prozentzeichen aufgerufen werden. <code>%Var%(x, "Fuchs")</code> beispielsweise wird aufgerufen, wenn <em>Var</em> den Namen einer gültigen Funktion enthält. <code>Funk%A_Index%()</code> kann hingegen Funk1(), Funk2() und so weiter aufrufen, je nachdem, welcher Wert in A_Index aktuell enthalten ist.</p>
+<p>Eine Funktion (auch eine <a href="#BuiltIn">interne Funktion</a>) kann dynamisch via Prozentzeichen aufgerufen werden. <code>%Var%(x, "Fuchs")</code> beispielsweise wird aufgerufen, wenn <em>Var</em> den Namen oder die <a href="Objects.htm#Function_References">Referenz</a> einer gültigen Funktion enthält. <code>Funk%A_Index%()</code> kann hingegen Funk1(), Funk2() und so weiter aufrufen, je nachdem, welcher Wert in A_Index aktuell enthalten ist.</p>
 <p><em>Var</em> in <code>%Var%()</code> kann einen Funktionsnamen oder ein <a href="objects/Functor.htm">Funktionsobjekt</a> enthalten. Wenn die Funktion nicht existiert, wird stattdessen die __Call-Meta-Funktion des <a href="Objects.htm#Default_Base_Object">Standard-Base-Objekts</a> aufgerufen (und wenn diese Methode undefiniert ist, wird wie immer die __Call-Meta-Funktion aufgerufen).</p>
 <p>Wenn die Funktion aus einem der folgenden Gründe nicht aufgerufen werden kann, wird eine <a href="commands/Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst:</p>
 <ul>
-  <li>Es wurde eine nicht-existierende Funktion aufgerufen. Um das zu verhindern, benutzt man <code>if <a href="commands/IsFunc.htm">IsFunc</a>(VarMitFunkName)</code>. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">interne Funktionen</a>) muss explizit im Skript angegeben sein (zum Beispiel über <a href="commands/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Bibliotheksfunktion</a>).</li>
-  <li>Es wurden zu wenig Parameter übergeben. Um das zu verhindern, überprüft man den Rückgabewert von <a href="commands/IsFunc.htm">IsFunc</a> (das ist die Anzahl der Pflichtparameter plus 1). Hinweis: Zu viel übergebene Parameter werden toleriert; jeder zusätzliche Parameter wird vollständig ausgewertet (einschließlich aller Funktionsaufrufe) und dann verworfen.</li>
+  <li>Es wurde eine nicht-existierende Funktion aufgerufen. Dies kann oft verhindert werden, indem man <code>if <a href="commands/IsFunc.htm">IsFunc</a>(VarMitFunkName)</code> verwendet. Die <a href="#define">Definition</a> der aufgerufenen Funktion (außer <a href="#BuiltIn">interne Funktionen</a>) muss explizit im Skript angegeben sein (zum Beispiel über <a href="commands/_Include.htm">#Include</a> oder einem nicht-dynamischen Aufruf einer <a href="#lib">Bibliotheksfunktion</a>).</li>
+  <li>Es wurden zu wenig oder zu viele Parameter übergeben. Dies kann oft verhindert werden, indem man die <a href="commands/Func.htm#MinParams">MinParams</a>-, <a href="commands/Func.htm#MaxParams">MaxParams</a>- und <a href="commands/Func.htm#IsVariadic">IsVariadic</a>-Eigenschaft der Funktion überprüft. Die Ausnahme wird jedoch ausgelöst, da diese Bedingung in der Regel bedeutet, dass die Funktion falsch aufgerufen wird. Der Aufrufer sollte grundsätzlich wissen, was jeder Parameter bedeutet und wie viele es sind, bevor er die Funktion aufruft.</li>
 </ul>
 <p>Beachten Sie, dass ein dynamischer Aufruf etwas langsamer ist als ein normaler Aufruf, weil normale Aufrufe aufgelöst (nachgeschlagen) werden, bevor das Skript seine Ausführung beginnt.</p>
+
 <h2 id="ShortCircuit">Boolesche Kurzschlussauswertung</h2>
 <p><em>AND, OR</em> und der <a href="Variables.htm#ternary">ternäre Operator</a> innerhalb eines <a href="Variables.htm#Expressions">Ausdrucks</a> reduzieren die Auswertung auf ein Minimum, um die Performance zu erhöhen (egal ob Funktionsaufrufe vorhanden sind oder nicht). Beim Kurzschließen werden nur Bereiche des Ausdrucks ausgewertet, die Einfluss auf das Endergebnis haben. Im folgenden Beispiel wird gezeigt, wie genau das abläuft:</p>
 <pre>if (FarbName != "" AND not FindeFarbe(FarbName))

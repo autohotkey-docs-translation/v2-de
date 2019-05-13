@@ -58,6 +58,8 @@ tocData = [
   ]],
   ["Externe Bibliotheken","",
   [
+    ["Buffer-Objekt","objects/Buffer.htm"],
+    ["BufferAlloc","commands/BufferAlloc.htm"],
     ["CallbackCreate","commands/CallbackCreate.htm"],
     ["DllCall","commands/DllCall.htm"],
     ["NumGet","commands/NumGet.htm"],
@@ -283,6 +285,7 @@ tocData = [
   ["Objekttypen","",
   [
     ["Object","objects/Object.htm"],
+    ["Buffer-Objekt","objects/Buffer.htm"],
     ["Enumerator-Objekt","objects/Enumerator.htm"],
     ["Exception-Objekt","commands/Throw.htm#Exception"],
     ["File-Objekt","objects/File.htm"],
@@ -290,6 +293,7 @@ tocData = [
     ["Funktionsobjekte","objects/Functor.htm"],
     ["Gui-Objekt","objects/Gui.htm"],
     ["GuiControl-Objekt","objects/GuiControl.htm"],
+    ["Menu/MenuBar-Objekt","objects/Menu.htm"],
     ["RegExMatch-Objekt","commands/RegExMatch.htm#MatchObject"]
   ]],
   ["Prozess","commands/Process.htm",

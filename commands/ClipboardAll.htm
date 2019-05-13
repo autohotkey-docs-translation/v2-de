@@ -35,18 +35,17 @@
 
 <h2 id="clipboardall-object">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
-<p>Diese Funktion gibt eine <a href="../Concepts.htm#references-to-objects">Referenz</a> zu einem ClipboardAll-Objekt zurück, das drei Eigenschaften hat:</p>
+<p>Diese Funktion gibt eine <a href="../Concepts.htm#references-to-objects">Referenz</a> zu einem ClipboardAll-Objekt zurück, das drei Eigenschaften hat (geerbt von <a href="../objects/Buffer.htm">Buffer</a>):</p>
 <ul>
-  <li id="Data"><strong>Data:</strong> Eine Zeichenkette mit rohen Binärdaten, die die Inhalte der Zwischenablage repräsentiert. Diese wird in der Regel an <a href="FileAppend.htm">FileAppend</a> oder <a href="../objects/File.htm#RawWrite">File.RawWrite</a> übergeben, um sie in eine Datei zu schreiben.</li>
-  <li id="Ptr"><strong>Ptr:</strong> Die Adresse der Daten, die im Objekt enthalten sind. Diese Adresse ist solange gültig, bis das Objekt freigegeben wird.</li>
-  <li id="Size"><strong>Size:</strong> Die Größe der rohen Binärdaten, in Bytes.</li>
+  <li><a href="../objects/Buffer.htm#Data">Data</a>: Eine Zeichenkette mit rohen Binärdaten, die die Inhalte der Zwischenablage repräsentiert. Diese wird in der Regel an <a href="FileAppend.htm">FileAppend</a> oder <a href="../objects/File.htm#RawWrite">File.RawWrite</a> übergeben, um sie in eine Datei zu schreiben.</li>
+  <li><a href="../objects/Buffer.htm#Ptr">Ptr</a>: Die Adresse der Daten, die im Objekt enthalten sind. Diese Adresse ist solange gültig, bis das Objekt freigegeben wird.</li>
+  <li><a href="../objects/Buffer.htm#Size">Size</a>: Die Größe der rohen Binärdaten, in Bytes.</li>
 </ul>
 
 <h2>Bemerkungen</h2>
 <p>Die interne Variable <a href="../misc/Clipboard.htm">Clipboard</a> spiegelt den aktuellen Inhalt der Windows-Zwischenablage als reinen Text wider.</p>
 <p>Die <em>ClipboardAll</em>-Funktion wird häufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vorübergehend für eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wiederhergestellt werden, wie in <a href="#ex1">Beispiel #1</a> und <a href="#ex2">Beispiel #2</a> gezeigt.</p>
 <p>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert.</p>
-<p>Eine Variable, die Daten von der Zwischenablage enthält, kann wie folgt in eine andere Variable kopiert werden: <code>ClipSicherung2 := ClipSicherung</code>.</p>
 <p>Mit <a href="ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
 <p>Binärdaten, die von der <a href="#Data">Data</a>-Eigenschaft zurückgegeben werden, bestehen intern aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die nächsten 4 Bytes die Datenblockgröße und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enthält (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschließend enden die Daten mit einem Formattyp (4 Byte groß), wobei jedoch eine 0 enthalten ist.</p>
 <p>Bekannte Einschränkung: Verwendet man <em>ClipboardAll</em>, während Zellen von MS Excel enthalten sind, kann es passieren, dass in Excel ein Dialogfenster mit "Keine Drucker" angezeigt wird.</p>
@@ -66,13 +65,14 @@ ClipSicherung := ""  <em>; Speicher freigeben, falls die Zwischenablage sehr gro
 <h3 id="ex2">Beispiel #2</h3>
 <p>Speichert den Inhalt der Zwischenablage in eine Datei und stellt ihn wieder her:</p>
 <pre class="NoIndent"><em>; Option 1: Lösche eine eventuell vorhandene Datei und benutze dann FileAppend im RAW-Modus.</em>
-<a href="FileDelete.htm">FileDelete</a> "C:\Firmenlogo.clip"
-<a href="FileAppend.htm">FileAppend</a> ClipboardAll().Data, "C:\Firmenlogo.clip", "RAW" <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em>
+<a href="FileDelete.htm">FileDelete</a> "Firmenlogo.clip"
+<a href="FileAppend.htm">FileAppend</a> ClipboardAll().Data, "Firmenlogo.clip", "RAW" <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em>
 
 <em>; Option 2: Benutze FileOpen im Überschreibmodus und File.RawWrite.</em>
-<a href="FileOpen.htm">FileOpen</a>("C:\Firmenlogo.clip", "w").<a href="../objects/File.htm#RawWrite">RawWrite</a>(ClipboardAll().Data)</pre>
+<a href="FileOpen.htm">FileOpen</a>("Firmenlogo.clip", "w").<a href="../objects/File.htm#RawWrite">RawWrite</a>(ClipboardAll().Data)</pre>
 <p>Das folgende Beispiel zeigt, wie die Datei später wieder in die Zwischenablage (oder in eine Variable) geladen werden kann:</p>
-<pre class="NoIndent">Clipboard := ClipboardAll(<a href="FileRead.htm">FileRead</a>("C:\Firmenlogo.clip", "RAW"))</pre>
+<pre class="NoIndent">clip := FileRead("Firmenlogo.clip", "RAW")
+Clipboard := ClipboardAll(clip.Data)</pre>
 
 </body>
 </html>
