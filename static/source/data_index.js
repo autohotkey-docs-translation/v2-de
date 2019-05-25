@@ -606,7 +606,7 @@ indexData = [
   ["LoadPicture","commands/LoadPicture.htm",2],
   ["local","Functions.htm#Local",5],
   ["local variables","Functions.htm#Local"],["lokale Variablen","Functions.htm#Local"],
-  ["Locale","commands/StringCaseSense.htm#Locale"],["Gebietsschema","commands/StringCaseSense.htm#Locale"],
+  ["Locale","commands/StringCaseSense.htm#Locale"],
   ["Log","commands/Math.htm#Log",2],
   ["Logarithmus, Log","commands/Math.htm#Log"],
   ["logoff","commands/Shutdown.htm"],["Abmelden","commands/Shutdown.htm"],
