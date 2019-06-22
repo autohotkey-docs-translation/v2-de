@@ -18,7 +18,7 @@
 <p>Wrappt ein Wert, SafeArray oder COM-Objekt, um es für das Skript oder für eine COM-Methode nutzbar zu machen.</p>
 <pre class="Syntax">ComObject := <span class="func">ComObject</span>(VarTyp, Wert <span class="optional">, Flags</span>)</pre>
 
-<p><strong>Erweitert:</strong> Wrappt oder entwrappt einen unbearbeiteten <a href="https://docs.microsoft.com/de-de/windows/desktop/api/oaidl/nn-oaidl-idispatch">IDispatch</a>-Pointer, um ihn für das Skript nutzbar zu machen.</p>
+<p><strong>Erweitert:</strong> Wrappt oder entwrappt einen rohen <a href="https://docs.microsoft.com/de-de/windows/desktop/api/oaidl/nn-oaidl-idispatch">IDispatch</a>-Pointer, um ihn für das Skript nutzbar zu machen.</p>
 <pre class="Syntax">ComObject := <span class="func">ComObject</span>(DispPtr)</pre>
 
 <h2>Parameter</h2>
@@ -27,13 +27,13 @@
   <dt>VarTyp</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Ein Integer-Wert, der den Typ des Wertes kennzeichnet. Auf der <a href="ComObjType.htm#vt">ComObjType</a>-Seite finden Sie eine Liste mit allen möglichen Typen.</p>
+    <p>Ein Integer, der den Typ des Wertes kennzeichnet. Eine Auflistung aller Typennummern finden Sie unter <a href="ComObjType.htm#vt">ComObjType</a>.</p>
   </dd>
 
   <dt>Wert</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Der Wert, der gewrappt werden soll. Zurzeit werden nur Integer- oder Pointer-Werte unterstützt.</p>
+    <p>Ein Wert, der gewrappt werden soll. Zurzeit werden nur Integer und Pointer-Werte unterstützt.</p>
   </dd>
 
   <dt>Flags</dt>
@@ -45,7 +45,7 @@
   <dt>DispPtr</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Unbearbeiteter IDispatch-Pointer.</p>
+    <p>Roher IDispatch-Pointer.</p>
   </dd>
 
 </dl>
@@ -53,27 +53,27 @@
 <h2 id="Returns">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
 <p>Gibt einen Wrapper-Objekt zurück, das einen <a href="ComObjType.htm">Variantentyp</a> und Wert, oder einen Pointer enthält.</p>
-<p>Dieses Objekt hat zwei Nutzen:</p>
+<p>Dieses Objekt kann für zwei Dinge genutzt werden:</p>
 <ol>
-  <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComObject(0xB, -1)</code> ein Objekt, das den booleschen COM-Wert <em>True</em> repräsentieren würde.</li>
+  <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComObject(0xB, -1)</code> ein Objekt, das den booleschen COM-Wert <em>True</em> repräsentiert.</li>
   <li>Ein Skript kann deutlich besser mit einem COM-Objekt oder SafeArray interagieren (via <a href="../Objects.htm#Usage_Objects">Objektsyntax</a>), wenn es gewrappt wurde. Die meisten Skripte müssen dies nicht manuell tun, weil <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjArray.htm">ComObjArray</a> und andere COM-Methoden, die ein Objekt zurückgeben, automatisch ein Wrapper-Objekt erstellen.</li>
 </ol>
 
 <h2 id="ByRef">ByRef</h2>
-<p>Wenn der <a href="ComObjType.htm"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, kann mit leeren eckigen Klammern <code>[]</code> der verwiesene Wert gelesen oder geschrieben werden.</p>
-<p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder Puffer mit ausreichender Kapazität sein, um einen Wert des angegebenen Typs enthalten zu können. Zum Beispiel könnte man wie folgt eine Variable erstellen, in der eine VBScript-Funktion etwas schreiben kann:</p>
+<p>Wenn der <a href="ComObjType.htm"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, können leere eckige Klammern <code>[]</code> zum Lesen oder Schreiben des referenzierten Wertes genutzt werden.</p>
+<p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder eines Puffers mit ausreichender Kapazität sein, um einen Wert bestimmten Typs zu speichern. Das folgende Beispiel erstellt eine Variable, die von einer VBScript-Funktion beschrieben werden kann:</p>
 <pre>VarSetCapacity(var, 24, 0)
 vref := ComObject(0x400C, &amp;var)  <em>; 0x400C ist eine Kombination von VT_BYREF und VT_VARIANT.</em>
 
 vref[] := "Eingabewert"
-sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ByRefEx">unteren Beispiel</a> initialisiert werden.</em>
+sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ByRefEx">Beispiel unten</a> initialisiert werden.</em>
 MsgBox vref[]</pre>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
-<p>Wenn mit dieser Funktion ein <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointer gewrappt wurde, wird das Wrapper-Objekt absofort dafür verantwortlich sein, den Pointer bei Bedarf automatisch freizugeben. Lässt man <em>VarTyp</em> weg, wird das Objekt <a href="ComObjQuery.htm">aufgefordert</a>, sein IDispatch-Interface zurückzugeben, sofern verfügbar; wenn es das macht, wird <em>DispPtr</em> sofort freigegeben. Wenn das Skript daraufhin beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiterzuverwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
-<p>Den aktuellen <em>VarTyp</em> eines Wrapper-Objekts kann man mithilfe von <a href="ComObjType.htm">ComObjType</a> ermitteln.</p>
-<p>Den aktuellen <em>Wert</em> eines Wrapper-Objekts kann man mithilfe von <a href="ComObjValue.htm">ComObjValue</a> ermitteln.</p>
-<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wurde, wird ein neues Wrapper-Objekt erstellt. Vergleiche und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> behandeln die zwei Wrapper-Objekte getrennt voneinander, selbst wenn sie das gleiche COM-Objekt enthalten.</p>
+<p>Wenn diese Funktion zum Wrappen eines <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointers genutzt wird, ist das Wrapper-Objekt zum Freigeben des Pointers verantwortlich, falls erforderlich. Lässt man <em>VarTyp</em> weg, wird das IDispatch-Interface des Objekts <a href="ComObjQuery.htm">angefordert</a>; bei Erfolg wird <em>DispPtr</em> sofort freigegeben. Wenn das Skript also beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiter zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
+<p>Der <em>VarTyp</em> eines Wrapper-Objekts kann via <a href="ComObjType.htm">ComObjType</a> abgerufen werden.</p>
+<p>Der <em>Wert</em> eines Wrapper-Objekts kann via <a href="ComObjValue.htm">ComObjValue</a> abgerufen werden.</p>
+<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wird, wird ein neues Wrapper-Objekt erstellt. Bei Vergleichen und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> werden beide Wrapper-Objekte nicht als identisch angesehen, obwohl sie das gleiche COM-Objekt enthalten.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjError.htm">ComObjError</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
