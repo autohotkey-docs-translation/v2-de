@@ -38,7 +38,7 @@
 <h2>ErrorLevel</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird bei Misserfolg auf 1 und bei Erfolg auf 0 gesetzt.</p>
 <h2>Bemerkungen</h2>
-<p>Diese Funktion speichert die heruntergeladenen Daten in eine Datei. Um die Daten stattdessen in eine Variable zu speichern, schauen Sie sich das Beispiel weiter unten an. Alternativen dazu finden Sie im folgenden Forumsbeitrag: <a href="http://www.autohotkey.com/forum/topic10466.html">www.autohotkey.com/forum/topic10466.html</a></p>
+<p>Diese Funktion speichert die heruntergeladenen Daten in eine Datei. Um die Daten stattdessen in eine Variable zu speichern, schauen Sie sich das Beispiel weiter unten an. Alternativen dazu finden Sie im folgenden Forumsbeitrag: <a href="https://www.autohotkey.com/forum/topic10466.html">www.autohotkey.com/forum/topic10466.html</a></p>
 <p>Der Download wird möglicherweise auch dann als erfolgreich angesehen, wenn die Remote-Datei nicht vorhanden ist. Das liegt daran, dass viele Webserver anstelle der fehlenden Datei eine Fehlerseite senden. Das heißt, dass in <em>Dateiname</em> die Fehlerseite gespeichert wird.</p>
 <p>Firewalls oder das Vorhandensein mehrerer Netzwerkadapter können dazu führen, dass die Funktion fehlschlägt. Zudem ist es möglich, dass einige Webseiten solche Downloads blockieren.</p>
 <p><strong>Caching</strong>: Standardmäßig wird die URL direkt vom Remote-Server abgerufen (also nie vom Cache des Internet Explorers). Um das Caching zuzulassen, setzt man vor der URL ein *0 gefolgt von einem Leerzeichen; zum Beispiel: <em>*0 http://someorg.org</em>. Die 0 nach dem Sternchen kann mit einer beliebigen gültigen dwFlags-Nummer ersetzt werden; suchen Sie nach InternetOpenUrl auf <a href="http://www.microsoft.com">www.microsoft.com</a> für weitere Details.</p>
@@ -52,22 +52,29 @@ Download "ftp://benutzer:passwort@beispiel.com/Mein Verzeichnis", "C:\Verzeichni
 <p><a href="FileRead.htm">FileRead</a>, <a href="FileCopy.htm">FileCopy</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent">Download "https://autohotkey.com/download/2.0/version.txt", "C:\Aktuellste AutoHotkey-Version.txt"
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>Download "https://www.autohotkey.com/download/2.0/version.txt", "C:\Aktuellste AutoHotkey-Version.txt"
 Download "http://someorg.org/archive.zip", "C:\SomeOrg-Archiv.zip"</pre>
-<pre id="WHR" class="NoIndent"><em>; Beispiel: Text in eine Variable herunterladen:</em>
-whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-whr.Open("GET", "http://autohotkey.com/download/2.0/version.txt")
+</div>
+
+<div class="ex" id="ExWHR">
+<p><a href="#ExWHR">#2</a>: Text in eine Variable herunterladen:</p>
+<pre>whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+whr.Open("GET", "https://www.autohotkey.com/download/2.0/version.txt")
 whr.Send()
 <em>; Durch das 'true' oben und dem Aufruf unten bleibt das Skript ansprechbar.</em>
 whr.WaitForResponse()
 version := whr.ResponseText
 MsgBox version
 </pre>
-<pre id="XHR" class="NoIndent"><em>; Beispiel: Einen asynchronen HTTP-Request machen.</em>
+</div>
 
-req := ComObjCreate("Msxml2.XMLHTTP")
+<div class="ex" id="ExXHR">
+<p><a href="#ExXHR">#3</a>: Einen asynchronen HTTP-Request machen.</p>
+<pre>req := ComObjCreate("Msxml2.XMLHTTP")
 <em>; Öffnet einen Request mit aktivierter async.</em>
-req.open("GET", "https://autohotkey.com/download/2.0/version.txt", true)
+req.open("GET", "https://www.autohotkey.com/download/2.0/version.txt", true)
 <em>; Setzt unsere Callback-Funktion.</em>
 req.onreadystatechange := Func("Ready")
 <em>; Sendet den Request.  Ready() wird aufgerufen, wenn es fertig ist.</em>
@@ -92,6 +99,7 @@ Ready() {
         MsgBox "Status " req.status,, 16
     ExitApp
 }</pre>
+</div>
 
 </body>
 </html>

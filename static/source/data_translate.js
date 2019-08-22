@@ -1,7 +1,9 @@
 translateData = {
   // Sidebar
-  "Content":"Inhalt",
-  "Index":"Index",
+  "C̲ontent":"I̲nhalt",
+  "Shortcut: ALT+C":"Tastenkürzel: ALT+I",
+  "In̲dex":true,
+  "Shortcut: ALT+N":"Tastenkürzel: ALT+N",
   "Filter":true,
   "Directives":"Direktiven",
   "Built-in Variables":"Interne Variablen",
@@ -9,8 +11,11 @@ translateData = {
   "Control Flow Statements":"Ablaufsteuerungsanweisungen",
   "Declarations":"Deklarationen",
   "Operators":"Operatoren",
+  "S̲earch":"S̲uchen",
+  "Shortcut: ALT+S":"Tastenkürzel: ALT+S",
   "Search":"Suchen",
-  "Highlight the words":"Suchwörter hervorheben",
+  "Highlight keywords":"Suchwörter hervorheben",
+  "Go to previous/next occurrence":"Gehe zum vorherigen/nächsten Vorkommen",
   // Oberleiste
   "Hide/Show sidebar":"Sidebar verstecken/anzeigen",
   "Home page":"Homepage",

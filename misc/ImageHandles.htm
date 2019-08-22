@@ -31,8 +31,9 @@ HICON:<i>Symbol-Handle</i></pre>
 <p>Standardmäßig behandelt AutoHotkey das Handle, als ob das Bild aus einer Datei geladen wurde - zum Beispiel wird eine Bitmap auf einem Picture-Steuerelement gelöscht, wenn das GUI zerstört wird, und ein Bild wird in der Regel sofort gelöscht, wenn dessen Größe geändert werden muss. Um das zu verhindern, setzt man ein Sternchen zwischen dem Doppelpunkt und dem Handle. Zum Beispiel: <code>"hbitmap:*" handle</code>. Diese Methode zwingt die Funktion, außer ImageSearch, eine Kopie des Bildes anzulegen.</p>
 
 <h2 id="Examples">Beispiele</h2>
-<pre class="NoIndent"><em>; Zeigt ein Menü der ersten n Dateien an, die dem Muster entsprechen, und ihre Symbole.</em>
-Muster := A_ScriptDir "\*"
+<div class="ex" id="ExHICON">
+<p><a href="#ExHICON">#1</a>: Zeigt ein Menü der ersten <em>n</em> Dateien an, die dem Muster entsprechen, und ihre Symbole.</p>
+<pre>Muster := A_ScriptDir "\*"
 n := 15
 
 <em>; Erstellt ein Menü.</em>
@@ -44,7 +45,7 @@ VarSetCapacity(Dateiinfo, Dateigröße := A_PtrSize + 688)
 Loop Files, Muster, "FD"
 {
     <em>; Fügt ein Menüpunkt für jede Datei ein.</em>
-    Fmenu.Add A_LoopFileName, "nix"
+    Fmenu.Add A_LoopFileName, (*) =&gt; "" <em>; Nichts tun.</em>
     
     <em>; Ruft das Symbol der Datei ab.</em>
     if DllCall("shell32\SHGetFileInfoW", "WStr", A_LoopFileFullPath
@@ -59,9 +60,8 @@ Loop Files, Muster, "FD"
 }
 until A_Index = n
 Fmenu.Show
-nix:
-return
 </pre>
+</div>
 <p>Siehe auch: <a href="../commands/LoadPicture.htm">LoadPicture</a>.</p>
 &nbsp;
 

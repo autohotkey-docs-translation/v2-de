@@ -98,40 +98,52 @@ Exception handling
 <p>Wenn eine <a href="#variables">Variable</a> oder ein Parameter als "leer" bezeichnet wird, meint man damit in der Regel eine leere Zeichenkette (eine Zeichenkette mit einer Länge von 0).</p>
 
 <h3 id="objects">Objekte</h3>
-<p>Grundsätzlich gibt es zwei Ansichten von Objekten:</p>
+<p>Das <em>Objekt</em> ist der zusammengesetzte bzw. abstrakte Datentyp von AutoHotkey. Ein Objekt besteht aus beliebig vielen <em>Eigenschaften</em> (die abgerufen oder gesetzt werden können) und <a href="#methods"><em>Methoden</em></a> (die aufgerufen werden können). Der Name und Effekt jeder Eigenschaft oder Methode hängt vom jeweiligen Objekt oder Objekttyp ab.</p>
+<p>Objekte haben die folgenden Attribute:</p>
 <ul>
-  <li>Ein Objekt enthält eine Gruppe von Werten, die als einzelner Wert behandelt werden kann. Ein Objekt könnte z. B. ein <em>Array</em> oder eine Folge von Elementen sein, oder eine Reihe von verwandten Werten, wie z. B. die X- und Y-Koordinaten einer Position auf dem Bildschirm. Objekte können genutzt werden, um komplexe Strukturen zu bilden, indem sie mit anderen Objekten kombiniert werden.</li>
-  <li>Ein Objekt kann eine <em>Sache</em>, einen <em>Service</em> oder etwas anderes darstellen und dem Skript die Möglichkeit bieten, mit dieser Sache oder diesem Service zu interagieren. Ein <em>BankAccount</em>-Objekt beispielsweise hat eventuell Eigenschaften wie Kontonummer, aktueller Saldo und Kontoinhaber sowie Methoden zur Auszahlung oder Einzahlung eines Betrags.</li>
+  <li>Objekte werden nicht gespeichert, sondern <a href="#references-to-objects">referenziert</a>. <code>alpha := []</code> beispielsweise erstellt ein neues <a href="objects/Array.htm">Array</a> und speichert eine Referenz in <em>alpha</em>. <code>bravo := alpha</code> kopiert die Referenz (nicht das Objekt) nach <code>bravo</code>, so dass beide auf das gleiche Objekt verweisen. Die Aussage, dass Arrays oder Variablen ein Objekt enthalten, bedeutet eigentlich, dass sie eine Referenz zum Objekt enthalten.</li>
+  <li>Zwei Objektreferenzen werden nur als gleich angesehen, wenn sie auf das gleiche Objekt verweisen.</li>
+  <li>Bei Anweisungen wie <code>if obj</code>, <code>!obj</code> oder <code>obj ? x : y</code> ist der boolesche Wert eines Objekts immer <i>True</i>.</li>
+  <li>Jedes Objekt hat eine einzigartige Adresse (Position im Speicher), die via <a href="Variables.htm#amp">Adressoperator</a> abgerufen werden kann, aber normalerweise nicht direkt verwendet wird. Mit dieser Adresse ist das Objekt eindeutig identifizierbar, zumindest solange, bis das Objekt freigegeben wird.</li>
+  <li>Ein Objekt wird normalerweise als leere Zeichenkette behandelt, wenn es in einem Kontext verwendet wird, wo ein Objekt nicht erwartet wird. Zum Beispiel würde <code>MsgBox(meinObjekt)</code> eine leere MsgBox anzeigen. Verlassen Sie sich nicht auf dieses Verhalten, weil es noch geändert werden könnte.</li>
+</ul>
+<p class="note"><strong>Hinweis:</strong> Alle Objekte, die von <a href="objects/Object.htm">Object</a> abgeleitet werden, haben zusätzliche Verhaltensweisen, Eigenschaften und Methoden.</p>
+<p>Ein Objekt kann für folgende Dinge verwendet werden:</p>
+<ul>
+  <li>Um eine Sammlung von <em>Elementen</em> zu enthalten. Zum Beispiel enthält ein <a href="objects/Array.htm">Array</a> eine Reihe von Elementen, während ein <a href="objects/Map.htm">Map</a>-Objekt Keys mit Werten assoziiert. Objekte ermöglichen es, eine Gruppe von Werten als einen Wert zu behandeln, einer einzelnen Variable zuzuweisen, an eine Funktion zu übergeben oder von einer Funktion zurückzugeben, und so weiter.</li>
+  <li>Um etwas in realer oder begrifflicher Form darzustellen. Zum Beispiel: eine Position auf dem Bildschirm, mit den Eigenschaften X und Y; ein Kontakt in einem Adressbuch, mit Name, Telefonnummer, EMailAdresse und so weiter. Objekte können genutzt werden, um komplexere Gruppen von Informationen darzustellen, indem sie mit anderen Objekten kombiniert werden.</li>
+  <li>Um einen Dienst oder eine Reihe von Diensten zu bündeln, so dass sich andere Teile des Skripts auf eine Aufgabe konzentrieren können und nicht darauf, wie diese Aufgabe ausgeführt wird. Ein <a href="objects/File.htm">File</a>-Objekt bietet beispielsweise Methoden zum Lesen von Daten aus einer Datei oder zum Schreiben von Daten in eine Datei. Wenn eine Skriptfunktion, die Informationen in eine Datei schreibt, ein File-Objekt als Parameter akzeptiert, muss sie nicht wissen, wie die Datei geöffnet wurde. Die gleiche Funktion kann wiederverwendet werden, um Informationen in ein anderes Ziel zu schreiben, wie z. B. ein TCP/IP-Socket oder WebSocket (via benutzerdefinierte Objekte).</li>
+  <li>Eine Kombination der oben genannten Punkte. Zum Beispiel ein <a href="objects/Gui.htm">Gui</a>-Objekt, das ein GUI-Fenster repräsentiert; es stellt die Mittel bereit, um eine grafische Benutzeroberfläche zu erstellen und anzuzeigen; es enthält eine Sammlung von Steuerelementen und bietet Informationen über das Fenster via Eigenschaften wie Title und FocusedCtrl.</li>
 </ul>
 <p>Die richtige Verwendung von Objekten (und insbesondere von <a href="Objects.htm#Custom_Classes">Klassen</a>) kann zu einem <em>modularen</em> und <em>wiederverwendbaren</em> Code verhelfen. Modularer Code ist in der Regel einfacher zu testen, zu verstehen und zu pflegen. So kann man z. B. einen Codeabschnitt verbessern oder modifizieren, ohne die Details anderer Abschnitte kennen zu müssen und ohne entsprechende Änderungen an diesen Abschnitten vornehmen zu müssen. Wiederverwendbarer Code spart Zeit, weil er das Schreiben und Testen von Code für gleiche oder ähnliche Aufgaben überflüssig macht.</p>
-<p>Wenn eine <a href="#variables">Variable</a> ein Objekt zugewiesen bekommt, z. B. <code>meinObj := {}</code>, wird nicht das Objekt selbst, sondern eine <a href="#references-to-objects"><em>Referenz</em></a> zu diesem Objekt gespeichert. Kopiert man diese Variable, z. B. <code>deinObj := meinObj</code>, wird eine neue Referenz zum <em>selben</em> Objekt erstellt. Eine Änderung wie <code>meinObj.ans := 42</code> würde sich sowohl in <code>meinObj.ans</code> als auch in <code>deinObj.ans</code> widerspiegeln, da beide auf dasselbe Objekt verweisen. <code>meinObj := Object()</code> wirkt sich jedoch nur auf die <em>meinObj</em>-Variable aus, nicht auf die <em>deinObj</em>-Variable, die immer noch auf das ursprüngliche Objekt verweist.</p>
 
 <h3 id="object-protocol">Objektorientierte Schnittstelle</h3>
 <p class="note">Dieser Abschnitt baut auf folgenden Konzepten auf, die in späteren Abschnitten behandelt werden: <a href="#variables">Variablen</a>, <a href="#functions">Funktionen</a></p>
 <p>Objekte arbeiten nach dem Prinzip der <em>Meldungsübermittlung</em>. Sie wissen nicht, wo sich der Code oder die Variablen eines Objekts tatsächlich befinden, also müssen Sie eine Meldung an das Objekt übergeben, wie z. B. "gib mir <em>foo</em>" oder "gehe zu <em>bar</em>", und sich darauf verlassen, dass das Objekt auf die Meldung reagiert. Objekte in AutoHotkey unterstützen die folgenden grundlegenden Meldungen:</p>
 <ul>
-  <li><strong>Get</strong> - Abrufen eines Wertes.</li>
-  <li><strong>Set</strong> - Setzen eines Wertes via <code>:=</code>.</li>
-  <li><strong>Call</strong> - Aufrufen einer Methode via <code>()</code>.</li>
+  <li><strong>Get</strong> - Abrufen einer Eigenschaft.</li>
+  <li><strong>Set</strong> - Setzen einer Eigenschaft via <code>:=</code>.</li>
+  <li><strong>Call</strong> - Aufrufen einer <a href="#methods">Methode</a> via <code>()</code>.</li>
 </ul>
-<p>Jede Meldung kann optional einen oder mehrere <a href="#parameters">Parameter</a>  enthalten (und bei <strong>Set</strong> den Wert). Für gewöhnlich gibt es mindestens einen Parameter, der als Name einer Eigenschaft oder Methode, eines Keys oder eines Array-Indexes interpretiert wird, je nachdem, welches Objekt vorliegt und wie man es verwendet. Die Parameter einer Meldung werden durch drei verschiedene Muster angegeben: <code>.Name</code>, <code>[Parameter]</code> und <code>(Parameter)</code>, wobei <em>Name</em> ein direkt geschriebener <a href="#names">Name oder Identifikator</a>, und <em>Parameter</em> eine Liste von Parametern (als Teilausdrücke) ist, die leer sein kann (<code>[]</code> oder <code>()</code>).</p>
-<p>Bei <strong>Get</strong> und <strong>Set</strong> können <code>.Name</code> und <code>[Parameter]</code> untereinander getauscht oder kombiniert werden:</p>
-<pre>meinObj[Param1, Param2, ..., ParamN]
-meinObj.Name
-meinObj.Name[Param2, ..., ParamN]
+<p>Eine <em>Eigenschaft</em> ist ein Aspekt des Objekts, der gesetzt und/oder abgerufen werden kann. Zum Beispiel hat <a href="objects/Array.htm">Array</a> eine <a href="objects/Array.htm#Length">Length</a>-Eigenschaft, die die Anzahl der Elemente im Array widerspiegelt. Wenn Sie eine Eigenschaft definieren, kann ihr eine beliebige Bedeutung zugeschrieben werden. Grundsätzlich verhält sich eine Eigenschaft wie eine <a href="#variables">Variable</a>, aber ihr Wert kann beim Abrufen geändert und beim Setzen nirgendwo gespeichert werden.</p>
+<p>Jede Meldung enthält Folgendes, das in der Regel beim <a href="#call">Aufrufen</a> der Eigenschaft oder Methode verwendet wird:</p>
+<ul>
+  <li>Der Name der Eigenschaft oder Methode.</li>
+  <li>Keine oder mehr <a href="#parameters">Parameter</a>, die Einfluss darauf haben können, welche Aktion ausgeführt wird, wie ein Wert gespeichert wird oder welcher Wert zurückgegeben wird. Eine Eigenschaft kann beispielsweise einen Array-Index oder Key annehmen.</li>
+</ul>
+<p>Zum Beispiel:</p>
+<pre>
+meinObj.Methodenname(Param1)
+Wert := meinObj.Eigenschaftsname[Param1]
 </pre>
-<p>Bei <strong>Call</strong> können <code>.Name</code> und <code>[Parameter]</code> untereinander getauscht werden, immer gefolgt von <code>(Parameter)</code>:</p>
-<pre>meinObj.Name(Param2, ..., ParamN)
-meinObj[Param1](Param2, ..., ParamN)
-</pre>
-<p>Beachten Sie, dass <code>Name</code>, sofern vorhanden, zum ersten Parameter wird. <code>meinObj.Name</code> ist das gleiche wie <code>meinObj["Name"]</code>, während <code>meinObj.123</code> das gleiche wie <code>meinObj[123]</code> ist. Dies gilt für jeden Objekttyp, daher ist es jederzeit möglich, den Namen einer Eigenschaft oder Methode zu berechnen, während das Skript läuft, anstatt ihn direkt in das Skript einzufügen.</p>
-<p>Obwohl <em>Name</em> oder <em>Param1</em> als erster Parameter betrachtet wird, sollten Sie daran denken, dass es sich hierbei nur um <em>Meldungen</em> handelt, und das dem Objekt freigestellt ist, mit ihnen in irgendeiner Weise zu interagieren. In einem Methodenaufruf wie oben gezeigt verwendet das Objekt normalerweise <em>Name</em> oder <em>Param1</em>, um zu identifizieren, welche Methode aufgerufen werden soll, und <em>Param2</em> und so weiter, um sie der Methode zu übergeben. In diesem Fall ist <em>Param2</em> in Wirklichkeit der erste Parameter der Methode.</p>
+<p>Ein Objekt kann auch eine <em>Standard</em>-Eigenschaft haben; um diese aufzurufen, muss der Eigenschaftsname weggelassen und eckige Klammern verwendet werden. Zum Beispiel:</p>
+<pre>Wert := meinObj[Param1]</pre>
 <p>Im Allgemeinen hat <strong>Set</strong> die gleiche Bedeutung wie eine Zuweisung und verwendet daher den gleichen Operator:</p>
-<pre>meinObj[Param1, Param2, ..., ParamN] := Wert
+<pre>
 meinObj.Name := Wert
-meinObj.Name[Param2, ..., ParamN] := Wert
+meinObj.Name[Param1, Param2, ..., ParamN] := Wert
+meinObj[Param1, Param2, ..., ParamN] := Wert
 </pre>
-<p>Technisch gesehen wird der <code>Wert</code> als letzter Parameter der <em>Set</em>-Nachricht übergeben; dieses Detail ist jedoch für Skript-Autoren fast nie relevant. Im Allgemeinen kann man es sich einfach als "der zugeordnete Wert" vorstellen.</p>
 
 <h2 id="variables">Variablen</h2>
 <p>Eine Variable ermöglicht es Ihnen, einen Namen als Platzhalter für einen Wert zu verwenden. Diesen Wert können Sie jederzeit ändern, während das Skript läuft. Ein Hotkey könnte z. B. eine Variable <code>press_count</code> verwenden, um zu zählen, wie oft er gedrückt wurde, und jedes Mal eine andere Taste senden, wenn <code>press_count</code> ein Vielfaches von 3 ist (jeder dritte Tastendruck). Auch eine Variable, der nur einmal ein Wert zugewiesen wird, kann nützlich sein. Zum Beispiel können Sie die Variable <code>WebBrowserTitle</code> nutzen, um die Aktualisierung Ihres Codes zu erleichtern, wenn Sie Ihren bevorzugten Webbrowser ändern oder wenn sich der <a href="misc/WinTitle.htm">Titel</a> oder die <a href="misc/WinTitle.htm#ahk_class">Fensterklasse</a> durch ein Software-Update ändert.</p>
@@ -202,7 +214,7 @@ ControlSend "^{Home}",, "A"          <em>; Korrekt. Steuerelement wurde weggelas
 </pre>
 
 <h3 id="methods">Methoden</h3>
-<p><em>Methoden</em> sind Funktionen, die sich auf ein bestimmtes <a href="#objects">Objekt</a> auswirken. Während es nur eine Funktion mit dem Namen <code>Send</code> (zum Beispiel) geben kann, kann es genauso viele Methoden mit dem Namen <code>Send</code> geben, wie es Objekte gibt, da jedes Objekt (oder Klasse von Objekten) unterschiedlich reagieren kann. Aus diesem Grund wird das Zielobjekt (das eine Variable oder ein Teilausdruck sein kann) nicht innerhalb der Parameterliste, sondern auf der linken Seite des Methodennamens angegeben. Weitere Informationen finden Sie unter <a href="#object-protocol">Objektorientierte Schnittstelle</a>.</p>
+<p>Eine <em>Methode</em> ist eine Funktion, die einem bestimmten <a href="#objects">Objekt</a> oder Objekttyp zugeordnet ist. Um eine Methode aufzurufen, muss man ein Objekt und einen Methodennamen angeben. Der Methodenname identifiziert die Funktion nicht eindeutig; es hängt vom Objekt ab, was beim Methodenaufruf passieren soll. Zum Beispiel könnte <code>x.Show()</code> <a href="objects/Menu.htm#Show">ein Menü anzeigen</a>, <a href="objects/Gui.htm#Show">eine GUI anzeigen</a>, einen Fehler auslösen oder etwas anderes tun, je nachdem, was <code>x</code> ist. Das heißt, dass ein Methodenaufruf einfach eine Meldung an das Objekt übergibt, damit es etwas tut. Weitere Informationen finden Sie unter <a href="#object-protocol">Objektorientierte Schnittstelle</a> und <a href="Language.htm#operators-for-objects">Operatoren für Objekte</a>.</p>
 
 <h2 id="control-flow">Ablaufsteuerung</h2>
 <p>Die <em>Ablaufsteuerung</em> ist die Reihenfolge, in der die einzelnen Anweisungen ausgeführt werden. Im Normalfall werden Anweisungen der Reihe nach von oben nach unten ausgeführt, allerdings kann dieses Verhalten mit einer Ablaufsteuerungsanweisung überschrieben werden, indem man Anweisungen z. B. wiederholt ausführen lässt, oder wenn eine bestimmte Bedingung erfüllt ist.</p>
@@ -212,7 +224,7 @@ ControlSend "^{Home}",, "A"          <em>; Korrekt. Steuerelement wurde weggelas
   <dt id="execute">Ausführen</dt>
   <dd><p>Ausführen, Durchführen, Auswerten, Umsetzen und so weiter. <em>Ausführen</em> hat grundsätzlich die gleiche Bedeutung wie im normalen Sprachgebrauch.</p></dd>
   <dt id="cf-body">Körper</dt>
-  <dd><p>Der <em>Körper</em> einer Ablaufsteuerungsanweisung ist die Anweisung oder Anweisungsgruppe, zu der sie gehört. Zum Beispiel wird der Körper einer <a href="commands/IfExpression.htm">if-Anweisung</a> nur ausgeführt, wenn eine bestimmte Bedingung erfüllt ist.</p></dd>
+  <dd><p>Der <em>Körper</em> einer Ablaufsteuerungsanweisung ist die Anweisung oder Anweisungsgruppe, zu der sie gehört. Zum Beispiel wird der Körper einer <a href="commands/If.htm">if-Anweisung</a> nur ausgeführt, wenn eine bestimmte Bedingung erfüllt ist.</p></dd>
 </dl>
 <p>Schauen Sie sich zum Beispiel die folgenden Instruktionen an:</p>
 <ol>
@@ -255,10 +267,12 @@ Send "Hallo, Welt!"
 <p>Jedes Zeichen in der Zeichenkette entspricht einer Zahl, auch <em>Ordinalzahl</em> genannt, oder einem <em>Zeichencode</em>. Der Wert "Abc" würde zum Beispiel wie folgt dargestellt werden:</p>
 <table class="info" style="width: 8em; text-align: center">
   <tr><td>A</td><td>b</td><td>c</td></tr>
-  <tr><td>65</td><td>98</td><td>99</td></tr>
+  <tr><td>65</td><td>98</td><td>99</td><td>0</td></tr>
 </table>
-<p>Die <em>Codierung</em> einer Zeichenkette definiert, welche Zahlen mit welchen Symbolen verknüpft sind. Es gibt viele verschiedene Codierungen, aber da alle Codierungen, die AutoHotkey unterstützt, ASCII als Untermenge enthalten, haben die Zeichencodes 0 bis 127 immer die gleiche Bedeutung. So hat zum Beispiel 'A' immer den Zeichencode 65.</p>
-<p>Obwohl AutoHotkey Möglichkeiten bereitstellt, Texte mit unterschiedlichen Codierungen zu bearbeiten, gehen die internen Funktionen -- und bis zu einem gewissen Grad auch die Sprache selbst -- davon aus, dass Zeichenkettenwerte in einer bestimmten Codierung vorliegen. Dies wird als <em>native</em> Codierung bezeichnet. Die native Kodierung hängt von der Version von AutoHotkey ab:</p>
+<p><strong>Codierung:</strong> Die <em>Codierung</em> einer Zeichenkette definiert, wie Symbole mit den Ordinalzahlen und Ordinalzahlen mit den Bytes verknüpft werden. Es gibt viele verschiedene Codierungen, aber da alle Codierungen, die AutoHotkey unterstützt, ASCII als Untermenge enthalten, haben die Zeichencodes 0 bis 127 immer die gleiche Bedeutung. So hat zum Beispiel 'A' immer den Zeichencode 65.</p>
+<p id="null-termination"><strong>Null-Terminierung:</strong> Jede Zeichenkette ist/wird mit einem "Nullzeichen" terminiert; solche Zeichen haben einen Binärwert von Null und markieren das Ende einer Zeichenkette. Die Länge der Zeichenkette muss nicht gespeichert werden, da die Länge anhand der Position des Null-Terminators abgeleitet werden kann. Aus Performance-Gründen speichert AutoHotkey manchmal die Länge, z. B. wenn eine Zeichenkette in einer Variable enthalten ist.</p>
+<p class="warning"><strong>Hinweis:</strong> Aufgrund der Abhängigkeit von Null-Terminierung unterstützen viele interne Funktionen keine Zeichenketten mit eingebetteten Nullzeichen. Es wird jedoch eine grundlegende Manipulation solcher Zeichenketten unterstützt; z. B. Verkettung, <code>==</code>, <code>!==</code>, <code>Chr(0)</code>, <a href="commands/StrLen.htm">StrLen</a>, <a href="commands/SubStr.htm">SubStr</a>, Zuweisungen, Parameterwerte und <a href="commands/Return.htm">return</a>.</p>
+<p id="native-encoding"><strong>Native Codierung:</strong> Obwohl AutoHotkey Möglichkeiten bereitstellt, Texte mit unterschiedlichen Codierungen zu bearbeiten, gehen die internen Funktionen -- und bis zu einem gewissen Grad auch die Sprache selbst -- davon aus, dass Zeichenkettenwerte in einer bestimmten Codierung vorliegen. Dies wird als <em>native</em> Codierung bezeichnet. Die native Kodierung hängt von der Version von AutoHotkey ab:</p>
 <ul>
   <li>
 <p>Unicode-Versionen von AutoHotkey verwenden UTF-16. Das kleinste Element in einer UTF-16-Zeichenkette ist zwei Bytes (16 Bit) groß. Unicode-Zeichen im Bereich von 0 bis 65535 (U+FFFF) werden von einer einzigen 16-Bit-Codeeinheit des gleichen Wertes repräsentiert, während Zeichen im Bereich von 65536 (U+10000) bis 1114111 (U+10FFFF) von einem <em>Ersatzzeichenpaar</em> repräsentiert werden; also exakt zwei 16-Bit-Codeeinheiten zwischen 0xD800 und 0xDFFF. (weitere Details zu Ersatzzeichenpaaren und Methoden zum Codieren oder Decodieren solcher finden Sie im Internet.)</p>
@@ -268,7 +282,7 @@ Send "Hallo, Welt!"
 </li>
 </ul>
 <p class="note"><strong>Hinweis:</strong> Es gibt derzeit keine ANSI-Version von AutoHotkey v2.</p>
-<p>In der Regel verwenden andere Bereiche dieser Dokumentation den Begriff "Zeichen" für die kleinste Einheit einer Zeichenkette; Bytes für ANSI-Zeichenketten und 16-Bit-Codeeinheiten für Unicode-Zeichenketten. Aus praktischen Gründen werden die Länge einer Zeichenkette und die Positionen innerhalb einer Zeichenkette anhand dieser festen Größen gemessen, auch wenn es sich dabei möglicherweise nicht um vollständige Unicode-Zeichen handelt.</p>
+<p id="character"><strong>Zeichen:</strong> In der Regel verwenden andere Bereiche dieser Dokumentation den Begriff "Zeichen" für die kleinste Einheit einer Zeichenkette; Bytes für ANSI-Zeichenketten und 16-Bit-Codeeinheiten für Unicode-Zeichenketten (UTF-16). Aus praktischen Gründen werden die Länge einer Zeichenkette und die Positionen innerhalb einer Zeichenkette anhand dieser festen Größen gemessen, auch wenn es sich dabei möglicherweise nicht um vollständige Unicode-Zeichen handelt.</p>
 <p><a href="commands/FileRead.htm">FileRead</a>, <a href="commands/FileAppend.htm">FileAppend</a>, <a href="commands/FileOpen.htm">FileOpen</a> und das <a href="objects/File.htm">File-Objekt</a> bieten Möglichkeiten, um den Text von Dateien mit einer bestimmten Codierung zu lesen und zu schreiben.</p>
 <p>Die Funktionen <a href="commands/StrGet.htm">StrGet</a> und <a href="commands/StrPut.htm">StrPut</a> können genutzt werden, um Zeichenketten zwischen der nativen Codierung und einer anderen angegebenen Codierung umzuwandeln. Diese Funktionen sind jedoch in der Regel nur in Kombination mit Datenstrukturen und der <a href="commands/DllCall.htm">DllCall</a>-Funktion sinnvoll. Zeichenketten, die direkt an oder von <a href="commands/DllCall.htm">DllCall</a> übergeben werden, können mithilfe der Parametertypen <code>AStr</code> oder <code>WStr</code> in ANSI oder UTF-16 umgewandelt werden.</p>
 <p>Techniken, wie man mit den Unterschieden zwischen ANSI- und Unicode-Versionen von AutoHotkey umgehen kann, finden Sie unter <a href="Compat.htm#Format">Unicode vs ANSI</a>.</p>
@@ -318,7 +332,9 @@ MsgBox 0.1 + 0.2 = 0.3   <em>; 0 (nicht identisch)</em>
 <p>Da eine Variable nicht das Objekt selbst, sondern nur eine <em>Referenz</em> zu diesem Objekt enthält, empfängt die Funktion, während so eine Variable an einen ByRef-losen Parameter übergeben wird, eine Referenz zum selben Objekt. Diese Tatsache erlaubt es, dass die Funktion das Objekt modifizieren kann, aber sie verhindert auch, dass die Funktion die <em>Variable</em>, die der Funktionsaufrufer übergeben hat, modifizieren kann, weil die Funktion nicht die Variable, sondern nur eine Referenz zum Objekt hat.</p>
 
 <h3 id="references-to-objects">Objektreferenzen</h3>
-<p>Ein Skript interagiert mit einem Objekt nicht direkt, sondern via <em>Referenz</em> zum Objekt. Wenn Sie ein Objekt erstellen, wird das Objekt an einem Ort erstellt, den Sie nicht kontrollieren können, und eine Referenz an Sie übergeben. Wenn Sie diese Referenz an eine Funktion übergeben oder in eine Variable oder in einem anderen Objekt speichern, wird eine neue Referenz zum <em>selben</em> Objekt erstellt. Um eine Referenz freizugeben, nutzt man einfach eine Zuweisung und ersetzt sie mit einem anderen Wert. Ein Objekt wird erst gelöscht, wenn alle Referenzen freigegeben sind; das heißt, dass es weder möglich noch lohnenswert ist, ein Objekt explizit zu löschen.</p>
+<p>Ein Skript interagiert mit einem Objekt nicht direkt, sondern via <em>Referenz</em> zum Objekt. Wenn Sie ein Objekt erstellen, wird das Objekt an einem Ort erstellt, den Sie nicht kontrollieren können, und eine Referenz an Sie übergeben. Wenn Sie diese Referenz an eine Funktion übergeben oder in eine Variable oder in einem anderen Objekt speichern, wird eine neue Referenz zum <em>selben</em> Objekt erstellt.</p>
+<p>Wenn zum Beispiel <em>meinObj</em> eine Referenz zu einem Objekt enthält, erstellt <code>deinObj := meinObj</code> eine neue Referenz zum gleichen Objekt. Eine Änderung wie <code>meinObj.ans := 42</code> würde sich sowohl in <code>meinObj.ans</code> als auch in <code>deinObj.ans</code> widerspiegeln, da beide auf dasselbe Objekt verweisen. <code>meinObj := Object()</code> wirkt sich jedoch nur auf die <em>meinObj</em>-Variable aus, nicht auf die <em>deinObj</em>-Variable, die immer noch auf das ursprüngliche Objekt verweist.</p>
+<p>Um eine Referenz freizugeben, nutzt man einfach eine Zuweisung und ersetzt sie mit einem anderen Wert. Ein Objekt wird erst gelöscht, wenn alle Referenzen freigegeben sind; das heißt, dass es weder möglich noch lohnenswert ist, ein Objekt explizit zu löschen. (Sie können jedoch die Eigenschaften, den Inhalt oder die zugehörigen Ressourcen eines Objekts löschen, wie z. B. die Elemente eines <a href="objects/Array.htm">Arrays</a>, das zugeordnete Fenster eines <a href="objects/Gui.htm">Gui</a>-Objekts, das Menü eines <a href="objects/Menu.htm">Menu</a> Objekts, und so weiter.)</p>
 <pre>Ref1 := Object()  <em>; Erstellt ein Objekt und speichert die erste Referenz</em>
 Ref2 := Ref1      <em>; Erstellt eine neue Referenz zum selben Objekt</em>
 Ref1 := ""        <em>; Gibt die erste Referenz frei</em>

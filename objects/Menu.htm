@@ -45,7 +45,6 @@
 <ul>
   <li><a href="#MenuItemName">Menüpunktname</a></li>
   <li><a href="#Win32_Menus">Win32-Menüs</a></li>
-  <li><a href="#Error_Handling">Fehlerbehandlung</a></li>
   <li><a href="#Remarks">Bemerkungen</a></li>
   <li><a href="#Related">Siehe auch</a></li>
   <li><a href="#Examples">Beispiele</a></li>
@@ -344,10 +343,7 @@
 <p>Während Menüpunkte modifiziert oder zu einem Menü hinzugefügt werden, werden ihre Namen und andere Eigenschaften in das Menu-Objekt gespeichert. Ein Win32-Menü wird erstellt, wenn das Menü oder sein übergeordnetes Menü zum ersten Mal mit einer GUI verbunden oder angezeigt wird. Es wird automatisch zerstört, wenn das Menu-Objekt gelöscht wird, oder anders gesagt, wenn dessen Referenzanzahl auf 0 ist.</p>
 <p><a href="#Handle">Menu.Handle</a> gibt ein Handle eines Win32-Menüs (ein Handle vom Typ <code>HMENU</code>) zurück, und konstruiert es, falls nötig.</p>
 <p>Jegliche Änderungen am Menü, die extern via Win32-Funktionen durchgeführt werden, spiegeln sich nicht im Menu-Objekt des Skripts wider, und gehen eventuell verloren, wenn ein Menüpunkt mit einer der internen Methoden geändert wird.</p>
-<p>Jeder Menüpunkt bekommt eine ID zugewiesen, wenn er das erste Mal zum Menü hinzugefügt wird. Skripte können sich nicht auf einen Menüpunkt mit einer bestimmten ID verlassen, aber sie können die ID eines Menüpunktes via GetMenuItemID abrufen, wie es im <a href="#Example5">fünften Beispiel</a> gezeigt wird. Diese ID kann nicht in Verbindung mit dem Menu-Objekt verwendet werden, sondern nur in Verbindung mit den <a href="https://msdn.microsoft.com/de-de/library/ms646977">Win32-Funktionen</a>.</p>
-
-<h2 id="Error_Handling">Fehlerbehandlung</h2>
-<p>Es wird eine <a href="../commands/Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn ungültige Optionen im <em>Optionen</em>-Parameter einer Methode erkannt werden.</p>
+<p>Jeder Menüpunkt bekommt eine ID zugewiesen, wenn er das erste Mal zum Menü hinzugefügt wird. Skripte können sich nicht auf einen Menüpunkt mit einer bestimmten ID verlassen, aber sie können die ID eines Menüpunktes via GetMenuItemID abrufen, wie es im <a href="#ExDllCall">fünften Beispiel</a> gezeigt wird. Diese ID kann nicht in Verbindung mit dem Menu-Objekt verwendet werden, sondern nur in Verbindung mit den <a href="https://msdn.microsoft.com/de-de/library/ms646977">Win32-Funktionen</a>.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Ein typisches Menü sieht wie folgt aus:</p>
@@ -361,18 +357,21 @@
 <p><a href="Gui.htm">GUI</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="../commands/Thread.htm">Thread</a>, <a href="../commands/Critical.htm">Critical</a>, <a href="../commands/_NoTrayIcon.htm">#NoTrayIcon</a>, <a href="../commands/Gosub.htm">Gosub</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../commands/Return.htm">Return</a>, <a href="../commands/SetTimer.htm">SetTimer</a></p>
 
 <h2 id="Examples">Beispiele</h2>
-<pre class="NoIndent" id="Example1"><em>; BEISPIEL #1: Dieses Skript zeigt, wie ein neuer Menüpunkt an das Ende des Tray-Menüs eingefügt werden kann.</em>
 
-A_TrayMenu.Add()  <em>; Erstellt eine Trennlinie.</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Dieses Skript zeigt, wie ein neuer Menüpunkt an das Ende des Tray-Menüs eingefügt werden kann:</p>
+<pre>A_TrayMenu.Add()  <em>; Erstellt eine Trennlinie.</em>
 A_TrayMenu.Add("Menüpunkt1", "MenuHandler")  <em>; Erstellt einen neuen Menüpunkt.</em>
 return
 
 MenuHandler(PunktName, PunktPos, Menu) {
     MsgBox "Sie haben " PunktName " (Position " PunktPos ") ausgewählt."
 }</pre>
-<pre class="NoIndent" id="Example2"><em>; BEISPIEL #2: Dieses Skript zeigt, wie ein aufklappbares Menü erstellt werden kann, das angezeigt werden soll, wenn der Benutzer WIN+Z drückt.</em>
+</div>
 
-<em>; Erstellt ein aufklappbares Menü durch Hinzufügen von Menüpunkten.</em>
+<div class="ex" id="ExPopup">
+<p><a href="#ExPopup">#2</a>: Dieses Skript zeigt, wie ein aufklappbares Menü erstellt werden kann, das angezeigt werden soll, wenn der Benutzer <kbd>Win</kbd>+<kbd>Z</kbd> drückt:</p>
+<pre><em>; Erstellt ein aufklappbares Menü durch Hinzufügen von Menüpunkten.</em>
 MeinMenü := MenuCreate()
 MeinMenü.Add "Menüpunkt 1", "MenuHandler"
 MeinMenü.Add "Menüpunkt 2", "MenuHandler"
@@ -390,14 +389,16 @@ MeinMenü.Add  <em>; Fügt eine Trennlinie unterhalb des Untermenüs ein.</em>
 MeinMenü.Add "Menüpunkt 3", "MenuHandler"  <em>; Fügt einen weiteren Menüpunkt unterhalb des Untermenüs ein.</em>
 return  <em>; Ende des automatischen Ausführungsbereichs.</em>
 
-MenuHandler(Punkt) {
+MenuHandler(Punkt, *) {
     MsgBox "Sie haben " Punkt " ausgewählt."
 }
 
 #z::MeinMenü.Show  <em>; Drücken Sie WIN+Z, um das Menü anzuzeigen.</em></pre>
-<pre class="NoIndent" id="Example3"><em>; BEISPIEL #3: Dieses Skript zeigt, wie die Elemente des Menu-Objekts genutzt werden können.</em>
+</div>
 
-#SingleInstance
+<div class="ex" id="ExTray">
+<p><a href="#ExTray">#3</a>: Dieses Skript zeigt, wie die Elemente des Menu-Objekts genutzt werden können:</p>
+<pre>#SingleInstance
 global tray := A_TrayMenu <em>; Für den praktischen Grund.</em>
 tray.delete <em>; Löscht die voreingestellten Menüpunkte.</em>
 tray.add <em>; Trennlinie</em>
@@ -413,19 +414,19 @@ return
 
 <em>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</em>
 
-TestToggleCheck()
+TestToggleCheck(*)
 {
     tray.ToggleCheck "TestToggleCheck"
     tray.Enable "TestToggleEnable" <em>; Aktiviert auch den nächsten Test, da es die Deaktivierung von sich selbst nicht rückgängig machen kann.</em>
     tray.add "TestDelete" <em>; Das gleiche wie oben.</em>
 }
 
-TestToggleEnable()
+TestToggleEnable(*)
 {
     tray.ToggleEnable "TestToggleEnable"
 }
 
-TestDefault()
+TestDefault(*)
 {
     if tray.default = "TestDefault"
         tray.default := ""
@@ -433,23 +434,23 @@ TestDefault()
         tray.default := "TestDefault"
 }
 
-TestAddStandard()
+TestAddStandard(*)
 {
     tray.addStandard
 }
 
-TestDelete()
+TestDelete(*)
 {
     tray.delete "TestDelete"
 }
 
-TestDeleteAll()
+TestDeleteAll(*)
 {
     tray.delete
     MsgBox "Das Skript wird eventuell jetzt beendet, da das Tray-Menü keine benutzerdefinierten Menüpunkte mehr enthält."
 }
 
-TestRename()
+TestRename(*)
 {
     static
     if NeuerName != "unbenannt"
@@ -465,13 +466,15 @@ TestRename()
     tray.rename AlterName, NeuerName
 }
 
-Test(Punkt)
+Test(Punkt, *)
 {
     MsgBox 'Sie haben "' Punkt '" ausgewählt.'
 }</pre>
-<pre class="NoIndent" id="Example4"><em>; BEISPIEL #4: Dieses Skript zeigt, wie Symbole in seinen Menüpunkten eingefügt werden können.</em>
+</div>
 
-Dateimenü := MenuCreate()
+<div class="ex" id="ExIcon">
+<p><a href="#ExIcon">#4</a>: Dieses Skript zeigt, wie Symbole in seinen Menüpunkten eingefügt werden können:</p>
+<pre>Dateimenü := MenuCreate()
 Dateimenü.Add("Skript-Symbol", "MenuHandler")
 Dateimenü.Add("Sperren-Symbol", "MenuHandler")
 Dateimenü.Add("Pause-Symbol", "MenuHandler")
@@ -482,14 +485,17 @@ MeineMenüleiste := MenuBarCreate()
 MeineMenüleiste.Add("&amp;Datei", Dateimenü)
 Gui := GuiCreate()
 Gui.MenuBar := MeineMenüleiste
-Gui.Add("Button",, "Beendet dieses Beispiel").OnEvent("Click", () =&gt; WinClose())
+Gui.Add("Button",, "Beendet dieses Beispiel").OnEvent("Click", (*) =&gt; WinClose())
 Gui.Show
 
-MenuHandler() {
+MenuHandler(*) {
     <em>; In diesem Beispiel machen die Menüpunkte nichts.</em>
 }</pre>
-<pre class="NoIndent" id="Example5"><em>; BEISPIEL #5: Anzahl der Menüpunkte und ID abrufen.</em>
+</div>
 
+<div class="ex" id="ExDllCall">
+<p><a href="#ExDllCall">#5</a>: Anzahl der Menüpunkte und ID abrufen.</p>
+<pre>
 MeinMenü := MenuCreate()
 MeinMenü.Add "Menüpunkt 1", "nix"
 MeinMenü.Add "Menüpunkt 2", "nix"
@@ -503,10 +509,11 @@ letzte_id := DllCall("GetMenuItemID", "ptr", MeinMenü.Handle, "int", menüpunkt
 
 MsgBox "MeinMenü hat " menüpunkt_anzahl " Menüpunkte, und sein letzter Menüpunkt hat die ID " letzte_id
 
-nix() {
+nix(*) {
     <em>; Nichts tun.</em>
 }
 </pre>
+</div>
 
 </body>
 </html>

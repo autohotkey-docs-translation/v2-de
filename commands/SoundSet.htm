@@ -38,18 +38,18 @@
   <dt>Kontrolltyp</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort VOLUME verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: VOLUME (oder VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER oder die Nummer eines gültigen Kontrolltyps (siehe <a href="#Ex">Soundkartenanalyse-Skript</a>). Wenn der <em>Komponententyp</em> den angegebenen <em>Kontrolltyp</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das Wort VOLUME verwendet. Ansonsten kann eines der folgenden Wörter angegeben werden: VOLUME (oder VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, EQUALIZER oder die Nummer eines gültigen Kontrolltyps (siehe <a href="#ExSoundcard">Soundkartenanalyse-Skript</a>). Wenn der <em>Komponententyp</em> den angegebenen <em>Kontrolltyp</em> nicht hat, wird ErrorLevel das Problem kennzeichnen.</p>
     <p class="note"><strong>Hinweis</strong>: Soundgeräte unterstützen üblicherweise nur VOLUME (oder VOL) und MUTE, auch wenn andere je nach Windows-Version und dem Soundgerät verfügbar sein könnten.</p>
   </dd>
 
   <dt>Gerätenummer</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Eine Nummer zwischen 1 und Gesamtanzahl an unterstützten Geräten. Lässt man diesen Parameter weg, wird standardmäßig 1 verwendet (das erste Audiogerät), oder in Windows Vista oder höher das standardmäßig verwendete Wiedergabegerät des Systems. Das <a href="#Ex">Soundkartenanalyse-Skript</a> könnte dabei helfen, welche Nummer verwendet werden soll.</p>
+    <p>Eine Nummer zwischen 1 und Gesamtanzahl an unterstützten Geräten. Lässt man diesen Parameter weg, wird standardmäßig 1 verwendet (das erste Audiogerät), oder in Windows Vista oder höher das standardmäßig verwendete Wiedergabegerät des Systems. Das <a href="#ExSoundcard">Soundkartenanalyse-Skript</a> könnte dabei helfen, welche Nummer verwendet werden soll.</p>
   </dd>
 
 </dl>
-<h2>ErrorLevel</h2>
+<h2>Fehlerbehandlung</h2>
 <p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Funktion erfolgreich war. Ansonsten wird es auf einen der folgenden Sätze gesetzt:</p>
 <ul>
     <li>Invalid Control Type or Component Type (ungültiger Kontrolltyp oder Komponententyp)</li>
@@ -61,20 +61,21 @@
     <li>Can't Change Setting (aktuelle Einstellung konnte nicht geändert werden)</li>
 </ul>
 <h2>Bemerkungen</h2>
-<p>Für mehr Funktionalität und feinere Audio-Steuerung ist die <a href="http://www.autohotkey.com/board/topic/21984-vista-audio-control-functions/">VA-Bibliothek</a> besser geeignet.</p>
+<p>Für mehr Funktionalität und feinere Audio-Steuerung ist die <a href="https://www.autohotkey.com/board/topic/21984-vista-audio-control-functions/">VA-Bibliothek</a> besser geeignet.</p>
 <p>Alternativ kann man sein Skript dazu bringen, lautstärke-spezifische Tastatureingaben zu senden, um die Gesamtlautstärke des Systems zu ändern. Zum Beispiel:</p>
 <pre>Send "{Volume_Up}"  <em>; Erhöht die Gesamtlautstärke um 1 Stufe (normalerweise 5%).</em>
 Send "{Volume_Down 3}"  <em>; Verringert die Gesamtlautstärke um 3 Stufen.</em>
 Send "{Volume_Mute}"  <em>; Gesamtlautstärke stumm schalten bzw. Stummschaltung aufheben.</em></pre>
-<p>Um den Leistungsumfang der installierten Audiogeräte (Mixer) zu ermitteln -- z. B. verfügbare Komponenten- und Kontrolltypen -- führt man das <a href="#Ex">Soundkartenanalyse-Skript</a> aus.</p>
+<p>Um den Leistungsumfang der installierten Audiogeräte (Mixer) zu ermitteln -- z. B. verfügbare Komponenten- und Kontrolltypen -- führt man das <a href="#ExSoundcard">Soundkartenanalyse-Skript</a> aus.</p>
 <p>Windows 2000/XP/2003: Wenn SoundSet die Lautstärke einer Komponente ändert, werden alle Kanäle dieser Komponente (zum Beispiel der linke und rechte Kanal) auf die gleiche Stufe gesetzt. Das heißt, dass jede zuvor eingestellte außermittige "Balance" verloren geht.</p>
 <p>Windows Vista und höher: SoundSet versucht, die vorhandene Balance beizubehalten, sobald sich die Lautstärke ändert.</p>
 <p>Mit <a href="SoundGet.htm">SoundGet</a> kann der aktuelle Wert einer Einstellung abgerufen werden.</p>
 <h2>Siehe auch</h2>
 <p><a href="SoundGet.htm">SoundGet</a>, <a href="SoundPlay.htm">SoundPlay</a></p>
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; EINFACHE BEISPIELE:</em>
-SoundSet 50  <em>; Setzt die Gesamtlautstärke auf 50%</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Einfache Beispiele</p>
+<pre>SoundSet 50  <em>; Setzt die Gesamtlautstärke auf 50%</em>
 SoundSet "+10"  <em>; Erhöht die Gesamtlautstärke um 10%</em>
 SoundSet -10  <em>; Verringert die Gesamtlautstärke um 10%</em>
 SoundSet 1, "Microphone", "Mute"  <em>; Schaltet das Mikrofon auf stumm</em>
@@ -82,9 +83,12 @@ SoundSet "+1", , "Mute"  <em>; Schaltet die Stummschaltung um (jeweils auf den e
 SoundSet "+20", "Master", "Bass"  <em>; Erhöht die Bassstärke um 20%.</em>
 if ErrorLevel
     MsgBox "Die BASS-Einstellung wird nicht für MASTER unterstützt."</pre>
-<h3 id="Ex">Soundkartenanalyse</h3>
-<p>Das folgende Skript kann verwendet werden, um die Fähigkeiten Ihrer Soundkarte zu ermitteln (Komponententypen und Kontrolltypen). Es zeigt die Ergebnisse in einer einfachen ListView an. Alternativ kann man ein Skript für Windows Vista oder höher, das mehr Details bereitstellt (z. B. die Anzeigenamen der Geräte), im folgenden Forumsbeitrag herunterladen: <a href="http://www.autohotkey.com/board/topic/90877-/">http://www.autohotkey.com/board/topic/90877-/</a></p>
-<pre class="NoIndent"><em>; Die meisten unten genannten reinen Zahlen gibt es wahrscheinlich nicht in jedem Mixer, allerdings werden sie der Vollständigkeit halber abgefragt.
+</div>
+
+<div class="ex" id="ExSoundcard">
+<p><a href="#ExSoundcard">#2</a>: Soundkartenanalyse. Das folgende Skript kann verwendet werden, um die Fähigkeiten Ihrer Soundkarte zu ermitteln (Komponententypen und Kontrolltypen). Es zeigt die Ergebnisse in einer einfachen ListView an. Alternativ kann man ein Skript für Windows Vista oder höher, das mehr Details bereitstellt (z. B. die Anzeigenamen der Geräte), im folgenden Forumsbeitrag herunterladen: <a href="https://www.autohotkey.com/board/topic/90877-/">https://www.autohotkey.com/board/topic/90877-/</a></p>
+<pre>
+<em>; Die meisten unten genannten reinen Zahlen gibt es wahrscheinlich nicht in jedem Mixer, allerdings werden sie der Vollständigkeit halber abgefragt.
 ; Die Zahlen beziehen sich auf folgende Elemente (in Reihenfolge): CUSTOM, BOOLEANMETER, SIGNEDMETER, PEAKMETER,
 ; UNSIGNEDMETER, BOOLEAN, BUTTON, DECIBELS, SIGNED, UNSIGNED, PERCENT, SLIDER, FADER, SINGLESELECT, MUX,
 ; MULTIPLESELECT, MIXER, MICROTIME, MILLITIME</em>
@@ -150,5 +154,6 @@ InfoText.Visible := false
 LV.Visible := true
 return</pre>
 
+</div>
 </body>
 </html>

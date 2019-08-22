@@ -91,14 +91,15 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
   </tr>
   <tr id="new">
     <td style="text-align:center"><strong>new</strong></td>
-    <td><code>new <i>Klasse</i></code> oder <code>new <i>Klasse</i>(<i>Params</i>)</code> erstellt ein neues von <em>Klasse</em> abgeleitetes Objekt. Zum Beispiel wäre <code>x := new y</code> generell das gleiche wie <code>x := {base: y}</code>. <em>Klasse</em> kann nahezu jeder Ausdruck sein, der ein Klassenobjekt erzeugt, und ist üblicherweise ein Klassenname wie <code>GlobaleKlasse</code> oder <code>GlobaleKlasse.Unterklasse</code>. Komplexere Fälle wie <code>new new (getClass())(params1)(params2)</code> werden ebenfalls unterstützt, aber es dürfen kein Leerzeichen zwischen dem Klassenausdruck und der Parameterliste vorkommen. Weitere Informationen finden Sie unter <a href="Objects.htm#Custom_Objects">Benutzerdefinierte Objekte</a>.</td>
+    <td><code>new <i>Klasse</i></code> oder <code>new <i>Klasse</i>(<i>Params</i>)</code> erstellt ein neues von <em>Klasse</em> abgeleitetes Objekt. Es ist äquivalent zu <a href="objects/Class.htm#New"><em>Class</em>.New()</a>. <em>Klasse</em> kann nahezu jeder Ausdruck sein, der ein Klassenobjekt erzeugt, und ist üblicherweise ein Klassenname wie <code>GlobaleKlasse</code> oder <code>GlobaleKlasse.Unterklasse</code>. Komplexere Fälle wie <code>new new (getClass())(params1)(params2)</code> werden ebenfalls unterstützt, aber es dürfen kein Leerzeichen zwischen dem Klassenausdruck und der Parameterliste vorkommen. Weitere Informationen finden Sie unter <a href="Objects.htm#Custom_Objects">Benutzerdefinierte Objekte</a>.</td>
   </tr>
   <tr id="IncDec">
     <td style="text-align:center"><strong>++<br>
     
     --</strong></td>
     <td>
-      <p><strong>Vorherige und nachherige Inkrementierung/Dekrementierung</strong>. Erhöht oder verringert eine Zahlenvariable um 1. Der Operator kann entweder vor oder nach dem Namen einer Variable erfolgen. Erfolgt der Operator <em>vor</em> dem Namen, wird die Operation sofort durchgeführt und ihr Ergebnis für die nächste Operation verwendet. Zum Beispiel würde <code>Var := ++X</code> die X-Variable sofort um 1 erhöhen und ihr Wert in <em>Var</em> speichern. Erfolgt der Operator <em>nach</em> dem Namen einer Variable, wird die Operation <em>erst</em> durchgeführt, wenn die Variable für die nächste Operation verwendet wurde. Zum Beispiel würde <code>Var := X++</code> die X-Variable erst um 1 erhöhen, wenn der aktuelle Wert von X in <em>Var</em> gespeichert wurde.</p>
+      <p><strong>Vorherige und nachherige Inkrementierung/Dekrementierung</strong>. Erhöht oder verringert eine Zahlenvariable um 1. Der Operator kann entweder vor oder nach dem Namen einer Variable erfolgen. Erfolgt der Operator <em>vor</em> dem Namen, wird die Operation durchgeführt und ihr Ergebnis für die nächste Operation verwendet (das Ergebnis ist in diesem Fall eine Variablenreferenz). Zum Beispiel würde <code>Var := ++X</code> die X-Variable um 1 erhöhen und ihr Wert in <em>Var</em> speichern. Erfolgt der Operator <em>nach</em> dem Namen einer Variable, ist das Ergebnis der Wert von X vor der Ausführung der Operation. Zum Beispiel erhöht <code>Var := X++</code> die X-Variable um 1, allerdings bekommt <em>Var</em> den Wert, den X hatte, bevor es inkrementiert wurde.</p>
+      <p>Diese Operatoren können auch mit einer Eigenschaft eines Objekts verwendet werden, wie z. B. <code>meinArray.Length++</code> oder <code>--meinArray[i]</code>. In solchen Fällen ist das Ergebnis des Teilausdrucks immer eine Zahl, keine Variablenreferenz.</p>
     </td>
   </tr>
   <tr id="pow">
@@ -122,7 +123,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><strong>Logisches NICHT (!)</strong>: Wenn dieser Operator bei einem Operanden angewendet wird, der leer oder 0 ist, ist das Ergebnis eine 1 (true). Ansonsten ist das Ergebnis eine 0 (false). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
       <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Handelt es sich bei den Operanden um eine Floating-Point-Zahl, wird er vor der Berechnung auf Integer-Größe gekürzt. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden.</p>
       <p id="amp"><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ruft die Adresse des Inhalts von <em>MeineVar</em> im Speicher ab, wobei <em>MeineVar</em> eine benutzerdefinierte Variable ist. Der Inhalt von <em>MeineVar</em> kann eine Zeichenkette, ein 64-Bit-Integer, eine 64-Bit-Floating-Point-Zahl oder ein Objekt sein. Dieser Operator wird häufig in Verbindung mit <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> genutzt.</p>
-      <p>Die Adresse verliert in der Regel ihre Gültigkeit, wenn <em>MeineVar</em> mit irgendeinem <a href=Variables.htm#AssignOp>Zuweisungsoperator</a> (inklusive ++ und --) neu zugewiesen wird oder als Ausgabevariable für eine interne Funktion verwendet wird. Die Adresse des Inhalts einer <a href=Functions.htm#Local>lokalen</a> Variablen einer Funktion verliert ihre Gültigkeit, wenn die Funktion ihr Ende erreicht hat. Die Adresse eines Objekts ist solange gültig, bis dessen letzte <a href=Objects.htm#Reference_Counting>Referenz</a> freigegeben wurde.</p> 
+      <p>Die Adresse verliert in der Regel ihre Gültigkeit, wenn <em>MeineVar</em> mit irgendeinem <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> (inklusive ++ und --) neu zugewiesen wird oder als Ausgabevariable für eine interne Funktion verwendet wird. Die Adresse des Inhalts einer <a href="Functions.htm#Local">lokalen</a> Variablen einer Funktion verliert ihre Gültigkeit, wenn die Funktion ihr Ende erreicht hat. Die Adresse eines Objekts ist solange gültig, bis dessen letzte <a href="Objects.htm#Reference_Counting">Referenz</a> freigegeben wurde.</p> 
 	  <p>Der Adressoperator kann in Verbindung mit anderen Zeichenketten genutzt werden, wie z. B. <code>&amp;"Zeichenkette"</code>, <code>&amp;(x . y)</code> oder <code>&amp;A_LoopField</code>, allerdings gelten folgende Einschränkungen:</p>
       <ul>
         <li>Der adressierte Speicher sollte niemals geändert werden, z. B. wenn man ihn an einen DllCall-Ausgabeparameter übergibt.</li>
@@ -142,14 +143,14 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><strong>Andere Einsatzmöglichkeiten</strong>: Das Sternchensymbol (*) kann auch in <a href="Functions.htm#VariadicCall">variadischen Funktionsaufrufen</a> genutzt werden.</p>
       <p id="divide"><strong>Echtes Dividieren (/)</strong>: Die echte Division liefert immer eine Floating-Point-Zahl, auch dann, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>3/2</code> gleich 1.5 statt 1, und <code>4/2</code> gleich 2.0 statt 2.</p>
       <p id="FloorDivide"><strong>Floor-Dividieren (//)</strong>: Der Doppelschrägstrich-Operator verwendet eine sehr performante Integer-Division, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der beiden Eingabewerte eine Floating-Point-Zahl ist, wird eine Floating-Point-Division durchgeführt und das Ergebnis auf den am nächsten links befindlichen Integer gekürzt. Zum Beispiel wäre <code>5//3.0</code> gleich 1.0 und <code>5.0//-3</code> gleich -2.0. Obwohl das Ergebnis dieser Floating-Point-Division ein Integer ist, wird es in nachfolgenden Operationen als Floating-Point-Zahl behandelt. Um stattdessen eine Division mit Rest (Modulo) durchzuführen, siehe <a href="commands/Math.htm#Mod">Mod</a>.</p>
-    <p>Die Operatoren <a href="#AssignOp">*=</a> und <a href="#AssignOp">/=</a> sind Kurzschreibweisen zum Multiplizieren oder Dividieren eines Variablenwertes mit einem anderen Wert. <code>Var *= 2</code> liefert zum Beispiel das gleiche Ergebnis wie <code>Var := Var * 2</code> (allerdings ist die erste Schreibweise performanter).</p>
+    <p>Die <a href="#AssignOp">Operatoren *= und /=</a> sind Kurzschreibweisen zum Multiplizieren oder Dividieren eines Variablenwertes mit einem anderen Wert. <code>Var *= 2</code> liefert zum Beispiel das gleiche Ergebnis wie <code>Var := Var * 2</code> (allerdings ist die erste Schreibweise performanter).</p>
     <p>Eine Division durch Null bewirkt, dass eine Ausnahme ausgelöst wird.</p></td>
   </tr>
   <tr id="AddSub">
     <td style="text-align:center"><strong>+<br>
     
     -</strong></td>
-    <td><p><strong>Addieren (+)</strong> und <strong>Subtrahieren (-)</strong>. Die Operatoren <a href="#AssignOp"><strong>+=</strong></a> und <a href="#AssignOp"><strong>-=</strong></a> sind Kurzschreibweisen zum Erhöhen oder Verringern eines Variablenwertes um einen beliebigen Wert. <code>Var += 2</code> liefert zum Beispiel das gleiche Ergebnis wie <code>Var := Var + 2</code> (allerdings ist die erste Schreibweise performanter). Desweiteren gibt es die Möglichkeit, eine Variable mit <a href="#IncDec">Var++, Var--, ++Var oder --Var</a> schrittweise um 1 zu erhöhen oder zu verringern.</p>
+    <td><p><strong>Addieren (+)</strong> und <strong>Subtrahieren (-)</strong>. Die <a href="#AssignOp">Operatoren += und -=</a> sind Kurzschreibweisen zum Erhöhen oder Verringern eines Variablenwertes um einen beliebigen Wert. <code>Var += 2</code> liefert zum Beispiel das gleiche Ergebnis wie <code>Var := Var + 2</code> (allerdings ist die erste Schreibweise performanter). Desweiteren gibt es die Möglichkeit, eine Variable mit <a href="#IncDec">Var++, Var--, ++Var oder --Var</a> schrittweise um 1 zu erhöhen oder zu verringern.</p>
       <p><strong>Andere Einsatzmöglichkeiten</strong>: Wenn das Plus- oder Minuszeichen keinen Wert (oder Teilausdruck, der einen Wert zurückgibt) davor hat, wird es stattdessen als <a href="#unary">unärer Operator</a> interpretiert.</p>
     </td>
   </tr>
@@ -249,7 +250,7 @@ MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurü
     </tr>
   <tr id="ternary">
     <td style="text-align:center"><strong>?:</strong></td>
-    <td><p><strong>Ternärer Operator</strong>. Dieser Operator ist eine Kurzschreibweise zum Durchführen einer <a href="commands/IfExpression.htm">if-else-Anweisung</a>. Der Operator wertet die Bedingung auf der linken Seite aus, um festzustellen, welche der beiden Verzweigungen als Endergebnis dienen soll. <code>Var := x&gt;y ? 2 : 3</code> beispielsweise würde eine 2 in <em>Var</em> speichern, falls x größer als y ist; ansonsten würde es eine 3 speichern. Zur Verbesserung der Performance wird nur die gewinnende Verzweigung ausgewertet (siehe <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a>).</p></td>
+    <td><p><strong>Ternärer Operator</strong>. Dieser Operator ist eine Kurzschreibweise zum Durchführen einer <a href="commands/If.htm">if-else-Anweisung</a>. Der Operator wertet die Bedingung auf der linken Seite aus, um festzustellen, welche der beiden Verzweigungen als Endergebnis dienen soll. <code>Var := x&gt;y ? 2 : 3</code> beispielsweise würde eine 2 in <em>Var</em> speichern, falls x größer als y ist; ansonsten würde es eine 3 speichern. Zur Verbesserung der Performance wird nur die gewinnende Verzweigung ausgewertet (siehe <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a>).</p></td>
   </tr>
   <tr id="AssignOp">
     <td style="text-align:center"><strong>:=<br>
@@ -280,6 +281,7 @@ MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurü
       <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Eine Zeile wie <code>Var1 := Var2 := 0</code> würde also erst eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
     <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Eine auf diese Weise verwendete Zuweisung kann auch via Referenz (<a href="Functions.htm#ByRef">ByRef</a>) übergeben werden, oder ihre <a href="#amp">Adresse</a> zurückgeben; zum Beispiel: <code>&amp;(x:="abc")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: <code>not x := y</code> würde als <code>not (x := y)</code> ausgewertet werden. <code>++Var := X</code> würde als <code>++(Var := X)</code> ausgewertet werden; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> würde als <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code> ausgewertet werden.</p>
+    <p>Eine Zuweisung funktioniert auch mit einer Eigenschaft eines Objekts, wie z. B. <code>meinArray.Length += n</code> oder <code>meinArray[i] .= t</code>. Wenn man einer Eigenschaft einen Wert zuweist, ist das Ergebnis des Teilausdrucks der Wert, der zugewiesen wird, nicht eine Variablenreferenz.</p>
     </td>
   </tr>
   <tr id="fat-arrow">
@@ -492,7 +494,7 @@ sumfn := Func("Sum")</pre>
   </tr>
   <tr id="YWeek">
     <td>A_YWeek</td>
-    <td>Das aktuelle Jahr und Wochennummer (z. B. 200453) gemäß ISO 8601. Mit <a href="commands/SubStr.htm">SubStr</a> kann das Jahr von der Woche getrennt werden. Genaue Definition von A_YWeek: Wenn die Woche mit dem 1. Januar mindestens vier Tage im neuen Jahr hat, ist sie Woche 1. Ansonsten ist sie die letzte Woche des vorherigen Jahres, und die nachfolgende Woche die erste Woche des neuen Jahres.</td>
+    <td>Das aktuelle Jahr und Wochennummer (z. B. 200453) gemäß ISO 8601. Um das Jahr von der Woche zu trennen, nutzen Sie <code>Jahr := <a href="commands/SubStr.htm">SubStr</a>(A_YWeek, 1, 4)</code> und <code>Woche := <a href="commands/SubStr.htm">SubStr</a>(A_YWeek, -2)</code>. Genaue Definition von A_YWeek: Wenn die Woche mit dem 1. Januar mindestens vier Tage im neuen Jahr hat, ist sie Woche 1. Ansonsten ist sie die letzte Woche des vorherigen Jahres, und die nachfolgende Woche die erste Woche des neuen Jahres.</td>
   </tr>
   <tr id="Hour">
     <td>A_Hour</td>
@@ -528,7 +530,7 @@ sumfn := Func("Sum")</pre>
 Sleep 1000
 VerstricheneZeit := A_TickCount - Startzeit
 MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
-<p>Schauen Sie sich <a href="commands/DllCall.htm#QPC">QueryPerformanceCounter()</a> an, wenn Sie eine höhere Genauigkeit als die 10 ms von A_TickCount benötigen.</p>
+<p>Schauen Sie sich <a href="commands/DllCall.htm#ExQPC">QueryPerformanceCounter()</a> an, wenn Sie eine höhere Genauigkeit als die 10 ms von A_TickCount benötigen.</p>
 </td>
   </tr>
 </table>
@@ -582,7 +584,7 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
     <td>A_SendLevel</td>
     <td><strong>Liest/Schreibt</strong> die aktuelle <a href="commands/SendLevel.htm">SendLevel</a>-Einstellung (ein Integer im Bereich von 0 bis 100).</td>
   </tr>
-  <tr id="StoreCapslockMode">
+  <tr id="StoreCapsLockMode">
     <td>A_StoreCapsLockMode</td>
     <td><strong>Liest/Schreibt</strong> den aktuellen Modus von <a href="commands/SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a>; 1 (eingeschaltet) oder 0 (ausgeschaltet).</td>
   </tr>
@@ -716,7 +718,7 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
 <table class="info">
   <tr id="ComSpec">
     <td>A_ComSpec</td>
-    <td>Enthält wie die ComSpec-Umgebungsvariable den Pfadnamen des Befehlszeileninterpreters. Diese Variable wird oft in Verbindung mit <a href="commands/Run.htm">Run/RunWait</a> genutzt. Zum Beispiel:</p>
+    <td><p>Enthält wie die ComSpec-Umgebungsvariable den Pfadnamen des Befehlszeileninterpreters. Diese Variable wird oft in Verbindung mit <a href="commands/Run.htm">Run/RunWait</a> genutzt. Zum Beispiel:</p>
       <pre class="NoIndent no-highlight">C:\Windows\system32\cmd.exe</pre>
     </td>
   </tr>
@@ -933,7 +935,7 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   <li>Wenn man einer Variable eine neue Zeichenkette zuweist, die länger als der aktuelle Inhalt der Variable ist, wird automatisch zusätzlicher Systemspeicher bereitgestellt.</li>
   <li>Um den beanspruchten Speicher einer großen Variable wieder freizugeben, weist man ihr einen leeren Wert zu (z. B. <code>Var := ""</code>).</li>
   <li>Es können beliebig viele Variablen erstellt werden. Das Programm unterstützt mehrere Millionen Variablen, ohne dass es signifikant an Performance einbüßt.</li>
-  <li>Funktionen und Ausdrücke, die numerische Eingaben akzeptieren, unterstützen in der Regel Floating-Point-Werte mit einer Genauigkeit von 15 Nachkommastellen. Integer können vorzeichenfähige 64-Bit-Werte sein, die einen Bereich von -9223372036854775808 (-0x8000000000000000) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF) abdecken. Integer-Konstanten außerhalb dieses Bereichs werden gekürzt. Ähnlich verhält es sich mit arithmetischen Operationen bei Integern, die bei einem Überlauf umgekehrt werden (z. B. 0x7FFFFFFFFFFFFFFF + 1 = -0x8000000000000000).</li>
+  <li>Funktionen und Ausdrücke, die numerische Eingaben akzeptieren, unterstützen in der Regel Floating-Point-Werte mit einer Genauigkeit von 15 Nachkommastellen. Integer können vorzeichenfähige 64-Bit-Werte sein, die einen Bereich von -9223372036854775808 (-0x8000000000000000) bis 9223372036854775807 (0x7FFFFFFFFFFFFFFF) abdecken. Integer-Konstanten außerhalb dieses Bereichs werden umgekehrt. Ähnlich verhält es sich mit arithmetischen Operationen bei Integern, die bei einem Überlauf umgekehrt werden (z. B. 0x7FFFFFFFFFFFFFFF + 1 = -0x8000000000000000).</li>
 </ul>
 </body>
 </html>

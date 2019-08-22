@@ -124,7 +124,7 @@ str := StrGet(&amp;Puffer, "cp0")  <em>; ANSI-Zeichenkette vom Puffer abrufen.</
   <td><p>Fügen Sie an einen der oben genannten Integer-Typen den Buchstaben U an, um den entsprechenden Wert als vorzeichenlosen Integer (UInt64, Uint, UShort und UChar) zu behandeln. Streng genommen ist das nur für Rückgabewerte und <a href="#asterisk">Sternchenvariablen</a> notwendig, da es keine Rolle spielt, ob das via Wert übergebene Argument vorzeichenfähig oder vorzeichenlos ist (außer für Int64).</p>
     <p>Wenn ein negativer Integer bei einem vorzeichenlosen Argument angegeben ist, wechselt der Integer in den vorzeichenlosen Bereich. Wenn zum Beispiel -1 als UInt gesendet wird, wird es zu 0xFFFFFFFF.</p>
     <p><em>Vorzeichenlose</em> 64-Bit-Integer, die von einer Funktion erzeugt werden, werden nicht unterstützt. Um mit Zahlen größer gleich 0x8000000000000000 umzugehen, sollten Sie auf das U-Präfix verzichten und alle von der Funktion kommenden negativen Werte als große Integer (Int64) behandeln. Wenn eine Funktion zum Beispiel -1 als UInt64 zurückgibt und dieser Rückgabewert als Int64 behandelt wird, erhält man 0xFFFFFFFFFFFFFFFF.</p>
-    <p>Für Parameter vom Typ UInt64 können lange vorzeichenlose Werte als Zeichenketten übergeben werden. Für kleinere Integer-Typen ohne *- oder P-Suffix oder bei der Übergabe von reinen 64-Bit-Integern an eine Funktion spielt der Unterschied zwischen vorzeichenfähig und vorzeichenlos keine Rolle, weil zum Darstellen von vorzeichenfähigen Integern das Zweierkomplement genutzt wird. Allerdings kann es nicht schaden, für Werte, die normalerweise vorzeichenlos sind, das U-Präfix zu verwenden, um die Übersichtlichkeit zu verbessern.</p></td>
+    </td>
 </tr>
 </table>
 
@@ -167,7 +167,7 @@ Loop 500
 <p>4) Verwenden Sie <code>MeinInteger := <a href="NumGet.htm">NumGet</a>(MeineStruktur, 4, "UInt")</code>, um den Integer eines Strukturelements abzurufen. Geben Sie für <code>4</code> den Offset des Elements innerhalb der Struktur an. Das erste Element liegt immer auf Offset 0. Das zweite Element liegt auf Offset 0 plus der Größe des ersten Elements (in der Regel 4). Jedes Element, das danach erfolgt, liegt auf dem Offset des vorherigen Elements plus der Größe des vorherigen Elements. Die meisten Elemente -- wie z. B. DWORD, Int und <a href="#Int">andere Typen von 32-Bit-Integern</a> -- haben eine Größe von 4 Bytes. Geben Sie für <code>"UInt"</code> den entsprechenden Typ an oder lassen Sie den Parameter weg, wenn das Element ein Pointer oder Handle ist.</p>
 <p>Strukturbeispiele finden Sie im <a href="#ExStruct">Beispielabschnitt</a> weiter unten.</p>
 <h2 id="limits">Bekannte Einschränkungen</h2>
-<p>Wenn eine Variable <a href="../Variables.htm#amp">via Adresse</a> (z. B. <code>&amp;MeineVar</code>) an eine Funktion übergeben und ihre Länge von dieser Funktion geändert wird, kann es passieren, dass diese Variable bei späterem Gebrauch ein fehlerhaftes Verhalten aufweist. Um dies zu verhindern, gibt es folgende Lösungsmöglichkeiten: 1) Übergeben Sie MeineVar nicht als Ptr/Adresse, sondern als <a href="#str">"Str"</a>-Argument; 2) Rufen Sie <code><a href="VarSetCapacity.htm#neg1">VarSetCapacity</a>(MeineVar, -1)</code> auf, um die intern gespeicherte Länge der Variable nach dem Aufruf von DllCall zu aktualisieren.</p>
+<p>Wenn eine Variable <a href="../Variables.htm#amp">via Adresse</a> (z. B. <code>&amp;MeineVar</code>) an eine Funktion übergeben und ihre Länge von dieser Funktion geändert wird, kann es passieren, dass diese Variable bei späterem Gebrauch ein fehlerhaftes Verhalten aufweist. Um dies zu verhindern, gibt es folgende Lösungsmöglichkeiten: 1) Übergeben Sie <em>MeineVar</em> nicht als Ptr/Adresse, sondern als <a href="#str">"Str"</a>-Argument; 2) Rufen Sie <code><a href="VarSetCapacity.htm#neg1">VarSetCapacity</a>(MeineVar, -1)</code> auf, um die intern gespeicherte Länge der Variable nach dem Aufruf von DllCall zu aktualisieren.</p>
 <p>Eine binäre Null innerhalb einer Variable führt dazu, dass alle rechts befindlichen Daten versteckt werden; das heißt, dass solche Daten von den meisten internen Funktionen weder abgerufen noch geändert werden können. Solche Daten können aber mit dem <a href="../Variables.htm#amp">Adressoperator</a>, mit den Funktionen <a href="NumPut.htm">NumPut</a> und <a href="NumGet.htm">NumGet</a> oder mit DllCall selbst manipuliert werden.</p>
 <p>Es ist möglich, dass eine Funktion, die die Adresse einer zuvor erhaltenen Zeichenkette zurückgibt, dieselbe Zeichenkette ungewollt auf einer anderen Speicheradresse zurückgibt. <code>CharLower(CharUpper(MeineVar))</code> beispielsweise würde bei einer Programmiersprache wie C++ bewirken, dass der Inhalt von <em>MeineVar</em> in Kleinbuchstaben umgewandelt wird. Nutzt man stattdessen DllCall wie unten gezeigt, bleibt der Inhalt von <em>MeineVar</em> groß geschrieben, weil CharLower eine andere/temporäre Zeichenkette verarbeitet hat, die identisch zum Inhalt von <em>MeineVar</em> ist:</p>
 <pre>MeineVar := "ABC"
@@ -177,50 +177,54 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 <h2 id="COM">Component Object Model (COM)</h2>
 <p>COM-Objekte, die für VBScript und ähnliche Sprachen zugänglich sind, können in der Regel via <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a> oder <a href="ComObjActive.htm">ComObjActive</a> in Kombination mit der internen <a href="../Objects.htm#Usage_Objects">Objektsyntax</a> angesteuert werden.</p>
 <p>COM-Objekte, die kein <a href="https://msdn.microsoft.com/de-de/library/ms221608.aspx">IDispatch</a> unterstützen, können in Verbindung mit DllCall genutzt werden, indem die Adresse einer Funktion aus der virtuellen Funktionstabelle des Objekt-Interfaces ermittelt wird. Weitere Informationen finden Sie <a href="#ExTaskbar">im Beispiel</a> weiter unten.</p>
-<p>Der Großteil des .NET-Frameworks kann auch via COM und DllCall angesteuert werden. Weitere Informationen finden Sie unter <a href="http://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (englisch).
+<p>Der Großteil des .NET-Frameworks kann auch via COM und DllCall angesteuert werden. Weitere Informationen finden Sie unter <a href="https://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (englisch).
 </p>
 
 <h2>Siehe auch</h2>
 <p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="Run.htm">Run</a>, <a href="VarSetCapacity.htm">VarSetCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="https://msdn.microsoft.com/de-de/library/">MSDN Library</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</em>
-
-WelcheSchaltfl := DllCall("MessageBox", "Int", "0", "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
+<div class="ex" id="ExMessageBox">
+<p><a href="#ExMessageBox">#1</a>: Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer drückt.</p>
+<pre>WelcheSchaltfl := DllCall("MessageBox", "Int", "0", "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
 MsgBox "Sie haben die Schaltfläche #%WelcheSchaltfl% gedrückt."</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Ersetzt das Desktop-Hintergrundbild mit der angegebenen Bitmap-Datei (.bmp).</em>
+<div class="ex" id="ExWallpaper">
+<p><a href="#ExWallpaper">#2</a>: Ersetzt das Desktop-Hintergrundbild mit der angegebenen Bitmap-Datei (.bmp).</p>
+<pre>DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir <strong>.</strong> "\winnt.bmp", "UInt", 2)</pre>
+</div>
 
-DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir <strong>.</strong> "\winnt.bmp", "UInt", 2)</pre>
-
-<pre class="NoIndent"><em>; Beispiel: Ruft die API-Funktion "IsWindowVisible" auf, um herauszufinden, ob ein Fenster des Texteditors sichtbar ist.</em>
-
-DetectHiddenWindows True
+<div class="ex" id="ExIsWindowVisible">
+<p><a href="#ExIsWindowVisible">#3</a>: Ruft die API-Funktion "IsWindowVisible" auf, um herauszufinden, ob ein Fenster des Texteditors sichtbar ist.</p>
+<pre>DetectHiddenWindows True
 if not DllCall("IsWindowVisible", "Ptr", WinExist("Unbenannt - Editor"))  <em>; WinExist gibt einen HWND zurück.</em>
     MsgBox "Das Fenster ist nicht sichtbar."</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Ruft die API-Funktion wsprintf() auf, um die Zahl 432 mit führenden Nullen aufzufüllen, bis sie eine Breite von 10 Zeichen hat (0000000432).</em>
-
-VarSetCapacity(AufgefüllteZahl, 20)  <em>; Stellt sicher, dass die Variable groß genug für die neue Zeichenkette ist.</em>
+<div class="ex" id="ExWsprintf">
+<p><a href="#ExWsprintf">#4</a>: Ruft die API-Funktion wsprintf() auf, um die Zahl 432 mit führenden Nullen aufzufüllen, bis sie eine Breite von 10 Zeichen hat (0000000432).</p>
+<pre>VarSetCapacity(AufgefüllteZahl, 20)  <em>; Stellt sicher, dass die Variable groß genug für die neue Zeichenkette ist.</em>
 DllCall("wsprintf", "Str", AufgefüllteZahl, "Str", "%010d", "Int", 432, "Cdecl")  <em>; Benötigt die Cdecl-Aufrufkonvention.</em>
 MsgBox AufgefüllteZahl
 
 <em>; Alternativ können Sie die <a href="Format.htm">Format</a>-Funktion in Verbindung mit dem Null-Flag nutzen:</em>
 MsgBox Format("{:010}", 432)
 </pre>
+</div>
 
-<pre class="NoIndent" id="QPC"><em>; Beispiel: Zeigt, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</em>
-
-DllCall("QueryPerformanceFrequency", "Int64*", freq)
+<div class="ex" id="ExQPC">
+<p><a href="#ExQPC">#5</a>: Zeigt, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</p>
+<pre>DllCall("QueryPerformanceFrequency", "Int64*", freq)
 DllCall("QueryPerformanceCounter", "Int64*", CounterDavor)
 Sleep 1000
 DllCall("QueryPerformanceCounter", "Int64*", CounterDanach)
 MsgBox "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - CounterDavor) / freq * 1000 " ms"</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Ein Hotkey, der vorübergehend die Geschwindigkeit des Mauszeigers verringert, um eine genauere Positionierung zu ermöglichen.
-; Halten Sie die F1-Taste gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie sie los, um die originale Geschwindigkeit wiederherzustellen.</em>
-
-F1::
+<div class="ex" id="ExMouseSpeed">
+<p><a href="#ExMouseSpeed">#6</a>: Ein Hotkey, der vorübergehend die Geschwindigkeit des Mauszeigers verringert, um eine genauere Positionierung zu ermöglichen. Halten Sie <kbd>F1</kbd> gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie diese Taste wieder los, um die originale Geschwindigkeit wiederherzustellen.</p>
+<pre>F1::
 SPI_GETMOUSESPEED := 0x70
 SPI_SETMOUSESPEED := 0x71
 <em>; Ermittelt die aktuelle Geschwindigkeit, um sie später wiederherzustellen:</em>
@@ -231,11 +235,11 @@ KeyWait "F1"  <em>; Verhindert, dass das Auto-Wiederholungs-Feature der Tastatur
 return
 
 F1 up::DllCall("SystemParametersInfo", "UInt", 0x71, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Überwacht das fokussierte Steuerelement und zeigt die Position seiner
-; vertikalen Scrollleiste an (in Echzeit).</em>
-
-SetTimer "BeobachteScrollleiste", 100
+<div class="ex" id="ExWatchScrollBar">
+<p><a href="#ExWatchScrollBar">#7</a>: Überwacht das fokussierte Steuerelement und zeigt die Position seiner vertikalen Scrollleiste an (in Echzeit).</p>
+<pre>SetTimer "BeobachteScrollleiste", 100
 
 BeobachteScrollleiste()
 {
@@ -245,11 +249,11 @@ BeobachteScrollleiste()
     <em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
     ToolTip DllCall("GetScrollPos", "Ptr", FokusHwnd, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 }</pre>
+</div>
 
-<pre class="NoIndent" id="file"><em>; Beispiel: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher.
-; Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern.
-; Alternativ kann das gleiche mit <a href="FileOpen.htm">FileOpen</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#writeread">Beispiel</a>.</em>
-
+<div class="ex" id="ExFile">
+<p><a href="#ExFile">#8</a>: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher. Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern. Alternativ kann das gleiche mit <a href="FileOpen.htm">FileOpen</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#ExWriteRead">Beispiel</a>.</p>
+<pre>
 Dateiname := FileSelect("S16",, "Neue Datei erstellen:")
 if Dateiname = ""
     return
@@ -281,10 +285,11 @@ ZuLesendeBytes := VarSetCapacity(TestZeichenkette, StrLen(TestZeichenkette))
 DllCall("ReadFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZuLesendeBytes, "UIntP", AktuellGeleseneBytes, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " TestZeichenkette</pre>
+</div>
 
-<pre class="NoIndent" id="HideCursor"><em>; Beispiel: Versteckt den Mauszeiger, wenn man WIN+C drückt. Um den Mauszeiger wieder sichtbar zu machen, drückt man nochmals WIN+C.</em>
-
-OnExit () =&gt; SystemCursor("Show")  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>
+<div class="ex" id="ExHideCursor">
+<p><a href="#ExHideCursor">#9</a>: Versteckt den Mauszeiger, wenn man <kbd>WIN</kbd>+<kbd>C</kbd> drückt. Um den Mauszeiger wieder sichtbar zu machen, drückt man nochmals diese Kombination. Dieses Skript stammt von <a href="https://www.autohotkey.com/forum/topic6107.html">www.autohotkey.com/forum/topic6107.html</a></p>
+<pre>OnExit () =&gt; SystemCursor("Show")  <em>; Stellt sicher, dass der Mauszeiger beim Beenden des Skripts wieder sichtbar gemacht wird.</em>
 
 #c::SystemCursor("Toggle")  <em>; Drückt man WIN+C, wird der Mauszeiger jeweils ein- oder ausgeschaltet.</em>
 
@@ -322,22 +327,22 @@ SystemCursor(cmd)  <em>; cmd = "Show|Hide|Toggle"</em>
         DllCall("SetSystemCursor", "Ptr", h_cursor, "UInt", cursor.r)
     }
 }</pre>
+</div>
 
-<pre class="NoIndent" id="ExStruct"><em>; Struktur-Beispiel: Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die
-; Strukturelemente auf die Positionen der linken, oberen, rechten und unteren Seite des Fensters setzt (relativ zum Bildschirm).</em>
-
-Run "Notepad"
+<div class="ex" id="ExStruct">
+<p><a href="#ExStruct">#10</a>: Struktur-Beispiel. Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die Strukturelemente auf die Positionen der linken, oberen, rechten und unteren Seite des Fensters setzt (relativ zum Bildschirm).</p>
+<pre>Run "Notepad"
 WinWait "Unbenannt - Editor"  <em>; Setzt auch das "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>" für das untere WinExist.</em>
 VarSetCapacity(Rect, 16)  <em>; RECT ist eine Struktur, die aus vier 32-Bit-Integern besteht (also 4*4=16).</em>
 DllCall("GetWindowRect", "Ptr", WinExist(), "Ptr", &amp;Rect)  <em>; WinExist gibt einen HWND zurück.</em>
 L := NumGet(Rect, 0, "Int"), O := NumGet(Rect, 4, "Int")
 R := NumGet(Rect, 8, "Int"), U := NumGet(Rect, 12, "Int")
 MsgBox Format("Links {1} Oben {2} Rechts {3} Unten {4}", L, O, R, U)</pre>
+</div>
 
-<pre class="NoIndent"><em>; Struktur-Beispiel: Übergibt an FillRect() die Adresse einer RECT-Struktur, die einen Bereich des
-; Bildschirms kennzeichnet, der kurzzeitig rot gefärbt werden soll.</em>
-
-VarSetCapacity(Rect, 16, 0)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern und initialisiert sie alle mit Null.</em>
+<div class="ex" id="ExStructRect">
+<p><a href="#ExStructRect">#11</a>: Struktur-Beispiel. Übergibt an FillRect() die Adresse einer RECT-Struktur, die einen Bereich des Bildschirms kennzeichnet, der kurzzeitig rot gefärbt werden soll.</p>
+<pre>VarSetCapacity(Rect, 16, 0)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern und initialisiert sie alle mit Null.</em>
 <a href="NumPut.htm">NumPut</a>(A_ScreenWidth//2, Rect, 8, "Int")  <em>; Der dritte Integer in der Struktur ist "rect.right".</em>
 NumPut(A_ScreenHeight//2, Rect, 12, "Int") <em>; Der vierte Integer in der Struktur ist "rect.bottom".</em>
 hDC := DllCall("GetDC", "Ptr", 0, "Ptr")  <em>; Übergibt Null, um den Gerätekontext des Desktops abzurufen.</em>
@@ -345,11 +350,11 @@ hBrush := DllCall("CreateSolidBrush", "UInt", 0x0000FF, "Ptr")  <em>; Erstellt e
 DllCall("FillRect", "Ptr", hDC, "Ptr", &amp;Rect, "Ptr", hBrush)  <em>; Füllt das angegebene Rechteck mit dem Pinsel von oben.</em>
 DllCall("ReleaseDC", "Ptr", 0, "Ptr", hDC)  <em>; Gibt Speicher frei.</em>
 DllCall("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
+</div>
 
-<pre class="NoIndent"><em>; Struktur-Beispiel: Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig,
-; wenn Sie ein zukünftiges Datum setzen, da dies dazu führen kann, dass geplante Tasks vorzeitig ausgeführt werden!</em>
-
-SetzeSystemuhr("20051008142211")  <em>; Übergeben Sie einen <a href="FileSetTime.htm#YYYYMMDD">Zeitstempel</a> (lokal, nicht UTC).</em>
+<div class="ex" id="ExSystemTime">
+<p><a href="#ExSystemTime">#12</a>: Struktur-Beispiel. Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um. Seien Sie vorsichtig, wenn Sie ein zukünftiges Datum setzen, da dies dazu führen kann, dass geplante Tasks vorzeitig ausgeführt werden!</p>
+<pre>SetzeSystemuhr("20051008142211")  <em>; Übergeben Sie einen <a href="FileSetTime.htm#YYYYMMDD">Zeitstempel</a> (lokal, nicht UTC).</em>
 
 SetzeSystemuhr(YYYYMMDDHHMISS)
 <em>; Stellt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit um.
@@ -378,20 +383,16 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 
     return DllCall("SetSystemTime", "Ptr", &amp;Systemuhr)
 }</pre>
+<p>Weitere Struktur-Beispiele:</p>
+<ul>
+  <li>Im <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a> wird gezeigt, wie man mit DllCall eine Netzwerkverbindung zu einem TCP/IP-Server aufbauen und Daten von ihm empfangen kann.</li>
+  <li>Das Betriebssystem bietet vorgefertigte Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schrift oder eines Symbols verwenden kann. Solche Dialogfenster nutzen Strukturen und werden auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> vorgestellt.</li>
+</ul>
+</div>
 
-<pre class="NoIndent"><em>/* <strong>Weitere Struktur-Beispiele:</strong>
-
-1) Im <a href="../scripts/WinLIRC.htm">WinLIRC-Client-Skript</a> wird gezeigt, wie man mit DllCall eine Netzwerkverbindung zu einem TCP/IP-Server aufbauen
-und Daten von ihm empfangen kann.
-
-2) Das Betriebssystem bietet vorgefertigte Dialogfenster an, die der Benutzer zum Auswählen einer Farbe, einer Schrift oder eines Symbols verwenden kann.
-Solche Dialogfenster nutzen Strukturen und werden auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> vorgestellt.
-
-*/</em></pre>
-
-<pre id="ExTaskbar" class="NoIndent"><em>/*
-  Beispiel: Entfernt mithilfe von COM vorübergehend das aktive Fenster aus der Taskleiste.
-
+<div class="ex" id="ExTaskbar">
+<p><a href="#ExTaskbar">#13</a>: Entfernt mithilfe von COM vorübergehend das aktive Fenster aus der Taskleiste.</p>
+<pre><em>/*
   Methoden in der <a href="https://msdn.microsoft.com/de-de/library/bb774652.aspx">ITaskbarList</a>-VTable:
     IUnknown:
       0 QueryInterface  -- nutze stattdessen <a href="ComObjQuery.htm">ComObjQuery</a>
@@ -427,6 +428,7 @@ vtable(ptr, n) {
     return NumGet(NumGet(ptr+0), n*A_PtrSize)
 }
 </pre>
+</div>
 
 </body>
 </html>

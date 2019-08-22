@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Map-Objekt - Methoden &amp; Eigenschaften | AutoHotkey v2</title>
+<meta name="description" content="Ein grundlegendes Objekt bietet eine Schnittstelle zum Durchführen von Aktionen wie z. B. Keys einfügen oder entfernen, Anzahl der Keys abrufen, Objekt klonen, etc." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Map-Objekt</h1>
+
+<p>Ein <strong>Map</strong>-Objekt <em>ordnet</em> eine Reihe von Werten, genannt <em>Keys</em>, einer anderen Gruppe von Werten zu. Ein Key und der zugeordnete Wert wird als Key-Value-Paar bezeichnet. Ein Map-Objekt kann beliebig viele Key-Value-Paare enthalten, allerdings muss jeder Key einzigartig sein.</p>
+<p>Ein Key kann ein <a href="../Concepts.htm#numbers">Integer</a>, eine <a href="../Objects.htm">Objekt</a>referenz oder eine null-terminierte <a href="../Concepts.htm#strings">Zeichenkette</a> sein. Der Vergleich von Zeichenketten-Keys ist Groß-/Kleinschreibung-sensitiv, während Objekte via Referenz/Adresse verglichen werden. <a href="../Concepts.htm#numbers">Float</a>-Keys werden automatisch in eine Zeichenkette umgewandelt.</p>
+<p>Der einfachste Weg, ein Map-Objekt zu nutzen, besteht darin, ein Key-Value-Paar über die implizite <a href="#__Item">__Item</a>-Eigenschaft abzurufen oder zu setzen, indem man einfach neben dem Map-Objekt den Key in eckigen Klammern setzt. Zum Beispiel:</p>
+<pre>Farben := Map()
+Farben["Rot"] := "ff0000"
+Farben["Grün"] := "00ff00"
+Farben["Blau"] := "0000ff"
+for Farbe in Array("Blau", "Grün")
+    MsgBox Farben[Farbe]
+</pre>
+<p>Die folgende Dokumentation verwendet <code>aMap</code> als Platzhalter für jedes Map-Objekt. Beachten Sie, dass "map" nicht als Variablenname verwendet werden sollte, da es genutzt wird, um auf die Map-Klasse selbst zu verweisen.</p>
+<p>Map-Objekte basieren auf <code>Map.Prototype</code>, das wiederum auf <code>Object.Prototype</code> basiert. Zusätzlich zu den Methoden und Eigenschaften, die von <a href="Object.htm">Object</a> geerbt werden, haben Map-Objekte die folgenden vordefinierten Methoden und Eigenschaften:</p>
+
+<p><strong>Methoden:</strong></p>
+<ul>
+  <li><a href="#Clear">Clear</a></li>
+  <li><a href="#Clone">Clone</a></li>
+  <li><a href="#Delete">Delete</a></li>
+	<li><a href="#HasKey">Has</a></li>
+  <li><a href="#__Enum">__Enum</a></li>
+</ul>
+<p><strong>Eigenschaften:</strong></p>
+<ul>
+  <li><a href="#Count">Count</a></li>
+	<li><a href="#Capacity">Capacity</a></li>
+  <li><a href="#__Item">__Item</a></li>
+</ul>
+
+<h1>Methoden</h1>
+
+<div class="methodShort" id="Clear"><h2>Clear</h2>
+<p>Entfernt alle Key-Value-Paare aus einem Map-Objekt.</p>
+<pre class="Syntax">aMap.<span class="func">Clear</span>()</pre>
+</div>
+
+<div class="methodShort" id="Clone"><h2>Clone</h2>
+<p>Gibt eine flache Kopie des Objekts zurück.</p>
+<pre class="Syntax">Klon := aMap.<span class="func">Clone</span>()</pre>
+<p>Alle Key-Value-Paare werden in das neue Map-Objekt kopiert. Objekt<em>referenzen</em> werden kopiert (wie bei einer normalen Zuweisung), nicht die Objekte selbst.</p>
+<p>Eigene Eigenschaften, eigene Methoden und Base werden gemäß <a href="Object.htm#Clone">Obj.Clone</a> kopiert.</p>
+</div>
+
+<div class="methodShort" id="Delete"><h2>Delete</h2>
+<p>Entfernt ein Key-Value-Paar aus einem Map-Objekt.</p>
+<pre class="Syntax">aMap.<span class="func">Delete</span>(Key)</pre>
+<dl>
+  <dt>Key</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a>, <a href="../Objects.htm">Objekt</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Beliebiger einzelner Key. Wenn das Map-Objekt diesen Key nicht enthält, wird eine Ausnahme ausgelöst.</p>
+  </dd>
+  <dt>Rückgabewert</dt>
+  <dd><p>Der entfernte Wert.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="Has"><h2>Has</h2>
+<p>Gibt True zurück, wenn <i>Key</i> einen zugeordneten Wert innerhalb des Map-Objekts hat, ansonsten False.</p>
+<pre class="Syntax">aMap.<span class="func">Has</span>(Key)</pre>
+</div>
+
+<div class="methodShort" id="__Enum"><h2>__Enum</h2>
+<p>Enumeriert Key-Value-Paare.</p>
+<pre class="Syntax">For Key <span class="optional">, Wert</span> in aMap</pre>
+<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück. Diese Methode wird für gewöhnlich nicht direkt aufgerufen. Stattdessen wird das Map-Objekt direkt an eine <a href="../commands/For.htm">For-Schleife</a> übergeben, die __Enum einmal aufruft und dann den Enumerator einmal für jede Wiederholung der Schleife aufruft. Jeder Aufruf des Enumerators gibt den nächsten Key und/oder Wert zurück. Die Variablen der For-Schleife entsprechen den folgenden Parametern des Enumerators:</p>
+<dl>
+  <dt>Key</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a>, <a href="../Objects.htm">Objekt</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Die Taste.</p>
+  </dd>
+  <dt>Wert</dt>
+  <dd>
+    <p>Der Wert.</p>
+  </dd>
+</dl>
+</div>
+
+<h1>Eigenschaften</h1>
+
+<div class="methodShort" id="Count"><h2>Count</h2>
+<p>Ruft die Anzahl von Key-Value-Paaren im Map-Objekt ab.</p>
+<pre class="Syntax">Anzahl := aMap.<span class="func">Count</span></pre>
+</div>
+
+<div class="methodShort" id="Capacity"><h2>Capacity</h2>
+<p>Ermittelt oder bestimmt die aktuelle Kapazität des Map-Objekts.</p>
+<pre class="Syntax">aMap.<span class="func">Capacity</span> := MaxElemente</pre>
+<pre class="Syntax">MaxElemente := aMap.<span class="func">Capacity</span></pre>
+<dl>
+	<dt>MaxElemente</dt>
+	<dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die maximale Anzahl von Key-Value-Paaren, die das Map-Objekt beinhalten soll, bevor es automatisch erweitert werden muss. Wenn ein Wert kleiner als die aktuelle Anzahl von Key-Value-Paaren gesetzt wird, wird dieser Wert stattdessen verwendet und ungenutzter Speicher freigegeben.</p>
+  </dd>
+</dl>
+</div>
+
+<div class="methodShort" id="__Item"><h2>__Item</h2>
+<p>Ermittelt oder aktualisiert den Wert eines Key-Value-Paares.</p>
+<pre class="Syntax">Wert := aMap[Key]</pre>
+<pre class="Syntax">aMap[Key] := Wert</pre>
+<dl>
+  <dt>Key</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a>, <a href="../Objects.htm">Objekt</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Beim Abrufen eines Wertes muss <em>Key</em> ein einzigartiger Wert sein, der zuvor einem anderen Wert zugeordnet wurde. Es wird eine Ausnahme ausgelöst, wenn <em>Key</em> keinen zugeordneten Wert innerhalb des Map-Objekts hat.</p>
+    <p>Beim Zuweisen eines Wertes kann <em>Key</em> ein beliebiger Wert sein, der mit <em>Wert</em> assoziiert werden kann; mit anderen Worten, der <em>Key</em>, der genutzt wird, um später auf <em>Wert</em> zugreifen zu können. <a href="../Concepts.htm#numbers">Float</a>-Keys werden automatisch in eine Zeichenkette umgewandelt.</p>
+  </dd>
+</dl>
+<p></p>
+<p>Der Eigenschaftsname __Item wird typischerweise weggelassen, wie oben gezeigt, ist aber nützlich, um die Eigenschaft zu überschreiben.</p>
+</div>
+
+</body>
+</html>

@@ -29,7 +29,6 @@
   </li>
   <li><a href="#Events">Ereignisse</a></li>
   <li><a href="#IL">ImageLists</a> (Symbole in die ListView einfügen)</li>
-  <li><a href="#Error_Handling">Fehlerbehandlung</a></li>
   <li><a href="#Remarks">ListView-Bemerkungen</a></li>
   <li><a href="#Examples">Beispiele</a></li>
 </ul>
@@ -441,17 +440,13 @@ Gui.Show</pre>
   </dl>
   <p>
     Hinweis: Normalerweise ist es nicht notwendig, ImageLists zu zerstören, denn wenn sie einmal mit einer ListView verbunden sind, werden sie automatisch zerstört, wenn die ListView oder ihr übergeordnetes Fenster zerstört wird. Wenn eine ImageList bei mehreren ListViews verwendet wird (wenn <code>0x40</code> in deren Optionen ist), sollte das Skript die ImageList explizit zerstören, nachdem alle ListViews zerstört wurden. Ersetzt das Skript eine der alten ImageLists mit einer neuen, sollte es explizit die alte ImageList zerstören.</p>
-
-<h2 id="Error_Handling">Fehlerbehandlung</h2>
-<p>Es wird eine <a href="../commands/Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn ungültige Optionen im <em>Optionen</em>-Parameter einer Methode erkannt werden.</p>
-
 <h2 id="Remarks">ListView-Bemerkungen</h2>
 <p><a href="../objects/Gui.htm#Submit">Gui.Submit</a> hat keine Auswirkung auf ein ListView-Steuerelement.</p>
 <p>Nachdem eine Spalte sortiert wurde - z. B. durch Anklicken der Spaltenüberschrift oder Aufrufen von <code>LV.<a href="#ModifyCol">ModifyCol</a>(1, "Sort")</code> - werden alle danach eingefügten Reihen am unteren Ende der Liste erscheinen, anstatt die aktuelle Sortierungsreihenfolge zu berücksichtigen. Die Ausnahme davon sind die Styles <a href="#Sort">Sort</a> und <a href="#SortDesc">SortDesc</a>, weil sie neu hinzugefügte Reihen an die korrekte Position verschieben.</p>
 <p id="Enter">Um die Eingabe einer <kbd>Enter</kbd>-Taste bei einer fokussierten ListView zu erfassen, nutzt man eine <a href="GuiControls.htm#DefaultButton">Standardschaltfläche</a> (die man natürlich verstecken kann). Zum Beispiel:</p>
 <pre>Gui.Add("Button", "Hidden Default", "OK").OnEvent("Click", "LV_Enter")
 ...
-LV_Enter() {
+LV_Enter(*) {
     global
     if Gui.FocusedCtrl != LV
         return
@@ -469,18 +464,20 @@ LV_Enter() {
 <p><a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm">Andere Steuerelemente</a>, <a href="GuiCreate.htm">GuiCreate</a>, <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu-Ereignis</a>, <a href="../objects/GuiControl.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../misc/Styles.htm#ListView">Style-Tabelle von ListView</a></p>
 <h2 id="Examples">Beispiele</h2>
 
-<h3 id="ex1">Beispiel #1: Verschiedenes</h3>
-<pre class="NoIndent"><em>; Das folgende Beispiel zeigt, wie mit einer 0 als Reihennummer alle Reihen aus- oder abgewählt werden können:</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre><em>; Das folgende Beispiel zeigt, wie mit einer 0 als Reihennummer alle Reihen aus- oder abgewählt werden können:</em>
 LV.<a href="#Modify">Modify</a>(0, "Select")   <em>; Wählt alle aus.</em>
 LV.Modify(0, "-Select")  <em>; Wählt alle ab.</em>
 LV.Modify(0, "-Check")  <em>; Entfernt die Häkchen von allen <a href="#Checked">Checkboxen</a>.</em>
 
 <em>; Passt die Breite der Spalten an den Inhalt der Reihen an:</em>
 LV.<a href="#ModifyCol">ModifyCol</a>  <em>; Es gibt keine Parameter in diesem Modus.</em></pre>
+</div>
 
-<h3 id="ex2">Beispiel #2</h3>
-<p>Das folgende Skript ist aufwendiger als das Beispiel ganz oben. Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen:</p>
-<pre class="NoIndent"><em>; Erstellt ein GUI-Fenster:</em>
+<div class="ex" id="ExAdvanced">
+<p><a href="#ExAdvanced">#2</a>: Das folgende Skript ist aufwendiger als das Beispiel ganz oben. Es zeigt Dateien aus einem Ordner an, den der Benutzer aussuchen kann, und weist jeder Datei je nach Typ ein Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um das Kontextmenü anzuzeigen:</p>
+<pre><em>; Erstellt ein GUI-Fenster:</em>
 Gui := GuiCreate("+Resize")  <em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen.</em>
 
 <em>; Erstellt einige Schaltflächen:</em>
@@ -504,7 +501,7 @@ LV.SetImageList(ImageListID2)
 LV.OnEvent("<a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>", "StarteDatei")
 LV.OnEvent("<a href="../objects/GuiOnEvent.htm#Ctrl-ContextMenu">ContextMenu</a>", "ZeigeKontextmenü")
 B1.OnEvent("Click", Func("LadeOrdner").bind(ImageListID1, ImageListID2))
-B2.OnEvent("Click", () =&gt; <a href="#Delete">LV.Delete</a>())
+B2.OnEvent("Click", (*) =&gt; <a href="#Delete">LV.Delete</a>())
 B3.OnEvent("Click", "WechsleAnsicht")
 
 <em>; Fenster-Ereignisse hinzufügen:</em>
@@ -513,7 +510,7 @@ Gui.OnEvent("Size", "Gui_Size")
 <em>; Zeigt das Fenster an:</em>
 Gui.Show()
 
-LadeOrdner(ImageListID1, ImageListID2, this)
+LadeOrdner(ImageListID1, ImageListID2, this, *)
 {
     static SymbolArray := []
     LV := this.Gui.Control["LV"]
@@ -591,7 +588,7 @@ LadeOrdner(ImageListID1, ImageListID2, this)
     LV.ModifyCol(3, 65)  <em>; Macht die Spalte "Größe" etwas breiter, um die Spaltenüberschrift komplett sichtbar zu machen.</em>
 }
 
-WechsleAnsicht(this)
+WechsleAnsicht(this, *)
 {
     static IconView
     LV := this.Gui.Control["LV"]
@@ -623,7 +620,7 @@ ZeigeKontextmenü(LV, Element, IstRechtsklick, X, Y)  <em>; Als Reaktion auf Rec
     ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
     <a href="../objects/Menu.htm#Show">Kontextmenü.Show</a>(X, Y)
 
-    ÖffnenOderEigenschaften(Menüpunktname)  <em>; Der Benutzer hat "Öffnen" oder "Eigenschaften" im Kontextmenü ausgewählt.</em>
+    ÖffnenOderEigenschaften(Menüpunktname, *)  <em>; Der Benutzer hat "Öffnen" oder "Eigenschaften" im Kontextmenü ausgewählt.</em>
     {
         Dateiname := LV.GetText(Element, 1) <em>; Ermittelt den Text des ersten Feldes.</em>
         Dateiverz := LV.GetText(Element, 2)  <em>; Ermittelt den Text des zweiten Feldes.</em>
@@ -635,7 +632,7 @@ ZeigeKontextmenü(LV, Element, IstRechtsklick, X, Y)  <em>; Als Reaktion auf Rec
             MsgBox("Angeforderte Aktion auf " Dateiverz "\" Dateiname " konnte nicht durchgeführt werden.")
     }
 
-    ReihenLeeren()  <em>; Der Benutzer hat "Leeren" im Kontextmenü ausgewählt.</em>
+    ReihenLeeren(*)  <em>; Der Benutzer hat "Leeren" im Kontextmenü ausgewählt.</em>
     {
         Reihennummer := 0  <em>; Veranlasst den ersten Schleifendurchlauf, die Suche am Anfang zu beginnen.</em>
         Loop
@@ -659,5 +656,6 @@ Gui_Size(this, MinMax, Breite, Höhe)  <em>; Vergrößert/verkleinert die ListVi
     this.Control["LV"].Move("W" Breite - 20 " H" Höhe - 40)
 }</pre>
 
+</div>
 </body>
 </html>

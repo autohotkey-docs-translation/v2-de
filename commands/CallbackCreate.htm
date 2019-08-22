@@ -66,7 +66,7 @@
 <p><strong>AutoHotkey 32-bit:</strong> Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Kleinere Typen werden auf 32 Bit erweitert, während größere Typen in mehreren 32-Bit-Parametern aufgeteilt werden.</p>
 <p>Wenn ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispiele offenbart werden:</p>
 <pre><em>; Methode #1</em>
-if wParam &gt; 0x7FFFFFFF
+if (wParam &gt; 0x7FFFFFFF)
     wParam := -(~wParam) - 1
 
 <em>; Methode #2: Beruht auf der Tatsache, dass AutoHotkey von sich aus vorzeichenfähige 64-Bit-Integer verwendet.</em>
@@ -111,9 +111,9 @@ DieFunk(params) {
 <p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</em>
-
-<em>; Aus Performance- und Speichergründen wird CallbackCreate nur einmal für einen bestimmten Callback aufgerufen:</em>
+<div class="ex" id="ExWinList">
+<p><a href="#ExWinList">#1</a>: Das folgende Skript zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
+<pre><em>; Aus Performance- und Speichergründen wird CallbackCreate nur einmal für einen bestimmten Callback aufgerufen:</em>
 if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird:</em>
     EnumAdresse := <strong>CallbackCreate</strong>("EnumWindowsProc", "Fast")
 
@@ -132,11 +132,11 @@ EnumWindowsProc(hwnd, lParam)
         Ausgabe .= "HWND: " . hwnd . "`tTitel: " . Titel . "`tKlasse: " . Klasse . "`n"
     return true  <em>; Setzt EnumWindows() fort, bis alle Fenster abgearbeitet wurden.</em>
 }</pre>
-<pre class="NoIndent"><em>; Beispiel: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann,
-; wenn man sein WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe
-; des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</em>
+</div>
 
-Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
+<div class="ex" id="ExSubclassGUI">
+<p><a href="#ExSubclassGUI">#2</a>: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man sein WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
+<pre>Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 Pinsel := DllCall("CreateSolidBrush", "UInt", Texthintergrundfarbe)
 
 Gui := GuiCreate()
@@ -164,5 +164,6 @@ WindowProc(hwnd, uMsg, wParam, lParam)
     return DllCall("CallWindowProc", "Ptr", WindowProcAlt, "Ptr", hwnd, "UInt", uMsg, "Ptr", wParam, "Ptr", lParam)
 }</pre>
 
+</div>
 </body>
 </html>

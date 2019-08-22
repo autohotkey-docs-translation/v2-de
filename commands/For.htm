@@ -16,119 +16,100 @@
 
 <p>Wiederholt mehrere Funktionen für jedes Key-Value-Paar in einem Objekt.</p>
 
-<pre class="Syntax"><span class="func">For</span> Key <span class="optional">, Value</span> in Ausdruck</pre>
+<pre class="Syntax"><span class="func">For</span> Wert1 <span class="optional">, Wert2</span> in Ausdruck</pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>Key</dt>
-  <dt>Wert</dt>
+  <dt>Wert1</dt>
+  <dt>Wert2</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#variables">Variable</a></p>
-    <p>Die Variablen, in denen die Werte gespeichert werden sollen, die der Enumerator zu Beginn jeder Iteration zurückgibt - das ist in der Regel der Key und Value jedes Key-Value-Paares innerhalb des Objekts. Die tatsächliche Beschaffenheit dieser Werte wird durch den Enumerator definiert (und der Typ des Enumerators wird durch das Zielobjekt definiert).</p>
+    <p>Die Variablen, in denen die zurückgegebenen Werte vom Enumerator zu Beginn jeder Iteration (Wiederholung) gespeichert werden soll. Die Beschaffenheit dieser Werte wird vom Enumerator definiert, der via <em>Ausdruck</em> ermittelt wird.</p>
     <p>Wenn die Schleife unterbrochen wird oder das Ende erreicht, werden die vorherigen Werte von diesen Variablen wiederhergestellt.</p>
   </dd>
 
   <dt>Ausdruck</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
-    <p>Ein <a href="../Variables.htm#Expressions">Ausdruck</a>, dessen Ergebnis ein Objekt ist, oder eine Variable, die ein Objekt enthält.</p>
+    <p>Ein <a href="../Variables.htm#Expressions">Ausdruck</a>, dessen Ergebnis ein enumerierbares Objekt ist, oder eine Variable, die ein enumerierbares Objekt enthält.</p>
   </dd>
 
 </dl>
 
 <h2>Bemerkungen</h2>
-<p>Die Parameterliste kann optional mit runden Klammern umschlossen werden. Zum Beispiel: <code>for (Key in meinObjekt)</code></p>
-<p><i>Ausdruck</i> wird nur einmal ausgewertet, bevor die Schleife beginnt. Die <code>_NewEnum</code>-Methode des resultierenden Objekts wird aufgerufen, um ein <a href="../objects/Enumerator.htm"><i>Enumerator</i></a>-Objekt abzurufen. Zu Beginn jeder Iteration wird die <a href="../objects/Enumerator.htm#Next">Next</a>-Methode des Enumerators aufgerufen, um das nächste Key-Value-Paar zu ermitteln. Wenn Next einen False-Wert zurückgibt (0 oder eine leere Zeichenkette), wird die Schleife beendet.</p>
+<p>Die Parameterliste kann optional mit runden Klammern umschlossen werden. Zum Beispiel: <code>for (Wert in MeinArray)</code></p>
+<p>Das Enumerieren läuft wie folgt ab:</p>
+<ul>
+  <li>Vor Beginn der Schleife wird <i>Ausdruck</i> ausgewertet, um das Zielobjekt zu bestimmen.</li>
+  <li>Die <code>__Enum</code>-Methode des Objekts wird aufgerufen, um ein <a href="../objects/Enumerator.htm"><i>Enumerator</i></a>-Objekt abzurufen. Wenn es keine derartige Methode gibt, wird das Objekt selbst als Enumerator-Objekt vermutet.</li>
+  <li>Zu Beginn jeder Iteration wird der Enumerator <a href="../objects/Enumerator.htm#Call">aufgerufen</a>, um den nächsten Wert oder das nächste Wertepaar abzurufen. Wenn der Enumerator False (0 oder eine leere Zeichenkette) zurückgibt, wird die Schleife terminiert.</li>
+</ul>
 <p>Das folgende Beispiel zeigt, wie eine For-Schleife ungefähr abläuft:</p>
-<pre>_enum := (<i>Ausdruck</i>)._NewEnum()
-while _enum.Next(Key, Value)
+<pre>_enum := <i>Ausdruck</i>
+try _enum := _enum.__Enum()
+while %_enum%(Wert1, Wert2)
 {
     ...
 }
 </pre>
-<p>Im Code oben wird eine Ausnahme ausgelöst, wenn <em>Ausdruck</em> oder _NewEnum kein Objekt zurückgibt oder wenn eine erforderliche Methode fehlt.</p>
-<p>Bestehende Key-Value-Paare können während der Schleife geändert werden. Allerdings kann das Einfügen oder Entfernen von Keys dazu führen, dass einige Elemente mehrfach übersprungen oder enumeriert werden. Eine Möglichkeit, dies zu umgehen, wäre es, eine Liste mit Keys zu erstellen, die entfernt werden sollen, und danach eine zweite Schleife zu verwenden, um die Keys nach dem ersten Schleifendurchlauf zu entfernen. Mit <code><a href="../objects/Object.htm#Delete">Object.Delete</a>(<i>ErsterKey</i>, <i>LetzterKey</i>)</code> kann ein bestimmter Bereich von Keys entfernt werden, ohne dass eine Schleife notwendig ist.</p>
+<p>Im Code oben wird eine Ausnahme ausgelöst, wenn <em>Ausdruck</em> oder __Enum kein Objekt zurückgibt oder wenn das Enumerator-Objekt nicht aufgerufen werden kann.</p>
+<p>Beim Enumerieren von Eigenschaften, Methoden oder Arrayelementen sollte man grundsätzlich darauf verzichten, Elemente dieser Art einzufügen oder zu entfernen. Würde man dies tun, kann es vorkommen, dass einige Elemente übersprungen oder mehrfach enumeriert werden. Eine Möglichkeit, dies zu umgehen, wäre es, eine Liste mit Elementen zu erstellen, die entfernt werden sollen, und danach eine zweite Schleife zu verwenden, um die Elemente nach dem ersten Schleifendurchlauf zu entfernen.</p>
 <p>Nach einer For-Schleife erfolgt üblicherweise ein <a href="Block.htm">Block</a> (eine Sammlung von Anweisungen), der den <em>Schleifenkörper</em> definiert. Eine Schleife mit nur einer einzigen Anweisung benötigt keinen Block (ein "if" und das dazugehörige "else" werden hierbei als Einzelanweisung angesehen). Optional kann der "One True Brace Style" (OTB) angewendet werden, um die geschweifte Startklammer auf dieselbe Zeile statt darunter zu setzen. Zum Beispiel: <code>for x, y in z {</code>.</p>
 <p>Diese und jede andere Schleife in AutoHotkey kann auf Hilfsmittel wie <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> zurückgreifen.</p>
 
 <h2>COM-Objekte</h2>
-<p>Da <i>Key</i> und <i>Value</i> direkt an die Next-Methode des Enumerators übergeben werden, hängen die zugewiesenen Werte davon ab, welche Art von Objekt enumeriert wird. Handelt es sich um ein COM-Objekt, enthält <i>Key</i> den Rückgabewert von <a href="https://msdn.microsoft.com/de-de/library/ms221369.aspx">IEnumVARIANT::Next()</a> und <i>Value</i> eine Zahl, die seinen <a href="https://msdn.microsoft.com/de-de/library/cc237865.aspx">Variantentyp</a> repräsentiert. Wenn es zum Beispiel mit einem <a href="https://msdn.microsoft.com/de-de/library/x4k5wbx4.aspx">Scripting.Dictionary</a>-Objekt genutzt wird, enthält <i>Key</i> einen Key aus dem Dictionary und <i>Value</i> eine 8 für Zeichenketten und eine 3 für Integer. Auf der <a href="ComObjType.htm">ComObjType</a>-Seite finden Sie eine Auflistung aller Typennummern.</p>
-<p>Beim Enumerieren eines <a href="ComObjArray.htm">SafeArrays</a> enthält <i>Key</i> das aktuelle Element und <i>Value</i> seinen Variantentyp.</p>
+<p>Da <i>Wert1</i> und <i>Wert2</i> direkt an den Enumerator übergeben werden, hängen die zugewiesenen Werte davon ab, welche Art von Objekt enumeriert wird. Handelt es sich um ein COM-Objekt, enthält <i>Wert1</i> den Rückgabewert von <a href="https://msdn.microsoft.com/de-de/library/ms221369.aspx">IEnumVARIANT::Next()</a> und <i>Wert2</i> eine Zahl, die seinen <a href="https://msdn.microsoft.com/de-de/library/cc237865.aspx">Variantentyp</a> repräsentiert. Wenn es zum Beispiel mit einem <a href="https://msdn.microsoft.com/de-de/library/x4k5wbx4.aspx">Scripting.Dictionary</a>-Objekt genutzt wird, enthält jedes <i>Wert1</i> einen Key aus dem Dictionary und <i>Wert2</i> eine 8 für Zeichenketten und eine 3 für Integer. Auf der <a href="ComObjType.htm">ComObjType</a>-Seite finden Sie eine Auflistung aller Typennummern.</p>
+<p>Beim Enumerieren eines <a href="ComObjArray.htm">SafeArrays</a> enthält <i>Wert1</i> das aktuelle Element und <i>Wert2</i> seinen Variantentyp.</p>
 
 <h2>Siehe auch</h2>
-<p><a href="../objects/Enumerator.htm">Enumerator-Objekt</a>, <a href="../objects/Object.htm#NewEnum">Object._NewEnum</a>, <a href="While.htm">While-Schleife</a>, <a href="Loop.htm">Loop</a>, <a href="Until.htm">Until</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a></p>
+<p><a href="../objects/Enumerator.htm">Enumerator-Objekt</a>, <a href="../objects/Object.htm#OwnProps">OwnProps</a>, <a href="../objects/Object.htm#OwnMethods">OwnMethods</a>, <a href="While.htm">While-Schleife</a>, <a href="Loop.htm">Loop</a>, <a href="Until.htm">Until</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Listet die Key-Value-Paare eines Objekts auf:</em>
-Farben := <a href="../Objects.htm#Arrays">Object</a>("Rot", 0xFF0000, "Blau", 0x0000FF, "Grün", 0x00FF00)
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Listet die eigenen Eigenschaften eines Objekts auf:</p>
+<pre>Farben := {rot: 0xFF0000, blau: 0x0000FF, grün: 0x00FF00}
 <em>; "Farben" könnte direkt mit dem obigen Ausdruck ersetzt werden:</em>
-For k, v in Farben
+for k, v in Farben.OwnProps()
     s .= k "=" v "`n"
 MsgBox s
 </pre>
-<pre class="NoIndent"><em>; Listet alle offenen Explorer- und IE-Fenster auf:</em>
-for window in <a href="ComObjCreate.htm">ComObjCreate</a>("<a href="https://msdn.microsoft.com/de-de/library/bb774094.aspx">Shell.Application</a>").Windows
+</div>
+
+<div class="ex" id="ExCOM">
+<p><a href="#ExCOM">#2</a>: Listet alle offenen Explorer- und Internet-Explorer-Fenster auf:</p>
+<pre>for window in <a href="ComObjCreate.htm">ComObjCreate</a>("<a href="https://msdn.microsoft.com/de-de/library/bb774094.aspx">Shell.Application</a>").Windows
     Fenster .= window.<a href="https://msdn.microsoft.com/de-de/library/aa752057.aspx">LocationName</a> " :: " window.<a href="https://msdn.microsoft.com/de-de/library/aa752058.aspx">LocationURL</a> "`n"
 MsgBox Fenster</pre>
-<pre class="NoIndent"><em>/*
-Klasse: CEnumerator
+</div>
 
-Generisches Enumerator-Objekt, mit dem numerische Keys iteriert werden können.
-Das Array darf beim Iterieren nicht verändert werden, weil der iterierte Bereich ansonsten ungültig wäre.
-Es ist möglich, eine benutzerdefinierte Length()-Funktion für die Array-Grenzen zu definieren.
-Befinden sich fehlende Array-Elemente zwischen 1 und Max-Index, werden sie iteriert, aber einen Wert von "" haben.
-Das bedeutet, dass dieser Enumerator keine realen lückenhaften Arrays unterstützt.
-Damit ein Objekt diesen Iterator verwenden kann, fügt man diese Funktion in die Klassendefinition ein:
+<div class="ex" id="ExFibF">
+<p><a href="#ExFibF">#3</a>: Definiert einen Enumerator als <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a>. Gibt unendlich lang die Zahlen der Fibonacci-Folge zurück, bis die Schleife unterbrochen wird.</p>
+<pre>for n in FibF()
+    if MsgBox("#" A_Index " = " n "`nWeiter?",, "y/n") = "No"
+        break
 
-    _NewEnum()
-    {
-        return new CEnumerator(this)
-    }
+FibF() {
+    a := 0, b := 1
+    return (ByRef n) =&gt; (
+        n := c := b, b += a, a := c,
+        true
+    )
+}</pre>
+</div>
 
-Quelle: http://www.autohotkey.com/board/topic/2667-suggestions-on-documentation-improvements/?p=531509
-*/</em>
+<div class="ex" id="ExFibC">
+<p><a href="#ExFibC">#4</a>: Definiert einen Enumerator als <a href="../Objects.htm#Custom_Classes">Klasse</a>. Äquivalent zum <a href="#ExFibF">vorherigen Beispiel</a>.</p>
+<pre>for n in FibC.new()
+    if MsgBox("#" A_Index " = " n "`nWeiter?",, "y/n") = "No"
+        break
 
-<em>; Iteriert über den Enumerator</em>
-For k, v in Test
-    MsgBox k "=" v
-
-<em>; Test-Klasse, um die Verwendung zu demonstrieren</em>
-class Test
-{
-    static Data := ["abc", "def", "ghi"]
-
-    _NewEnum()
-    {
-        return new CEnumerator(this.Data)
-    }
-}
-
-class CEnumerator
-{
-    __New(Object)
-    {
-        this.Object := Object
-        this.first := true
-        <em>; Für die Geschwindigkeit zwischenspeichern. Nützlich, falls benutzerdefinierte Length-Funktionen schlechte Performance haben.</em>
-        <em>; Das bedeutet aber auch, dass keine Key-Value-Paare beim Iterieren eingefügt werden können, weil der Bereich ansonsten ungültig wäre.</em>
-        this.ObjMaxIndex := Object.Length()
-    }
-
-    Next(ByRef key, ByRef value)
-    {
-        if (this.first)
-        {
-            this.Delete("first")
-            key := 1
-        }
-        else
-            key++
-        if (key &lt;= this.ObjMaxIndex)
-            value := this.Object[key]
-        else
-            key := ""
-        return key != ""
+class FibC {
+    a := 0, b := 1
+    Call(ByRef n) {
+        n := c := this.b, this.b += this.a, this.a := c
+        return true
     }
 }</pre>
+</div>
 </body>
 </html>

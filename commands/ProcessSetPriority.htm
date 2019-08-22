@@ -56,15 +56,16 @@
 
 <h2>Beispiele</h2>
 
-<h3 id="ex1">Beispiel #1</h3>
-<p>Startet den Texteditor, setzt seine Priorität auf "Hoch" und zeigt seine aktuelle PID:</p>
-<pre class="NoIndent">Run "notepad.exe", , , NeuePID
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Startet den Texteditor, setzt seine Priorität auf "Hoch" und zeigt seine aktuelle PID:</p>
+<pre>Run "notepad.exe", , , NeuePID
 ProcessSetPriority "High", NeuePID
 MsgBox "Die PID des neu gestarteten Texteditors ist " NeuePID</pre>
+</div>
 
-<h3 id="ex2">Beispiel #2</h3>
-<p>Ein Hotkey zum Ändern der Prozess-Priorität eines aktiven Fensters:</p>
-<pre class="NoIndent">#z:: <em>; Hotkey: WIN+Z</em>
+<div class="ex" id="ExHotkey">
+<p><a href="#ExHotkey">#2</a>: Ein Hotkey zum Ändern der Prozess-Priorität eines aktiven Fensters:</p>
+<pre>#z:: <em>; Hotkey: WIN+Z</em>
 Gui := GuiCreate(, "Priorität setzen")
 Gui.Add("Text",, "
 (
@@ -76,12 +77,12 @@ LB := Gui.Add("ListBox", "r5 vLB", "Normal||High|Low|BelowNormal|AboveNormal")
 SetzePriorität := Func("SetzePriorität").bind(WinGetPID("A"))
 LB.OnEvent("DoubleClick", SetzePriorität)
 Gui.Add("Button", "default", "OK").OnEvent("Click", SetzePriorität)
-Gui.OnEvent("Escape", () =&gt; Gui.Destroy())
-Gui.OnEvent("Close", () =&gt; Gui.Destroy())
+Gui.OnEvent("Escape", (*) =&gt; Gui.Destroy())
+Gui.OnEvent("Close", (*) =&gt; Gui.Destroy())
 Gui.Show()
 return
 
-SetzePriorität(this, PID)
+SetzePriorität(PID, this, *)
 {
     LB := this.Gui.Control["LB"]
     if ProcessSetPriority(LB.Text, PID)
@@ -90,6 +91,7 @@ SetzePriorität(this, PID)
         MsgBox "Fehler: Die Priorität konnte nicht auf '" LB.Text "' gesetzt werden."
     WinClose()
 }</pre>
+</div>
 
 </body>
 </html>

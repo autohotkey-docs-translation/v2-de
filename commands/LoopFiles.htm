@@ -125,21 +125,28 @@ Loop Parse, Dateiliste, "`n"
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel #1:</em>
-Loop Files, A_ProgramFiles "\*.txt", "R"  <em>; Durchsucht Unterordner.</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>Loop Files, A_ProgramFiles "\*.txt", "R"  <em>; Durchsucht Unterordner.</em>
 {
     Result := MsgBox(Dateiname = " A_LoopFilePath "`n`nWeiter?",, "y/n")
     if Result = "No"
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #2: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</em>
-OrdnerGrößeKB := 0
+</div>
+
+<div class="ex" id="ExSize">
+<p><a href="#ExSize">#2</a>: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</p>
+<pre>OrdnerGrößeKB := 0
 WelcherOrdner := DirSelect()  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
 Loop Files, WelcherOrdner "\*.*", "R"
     OrdnerGrößeKB += A_LoopFileSizeKB
 MsgBox "Der Ordner " WelcherOrdner " hat eine Größe von " OrdnerGrößeKB " KB."</pre>
-<pre class="NoIndent"><em>; Beispiel #3: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</em>
-Dateiliste := ""  <em>; Initialisiert sie als leere Variable.</em>
+</div>
+
+<div class="ex" id="ExSortName">
+<p><a href="#ExSortName">#3</a>: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</p>
+<pre>Dateiliste := ""  <em>; Initialisiert sie als leere Variable.</em>
 Loop Files, "C:\*.*"
     Dateiliste .= A_LoopFileName "`n"
 Dateiliste := Sort(Dateiliste, "R")  <em>; Die R-Option sortiert in umgekehrter Richtung. Siehe <a href="Sort.htm">Sort</a> für weitere Optionen.</em>
@@ -151,8 +158,11 @@ Loop Parse, Dateiliste, "`n"
     if Result = "No"
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #4: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</em>
-Dateiliste := ""
+</div>
+
+<div class="ex" id="ExSortDate">
+<p><a href="#ExSortDate">#4</a>: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</p>
+<pre>Dateiliste := ""
 Loop Files, A_MyDocuments "\Fotos\*.*", "FD"  <em>; Bezieht Dateien und Ordner mit ein</em>
     Dateiliste .= A_LoopFileTimeModified "`t" A_LoopFileName "`n"
 Dateiliste := Sort(Dateiliste)  <em>; Sortiert nach Datum.</em>
@@ -165,9 +175,11 @@ Loop Parse, Dateiliste, "`n"
     if Result = "No"
         break
 }</pre>
-<pre class="NoIndent"><em>; Beispiel #5: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück,
-; in das Ziel:</em>
-KopiereWennNeuer:
+</div>
+
+<div class="ex" id="ExFileCopy">
+<p><a href="#ExFileCopy">#5</a>: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück, in das Ziel:</p>
+<pre>KopiereWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuellmuster und KopieZiel für uns gesetzt.</em>
 Loop Files, KopieQuellmuster
 {
@@ -189,15 +201,18 @@ Loop Files, KopieQuellmuster
     }
 }
 Return</pre>
-<pre class="NoIndent"><em>; Beispiel #6: Wandelt Dateinamen, die via Kommandozeilenparameter übergeben wurden, in lange Namen um,
-; mit vollständigem Pfad und korrekter Groß-/Kleinschreibung, wie sie im Dateisystem vorkommen.</em>
-Loop A_Args.Length()  <em>; Für jeden Parameter (oder für jede auf ein Skript gezogene Datei):</em>
+</div>
+
+<div class="ex" id="ExLongPath">
+<p><a href="#ExLongPath">#6</a>: Wandelt Dateinamen, die via Kommandozeilenparameter übergeben wurden, in lange Namen um, mit vollständigem Pfad und korrekter Groß-/Kleinschreibung, wie sie im Dateisystem vorkommen.</p>
+<pre>Loop A_Args.Length()  <em>; Für jeden Parameter (oder für jede auf ein Skript gezogene Datei):</em>
 {
     EingabePfad := A_Args[A_Index]
     Loop Files, EingabePfad, "FD"  <em>; Dateien und Verzeichnisse einbeziehen.</em>
         LangerPfad := A_LoopFilePath
     MsgBox "Der lange Pfadname mit korrekter Groß-/Kleinschreibung der Datei`n" EingabePfad "`nist:`n" LangerPfad
 }</pre>
+</div>
 
 </body>
 </html>

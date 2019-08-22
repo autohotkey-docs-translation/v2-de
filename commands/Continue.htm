@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Continue - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die Continue-Anweisung überspringt den Rest der aktuellen Schleife und beginnt einen neuen Durchlauf. Nur in einer Schleife gültig." />
+<meta name="description" content="Die Continue-Anweisung überspringt den Rest des aktuellen Durchlaufs einer Schleifenanweisung und beginnt einen neuen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -13,12 +13,19 @@
 <body>
 
 <h1>Continue</h1>
-
-<p>Überspringt den Rest der aktuellen <a href="Loop.htm">Schleife</a> und beginnt einen neuen Durchlauf. Nur in einer <a href="Loop.htm">Schleife</a> gültig.</p>
-
+<p>Überspringt den Rest des aktuellen Durchlaufs einer <a href="../Language.htm#loop-statement">Schleifenanweisung</a> und beginnt einen neuen.</p>
 <pre class="Syntax"><span class="func">Continue</span> <span class="optional">LoopLabel</span></pre>
-<p><em>LoopLabel</em> ist optional und kennzeichnet, für welche Schleife diese Anweisung gelten soll; dieser Parameter kann entweder der <a href="../misc/Labels.htm">Name eines Labels</a> oder die Nummer einer Verschachtelungsebene sein. Wenn dieser Parameter weggelassen wird oder 1 ist, gilt diese Anweisung für die innerste umschlossene Schleife. Wenn Sie vorhaben, den Namen eines <a href="../misc/Labels.htm">Labels</a> anzugeben, müssen Sie darauf achten, dass dieses Label direkt auf eine Schleifenanweisung verweist.</p>
-<p><em>LoopLabel</em> muss ein konstanter Wert sein - Variablen und Ausdrücke werden nicht unterstützt, außer eine direkt geschriebene Zahl oder eine in Anführungszeichen gesetzte Zeichenkette, die mit runden Klammern umschlossen ist. Zum Beispiel: <code>continue("outer")</code></p>
+
+<h2>Parameter</h2>
+<dl>
+  <dt>LoopLabel</dt>
+  <dd>
+    <p><em>LoopLabel</em> kennzeichnet, für welche Schleife diese Anweisung gelten soll; dieser Parameter kann entweder der <a href="../misc/Labels.htm">Name eines Labels</a> oder die Nummer einer Verschachtelungsebene sein. Wenn dieser Parameter weggelassen wird oder 1 ist, gilt diese Anweisung für die innerste umschlossene Schleife. Wenn Sie vorhaben, den Namen eines <a href="../misc/Labels.htm">Labels</a> anzugeben, müssen Sie darauf achten, dass dieses Label direkt auf eine <a href="../Language.htm#loop-statement">Schleifenanweisung</a> verweist.</p>
+    <p><em>LoopLabel</em> muss ein konstanter Wert sein - Variablen und Ausdrücke werden nicht unterstützt, außer eine direkt geschriebene Zahl oder eine in Anführungszeichen gesetzte Zeichenkette, die mit runden Klammern umschlossen ist. Zum Beispiel: <code>continue("outer")</code></p>
+  </dd>
+</dl>
+
+<h2>Bemerkungen</h2>
 <p>Continue ist dem Verhalten nach das gleiche wie, als würde das Skript die geschweifte Endklammer einer Schleife erreichen:</p>
 <ol>
   <li><a href="../Variables.htm#Index">A_Index</a> wird um 1 erhöht.</li>
@@ -26,21 +33,25 @@
   <li>Die Bedingung der Schleife (falls vorhanden) wird überprüft, ob sie erfüllt ist. Ist dies der Fall, beginnt ein neuer Durchlauf; ansonsten endet die Schleife.</li>
 </ol>
 <p><a href="Break.htm">Break</a> und Continue sind besser geeignet als <a href="Goto.htm">Goto</a>, weil sie ein Skript üblicherweise besser lesbar und verwaltbar machen.</p>
+
 <h2>Siehe auch</h2>
 <p><a href="Break.htm">Break</a>, <a href="Loop.htm">Loop</a>, <a href="Until.htm">Until</a>, <a href="While.htm">While-Schleife</a>, <a href="For.htm">For-Schleife</a>, <a href="Block.htm">Blöcke</a>, <a href="../misc/Labels.htm">Label</a></p>
 
-<h2>Beispiel</h2>
-<pre class="NoIndent"><em>; Dieses Beispiel zeigt vom 6. bis zum 10. Durchlauf 5 Mitteilungsfenster an.
-; Das "continue" in den ersten 5 Durchläufen bewirkt, dass
-; die MsgBox-Zeile darunter übersprungen wird.</em>
+<h2>Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Dieses Beispiel zeigt vom 10. bis zum 5. Durchlauf 6 Mitteilungsfenster an. Die Continue-Anweisung in den ersten 5 Durchläufen bewirkt, dass die MsgBox-Zeile darunter übersprungen wird.</p>
+<pre>
 Loop 10
 {
-    if A_Index &lt;= 5
+    if (A_Index &lt;= 5)
         continue
     MsgBox A_Index
 }</pre>
-<pre class="NoIndent"><em>; Überspringt von einer inneren Schleife aus den Rest des äußeren Schleifenkörpers.</em>
-outer:
+</div>
+
+<div class="ex" id="ExContinueOuter">
+<p><a href="#ExContinueOuter">#2</a>: Überspringt von einer inneren Schleife aus den Rest des äußeren Schleifenkörpers.</p>
+<pre>outer:
 Loop 3
 {
     x := A_Index
@@ -51,8 +62,8 @@ Loop 3
         MsgBox x "," A_Index
     }
     continue_outer: <em>; Für goto.</em>
-}
-</pre>
+}</pre>
+</div>
 
 </body>
 </html>

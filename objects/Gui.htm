@@ -38,7 +38,7 @@
   <li><a href="#Hide">Hide / Cancel</a>: Versteckt das Fenster.</li>
   <li><a href="#Maximize">Maximize</a>: Macht das Fenster wieder sichtbar und maximiert es.</li>
   <li><a href="#Minimize">Minimize</a>: Macht das Fenster wieder sichtbar und minimiert es.</li>
-  <li><a href="#_NewEnum">_NewEnum</a>: Ermöglicht es, Steuerelemente des GUI-Fensters schrittweise durchzugehen.</li>
+  <li><a href="#__Enum">__Enum</a>: Ermöglicht es, Steuerelemente des GUI-Fensters schrittweise durchzugehen.</li>
   <li><a href="GuiOnEvent.htm">OnEvent</a>: Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn das entsprechende Ereignis ausgelöst wird.</li>
   <li><a href="#Opt">Opt</a>: Setzt verschiedene Optionen und Styles, die das Aussehen und Verhalten des GUI-Fensters beeinflussen.</li>
   <li><a href="#Restore">Restore</a>: Macht das Fenster wieder sichtbar und stellt dessen ursprünglichen Zustand wieder her, falls es zuvor minimiert oder maximiert war.</li>
@@ -335,10 +335,10 @@ Gui.Opt("+Owner")  <em>; Definiert die GUI als Unterfenster vom <a href="../Vari
 <pre class="Syntax">Menüleiste := Gui.MenuBar</pre>
 <p><em>Menüleiste</em> ist ein <a href="Menu.htm">MenuBar-Objekt</a>, das mit der <a href="../commands/MenuBarCreate.htm">MenuCreate</a>-Funktion erstellt wurde. Zum Beispiel:</p>
 <pre>Dateimenü := MenuCreate()
-Dateimenü.Add "Ö&amp;ffnen`tCtrl+F", () =&gt; FileSelect()  <em>; Siehe untere Bemerkungen zu Ctrl+F.</em>
-Dateimenü.Add "&amp;Beenden", () =&gt; ExitApp()
+Dateimenü.Add "Ö&amp;ffnen`tCtrl+F", (*) =&gt; FileSelect()  <em>; Siehe untere Bemerkungen zu Ctrl+F.</em>
+Dateimenü.Add "&amp;Beenden", (*) =&gt; ExitApp()
 Hilfsmenü := MenuCreate()
-Hilfsmenü.Add "Inf&amp;o", () =&gt; MsgBox("Nicht implementiert")
+Hilfsmenü.Add "Inf&amp;o", (*) =&gt; MsgBox("Nicht implementiert")
 Menüs := MenuBarCreate()
 Menüs.Add "&amp;Datei", Dateimenü  <em>; Fügt die zwei oben erstellten Untermenüs hinzu.</em>
 Menüs.Add "&amp;?", Hilfsmenü
@@ -420,19 +420,30 @@ Gui.Show "w300 h200"</pre>
 <pre class="Syntax">Gui.Name := NeuerName</pre>
 </div>
 
-<div class="methodShort" id="Control">
-<h2>Control</h2>
+<div class="methodShort" id="__Item">
+<h2>__Item</h2>
 <p>Ermittelt ein <a href="GuiControl.htm">GuiControl-Objekt</a>, das zu einem Namen, einem Text, einer ClassNN oder einer HWND-Nummer (eindeutige ID) gehört.</p>
-<pre class="Syntax">GuiCtrlObj := Gui.Control<span class="optional">Name</span></pre>
+<pre class="Syntax">GuiCtrlObj := Gui[Name]</pre>
 </div>
 
-<div class="methodShort" id="_NewEnum">
-<h2>_NewEnum</h2>
-<p>Ermöglicht es, Steuerelemente des GUI-Fensters schrittweise durchzugehen.</p>
-<pre class="Syntax">Enum := Gui._<span class="func">NewEnum</span>()</pre>
-<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück, um die HWND-Nummer (eindeutige ID) und das <a href="GuiControl.htm">GuiControl-Objekt</a> von jedem Steuerelement innerhalb einer GUI schrittweise durchzugehen.</p>
-  <p>Diese Methode wird in der Regel nur indirekt über die <a href="../commands/For.htm">For-Schleife</a> aufgerufen. Zum Beispiel:</p>
-  <pre>For Hwnd, GuiCtrlObj in GuiObj
+<div class="methodShort" id="__Enum">
+<h2>__Enum</h2>
+<p>Enumeriert die Steuerelemente der GUI.</p>
+<pre class="Syntax">For Hwnd <span class="optional">, Ctrl</span> in Gui</pre>
+<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück. Diese Methode wird für gewöhnlich nicht direkt aufgerufen. Stattdessen wird das Gui-Objekt direkt an eine <a href="../commands/For.htm">For-Schleife</a> übergeben, die __Enum einmal aufruft und dann den Enumerator einmal für jede Wiederholung der Schleife aufruft. Jeder Aufruf des Enumerators gibt das nächste Steuerelement zurück. Die Variablen der For-Schleife entsprechen den folgenden Parametern des Enumerators:</p>
+<dl>
+  <dt>Hwnd</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die HWND-Nummer des Steuerelements.</p>
+  </dd>
+  <dt>Ctrl</dt>
+  <dd>
+    <p>Das <a href="GuiControl.htm">GuiControl</a>-Objekt.</p>
+  </dd>
+</dl>
+<p>Zum Beispiel:</p>
+<pre>For Hwnd, GuiCtrlObj in GuiObj
     MsgBox "Steuerelement #" A_Index " ist " GuiCtrlObj.ClassNN</pre>
 </div>
 
@@ -462,33 +473,36 @@ Gui.Show()</pre>
 <p><a href="../commands/GuiCreate.htm">GuiCreate</a>, <a href="GuiControl.htm">GuiControl-Objekt</a>, <a href="../commands/GuiFromHwnd.htm">GuiFromHwnd</a>, <a href="../commands/GuiCtrlFromHwnd.htm">GuiCtrlFromHwnd</a>, <a href="../commands/GuiControls.htm">Steuerelemente</a>, <a href="../commands/ListView.htm">ListView</a>, <a href="../commands/TreeView.htm">TreeView</a>, <a href="Menu.htm">Menu-Objekt</a>, <a href="../commands/Control.htm">Control-Funktionen</a>, <a href="../commands/MsgBox.htm">MsgBox</a>, <a href="../commands/FileSelect.htm">FileSelect</a>, <a href="../commands/DirSelect.htm">DirSelect</a></p>
 
 <h2 id="Examples">Beispiele</h2>
-<pre class="NoIndent"><em>; Beispiel: Zeigt ein Begrüßungsfenster an:</em>
 
-Gui := GuiCreate(, "Fenstertitel")
+<div class="ex" id="ExPopup">
+<p><a href="#ExPopup">#1</a>: Zeigt ein Begrüßungsfenster an:</p>
+<pre>Gui := GuiCreate(, "Fenstertitel")
 Gui.Opt("+AlwaysOnTop +Disabled -SysMenu +Owner")  <em>; +Owner verhindert eine Taskleistenschaltfläche.</em>
 Gui.Add("Text",, "Beliebiger Text.")
 Gui.Show("NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster seinen Aktivzustand verliert.</em></pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Ein einfaches Eingabefenster zum Abfragen des Vor- und Nachnamens:</em>
-
-Gui := GuiCreate(, "Einfaches Eingabebeispiel")
+<div class="ex" id="ExInputBox">
+<p><a href="#ExInputBox">#2</a>: Ein einfaches Eingabefenster zum Abfragen des Vor- und Nachnamens:</p>
+<pre>Gui := GuiCreate(, "Einfaches Eingabebeispiel")
 Gui.Add("Text",, "Vorname:")
 Gui.Add("Text",, "Nachname:")
 Gui.Add("Edit", "vVorname ym")  <em>; Die ym-Option beginnt eine neue Spalte für Steuerelemente.</em>
 Gui.Add("Edit", "vNachname")
-Gui.Add("Button", "default", "OK").OnEvent("Click", () =&gt; VerarbeiteBenutzereingabe(Gui))
+Gui.Add("Button", "default", "OK").OnEvent("Click", (*) =&gt; VerarbeiteBenutzereingabe(Gui))
 Gui.OnEvent("Close", "VerarbeiteBenutzereingabe")
 Gui.Show()
 
-VerarbeiteBenutzereingabe(this)
+VerarbeiteBenutzereingabe(this, *)
 {
     Gespeichert := this.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
     MsgBox("Sie haben '" Gespeichert.Vorname " " Gespeichert.Nachname "' eingegeben.")
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Tab-Steuerelement:</em>
-
-Gui := GuiCreate()
+<div class="ex" id="ExTab">
+<p><a href="#ExTab">#3</a>: Erstellt ein Tab-Steuerelement mit mehreren Tabs, die jeweils verschiedene Steuerelemente enthalten, mit denen Sie interagieren können:</p>
+<pre>Gui := GuiCreate()
 Tab := Gui.Add("Tab3",, "Erster Tab|Zweiter Tab|Dritter Tab")
 Gui.Add("Checkbox", "vMeineCheckBox", "Kontrollkästchen") 
 Tab.UseTab(2)
@@ -498,20 +512,21 @@ Tab.UseTab(3)
 Gui.Add("Edit", "vMeinEdit r5")  <em>; r5 bedeutet 5 Reihen hoch.</em>
 Tab.UseTab()  <em>; nachfolgende Steuerelemente werden nicht als Teil des Tab-Steuerelements angesehen.</em>
 Btn := Gui.Add("Button", "default xm", "OK")  <em>; xm positioniert die Schaltfläche in die untere linke Ecke.</em>
-Btn.OnEvent("Click", () =&gt; VerarbeiteBenutzereingabe(Gui))
+Btn.OnEvent("Click", (*) =&gt; VerarbeiteBenutzereingabe(Gui))
 Gui.OnEvent("Close", "VerarbeiteBenutzereingabe")
 Gui.OnEvent("Escape", "VerarbeiteBenutzereingabe")
 Gui.Show()
 
-VerarbeiteBenutzereingabe(this)
+VerarbeiteBenutzereingabe(this, *)
 {
     Gespeichert := this.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
     MsgBox("Ihre Eingaben sind:`n" Gespeichert.MeineCheckBox "`n" Gespeichert.MeinRadio "`n" Gespeichert.MeinEdit)
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: ListBox mit Dateien aus einem Verzeichnis:</em>
-
-Gui := GuiCreate()
+<div class="ex" id="ExListBox">
+<p><a href="#ExListBox">#4</a>: Erstellt eine ListBox mit Dateien aus einem Verzeichnis:</p>
+<pre>Gui := GuiCreate()
 Gui.Add("Text",, "Wählen Sie eine Datei aus der unteren Liste aus.")
 LB := Gui.Add("ListBox", "w640 r10 vDatei")
 LB.OnEvent("DoubleClick", "StarteDatei")
@@ -520,7 +535,7 @@ Loop Files, "C:\*.*"  <em>; Ordner und Platzhaltermuster je nach Bedarf anpassen
 Gui.Add("Button", "Default", "OK").OnEvent("Click", "StarteDatei")
 Gui.Show()
 
-StarteDatei(this)
+StarteDatei(this, *)
 {
     Gespeichert := this.Gui.Submit()
     if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n" Gespeichert.Datei,, 4) = "No"
@@ -530,16 +545,17 @@ StarteDatei(this)
     if A_LastError
         MsgBox("Die angegebene Datei konnte nicht gestartet werden. Scheinbar fehlt ein passendes Programm dafür.")
 }</pre>
+</div>
 
-<pre class="NoIndent" id="ExToolTip"><em>; Beispiel: Zeigt eine kontextabhängige Hilfe an (via ToolTip), wenn man den Mauszeiger über ein bestimmtes Steuerelement bewegt:</em>
-
-Gui := GuiCreate()
+<div class="ex" id="ExToolTip">
+<p><a href="#ExToolTip">#5</a>: Zeigt eine kontextabhängige Hilfe an (via ToolTip), wenn man den Mauszeiger über ein bestimmtes Steuerelement bewegt:</p>
+<pre>Gui := GuiCreate()
 Gui.Add("Edit", "v<strong>MeinEdit</strong>")
 <strong>MeinEdit</strong>_TT := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
 Gui.Add("DropDownList", "v<strong>MeineDDL</strong>", "Rot|Grün|Blau")
 <strong>MeineDDL</strong>_TT := "Wählen Sie eine Farbe aus."
 Gui.Add("Checkbox", "vMeineCheckBox", "Dieses Steuerelement hat kein Tooltip.")
-Gui.OnEvent("Close", "Gui_Close")
+Gui.OnEvent("Close", (*) =&gt; ExitApp())
 Gui.Show()
 <a href="../commands/OnMessage.htm">OnMessage</a>(0x200, "WM_MOUSEMOVE")
 
@@ -559,16 +575,12 @@ WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
         }
         AltesHwnd := Hwnd
     }
-}
-
-Gui_Close()
-{
-    ExitApp()
 }</pre>
+</div>
 
-<pre class="NoIndent" id="OSD"><em>; Beispiel: Bildschirmanzeige (OSD) mittels transparentem Fenster:</em>
-
-Gui := GuiCreate()
+<div class="ex" id="ExOSD">
+<p><a href="#ExOSD">#6</a>: Erstellt eine Bildschirmanzeige (OSD) mittels transparentem Fenster:</p>
+<pre>Gui := GuiCreate()
 Gui.Opt("+LastFound +AlwaysOnTop -Caption +ToolWindow")  <em>; +ToolWindow entfernt die Taskleistenschaltfläche und die Möglichkeit, via ALT+TAB angesteuert zu werden.</em>
 Gui.BackColor := "EEAA99"  <em>; Kann eine beliebige RGB-Farbe sein (wird weiter unten transparent gemacht).</em>
 Gui.SetFont("s32")  <em>; Setzt eine große Schriftgröße (32 Punkte).</em>
@@ -584,10 +596,11 @@ AktualisiereOSD(GuiCtrl)
     MouseGetPos(MausX, MausY)
     GuiCtrl.Value := "X" MausX ", Y" MausY
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Eine animierte Fortschrittsleiste auf einem Hintergrundbild.</em>
-
-Gui := GuiCreate()
+<div class="ex" id="ExProgressBar">
+<p><a href="#ExProgressBar">#7</a>: Ein animierter Fortschrittsbalken auf einem Hintergrundbild:</p>
+<pre>Gui := GuiCreate()
 Gui.BackColor := "White"
 Gui.Add("Picture", "x0 y0 h350 w450", A_WinDir "\Web\Wallpaper\Windows\img0.jpg")
 MeinBtn := Gui.Add("Button", "Default xp+20 yp+250", "Animation starten")
@@ -596,7 +609,7 @@ Gui.Add("Progress", "w416 vMeinProgress")
 Gui.Add("Text", "wp vMeinText")  <em>; wp bedeutet "vorherige Breite verwenden".</em>
 Gui.Show()
 
-AnimiereLeiste(this)
+AnimiereLeiste(this, *)
 {
     ProgressCtrl := this.Gui.Control["MeinProgress"]
     TextCtrl := this.Gui.Control["MeinText"]
@@ -610,10 +623,11 @@ AnimiereLeiste(this)
     }
     TextCtrl.Value := "Animation beendet."
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Einfacher Bildbetrachter:</em>
-
-Gui := GuiCreate("+Resize")
+<div class="ex" id="ExImageViewer">
+<p><a href="#ExImageViewer">#8</a>: Ein einfacher Bildbetrachter:</p>
+<pre>Gui := GuiCreate("+Resize")
 MeinBtn := Gui.Add("Button", "default", "Neues Bild &amp;laden")
 MeinBtn.OnEvent("Click", "LadeNeuesBild")
 Gui.Add("Radio", "ym+5 x+10 checked vMeinRadio", "&amp;Originalgröße")
@@ -621,7 +635,7 @@ Gui.Add("Radio", "ym+5 x+10", "&amp;Kompletter Bildschirm")
 Gui.Add("Pic", "xm vMeinPic")
 Gui.Show()
 
-LadeNeuesBild(this)
+LadeNeuesBild(this, *)
 {
     Gui := this.Gui
     RadioCtrl := Gui.Control["MeinRadio"]
@@ -643,10 +657,11 @@ LadeNeuesBild(this)
     Gui.Title := Datei
     Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
 }</pre>
+</div>
 
-<pre class="NoIndent"><em>; Beispiel: Einfacher Texteditor mit Menüleiste.</em>
-
-<em>; Macht diese Variablen für alle unteren Funktionen zugänglich:</em>
+<div class="ex" id="ExEditor">
+<p><a href="#ExEditor">#9</a>: Ein einfacher Texteditor mit Menüleiste:</p>
+<pre><em>; Macht diese Variablen für alle unteren Funktionen zugänglich:</em>
 global Gui, Dateimenü, HauptEdit, AktuellerDateiname, Über
 
 <em>; Erstellt das GUI-Fenster:</em>
@@ -681,14 +696,14 @@ Gui.OnEvent("Size", "Gui_Size")
 MenüDateiNeu()  <em>; Standardeinstellungen abrufen.</em>
 Gui.Show()  <em>; Zeigt das Fenster an.</em>
 
-MenüDateiNeu()
+MenüDateiNeu(*)
 {
     HauptEdit.Value := ""  <em>; Eingabefeld leeren.</em>
     Dateimenü.Disable("3&amp;")  <em>; Ergraut &amp;Speichern.</em>
     Gui.Title := "Unbenannt"
 }
 
-MenüDateiÖffnen()
+MenüDateiÖffnen(*)
 {
     Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
     AusgewählterDateiname := FileSelect(3,, "Datei öffnen", "Text-Dokumente (*.txt)")
@@ -697,12 +712,12 @@ MenüDateiÖffnen()
     AktuellerDateiname := leseInhalt(AusgewählterDateiname)
 }
 
-MenüDateiSpeichern()
+MenüDateiSpeichern(*)
 {
     speichereInhalt(AktuellerDateiname)
 }
 
-MenüDateiSpeichernUnter()
+MenüDateiSpeichernUnter(*)
 {
     Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
     AusgewählterDateiname := FileSelect("S16",, "Datei speichern", "Text-Dokumente (*.txt)")
@@ -711,12 +726,12 @@ MenüDateiSpeichernUnter()
     AktuellerDateiname := speichereInhalt(AusgewählterDateiname)
 }
 
-MenüDateiBeenden()  <em>; Benutzer hat "Exit" im Dateimenü ausgewählt.</em>
+MenüDateiBeenden(*)  <em>; Benutzer hat "Exit" im Dateimenü ausgewählt.</em>
 {
     WinClose()
 }
 
-MenüHilfeÜber()
+MenüHilfeÜber(*)
 {
     Über := GuiCreate("+owner" Gui.Hwnd)  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
     Gui.Opt("+Disabled")  <em>; Deaktiviert die Interaktion mit dem Hauptfenster.</em>
@@ -758,13 +773,13 @@ speichereInhalt(Dateiname)
     return Dateiname
 }
 
-Über_Close()
+Über_Close(*)
 {
     Gui.Opt("-Disabled")  <em>; Reaktiviert die Interaktion mit dem Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
     Über.Destroy()  <em>; Entfernt das Über-Fenster.</em>
 }
 
-Gui_DropFiles(Gui, DateiArray)  <em>; Ziehen &amp; Ablegen unterstützen.</em>
+Gui_DropFiles(Gui, Ctrl, DateiArray, *)  <em>; Ziehen &amp; Ablegen unterstützen.</em>
 {
     AktuellerDateiname := leseInhalt(DateiArray[1])  <em>; Nur die erste Datei nehmen (sofern mehrere Dateien vorhanden sind).</em>
 }
@@ -776,6 +791,6 @@ Gui_Size(Gui, MinMax, Breite, Höhe)
     <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Die Größe des Eingabefeldes muss entsprechend angepasst werden.</em>
     HauptEdit.Move("W" Breite-20 " H" Höhe-20)
 }</pre>
-
+</div>
 </body>
 </html>

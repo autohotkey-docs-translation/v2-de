@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Array-Objekt - Methoden &amp; Eigenschaften | AutoHotkey v2</title>
+<meta name="description" content="Ein Array-Objekt enthält eine Liste oder Sequenz von Werten." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Array-Objekt</h1>
+
+<p>Ein <strong>Array</strong>-Objekt enthält eine Liste oder Sequenz von Werten.</p>
+<p>Der Zugriff auf Werte erfolgt anhand ihrer Position innerhalb des Arrays (auch bekannt als <em>Array-Index</em>); Position 1 ist das erste Element.</p>
+<p>Häufig werden Arrays erstellt, indem man eine Liste von Werten mit eckigen Klammern umschließt. Zum Beispiel:</p>
+<pre>veg := ["Spargel", "Brokkoli", "Gurke"]
+Loop veg.Length
+    MsgBox veg[A_Index]</pre>
+<p>Ein negativer Index kann genutzt werden, um auf Elemente in umgekehrter Richtung zuzugreifen; -1 ist das letzte Element, -2 ist das vorletzte Element, und so weiter.</p>
+<p>Der Versuch, einen Array-Index zu verwenden, der außerhalb der Grenzen liegt (z. B. 0 oder wenn sein absoluter Wert größer als die <a href="#Length">Länge</a> des Arrays ist), wird als Fehler angesehen und führt dazu, dass eine Ausnahme ausgelöst wird. Der beste Weg, neue Elemente zum Array hinzuzufügen, ist das Aufrufen von <a href="#InsertAt">InsertAt</a> oder <a href="#Push">Push</a>. Zum Beispiel:</p>
+<pre>Benutzer := Array()
+Benutzer.Push A_UserName
+MsgBox Benutzer[1]</pre>
+<p>Ein Array kann auch erweitert werden, indem man <a href="#Length">Length</a> einen größeren Wert zuweist. Dadurch ändert sich, welche Indizes gültig sind, allerdings wird <a href="#Has">Has</a> anzeigen, dass die neuen Elemente keinen Wert haben. Elemente ohne Wert werden typischerweise für <a href="../Functions.htm#VariadicCall">variadische Aufrufe</a> oder von <a href="../Functions.htm#Variadic">variadischen Funktionen</a> verwendet.</p>
+<p>Die folgende Dokumentation verwendet <code>Arr</code> als Platzhalter für jedes Array-Objekt. Beachten Sie, dass "array" nicht als Variablenname verwendet werden sollte, da es genutzt wird, um auf die Array-Klasse selbst zu verweisen.</p>
+<p>Array-Objekte basieren auf <code>Array.Prototype</code>, das wiederum auf <code>Object.Prototype</code> basiert. Zusätzlich zu den Methoden und Eigenschaften, die von <a href="Object.htm">Object</a> geerbt werden, haben Array-Objekte die folgenden vordefinierten Methoden und Eigenschaften:</p>
+
+<p><strong>Methoden:</strong></p>
+<ul>
+  <li><a href="#Clone">Clone</a></li>
+  <li><a href="#Delete">Delete</a></li>
+  <li><a href="#Has">Has</a></li>
+  <li><a href="#InsertAt">InsertAt</a></li>
+  <li><a href="#Pop">Pop</a></li>
+  <li><a href="#Push">Push</a></li>
+  <li><a href="#RemoveAt">RemoveAt</a></li>
+  <li><a href="#__Enum">__Enum</a></li>
+</ul>
+<p><strong>Eigenschaften:</strong></p>
+<ul>
+  <li><a href="#Length">Length</a></li>
+  <li><a href="#Capacity">Capacity</a></li>
+  <li><a href="#__Item">__Item</a></li>
+</ul>
+
+<h1>Methoden</h1>
+
+<div class="methodShort" id="Clone"><h2>Clone</h2>
+<p>Gibt eine flache Kopie des Objekts zurück.</p>
+<pre class="Syntax">Klon := Arr.<span class="func">Clone</span>()</pre>
+<p>Alle Array-Elemente werden in das neue Array kopiert. Objekt<em>referenzen</em> werden kopiert (wie bei einer normalen Zuweisung), nicht die Objekte selbst.</p>
+<p>Eigene Eigenschaften, eigene Methoden und Base werden gemäß <a href="Object.htm#Clone">Obj.Clone</a> kopiert.</p>
+</div>
+
+<div class="methodShort" id="Delete"><h2>Delete</h2>
+<p>Entfernt den Wert eines Array-Elements und bewirkt, dass der Index keinen Wert mehr hat.</p>
+<pre class="Syntax">Arr.<span class="func">Delete</span>(Index)</pre>
+<dl>
+  <dt>Index</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Ein gültiger Array-Index.</p>
+  </dd>
+  <dt>Rückgabewert</dt>
+  <dd><p>Der entfernte Wert.</p></dd>
+</dl>
+<p>Delete hat keinen Einfluss auf die <a href="#Length">Länge</a> des Arrays.</p>
+</div>
+
+<div class="methodShort" id="Has"><h2>Has</h2>
+<p>Gibt True zurück, wenn <i>Index</i> gültig ist und an dieser Stelle ein Wert steht, ansonsten False.</p>
+<pre class="Syntax">Arr.<span class="func">Has</span>(Index)</pre>
+</div>
+
+<div class="methodShort" id="InsertAt"><h2>InsertAt</h2>
+<p>Fügt einen oder mehrere Werte auf einer bestimmten Position ein.</p>
+<pre class="Syntax">Arr.<span class="func">InsertAt</span>(Index, Value1 <span class="optional">, Value2, ... Value<i>N</i></span>)</pre>
+<dl>
+  <dt>Index</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die Position, auf der <em>Value1</em> eingefügt werden soll. Nachfolgende Werte werden auf Pos+1, Pos+2, etc. eingefügt.</p>
+  </dd>
+  <dt>Value1 ...</dt>
+  <dd>
+    <p>Eine oder mehrere Werte, die eingefügt werden sollen. Um einen Array mit Werten einzufügen, übergibt man <code><a href="../Functions.htm#VariadicCall">dasArray*</a></code> als letzten Parameter.</p>
+  </dd>
+</dl>
+<h3>Bemerkungen</h3>
+<p>InsertAt ist das Gegenstück von <a href="#RemoveAt">RemoveAt</a>.</p>
+<p>Alle Elemente, die sich auf oder rechts neben <em>Index</em> befinden, werden nach rechts verschoben. Fehlende Parameter werden ebenfalls eingefügt, aber ohne Wert. Zum Beispiel:</p>
+<pre>x := []
+x.InsertAt(1, "A", "B") <em>; =&gt;  ["A", "B"]</em>
+x.InsertAt(2, "C")      <em>; =&gt;  ["A", "C", "B"]</em>
+
+<em>; Fehlende Elemente bleiben erhalten:</em>
+x := ["A", , "C"]
+x.InsertAt(2, "B")      <em>; =&gt;  ["A", "B",    , "C"]</em>
+
+x := ["C"]
+x.InsertAt(1, , "B")    <em>; =&gt;  [   , "B", "C"]</em></pre>
+</div>
+
+<div class="methodShort" id="Pop"><h2>Pop</h2>
+<p>Entfernt und gibt das letzte Array-Element zurück.</p>
+<pre class="Syntax">Value := Arr.<span class="func">Pop</span>()</pre>
+<p>Alle folgenden Zeilen sind äquivalent:</p>
+<pre>Value := Arr.Pop()
+Value := Arr.RemoveAt(Arr.Length)
+Value := Arr.RemoveAt(-1)</pre>
+<p>Wenn das Array leer ist (<a href="#Length">Length</a> ist 0), wird eine Ausnahme ausgelöst.</p>
+</div>
+
+<div class="methodShort" id="Push"><h2>Push</h2>
+<p>Fügt Values an das Ende eines Arrays an.</p>
+<pre class="Syntax">Arr.<span class="func">Push</span>(<span class="optional"> Value, Value2, ..., Value<i>N</i> </span>)</pre>
+<dl>
+  <dt>Value ...</dt>
+  <dd><p>Eine oder mehrere Werte, die eingefügt werden sollen. Um einen Array mit Werten einzufügen, übergibt man <code><a href="../Functions.htm#VariadicCall">dasArray*</a></code> als letzten Parameter.</p></dd>
+</dl>
+</div>
+
+<div class="methodShort" id="RemoveAt"><h2>RemoveAt</h2>
+<p>Entfernt Elemente aus dem Array.</p>
+<pre class="Syntax">Arr.<span class="func">RemoveAt</span>(Index <span class="optional">, Länge</span>)</pre>
+<dl>
+  <dt>Index</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Der Index des Wertes oder der Werte, die entfernt werden sollen.</p>
+  </dd>
+  
+  <dt>Länge</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die Länge des Wertebereichs, der entfernt werden soll. Lässt man diesen Parameter weg, wird nur ein Element entfernt.</p>
+  </dd>
+  
+  <dt>Rückgabewert</dt>
+  <dd><p>Lässt man <em>Länge</em> weg, wird der entfernte Wert zurückgegeben (leer, wenn keine entfernt wurden). Andernfalls gibt es keinen Rückgabewert.</p></dd>
+</dl>
+<h3>Bemerkungen</h3>
+<p>RemoveAt ist das Gegenstück der <a href="#InsertAt">InsertAt</a>.</p>
+<p>Der angegebene Bereich via <em>Index</em> und <em>Länge</em> muss gültig (innerhalb der Grenzen des Arrays) sein, allerdings können einige Elemente ohne Wert sein.</p>
+<p>Die restlichen Elemente auf der rechten Seite von <em>Pos</em> werden um den via <em>Länge</em> definierten Wert (oder standardmäßig um 1) nach links verschoben. Zum Beispiel:</p>
+<pre>x := ["A", "B"]
+MsgBox x.RemoveAt(1)  <em>; A</em>
+MsgBox x[1]           <em>; B</em>
+
+x := ["A", , "C"]
+MsgBox x.RemoveAt(1, 2)  <em>; 1</em>
+MsgBox x[1]              <em>; C</em></pre>
+</div>
+
+<div class="methodShort" id="__Enum"><h2>__Enum</h2>
+<p>Enumeriert Array-Elemente.</p>
+<pre class="Syntax">For Value in Arr</pre>
+<pre class="Syntax">For Index, Value in Arr</pre>
+<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück. Diese Methode wird für gewöhnlich nicht direkt aufgerufen. Stattdessen wird das Array-Objekt direkt an eine <a href="../commands/For.htm">For-Schleife</a> übergeben, die __Enum einmal aufruft und dann den Enumerator einmal für jede Wiederholung der Schleife aufruft. Jeder Aufruf des Enumerators gibt das nächste Array-Element zurück. Die Variablen der For-Schleife entsprechen den folgenden Parametern des Enumerators:</p>
+<dl>
+  <dt>Index</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Der Array-Index, typischerweise das gleiche wie <a href="../Variables.htm#Index">A_Index</a>. Dies gibt es nur im Zwei-Parameter-Modus.</p>
+  </dd>
+  <dt>Wert</dt>
+  <dd>
+    <p>Der Wert (leer, wenn es keinen gibt).</p>
+  </dd>
+</dl>
+</div>
+
+<h1>Eigenschaften</h1>
+
+<div class="methodShort" id="Length"><h2>Length</h2>
+<p>Ermittelt oder bestimmt die Länge des Arrays.</p>
+<pre class="Syntax">Länge := Arr.<span class="func">Length</span></pre>
+<pre class="Syntax">Arr.<span class="func">Length</span> := Länge</pre>
+<p>Die Länge berücksichtigt Elemente, die keinen Wert haben. Durch Erhöhung der Länge ändert sich, welche Indizes gültig sind, allerdings haben die neuen Elemente keinen Wert (wie von <a href="#Has">Has</a> angezeigt).</p>
+<pre>
+MsgBox ["A", "B", "C"].Length  <em>;  3</em>
+MsgBox ["A",    , "C"].Length  <em>;  3</em>
+</pre>
+</div>
+
+<div class="methodShort" id="Capacity"><h2>Capacity</h2>
+<p>Ermittelt oder bestimmt die aktuelle Kapazität des Arrays.</p>
+<pre class="Syntax">Arr.<span class="func">Capacity</span> := MaxElemente</pre>
+<pre class="Syntax">MaxElemente := Arr.<span class="func">Capacity</span></pre>
+<dl>
+	<dt>MaxElemente</dt>
+	<dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die maximale Anzahl von Elementen, die das Array beinhalten soll, bevor es automatisch erweitert werden muss. Wenn ein Wert kleiner als <a href="#Length">Length</a> gesetzt wird, werden Elemente entfernt.</p>
+  </dd>
+</dl>
+</div>
+
+<div class="methodShort" id="__Item"><h2>__Item</h2>
+<p>Ermittelt oder bestimmt den Wert eines Array-Elements.</p>
+<pre class="Syntax">Wert := Arr[Index]</pre>
+<pre class="Syntax">Arr[Index] := Wert</pre>
+<dl>
+  <dt>Index</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Ein gültiger Array-Index; also ein Integer mit einem Absolutwert im Bereich von 1 bis <a href="#Length">Length</a>. </p>
+    <p>Ein negativer Index kann genutzt werden, um auf Elemente in umgekehrter Richtung zuzugreifen; -1 ist das letzte Element, -2 ist das vorletzte Element, und so weiter.</p>
+    <p>Der Versuch, einen Index zu verwenden, der außerhalb der Grenzen liegt (z. B. 0 oder wenn sein absoluter Wert größer als die <a href="#Length">Länge</a> des Arrays ist), wird als Fehler angesehen und führt dazu, dass eine Ausnahme ausgelöst wird.</p>
+  </dd>
+</dl>
+<p>Der Eigenschaftsname __Item wird typischerweise weggelassen, wie oben gezeigt, ist aber nützlich, um die Eigenschaft zu überschreiben.</p>
+</div>
+
+</body>
+</html>

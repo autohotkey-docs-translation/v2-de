@@ -79,41 +79,46 @@ C:\AAA\BBB.txt</pre>
 <p><a href="FileRead.htm">FileRead</a>, <a href="LoopRead.htm">Datei-lesende Schleife</a>, <a href="LoopParse.htm">Parsende Schleife</a>, <a href="StrSplit.htm">StringSplit</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="../misc/Clipboard.htm">Clipboard</a></p>
 
 <h2>Beispiele</h2>
-<pre class="NoIndent">MeineVar := "5,3,7,9,1,13,999,-4"
+<div class="ex" id="ExNumbers">
+<p><a href="#ExNumbers">#1</a></p>
+<pre>MeineVar := "5,3,7,9,1,13,999,-4"
 MeineVar := <strong>Sort</strong>(MeineVar, "N D,")  <em>; Numerisch sortieren und Komma als Trennzeichen verwenden.</em>
-MsgBox MeineVar   <em>; Das Ergebnis ist -4,1,3,5,7,9,13,999</em>
+MsgBox MeineVar   <em>; Das Ergebnis ist -4,1,3,5,7,9,13,999</em></pre>
+</div>
 
-<em>; Das folgende Beispiel sortiert den Inhalt einer Datei:</em>
-Inhalt := <a href="FileRead.htm">FileRead</a>("C:\Adressenliste.txt")
+<div class="ex" id="ExFileContents">
+<p><a href="#ExFileContents">#2</a>: Das folgende Beispiel sortiert den Inhalt einer Datei:</p>
+<pre>Inhalt := <a href="FileRead.htm">FileRead</a>("C:\Adressenliste.txt")
 if not ErrorLevel  <em>; Erfolgreich geladen.</em>
 {
     FileDelete "C:\Adressenliste (alphabetisch).txt"
     FileAppend <strong>Sort</strong>(Inhalt), "C:\Adressenliste (alphabetisch).txt"
-    Inhalt := "" <em>; Gibt den Speicher frei.</em>
-}
+    Inhalt := ""  <em>; Gibt den Speicher frei.</em></pre>
+</div>
 
-<em>; Das folgende Beispiel macht WIN+C zu einem Hotkey, um Dateien von einem
-; Explorer-Fenster zu kopieren und die sortierten Dateinamen in die Zwischenablage einzufügen:</em>
-#c::
+<div class="ex" id="ExFilenames">
+<p><a href="#ExFilenames">#3</a>: Das folgende Beispiel macht <kbd>Win</kbd>+<kbd>C</kbd> zu einem Hotkey, um Dateien von einem Explorer-Fenster zu kopieren und die sortierten Dateinamen in die Zwischenablage einzufügen:</p>
+<pre>#c::
 Clipboard := "" <em>; Muss leer sein, damit die Erkennung funktioniert.</em>
 Send "^c"
 if !ClipWait(2)
     return
 MsgBox "Bereit zum Einfügen:`n" <strong>Sort</strong>(Clipboard)
-return
-</pre>
-<p>Die folgenden Beispiele demonstrieren die benutzerdefinierte Sortierung mit einer Callback-Funktion.</p>
-<pre class="NoIndent">
-MeineVar := "def`nabc`nmno`nFGH`nco-op`ncoop`ncop`ncon`n"
+return</pre>
+</div>
+
+<div class="ex" id="ExCustom">
+<p><a href="#ExCustom">#4</a>: Die folgenden Beispiele demonstrieren die benutzerdefinierte Sortierung mit einer Callback-Funktion.</p>
+<pre>MeineVar := "def`nabc`nmno`nFGH`nco-op`ncoop`ncop`ncon`n"
 MsgBox <strong>Sort</strong>(MeineVar,, "StringSort")
-StringSort(a1, a2)
+StringSort(a1, a2, *)
 {
     return a1 &gt; a2 ? 1 : a1 &lt; a2 ? -1 : 0  <em>; Sortiert alphabetisch, basierend auf die Einstellung von <a href="StringCaseSense.htm">StringCaseSense</a>.</em>
 }
 
 MeineVar := "5,3,7,9,1,13,999,-4"
 MsgBox <strong>Sort</strong>(MeineVar, "D,", "IntegerSort")
-IntegerSort(a1, a2)
+IntegerSort(a1, a2, *)
 {
     return a1 - a2  <em>; Sortiert in aufsteigender numerischer Reihenfolge. Diese Methode funktioniert nur, wenn die Differenz einen vorzeichenfähigen 64-Bit-Integer nicht überschreiten kann.</em>
 }
@@ -127,8 +132,9 @@ UmgekehrteRichtung(a1, a2, offset)
 
 MeineVar := "a bbb cc"
 <em>; Sortiert in aufsteigender Längenreihenfolge; verwendet eine <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a>:</em>
-MsgBox <strong>Sort</strong>(MeineVar, "D ", (a,b) =&gt; StrLen(a) - StrLen(b))
+MsgBox <strong>Sort</strong>(MeineVar, "D ", (a,b,*) =&gt; StrLen(a) - StrLen(b))
 </pre>
+</div>
 
 </body>
 </html>

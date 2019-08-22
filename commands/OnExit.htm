@@ -41,7 +41,7 @@
 <h2>Bemerkungen</h2>
 <p>Es können beliebig viele OnExit-Funktionen registriert werden. Eine OnExit-Funktion sollte in der Regel nicht ExitApp aufrufen; wäre dies der Fall, würde das Skript sofort beendet werden.</p>
 <p>OnExit-Funktionen werden aufgerufen, wenn das Skript in irgendeiner Form beendet wird (nur nicht, wenn das Beenden von so etwas wie "Task beenden" erzwungen wird). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Beenden auffordert.</p>
-<p>Mit <code><a href="OnMessage.htm#shutdown">OnMessage(0x11, "WM_QUERYENDSESSION")</a></code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden.</p>
+<p>Mit <code>OnMessage(0x11, "WM_QUERYENDSESSION")</code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden (siehe <a href="OnMessage.htm#ExShutdown">OnMessage-Beispiel #2</a> für ein funktionsfähiges Beispiel).</p>
 <p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> nimmt keine Rücksicht auf <a href="_MaxThreads.htm">#MaxThreads</a> (er wird bei Bedarf immer gestartet). Darüber hinaus kann dieser Thread, während er läuft, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="../objects/Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Skript beendet), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Skript aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> zum Beenden aufgefordert wird. Aus diesem Grund sollte die OnExit-Funktion so gestaltet werden, dass sie schnell zum Ende kommen kann, sofern der Benutzer das nicht will.</p>
 <p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen fehlerhaften Zustand wie z. B. Laufzeitfehler stößt, wird das Skript beendet.</p>
 <p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> aufgrund von <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> gestartet wurde, wird der Exitcode sofern vorhanden verwendet, es sei denn, eine OnExit-Funktion gibt True zurück (das ein Exit verhindern würde) oder ruft ExitApp selbst auf.</p>
@@ -86,8 +86,9 @@
 <p><a href="OnError.htm">OnError</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="Shutdown.htm">Shutdown</a>, <a href="_Persistent.htm">#Persistent</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Return.htm">Return</a></p>
 
 <h2 id="Examples">Beispiele</h2>
-<p>Das folgende Beispiel verwendet <a href="_Persistent.htm">#Persistent</a> , um zu verhindern, dass das Skript automatisch beendet wird. Nachdem Sie das Skript gestartet haben, können Sie einen Rechtsklick auf das Infobereichssymbol machen und dann <em>Exit</em> auswählen, um die OnExit-Funktion zu testen. Klicken Sie danach auf "Ja", um das Skript zu beenden, oder auf "Nein", um es weiter laufen zu lassen.</p>
-<pre class="NoIndent">#Persistent
+<div class="ex" id="ExAdvanced">
+<p><a href="#ExAdvanced">#1</a>: Das folgende Beispiel verwendet <a href="_Persistent.htm">#Persistent</a> , um zu verhindern, dass das Skript automatisch beendet wird. Nachdem Sie das Skript gestartet haben, können Sie einen Rechtsklick auf das Infobereichssymbol machen und dann <em>Exit</em> auswählen, um die OnExit-Funktion zu testen. Klicken Sie danach auf "Ja", um das Skript zu beenden, oder auf "Nein", um es weiter laufen zu lassen.</p>
+<pre>#Persistent
 
 <em>; Registriert eine Funktion, die bei Exit aufgerufen werden soll:</em>
 OnExit("ExitFunk")
@@ -117,6 +118,7 @@ class MeinObjekt
         */</em>
     }
 }</pre>
+</div>
 
 </body>
 </html>

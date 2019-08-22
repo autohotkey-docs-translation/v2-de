@@ -134,7 +134,7 @@ tocData = [
     ["For-Schleife","commands/For.htm"],
     ["Gosub","commands/Gosub.htm"],
     ["Goto","commands/Goto.htm"],
-    ["If (Ausdruck)","commands/IfExpression.htm"],
+    ["If","commands/If.htm"],
     ["Loop","commands/Loop.htm",
     [
       ["Loop","commands/Loop.htm"],
@@ -151,6 +151,7 @@ tocData = [
     ["SetTimer","commands/SetTimer.htm"],
     ["Sleep","commands/Sleep.htm"],
     ["Suspend","commands/Suspend.htm"],
+    ["Switch","commands/Switch.htm"],
     ["Thread","commands/Thread.htm"],
     ["Throw","commands/Throw.htm"],
     ["Try","commands/Try.htm"],
@@ -253,6 +254,7 @@ tocData = [
     ["KeyHistory","commands/KeyHistory.htm"],
     ["KeyWait","commands/KeyWait.htm"],
     ["Input","commands/Input.htm"],
+    ["InputHook","commands/InputHook.htm"],
     ["MouseClick","commands/MouseClick.htm"],
     ["MouseClickDrag","commands/MouseClickDrag.htm"],
     ["MouseGetPos","commands/MouseGetPos.htm"],
@@ -266,7 +268,7 @@ tocData = [
     ["SetMouseDelay","commands/SetMouseDelay.htm"],
     ["SetNumLockState","commands/SetNumScrollCapsLockState.htm"],
     ["SetScrollLockState","commands/SetNumScrollCapsLockState.htm"],
-    ["SetStoreCapsLockMode","commands/SetStoreCapslockMode.htm"]
+    ["SetStoreCapsLockMode","commands/SetStoreCapsLockMode.htm"]
   ]],
   ["Sonstiges","",
   [
@@ -285,7 +287,9 @@ tocData = [
   ["Objekttypen","",
   [
     ["Object","objects/Object.htm"],
+    ["Array-Objekt","objects/Array.htm"],
     ["Buffer-Objekt","objects/Buffer.htm"],
+    ["Class-Objekt","objects/Class.htm"],
     ["Enumerator-Objekt","objects/Enumerator.htm"],
     ["Exception-Objekt","commands/Throw.htm#Exception"],
     ["File-Objekt","objects/File.htm"],
@@ -293,6 +297,7 @@ tocData = [
     ["Funktionsobjekte","objects/Functor.htm"],
     ["Gui-Objekt","objects/Gui.htm"],
     ["GuiControl-Objekt","objects/GuiControl.htm"],
+    ["Map-Objekt","objects/Map.htm"],
     ["Menu/MenuBar-Objekt","objects/Menu.htm"],
     ["RegExMatch-Objekt","commands/RegExMatch.htm#MatchObject"]
   ]],
@@ -341,6 +346,7 @@ tocData = [
     ["RegExMatch","commands/RegExMatch.htm"],
     ["RegExReplace","commands/RegExReplace.htm"],
     ["Sort","commands/Sort.htm"],
+    ["StrCompare","commands/StrCompare.htm"],
     ["String","commands/String.htm"],
     ["StringCaseSense","commands/StringCaseSense.htm"],
     ["StrLower/StrUpper","commands/StrLower.htm"],
