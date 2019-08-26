@@ -41,7 +41,7 @@ ul.list_of_p li { margin: 1em 0; }
 <ul>
   <li><a href="#Usage">Grundlegende Verwendung</a> - <a href="#Usage_Simple_Arrays">Arrays</a>, <a href="#Usage_Associative_Arrays">Maps (assoziative Arrays)</a>, <a href="#Usage_Objects">Objekte</a>, <a href="#Usage_Freeing_Objects">Freigeben von Objekten</a></li>
   <li><a href="#Extended_Usage">Erweiterte Verwendung</a> - <a href="#Function_References">Funktionsreferenzen</a>, <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a></li>
-  <li><a href="#Custom_Objects">Benutzerdefinierte Objekte</a> - <a href="#creating-a-base-object">Erstellen eines Base-Objekts</a>, <a href="#Custom_Classes">Klassen</a>, <a href="#Custom_NewDelete">Konstruktion und Destruktion</a>, <a href="#Meta_Functions">Meta-Funktionen</a></li>
+  <li><a href="#Custom_Objects">Benutzerdefinierte Objekte</a> - <a href="#creating-a-base-object">Erstellen eines Base-Objekts</a>, <a href="#Custom_Classes">Klassen</a>, <a href="#Custom_NewDelete">Konstruktion und Destruktion</a>, <a href="#Meta_Functions">Metafunktionen</a></li>
   <li><a href="#Default_Base_Object">Standard-Base-Objekt</a> - <a href="#Automatic_Var_Init">Automatische Variableninitialisierung</a>, <a href="#Pseudo_Properties">Pseudo-Eigenschaften</a>, <a href="#Default__Warn">Debugging</a></li>
   <li><a href="#Implementation">Implementierung</a> - <a href="#Reference_Counting">Referenzzählung</a>, <a href="#Implementation_Pointers">Objekt-Pointer</a></li>
 </ul>
@@ -354,7 +354,7 @@ Methode()
 <p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_base">base.Eigenschaft</a></code> benutzen, um auf die via eigene Base-Klasse definierte Eigenschaft zugreifen zu können. Wenn <em>Get</em> oder <em>Set</em> nicht definiert ist, kann es von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist, ist die Eigenschaft schreibgeschützt (der Versuch, die Eigenschaft zu setzen, löst eine Ausnahme aus).</p>
 <p>Intern sind <em>get</em> und <em>set</em> zwei unterschiedliche Methoden, die sich untereinander keine Variablen teilen können (es sei denn, man speichert sie in <code>this</code>).</p>
 <p>Siehe auch: <a href="objects/Object.htm#DefineProp">DefineProp</a></p>
-<p><a href="#Meta_Functions">Meta-Funktionen</a> bieten eine breitere Auswahl an Möglichkeiten für den kontrollierten Zugriff auf Eigenschaften und Methoden eines Objekts, allerdings sind sie komplizierter und fehleranfälliger.</p>
+<p><a href="#Meta_Functions">Metafunktionen</a> bieten eine breitere Auswahl an Möglichkeiten für den kontrollierten Zugriff auf Eigenschaften und Methoden eines Objekts, allerdings sind sie komplizierter und fehleranfälliger.</p>
 
 <h4 id="Custom_Classes_property_short">Fat-Arrow-Eigenschaften</h4>
 <p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann genutzt werden, um einen <a href="#Custom_Classes_property">Eigenschaft</a>-Getter oder -Setter für die Rückgabe eines Ausdrucks zu definieren:</p>
@@ -422,10 +422,10 @@ class GMem<span id="GMem"></span>
     }
 }</pre>
 <p>__Delete wird nicht bei Objekten aufgerufen, die eine Eigenschaft namens "__Class" besitzen. <a href="objects/Class.htm#Prototype">Prototype-Objekte</a> haben standardmäßig diese Eigenschaft.</p>
-<p>Wenn eine Ausnahme oder ein Laufzeitfehler ausgelöst wird, während __Delete ausgeführt wird, und nicht innerhalb von __Delete behandelt wird, verhält es sich so, als wäre __Delete von einem neuen <a href="misc/Threads.htm">Thread</a> aufgerufen wurden. Das heißt, dass eine Fehlermeldung angezeigt und __Delete durchgeführt wird, aber der Thread nicht beendet wird (es sei denn, er wurde bereits beendet).</p>
+<p>Wenn eine Ausnahme oder ein Laufzeitfehler ausgelöst wird, während __Delete ausgeführt wird, und nicht innerhalb von __Delete behandelt wird, verhält es sich so, als wäre __Delete von einem neuen <a href="misc/Threads.htm">Thread</a> aufgerufen wurden. Das heißt, dass ein Fehlerdialogfenster angezeigt und __Delete durchgeführt wird, aber der Thread nicht beendet wird (es sei denn, er wurde bereits beendet).</p>
 <p>Jede Klasse kann auch eine <code>static __New</code>-Methode haben, die unmittelbar nach Initialisierung ihrer <a href="#Custom_Classes_staticvar">statischen Variablen</a> aufgerufen wird (dies geschieht der Reihenfolge nach, wie die Klassen im Skript definiert sind). Diese Methode kann von einer Base-Klasse geerbt und daher zum Initialisieren von Unterklassen verwendet werden. Innerhalb von <code>static __New</code> verweist <code>this</code> entweder auf die Klasse, die die Methode definiert hat, oder auf eine Unterklasse.</p>
 
-<h3 id="Meta_Functions">Meta-Funktionen</h3>
+<h3 id="Meta_Functions">Metafunktionen</h3>
 <pre class="Syntax">
 class <i>Klassenname</i> {
     __Get(Name, Params)
@@ -466,7 +466,7 @@ class <i>Klassenname</i> {
 <p>Wenn ein objektloser Wert mit der Objektsyntax benutzt wird, wird das <i>Standard-Base-Objekt</i> aufgerufen. Dieses Objekt ist nützlich, um das Skript zu debuggen oder um Zeichenketten, Zahlen und/oder Variablen in globaler Hinsicht ein objektähnliches Verhalten zu geben. Der Zugriff auf das Standard-Base kann nur erfolgen, wenn <code>.base</code> mit irgendeinem objektlosen Wert verwendet wird; zum Beispiel <code>"".base</code>. Obwohl das Standard-Base nicht wie in <code>"".base := Object()</code> <i>gesetzt</i> werden kann, kann es selbst ein Base wie in <code>"".base.base := Object()</code> haben.</p>
 
 <h3 id="Automatic_Var_Init">Automatische Variableninitialisierung</h3>
-<p>Wenn eine leere Variable als Ziel einer <i>Set</i>-Operation bestimmt wurde, wird sie direkt an die __Set-Meta-Funktion übergeben, damit sie ein neues Objekt in die Variable einfügen kann. Aus Platzgründen unterstützt dieses Beispiel nicht mehr als ein Parameter; mit einer <a href="Functions.htm#Variadic">variadischen Funktion</a> wäre das möglich.</p>
+<p>Wenn eine leere Variable als Ziel einer <i>Set</i>-Operation bestimmt wurde, wird sie direkt an die __Set-Metafunktion übergeben, damit sie ein neues Objekt in die Variable einfügen kann. Aus Platzgründen unterstützt dieses Beispiel nicht mehr als ein Parameter; mit einer <a href="Functions.htm#Variadic">variadischen Funktion</a> wäre das möglich.</p>
 <pre>"".base.__Set := Func("Default_Set_AutomaticVarInit")
 
 empty_var.foo := "bar"
@@ -521,7 +521,7 @@ Default__Warn(nonobj, p1:="", p2:="", p3:="", p4:="")
 <p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um automatisch Ressourcen freizugeben, falls ein Objekt nicht länger in einem Skript benötigt bzw. verwiesen wird. Skript-Autoren sollten diesen Mechanismus nicht explizit aufrufen, es sei denn, sie müssen sich direkt mit unverwalteten <a href="#Implementation_Pointers">Objekt-Pointern</a> befassen.</p>
 <p>Temporär zurückgegebene Referenzen von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Dadurch können temporäre Objekte für die Ressourcenverwaltung verwendet werden. Zum Beispiel:</p>
 <pre>MsgBox <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", (new <a href="#GMem">GMem</a>(0, 20)), "ptr")  <em>; 20</em></pre>
-<p>Um eine Aktion nach Freigabe der letzten Referenz zu einem Objekt durchzuführen, implementiert man die <a href="#Custom_NewDelete">__Delete</a>-Meta-Funktion.</p>
+<p>Um eine Aktion nach Freigabe der letzten Referenz zu einem Objekt durchzuführen, implementiert man die <a href="#Custom_NewDelete">__Delete</a>-Metafunktion.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>
   <li>Zirkelbezüge müssen unterbrochen werden, bevor ein Objekt freigegeben werden kann. Siehe <a href="#Circular_References">Freigeben von Objekten</a>, um anhand eines Beispiels mehr darüber zu erfahren.</li>
