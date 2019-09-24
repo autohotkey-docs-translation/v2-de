@@ -56,13 +56,13 @@ MeinArray := Array(Element1, Element2, ..., ElementN)</pre>
 <pre>Wert := MeinArray[Index]</pre>
 <p>Ändern eines Elementwertes (muss bereits im Array existieren):</p>
 <pre>MeinArray[Index] := Wert</pre>
-<p>Einfügen eines oder mehrerer Elemente ab einem bestimmten Index mittels <a href="objects/Object.htm#InsertAt">InsertAt</a>-Methode:</p>
+<p>Einfügen eines oder mehrerer Elemente ab einem bestimmten Index mittels <a href="objects/Array.htm#InsertAt">InsertAt</a>-Methode:</p>
 <pre>MeinArray.InsertAt(Index, Wert, Wert2, ...)</pre>
-<p>Anfügen eines oder mehrerer Elemente mittels <a href="objects/Object.htm#Push">Push</a>-Methode:</p>
+<p>Anfügen eines oder mehrerer Elemente mittels <a href="objects/Array.htm#Push">Push</a>-Methode:</p>
 <pre>MeinArray.Push(Wert, Wert2, ...)</pre>
-<p>Entfernen eines Elements mittels <a href="objects/Object.htm#RemoveAt">RemoveAt</a>-Methode:</p>
+<p>Entfernen eines Elements mittels <a href="objects/Array.htm#RemoveAt">RemoveAt</a>-Methode:</p>
 <pre>EntfernterWert := MeinArray.RemoveAt(Index)</pre>
-<p>Entfernen eines Elements mittels <a href="objects/Object.htm#Pop">Pop</a>-Methode:</p>
+<p>Entfernen eines Elements mittels <a href="objects/Array.htm#Pop">Pop</a>-Methode:</p>
 <pre>EntfernterWert := MeinArray.Pop()</pre>
 <p><a href="objects/Array.htm#Length">Length</a> gibt die Anzahl aller Elemente im Array zurück. Um die Inhalte des Arrays zu durchlaufen, benutzt man entweder den Index oder eine For-Schleife. Zum Beispiel:</p>
 <pre>MeinArray := ["eins", "zwei", "drei"]
@@ -87,7 +87,7 @@ For wert in MeinArray
 <pre>Wert := MeinMap[Key]</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>MeinMap[Key] := Wert</pre>
-<p>Entfernen eines Elements mittels <a href="objects/Object.htm#Delete">Delete</a>-Methode:</p>
+<p>Entfernen eines Elements mittels <a href="objects/Array.htm#Delete">Delete</a>-Methode:</p>
 <pre>EntfernterWert := MeinMap.Delete(Key)</pre>
 <p>Enumerieren von Elementen:</p>
 <pre>MeinMap := Map("zehn", 10, "zwanzig", 20, "dreißig", 30)
@@ -348,7 +348,8 @@ Methode()
 }
 </pre>
 <p><em>Eigenschaft</em> ist der Name der Eigenschaft, mit dem sie aufgerufen werden kann. <code>obj.Eigenschaft</code> würde beispielsweise <em>get</em> aufrufen, und <code>obj.Eigenschaft := Wert</code> würde <em>set</em> aufrufen. Innerhalb von  <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das aufgerufen wird. Innerhalb von <em>set</em> enthält <code>value</code> den Wert, der zugewiesen wird.</p>
-<p>Beim Definieren oder Aufrufen einer Eigenschaft können Parameter übergeben werden, indem man sie auf der rechten Seite des Eigenschaftsnamens in eckigen Klammern setzt. Abgesehen von den eckigen Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
+<p>Die Definition und Übergabe von Parametern erfolgt auf der rechten Seite des Eigenschaftsnamens, in eckigen Klammern. Abgesehen von den eckigen Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
+<p>Wenn eine Eigenschaft keine Parameter akzeptieren kann (die eckigen Klammern werden weggelassen oder sind leer), werden Parameter automatisch an die <a href="#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet. <code>this.Eigenschaft[x]</code> beispielsweise hätte die gleiche Wirkung wie <code>(this.Eigenschaft)[x]</code> oder <code>y := this.Eigenschaft, y[x]</code>.</p>
 <p>Um statische Eigenschaften zu definieren, muss vor dem Eigenschaftsnamen das separate Schlüsselwort <code>static</code> verwendet werden. In diesem Fall verweist <code>this</code> auf die Klasse selbst oder eine Unterklasse.</p>
 <p>Der Rückgabewert von <em>set</em> wird ignoriert. <code>Wert := obj.Eigenschaft := 42</code> beispielsweise wird immer <code>Wert := 42</code> zuweisen, egal was die Eigenschaft macht, es sei denn, sie löst eine Ausnahme aus oder beendet den Thread.</p>
 <p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_base">base.Eigenschaft</a></code> benutzen, um auf die via eigene Base-Klasse definierte Eigenschaft zugreifen zu können. Wenn <em>Get</em> oder <em>Set</em> nicht definiert ist, kann es von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist, ist die Eigenschaft schreibgeschützt (der Versuch, die Eigenschaft zu setzen, löst eine Ausnahme aus).</p>
@@ -448,7 +449,7 @@ class <i>Klassenname</i> {
   <li><i>Call</i>: Löse eine Ausnahme "Unbekannte Methode" aus.</li>
   <li>Wenn Parameter angegeben wurden, löse eine Ausnahme aus (es gibt kein Objekt, an das die Parameter weitergeleitet werden können).</li>
   <li><i>Get</i>: Gib eine leere Zeichenkette zurück (Standardverhalten bei Funktionen ohne <code>return</code>).</li>
-  <li><i>Set</i>: Definiere eine neue Eigenschaft mit dem angegebenen Wert, z. B. durch Aufruf von <a href="objects/Object.htm#ObjRawSet">ObjRawSet</a>. </li>
+  <li><i>Set</i>: Definiere eine neue Eigenschaft mit dem angegebenen Wert, z. B. durch Aufruf von <a href="objects/Object.htm#RawSet">ObjRawSet</a>. </li>
 </ul>
 <p>Es kann ein beliebiges <a href="objects/Functor.htm">aufrufbare Objekt</a> als Metafunktion verwendet werden, indem es an <a href="objects/Object.htm#DefineMethod">DefineMethod</a> übergeben wird.</p>
 <p>Metafunktionen werden nie aufgerufen, wenn der Name der Eigenschaft oder Methode weggelassen wird:</p>

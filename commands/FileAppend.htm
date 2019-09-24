@@ -22,9 +22,9 @@
 
   <dt>Text</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der Text, der an das Ende der Datei angefügt werden soll. Dieser Text kann Zeilenumbruchszeichen (`n) enthalten, um neue Zeilen beginnen zu können. Außerdem kann mithilfe eines <a href="../Scripts.htm#continuation">Fortsetzungsbereichs</a> eine lange Zeile in mehreren kurzen Zeilen aufgeteilt werden.</p>
-    <p><em>Text</em> kann binäre Daten enthalten, wenn die <code>RAW</code>-Option benutzt wird, aber in diesem Fall wird FileAppend immer eine gerade Anzahl von Bytes anfügen (<a href="StrLen.htm">StrLen</a> mal zwei). Dies kann zum <a href="ClipboardAll.htm#ExFile">Speichern von Daten in die Zwischenablage</a> verwendet werden. Mit <a href="../objects/File.htm#RawWrite">File.RawWrite</a> kann eine ungerade oder gerade Anzahl von Bytes geschrieben werden.</p>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Der Text oder rohe Binärdaten, die an das Ende der Datei angefügt werden sollen. Der Text kann Zeilenumbruchszeichen (`n) enthalten, um neue Zeilen beginnen zu können. Außerdem kann mithilfe eines <a href="../Scripts.htm#continuation">Fortsetzungsbereichs</a> eine lange Zeile in mehreren kurzen Zeilen aufgeteilt werden.</p>
+    <p>Es ist möglich, ein <a href="../objects/Buffer.htm">Buffer</a>-ähnliches Objekt zu übergeben, um rohe Binärdaten anzufügen. Beim Erstellen einer Datei wird nur eine Byte-Order-Markierung (BOM) geschrieben, wenn "UTF-8" oder "UTF-16" in <em>Optionen</em> angegeben wurde. Die <a href="../Variables.htm#FileEncoding">Standardcodierung</a> wird ignoriert und die im Objekt enthaltenen Daten werden unverändert geschrieben, unabhängig von <em>Optionen</em>. Es kann ein beliebiges Objekt mit einer <a href="../objects/Buffer.htm#Ptr">Ptr</a>- und <a href="../objects/Buffer.htm#Size">Size</a>-Eigenschaft verwendet werden.</p>
     <p>Wenn <em>Text</em> leer ist, wird <em>Dateiname</em> als leere Datei erstellt (wenn die Datei bereits existiert, wird nur ihr Änderungsdatum aktualisiert).</p>
   </dd>
 
@@ -44,8 +44,8 @@
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Null oder mehr der folgenden Zeichenketten. Die Optionen müssen jeweils mit einem Leer- oder Tabulatorzeichen voneinander getrennt werden. Zum Beispiel: <code>"`n UTF-8"</code></p>
-    <p><strong>Codierung</strong>: Geben Sie einen beliebigen Codierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (außer die leere Zeichenkette), um diese Codierung zu benutzen, falls die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Lässt man diesen Parameter weg, wird standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet.</p>
-    <p><strong>RAW</strong>: Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um <em>Text</em> unverändert und ohne jegliche Umwandlungen in die Datei zu schreiben. Diese Option überschreibt jede zuvor festgelegte Codierung und umgekehrt.</p>
+    <p><strong>Codierung</strong>: Geben Sie einen beliebigen Codierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (außer die leere Zeichenkette), um diese Codierung zu benutzen, falls die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Lässt man den Parameter weg, wird standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet (es sei denn, <em>Text</em> ist ein Objekt, dann wird keine Byte-Order-Markierung geschrieben).</p>
+    <p><strong>RAW</strong>: Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um <em>Text</em> unverändert und ohne jegliche Umwandlungen in die Datei zu schreiben. Diese Option überschreibt jede zuvor festgelegte Codierung und umgekehrt. Wenn <em>Text</em> kein Objekt ist, ist die Datengröße immer ein Vielfaches von 2 Bytes, weil UTF-16 Zeichenketten verwendet werden.</p>
     <p><strong>`n</strong> (ein LF-Zeichen): Fügt vor jedem LF-Zeichen (`n) ein CR-Zeichen (`r) ein, sofern noch nicht vorhanden. Das heißt, dass `n in `r`n umgewandelt wird. Diese Umwandlung hat in der Regel keinen Einfluss auf die Performance. Wenn diese Option nicht verwendet wird, werden die Zeilenenden innerhalb von <em>Text</em> nicht geändert.</p>
   </dd>
 

@@ -152,7 +152,7 @@ G := GuiCreate(, config.ScriptTitle)
 <em>; Eingabefeld hinzufügen, damit der Benutzer den Suchtext eingeben kann:</em>
 G.Add("Edit", "W600 vE_Search").OnEvent("Change", "FindMatches")
 if config.TrackKeyPhrase
-    G.Control["E_Search"].Value := IniRead(config.saveFile, "LastSession", "SearchText")
+    G["E_Search"].Value := IniRead(config.saveFile, "LastSession", "SearchText")
 
 <em>; Meine Lieblingszeile hinzufügen:</em>
 G.Add("Text", "X625 Y10", "Wonach suchen Sie, mein Freund?")
@@ -180,26 +180,26 @@ G.Show("Center")
 
 <em>; Erneutes Scannen erzwingen, wenn -scan aktiv ist oder Cache-Datei der Auflistung fehlt:</em>
 if (A_Args[1] = "-scan" or !FileExist(config.saveFile))
-    ScanStartMenu(G.Control["LB"])
+    ScanStartMenu(G["LB"])
 
 <em>; Trefferliste abrufen und setzen:</em>
-FindMatches(G.Control["LB"])
+FindMatches(G["LB"])
 
 <em>; Aktuellste Auswahl aus Cache-Datei abrufen und Element auswählen:</em>
 if config.TrackKeyPhrase
     if (LastSelection := IniRead(config.saveFile, "LastSession", "Selection"))
-        G.Control["LB"].Choose(LastSelection)
+        G["LB"].Choose(LastSelection)
 
 <em>; Funktionsdefinitionen ---
 
 ; Startmenü scannen und Dateiauflistung in eine Cache-Datei speichern:</em>
 ScanStartMenu(this, *)
 {
-    T_Info := this.Gui.Control["T_Info"]
-    LB := this.Gui.Control["LB"]
-    B1 := this.Gui.Control["B1"]
-    B2 := this.Gui.Control["B2"]
-    B3 := this.Gui.Control["B3"]
+    T_Info := this.Gui["T_Info"]
+    LB := this.Gui["LB"]
+    B1 := this.Gui["B1"]
+    B2 := this.Gui["B2"]
+    B3 := this.Gui["B3"]
 
     <em>; Benutzer informieren, dass gescannt wird:</em>
     T_Info.Value := "Scanne Verzeichnisse..."
@@ -268,10 +268,10 @@ SaveFileList()
 FindMatches(this, *)
 {
     FileArray := []
-    E_Search := this.Gui.Control["E_Search"]
-    LB := this.Gui.Control["LB"]
-    B1 := this.Gui.Control["B1"]
-    B2 := this.Gui.Control["B2"]
+    E_Search := this.Gui["E_Search"]
+    LB := this.Gui["LB"]
+    B1 := this.Gui["B1"]
+    B2 := this.Gui["B2"]
     SearchText := E_Search.Value
     <em>; Treffer auf Basis des Suchtextes filtern:</em>
     if SearchText
@@ -338,7 +338,7 @@ FindMatches(this, *)
 <em>; Benutzer hat 'Öffnen' angeklickt oder ENTER gedrückt:</em>
 OpenTarget(this, *)
 {
-    LB := this.Gui.Control["LB"]
+    LB := this.Gui["LB"]
     <em>; Ausgewählter Treffer existiert nicht (Datei oder Verzeichnis nicht gefunden):</em>
     if !FileExist(LB.Text)
     {
@@ -374,7 +374,7 @@ OpenTarget(this, *)
 <em>; Benutzer hat 'Verzeichnis öffnen' angeklickt:</em>
 OpenFolder(this, *)
 {
-    Path := this.Gui.Control["LB"].Text
+    Path := this.Gui["LB"].Text
     <em>; Wenn der Benutzer eine Datei statt ein Verzeichnis auswählt, wird der
     ; Verzeichnispfad extrahiert (Ich benutze DriveGetStatus anstelle von FileGetAttrib,
     ; um das Szenario zu erlauben, wo LB.Text ungültig ist, aber der Verzeichnis-
@@ -412,8 +412,8 @@ Gui_Close(this)
     <em>; Suchtext zwischenspeichern:</em>
     if config.TrackKeyPhrase
     {
-        IniWrite(this.Control["E_Search"].Value, config.saveFile, "LastSession", "SearchText")
-        IniWrite(this.Control["LB"].Text, config.saveFile, "LastSession", "Selection")
+        IniWrite(this["E_Search"].Value, config.saveFile, "LastSession", "SearchText")
+        IniWrite(this["LB"].Text, config.saveFile, "LastSession", "Selection")
     }
     ExitApp
 }</pre>

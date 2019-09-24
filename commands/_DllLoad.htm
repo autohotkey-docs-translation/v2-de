@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>#DllLoad - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die #DllLoad-Direktive lädt eine DLL- oder EXE-Datei, bevor das Skript mit der Ausführung beginnt." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>#DllLoad</h1>
+
+<p><a href="DllCall.htm#load">Lädt</a> eine DLL- oder EXE-Datei, bevor das Skript mit der Ausführung beginnt.</p>
+
+<pre class="Syntax"><span class="func">#DllLoad</span> <span class="optional">DateiOderVerzName</span></pre>
+<h2>Parameter</h2>
+<dl>
+
+  <dt>DateiOderVerzName</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Der Pfad einer Datei oder eines Verzeichnisses, wie unten beschrieben. Der Dateiname <strong>darf keine</strong> Anführungszeichen, Platzhalterzeichen oder <a href="../misc/EscapeChar.htm">Escapesequenzen</a> außer Semikolon (<strong>`;</strong>) enthalten.</p>
+    <p>Interne Variablen können genutzt werden, indem man sie mit Prozentzeichen umschließt (zum Beispiel <code>#DllLoad %A_ScriptDir%</code>). Prozentzeichen, die nicht zu einer gültigen Variablenreferenz gehören, werden als direkt geschriebener Text interpretiert. Alle internen Variablen sind gültig, außer <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und <a href="../Variables.htm#Args">A_Args</a>.</p>
+    <p>Bekannte Einschränkung: Beim Kompilieren eines Skripts werden Variablen vom Compiler ausgewertet; das heißt, dass sie von dem abweichen können, was das Skript bei der endgültigen Ausführung zurückgeben würde. Folgende Variablen werden unterstützt: A_AhkPath, A_AppData, A_AppDataCommon, A_ComputerName, A_ComSpec, A_Desktop, A_DesktopCommon, A_IsCompiled, A_LineFile, A_MyDocuments, A_ProgramFiles, A_Programs, A_ProgramsCommon, A_ScriptDir, A_ScriptFullPath, A_ScriptName, A_Space, A_StartMenu, A_StartMenuCommon, A_Startup, A_StartupCommon, A_Tab, A_Temp, A_UserName, A_WinDir.</p>
+    <p><strong>Datei:</strong> Der absolute oder relative Pfad der DLL- oder EXE-Datei, die geladen werden soll. Wenn ein relativer Pfad angegeben ist, verwendet die Direktive die Suchstrategie der Systemfunktion <a href="https://docs.microsoft.com/de-de/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryw">LoadLibraryW</a> zum Suchen der Datei. Hinweis: <a href="SetWorkingDir.htm">SetWorkingDir</a> hat keine Auswirkung auf #DllLoad, da #DllLoad bereits vor Beginn der Skriptausführung ausgewertet wird.</p>
+    <p><strong>Verzeichnis:</strong> Geben Sie ein Verzeichnis anstelle einer Datei an, um die Suchstrategie für alle nachfolgenden #DllLoad-Direktiven ohne absolutem Pfad zu ändern. Die neue Suchstrategie ist das gleiche wie, als hätte man <em>Verzeichnis</em> an die Systemfunktion <a href="https://docs.microsoft.com/de-de/windows/win32/api/winbase/nf-winbase-setdlldirectoryw">SetDllDirectoryW</a> übergeben. Lässt man diesen Parameter weg, wird die ursprüngliche Suchstrategie wiederhergestellt.</p>
+  </dd>
+</dl>
+<h2>Bemerkungen</h2>
+<p>Eine mit dieser Direktive geladene DLL- oder EXE-Datei kann nicht mehr mit der Systemfunktion <a href="https://docs.microsoft.com/de-de/windows/win32/api/libloaderapi/nf-libloaderapi-freelibrary">FreeLibrary</a> entladen werden. Wenn das Skript beendet wird, werden alle geladenen Dateien automatisch entladen.</p>
+<p>Vor dem <em>Dateiname</em>-Parameter kann optional <code>*i</code> und ein einzelnes Leerzeichen gesetzt werden, um alle Fehler zu ignorieren, die beim Laden der Datei auftreten könnten. Zum Beispiel: <code>#DllLoad *i MeineDLL</code>. Diese Option sollte nur verwenden werden, wenn die DLL- oder EXE-Datei nicht für die Ausführung des Hauptskripts relevant ist.</p>
+<p>Wenn für DateiName nur der Name einer DLL-Datei angegeben ist (also ohne Pfad und Dateiendung), wird <em>.dll</em> an den Dateinamen angehängt. Um das zu verhindern, muss direkt nach dem Dateinamen ein Punkt (.) erfolgen.</p>
+<h2>Siehe auch</h2>
+<p><a href="DllCall.htm">DllCall</a></p>
+<h2>Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>
+#DllLoad %A_MyDocuments%\MeineDLL.dll
+</div>
+
+</body>
+</html>
