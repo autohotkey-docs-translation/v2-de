@@ -35,7 +35,7 @@
   <dt>Sekunden</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#numbers">Float</a></p>
-    <p>Wie viele Sekunden gewartet werden sollen, bevor eine Zeitüberschreitung erfolgt und eine 0 zurückgegeben wird. Lassen Sie diesen Parameter weg oder leer, um unendlich lang zu warten. Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p>
+    <p>Die zu wartenden Sekunden, bevor eine Zeitüberschreitung erfolgt und 0 zurückgegeben wird. Lassen Sie diesen Parameter weg oder leer, um eine unbegrenzte Wartezeit zu ermöglichen. Die Angabe von 0 ist das gleiche wie, als würde man 0.5 angeben.</p>
   </dd>
 
   <dt>Titelausnahme</dt>
@@ -57,7 +57,7 @@
 <p>Diese Funktion gibt 0 (false) zurück, wenn die Funktion das Zeitlimit überschritten hat, ansonsten 1 (true).</p>
 
 <h2>Bemerkungen</h2>
-<p>Wenn keine passenden Fenster vorhanden sind, wartet die Funktion nicht, bis <em>Sekunden</em> abgelaufen sind. Stattdessen wird sie sofort eine 1 zurückgeben und die Ausführung des Skripts fortgesetzt. Umgekehrt kann die Funktion auch nach dem Schließen eines passenden Fensters weiter warten, bis keine passenden Fenster mehr gefunden werden.</p>
+<p>Die Funktion hört bereits auf zu warten, wenn keine passenden Fenster gefunden werden, und nicht erst, wenn die <em>Sekunden</em> abgelaufen sind. In diesem Fall wird sofort 1 zurückgegeben und die Ausführung des Skripts fortgesetzt. Umgekehrt kann die Funktion auch nach dem Schließen eines passenden Fensters weiter warten, bis keine passenden Fenster mehr gefunden werden.</p>
 <p>Da <code>"A"</code> mit dem jeweils aktiven Fenster übereinstimmt, wartet <code>WinWaitClose "A"</code> normalerweise unendlich lange. Um stattdessen auf das Schließen des aktuell aktiven Fensters zu warten, gibt man dessen Titel oder eindeutige ID wie im folgenden Beispiel an:</p>
 <pre>WinWaitClose "ahk_id " WinExist("A")</pre>
 <p>WinWaitClose aktualisiert das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a>, wenn es ein passendes Fenster findet. Dies kann zum Beispiel genutzt werden, um das Fenster zu identifizieren oder anzusteuern, nachdem die Funktion das Zeitlimit überschritten hat. Zum Beispiel:</p>
@@ -70,7 +70,7 @@ if !WinWaitClose("Test",, 5)  <em>; Wartet 5 Sekunden, bis es jemand schließt.<
 }
 </pre>
 <p>Während die Funktion im Wartezustand ist, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="../objects/Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-<p>Wenn ein anderer <a href="../misc/Threads.htm">Thread</a> die Inhalte der Variablen ändert, die als Parameter für diese Funktion verwenden wurden, wird die Funktion die Änderung nicht sehen -- sie wird weiter den Titel und Text verwenden, die ursprünglich in den Variablen vorhanden waren, als die Funktion anfing zu warten.</p>
+<p>Wenn ein anderer <a href="../misc/Threads.htm">Thread</a> die Inhalte von Variablen, die die Funktion als Parameter verwendet, zwischendurch ändert, wird die Funktion diese Änderung ignorieren; das heißt, dass die Funktion weiterhin den Titel und Text verwendet, die ursprünglich in den Variablen vorhanden waren, als die Funktion zum ersten Mal zu warten begann.</p>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2>Siehe auch</h2>
@@ -80,7 +80,7 @@ if !WinWaitClose("Test",, 5)  <em>; Wartet 5 Sekunden, bis es jemand schließt.<
 <p><a href="#ExBasic">#1</a></p>
 <pre>Run "notepad.exe"
 WinWait "Unbenannt - Editor"
-WinWaitClose  <em>; Wartet, bis das gefundene Fenster von WinWait geschlossen wird.</em>
+WinWaitClose  <em>; Wartet, bis das von WinWait gefundene Fenster geschlossen wird.</em>
 MsgBox "Editor wurde geschlossen."</pre>
 </div>
 
