@@ -44,7 +44,7 @@ if (ih.Input = StrgC)
 
   <dt id="EndKeys">Endtasten</dt>
   <dd>
-    <p>Eine optionale Liste mit einer oder mehr Tasten, die, wenn gedrückt, die Eingabeerfassung beenden können (die Endtaste selbst wird nicht in den Input-Puffer geschrieben). Wenn ein Input auf diese Weise beendet wird, wird EndReason auf das Wort EndKey gesetzt und die <a href="#EndKey">EndKey</a>-Eigenschaft den Namen der Taste enthalten.</p>
+    <p>Eine optionale Liste mit einer oder mehr Tasten, die, wenn gedrückt, die Eingabeerfassung beenden können (die Endtaste selbst wird nicht in den Input-Puffer geschrieben). Wenn eine Eingabeerfassung auf diese Weise beendet wird, wird EndReason auf das Wort EndKey und die <a href="#EndKey">EndKey</a>-Eigenschaft auf den Namen der Taste gesetzt.</p>
     <p>Die <em>Endtasten</em>-Liste verwendet ein Format, das Ähnlichkeit zum verwendeten Format der <a href="Send.htm">Send</a>-Funktion hat. Zum Beispiel würde <code>{Enter}.{Esc}</code> bewirken, dass <kbd>Enter</kbd>, <kbd>.</kbd> oder <kbd>Esc</kbd> die Eingabeerfassung beenden können. Damit die geschweiften Klammern selbst Endtasten sein können, gibt man <code>{{}</code> und/oder <code>{}}</code> an.</p>
     <p>Um <kbd>Strg</kbd>, <kbd>Alt</kbd> oder <kbd>Umschalt</kbd> als Endtasten zu verwenden, gibt man die linke und/oder rechte Version der Taste an, nicht die neutrale Version. Zum Beispiel müsste <code>{LControl}{RControl}</code> anstelle von <code>{Control}</code> angegeben werden.</p>
     <p>Obwohl modifizierte Tasten wie <kbd>Alt</kbd>+<kbd>C</kbd> (!c) nicht unterstützt werden, setzen nicht-alphanumerische Zeichen wie <code>?!:@&amp;{}</code> standardmäßig voraus, dass UMSCHALT gedrückt oder nicht gedrückt sein muss, je nachdem, wie das Zeichen normalerweise eingegeben wird. Wenn die <strong>E</strong>-Option vorhanden ist, werden die Namen von Einzelzeichentasten stattdessen als Zeichen interpretiert - in solchen Fällen müssen die Modifikatortasten im richtigen Zustand sein, um dieses Zeichen zu erzeugen.  Wenn sowohl die <strong>E</strong>- als auch <strong>M</strong>-Option vorhanden sind, werden Tastenkombinationen von <kbd>Strg</kbd>+<kbd>A</kbd> bis <kbd>Strg</kbd>+<kbd>Z</kbd> unterstützt, indem man die entsprechenden ASCII-Steuerzeichen in <em>Endtasten</em> einfügt.</p>
@@ -125,7 +125,7 @@ if (ih.Input = StrgC)
 <div class="methodShort" id="Start"><h2>Start</h2>
 <p>Beginnt die Eingabeerfassung.</p>
 <pre class="Syntax">InputHook.<span class="func">Start</span>()</pre>
-<p>Hat keine Wirkung, wenn die Eingabeerfassung bereits aktiv ist.</p>
+<p>Hat keine Wirkung, wenn die Eingabeerfassung bereits im Gange ist.</p>
 <p>Die neu gestartete Eingabeerfassung wird ganz oben auf dem <a href="#stack">InputHook-Stapel</a> platziert, damit diese jede zuvor gestartete Eingabeerfassung überschreiben kann.</p>
 <p>Diese Methode installiert den <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> (falls noch nicht geschehen).</p>
 </div>
@@ -143,7 +143,7 @@ if (ih.Input = StrgC)
 <div class="methodShort" id="Stop"><h2>Stop</h2>
 <p>Beendet die Eingabeerfassung und setzt <a href="#EndReason">EndReason</a> auf das Wort Stopped.</p>
 <pre class="Syntax">InputHook.<span class="func">Stop</span>()</pre>
-<p>Hat keine Wirkung, wenn die Eingabeerfassung inaktiv ist.</p>
+<p>Hat keine Wirkung, wenn die Eingabeerfassung nicht im Gange ist.</p>
 </div>
 
 <div class="methodShort" id="EndKey"><h2>EndKey</h2>
@@ -159,7 +159,7 @@ if (ih.Input = StrgC)
 <pre class="Syntax">Mods := InputHook.EndMods</pre>
 <p>Wenn alle Modifikatoren logisch unten (gedrückt) waren, erhält man die folgende Zeichenkette:</p>
 <pre>&lt;^&gt;^&lt;!&gt;!&lt;+&gt;+&lt;#&gt;#</pre>
-<p>Diese Modifikatoren haben die gleiche Bedeutung wie bei <a href="../Hotkeys.htm">Hotkeys</a>. Jeder Modifikator ist immer mit &lt; (links) oder &gt; (rechts) gekennzeichnet. Die zugehörigen Tastennamen sind: LCtrl, RCtrl, LAlt, RAlt, LShift, RShift, LWin, RWin.</p>
+<p>Diese Modifikatoren haben die gleiche Bedeutung wie  die der <a href="../Hotkeys.htm">Hotkeys</a>. Jeder Modifikator ist immer mit &lt; (links) oder &gt; (rechts) gekennzeichnet. Die zugehörigen Tastennamen sind: LCtrl, RCtrl, LAlt, RAlt, LShift, RShift, LWin, RWin.</p>
 <p>Mit <a href="InStr.htm">InStr</a> kann überprüft werden, ob ein bestimmter Modifikator (z. B. <code>&gt;!</code> oder <code>^</code>) vorhanden ist. Die folgende Zeile kann genutzt werden, um <em>Mods</em> in neutrale Modifikatoren umzuwandeln, wie z. B. <code>^!+#</code>:</p>
 <pre>Mods := RegExReplace(Mods, "[&lt;&gt;](.)(?:&gt;\1)?", "$1")</pre>
 <p>Aufgrund des sehr präzisen Timings ist diese Eigenschaft grundsätzlich zuverlässiger als <a href="GetKeyState.htm">GetKeyState</a>, sogar wenn diese unmittelbar nach Beendigung der Eingabeerfassung oder im <a href="#OnEnd">OnEnd</a>-Callback verwendet wird.</p>
@@ -168,18 +168,18 @@ if (ih.Input = StrgC)
 <div class="methodShort" id="EndReason"><h2>EndReason</h2>
 <p>Gibt eine <a href="#EndReasons">EndReason-Zeichenkette</a> zurück, die angibt, wie die Eingabeerfassung beendet wurde.</p>
 <pre class="Syntax">Grund := InputHook.EndReason</pre>
-<p>Gibt eine leere Zeichenkette zurück, wenn die Eingabeerfassung noch aktiv ist.</p>
+<p>Gibt eine leere Zeichenkette zurück, wenn die Eingabeerfassung noch im Gange ist.</p>
 </div>
 
 <div class="methodShort" id="InProgress"><h2>InProgress</h2>
-<p>Gibt True zurück, wenn die Eingabeerfassung aktiv ist, ansonsten False.</p>
+<p>Gibt True zurück, wenn die Eingabeerfassung im Gange ist, ansonsten False.</p>
 <pre class="Syntax">BoolescherWert := InputHook.InProgress</pre>
 </div>
 
 <div class="methodShort" id="Input"><h2>Input</h2>
 <p>Gibt den erfassten Text seit dem letzten Start der Eingabeerfassung zurück.</p>
 <pre class="Syntax">Zeichenkette := InputHook.Input</pre>
-<p>Diese Eigenschaft kann genutzt werden, während die Eingabeerfassung aktiv ist oder nachdem sie beendet wurde.</p>
+<p>Diese Eigenschaft kann genutzt werden, während die Eingabeerfassung im Gange ist oder nachdem sie beendet wurde.</p>
 </div>
 
 <div class="methodShort" id="Match"><h2>Match</h2>
@@ -266,7 +266,7 @@ if (ih.Input = StrgC)
 <pre class="Syntax">Sekunden := InputHook.Timeout</pre>
 <pre class="Syntax">InputHook.Timeout := Sekunden</pre>
 <p>Typ: <a href="../Concepts.htm#numbers">Float</a>. Standard: 0.0 (kein Timeout). Die <strong>T</strong>-Option setzt auch den Timeout-Wert.</p>
-<p>Die Timeout-Periode beginnt normalerweise mit dem Aufruf von <a href="#Start">Start</a>. Wenn aber diese Eigenschaft während einer aktiven Eingabeerfassung ein Wert zugewiesen bekommt, wird die Timeout-Periode neu gestartet. Wenn die Eingabeerfassung nach Ablauf der Timeout-Periode noch aktiv ist, wird diese beendet und <a href="#EndReason">EndReason</a> auf das Wort Timeout gesetzt.</p>
+<p>Die Timeout-Periode beginnt normalerweise mit dem Aufruf von <a href="#Start">Start</a>. Wenn aber diese Eigenschaft ein Wert zugewiesen bekommt, während die Eingabeerfassung im Gange ist, wird die Timeout-Periode neu gestartet. Wenn die Eingabeerfassung nach Ablauf der Timeout-Periode noch im Gange ist, wird diese beendet und <a href="#EndReason">EndReason</a> auf das Wort Timeout gesetzt.</p>
 </div>
 
 <div class="methodShort" id="VisibleNonText"><h2>VisibleNonText</h2>
@@ -317,14 +317,14 @@ if (ih.Input = StrgC)
   </tr>
   <tr>
     <td></td>
-    <td>Wenn die Eingabeerfassung aktiv ist, ist EndReason leer.</td>
+    <td>Wenn die Eingabeerfassung im Gange ist, ist EndReason leer.</td>
   </tr>
 </table>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die <a href="#Start">Start</a>-Methode kann nur aufgerufen werden, wenn die Eingabeerfassung inaktiv ist.</p>
+<p>Die <a href="#Start">Start</a>-Methode kann nur aufgerufen werden, wenn die Eingabeerfassung nicht im Gange ist.</p>
 <p>InputHook ist so konzipiert, dass verschiedene Teile des Skripts die Eingabe mit geringem Konfliktpotenzial überwachen können. Es kann kontinuierlich laufen, um z. B. auf <a href="#ExSac">willkürliche Wörter</a> oder andere Muster zu reagieren. Es kann auch zeitweise genutzt werden, um z. B. Benutzereingaben zu erfassen oder vorübergehend bestimmte (oder <a href="#ExKeyWaitAny">unbestimmte</a>) Tasten zu überschreiben, ohne Hotkeys zu beeinträchtigen.</p>
-<p>Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> bleiben während einer aktiven Eingabeerfassung wirksam, aber können nicht von Tasten ausgelöst werden, die von der Eingabeerfassung unterdrückt werden.</p>
+<p>Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> bleiben wirksam, während eine Eingabeerfassung im Gange ist, aber können nicht von Tasten ausgelöst werden, die von der Eingabeerfassung unterdrückt werden.</p>
 <p>Tasten werden entweder unterdrückt (blockiert) oder nicht, abhängig von den folgenden Faktoren (in dieser Reihenfolge):</p>
 <ul>
   <li>Wenn die <a href="#KeyOpt-v">V-Option</a> bei diesen VK oder SC  wirksam ist, wird sie nicht unterdrückt.</li>
@@ -332,7 +332,7 @@ if (ih.Input = StrgC)
   <li>Wenn die Taste eine <a href="../KeyList.htm#modifier">Standardmodifikatortaste</a> oder CapsLock, NumLock oder ScrollLock ist, wird sie nicht unterdrückt.</li>
   <li><a href="#VisibleText">VisibleText</a> oder <a href="#VisibleNonText">VisibleNonText</a> wird herangezogen, je nachdem, ob die Taste Text erzeugt oder nicht. Wenn die Eigenschaft False ist, wird die Taste unterdrückt. Informationen darüber, welche Tasten als Texterzeuger eingestuft werden, finden Sie unter <a href="#VisibleText">VisibleText</a>.</li>
 </ul>
-<p>Der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> wird benötigt, während eine Eingabeerfassung aktiv ist, wird aber automatisch deinstalliert, wenn er nach Beendigung der Eingabeerfassung nicht mehr benötigt wird. Der Tastatur-Hook (sofern installiert) bewirkt, dass das Skript vorübergehend <a href="_Persistent.htm">persistent</a> wird; das heißt, dass das Skript nur noch mit <a href="ExitApp.htm">ExitApp</a> beendet werden kann.</p>
+<p>Der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> wird benötigt, während eine Eingabeerfassung im Gange ist, wird aber automatisch deinstalliert, wenn er nach Beendigung der Eingabeerfassung nicht mehr benötigt wird. Der Tastatur-Hook (sofern installiert) bewirkt, dass das Skript vorübergehend <a href="_Persistent.htm">persistent</a> wird; das heißt, dass das Skript nur noch mit <a href="ExitApp.htm">ExitApp</a> beendet werden kann.</p>
 <p>AutoHotkey unterstützt keine Input Method Editors (IME). Der Tastatur-Hook fängt Tastaturereignisse ab und wandelt sie mithilfe von <a href="https://docs.microsoft.com/windows/desktop/api/winuser/nf-winuser-tounicodeex">ToUnicodeEx</a> oder ToAsciiEx in Text um (außer im Falle von <a href="https://docs.microsoft.com/windows/desktop/inputdev/virtual-key-codes#vk_packet">VK_PACKET</a>-Ereignissen, die ein einzelnes Zeichen beinhalten).</p>
 <p>Wenn Sie mehrere Sprachen oder Tastaturlayouts verwenden, greift die Eingabeerfassung auf das Tastaturlayout des aktiven Fensters statt auf die des Skripts zurück (egal ob die Eingabeerfassung <a href="#vis">sichtbar</a> ist oder nicht).</p>
 <p>Trotz ihrer geringeren Flexibilität sind <a href="../Hotstrings.htm">Hotstrings</a> in der Regel einfacher zu bedienen.</p>
@@ -353,7 +353,7 @@ AusgabeVar := ih.Input
 <p><em>Optionen</em> wird gleichermaßen interpretiert, allerdings gibt es Unterschiede bei den Standardeinstellungen:</p>
 <ul>
   <li>Die Input-Funktion limitiert die Länge der Eingabe auf 16383, während InputHook diese auf 1023 limitiert. Dies kann mit der <a href="#option-l">L-Option</a> überschrieben werden (ohne absoluten Maximum).</li>
-  <li>Die Input-Funktion blockiert standardmäßig sowohl Text- als auch Nicht-Text-Tastendrücke, und blockiert keine der beiden, wenn die <a href="Input.htm#vis">V-Option</a> vorhanden ist. InputHook dagegen blockiert standardmäßig nur Text-Tastendrücke (<a href="#VisibleNonText">VisibleNonText</a> ist standardmäßig True), dadurch können die meisten Hotkeys während einer aktiven Eingabeerfassung verwenden werden.</li>
+  <li>Die Input-Funktion blockiert standardmäßig sowohl Text- als auch Nicht-Text-Tastendrücke, und blockiert keine der beiden, wenn die <a href="Input.htm#vis">V-Option</a> vorhanden ist. InputHook dagegen blockiert standardmäßig nur Text-Tastendrücke (<a href="#VisibleNonText">VisibleNonText</a> ist standardmäßig True), dadurch können die meisten Hotkeys verwendet werden, während eine Eingabeerfassung im Gange ist.</li>
 </ul>
 <p>Die Input-Funktion blockiert den <a href="../misc/Threads.htm">Thread</a> während einer aktiven Eingabeerfassung, wohingegen InputHook dem Thread erlaubt, fortzufahren oder sogar beendet zu werden (wodurch jeder von ihm unterbrochene Thread fortgesetzt werden kann). Anstatt zu warten, kann das Skript eine <a href="#OnEnd">OnEnd</a>-Funktion registrieren, die aufgerufen wird, wenn die Eingabeerfassung beendet wird.</p>
 <p>Die Input-Funktion gibt die Eingabe des Benutzers erst zurück, nachdem die Eingabeerfassung beendet wurde, während mit der <a href="Input.htm">Input</a>-Eigenschaft von InputHook die aktuelle Eingabe des Benutzers jederzeit abgerufen werden kann. Anstatt ständig die Input-Eigenschaft zu prüfen, kann das Skript eine <a href="#OnChar">OnChar</a>-Funktion registrieren, die jedes Mal aufgerufen wird, wenn ein Zeichen hinzugefügt wird.</p>
