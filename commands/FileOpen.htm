@@ -151,10 +151,11 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
 </table>
 
 <h2>Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
-<p>Wenn die Datei erfolgreich geöffnet wurde, ist der Rückgabewert eine <a href="../Concepts.htm#references-to-objects">Referenz</a> zu einem neuen <a href="../objects/File.htm">File-Objekt</a>.</p>
-<p>Wenn die Funktion fehlschlägt, wird eine 0 zurückgegeben und <a href="../Variables.htm#LastError">A_LastError</a> auf einen Fehlercode gesetzt.</p>
-<p>Mit <code>if File</code> oder <code>IsObject(File)</code> kann man überprüfen, ob die Funktion erfolgreich war.</p>
+<p>Typ: <a href="../objects/File.htm">File</a></p>
+<p>Der Rückgabewert ist ein neues <a href="../objects/File.htm">File-Objekt</a>, das das offene Handle in der Datei kapselt. Verwenden Sie die Methoden und Eigenschaften dieses Objekts, um auf den Inhalt der Datei zuzugreifen.</p>
+
+<h2 id="Errors">Fehler</h2>
+<p>Wenn die Datei nicht geöffnet werden kann, wird eine <a href="Throw.htm#Exception">Ausnahme</a> ausgelöst. Die <code>Message</code>-Eigenschaft des Exception-Objekts basiert auf dem Fehlercode, der von der <code>Extra</code>-Eigenschaft des Exception-Objekts abgerufen werden kann.</p>
 
 <h2>Bemerkungen</h2>
 <p><a href="../objects/File.htm#ReadLine">File.ReadLine</a> unterstützt immer <code>`n</code>, <code>`r`n</code> und <code>`r</code> als Zeilenenden, allerdings sind sie nicht im Rückgabewert enthalten, egal ob die Optionen <code>`r</code> oder <code>`n</code> benutzt werden oder nicht. Die Optionen haben nur Einfluss auf die Zeilenendenumwandlung innerhalb eines Textes, der von <a href="../objects/File.htm#Read">File.Read</a> zurückgegeben oder von <a href="../objects/File.htm#Write">File.Write</a> oder <a href="../objects/File.htm#WriteLine">File.WriteLine</a> geschrieben wurde.</p>
@@ -171,10 +172,12 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
 <pre>Dateiname := FileSelect("S16",, "Neue Datei erstellen:")
 if (Dateiname = "")
     return
-File := FileOpen(Dateiname, "w")
-if !IsObject(File)
+try
+    File := FileOpen(Dateiname, "w")
+catch Fehler
 {
     MsgBox "Kann '" Dateiname "' nicht zum Schreiben öffnen."
+        . "`n`nFehler " Fehler.Extra ": " Fehler.Message
     return
 }
 TestZeichenkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
@@ -182,10 +185,12 @@ File.Write(TestZeichenkette)
 File.Close()
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
-File := FileOpen(Dateiname, "r-d") <em>; Liest die Datei ("r"), gibt alle Zugriffe außer Löschen ("-d") frei</em>
-if !IsObject(File)
+try
+    File := FileOpen(Dateiname, "r-d") <em>; Liest die Datei ("r"), gibt alle Zugriffe außer Löschen ("-d") frei</em>
+catch
 {
     MsgBox "Kann '" Dateiname "' nicht zum Lesen öffnen."
+        . "`n`nFehler " Fehler.Extra ": " Fehler.Message
     return
 }
 ZuLesendeZeichen := StrLen(TestZeichenkette)

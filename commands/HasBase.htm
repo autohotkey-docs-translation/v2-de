@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>HasBase - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die IsObject-Funktion gibt eine Nummer ungleich 0 zurück, wenn ein bestimmter Wert von einem bestimmten Base-Objekt abgeleitet ist." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>HasBase</h1>
+
+<p>Gibt eine Nummer ungleich 0 zurück, wenn <em>Wert</em> von <em>BaseObj</em> abgeleitet ist.</p>
+
+<pre class="Syntax">HasBase := <span class="func">HasBase</span>(Wert, BaseObj)</pre>
+<h2>Parameter</h2>
+<dl>
+  <dt>Wert</dt>
+  <dd>
+    <p>Ein Wert beliebigen Typs.</p>
+  </dd>
+  <dt>BaseObj</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Das potentielle Base-Objekt, das getestet werden soll.</p>
+  </dd>
+</dl>
+
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolescher Wert)</a></p>
+<p>Diese Funktion gibt True zurück, wenn <em>BaseObj</em> in der Kette von Base-Objekten von <em>Wert</em> ist, ansonsten False.</p>
+
+<h2>Bemerkungen</h2>
+<p>Der folgende Code entspricht in etwa dieser Funktion:</p>
+<pre>MyHasBase(Wert, BaseObj) {
+    b := Wert
+    while b := ObjGetBase(b)
+        if b = BaseObj
+            return true
+    return false
+}</pre>
+<p>Zum Beispiel ist <code>HasBase(Obj, Array.Prototype)</code> True, wenn <em>Obj</em> eine Instanz eines Arrays oder einer abgeleiteten Klasse ist. Dieselbe Prüfung wird von <code>Obj is Array</code> durchgeführt; Instanzen können jedoch auf anderen Instanzen basieren, während <code>is</code> ein Class-Objekt benötigt.</p>
+<p>HasBase akzeptiert sowohl Objekte als auch <a href="../Objects.htm#primitive">primitive Werte</a>. <code>HasBase(1, 0.base)</code> beispielsweise gibt True zurück.</p>
+<p>Da COM-Objekte nicht von einem AutoHotkey-Objekt abgeleitet sind, gibt HasBase immer 0 zurück, wenn ein <a href="ComObject.htm">ComObject</a>-Objekt übergeben wird.</p>
+
+<h2>Siehe auch</h2>
+<p><a href="../Objects.htm">Objekte</a>, <a href="../objects/Object.htm#Base">Obj.Base</a>, <a href="../objects/Any.htm#GetBase">ObjGetBase</a>, <a href="HasMethod.htm">HasMethod</a>, <a href="HasProp.htm">HasProp</a></p>
+
+<h2>Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a></p>
+<pre>
+DasBase := {key: "Wert"}
+Abgeleitet := {base: DasBase}
+MsgBox HasBase(DasBase, Abgeleitet) <em>; 0</em>
+MsgBox HasBase(Abgeleitet, DasBase) <em>; 1</em>
+</pre>
+</div>
+
+</body>
+</html>

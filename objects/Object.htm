@@ -21,7 +21,8 @@
   <li>Ein Base-Objekt, von dem Eigenschaften und Methoden geerbt werden.</li>
 </ul>
 <p>Es gibt Werteigenschaften und dynamische Eigenschaften. Werteigenschaften enthalten lediglich einen Wert. Dynamische Eigenschaften enthalten keinen Wert, sondern rufen stattdessen eine <em>Getter</em>- oder <em>Setter</em>-Funktion auf, wenn sie zugegriffen werden. Der <em>Getter</em> oder <em>Setter</em> kann via abgeleitetes Objekt überschrieben werden (am einfachsten definiert man diese innerhalb einer Klasse).</p>
-<p>Die folgende Dokumentation verwendet <code>Obj</code> als Platzhalter für jede Instanz von Object. Alle Instanzen von Object basieren auf <code>Object.Prototype</code>, von dem die folgenden vordefinierten Methoden und Eigenschaften geerbt werden:</p>
+<p>Die folgende Dokumentation verwendet <code>Obj</code> als Platzhalter für jede Instanz von Object.</p>
+<p>Alle Instanzen von Object basieren auf <code>Object.Prototype</code>, das wiederum auf dem <a href="Any.htm">Any-Prototyp</a> basiert. Zusätzlich zu den Methoden und Eigenschaften, die von Any geerbt werden, haben Object-Objekte die folgenden vordefinierten Methoden und Eigenschaften:</p>
 <p><strong>Methoden:</strong></p>
 <ul>
 	<li><a href="#Clone">Clone</a></li>
@@ -29,13 +30,9 @@
   <li><a href="#DefineProp">DefineProp</a></li>
   <li><a href="#DeleteMethod">DeleteMethod</a></li>
   <li><a href="#DeleteProp">DeleteProp</a></li>
-  <li><a href="#GetMethod">GetMethod</a></li>
   <li><a href="#GetOwnPropDesc">GetOwnPropDesc</a></li>
-  <li><a href="#HasBase">HasBase</a></li>
-  <li><a href="#HasMethod">HasMethod</a></li>
   <li><a href="#HasOwnMethod">HasOwnMethod</a></li>
   <li><a href="#HasOwnProp">HasOwnProp</a></li>
-  <li><a href="#HasProp">HasProp</a></li>
   <li><a href="#OwnMethods">OwnMethods</a></li>
   <li><a href="#OwnProps">OwnProps</a></li>
 </ul>
@@ -45,7 +42,7 @@
 </ul>
 <p><strong>Funktionen:</strong></p>
 <ul>
-	<li><a href="#GetBase">ObjGetBase</a>, <a href="#SetBase">ObjSetBase</a>: Ermittelt oder setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts.</li>
+	<li><a href="#SetBase">ObjSetBase</a>: Setzt das <a href="../Objects.htm#delegation">Base-Objekt</a> des Objekts.</li>
   <li><a href="#GetCapacity">ObjGetCapacity</a>, <a href="#SetCapacity">ObjSetCapacity</a>: Ermittelt oder setzt die Kapazität von Eigenschaften eines Objekts.</li>
   <li><a href="#OwnPropCount">ObjOwnPropCount</a>: Ruft die Anzahl von eigenen Eigenschaften ab, die in einem Objekt enthalten sind.</li>
 	<li>Veraltet: <a href="#RawGet">ObjRawGet</a>, <a href="#RawSet">ObjRawSet</a>: Ermittelt oder setzt die eigene Werteigenschaft eines Objekts, umgeht alle Metafunktionen und überschreibt eventuell Eigenschaften-Accessor-Funktionen.</li>
@@ -128,24 +125,6 @@
 </dl>
 </div>
 
-<div class="methodShort" id="GetMethod"><h2>GetMethod</h2>
-<p>Ruft die Implementierungsfunktion einer Methode ab.</p>
-<pre class="Syntax">Obj.<span class="func">GetMethod</span>(Name)</pre>
-<dl>
-  <dt>Name</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Namen einer Methode.</p>
-  </dd>
-  <dt>Rückgabewert</dt>
-  <dd>
-    <p>Typ: <a href="Functor.htm">Funktionsobjekt</a></p>
-    <p>Die Implementierung der Methode. Dies ist entweder ein <a href="Func.htm">Func</a>-Objekt, das via Klassendefinition erstellt wurde, oder ein Objekt, das zuvor an <a href="#DefineMethod">DefineMethod</a> übergeben wurde.</p>
-  </dd>
-</dl>
-<p>Die Methode kann dem Objekt selbst gehören oder von einem Base-Objekt geerbt werden.</p>
-</div>
-
 <div class="methodShort" id="GetOwnPropDesc"><h2>GetOwnPropDesc</h2>
 <p>Gibt einen Deskriptor für eine bestimmte Eigenschaft zurück, der kompatibel mit <a href="#DefineProp">DefineProp</a> ist.</p>
 <pre class="Syntax">Obj.<span class="func">GetOwnPropDesc</span>(Name)</pre>
@@ -161,6 +140,7 @@
     <p>Ein neues Objekt mit keine oder mehr der folgenden eigenen Eigenschaften:</p>
     <p><code>Get</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Wert der Eigenschaft abgerufen wird, sofern dies in <em>Obj</em> definiert ist.</p>
     <p><code>Set</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Eigenschaft ein Wert zugewiesen wird, sofern dies in <em>Obj</em> definiert ist.</p>
+    <p>Wenn die Eigenschaft eine Werteigenschaft ist, ist der Rückgabewert eine leere Zeichenkette.</p>
   </dd>
 </dl>
 <p>Das Ändern des zurückgegebenen Objekts hat keinen Einfluss auf <em>Obj</em>, es sei denn, <a href="#DefineProp">DefineProp</a> wird aufgerufen.</p>
@@ -174,21 +154,6 @@
 <div class="methodShort" id="HasOwnProp"><h2>HasOwnProp</h2>
 <pre class="Syntax">Obj.<span class="func">HasOwnProp</span>(Name)</pre>
 <p>Gibt True zurück, wenn das Objekt eine Eigenschaft mit diesem Namen besitzt, ansonsten False.</p>
-</div>
-
-<div class="methodShort" id="HasBase"><h2>HasBase</h2>
-<pre class="Syntax">Obj.<span class="func">HasBase</span>(BaseObj)</pre>
-<p>Gibt True zurück, wenn <em>BaseObj</em> ein direktes oder indirektes Base von <em>Obj</em> ist, ansonsten False. Zum Beispiel ist <code>Obj.HasBase(Array.Prototype)</code> True, wenn <em>Obj</em> eine Instanz eines Arrays oder einer abgeleiteten Klasse ist. Dieselbe Prüfung wird von <code>Obj is Array</code> durchgeführt; Instanzen können jedoch auf anderen Instanzen basieren, während <code>is</code> ein Class-Objekt benötigt.</p>
-</div>
-
-<div class="methodShort" id="HasMethod"><h2>HasMethod</h2>
-<pre class="Syntax">Obj.<span class="func">HasMethod</span>(Name)</pre>
-<p>Gibt True zurück, wenn das Objekt eine Methode mit diesem Namen hat, ansonsten False. Die Methode kann dem Objekt selbst gehören oder von einem Base-Objekt geerbt werden.</p>
-</div>
-
-<div class="methodShort" id="HasProp"><h2>HasProp</h2>
-<pre class="Syntax">Obj.<span class="func">HasProp</span>(Name)</pre>
-<p>Gibt True zurück, wenn das Objekt eine Eigenschaft mit diesem Namen hat, ansonsten False. Die Eigenschaft kann dem Objekt selbst gehören oder von einem Base-Objekt geerbt werden.</p>
 </div>
 
 <div class="methodShort" id="OwnMethods"><h2>OwnMethods</h2>
@@ -230,14 +195,14 @@
 <h2>Eigenschaften</h2>
 
 <div class="methodShort" id="Base"><h2>Base</h2>
-<p>Ermittelt oder setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts.</p>
+<p>Ermittelt oder setzt das <a href="../Objects.htm#delegation">Base-Objekt</a> des Objekts.</p>
 <pre class="Syntax">BaseObj := Obj.Base</pre>
 <pre class="Syntax">Obj.Base := BaseObj</pre>
 <p><em>BaseObj</em> muss ein Objekt vom Typ Object sein.</p>
 <p>Wenn die Zuweisung des neuen Base den nativen Typ des Objekts ändern sollte, wird eine Ausnahme ausgelöst. Der native Typ eines Objekts wird vom nächstgelegenen Prototype-Objekt einer internen Klasse bestimmt, wie z. B. <code>Object.Prototype</code> oder <code>Array.Prototype</code>. Zum Beispiel muss eine Instanz eines Arrays immer von <code>Array.Prototype</code> abgeleitet werden, entweder direkt oder indirekt.</p>
-<p></p>
 <p>Eigenschaften und Methoden werden dynamisch vom Base-Objekt geerbt; ändert man also das Base eines Objekts, ändert man gleichzeitig auch die Verfügbarkeit von geerbten Eigenschaften und Methoden.</p>
-<p>Siehe auch: <a href="#GetBase">ObjGetBase</a>, <a href="#SetBase">ObjSetBase</a></p>
+<p>Diese Eigenschaft wurde von <a href="Any.htm">Any</a> geerbt; allerdings kann sie nur für Instanzen eines Object-Objekts gesetzt werden.</p>
+<p>Siehe auch: <a href="Any.htm#GetBase">ObjGetBase</a>, <a href="#SetBase">ObjSetBase</a></p>
 </div>
 
 <h2>Funktionen</h2>
@@ -259,20 +224,12 @@
 <p>Es wird eine Ausnahme ausgelöst, wenn <em>Obj</em> vom falschen Typ ist.</p>
 </div>
 
-<div class="methodShort" id="GetBase"><h2>ObjGetBase</h2>
-<p>Gibt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts zurück.</p>
-<pre class="Syntax">BaseObj := <span class="func">ObjGetBase</span>(Obj)</pre>
-<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Der Aufruf dieser Funktion entspricht dem Aufruf der Standardimplementierung der <a href="#Base">Base</a>-Eigenschaft, auch wenn diese Eigenschaft überschrieben wurde.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em>Obj</em> vom falschen Typ ist.</p>
-<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
-</div>
-
 <div class="methodShort" id="SetBase"><h2>ObjSetBase</h2>
-<p>Setzt das <a href="../Objects.htm#Custom_Objects">Base-Objekt</a> des Objekts.</p>
+<p>Setzt das <a href="../Objects.htm#delegation">Base-Objekt</a> des Objekts.</p>
 <pre class="Syntax"><span class="func">ObjSetBase</span>(Obj, BaseObj)</pre>
-<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Der Aufruf dieser Funktion entspricht dem Aufruf der Standardimplementierung der <a href="#Base">Base</a>-Eigenschaft, auch wenn diese Eigenschaft überschrieben wurde.</p>
+<p>Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Das Überschreiben der <a href="#Base">Base</a>-Eigenschaft hat keinen Einfluss auf das Verhalten dieser Funktion.</p>
 <p>Es wird eine Ausnahme ausgelöst, wenn <em>Obj</em> oder <em>BaseObj</em> vom falschen Typ ist.</p>
-<p>Siehe auch: <a href="#Base">Base-Eigenschaft</a></p>
+<p>Siehe auch: <a href="Any.htm#GetBase">ObjGetBase</a>, <a href="#Base">Base-Eigenschaft</a></p>
 </div>
 
 <div class="methodShort" id="OwnPropCount"><h2>ObjOwnPropCount</h2>

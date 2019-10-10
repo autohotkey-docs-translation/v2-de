@@ -20,7 +20,7 @@ tocData = [
       ["Grundlegende Verwendung","Objects.htm#Usage"],
       ["Erweiterte Verwendung","Objects.htm#Extended_Usage"],
       ["Benutzerdefinierte Objekte","Objects.htm#Custom_Objects"],
-      ["Standard-Base-Objekt","Objects.htm#Default_Base_Object"],
+      ["Primitive Werte","Objects.htm#primitive"],
       ["Implementierung","Objects.htm#Implementation"]
     ]]
   ]],
@@ -61,6 +61,7 @@ tocData = [
     ["Buffer-Objekt","objects/Buffer.htm"],
     ["BufferAlloc","commands/BufferAlloc.htm"],
     ["CallbackCreate","commands/CallbackCreate.htm"],
+    ["ComCall","commands/ComCall.htm"],
     ["DllCall","commands/DllCall.htm"],
     ["NumGet","commands/NumGet.htm"],
     ["NumPut","commands/NumPut.htm"],
@@ -71,6 +72,7 @@ tocData = [
     [
       ["ComObjActive","commands/ComObjActive.htm"],
       ["ComObjArray","commands/ComObjArray.htm"],
+      ["ComCall","commands/ComCall.htm"],
       ["ComObjConnect","commands/ComObjConnect.htm"],
       ["ComObjCreate","commands/ComObjCreate.htm"],
       ["ComObjGet","commands/ComObjGet.htm"],
@@ -114,6 +116,7 @@ tocData = [
     ["IniDelete","commands/IniDelete.htm"],
     ["IniRead","commands/IniRead.htm"],
     ["IniWrite","commands/IniWrite.htm"],
+    ["Lange Pfade","misc/LongPaths.htm"],
     ["Loop Files (und Ordner)","commands/LoopFiles.htm"],
     ["Loop Read (Dateiinhalte)","commands/LoopRead.htm"],
     ["SetWorkingDir","commands/SetWorkingDir.htm"],
@@ -275,10 +278,15 @@ tocData = [
     ["Download","commands/Download.htm"],
     ["Edit","commands/Edit.htm"],
     ["Func","commands/Func.htm"],
+    ["GetMethod","commands/GetMethod.htm"],
+    ["HasBase","commands/HasBase.htm"],
+    ["HasMethod","commands/HasMethod.htm"],
+    ["HasProp","commands/HasProp.htm"],
     ["IsByRef","commands/IsByRef.htm"],
     ["IsFunc","commands/IsFunc.htm"],
     ["IsLabel","commands/IsLabel.htm"],
     ["IsObject","commands/IsObject.htm"],
+    ["IsSet","commands/IsSet.htm"],
     ["ListLines","commands/ListLines.htm"],
     ["ListVars","commands/ListVars.htm"],
     ["OutputDebug","commands/OutputDebug.htm"],
@@ -299,7 +307,8 @@ tocData = [
     ["GuiControl-Objekt","objects/GuiControl.htm"],
     ["Map-Objekt","objects/Map.htm"],
     ["Menu/MenuBar-Objekt","objects/Menu.htm"],
-    ["RegExMatch-Objekt","commands/RegExMatch.htm#MatchObject"]
+    ["RegExMatch-Objekt","commands/RegExMatch.htm#MatchObject"],
+    ["Any-Prototyp","objects/Any.htm"]
   ]],
   ["Prozess","commands/Process.htm",
   [
@@ -466,7 +475,7 @@ tocData = [
   ["#Direktiven","",
   [
     ["#ClipboardTimeout","commands/_ClipboardTimeout.htm"],
-	["#DllLoad","commands/_DllLoad.htm"],
+    ["#DllLoad","commands/_DllLoad.htm"],
     ["#ErrorStdOut","commands/_ErrorStdOut.htm"],
     ["#HotkeyInterval","commands/_HotkeyInterval.htm"],
     ["#HotkeyModifierTimeout","commands/_HotkeyModifierTimeout.htm"],

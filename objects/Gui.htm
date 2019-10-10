@@ -44,7 +44,7 @@
   <li><a href="#Restore">Restore</a>: Macht das Fenster wieder sichtbar und stellt dessen ursprünglichen Zustand wieder her, falls es zuvor minimiert oder maximiert war.</li>
   <li><a href="#SetFont">SetFont</a>: Bestimmt Schriftart, Schriftgröße, Schriftstil und Schriftfarbe für danach erstellte Steuerelemente.</li>
   <li><a href="#Show">Show</a>: Macht das Fenster sichtbar. Kann ein Fenster auch minimieren, maximieren oder verschieben.</li>
-  <li><a href="#Submit">Submit</a>: Speichert die Benutzereingaben und versteckt optional das Fenster.</li>
+  <li><a href="#Submit">Submit</a>: Sammelt die Werte von benannten Steuerelementen und bildet daraus ein <a href="Object.htm">Object</a>-Objekt. Kann optional das Fenster verstecken.</li>
 </ul>
 <p><strong>Allgemeines:</strong></p>
 <ul>
@@ -160,7 +160,7 @@ Gui.Show</pre>
 
 <div class="methodShort" id="Submit">
 <h2>Submit</h2>
-<p>Speichert den Inhalt von allen Steuerelementen in ein <a href="../Objects.htm#Usage_Associative_Arrays">assoziatives Array</a> (Objekt) und gibt es zurück.</p>
+<p>Sammelt die Werte von benannten Steuerelementen und bildet daraus ein <a href="Object.htm">Object</a>-Objekt. Kann optional das Fenster verstecken.</p>
 <pre class="Syntax">InhaltVonBenanntenElementen := Gui.<span class="func">Submit</span>(<span class="optional">Verstecken := True</span>)</pre>
 <dl>
   <dt>Verstecken</dt><dd>
@@ -168,7 +168,7 @@ Gui.Show</pre>
     <p>Wenn dieser Parameter weggelassen wird oder 1 (true) ist, wird das Fenster versteckt. Wenn dieser Parameter 0 (false) ist, wird das Fenster nicht versteckt.</p>
   </dd>
 </dl>
-<p>Das zurückgegebene Array enthält ein Element pro Steuerelement, meist so etwas wie <code>Array[GuiCtrl.<a href="GuiControl.htm#Name">Name</a>] := GuiCtrl.<a href="GuiControl.htm#Value">Value</a></code>, mit den unten genannten Ausnahmen. Es sind nur Steuerelemente enthalten, die eingabefähig sind, <a href="GuiControl.htm#Value">GuiCtrl.Value</a> unterstützen und einen Namen erhalten haben.</p>
+<p>Das zurückgegebene Objekt enthält für jedes benannte Steuerelement eine eigene Eigenschaft, wie <code>InhaltVonBenanntenElementen.%GuiCtrl.<a href="GuiControl.htm#Name">Name</a>% := GuiCtrl.<a href="GuiControl.htm#Value">Value</a></code>, mit den unten genannten Ausnahmen. Es sind nur Steuerelemente enthalten, die eingabefähig sind, <a href="GuiControl.htm#Value">GuiCtrl.Value</a> unterstützen und einen Namen erhalten haben. Nutzen Sie <code>InhaltVonBenanntenElementen.NameDesElements</code>, um einen einzelnen Wert abzurufen, oder <a href="Object.htm#OwnProps">OwnProps</a>, um sie alle zu enumerieren.</p>
 <p>Bei <a href="../commands/GuiControls.htm#DropDownList">DropDownList</a>, <a href="../commands/GuiControls.htm#ComboBox">ComboBox</a>, <a href="../commands/GuiControls.htm#ListBox">ListBox</a> und <a href="../commands/GuiControls.htm#Tab">Tab</a> wird nicht der Text, sondern die Positionsnummer des ausgewählten Listeneintrags/Tabs gespeichert, wenn dem Steuerelement die <a href="#AltSubmit">AltSubmit</a>-Option <strong>fehlt</strong> oder wenn der Text der ComboBox nicht mit einem Listeneintrag übereinstimmt. Ansonsten wird der <a href="GuiControl.htm#Value">Wert</a> (die Positionsnummer des Elements) gespeichert.</p>
 <p id="submit-radio">Wenn jedoch nur einem <a href="../commands/GuiControls.htm#Radio">Radio</a>-Button einer Radio-Gruppe einen Namen zugeordnet wurde, speichert Submit nicht den <a href="GuiControl.htm#Value">Wert</a> des Steuerelements, sondern die Nummer des aktuell eingeschalteten Radio-Buttons. 1 ist der erste Radio-Button (gemäß der originalen Erstellungsreihenfolge), 2 ist der zweite und so weiter. Wenn kein einziger Radio-Button eingeschaltet ist, wird 0 gespeichert.</p>
 <p>Folgende Steuerelemente sind ausgeschlossen, weil sie nicht eingabefähig sind: <a href="../commands/GuiControls.htm#Text">Text</a>, <a href="../commands/GuiControls.htm#Pic">Pic</a>, <a href="../commands/GuiControls.htm#GroupBox">GroupBox</a>, <a href="../commands/GuiControls.htm#Button">Button</a>, <a href="../commands/GuiControls.htm#Progress">Progress</a>, <a href="../commands/GuiControls.htm#Link">Link</a>, <a href="../commands/GuiControls.htm#StatusBar">StatusBar</a>.</p>
@@ -451,11 +451,11 @@ Gui.Show "w300 h200"</pre>
 <p>Geben Sie zwei aufeinanderfolgende Und-Zeichen an, um ein direkt geschriebenes Und-Zeichen in einem der oben genannten Steuerelementen anzuzeigen. Zum Beispiel: <code>Gui.Add("Button",, "Speichern &amp;&amp; Beenden")</code>.</p>
 
 <h2 id="Appear">Fensterdarstellung</h2>
-<p>Ein GUI-Fenster verwendet als Symbol das Tray-Symbol, welches zum Zeitpunkt der Erstellung des Fensters wirksam war. Daher muss, sofern ein anderes Symbol angezeigt werden soll, das Tray-Symbol vor der Erstellung des Fensters geändert werden. Zum Beispiel: <code><a href="../commands/TraySetIcon.htm">TraySetIcon</a>("MeinSymbol.ico")</code>. Es ist auch möglich, ein Fenster mit einem anderen großen Symbol zu versehen (das große Symbol wird im Alt-Tab-Fenster angezeigt). Dazu verwendet man LoadPicture und SendMessage; zum Beispiel:</p>
+<p>Ein GUI-Fenster verwendet als Symbol das Tray-Symbol, welches zum Zeitpunkt der Erstellung des Fensters wirksam war. Daher muss, sofern ein anderes Symbol angezeigt werden soll, das Tray-Symbol vor der Erstellung des Fensters geändert werden. Zum Beispiel: <code><a href="../commands/TraySetIcon.htm">TraySetIcon</a>("MeinSymbol.ico")</code>. Es ist auch möglich, ein Fenster mit einem anderen großen Symbol zu versehen (das große Symbol wird im Alt-Tab-Fenster angezeigt). Dazu verwendet man <a href="../commands/LoadPicture.htm">LoadPicture</a> und <a href="../commands/SendMessage.htm">SendMessage</a>; zum Beispiel:</p>
 <pre>Symbolgröße := 32  <em>; Die ideale Größe für Alt-Tab variiert je nach System und Windows-Version.</em>
-hIcon := <a href="../commands/LoadPicture.htm">LoadPicture</a>("Mein Symbol.ico", "Icon1 w" Symbolgröße " h" Symbolgröße, Bildtyp)
+hIcon := LoadPicture("Mein Symbol.ico", "Icon1 w" Symbolgröße " h" Symbolgröße, Bildtyp)
 Gui := GuiCreate("+LastFound")
-<a href="../commands/SendMessage.htm">SendMessage</a>(0x80, 1, hIcon)  <em>; 0x80 ist WM_SETICON; und 1 bedeutet ICON_BIG (0 wäre ICON_SMALL).</em>
+SendMessage(0x80, 1, hIcon)  <em>; 0x80 ist WM_SETICON; und 1 bedeutet ICON_BIG (0 wäre ICON_SMALL).</em>
 Gui.Show()</pre>
 <p>Aufgrund von Einschränkungen in Windows XP und höher werden CheckBox-, Radio- und GroupBox-Steuerelemente mit benutzerdefinierter Textfarbe im klassischen Design dargestellt.</p>
 <p>Verwandtes Thema: <a href="#MarginX">Margin</a> (Abstände innerhalb eines Fensters).</p>

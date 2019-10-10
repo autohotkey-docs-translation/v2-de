@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Objekte - Definition &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Erfahren Sie mehr über die grundlegende Verwendung von Objekten, die erweiterte Verwendung von Objekten, benutzerdefinierte Objekte, Standard-Base-Objekte und die Implementierung von Objekten." />
+<meta name="description" content="Wie man Objekte verwendet, neue Objekttypen definiert und weitere Einzelheiten darüber, wie Objekte in AutoHotkey funktionieren." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -42,7 +42,7 @@ ul.list_of_p li { margin: 1em 0; }
   <li><a href="#Usage">Grundlegende Verwendung</a> - <a href="#Usage_Simple_Arrays">Arrays</a>, <a href="#Usage_Associative_Arrays">Maps (assoziative Arrays)</a>, <a href="#Usage_Objects">Objekte</a>, <a href="#Usage_Freeing_Objects">Freigeben von Objekten</a></li>
   <li><a href="#Extended_Usage">Erweiterte Verwendung</a> - <a href="#Function_References">Funktionsreferenzen</a>, <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a></li>
   <li><a href="#Custom_Objects">Benutzerdefinierte Objekte</a> - <a href="#creating-a-base-object">Erstellen eines Base-Objekts</a>, <a href="#Custom_Classes">Klassen</a>, <a href="#Custom_NewDelete">Konstruktion und Destruktion</a>, <a href="#Meta_Functions">Metafunktionen</a></li>
-  <li><a href="#Default_Base_Object">Standard-Base-Objekt</a> - <a href="#Automatic_Var_Init">Automatische Variableninitialisierung</a>, <a href="#Pseudo_Properties">Pseudo-Eigenschaften</a>, <a href="#Default__Warn">Debugging</a></li>
+  <li><a href="#primitive">Primitive Werte</a></li>
   <li><a href="#Implementation">Implementierung</a> - <a href="#Reference_Counting">Referenzzählung</a>, <a href="#Implementation_Pointers">Objekt-Pointer</a></li>
 </ul>
 
@@ -110,7 +110,7 @@ For wert in MeinArray
 <p>Einige Eigenschaften können Parameter akzeptieren:</p>
 <pre>Wert := Objekt.Eigenschaft[Parameter]
 Objekt.Eigenschaft[Parameter] := Wert</pre>
-<p>Tatsächlich ruft die Array-Indexierungssyntax <code>MeinArray[Index]</code> eigentlich die <code>__Item</code>-Eigenschaft von <code>MeinArray</code> auf und übergibt <code>Index</code> als Parameter.</p>
+<p>Tatsächlich ruft die Array-Indexierungssyntax <code>MeinArray[Index]</code> eigentlich die <a href="#__Item">__Item</a>-Eigenschaft von <code>MeinArray</code> auf und übergibt <code>Index</code> als Parameter.</p>
 
 <h3 id="Usage_Freeing_Objects">Freigeben von Objekten</h3>
 <p>Skripte geben Objekte nicht explizit frei. Sobald die letzte Referenz zu einem Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Eine Referenz, die in einer Variable gespeichert ist, wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
@@ -181,7 +181,7 @@ Loop Gitter.Breite {
 }
 MsgBox Gittertext
 </pre>
-<p>Ein echtes Skript sollte eine Fehlerprüfung durchführen und andere Methoden wie __Enum überschreiben, um die Enumeration zu unterstützen.</p>
+<p>Ein echtes Skript sollte eine Fehlerprüfung durchführen und andere Methoden überschreiben, wie z. B. <a href="#__Enum">__Enum</a>, um die Enumeration zu unterstützen.</p>
 
 <h2 id="Custom_Objects">Benutzerdefinierte Objekte</h2>
 <p>Es gibt zwei verschiedene Möglichkeiten, benutzerdefinierte Objekte zu erstellen:</p>
@@ -399,10 +399,9 @@ MsgBox obj["base"]                  <em>; 10</em>
 <p class="note"><strong>Hinweis:</strong> Wenn ein expliziter Eigenschaftsname mit leeren eckigen Klammern kombiniert wird, wie in <code>obj.prop[]</code>, wird dies als zwei separate Operationen behandelt: zuerst wird <code>obj.prop</code> abgerufen, danach indirekt die Standardeigenschaft des Ergebnisses aufgerufen. Dies ist Bestandteil der Sprachsyntax und somit objektunabhängig.</p>
 
 <h3 id="Custom_NewDelete">Konstruktion und Destruktion</h3>
-<p>Jedes Mal, wenn ein Objekt via <a href="objects/Class.htm#New"><em>Klassenname</em>.new()</a> oder <code>new</code>-Schlüsselwort erstellt wird, wird dessen <code>__New</code>-Methode aufgerufen, um eine benutzerdefinierte Initialisierung zu ermöglichen. Alle Parameter, die an <code>new</code> übergeben werden, werden an <code>__New</code> weitergeleitet, so dass sie den ursprünglichen Inhalt des Objekts oder die Art und Weise, wie es konstruiert ist, beeinflussen können. Zerstört man ein Objekt, wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
+<p>Jedes Mal, wenn ein Objekt mit der Standardimplementierung von <a href="objects/Class.htm#New"><em>Klassenname</em>.new()</a> erstellt wird, wird die <code>__New</code>-Methode des neuen Objekts aufgerufen, um eine benutzerdefinierte Initialisierung zu ermöglichen. Alle Parameter, die an <code>new</code> übergeben werden, werden an <code>__New</code> weitergeleitet, so dass sie den ursprünglichen Inhalt des Objekts oder die Art und Weise, wie es konstruiert ist, beeinflussen können. Zerstört man ein Objekt, wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
 <pre>m1 := GMem.new(0, 10)
-m2 := new GMem(0, 20)
-m3 := {base: GMem.Prototype}.__New(0, 30)
+m2 := {base: GMem.Prototype}, m2.__New(0, 30)
 
 <em>; Hinweis: Für allgemeine Speicherzuweisungen sollten Sie stattdessen <a href="commands/BufferAlloc.htm">BufferAlloc</a>() verwenden.</em>
 class GMem<span id="GMem"></span>
@@ -413,7 +412,6 @@ class GMem<span id="GMem"></span>
         if !this.ptr
             throw Exception("Nicht genug Speicher")
         MsgBox "New GMem mit einer Größe von " aGröße " Bytes auf der Adresse " this.ptr "."
-        return this  <em>; Diese Zeile wird nur benötigt, wenn __new direkt aufgerufen wird.</em>
     }
 
     __Delete()
@@ -452,76 +450,80 @@ class <i>Klassenname</i> {
   <li><i>Set</i>: Definiere eine neue Eigenschaft mit dem angegebenen Wert, z. B. durch Aufruf von <a href="objects/Object.htm#RawSet">ObjRawSet</a>. </li>
 </ul>
 <p>Es kann ein beliebiges <a href="objects/Functor.htm">aufrufbare Objekt</a> als Metafunktion verwendet werden, indem es an <a href="objects/Object.htm#DefineMethod">DefineMethod</a> übergeben wird.</p>
-<p>Metafunktionen werden nie aufgerufen, wenn der Name der Eigenschaft oder Methode weggelassen wird:</p>
+<p>Metafunktionen werden in den folgenden Fällen nicht aufgerufen:</p>
 <ul>
-  <li>Für <code>x[y]</code> können Sie stattdessen eine <code>__Item</code>-Eigenschaft definieren (sie sollte mindestens einen Parameter akzeptieren).</li>
-  <li>Für <code>%x%()</code> können Sie stattdessen eine <code>__Call</code>-Methode definieren.</li>
+  <li><code>x[y]</code>: Die Verwendung von eckigen Klammern ohne Eigenschaftsnamen ruft nur die <a href="#__Item">__Item</a>-Eigenschaft auf.</li>
+  <li><code>%x%()</code>: Der Aufruf des Objekts selbst ruft nur die <code>Call</code>-Methode auf. Dazu gehören interne Aufrufe von internen Funktionen wie <a href="commands/SetTimer.htm">SetTimer</a> und <a href="commands/Hotkey.htm">Hotkey</a>.</li>
+  <li>Interne Aufrufe von anderen Metafunktionen oder Doppel-Unterstrich-Methoden lösen <code>__Call</code> nicht aus.</li>
 </ul>
 
 <h4 id="Dynamic_Properties">Dynamische Eigenschaften</h4>
 <p>Mit der <a href="#Custom_Classes_property">Eigenschaftssyntax</a> und <a href="objects/Object.htm#DefineProp">DefineProp</a> können Eigenschaften definiert werden, die jedes Mal, wenn sie ausgewertet werden, einen Wert berechnen, allerdings muss jede Eigenschaft im Voraus definiert sein. Mit <em>__Get</em> und <em>__Set</em> können hingegen Eigenschaften implementiert werden, die erst zum Zeitpunkt ihres Aufrufs bekannt sind.</p>
 <p>Zum Beispiel kann ein "Proxy-Objekt" mit Eigenschaften erstellt werden, die den aktuellen Wert über das Netzwerk (oder über einen anderen Kanal) abfragen. Ein Remote-Server sendet eine Antwort zurück, die den Wert der Eigenschaft enthält, und das Proxy-Objekt übergibt den Wert an seinen Aufrufer. Auch wenn der Name jeder Eigenschaft im Voraus bekannt war, wäre es unlogisch, jede Eigenschaft einzeln in der Proxy-Klasse zu definieren, da jede Eigenschaft dasselbe tun würde (eine Netzwerkanfrage senden). Metafunktionen bekommen den Namen der Eigenschaft als Parameter, demzufolge sind sie eine gute Lösung für dieses Problem.</p>
 
-<h2 id="Default_Base_Object">Standard-Base-Objekt</h2>
-<p class="warning"><strong>Hinweis:</strong> Dieser Abschnitt ist veraltet, außerdem wird das Standard-Base-Objekt bald mit spezifischeren Klassen ersetzt.</p>
-<p>Wenn ein objektloser Wert mit der Objektsyntax benutzt wird, wird das <i>Standard-Base-Objekt</i> aufgerufen. Dieses Objekt ist nützlich, um das Skript zu debuggen oder um Zeichenketten, Zahlen und/oder Variablen in globaler Hinsicht ein objektähnliches Verhalten zu geben. Der Zugriff auf das Standard-Base kann nur erfolgen, wenn <code>.base</code> mit irgendeinem objektlosen Wert verwendet wird; zum Beispiel <code>"".base</code>. Obwohl das Standard-Base nicht wie in <code>"".base := Object()</code> <i>gesetzt</i> werden kann, kann es selbst ein Base wie in <code>"".base.base := Object()</code> haben.</p>
+<h2 id="primitive">Primitive Werte</h2>
+<p>Primitive Werte, wie Zeichenketten und Zahlen, können keine eigenen Eigenschaften und Methoden haben. Allerdings unterstützen primitive Werte die gleiche Art von <a href="#delegation">Delegation</a> wie Objekte. Das heißt, dass jede Eigenschaft oder Methode, die einen primitiven Wert aufruft, an das <em>Prototype-Objekt</em>, das dem Typ dieses Wertes entspricht, oder mit anderen Worten das <em>Base-Objekt</em> des Wertes, delegiert wird. Es existieren folgende Prototype-Objekte:</p>
+<ul style="line-height: 1.5">
+  <li>Any  <ul style="padding-left: 1.7em">
+    <li>Primitive  <ul style="padding-left: 1.7em">
+      <li>Number  <ul style="padding-left: 1.7em">
+        <li>Float</li>
+        <li>Integer</li>
+      </ul>
+      </li><li>String</li>
+    </ul>
+  </li></ul>
+</li></ul>
+<p>Allerdings sind diese Objekte derzeit nur über die <code>Base</code>-Eigenschaft eines primitiven Wertes (oder eines abgeleiteten Prototype-Objekts) zugänglich. <a href="objects/Object.htm">Object.Prototype</a> basiert ebenfalls auf dem Any-Prototypen, so dass alle Methoden oder Eigenschaften, die in diesem Prototyp definiert sind, von Werten aller Typen außer ComObject geerbt werden. Ebenso erben alle primitiven Werte von Primitive, und alle Zahlen von Number.</p>
+<p>Obwohl die Überprüfung der <a href="commands/Type.htm">Type</a>-Zeichenkette in der Regel schneller ist, kann der Typ eines Wertes getestet werden, indem überprüft wird, ob der Wert ein Base hat. <code>n.HasBase(0.base.base)</code> beispielsweise ist True, wenn <em>n</em> ein reiner Integer oder eine reine Floating-Point-Zahl ist, aber False, wenn n eine numerische Zeichenkette ist, da der String-Prototyp nicht vom Number-Prototyp ableitet. <code>n is 'number'</code> hingegen ist True, wenn <em>n</em> eine Zahl oder numerische Zeichenkette ist.</p>
+<p>Anstatt über Zahlen und Zeichenketten auf die Prototype-Objekte zu verweisen, kann der folgende Code genutzt werden, um die fehlenden Klassen zu erstellen:</p>
+<pre><em>; Primitive Klassen definieren.</em>
+global Any := Class.new()
+     , Primitive := Class.new()
+     , String := Class.new()
+     , Number := Class.new()
+     , Integer := Class.new()
+     , Float := Class.new()
 
-<h3 id="Automatic_Var_Init">Automatische Variableninitialisierung</h3>
-<p>Wenn eine leere Variable als Ziel einer <i>Set</i>-Operation bestimmt wurde, wird sie direkt an die __Set-Metafunktion übergeben, damit sie ein neues Objekt in die Variable einfügen kann. Aus Platzgründen unterstützt dieses Beispiel nicht mehr als ein Parameter; mit einer <a href="Functions.htm#Variadic">variadischen Funktion</a> wäre das möglich.</p>
-<pre>"".base.__Set := Func("Default_Set_AutomaticVarInit")
+<em>; Hierarchie für primitive Klassen definieren.</em>
+Primitive.base := Any
+  , Number.base := Primitive
+    , Integer.base := Number
+    , Float.base := Number
+  , String.base := Primitive
 
-empty_var.foo := "bar"
-MsgBox empty_var.foo
+<em>; Die vorhandenen Prototype-Objekte einbinden.</em>
+Any.Prototype := (
+    Primitive.Prototype := (
+      Number.Prototype := (
+        Integer.Prototype := 0.base,
+        Float.Prototype := 0.0.base
+      ).base,
+      String.Prototype := "".base
+    ).base
+  ).base
+</pre>
+<p>Der <code>is</code>-Operator kann mit diesen Klassen verwendet werden. <code>n is Number</code> beispielsweise ist äquivalent zu <code>n.HasBase(Number.Prototype)</code>, außer wenn die HasBase-Methode für <em>n</em> überschrieben wurde. Beachten Sie, dass <code>x is Any</code> normalerweise für jeden Wert innerhalb der Typenhierarchie von AutoHotkey True, aber für COM-Objekte False ist.</p>
 
-Default_Set_AutomaticVarInit(ByRef var, key, value)
-{
-    if (var = "")
-        var := Object(key, value)
-    return var
-}</pre>
-
-<h3 id="Pseudo_Properties">Pseudo-Eigenschaften</h3>
-<p>Diese Art von Syntax kann auch auf Zeichenketten und Zahlen angewendet werden.</p>
-<pre>"".base.__Get := Func("Default_Get_PseudoProperty")
-"".base.is    := Func("Default_is")
-
+<h3 id="primitive-extension">Hinzufügen von Eigenschaften und Methoden</h3>
+<p>Eigenschaften und Methoden können für alle Werte eines bestimmten Typs hinzugefügt werden, indem das Prototype-Objekt dieses Typs geändert wird. Da aber ein primitiver Wert kein Object-Objekt ist und keine eigenen Eigenschaften oder Methoden haben kann, können die primitiven Prototype-Objekte nicht von <code>Object.Prototype</code> ableiten. Mit anderen Worten sind Methoden wie <a href="objects/Object.htm#DefineProp">DefineProp</a> und <a href="objects/Object.htm#DefineMethod">DefineMethod</a> standardmäßig nicht zugänglich. Diese können indirekt aufgerufen werden. Zum Beispiel:</p>
+<pre>
+DefProp := {}.GetMethod("DefineProp")
+%DefProp%( "".base, "Length", { get: Func("StrLen") } )
 MsgBox A_AhkPath.length " == " StrLen(A_AhkPath)
-MsgBox A_AhkPath.length.is("int")
-
-Default_Get_PseudoProperty(nonobj, key)
-{
-    if (key = "length")
-        return StrLen(nonobj)
-}
-
-Default_is(nonobj, type)
-{
-    static alias := {int: "integer"}
-    return nonobj is (alias[type] or type)
-}</pre>
-<p>Beachten Sie, dass interne Funktionen auch genutzt werden können, aber in diesem Fall dürfen die runden Klammern nicht weggelassen werden:</p>
-<pre>"".base.length := Func("StrLen")
-MsgBox A_AhkPath.length() " == " StrLen(A_AhkPath)</pre>
-
-<h3 id="Default__Warn">Debuggen</h3>
-<p>Standardmäßig bewirkt der Aufruf eines objektlosen Wertes, dass eine Ausnahme ausgelöst wird. Das folgende Beispiel ändert das Verhalten, so dass eine Warnung angezeigt und dann das Skript fortgesetzt wird:</p>
-<pre>"".base.__Get := "".base.__Set := "".base.__Call := Func("Default__Warn")
-
-empty_var.foo := "bar"
-x := (1 + 1).is("integer")
-
-Default__Warn(nonobj, p1:="", p2:="", p3:="", p4:="")
-{
-    ListLines
-    MsgBox "Ein objektloser Wert wurde unsachgemäß aufgerufen.`n`nSpeziell: " nonobj
-    return "" <em>; Überschreibt das Standardverhalten durch explizites Returning.</em>
-}</pre>
+</pre>
+<p>Obwohl primitive Werte Werteigenschaften von ihrem Prototyp erben können, wird eine Ausnahme ausgelöst, wenn das Skript versucht, eine Werteigenschaft auf einen primitiven Wert zu setzen. Zum Beispiel:</p>
+<pre>"".base.test := 1  <em>; Bitte nicht nachmachen.</em>
+MsgBox "".test  <em>; 1</em>
+"".test := 2  <em>; Fehler: Eigenschaft ist schreibgeschützt.</em></pre>
+<p>Obwohl __Set- und Eigenschaft-Setter genutzt werden können, sind sie nicht nützlich, da primitive Werte als unveränderlich zu betrachten sind.</p>
 
 <h2 id="Implementation">Implementierung</h2>
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
 <p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um automatisch Ressourcen freizugeben, falls ein Objekt nicht länger in einem Skript benötigt bzw. verwiesen wird. Skript-Autoren sollten diesen Mechanismus nicht explizit aufrufen, es sei denn, sie müssen sich direkt mit unverwalteten <a href="#Implementation_Pointers">Objekt-Pointern</a> befassen.</p>
-<p>Temporär zurückgegebene Referenzen von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Dadurch können temporäre Objekte für die Ressourcenverwaltung verwendet werden. Zum Beispiel:</p>
-<pre>MsgBox <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", (new <a href="#GMem">GMem</a>(0, 20)), "ptr")  <em>; 20</em></pre>
+<p>Temporär zurückgegebene Referenzen von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Im folgenden Beispiel wird das neue <a href="#GMem">GMem</a>-Objekt erst nach Durchführung von MsgBox freigegeben:</p>
+<pre>MsgBox <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", GMem.new(0, 20).ptr, "ptr")  <em>; 20</em></pre>
+<p class="note"><strong>Hinweis:</strong> In diesem Beispiel kann <code>.ptr</code> auch weggelassen werden, da der <a href="commands/DllCall.htm#ptr">Ptr</a>-Argumenttyp Objekte mit einer <code>Ptr</code>-Eigenschaft zulässt. Allerdings funktioniert das oben gezeigte Muster auch mit anderen Eigenschaftsnamen.</p>
 <p>Um eine Aktion nach Freigabe der letzten Referenz zu einem Objekt durchzuführen, implementiert man die <a href="#Custom_NewDelete">__Delete</a>-Metafunktion.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>

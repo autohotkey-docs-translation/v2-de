@@ -512,7 +512,7 @@ Gui.Show()
 
 LadeOrdner(ImageListID1, ImageListID2, this, *)
 {
-    static SymbolArray := []
+    static SymbolMap := Map()
     LV := this.Gui["LV"]
     this.Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das folgende Dialogfenster zu schließen, bevor er das Hauptfenster benutzen kann.</em>
     Ordner := DirSelect(, 3, "Wähle einen Ordner aus, das eingelesen werden soll:")
@@ -526,7 +526,7 @@ LadeOrdner(ImageListID1, ImageListID2, this, *)
 
     <em>; Berechnet die notwendige Puffergröße für die SHFILEINFO-Struktur.</em>
     sfi_größe := A_PtrSize + 688
-    VarSetCapacity(sfi, sfi_größe)
+    sfi := BufferAlloc(sfi_größe)
 
     <em>; Sammelt eine Liste mit Dateinamen vom ausgewählten Ordner und fügt sie in die ListView ein:</em>
     LV.Opt("-Redraw")  <em>; Verbessert die Performance durch Deaktivieren der Neuzeichnung während des Ladens.</em>
@@ -557,13 +557,13 @@ LadeOrdner(ImageListID1, ImageListID2, this, *)
             <em>; Überprüft, ob diese Dateiendung bereits ein Symbol in den ImageLists hat. Ist dies der Fall,
             ; können mehrere Aufrufe verhindert werden, was die Lade-Performance deutlich verbessert,
             ; besonders bei einem Ordner mit mehreren hundert Dateien:</em>
-            Symbolnummer := SymbolArray[EndungsID]
+            Symbolnummer := SymbolMap.Has(EndungsID) ? SymbolMap[EndungsID] : 0
         }
         if not Symbolnummer  <em>; Es gibt noch kein Symbol für diese Endung, also wird es geladen.</em>
         {
             <em>; Ermittelt das kleine Symbol in hoher Qualität, das mit dieser Dateiendung verbunden ist:</em>
             if not DllCall("Shell32\SHGetFileInfoW", "Str", Dateiname
-            , "UInt", 0, "Ptr", &amp;sfi, "UInt", sfi_größe, "UInt", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
+            , "Uint", 0, "Ptr", sfi, "UInt", sfi_größe, "UInt", 0x101)  <em>; 0x101 ist SHGFI_ICON+SHGFI_SMALLICON</em>
                 Symbolnummer := 9999999  <em>; Setzt die Nummer außerhalb des gültigen Bereichs, um ein leeres Symbol anzuzeigen.</em>
             else <em>; Symbol erfolgreich geladen.</em>
             {
@@ -576,7 +576,7 @@ LadeOrdner(ImageListID1, ImageListID2, this, *)
                 <em>; Da es nun in die ImageLists kopiert wurde, sollte das Original zerstört werden:</em>
                 DllCall("DestroyIcon", "Ptr", hIcon)
                 <em>; Cacht das Symbol, um Speicher zu sparen und Lade-Performance zu erhöhen:</em>
-                SymbolArray[EndungsID] := Symbolnummer
+                SymbolMap[EndungsID] := Symbolnummer
             }
         }
 

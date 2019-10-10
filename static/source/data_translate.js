@@ -29,7 +29,7 @@ translateData = {
   "Go forward":"Eine Seite vor",
   "Change font size":"Schriftgröße ändern",
   "Print current document":"Aktuelle Seite drucken",
-  "Open Settings":"Einstellungen öffnen",
+  "Open settings":"Einstellungen öffnen",
   "Change to dark/light theme":"Zum dunklen/hellen Farbschema wechseln",
   // ALT+... Tastenkürzel (muss in Großbuchstaben sein)
   "C":"I",

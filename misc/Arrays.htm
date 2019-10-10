@@ -21,59 +21,60 @@
 <p class="note"><strong>Hinweis</strong>: Die folgenden Code-Beispiele zeigen verschiedene Ansätze, die zum gleichen Endergebnis führen.</p>
 
 <h2 id="object-based">Objekt-basierende Arrays</h2>
-<p>Solche Arrays können <a href="../Objects.htm#Usage_Associative_Arrays">assoziative Arrays</a> oder <a href="../Objects.htm#Usage_Simple_Arrays">einfache Arrays</a> sein. Assoziative Arrays werden mit der Object-Funktion oder mit geschweiften Klammern erstellt, während einfache Arrays mit der Array-Funktion oder mit eckigen Klammern erstellt werden. Weitere Informationen finden Sie unter <a href="../Tutorial.htm#s7">AutoHotkey Anfänger-Tutorial</a> oder <a href="../Objects.htm">Objekte</a>.</p>
+<p>Solche Arrays können <a href="../Objects.htm#Usage_Associative_Arrays">assoziative Arrays</a> oder <a href="../Objects.htm#Usage_Simple_Arrays">einfache Arrays</a> sein. Assoziative Arrays werden mit der Map-Funktion erstellt, während einfache Arrays mit der Array-Funktion oder mit eckigen Klammern erstellt werden. Weitere Informationen finden Sie unter <a href="../Tutorial.htm#s7">AutoHotkey Anfänger-Tutorial</a> oder <a href="../Objects.htm">Objekte</a>.</p>
 
 <p>Das folgende Beispiel zeigt die Verwendung eines einfachen Arrays:</p>
 <pre><em>; Erstellt ein Array, das zunächst leer ist:</em>
-Array := [] <em>; oder Array := Array()</em>
+MeinArray := [] <em>; oder MeinArray := Array()</em>
 
 <em>; Schreibt in das Array:</em>
 Loop Read A_WinDir "\system.ini" <em>; Diese Schleife ruft jede Zeile der Datei einzeln ab.</em>
 {
-    Array.Push(A_LoopReadLine) <em>; Fügt diese Zeile ans Array an.</em>
+    MeinArray.Push(A_LoopReadLine) <em>; Fügt diese Zeile ans Array an.</em>
 }
 
 <em>; Liest vom Array:
-; Loop Array.Length()   ; Traditionellerer Ansatz.</em>
-for index, element in Array <em>; Enumeration ist in den meisten Fällen empfohlen.</em>
+; Loop MeinArray.Length   ; Traditionellerer Ansatz.</em>
+for index, element in MeinArray <em>; Enumeration ist in den meisten Fällen empfohlen.</em>
 {
     <em>; Beim Verwenden von "Loop" müssen die Indexe fortlaufende Nummern von 1 bis zur Anzahl
     ; der Elemente im Array sein (oder sie müssen innerhalb der Schleife berechnet werden).
-    ; MsgBox "Elementnummer " . A_Index . " ist " . Array[A_Index]
+    ; MsgBox "Elementnummer " . A_Index . " ist " . MeinArray[A_Index]
 
     ; Beim Verwenden von "for" werden sowohl der Index (oder "Key") als auch dessen Wert
     ; bereitgestellt, wobei der Index ein *beliebiger* Wert sein kann.</em>
     MsgBox "Elementnummer " . index . " ist " . element
 }</pre>
-<p>Damit wird nur ein kleiner Teil der <a href="../Objects.htm">Objekt</a>-<a href="../objects/Object.htm">Funktionalität</a> angezeigt. Elemente können gesetzt, abgerufen, eingefügt, entfernt und enumeriert werden. Neben Zahlen können auch Zeichenketten und Objekte als Keys verwendet werden. Objekte können als Werte in andere Objekte gespeichert und als Funktionsparameter oder Rückgabewerte übergeben werden. Zudem können Objekte mit neuer Funktionalität <a href="../Objects.htm#Custom_Objects">erweitert</a> werden.</p>
+<p>Dies zeigt nur ein kleiner Teil der <a href="../objects/Array.htm">Funktionalität</a> von einfachen Arrays (oder die <a href="../objects/Map.htm">Funktionalität</a> von assoziativen Arrays, auch bekannt als Map-Objekte). Elemente können gesetzt, abgerufen, eingefügt, entfernt und enumeriert werden. Neben Zahlen können auch Zeichenketten und Objekte beliebigen Typs als Keys verwendet werden. Objekte können als Werte in andere Objekte gespeichert und als Funktionsparameter oder Rückgabewerte übergeben werden. Zudem können Objekte mit neuer Funktionalität <a href="../Objects.htm#Custom_Objects">erweitert</a> werden.</p>
 <p>Obwohl Push() und Enumeratoren ihren Nutzen haben, finden es einige Benutzer einfacher, den traditionelleren Ansatz zu verwenden (die auskommentierten Zeilen sind die entsprechenden Counterparts, die die unten beschriebenen <a href="#pseudo">Pseudo-Arrays</a> verwenden):</p>
 <pre>
 <em>; Jedes Array muss vorher initialisiert werden:</em>
-Array := []
+MeinMap := Map()
 
-<em>; Array%j% := A_LoopField</em>
-Array[j] := A_LoopField
+<em>; MeinMap%j% := A_LoopField</em>
+MeinMap[j] := A_LoopField
 
-<em>; Array%j%_%k% := A_LoopReadLine</em>
-Array[j, k] := A_LoopReadLine
+<em>; MeinMap%j%_%k% := A_LoopReadLine</em>
+MeinMap[j] := Map()
+MeinMap[j][k] := A_LoopReadLine
 
-ArrayAnzahl := 0
+MeinMapLänge := 0
 Loop Read A_WinDir "\system.ini"
 {
-    ArrayAnzahl += 1
-    <em>; Array%ArrayAnzahl% := A_LoopReadLine</em>
-    Array[ArrayAnzahl] := A_LoopReadLine
+    MeinMapLänge += 1
+    <em>; MeinMap%MeinMapLänge% := A_LoopReadLine</em>
+    MeinMap[MeinMapLänge] := A_LoopReadLine
 }
 
-Loop ArrayAnzahl
+Loop MeinMapLänge
 {
-    <em>; Element := Array%A_Index%</em>
-    Element := Array[A_Index]
-    <em>; MsgBox "Elementnummer " . A_Index . " ist " . Array%A_Index%</em>
-    MsgBox "Elementnummer " . A_Index . " ist " . Array[A_Index]
+    <em>; Element := MeinMap%A_Index%</em>
+    Element := MeinMap[A_Index]
+    <em>; MsgBox "Elementnummer " . A_Index . " ist " . MeinMap%A_Index%</em>
+    MsgBox "Elementnummer " . A_Index . " ist " . MeinMap[A_Index]
 }
 </pre>
-<p><i>ArrayAnzahl</i> bleibt aus Bequemlichkeit eine Variable, die aber mit <code>Array.Anzahl := <i>n</i></code> in das Array selbst gespeichert oder mit <code>Array.<a href="../objects/Object.htm#MinMaxIndex">MaxIndex</a>()</code> ersetzt werden kann. Falls der Index nicht mit 1 beginnen soll, dann könnte auch <code>Array.<a href="../objects/Object.htm#MinMaxIndex">MinIndex</a>()</code> verwendet werden.</p>
+<p><i>MeinMapLänge</i> bleibt aus Bequemlichkeit eine Variable, die aber mit <code>MeinMap.Length := <i>n</i></code> in das Array selbst gespeichert oder mit <code>MeinMap.<a href="../objects/Map.htm#Count">Count</a></code> ersetzt werden kann.</p>
 
 <h2 id="pseudo">Pseudo-Arrays</h2>
   <p class="note"><strong>Hinweis</strong>: Verwenden Sie nach Möglichkeit immer das oben erwähnte Objekt-basierende Array. Es ist einem Pseudo-Array in fast allen Aspekten überlegen: Es ist platzsparend, flexibler, übersichtlicher und ähnelt vielen anderen Programmiersprachen.</p>
