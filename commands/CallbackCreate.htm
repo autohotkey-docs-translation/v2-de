@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>CallbackCreate - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die CallbackCreate-Funktion erstellt eine Maschinencode-Adresse, die ihren Aufruf an eine Funktion im Skript weiterleitet." />
+<meta name="description" content="Die CallbackCreate-Funktion erstellt eine Maschinencode-Adresse, die, wenn aufgerufen, den Aufruf an eine Funktion im Skript weiterleitet." />
 <meta name="ahk:equiv-v1" content="commands/RegisterCallback.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,7 +15,7 @@
 
 <h1>CallbackCreate</h1>
 
-<p>Erstellt eine Maschinencode-Adresse, die ihren Aufruf an eine <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
+<p>Erstellt eine Maschinencode-Adresse, die, wenn aufgerufen, den Aufruf an eine <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
 <pre class="Syntax">Adresse := <span class="func">CallbackCreate</span>(Funktion <span class="optional">, Optionen := "", ParamAnzahl := Funktion.MinParams</span>)</pre>
 <h2>Parameter</h2>
@@ -24,7 +24,7 @@
   <dt>Funktion</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
-    <p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>. Diese Funktion wird automatisch aufgerufen, wann immer die <em>Adresse</em> aufgerufen wird. Die Funktion empfängt auch die Parameter, die an die <em>Adresse</em> übergeben wurden.</p>
+    <p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>. Diese Funktion wird jedes Mal automatisch aufgerufen, wenn <em>Adresse</em> aufgerufen wird. Die Funktion erhält auch die Parameter, die an <em>Adresse</em> übergeben wurden.</p>
     <p>Ein <a href="../Functions.htm#closures">Closure</a> oder <a href="../objects/Functor.htm#BoundFunc">Bound-Funktion</a> kann genutzt werden, um zwischen mehreren Callbacks zu unterscheiden, die alle die gleiche Skript-Funktion aufrufen.</p>
     <p>Das Callback reserviert für sich selbst eine Referenz zum Funktionsobjekt und gibt sie frei, wenn das Skript <a href="#CallbackFree">CallbackFree</a> aufruft.</p>
   </dd>
@@ -32,16 +32,16 @@
   <dt>Optionen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Geben Sie null oder mehrere der folgenden Wörter oder Zeichen an. Trennen Sie diese Optionen jeweils mit einem Leerzeichen (z.B. <code>"C Fast"</code>).</p>
-    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass jedes Mal ein neuer <a href="../misc/Threads.htm">Thread</a> startet, wenn <em>Funktionsname</em> aufgerufen wird. Zwar ist dies leistungsfähiger, allerdings sollte es nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wurde, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Denn <em>Funktionsname</em> kann globale Einstellungen eines Threads wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> jederzeit ändern. Weitere Informationen finden Sie bei den <a href="#Threads">Bemerkungen</a>.</p>
-    <p><strong>CDecl</strong> oder <strong>C</strong>: Passt die <em>Adresse</em> an die "C"-Aufrufkonvention an. Diese Option lässt man üblicherweise weg, weil die Standard-Aufrufkonvention in der Regel für Callbacks genügt. 64-Bit-Versionen von AutoHotkey, die die x64-Aufrufkonvention verwenden, ignorieren diese Option.</p>
+    <p>Geben Sie keine oder mehr der folgenden Wörter oder Zeichen an. Trennen Sie diese Optionen jeweils mit einem Leerzeichen (z.B. <code>"C Fast"</code>).</p>
+    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass bei jedem Aufruf von <em>Funktionsname</em> ein neuer <a href="../misc/Threads.htm">Thread</a> gestartet wird. Trotz der daraus resultierenden höheren Performance sollte diese Option nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wird, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Der Grund dafür ist, dass <em>Funktionsname</em> in der Lage sein wird, globale Einstellungen wie <a href="../misc/ErrorLevel.htm">ErrorLevel</a>, <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> eines Threads zu ändern, der zum Zeitpunkt des Aufrufs aktiv war. Weitere Informationen finden Sie unter <a href="#Threads">Bemerkungen</a>.</p>
+    <p><strong>CDecl</strong> oder <strong>C</strong>: Macht <em>Adresse</em> konform mit der "C"-Aufrufkonvention. Diese Option lässt man üblicherweise weg, weil die meisten Callbacks die Standardaufrufkonvention verwenden. 64-Bit-Versionen von AutoHotkey, die die x64-Aufrufkonvention verwenden, ignorieren diese Option.</p>
     <p><strong>&amp;</strong>: Bewirkt, dass die Parameter nicht einzeln, sondern als Parameterliste in Form einer Adresse (ein einzelner Integer) an <em>Funktion</em> übergeben wird. Parameterwerte können mithilfe von <a href="NumGet.htm">NumGet</a> abgerufen werden. Wenn man die standardmäßige 32-Bit-Aufrufkonvention verwendet, muss <em>ParamAnzahl</em> die Größe der Parameterliste als DWORDs spezifizieren (die Anzahl der Bytes geteilt durch 4).</p>
   </dd>
 
   <dt>ParamAnzahl</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die Anzahl der Parameter, die <em>Adresse</em>'s Aufrufer übergeben muss. Lässt man diesen Parameter weg, wird standardmäßig <code><i>Funktion</i>.<a href="../objects/Func.htm#MinParams">MinParams</a></code> verwendet, das üblicherweise der Anzahl von Pflichtparametern entspricht, die in der <a href="../Functions.htm#define">Definition</a> der <em>Funktion</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p>
+    <p>Die Anzahl der Parameter, die der Aufrufer von <em>Adresse</em> übergeben muss. Lässt man diesen Parameter weg, wird standardmäßig <code><i>Funktion</i>.<a href="../objects/Func.htm#MinParams">MinParams</a></code> verwendet, das üblicherweise der Anzahl von Pflichtparametern entspricht, die in der <a href="../Functions.htm#define">Definition</a> der <em>Funktion</em> angegeben sind. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p>
   </dd>
 
 </dl>
@@ -53,37 +53,37 @@
 <h2 id="failure">Misserfolg</h2>
 <p>Diese Funktion scheitert und löst eine Ausnahme unter folgenden Bedingungen aus:</p>
 <ul>
-  <li><em>Funktion</em> kein Objekt oder kein gültiger Funktionsname ist.</li>
-  <li><em>Funktion</em> eine <code>MinParams</code>-Eigenschaft hat, die die Anzahl der vom Callback bereitgestellten Parameter überschreitet.</li>
-  <li><em>ParamAnzahl</em> negativ ist.</li>
-  <li><em>ParamAnzahl</em> weggelassen wird und: 1) <em>Funktion</em> keine <code>MinParams</code>-Eigenschaft hat; oder 2) die <code>&amp;</code>-Option in Verbindung mit der standardmäßigen 32-Bit-Aufrufkonvention genutzt wird.</li>
+  <li><em>Funktion</em> ist kein Objekt oder kein gültiger Funktionsname.</li>
+  <li><em>Funktion</em> hat eine <code>MinParams</code>-Eigenschaft, die die Anzahl der vom Callback bereitgestellten Parameter überschreitet.</li>
+  <li><em>ParamAnzahl</em> ist negativ.</li>
+  <li><em>ParamAnzahl</em> wird weggelassen und: 1) <em>Funktion</em> hat keine <code>MinParams</code>-Eigenschaft; oder 2) die <code>&amp;</code>-Option wird in Verbindung mit der standardmäßigen 32-Bit-Aufrufkonvention genutzt.</li>
 </ul>
 
 <h2>Die Parameter der Callback-Funktion</h2>
-<p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen ist, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt, so dass die Funktion von mehr als einem Aufrufer aufgerufen werden kann.</p>
-<p>Das richtige Interpretieren von Parametern erfordert ein gutes Verständnis darüber, wie die x86-Aufrufkonvention funktioniert. Da Autohotkey keine typisierten Parameter besitzt, besteht Callback's Parameterliste voraussichtlich aus Integern, von denen einige neuinterpretiert werden müssen.</p>
+<p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen wurde, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt; dies ist nützlich, wenn die Funktion von mehr als einem Aufrufer aufgerufen wird.</p>
+<p>Die korrekte Interpretation der Parameter erfordert ein gewisses Verständnis dafür, wie die x86-Aufrufkonventionen funktionieren. Da Autohotkey keine typisierten Parameter besitzt, wird davon ausgegangen, dass die Parameterliste des Callbacks aus Integern besteht und dass einige Neuinterpretationen gemacht werden müssen.</p>
 
-<p><strong>AutoHotkey 32-bit:</strong> Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Kleinere Typen werden auf 32 Bit erweitert, während größere Typen in mehreren 32-Bit-Parametern aufgeteilt werden.</p>
+<p><strong>AutoHotkey 32-Bit:</strong> Alle eingehenden Parameter sind vorzeichenlose 32-Bit-Integer. Kleinere Typen werden auf 32 Bit erweitert, während größere Typen in mehreren 32-Bit-Parametern aufgeteilt werden.</p>
 <p>Wenn ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen mit einem der folgenden Beispiele offenbart werden:</p>
 <pre><em>; Methode #1</em>
 if (wParam &gt; 0x7FFFFFFF)
     wParam := -(~wParam) - 1
 
-<em>; Methode #2: Beruht auf der Tatsache, dass AutoHotkey von sich aus vorzeichenfähige 64-Bit-Integer verwendet.</em>
+<em>; Methode #2: Verlässt sich auf die Tatsache, dass AutoHotkey von sich aus vorzeichenfähige 64-Bit-Integer verwendet.</em>
 wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 
-<p><strong>AutoHotkey 64-bit:</strong> Alle eingehenden Parameter sind vorzeichenfähige 64-Bit-Integer. AutoHotkey unterstützt von sich aus keine vorzeichenlose 64-Bit-Integers. Kleinere Typen werden auf 64 Bit erweitert, während größere Typen immer via Adresse übergeben werden.</p>
+<p><strong>AutoHotkey 64-Bit:</strong> Alle eingehenden Parameter sind vorzeichenfähige 64-Bit-Integer. AutoHotkey unterstützt von sich aus keine vorzeichenlose 64-Bit-Integers. Kleinere Typen werden auf 64 Bit erweitert, während größere Typen immer via Adresse übergeben werden.</p>
 
-<p><strong>AutoHotkey 32-bit/64-bit:</strong> Wenn ein eingehender Parameter als 8-Bit- oder 16-Bit-Wert (oder 32-Bit in x64) vorgesehen ist, kann es passieren, dass die höheren Bits des Wertes "Müll" enthalten - so etwas könnte man mithilfe des bitweisen UNDs herausfiltern:</p>
+<p><strong>AutoHotkey 32-Bit/64-Bit:</strong> Wenn ein eingehender Parameter als 8-Bit- oder 16-Bit-Wert (oder 32-Bit in x64) vorgesehen ist, sind die höheren Bits des Wertes willkürlich gesetzt - um diese herauszufiltern, können Sie wie folgt das bitweise UND nutzen:</p>
 <pre>Callback(UCharParam, UShortParam, UIntParam) {
     UCharParam &amp;= 0xFF
     UShortParam &amp;= 0xFFFF
     UIntParam &amp;= 0xFFFFFFFF
     <em>;...</em>
 }</pre>
-<p>Wenn ein eingehender Parameter als Zeichenkette vorgesehen ist, dann ist das, was aktuell empfangen wird, die aktuelle Adresse der Zeichenkette. Mit <a href="StrGet.htm">StrGet</a> kann die Zeichenkette selbst abgerufen werden:</p>
+<p>Wenn ein eingehender Parameter von seinem Aufrufer als Zeichenkette vorgesehen ist, dann ist das, was tatsächlich ankommt, die Adresse der Zeichenkette. Mit <a href="StrGet.htm">StrGet</a> kann die Zeichenkette selbst abgerufen werden:</p>
 <pre>MeineZeichenkette := StrGet(MeinParameter)</pre>
-<p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, kann man die einzelnen Elemente durch Befolgen der Schritte in "<a href="DllCall.htm#struct">DllCall-Strukturen</a>" extrahieren.</p>
+<p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, können die einzelnen Elemente durch Befolgen der Schritte in <a href="DllCall.htm#struct">DllCall-Strukturen</a> extrahiert werden.</p>
 
 <p id="Indirect"><strong>Parameter via Adresse abrufen:</strong> Wenn die <code>&amp;</code>-Option genutzt wird, erhält die Funktion die <i>Adresse</i> des ersten Callback-Parameters. Zum Beispiel:</p>
 <pre>
@@ -92,23 +92,23 @@ DllCall(callback, "float", 10.5, "int64", 42)
 DieFunk(params) {
     MsgBox <a href="NumGet.htm">NumGet</a>(params+0, "float") ", " NumGet(params+A_PtrSize, "int64")
 }</pre>
-<p>Die meisten Callbacks in 32-Bit-Programmen verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl an Parametern voraussetzt. In solchen Fällen muss <em>ParamAnzahl</em> auf die Größe der Parameterliste gesetzt werden, wo Int64 und Double als zwei 32-Bit-Parameter zählen. Beim Verwenden von <em>Cdecl</em> oder der 64-Bit-Aufrufkonvention hat <em>ParamAnzahl</em> keine Wirkung.</p>
+<p>Die meisten Callbacks in 32-Bit-Programmen verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl von Parametern voraussetzt. In solchen Fällen muss <em>ParamAnzahl</em> auf die Größe der Parameterliste gesetzt werden, wobei Int64 und Double als zwei 32-Bit-Parameter zählen. Bei <em>Cdecl</em>- oder 64-Bit-Aufrufkonventionen hat <em>ParamAnzahl</em> keine Wirkung.</p>
 
 <h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
-<p>Wenn die Funktion ein <a href="Return.htm">Return</a> ohne Parameter verwendet oder einen leeren Wert wie "" zurückgibt (oder überhaupt kein Return verwendet), wird eine 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-bit kürzt Rückgabewerte auf 32 Bit, während AutoHotkey 64-bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
+<p>Wenn die Funktion ein <a href="Return.htm">Return</a> ohne Parameter verwendet oder einen leeren Wert wie "" zurückgibt (oder überhaupt kein Return verwendet), wird 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-Bit kürzt Rückgabewerte auf das 32-Bit-Format, während AutoHotkey 64-Bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
 
 <h2 id="Threads">Fast vs. Slow</h2>
 <p>Der Standard/Slow-Modus bewirkt, dass die Funktion zu Beginn die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a> und <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> verwendet. Diese Standardwerte können im <a href="../Scripts.htm#auto">automatischen Ausführungsbereich</a> geändert werden.</p>
-<p>Der <a href="#Fast">Fast-Modus</a> erbt hingegen die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Desweiteren werden jegliche Änderungen, die die Funktion bei globalen Einstellungen gemacht hat (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>), auch für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn bekannt ist, in welchen Threads die Funktion aufgerufen wird.</p>
-<p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), fügt man <a href="Critical.htm">Critical</a> in die erste Zeile ein. Allerdings ist dies nicht effektiv, wenn die Funktion indirekt via eingehende Meldung kleiner als 0x312 aufgerufen wird (das Erhöhen von Critical's <a href="Critical.htm#Interval">Intervall</a> könnte helfen). Desweiteren kann <a href="Critical.htm">Critical</a> die Funktion nicht daran zu hindern, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. durch <a href="SendMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
+<p>Der <a href="#Fast">Fast-Modus</a> hingegen erbt die globalen Einstellungen von einem <a href="../misc/Threads.htm">Thread</a>, der zum Zeitpunkt des Funktionsaufrufs aktiv war. Darüber hinaus werden jegliche Änderungen, die die Funktion an den globalen Einstellungen (einschließlich <a href="../misc/ErrorLevel.htm">ErrorLevel</a> und dem <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundenen Fenster</a>) vornimmt, für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam. Demzufolge sollte der Fast-Modus nur verwendet werden, wenn genau bekannt ist, in welchem oder welchen Threads die Funktion aufgerufen wird.</p>
+<p>Um zu verhindern, dass ein Callback sich selbst unterbricht (oder von einem anderen Thread unterbrochen wird), können Sie <a href="Critical.htm">Critical</a> in die erste Zeile einfügen. Allerdings ist diese Vorgehensweise nicht besonders effektiv, wenn die Funktion indirekt über eine eingehende Meldung kleiner als 0x312 aufgerufen wird (das <a href="Critical.htm#Interval">Intervall</a> von Critical zu erhöhen könnte hierbei helfen). Darüber hinaus hindert <a href="Critical.htm">Critical</a> die Funktion nicht daran, etwas zu tun, das zum indirekten Selbstaufruf führen könnte, wie z. B. der Aufruf von <a href="SendMessage.htm">SendMessage</a> oder <a href="DllCall.htm">DllCall</a>.</p>
 
 <h2 id="CallbackFree">Speicher</h2>
-<p>Jede Verwendung von CallbackCreate bekommt eine kleine Speichermenge zugewiesen (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl an Callbacks zugewiesen bekommt, den Speicher nicht explizit freigegeben. Dagegen sollte ein Skript, das CallbackCreate unendlich oft aufruft, folgende Funktion bei jedem unbenutzten Callback aufrufen:</p>
+<p>Jedes Mal, wenn CallbackCreate verwendet wird, wird eine kleine Menge an Speicher beansprucht (32 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch beim Beenden des Skripts freigibt, muss jedes Skript, das eine kleine <em>feste</em> Anzahl von Callbacks beansprucht, den Speicher nicht explizit freigegeben. Ein Skript hingegen, das CallbackCreate unbestimmt/unbegrenzt oft aufruft, sollte folgende Anweisung bei jedem unbenutzten Callback aufrufen:</p>
 <pre>CallbackFree(Adresse)</pre>
 <p>Dadurch wird auch sichergestellt, dass Callback's Referenz zum Funktionsobjekt des Skripts freigegeben wird.</p>
 
 <h2>Siehe auch</h2>
-<p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort's Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
+<p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort-Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
 <h2>Beispiele</h2>
 <div class="ex" id="ExWinList">
