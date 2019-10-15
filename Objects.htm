@@ -236,7 +236,7 @@ anderesObj.test()</pre>
 <p>Allgemein ausgedrückt ist eine <em>Klasse</em> eine Gruppe oder Kategorie von Dingen, die Eigenschaften oder Attribute gemeinsam nutzen. In AutoHotkey definiert <code>class</code> Eigenschaften und Methoden, die von Instanzen der Klasse gemeinsam genutzt werden sollen. Eine <em>Instanz</em> ist nur ein Objekt, das Eigenschaften und Methoden von der Klasse erbt und typischerweise auch als Teil dieser Klasse verstanden werden kann (z. B. mit dem Ausdruck <code><i>Instanz</i> is <i>Klassenname</i></code>). Instanzen werden typischerweise durch den Aufruf von <a href="objects/Class.htm#New"><em>Klassenname</em>.new()</a> erzeugt.</p>
 <p>Da ein von <a href="objects/Object.htm">Object</a> abgeleitetes Objekt <a href="#ad-hoc">dynamisch</a> und <a href="#delegation">prototypenbasiert</a> ist, besteht jede Klasse aus zwei Teilen:</p>
 <ul>
-  <li>Die Klasse hat ein <a href="objects/Class.htm#Prototype">Prototype</a>-Objekt, auf dem alle Instanzen der Klasse basieren. Alle Methoden und Eigenschaften, die sich auf eine bestimmte Instanz beziehen, sind im Prototype-Objekt enthalten. Dazu gehören alle Eigenschaften und Methoden, denen das Schlüsselwort <code>static</code> fehlt.</li>
+  <li>Die Klasse hat ein <a href="objects/Class.htm#Prototype">Prototyp</a>-Objekt, auf dem alle Instanzen der Klasse basieren. Alle Methoden und Eigenschaften, die sich auf eine bestimmte Instanz beziehen, sind im Prototypobjekt enthalten. Dazu gehören alle Eigenschaften und Methoden, denen das Schlüsselwort <code>static</code> fehlt.</li>
   <li>Die Klasse selbst ist ein Objekt, das nur statische Methoden und Eigenschaften enthält. Dazu gehören alle Eigenschaften und Methoden mit dem Schlüsselwort <code>static</code> und alle verschachtelten Klassen. Diese gelten nicht für eine bestimmte Instanz und können verwendet werden, indem man via Name auf die Klasse selbst verweist.</li>
 </ul>
 <p>Das Folgende zeigt die meisten Elemente einer Klassendefinition:</p>
@@ -420,7 +420,7 @@ class GMem<span id="GMem"></span>
         DllCall("GlobalFree", "Ptr", this.ptr)
     }
 }</pre>
-<p>__Delete wird nicht bei Objekten aufgerufen, die eine Eigenschaft namens "__Class" besitzen. <a href="objects/Class.htm#Prototype">Prototype-Objekte</a> haben standardmäßig diese Eigenschaft.</p>
+<p>__Delete wird nicht bei Objekten aufgerufen, die eine Eigenschaft namens "__Class" besitzen. <a href="objects/Class.htm#Prototype">Prototypobjekte</a> haben standardmäßig diese Eigenschaft.</p>
 <p>Wenn eine Ausnahme oder ein Laufzeitfehler ausgelöst wird, während __Delete ausgeführt wird, und nicht innerhalb von __Delete behandelt wird, verhält es sich so, als wäre __Delete von einem neuen <a href="misc/Threads.htm">Thread</a> aufgerufen wurden. Das heißt, dass ein Fehlerdialogfenster angezeigt und __Delete durchgeführt wird, aber der Thread nicht beendet wird (es sei denn, er wurde bereits beendet).</p>
 <p>Jede Klasse kann auch eine <code>static __New</code>-Methode haben, die unmittelbar nach Initialisierung ihrer <a href="#Custom_Classes_staticvar">statischen Variablen</a> aufgerufen wird (dies geschieht der Reihenfolge nach, wie die Klassen im Skript definiert sind). Diese Methode kann von einer Base-Klasse geerbt und daher zum Initialisieren von Unterklassen verwendet werden. Innerhalb von <code>static __New</code> verweist <code>this</code> entweder auf die Klasse, die die Methode definiert hat, oder auf eine Unterklasse.</p>
 
@@ -462,7 +462,7 @@ class <i>Klassenname</i> {
 <p>Zum Beispiel kann ein "Proxy-Objekt" mit Eigenschaften erstellt werden, die den aktuellen Wert über das Netzwerk (oder über einen anderen Kanal) abfragen. Ein Remote-Server sendet eine Antwort zurück, die den Wert der Eigenschaft enthält, und das Proxy-Objekt übergibt den Wert an seinen Aufrufer. Auch wenn der Name jeder Eigenschaft im Voraus bekannt war, wäre es unlogisch, jede Eigenschaft einzeln in der Proxy-Klasse zu definieren, da jede Eigenschaft dasselbe tun würde (eine Netzwerkanfrage senden). Metafunktionen bekommen den Namen der Eigenschaft als Parameter, demzufolge sind sie eine gute Lösung für dieses Problem.</p>
 
 <h2 id="primitive">Primitive Werte</h2>
-<p>Primitive Werte, wie Zeichenketten und Zahlen, können keine eigenen Eigenschaften und Methoden haben. Allerdings unterstützen primitive Werte die gleiche Art von <a href="#delegation">Delegation</a> wie Objekte. Das heißt, dass jede Eigenschaft oder Methode, die einen primitiven Wert aufruft, an das <em>Prototype-Objekt</em>, das dem Typ dieses Wertes entspricht, oder mit anderen Worten das <em>Base-Objekt</em> des Wertes, delegiert wird. Es existieren folgende Prototype-Objekte:</p>
+<p>Primitive Werte, wie Zeichenketten und Zahlen, können keine eigenen Eigenschaften und Methoden haben. Allerdings unterstützen primitive Werte die gleiche Art von <a href="#delegation">Delegation</a> wie Objekte. Das heißt, dass jede Eigenschaft oder Methode, die einen primitiven Wert aufruft, an das <em>Prototypobjekt</em>, das dem Typ dieses Wertes entspricht, oder mit anderen Worten das <em>Base-Objekt</em> des Wertes, delegiert wird. Es existieren folgende Prototypobjekte:</p>
 <ul style="line-height: 1.5">
   <li>Any  <ul style="padding-left: 1.7em">
     <li>Primitive  <ul style="padding-left: 1.7em">
@@ -474,9 +474,9 @@ class <i>Klassenname</i> {
     </ul>
   </li></ul>
 </li></ul>
-<p>Allerdings sind diese Objekte derzeit nur über die <code>Base</code>-Eigenschaft eines primitiven Wertes (oder eines abgeleiteten Prototype-Objekts) zugänglich. <a href="objects/Object.htm">Object.Prototype</a> basiert ebenfalls auf dem Any-Prototypen, so dass alle Methoden oder Eigenschaften, die in diesem Prototyp definiert sind, von Werten aller Typen außer ComObject geerbt werden. Ebenso erben alle primitiven Werte von Primitive, und alle Zahlen von Number.</p>
+<p>Allerdings sind diese Objekte derzeit nur über die <code>Base</code>-Eigenschaft eines primitiven Wertes (oder eines abgeleiteten Prototypobjekts) zugänglich. <a href="objects/Object.htm">Object.Prototype</a> basiert ebenfalls auf dem Any-Prototypen, so dass alle Methoden oder Eigenschaften, die in diesem Prototyp definiert sind, von Werten aller Typen außer ComObject geerbt werden. Ebenso erben alle primitiven Werte von Primitive, und alle Zahlen von Number.</p>
 <p>Obwohl die Überprüfung der <a href="commands/Type.htm">Type</a>-Zeichenkette in der Regel schneller ist, kann der Typ eines Wertes getestet werden, indem überprüft wird, ob der Wert ein Base hat. <code>n.HasBase(0.base.base)</code> beispielsweise ist True, wenn <em>n</em> ein reiner Integer oder eine reine Floating-Point-Zahl ist, aber False, wenn n eine numerische Zeichenkette ist, da der String-Prototyp nicht vom Number-Prototyp ableitet. <code>n is 'number'</code> hingegen ist True, wenn <em>n</em> eine Zahl oder numerische Zeichenkette ist.</p>
-<p>Anstatt über Zahlen und Zeichenketten auf die Prototype-Objekte zu verweisen, kann der folgende Code genutzt werden, um die fehlenden Klassen zu erstellen:</p>
+<p>Anstatt über Zahlen und Zeichenketten auf die Prototypobjekte zu verweisen, kann der folgende Code genutzt werden, um die fehlenden Klassen zu erstellen:</p>
 <pre><em>; Primitive Klassen definieren.</em>
 global Any := Class.new()
      , Primitive := Class.new()
@@ -492,7 +492,7 @@ Primitive.base := Any
     , Float.base := Number
   , String.base := Primitive
 
-<em>; Die vorhandenen Prototype-Objekte einbinden.</em>
+<em>; Die vorhandenen Prototypobjekte einbinden.</em>
 Any.Prototype := (
     Primitive.Prototype := (
       Number.Prototype := (
@@ -506,7 +506,7 @@ Any.Prototype := (
 <p>Der <code>is</code>-Operator kann mit diesen Klassen verwendet werden. <code>n is Number</code> beispielsweise ist äquivalent zu <code>n.HasBase(Number.Prototype)</code>, außer wenn die HasBase-Methode für <em>n</em> überschrieben wurde. Beachten Sie, dass <code>x is Any</code> normalerweise für jeden Wert innerhalb der Typenhierarchie von AutoHotkey True, aber für COM-Objekte False ist.</p>
 
 <h3 id="primitive-extension">Hinzufügen von Eigenschaften und Methoden</h3>
-<p>Eigenschaften und Methoden können für alle Werte eines bestimmten Typs hinzugefügt werden, indem das Prototype-Objekt dieses Typs geändert wird. Da aber ein primitiver Wert kein Object-Objekt ist und keine eigenen Eigenschaften oder Methoden haben kann, können die primitiven Prototype-Objekte nicht von <code>Object.Prototype</code> ableiten. Mit anderen Worten sind Methoden wie <a href="objects/Object.htm#DefineProp">DefineProp</a> und <a href="objects/Object.htm#DefineMethod">DefineMethod</a> standardmäßig nicht zugänglich. Diese können indirekt aufgerufen werden. Zum Beispiel:</p>
+<p>Eigenschaften und Methoden können für alle Werte eines bestimmten Typs hinzugefügt werden, indem das Prototypobjekt dieses Typs geändert wird. Da aber ein primitiver Wert kein Object-Objekt ist und keine eigenen Eigenschaften oder Methoden haben kann, können die primitiven Prototypobjekte nicht von <code>Object.Prototype</code> ableiten. Mit anderen Worten sind Methoden wie <a href="objects/Object.htm#DefineProp">DefineProp</a> und <a href="objects/Object.htm#DefineMethod">DefineMethod</a> standardmäßig nicht zugänglich. Diese können indirekt aufgerufen werden. Zum Beispiel:</p>
 <pre>
 DefProp := {}.GetMethod("DefineProp")
 %DefProp%( "".base, "Length", { get: Func("StrLen") } )
