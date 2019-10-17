@@ -56,11 +56,11 @@
 <tr id="str">
 <td>Str</td>
 <td><p>Eine Zeichenkette wie "Blau" oder MeineVar. Wenn die aufgerufene Funktion die Zeichenkette ändert und das Argument eine reine Variable ist, wird der Inhalt der Variable aktualisiert. Der folgende Aufruf wandelt z. B. den Inhalt von <em>MeineVar</em> in Großbuchstaben um: <code>DllCall("CharUpper", "Str", <i>MeineVar</i>)</code>.</p>
-  <p>Wenn die Funktion so ausgelegt ist, dass sie eine Zeichenkette länger als der Eingabewert des Parameters speichert (oder wenn der Parameter nur für die Ausgabe vorgesehen ist), wird folgende Vorgehensweise empfohlen: Nutzen Sie <a href="BufferAlloc.htm">BufferAlloc</a>, um einen Puffer zuzuweisen, den <a href="#ptr">Ptr</a>-Typ, um ihn zu übergeben, und <a href="StrGet.htm">StrGet</a>, um die Zeichenkette nach Abschluss der Funktion abzurufen. </p>
+  <p>Wenn die Funktion so ausgelegt ist, dass sie eine Zeichenkette länger als der Eingabewert des Parameters speichert (oder wenn der Parameter nur für die Ausgabe vorgesehen ist), wird folgende Vorgehensweise empfohlen: Nutzen Sie <a href="BufferAlloc.htm">BufferAlloc</a>, um einen Pufferspeicher zu reservieren, den <a href="#ptr">Ptr</a>-Typ, um ihn zu übergeben, und <a href="StrGet.htm">StrGet</a>, um die Zeichenkette nach Abschluss der Funktion abzurufen. </p>
   <p>Ansonsten sollten Sie vor dem Aufruf der Funktion sicherstellen, dass die Variable groß genug ist. Um das zu erreichen, können Sie <code><a href="VarSetCapacity.htm">VarSetCapacity</a>(MeineVar, 123)</code> aufrufen. Ersetzen Sie 123 mit der gewünschten Kapazität in <strong>Bytes</strong>, die <em>MeineVar</em> haben soll. Wenn die Variable beim Return nicht null-terminiert ist, wird eine Fehlermeldung angezeigt und das Programm beendet, da es wahrscheinlich ist, dass der Speicher via Pufferüberlauf korrumpiert wurde. Dies deutet typischerweise darauf hin, dass die Kapazität der Variable unzureichend war.</p>
   <p></p>
   <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der zu einer Zahl ausgewertet wird (z. B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst.</p>
-  <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine übergeben wurde. Dies kann in Verbindung mit Funktionen genutzt werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher zuordnet und erwartet, dass der Aufrufer ihn freigibt (z. B. durch Aufruf von <a href="https://docs.microsoft.com/de-de/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code>Ptr*</code>-Argumenttyp verwendet werden.</p>
+  <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine übergeben wurde. Dies kann in Verbindung mit Funktionen genutzt werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher reserviert und erwartet, dass der Aufrufer ihn freigibt (z. B. durch Aufruf von <a href="https://docs.microsoft.com/de-de/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code>Ptr*</code>-Argumenttyp verwendet werden.</p>
   <p class="note"><strong>Hinweis</strong>: Wenn Sie eine Zeichenkette an eine Funktion übergeben, müssen Sie darauf achten, welchen <a href="../Compat.htm#DllCall"><i>Typ</i> von Zeichenkette</a> die Funktion erwartet.</p></td>
 </tr>
 <tr>
@@ -71,9 +71,9 @@
   <td><span id="astr"></span>AStr</td>
   <td>
     <p>AStr bewirkt, dass der Eingabewert automatisch in ANSI umgewandelt wird. Da der für diese Konvertierung verwendete temporäre Speicher nur groß genug für die konvertierte Eingabezeichenkette ist, werden alle Werte, die die Funktion in diese Zeichenkette schreibt, verworfen. Das folgende Beispiel zeigt, wie eine ANSI-Zeichenkette als Ausgabeparameter abgerufen werden kann:</p>
-<pre>buf := BufferAlloc(<i>Länge</i>)  <em>; Temporären Puffer zuordnen.</em>
-DllCall("<i>Function</i>", "ptr", buf)  <em>; Puffer an Function übergeben.</em>
-str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette vom Puffer abrufen.</em>
+<pre>buf := BufferAlloc(<i>Länge</i>)  <em>; Temporären Pufferspeicher reservieren.</em>
+DllCall("<i>Function</i>", "ptr", buf)  <em>; Pufferspeicher an Function übergeben.</em>
+str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufen.</em>
 </pre>
     <p>Der selten verwendete <a href="#asterisk">AStr*</a>-Argumenttyp wird ebenfalls unterstützt und verhält sich ähnlich wie der <a href="#strp">Str*</a>-Typ, außer dass jede neue Zeichenkette im ANSI-Format in das native Format (UTF-16) umgewandelt wird.</p>
     <p>Weitere Informationen und äquivalente Win32-Typen finden Sie unter <a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>.</p>
@@ -220,7 +220,7 @@ if not DllCall("IsWindowVisible", "Ptr", WinExist("Unbenannt - Editor"))  <em>; 
 
 <div class="ex" id="ExWsprintf">
 <p><a href="#ExWsprintf">#4</a>: Ruft die API-Funktion wsprintf() auf, um die Zahl 432 mit führenden Nullen aufzufüllen, bis sie eine Breite von 10 Zeichen hat (0000000432).</p>
-<pre>AufgefüllteZahl := BufferAlloc(20)  <em>; Stellt sicher, dass der Puffer groß genug für die neue Zeichenkette ist.</em>
+<pre>AufgefüllteZahl := BufferAlloc(20)  <em>; Stellt sicher, dass der Pufferspeicher groß genug für die neue Zeichenkette ist.</em>
 DllCall("wsprintf", "Ptr", AufgefüllteZahl, "Str", "%010d", "Int", 432, "Cdecl")  <em>; Benötigt die Cdecl-Aufrufkonvention.</em>
 MsgBox StrGet(AufgefüllteZahl)
 
@@ -297,7 +297,7 @@ if !hFile
     MsgBox "Kann '" Dateiname "' nicht zum Lesen öffnen."
     return
 }
-<em>; Weist einen Speicherbereich für die zu lesende Zeichenkette zu:</em>
+<em>; Reserviert einen Bereich im Speicher für die zu lesende Zeichenkette:</em>
 Puf := BufferAlloc(ZketteLänge)
 DllCall("ReadFile", "Ptr", hFile, "Ptr", Puf, "UInt", Puf.Size, "UIntP", RealGeleseneBytes, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
