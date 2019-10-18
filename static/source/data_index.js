@@ -502,7 +502,7 @@ indexData = [
   ["function objects","objects/Functor.htm"],["Funktionsobjekte","objects/Functor.htm"],
   ["Func-Objekt","objects/Func.htm"],
   ["Func","commands/Func.htm",2],
-  ["game automation","commands/PixelSearch.htm"],["Spiel-Automatisierung","commands/PixelSearch.htm"],
+  ["game automation","commands/PixelSearch.htm"],["Videospielautomatisierung","commands/PixelSearch.htm"],
   ["GetKeyName","commands/GetKeyName.htm",2],
   ["GetKeySC","commands/GetKeySC.htm",2],
   ["GetKeyState","commands/GetKeyState.htm",2],
