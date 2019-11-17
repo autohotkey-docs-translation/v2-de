@@ -34,6 +34,8 @@
 <strong>Kurzübersicht:</strong>
 <table id="QuickRef">
   <tr><td><em>Titel</em></td><td><a href="#Matching">Übereinstimmungsverhalten</a></td></tr>
+  <tr><td><em>Integer</em></td><td><a href="#hwnd">HWND</a></td></tr>
+  <tr><td><em>Objekt</em></td><td><a href="#object">Objekt mit HWND</a></td></tr>
   <tr><td>A</td><td><a href="#ActiveWindow">Das aktive Fenster</a></td></tr>
   <tr><td>ahk_class</td><td><a href="#ahk_class">Fensterklasse</a></td></tr>
   <tr><td>ahk_id</td><td><a href="#ahk_id">Eindeutige ID/HWND</a></td></tr>
@@ -68,10 +70,22 @@ WinActivate "ahk_class ConsoleWindowClass"
 </pre>
 
 <h2 id="ahk_id">ahk_id Eindeutige ID / HWND</h2>
-<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (Abkürzung für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel ändert. Die ID eines Fensters wird üblicherweise per <a href="../commands/WinExist.htm">WinExist</a> oder <a href="../commands/WinGetID.htm">WinGetID</a> ermittelt. Die ID eines Steuerelements wird für gewöhnlich per <a href="../commands/ControlGetHwnd.htm">ControlGetHwnd</a>, <a href="../commands/MouseGetPos.htm">MouseGetPos</a> oder <a href="../commands/DllCall.htm">DllCall</a> ermittelt. Außerdem funktioniert ahk_id auch bei Steuerelementen, selbst wenn sie versteckt sind; das heißt, dass die Einstellung von <a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> bei Steuerelementen keine Rolle spielt.</p>
-<pre>
+<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (Abkürzung für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel ändert. Es gibt drei Möglichkeiten, eine ID im <em>Fenstertitel</em>-Parameter anzugeben:</p>
+<pre><em>; Einen <a href="../Concepts.htm#numbers">Integer</a> übergeben.</em>
+WinActivate Integer(VarMitID)
+WinShow A_ScriptHwnd
+WinWaitNotActive WinExist("A")
+
+<em>; Ein <a href="../Objects.htm">Objekt</a> mit einer HWND-Eigenschaft übergeben.</em>
+WinActivate {Hwnd: VarMitID}
+WinWaitClose meinGuiObjekt
+
+<em>; Das ahk_id-Präfix verwenden.</em>
 WinActivate "ahk_id " VarMitID
 </pre>
+<p><a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> beeinflusst, ob <em>ahk_id</em> versteckte nicht-untergeordnete Fenster erkennt (versteckte Steuerelemente hingegen werden immer erkannt). Versteckte Fenster werden immer erkannt, wenn ein gültiger Integer oder ein gültiges Objekt übergeben wird.</p>
+<p><em>ahk_id</em> kann zudem mit weiteren Kriterien kombiniert werden, die das angegebene Fenster erfüllen muss. <code>WinExist("ahk_id " eineHWND " ahk_class " eineKlasse)</code> beispielsweise gibt <code>eineHWND</code> zurück, wenn das Fenster "erkannt" wird (gemäß DetectHiddenWindows) und dessen Fensterklasse mit der in <code>eineKlasse</code> enthaltene Zeichenkette übereinstimmt.</p>
+<p>Die ID eines Fensters wird üblicherweise per <a href="../commands/WinExist.htm">WinExist</a> oder <a href="../commands/WinGetID.htm">WinGetID</a> ermittelt. Die ID eines Steuerelements wird für gewöhnlich per <a href="../commands/ControlGetHwnd.htm">ControlGetHwnd</a>, <a href="../commands/MouseGetPos.htm">MouseGetPos</a> oder <a href="../commands/DllCall.htm">DllCall</a> ermittelt. <a href="../objects/Gui.htm">Gui</a> und <a href="../objects/GuiControl.htm">GuiControl</a>-Objekte haben eine <code>Hwnd</code>-Eigenschaft und können daher direkt in einem <em>Fenstertitel</em>-Parameter verwendet werden.</p>
 
 <h2 id="ahk_pid">ahk_pid Prozess-ID</h2>
 <p>Es ist möglich, mit ahk_pid ein Fenster zu bestimmen, das zu einem bestimmten Prozess gehört. Der Prozessidentifikator (PID) wird üblicherweise via <a href="../commands/WinGetPID.htm">WinGetPID</a>, <a href="../commands/Run.htm">Run</a> oder <a href="../commands/Process.htm">Process-Funktionen</a> ermittelt.</p>

@@ -96,39 +96,31 @@ End Sub
 sc := <a href="ComObjCreate.htm">ComObjCreate</a>("ScriptControl"), sc.Language := "VBScript", sc.AddCode(code)
 
 
-<em>; Beispiel: VARIANT-ByRef an eine COM-Funktion übergeben.</em>
-var := ComVar()
+<em>; Beispiel: VARIANT via Referenz an eine COM-Methode übergeben.</em>
+var := ComVar.new()
 var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox var[]
 
-<em>; ComVar: Erstellt ein Objekt, mit dem ein Wert via ByRef übergeben werden kann.
-;   ComVar[] bekommt den Wert.
-;   ComVar[] := Val setzt den Wert.
-;   ComVar.ref bekommt ein ByRef-Objekt, das eine COM-Funktion nutzen kann.</em>
-ComVar(Type:=0xC)
-{
-    static <a href="../Objects.htm#Custom_Objects">base</a> := { __Get: "ComVarGet", __Set: "ComVarSet", __Delete: "ComVarDel" }
-    <em>; Erstellt ein Array mit 1 VARIANT.  Durch diese Methode kann der interne Code sich um
-    ; alle Umwandlungen zwischen VARIANT und AutoHotkey's interne Typen kümmern.</em>
-    arr := <a href="ComObjArray.htm">ComObjArray</a>(Type, 1)
-    <em>; Sperrt das Array und bekommt einen Pointer, der auf das VARIANT verweist.</em>
-    DllCall("oleaut32\SafeArrayAccessData", "ptr", <a href="ComObjValue.htm">ComObjValue</a>(arr), "ptr*", arr_data)
-    <em>; Speichert das Array und ein Objekt, mit dem das VARIANT-ByRef übergeben werden kann.</em>
-    return { ref: ComObject(0x4000|Type, arr_data), _: arr, base: base }
+
+<em>; ComVar: Ein Objekt, mit dem ein Wert via Referenz übergeben werden kann.
+;   this[] ruft den Wert ab.
+;   this[] := Val setzt den Wert.
+;   this.ref ruft ein ByRef-Objekt zur Übergabe an eine COM-Methode ab.</em>
+class ComVar {
+    __new(Type := 0xC) {
+        <em>; Reserviert Speicher für die typisierte Variable.
+        ; Der größte unterstützte Typ ist VT_VARIANT auf x64 (24 Byte).</em>
+        this.var := BufferAlloc(24, 0)
+        <em>; Erstelle ein Objekt, mit dem die Variable via Referenz übergeben werden kann.</em>
+        this.ref := ComObject(0x4000|Type, this.var.ptr + (Type=0xC ? 0 : 8))
+    }
+    __item {
+        get =&gt; this.ref[]
+        set =&gt; this.ref[] := value
+    }
 }
-ComVarGet(cv, <a href="../Functions.htm#Variadic">p*</a>) { <em>; Wird aufgerufen, wenn das Skript auf ein unbekanntes Feld zugreift.</em>
-    if !p.Length  <em>; Keine Namen/Parameter, also cv[]</em>
-        return cv._[0]
-}
-ComVarSet(cv, v, p*) { <em>; Wird aufgerufen, wenn das Skript ein unbekanntes Feld setzt.</em>
-    if !p.Length  <em>; Keine Namen/Parameter, also cv[]:=v</em>
-        return cv._[0] := v
-}
-ComVarDel(cv) { <em>; Wird aufgerufen, wenn das Objekt freigegeben wird.
-    ; Notwendig, damit das interne Array freigegeben werden kann.</em>
-    DllCall("oleaut32\SafeArrayUnaccessData", "ptr", ComObjValue(cv._))
-}
+
 </pre>
 </div>
 
