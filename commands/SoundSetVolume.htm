@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>SoundSetVolume - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die SoundSetVolume-Funktion ändert die Lautstärkeeinstellung eines Audiogeräts." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>SoundSetVolume</h1>
+
+<p>Ändert eine Lautstärkeeinstellung eines Audiogeräts.</p>
+
+<pre class="Syntax"><span class="func">SoundSetVolume</span> Einstellung <span class="optional">, Komponente, Gerät</span></pre>
+<h2>Parameter</h2>
+<dl>
+
+  <dt>Einstellung</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Zahl</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Eine Prozentzahl zwischen -100 und 100 (kann eine Floating-Point-Zahl sein). Wenn die Zahl mit einem Plus- oder Minuszeichen beginnt, wird die <strong>aktuelle Einstellung</strong> mit der angegebenen Menge nach oben oder nach unten reguliert. Andernfalls wird die <em>Einstellung</em> explizit gesetzt.</p>
+  </dd>
+
+  <dt>Komponente</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Anzeigename und/oder Indexnummer der Komponente. Zum Beispiel <code>1</code>, <code>"Line in"</code> oder <code>"Line in:2"</code>.</p>
+    <p>If omitted or blank, xxx.</p>
+    <p>Weitere Informationen finden Sie unter <a href="Sound.htm#component">Komponente (Sound-Funktionen)</a>.</p>
+  </dd>
+
+  <dt>Gerät</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Anzeigename und/oder Indexnummer des Geräts. Zum Beispiel <code>1</code>, <code>"Lautsprecher"</code>, <code>"Lautsprecher:2"</code> oder <code>"Lautsprecher (Beispiel HD Audio)"</code>.</p>
+    <p>Lässt man diesen Parameter weg, wird standardmäßig das als Standard festgelegte Wiedergabegerät des Systems verwendet (was nicht unbedingt Gerät 1 ist).</p>
+    <p>Weitere Informationen finden Sie unter <a href="Sound.htm#device">Gerät (Sound-Funktionen)</a>.</p>
+  </dd>
+
+</dl>
+
+<h2>Fehlerbehandlung</h2>
+<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 0 gesetzt, wenn die Funktion erfolgreich war. Ansonsten wird es auf einen der folgenden Sätze gesetzt:</p>
+<ul>
+    <li>Device Not Found (Gerät nicht gefunden)</li>
+    <li>Component Not Found (Komponente nicht gefunden)</li>
+    <li>Component Doesn't Support This Control Type (die Komponente unterstützt nicht diesen Kontrolltyp)</li>
+    <li>Can't Get Current Setting (aktuelle Einstellung konnte nicht ermittelt werden)</li>
+    <li>Can't Change Setting (aktuelle Einstellung konnte nicht geändert werden)</li>
+</ul>
+
+<h2>Bemerkungen</h2>
+<p>Zum Anpassen der Gesamtlautstärke des Systems kann alternativ auch ein Skript verwendet werden, das lautstärkespezifische Tastendrücke sendet. Zum Beispiel:</p>
+<pre>Send "{Volume_Up}"  <em>; Erhöht die Gesamtlautstärke um 1 Stufe (normalerweise 5%).</em>
+Send "{Volume_Down 3}"  <em>; Verringert die Gesamtlautstärke um 3 Stufen.</em>
+</pre>
+<p>Um den Leistungsumfang der installierten Audiogeräte auf dem Betriebssystem zu ermitteln -- z. B. die Namen und verfügbaren Komponenten -- können Sie das <a href="Sound.htm#ExSoundcard">Soundkartenanalyse-Skript</a> ausführen.</p>
+<p>SoundSetVolume versucht, die vorhandene Balance beim Ändern der Lautstärke beizubehalten.</p>
+<p>Mit <a href="SoundGetVolume.htm">SoundGetVolume</a> kann die aktuelle Lautstärkeeinstellung abgerufen werden.</p>
+
+<h2>Siehe auch</h2>
+<p><a href="Sound.htm">Sound-Funktionen</a></p>
+
+<h2>Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Einfache Beispiele</p>
+<pre>SoundSetVolume 50  <em>; Setzt die Gesamtlautstärke auf 50%</em>
+SoundSetVolume "+10"  <em>; Erhöht die Gesamtlautstärke um 10%</em>
+SoundSetVolume -10  <em>; Verringert die Gesamtlautstärke um 10%</em>
+SoundSetVolume "+20", , "Mikrofon"  <em>; Erhöht die Mikrofonaufnahmelautstärke um 20%</em>
+if ErrorLevel
+    MsgBox "Fehler beim Setzen der Mikrofonlautstärke: " ErrorLevel</pre>
+</div>
+
+</div>
+</body>
+</html>
