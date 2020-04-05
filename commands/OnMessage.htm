@@ -74,7 +74,7 @@ Parameter #4: Die HWND-Nummer (eindeutige ID) des Fensters oder Steuerelements, 
 <p>WPARAM und LPARAM sind vorzeichenlose 32-Bit-Integer (von 0 bis 2<sup>32</sup>-1) oder vorzeichenfähige 64-Bit-Integer (von -2<sup>63</sup> bis 2<sup>63</sup>-1), abhängig davon, ob die zum Ausführen verwendete EXE-Datei 32- oder 64-Bit ist. Wenn bei einem 32-Bit-Skript ein eingehender Parameter als vorzeichenfähiger Integer vorgesehen ist, können negative Zahlen zum Beispiel wie folgt offenbart werden:</p>
 <pre>if (A_PtrSize = 4 &amp;&amp; wParam &gt; 0x7FFFFFFF)  <em>; Das Überprüfen von <a href="../Variables.htm#PtrSize">A_PtrSize</a> stellt sicher, dass das Skript 32-Bit ist.</em>
     wParam := -(~wParam) - 1</pre>
-<p>Sie können eine oder mehrere Parameter vom Ende der Liste weglassen, wenn Sie die entsprechende Information nicht benötigen. Zum Beispiel würde eine Funktion, definiert als <code>MeineMeldeüberwachung(wParam, lParam)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineMeldeüberwachung()</code>, gar keine von  ihnen.</p>
+<p>Sie können eine oder mehrere Parameter vom Ende der Liste weglassen, wenn Sie die entsprechende Information nicht benötigen, doch in diesem Fall muss als letzter Parameter ein Sternchen angegeben werden. Zum Beispiel würde eine Funktion, definiert als <code>MeineMeldeüberwachung(wParam, lParam, *)</code>, nur die ersten zwei Parameter empfangen, und eine, definiert als <code>MeineMeldeüberwachung(*)</code>, gar keine von ihnen.</p>
 
 <h2>Weitere verfügbare Informationen für die Funktion</h2>
 <p>Neben den oben genannten Parametern kann die Funktion auch auf die interne Variable <a href="../Variables.htm#EventInfo">A_EventInfo</a> zurückgreifen, die 0 enthalten wird, wenn die Meldung via SendMessage gesendet wurde. Wenn sie via PostMessage gesendet wurde, enthält die Variable die <a href="../Variables.htm#TickCount">Tick-Count-Zeit</a>, die während des Sendens gegolten hat.</p>
@@ -126,22 +126,54 @@ WM_LBUTTONDOWN(wParam, lParam, msg, hwnd)
 </div>
 
 <div class="ex" id="ExShutdown">
-<p><a href="#ExShutdown">#2</a>: Das folgende Skript zeigt, wie man das Abmelden/Herunterfahren des Systems erkennen und unterbrechen kann (es wurde gemeldet, dass dies NICHT in Windows Vista und höher funktioniert). Verwandtes Thema: <a href="OnExit.htm">OnExit</a></p>
-<pre><em>; Das folgende DllCall ist optional: es teilt dem OS mit, dass dieses Skript <i>zuerst</i> beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
-DllCall "kernel32.dll\SetProcessShutdownParameters", "UInt", 0x4FF, "UInt", 0
-OnMessage 0x11, "WM_QUERYENDSESSION"
+<p><a href="#ExShutdown">#2</a>: Das folgende Skript zeigt, wie man das Herunterfahren/Abmelden des Systems erkennen und unterbrechen kann. In Windows Vista und höher erscheint eine Benutzeroberfläche, die anzeigt, welches Programm das Herunterfahren/Abmelden blockiert, und dem Benutzer ermöglicht, das Herunterfahren/Abmelden zu erzwingen. In älteren Betriebssystemen zeigt das Skript eine Sicherheitsabfrage an. Verwandtes Thema: <a href="OnExit.htm">OnExit</a></p>
+<pre><em>; Das folgende DllCall ist optional: es teilt dem OS mit, dass dieses Skript zuerst beendet werden soll (bevor alle anderen Anwendungen beendet werden).</em>
+DllCall("kernel32.dll\SetProcessShutdownParameters", "UInt", 0x4FF, "UInt", 0)
+OnMessage(0x11, "WM_QUERYENDSESSION")
 return
 
-WM_QUERYENDSESSION(wParam, lParam)
+WM_QUERYENDSESSION(wParam, lParam, *)
 {
     ENDSESSION_LOGOFF := 0x80000000
     if (lParam &amp; ENDSESSION_LOGOFF)  <em>; Benutzer meldet sich ab.</em>
         Ereignis := "Abmelden"
     else  <em>; System wird entweder heruntergefahren oder neu gestartet.</em>
         Ereignis := "Herunterfahren"
-    Result := MsgBox(Ereignis " im Gange. Erlauben?",, 4)
-    <em>; Das Betriebssystem kann erst mit dem Herunterfahren/Abmelden fortfahren, wenn der Benutzer auf Ja klickt.</em>
-    return Result = "Yes"
+    try
+    {
+        <em>; Bestimmt einen Anzeigetext für die OS-Herunterfahren-UI. Wir
+        ; zeigen keine eigene Sicherheitsabfrage an, da wir nur 5 Sekunden
+        ; haben, bevor das OS von sich aus die Herunterfahren-UI anzeigt.  
+        ; Außerdem kann ein Programm ohne sichtbares Fenster das
+        ; Herunterfahren nur blockieren, wenn ein Grund angegeben ist.</em>
+        BlockiereHerunterfahren("Es wird versucht, " Ereignis " zu verhindern.")
+        return false
+    }
+    catch
+    {
+        <em>; ShutdownBlockReasonCreate ist nicht verfügbar, demzufolge läuft
+        ; vermutlich Windows XP, 2003 oder 2000, wo wir tatsächlich
+        ; das Herunterfahren verhindern können.</em>
+        Result := MsgBox(Ereignis " im Gange. Erlauben?",, "YN")
+        if (Result = "Yes")
+            return true  <em>; Erlaubt dem OS das Herunterfahren/Abmelden.</em>
+        else
+            return false  <em>; Verbietet dem OS das Herunterfahren/Abmelden.</em>
+    }
+}
+
+BlockiereHerunterfahren(Grund)
+{
+    <em>; Wenn Ihr Skript eine sichtbare GUI hat, nutzen Sie diese anstelle
+    ; von A_ScriptHwnd.</em>
+    DllCall("ShutdownBlockReasonCreate", "ptr", A_ScriptHwnd, "wstr", Grund)
+    OnExit("StoppeBlockenHerunterfahren")
+}
+
+StoppeBlockenHerunterfahren(*)
+{
+    OnExit(A_ThisFunc, 0)
+    DllCall("ShutdownBlockReasonDestroy", "ptr", A_ScriptHwnd)
 }</pre>
 </div>
 
@@ -150,7 +182,7 @@ WM_QUERYENDSESSION(wParam, lParam)
 <pre>OnMessage 0x5555, "Meldeüberwachung"
 OnMessage 0x5556, "Meldeüberwachung"
 
-Meldeüberwachung(wParam, lParam, msg)
+Meldeüberwachung(wParam, lParam, msg, *)
 {
     <em>; Damit die Funktion schnell zum Ende kommen kann, ist es besser, ein ToolTip zu verwenden,</em>
     <em>; weil so etwas wie eine MsgBox dies verhindern würde:</em>

@@ -244,13 +244,13 @@ MsgBox "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - CounterD
 SPI_GETMOUSESPEED := 0x70
 SPI_SETMOUSESPEED := 0x71
 <em>; Ermittelt die aktuelle Geschwindigkeit, um sie später wiederherzustellen:</em>
-DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "UIntP", OrigMausGeschw, "UInt", 0)
+DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "Ptr*", OrigMausGeschw := 0, "UInt", 0)
 <em>; Verringert nun die Geschwindigkeit des Mauszeigers im vorletzten Parameter (im Bereich von 1 bis 20, 10 ist Standard):</em>
 DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", <strong>3</strong>, "UInt", 0)
 KeyWait "F1"  <em>; Verhindert, dass das Auto-Wiederholungs-Feature der Tastatur DllCall wiederholt aufruft.</em>
 return
 
-F1 up::DllCall("SystemParametersInfo", "UInt", 0x71, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
+F1 up::DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
 </div>
 
 <div class="ex" id="ExWatchScrollBar">
