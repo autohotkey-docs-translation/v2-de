@@ -67,7 +67,7 @@ tocData = [
     ["NumPut","commands/NumPut.htm"],
     ["StrGet","commands/StrGet.htm"],
     ["StrPut","commands/StrPut.htm"],
-    ["VarSetCapacity","commands/VarSetCapacity.htm"],
+    ["VarSetStrCapacity","commands/VarSetStrCapacity.htm"],
     ["COM","",
     [
       ["ComObjActive","commands/ComObjActive.htm"],
@@ -256,7 +256,6 @@ tocData = [
     ["Tastenliste","KeyList.htm"],
     ["KeyHistory","commands/KeyHistory.htm"],
     ["KeyWait","commands/KeyWait.htm"],
-    ["Input","commands/Input.htm"],
     ["InputHook","commands/InputHook.htm"],
     ["MouseClick","commands/MouseClick.htm"],
     ["MouseClickDrag","commands/MouseClickDrag.htm"],
@@ -289,8 +288,7 @@ tocData = [
     ["IsSet","commands/IsSet.htm"],
     ["ListLines","commands/ListLines.htm"],
     ["ListVars","commands/ListVars.htm"],
-    ["OutputDebug","commands/OutputDebug.htm"],
-    ["VarSetCapacity","commands/VarSetCapacity.htm"]
+    ["OutputDebug","commands/OutputDebug.htm"]
   ]],
   ["Objekttypen","",
   [
@@ -370,7 +368,8 @@ tocData = [
     ["StrReplace","commands/StrReplace.htm"],
     ["StrSplit","commands/StrSplit.htm"],
     ["SubStr","commands/SubStr.htm"],
-    ["Trim","commands/Trim.htm"]
+    ["Trim","commands/Trim.htm"],
+    ["VarSetStrCapacity","commands/VarSetStrCapacity.htm"]
   ]],
   ["Fenster","commands/Win.htm",
   [

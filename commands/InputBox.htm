@@ -16,7 +16,7 @@
 
 <p>Zeigt ein Eingabefenster an, das den Benutzer zur Eingabe einer Zeichenkette auffordert.</p>
 
-<pre class="Syntax">Text := <span class="func">InputBox</span>(<span class="optional">Anzeigetext, Titel, Optionen, Standardwert</span>)</pre>
+<pre class="Syntax">Obj := <span class="func">InputBox</span>(<span class="optional">Anzeigetext, Titel, Optionen, Standardwert</span>)</pre>
 <h2>Parameter</h2>
 <dl>
 
@@ -37,8 +37,8 @@
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
       <p>Eine Zeichenkette von nicht-Groß-/Kleinschreibung-sensitiven Optionen, die mit Leer- oder Tabulatorzeichen voneinander getrennt sind:</p>
       <p><strong>Xn Yn:</strong> Die X- und Y-Koordinaten des Dialogfensters. Zum Beispiel würde <em>X0 Y0</em> das Fenster in die obere linke Ecke des Desktops setzen. Lässt man eine dieser Koordinaten weg, wird das Fenster in dieser Abmessung zentriert. Jede Koordinate kann negativ sein, um das Dialogfenster teilweise oder vollständig über den Bildschirmrand hinaus zu positionieren.</p>
-      <p><strong>Wn Hn:</strong> Die Breite und Höhe des Dialogfensters. Zum Beispiel wäre <em>W375 H189</em> die Standardgröße.</p>
-      <p><strong>T:</strong> Bestimmt ein Zeitlimit in Sekunden. Zum Beispiel wäre <em>T10.0</em> ein Zeitlimit von zehn Sekunden. Wenn ein Zeitlimit höher als 2147483 (24,8 Tage) angegeben ist, wird es automatisch auf 2147483 zurückgesetzt. Nachdem das Zeitlimit überschritten wurde, wird das InputBox-Fenster automatisch geschlossen und <a href="../misc/ErrorLevel.htm">ErrorLevel</a> auf 2 gesetzt. Es wird weiterhin alles zurückgegeben, was der Benutzer zuletzt eingegeben hat.</p>
+      <p><strong>Wn Hn:</strong> Die Breite und Höhe des Clientbereichs (das ist im Dialogfenster der Bereich ohne Titelleiste und Rahmen). Zum Beispiel <em>W200 H100</em>.</p>
+      <p><strong>T:</strong> Bestimmt ein Zeitlimit in Sekunden. Zum Beispiel wäre <em>T10.0</em> ein Zeitlimit von zehn Sekunden. Wenn ein Zeitlimit höher als 2147483 (24,8 Tage) angegeben ist, wird es automatisch auf 2147483 zurückgesetzt. Nachdem das Zeitlimit überschritten wurde, wird das InputBox-Fenster automatisch geschlossen und <a href="#return">Result</a> auf das Wort "Timeout" gesetzt. <a href="#return">Value</a> wird weiterhin alles enthalten, was der Benutzer zuletzt eingegeben hat.</p>
       <p><strong>Password:</strong> Ersetzt die Benutzereingabe mit Maskierungszeichen. Das Maskierungszeichen kann wie folgt geändert werden: <em>Password*</em></p>
   </dd>
 
@@ -50,12 +50,13 @@
 
 </dl>
 
-<h2>Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt den vom Benutzer eingegebenen Text zurück.</p>
-
-<h2>Fehlerbehandlung</h2>
-<p><a href="../misc/ErrorLevel.htm">ErrorLevel</a> wird auf 1 gesetzt, wenn der Benutzer die CANCEL-Schaltfläche gedrückt hat, auf 0, wenn der Benutzer OK gedrückt hat, oder auf 2, wenn das Dialogfenster die Zeit überschritten hat. In allen drei Fällen gibt InputBox den vom Benutzer eingegebenen Text zurück. Auf diese Weise kann die CANCEL-Schaltfläche neben Abbrechen noch andere Funktionen ausführen, falls der Skript-Entwickler das wünscht.</p>
+<h2 id="return">Rückgabewert</h2>
+<p>Typ: <a href="../objects/Object.htm">Objekt</a></p>
+<p>Diese Funktion gibt ein Objekt mit folgenden Eigenschaften zurück:</p>
+<ul>
+  <li><code>Value</code> (<a href="../Concepts.htm#strings">Zeichenkette</a>): Den vom Benutzer eingegebenen Text.</li>
+  <li><code>Result</code> (<a href="../Concepts.htm#strings">Zeichenkette</a>): Eines der folgenden Wörter, das angibt, wie das Eingabefenster geschlossen wurde: "OK", "Cancel", "Timeout".</li>
+</ul>
 
 <h2>Bemerkungen</h2>
 <p>Ein typisches Eingabefenster sieht wie folgt aus:</p>
@@ -63,20 +64,20 @@
 <p>Das Dialogfenster erlaubt den Benutzer, einen beliebigen Text einzugeben und dann OK oder CANCEL (Abbrechen) zu drücken. Der Benutzer kann die Größe des Dialogfensters durch Ziehen des Rahmens ändern.</p>
 <p>Ein GUI-Fenster kann ein modales InputBox-Fenster mithilfe der <a href="../objects/Gui.htm#OwnDialogs">OwnDialogs-Option</a> anzeigen. Ein modales InputBox-Fenster hindert den Benutzer daran, mit dem GUI-Fenster zu interagieren, bis er das InputBox-Fenster wieder schließt.</p>
 <h2>Siehe auch</h2>
-<p><a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="Input.htm">Input</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="FileSelect.htm">FileSelect</a>, <a href="DirSelect.htm">DirSelect</a>, <a href="ToolTip.htm">ToolTip</a></p>
+<p><a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="FileSelect.htm">FileSelect</a>, <a href="DirSelect.htm">DirSelect</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="InputHook.htm">InputHook</a></p>
 <h2>Beispiele</h2>
 <div class="ex" id="ExPassword">
 <p><a href="#ExPassword">#1</a></p>
-<pre>Passwort := InputBox("(Ihre Eingabe wird versteckt)", "Bitte Passwort eingeben", "password")</pre>
+<pre>Passwort := InputBox("(Ihre Eingabe wird versteckt)", "Bitte Passwort eingeben", "password").Value</pre>
 </div>
 
 <div class="ex" id="ExBasic">
 <p><a href="#ExBasic">#2</a></p>
-<pre>Benutzereingabe := InputBox("Bitte geben Sie eine Telefonnummer ein.", "Telefonnummer", "w640 h480")
-if ErrorLevel
-    MsgBox "Sie haben CANCEL gedrückt."
+<pre>IB := InputBox("Bitte geben Sie eine Telefonnummer ein.", "Telefonnummer", "w640 h480")
+if IB.Result = "Cancel"
+    MsgBox "Sie haben '" IB.Value "' eingegeben, aber dann auf Abbrechen gedrückt."
 else
-    MsgBox "Sie haben '" Benutzereingabe "' eingegeben."</pre>
+    MsgBox "Sie haben '" IB.Value "' eingegeben."</pre>
 </div>
 
 </body>

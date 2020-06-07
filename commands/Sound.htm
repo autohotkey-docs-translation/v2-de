@@ -67,7 +67,7 @@
       <li>Wenn dieser Parameter weggelassen wird oder leer ist, agiert die Funktion mit den Master-Lautstärke/Stummschaltung-Reglern oder einem Interface, das via <a href="https://docs.microsoft.com/de-de/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdevice-activate">IMMDevice::Activate</a> zurückgegeben werden kann.</li>
     </ul>
     <p>Wenn nur eine Indexnummer angegeben ist, werden die Anzeigenamen ignoriert. Zum Beispiel verwenden <code>1</code>, <code>"1"</code> und <code>":1"</code> die erste Komponente unabhängig vom Namen, während <code>""</code> auf die Master-Regler zugreift.</p>
-    <p>Wenn das Audiogerät die angegebene <em>Komponente</em> nicht besitzt, wird ErrorLevel das Problem kennzeichnen.</p>
+    <p>Wenn das Audiogerät die angegebene <em>Komponente</em> nicht besitzt, wird eine Ausnahme ausgelöst.</p>
   </dd>
 
   <dt id="device">Gerät</dt>
@@ -95,32 +95,40 @@ scLV := scGui.Add('ListView', "w600 h400"
 
 devMap := Map()
 
-<em>; Für jedes verfügbare Audiogerät zunächst dessen Namen abrufen.
-; Leere Namen durch Überprüfen von ErrorLevel zulassen.</em>
-while (devName := SoundGetName(, dev := A_Index)) || !ErrorLevel
+loop
 {
+    <em>; Bei jedem Schleifendurchlauf versuchen, das entsprechende Gerät abzurufen.</em>
+    try
+        devName := SoundGetName(, dev := A_Index)
+    catch  <em>; Keine weiteren Geräte.</em>
+        break
+    
     <em>; Namen mit ":index" bei Bedarf qualifizieren.</em>
     devName := Qualify(devName, devMap, dev)
     
     <em>; Master-Lautstärke/Stummschaltung-Einstellung abrufen, wenn möglich.</em>
-    vol := SoundGetVolume( , dev)
-    if !ErrorLevel
-        vol := Round(vol, 2)
-    mute := SoundGetMute( , dev)
+    vol := mute := ""
+    try vol := Round(SoundGetVolume( , dev), 2)
+    try mute := SoundGetMute( , dev)
+    
     <em>; Die Master-Einstellungen nur anzeigen, wenn mindestens eine abgerufen wurde.</em>
     if vol != "" || mute != ""
         scLV.Add("", "", dev, devName, vol, mute)
     
     <em>; Für jede Komponente zunächst ihren Namen abrufen.</em>
     cmpMap := Map()
-    while (cmpName := SoundGetName(cmp := A_Index, dev)) || !ErrorLevel
+    
+    loop
     {
+        try
+            cmpName := SoundGetName(cmp := A_Index, dev)
+        catch
+            break
         <em>; Lautstärke/Stummschaltung-Einstellung dieser Komponente abrufen, wenn
         ; möglich.</em>
-        vol := SoundGetVolume(cmp, dev)
-        if !ErrorLevel
-            vol := Round(vol, 2)
-        mute := SoundGetMute(cmp, dev)
+        vol := mute := ""
+        try vol := Round(SoundGetVolume(cmp, dev), 2)
+        try mute := SoundGetMute(cmp, dev)
         <em>; Komponente auch anzeigen, wenn sie keine Lautstärke oder Stummschaltung
         ; unterstützt, da sie vielleicht andere Regler via SoundGetInterface()
         ; unterstützt.</em>

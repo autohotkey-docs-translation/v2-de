@@ -23,7 +23,7 @@
   <dt>Func</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
-    <p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>, die aufgerufen werden sollen, wenn ein unbehandelter Fehler auftritt. Die Funktion erhält das Exception-Objekt als Parameter. Sie kann via Return einen Integer ungleich Null zurückgeben, um das voreingestellte Fehlerdialogfenster zu unterdrücken.</p>
+    <p>Ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a>, die aufgerufen werden sollen, wenn ein unbehandelter Fehler auftritt. Siehe <em>Callback</em> unten.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
@@ -37,10 +37,30 @@
 
 </dl>
 
+<h2>Callback</h2>
+<p>Die Callback-Funktion akzeptiert zwei Parameter:</p>
+<pre class="Syntax"><i>Callback</i>(Fehlersignal, Modus)</pre>
+<dl>
+  <dt>Fehlersignal</dt>
+  <dd><em>Fehlersignal</em> enthält die Daten des Fehlersignals, üblicherweise ein <a href="Throw.htm#Exception">Exception-Objekt</a>.</dd>
+  <dt>Modus</dt>
+  <dd>Eine der folgenden Zeichenketten:
+    <ul>
+      <li><code>"Return"</code>: <em>Fehlersignal</em> ist ein fortsetzbarer Laufzeitfehler. Der Thread wird fortgesetzt, wenn die Callback-Funktion -1 zurückgibt; ansonsten wird der Thread beendet.</li>
+      <li><code>"Exit"</code>: <em>Fehlersignal</em> ist ein nicht-fortsetzbarer Laufzeitfehler oder ein Wert, der vom Skript via <a href="Throw.htm">Throw</a> gemeldet wurde. Der Thread wird beendet.</li>
+      <li><code>"ExitApp"</code>: <em>Fehlersignal</em> ist ein kritischer Laufzeitfehler, wie z. B. wenn DllCall einen korrumpierten Speicher erkennt. Das Programm wird beendet.</li>
+    </ul>
+  </dd>
+</dl>
+<p>Die Callback-Funktion kann einen der folgenden Werte zurückgeben (andere Werte sind für die zukünftige Verwendung reserviert und sollten vermieden werden):</p>
+<ul>
+  <li><code>0</code>, <code>""</code> oder kein <code>return</code>: Fehlerbehandlung normal fortsetzen lassen.</li>
+  <li><code>1</code>: Standard-Fehlerdialogfenster und alle verbleibenden Fehler-Callbacks unterdrücken.</li>
+  <li><code>-1</code>: Wie oben, aber wenn <em>Modus</em> die Zeichenkette <code>"Return"</code> ist, wird die Ausführung des aktuellen Threads fortgesetzt.</li>
+</ul>
+
 <h2>Bemerkungen</h2>
 <p><em>Func</em> wird nur bei Fehlern oder Ausnahmen aufgerufen, die normalerweise zu einer Fehlermeldung führen würden. Ladezeitfehler gehören nicht dazu, da OnError erst nach dem Laden des Skripts aufgerufen werden kann.</p>
-<p>Wenn eine Fehlerfunktion einen Integer ungleich Null via Return zurückgibt, wird der Thread beendet. Wenn innerhalb einer Fehlerfunktion ein Fehler auftritt (oder eine Ausnahme ausgelöst wird), wird eine Fehlermeldung für den neuen Fehler angezeigt und der Thread beendet. Ansonsten werden alle Fehlerfunktionen aufgerufen, eine Fehlermeldung angezeigt und der Thread beendet.</p>
-<p><em>Func</em>'s erster Parameter erhält den Wert oder das <a href="Throw.htm#Exception">Exception</a>-Objekt der ausgelösten Ausnahme. Wenn es sich um ein Objekt handelt, kann es modifiziert werden, um zu bestimmen, was das voreingestellte Fehlerdialogfenster anzeigen soll.</p>
 <p><em>Func</em> wird während des aktuellen <a href="../misc/Threads.htm">Threads</a> aufgerufen, bevor er beendet wird (also bevor der Aufrufstapel abgearbeitet wurde).</p>
 
 <h2>Siehe auch</h2>
@@ -48,16 +68,85 @@
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#1</a></p>
+<p><a href="#ExBasic">#1</a>: Protokolliert Fehler in einer Textdatei, anstatt sie dem Benutzer anzuzeigen.</p>
 <pre>
 OnError "FehlerProtokollieren"
 %Fehler% := auslösen
 
-FehlerProtokollieren(Exception) {
+FehlerProtokollieren(Exception, Modus) {
     FileAppend "Fehler bei Zeile " Exception.Line ": " Exception.Message "`n"
         , "Fehlerprotokoll.txt"
     return true
 }
+</pre>
+</div>
+
+<div class="ex" id="ExAccumulator">
+<p><a href="#ExAccumulator">#2</a>: Verwenden Sie OnError, um alternative Fehlerbehandlungsmethoden zu implementieren. Einschränkung: OnError ist unwirksam, während <a href="Try.htm">Try</a> aktiv ist.</p>
+<pre>
+AccumulateErrors()
+{
+    local ea := ErrorAccumulator.new()
+    ea.Start()
+    return ea
+}
+
+class ErrorAccumulator
+{
+    Errors := []                        <em>; Array für akkumulierte Fehler.</em>
+    _cb := Func("AccumulateError").Bind(this.Errors)
+    Start() =&gt; OnError(this._cb, -1)    <em>; Unsere cb vor allen anderen registrieren.</em>
+    Stop() =&gt; OnError(this._cb, 0)      <em>; Unsere cb deregistrieren.</em>
+    Last =&gt; this.Errors[-1]             <em>; Aktuellster Fehler.</em>
+    Count =&gt; this.Errors.Length         <em>; Anzahl der akkumulierten Fehler.</em>
+    __item[i] =&gt; this.Errors[i]         <em>; Shortcut für Indexierung.</em>
+    __delete() =&gt; this.Stop()           <em>; Zum Binden an Gültigkeitsbereich der Funktion.</em>
+}
+
+<em>; Nachfolgend die OnError-Callback-Funktion. 'errors' wird ein Wert via Bind() übergeben.</em>
+AccumulateError(errors, e, mode)
+{
+    if mode != "Return" <em>; Nicht fortsetzbar.</em>
+        return
+    if e.What = "" <em>; Ausdrucksfehler oder ähnliches, keine interne Funktion.</em>
+        return
+    try {
+        <em>; Versuchen, den Fehler in stdout auszugeben.</em>
+        FileAppend Format("{1} ({2}) : ({3}) {4}`n", e.File, e.Line, e.What, e.Message), "*"
+        if HasProp(e, "extra")
+            FileAppend "     Specifically: " e.Extra "`n", "*"
+    }
+    errors.Push(e)
+    return -1 <em>; Weiter.</em>
+}
+
+FensterNeuanordnen()
+{
+    <em>; Beginnen, Fehler in 'err' zu akkumulieren.</em>
+    local err := AccumulateErrors()
+
+    <em>; Einige Dinge tun, die fehlschlagen könnten...</em>
+    MonitorGetWorkArea , Links, Oben, Rechts, Unten
+    Breite := (Rechts-Links)//2, Höhe := Unten-Oben
+    WinMove Links, Oben, Breite, Höhe, A_ScriptFullPath
+    WinMove Links+Breite, Oben, Breite, Höhe, "Hilfe für AutoHotkey v2"
+
+    <em>; Überprüfen, ob Fehler aufgetreten sind.</em>
+    if err.Count
+        MsgBox err.Count " Fehler; letzter Fehler auf Zeile #" err.Last.Line
+    else
+        MsgBox "Keine Fehler"
+
+    <em>; Stop wird automatisch aufgerufen, wenn die Variable den Gültigkeitsbereich
+    ; verlässt, da nur wir eine Referenz zum Objekt haben. Dies führt dazu,
+    ; dass OnError aufgerufen wird, um die Callback-Funktion zu deregistrieren.
+    ;err.Stop()</em>
+}
+
+<em>; Testfunktion aufrufen, die Fehler unterdrückt und akkumuliert.</em>
+FensterNeuanordnen()
+<em>; Andere Funktion aufrufen, um zu zeigen, dass normales Fehlerverhalten wiederhergestellt wird.</em>
+WinMove 0, 0, Breite, Höhe, "Nicht-existierendes Fenster"
 </pre>
 </div>
 

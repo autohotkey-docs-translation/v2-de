@@ -56,7 +56,7 @@ AlterWert := <span class="func">Hotstring</span>("<a href="#MouseReset">MouseRes
 </dl>
 
 <h2 id="Errors">Fehler</h2>
-<p>Diese Funktion löst eine Ausnahme aus, wenn die Parameter ungültig sind oder eine Speicherreservierung fehlschlägt. Sie hat keinen Einfluss auf <a href="../misc/ErrorLevel.htm">ErrorLevel</a>.</p>
+<p>Diese Funktion löst eine Ausnahme aus, wenn die Parameter ungültig sind oder eine Speicherreservierung fehlschlägt.</p>
 <p>Eine Ausnahme wird auch ausgelöst, wenn <em>Ersatz</em> weggelassen wird und <em>Zeichenkette</em> gültig ist, aber nicht mit einem existierenden Hotstring übereinstimmt. Dieser Sachverhalt kann genutzt werden, um die Existenz eines Hotstrings zu testen. Zum Beispiel:</p>
 <pre>try
     Hotstring "::bzw"
@@ -140,16 +140,16 @@ ZeigeInputBox(Standardwert)
     <em>; Verschiebe den Textcursor der InputBox auf eine benutzerfreundliche Position:</em>
     SetTimer "VerschiebeTextcursor", 10
     <em>; Zeige die InputBox mit dem vordefinierten Hotstring:</em>
-    Benutzereingabe := InputBox("
+    IB := InputBox("
     (
     Fügen Sie Ihre Abkürzung an die Position des Textcursors ein. Bei Bedarf können Sie den Ersatztext noch ändern.
 
     Beispieleintrag: :T:bzw`::beziehungsweise
     )", "Neuer Hotstring",, Standardwert)
-    if ErrorLevel  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
+    if IB.Result = "Cancel"  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
         return
 
-    if RegExMatch(Benutzereingabe, "(?P&lt;Label&gt;:.*?:(?P&lt;Abkuerzung&gt;.*?))::(?P&lt;Ersatztext&gt;.*)", Hotstring)
+    if RegExMatch(IB.Value, "(?P&lt;Label&gt;:.*?:(?P&lt;Abkuerzung&gt;.*?))::(?P&lt;Ersatztext&gt;.*)", Hotstring)
     {
         if !Hotstring.Abkuerzung
             Mitteilung := "Sie haben keine Abkürzung angegeben"
@@ -158,7 +158,7 @@ ZeigeInputBox(Standardwert)
         else
         {
             Hotstring Hotstring.Label, Hotstring.Ersatztext  <em>; Aktiviert jetzt den Hotstring.</em>
-            FileAppend "`n" Benutzereingabe, A_ScriptFullPath  <em>; Speichert den Hotstring für den späteren Gebrauch.</em>
+            FileAppend "`n" IB.Value, A_ScriptFullPath  <em>; Speichert den Hotstring für den späteren Gebrauch.</em>
         }
     }
     else

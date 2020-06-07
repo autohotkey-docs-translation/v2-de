@@ -742,8 +742,9 @@ MenüHilfeÜber(*)
 
 leseInhalt(Dateiname)
 {
-    Dateiinhalt := FileRead(Dateiname)  <em>; Liest den Inhalt der Datei und speichert ihn in die Variable.</em>
-    if ErrorLevel
+    try
+        Dateiinhalt := FileRead(Dateiname)  <em>; Liest den Inhalt der Datei und speichert ihn in die Variable.</em>
+    catch
     {
         MsgBox("'" Dateiname "' konnte nicht geöffnet werden.")
         return
@@ -756,16 +757,17 @@ leseInhalt(Dateiname)
 
 speichereInhalt(Dateiname)
 {
-    if FileExist(Dateiname)
+    try
     {
-        FileDelete(Dateiname)
-        if ErrorLevel
-        {
-            MsgBox("Überschreiben der Datei '" Dateiname "' fehlgeschlagen.")
-            return
-        }
+        if FileExist(Dateiname)
+            FileDelete(Dateiname)
+        FileAppend(HauptEdit.Value, Dateiname)  <em>; Speichert den Inhalt in eine Datei.
     }
-    FileAppend(HauptEdit.Value, Dateiname)  <em>; Speichert den Inhalt in eine Datei.
+    catch
+    {
+        MsgBox("Überschreiben der Datei '" Dateiname "' fehlgeschlagen.")
+        return
+    }
     ; Bei Erfolg den Dateinamen in der Titelleiste anzeigen (falls es mit DateiSpeichernUnter aufgerufen wurde):</em>
     Gui.Title := Dateiname
     return Dateiname

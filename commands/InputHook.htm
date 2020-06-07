@@ -55,17 +55,16 @@ if (ih.Input = StrgC)
   <dd>
     <p>Eine kommagetrennte Liste mit Stichwörtern, die die Eingabeerfassung beenden können (in diesem Fall wird EndReason auf das Wort Match gesetzt). Alles, was der Benutzer eingibt, muss exakt mit einem Element aus der Liste übereinstimmen, um eine Übereinstimmung zu bewirken (sofern die <a href="#asterisk">*-Option</a> nicht vorhanden ist). <strong>Alle Leer- und Tabulatorzeichen an den angrenzenden Kommas sind von Bedeutung</strong> - das heißt, dass sie ein Teil der Übereinstimmungszeichenkette sind. Wenn <em>Vergleichsliste</em> beispielsweise <code>ABC , XYZ</code> wäre, kann eine Übereinstimmung nur erfolgen, wenn der Benutzer ein Leerzeichen nach ABC oder vor XYZ eingibt.</p>
     <p>Zwei aufeinanderfolgende Kommas ergeben ein direkt geschriebenes Komma. Zum Beispiel würde die folgende Zeile ein direkt geschriebenes Komma nach dem Wort Zeichenkette1 erzeugen: <code>Zeichenkette1,,,Zeichenkette2</code>. Im Vergleich dazu würde die folgende Liste nur ein einzelnes Element mit einem direkt geschriebenen Komma dazwischen enthalten: <code>einzelnes,,Element</code>.</p>
-    <p>Da die Elemente in <em>Vergleichsliste</em> nicht als einzelne Parameter behandelt werden, kann die Liste komplett in einer Variable enthalten sein. Diese Methode ist sowieso notwendig, wenn die Liste eine Länge von 16383 Zeichen überschreitet (die maximale Länge einer Skriptzeile). Zum Beispiel könnte <em>Vergleichsliste</em> aus <code>%Liste1%,%Liste2%,%Liste3%</code> bestehen, von der jede Unterliste eine lange Liste mit Elementen enthält.</p>
+    <p>Da die Elemente in <em>Vergleichsliste</em> nicht als einzelne Parameter behandelt werden, kann die Liste komplett in einer Variable enthalten sein. Diese Methode ist sowieso notwendig, wenn die Liste eine Länge von 16383 Zeichen überschreitet (die maximale Länge einer Skriptzeile). Zum Beispiel könnte <em>Vergleichsliste</em> aus <code>Liste1 "," Liste2 "," Liste3</code> bestehen, von der jede Unterliste eine lange Liste mit Elementen enthält.</p>
   </dd>
 
 </dl>
 
 <h2 id="stack">Input-Stapel</h2>
 <p>Es können beliebig viele InputHook-Objekte erstellt werden und zur selben Zeit aktiv sein, allerdings hat die Reihenfolge, in der sie gestartet werden, Einfluss darauf, wie die Eingaben erfasst werden.</p>
-<p>Wenn eine Eingabeerfassung gestartet wird (via <a href="#Start">Start</a>-Methode oder <a href="Input.htm">Input</a>-Funktion), wird sie ganz oben auf den Stapel geschoben, und aus diesem Stapel entfernt, wenn die Eingabeerfassung beendet wird. Die Reihenfolge, in der die Tastaturereignisse an eine Eingabeerfassung übergeben werden, geht vom neuesten zum ältesten. Wenn eine Eingabeerfassung ein bestimmtes Tastaturereignis unterdrückt, wird er nicht weiter im Stapel nach unten verschoben.</p>
+<p>Wenn eine Eingabeerfassung gestartet wird (via <a href="#Start">Start</a>-Methode), wird sie ganz oben auf den Stapel geschoben, und aus diesem Stapel entfernt, wenn die Eingabeerfassung beendet wird. Die Reihenfolge, in der die Tastaturereignisse an eine Eingabeerfassung übergeben werden, geht vom neuesten zum ältesten. Wenn eine Eingabeerfassung ein bestimmtes Tastaturereignis unterdrückt, wird er nicht weiter im Stapel nach unten verschoben.</p>
 <p><a href="Send.htm">Gesendete</a> Tastendrücke werden ignoriert, wenn die <a href="SendLevel.htm">Sendestufe</a> des Tastendrucks unterhalb des InputHook's <a href="#MinSendLevel">MinSendLevel</a> liegt. In solchen Fällen kann der Tastendruck immer noch von einer Eingabeerfassung verarbeitet werden, der niedriger auf dem Stapel liegt.</p>
 <p>Es können mehrere InputHooks in Kombination mit <a href="#MinSendLevel">MinSendLevel</a> genutzt werden, um sowohl gesendete als auch reale Tastendrücke separat zu erfassen.</p>
-<p>Der Aufruf der <a href="Input.htm">Input</a>-Funktion beendet jede vorherige via Input-Funktion gestartete Eingabeerfassung, lässt aber alle InputHooks aktiv. Wenn die Eingabeerfassung nicht <a href="Input.htm#vis">sichtbar</a> ist, werden alle InputHooks, die davon unterbrochen werden, grundsätzlich keine Eingaben erfassen, bis die Input-Funktion fertig ist.</p>
 
 <h2 id="object">InputHook-Objekt</h2>
 <p>Die InputHook-Funktion gibt ein InputHook-Objekt zurück, das die folgenden Methoden und Eigenschaften hat.</p>
@@ -351,11 +350,10 @@ if (ih.Input = StrgC)
 <p>Wenn Sie mehrere Sprachen oder Tastaturlayouts verwenden, greift die Eingabeerfassung auf das Tastaturlayout des aktiven Fensters statt auf die des Skripts zurück (egal ob die Eingabeerfassung <a href="#vis">sichtbar</a> ist oder nicht).</p>
 <p>Trotz ihrer geringeren Flexibilität sind <a href="../Hotstrings.htm">Hotstrings</a> in der Regel einfacher zu bedienen.</p>
 
-<h2 id="comparison">InputHook vs. Input</h2>
-<p>InputHook und die <a href="Input.htm">Input</a>-Funktion sind zwei verschiedene Schnittstellen, die im Grunde die gleiche Funktionalität bieten. Die folgenden zwei Beispiele sind funktionsgemäß nahezu identisch:</p>
+<h2 id="comparison">InputHook vs. Input (v1)</h2>
+<p>In AutoHotkey v1.1 kann InputHook anstelle des Input-Befehls verwendet werden, was eine größere Flexibilität bietet. In v2.0 wurde der Input-Befehl entfernt, aber der folgende Code ist größtenteils äquivalent:</p>
 <pre>
-AusgabeVar := Input(Optionen, Endtasten, Vergleichsliste)
-</pre><pre>
+<em>; Input AusgabeVar, % Optionen, % Endtasten, % Vergleichsliste ; v1</em>
 ih := InputHook(Optionen, Endtasten, Vergleichsliste)
 ih.Start()
 ErrorLevel := ih.Wait()
@@ -363,28 +361,28 @@ if (ErrorLevel = "EndKey")
     ErrorLevel .= ":" ih.EndKey
 AusgabeVar := ih.Input
 </pre>
-<p>Die Input-Funktion beendet jede vorher von ihr gestartete Eingabeerfassung, während InputHook <a href="#stack">mehrere Eingabeerfassungen</a> gleichzeitig erlaubt.</p>
+<p>Der Input-Befehl beendet jede vorher von ihm gestartete Eingabeerfassung, während InputHook <a href="#stack">mehrere Eingabeerfassungen</a> gleichzeitig erlaubt.</p>
 <p><em>Optionen</em> wird gleichermaßen interpretiert, allerdings gibt es Unterschiede bei den Standardeinstellungen:</p>
 <ul>
-  <li>Die Input-Funktion limitiert die Länge der Eingabe auf 16383, während InputHook diese auf 1023 limitiert. Dies kann mit der <a href="#option-l">L-Option</a> überschrieben werden (ohne absoluten Maximum).</li>
-  <li>Die Input-Funktion blockiert standardmäßig sowohl Text- als auch Nicht-Text-Tastendrücke, und blockiert keine der beiden, wenn die <a href="Input.htm#vis">V-Option</a> vorhanden ist. InputHook dagegen blockiert standardmäßig nur Text-Tastendrücke (<a href="#VisibleNonText">VisibleNonText</a> ist standardmäßig True), dadurch können die meisten Hotkeys verwendet werden, während eine Eingabeerfassung im Gange ist.</li>
+  <li>Der Input-Befehl limitiert die Länge der Eingabe auf 16383, während InputHook diese auf 1023 limitiert. Dies kann mit der <a href="#option-l">L-Option</a> überschrieben werden (ohne absoluten Maximum).</li>
+  <li>Der Input-Befehl blockiert standardmäßig sowohl Text- als auch Nicht-Text-Tastendrücke, und blockiert keine der beiden, wenn die <a href="#vis">V-Option</a> vorhanden ist. InputHook dagegen blockiert standardmäßig nur Text-Tastendrücke (<a href="#VisibleNonText">VisibleNonText</a> ist standardmäßig True), dadurch können die meisten Hotkeys verwendet werden, während eine Eingabeerfassung im Gange ist.</li>
 </ul>
-<p>Die Input-Funktion blockiert den <a href="../misc/Threads.htm">Thread</a> während einer aktiven Eingabeerfassung, wohingegen InputHook dem Thread erlaubt, fortzufahren oder sogar beendet zu werden (wodurch jeder von ihm unterbrochene Thread fortgesetzt werden kann). Anstatt zu warten, kann das Skript eine <a href="#OnEnd">OnEnd</a>-Funktion registrieren, die aufgerufen wird, wenn die Eingabeerfassung beendet wird.</p>
-<p>Die Input-Funktion gibt die Eingabe des Benutzers erst zurück, nachdem die Eingabeerfassung beendet wurde, während mit der <a href="Input.htm">Input</a>-Eigenschaft von InputHook die aktuelle Eingabe des Benutzers jederzeit abgerufen werden kann. Anstatt ständig die Input-Eigenschaft zu prüfen, kann das Skript eine <a href="#OnChar">OnChar</a>-Funktion registrieren, die jedes Mal aufgerufen wird, wenn ein Zeichen hinzugefügt wird.</p>
+<p>Der Input-Befehl blockiert den <a href="../misc/Threads.htm">Thread</a>, während eine Eingabeerfassung im Gange ist, wohingegen InputHook dem Thread erlaubt, fortzufahren oder sogar beendet zu werden (wodurch jeder von ihm unterbrochene Thread fortgesetzt werden kann). Anstatt zu warten, kann das Skript eine <a href="#OnEnd">OnEnd</a>-Funktion registrieren, die aufgerufen wird, wenn die Eingabeerfassung beendet wird.</p>
+<p>Der Input-Befehl gibt die Eingabe des Benutzers erst zurück, nachdem die Eingabeerfassung beendet wurde, während mit der <a href="#Input">Input</a>-Eigenschaft von InputHook die aktuelle Eingabe des Benutzers jederzeit abgerufen werden kann. Anstatt ständig die Input-Eigenschaft zu prüfen, kann das Skript eine <a href="#OnChar">OnChar</a>-Funktion registrieren, die jedes Mal aufgerufen wird, wenn ein Zeichen hinzugefügt wird.</p>
 <p>InputHook ermöglicht deutlich mehr Kontrolle über einzelne Tasten via <a href="#KeyOpt">KeyOpt</a>-Methode. Dazu gehört das Hinzufügen oder Entfernen von Endtasten, das Unterdrücken oder Nicht-Unterdrücken bestimmter Tasten oder das Ignorieren von Texterzeugnissen bestimmter Tasten.</p>
-<p>Im Gegensatz zur Input-Funktion kann InputHook genutzt werden, um Tasten zu erkennen, die keinen Text erzeugen, <em>ohne</em> die Eingabeerfassung zu beenden. Hierzu wird eine <a href="#OnKeyDown">OnKeyDown</a>-Funktion registriert und <a href="#KeyOpt">KeyOpt</a> oder <a href="#NotifyNonText">NotifyNonText</a> verwendet, um die zu betreffenden Tasten anzugeben.</p>
+<p>Im Gegensatz zum Input-Befehl kann InputHook genutzt werden, um Tasten zu erkennen, die keinen Text erzeugen, <em>ohne</em> die Eingabeerfassung zu beenden. Hierzu wird eine <a href="#OnKeyDown">OnKeyDown</a>-Funktion registriert und <a href="#KeyOpt">KeyOpt</a> oder <a href="#NotifyNonText">NotifyNonText</a> verwendet, um die zu betreffenden Tasten anzugeben.</p>
 <p>Wenn eines der Elemente in <em>Vergleichsliste</em> die Eingabeerfassung beendet hat, kann die <a href="#Match">Match</a>-Eigenschaft herangezogen werden, um genau zu bestimmen, welche Übereinstimmung eingetreten ist (vor allem dann, wenn die <a href="#asterisk">*-Option</a> vorhanden ist).</p>
-<p>Obwohl das Skript <a href="GetKeyState.htm">GetKeyState</a> nach einer Input-Funktion heranziehen kann, spiegelt es manchmal nicht genau wider, welche Tasten gedrückt wurden, nachdem die Eingabeerfassung beendet wurde. Die <a href="#EndMods">EndMods</a>-Eigenschaft von InputHook spiegelt den logischen Zustand der Modifikatortasten zum Zeitpunkt der Beendigung der Eingabeerfassung wider.</p>
+<p>Obwohl das Skript <a href="GetKeyState.htm">GetKeyState</a> nach einem Input-Befehl heranziehen kann, spiegelt es manchmal nicht genau wider, welche Tasten gedrückt wurden, nachdem die Eingabeerfassung beendet wurde. Die <a href="#EndMods">EndMods</a>-Eigenschaft von InputHook spiegelt den logischen Zustand der Modifikatortasten zum Zeitpunkt der Beendigung der Eingabeerfassung wider.</p>
 <p>Es gibt einige Unterschiede in Bezug auf die Abwärtskompatibilität:</p>
 <ul>
-  <li>Die Input-Funktion speichert Endtasten <kbd>A</kbd>-<kbd>Z</kbd> in Großbuchstaben, obwohl andere Buchstaben auf einigen Tastaturlayouts kleingeschrieben sind. Übergibt man den Wert an <a href="Send.htm">Send</a>, würde es ungewollt einen UMSCHALT-modifizierten Tastendruck erzeugen. Die <a href="#EndKeys">EndKeys</a>-Eigenschaft von InputHook gibt dagegen immer den normalisierten Namen zurück; also das Zeichen, das die Taste erzeugen würde, wenn kein <kbd>Umschalt</kbd> oder andere Modifikatoren gedrückt gehalten werden.</li>
-  <li><p>Wenn ein Tastenname in <em>Endtasten</em> einem VK entspricht, der von zwei physischen Tasten verwendet wird (z. B. <kbd>NumpadUp</kbd> und <kbd>Up</kbd>), wird die Input-Funktion die primäre Taste via VK und die sekundäre Taste via SC behandeln, während InputHook beide via SC behandelt. Mit der Schreibweise <code>{vkNN}</code> kann die Taste via VK behandelt werden.</p>
-  <p>Wenn die Endtaste via VK behandelt wird, können beide physikalischen Tasten die Eingabeerfassung beenden. <code>{NumpadUp}</code> beispielsweise würde bewirken, dass die Input-Funktion mit <kbd>Up</kbd> beendet werden kann, allerdings würde ErrorLevel <code>EndKey:NumpadUp</code> enthalten, da nur der VK berücksichtigt wird.</p>
-  <p>Wenn eine Endtaste via SC behandelt wird, erzeugt die Input-Funktion immer Namen für den bekannten sekundären SC eines bestimmten VKs, und für alle anderen Tasten immer <code>sc<i>NNN</i></code> (selbst wenn sie einen Namen hat). InputHook dagegen erzeugt einen Namen, wenn die Tasten einen hat.</p></li>
+  <li>Der Input-Befehl speichert Endtasten <kbd>A</kbd>-<kbd>Z</kbd> in Großbuchstaben, obwohl andere Buchstaben auf einigen Tastaturlayouts kleingeschrieben sind. Übergibt man den Wert an <a href="Send.htm">Send</a>, würde es ungewollt einen UMSCHALT-modifizierten Tastendruck erzeugen. Die <a href="#EndKeys">EndKeys</a>-Eigenschaft von InputHook gibt dagegen immer den normalisierten Namen zurück; also das Zeichen, das die Taste erzeugen würde, wenn kein <kbd>Umschalt</kbd> oder andere Modifikatoren gedrückt gehalten werden.</li>
+  <li><p>Wenn ein Tastenname in <em>Endtasten</em> einem VK entspricht, der von zwei physischen Tasten verwendet wird (z. B. <kbd>NumpadUp</kbd> und <kbd>Up</kbd>), wird der Input-Befehl die primäre Taste via VK und die sekundäre Taste via SC behandeln, während InputHook beide via SC behandelt. Mit der Schreibweise <code>{vkNN}</code> kann die Taste via VK behandelt werden.</p>
+  <p>Wenn die Endtaste via VK behandelt wird, können beide physikalischen Tasten die Eingabeerfassung beenden. <code>{NumpadUp}</code> beispielsweise würde bewirken, dass der Input-Befehl mit <kbd>Up</kbd> beendet werden kann, allerdings würde ErrorLevel <code>EndKey:NumpadUp</code> enthalten, da nur der VK berücksichtigt wird.</p>
+  <p>Wenn eine Endtaste via SC behandelt wird, erzeugt der Input-Befehl immer Namen für den bekannten sekundären SC eines bestimmten VKs, und für alle anderen Tasten immer <code>sc<i>NNN</i></code> (selbst wenn sie einen Namen hat). InputHook dagegen erzeugt einen Namen, wenn die Tasten einen hat.</p></li>
 </ul>
 
 <h2>Siehe auch</h2>
-<p><a href="Input.htm">Input</a>, <a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a></p>
+<p><a href="KeyWait.htm">KeyWait</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="InputBox.htm">InputBox</a>, <a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
 <h2>Beispiele</h2>
 <div class="ex" id="ExKeyWaitAny">
@@ -400,7 +398,7 @@ KeyWaitAny(Optionen:="")
     ih := InputHook(Optionen)
     ih.KeyOpt("{All}", "ES")  <em>; End und Suppress</em>
     ih.Start()
-    ErrorLevel := ih.Wait()  <em>; EndReason in ErrorLevel speichern</em>
+    ih.Wait()
     return ih.EndKey  <em>; Tastenname zurückgeben</em>
 }
 </pre>
@@ -417,7 +415,7 @@ KeyWaitCombo(Optionen:="")
     <em>; Modifikatoren ausschließen</em>
     ih.KeyOpt("{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}", "-ES")
     ih.Start()
-    ErrorLevel := ih.Wait()  <em>; EndReason in ErrorLevel speichern</em>
+    ih.Wait()
     return ih.EndMods . ih.EndKey  <em>; Eine Zeichenkette wie &lt;^&lt;+Esc zurückgeben</em>
 }
 </pre>

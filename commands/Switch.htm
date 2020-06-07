@@ -40,33 +40,28 @@
 
 <h2 id="examples">Beispiele</h2>
 <div class="ex" id="ExInput">
-<p><a href="#ExInput">#1</a>: Dies ist ein funktionierendes Hotkey-Beispiel. Es gibt ein <a href="Input.htm#ExHotkey">Beispiel</a> auf der <a href="Input.htm">Input</a>-Seite, das funktionsgemäß identisch ist, aber if-else-if verwendet.</p>
+<p><a href="#ExInput">#1</a>: Um dieses Beispiel zu testen, geben Sie <kbd>[</kbd> gefolgt von einer der unten aufgelisteten Abkürzungen, weitere 5 Zeichen oder Enter/Esc/Tab/<kbd>.</kbd> ein; oder warten Sie 4 Sekunden.</p>
 <pre>~[::
-Benutzereingabe := Input("V T5 L4 C", "{enter}.{esc}{tab}", "btw,otoh,fl,ahk,ca")
-switch ErrorLevel
+Hook := InputHook("V T5 L4 C", "{enter}.{esc}{tab}", "btw,otoh,fl,ahk,ca")
+Hook.Start()
+Hook.Wait()
+switch Hook.EndReason
 {
 case "Max":
-    MsgBox 'Ihre Eingabe "' Benutzereingabe '" hat die maximale Textlänge erreicht.'
-    return
+    MsgBox 'Ihre Eingabe "' Hook.Input '" hat die maximale Textlänge erreicht.'
 case "Timeout":
-    MsgBox 'Sie haben "' Benutzereingabe '" innerhalb der verfügbaren Zeit eingegeben.'
-    return
-case "NewInput":
-    return
-default:
-    if InStr(ErrorLevel, "EndKey:")
+    MsgBox 'Sie haben "' Hook.Input '" innerhalb der verfügbaren Zeit eingegeben.'
+case "EndKey":
+    MsgBox 'Sie haben "' Hook.Input '" eingegeben und die Eingabe mit ' Hook.EndReason ' beendet.'
+default:  <em>; Übereinstimmung</em>
+    switch Hook.Input
     {
-        MsgBox 'Sie haben "' Benutzereingabe '" eingegeben und Eingabe mit ' ErrorLevel ' beendet.'
-        return
+    case "btw":   Send "{backspace 4}by the way"
+    case "otoh":  Send "{backspace 5}on the other hand"
+    case "fl":    Send "{backspace 3}Florida"
+    case "ca":    Send "{backspace 3}California"
+    case "ahk":   Run "https://www.autohotkey.com"
     }
-}
-switch Benutzereingabe
-{
-case "btw":   Send "{backspace 4}by the way"
-case "otoh":  Send "{backspace 5}on the other hand"
-case "fl":    Send "{backspace 3}Florida"
-case "ca":    Send "{backspace 3}California"
-case "ahk":   Run "https://www.autohotkey.com"
 }
 return
 </pre>

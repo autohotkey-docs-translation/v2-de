@@ -18,7 +18,16 @@
 </p>
 <p><a href="IntelliSense.ahk">Dieses Skript herunterladen</a>  |  <a href="index.htm">Andere Beispiel-Skripte</a>  |  <a href="../AutoHotkey.htm">Home</a></p>
 
-<pre class="NoIndent"><em>; KONFIGURATIONSBEREICH: Passt das Skript mit den folgenden Variablen an.</em>
+<pre class="NoIndent">
+<em>; IntelliSense -- von Rajat (von anderen aktualisiert)
+; http://www.autohotkey.com
+; Dieses Skript überwacht die Benutzereingaben beim Bearbeiten eines AutoHotkey-Skripts.
+; Sobald ein Befehl gefolgt von einem Komma oder eines Leerzeichens eingegeben wird,
+; dann wird als Hilfe die Parameterliste des Befehls angezeigt.
+; Darüber hinaus kann Strg+F1 (oder ein anderer Hotkey) gedrückt werden,
+; um die Befehlsseite in der Hilfe-Datei anzuzeigen. Um die Parameterliste zu schließen, drücken Sie Escape oder Enter.</em>
+
+<em>; KONFIGURATIONSBEREICH: Passt das Skript mit den folgenden Variablen an.</em>
 
 <em>; Der unten genannte Hotkey wird gedrückt, um die aktuelle Befehlsseite in der
 ; Hilfedatei anzuzeigen:</em>
@@ -51,8 +60,9 @@ if I_Icon != ""
         TraySetIcon I_Icon
 
 <em>; Den Standort von AutoHotkey ermitteln:</em>
-ahk_dir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir")
-if ErrorLevel  <em>; Nichts gefunden, so in anderen häufigen Standorten nachschauen.</em>
+try
+    ahk_dir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\AutoHotkey", "InstallDir")
+catch  <em>; Nichts gefunden, so in anderen häufigen Standorten nachschauen.</em>
 {
     if A_AhkPath
         SplitPath A_AhkPath,, ahk_dir
@@ -76,7 +86,7 @@ Loop Read, ahk_dir "\Extras\Editors\Syntax\Commands.txt"
 
     <em>; Direktiven haben ein erstes Leerzeichen anstelle eines ersten Kommas.</em>
     <em>; So wird je nachdem verwendet, was zuerst als Endzeichen im Befehlsnamen vorkommt:</em>
-    I_cPos := InStr(I_FullCmd, ",")
+    I_cPos := InStr(I_FullCmd, "(")
     I_sPos := InStr(I_FullCmd, "`s")
     if (!I_cPos or (I_cPos &gt; I_sPos and I_sPos))
         I_EndPos := I_sPos
@@ -102,26 +112,27 @@ Loop Read, ahk_dir "\Extras\Editors\Syntax\Commands.txt"
 Loop
 {
     <em>; Editor-Fenster überprüfen:</em>
-    if !InStr(WinGetTitle("A"), I_Editor)
+    if !WinActive(I_Editor)
     {
         ToolTip
         Sleep 500
         Continue
     }
     
-    <em>; Alle Tasten bis zur Endtaste abrufen:</em>
-    I_Word := Input("V", "{Enter}{Escape}{Space},")
-    I_EndKey := ErrorLevel
+    <em><em>; Alle Tasten bis zur Endtaste abrufen:</em></em>
+    I_Hook := I_Input("V", "{Enter}{Escape}{Space},")
+    I_Word := I_Hook.Input
+    I_EndKey := I_Hook.EndKey
     
     <em>; ToolTip wird in folgenden Fällen versteckt:</em>
-    if I_EndKey = "EndKey:Enter" or I_EndKey = "EndKey:Escape"
+    if I_EndKey = "Enter" or I_EndKey = "Escape"
     {
         ToolTip
         Continue
     }
 
     <em>; Nochmals Editor-Fenster überprüfen!</em>
-    if !InStr(WinGetTitle("A"), I_Editor)
+    if !WinActive(I_Editor)
     {
         ToolTip
         Continue
@@ -142,9 +153,9 @@ Loop
     I_Index := ""
     Loop
     {
-        <em>; Es kommt der Leistung zugute, wenn dynamische Variablen nur einmal aufgelöst werden.
-        ; Darüber hinaus wird der eingefügte Wert in I_ThisCmd auch von der
-        ; I_HelpHotkey-Subroutine verwendet:</em>
+        <em>; Es kommt der Leistung zugute, wenn dynamische Variablen nur einmal aufgelöst werden.</em>
+        <em>; Darüber hinaus wird der eingefügte Wert in I_ThisCmd auch von der</em>
+        <em>; I_HelpHotkey-Subroutine verwendet:</em>
         I_ThisCmd := I_Cmd%A_Index%
         if I_ThisCmd = ""
             break
@@ -162,14 +173,28 @@ Loop
     
     <em>; Übereinstimmende Befehle anzeigen, um den Benutzer zu führen:</em>
     I_ThisFullCmd := I_FullCmd%I_Index%
-    CaretGetPos CaretX, CaretY
-    ToolTip I_ThisFullCmd, CaretX, CaretY + 20
+    CaretGetPos I_CaretX, I_CaretY
+    ToolTip I_ThisFullCmd, I_CaretX, I_CaretY + 20
+}
+
+
+
+<em>; Dieses Skript wurde ursprünglich für AutoHotkey v1 geschrieben.
+; I_Input() ist eine grobe Nachbildung des Input-Befehls.</em>
+I_Input(Options:="", EndKeys:="", MatchList:="") {
+    static ih
+    if IsSet(ih) &amp;&amp; ih.InProgress
+        ih.Stop()
+    ih := InputHook(Optionen, Endtasten, Vergleichsliste)
+    ih.Start()
+    ih.Wait()
+    return ih
 }
 
 
 
 I_HelpHotkey:
-if !InStr(WinGetTitle("A"), I_Editor)
+if !WinActive(I_Editor)
     return
 
 ToolTip  <em>; Syntaxhelfer deaktivieren, da er zurzeit nicht benötigt wird.</em>
