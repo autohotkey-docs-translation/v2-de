@@ -88,7 +88,9 @@
 <table class="info">
   <tr>
     <td style="width:12em">CapsLock</td>
-    <td><kbd>Feststell</kbd> (Feststelltaste)</td>
+    <td><kbd>Feststell</kbd> (Feststelltaste)
+      <p class="warning"><strong>Hinweis:</strong> Windows IME kann die Erkennung und Funktionalität der Feststelltaste stören; siehe <a href="#IME">Feststelltaste und IME</a> für Details.</p>
+    </td>
   </tr>
   <tr>
     <td>Space</td>
@@ -423,9 +425,9 @@
   <li>Scrollen Sie die Seite nach unten. Dort werden Sie die Down- und Up-Ereignisse Ihrer Taste finden. HINWEIS: Einige Tasten erzeugen keine Ereignisse und werden deshalb hier nicht angezeigt. In diesem Fall kann diese Taste nicht zu einem Hotkey gemacht werden, weil Ihr Tastatur-Treiber oder Ihre Hardware diese Taste auf einer Ebene behandelt, auf die AutoHotkey nicht zugreifen kann. Weiter unten finden Sie Lösungswege, die eventuell hilfreich sein könnten.</li>
   <li>Wenn Ihre Taste in der Liste zu finden ist, sollten Sie sich den 3-stelligen hexadezimalen Wert aus der zweiten Spalte notieren (z. B. <strong>159</strong>).</li>
   <li>Das folgende Beispiel zeigt, wie diese Taste zu einem Hotkey gemacht werden kann:
-<pre><strong>SC159::</strong> <em>; Ersetzen Sie 159 mit dem Wert Ihrer Taste.</em>
-MsgBox A_ThisHotkey " wurde gedrückt."
-return</pre></li>
+<pre>
+<strong>SC159::</strong>MsgBox ThisHotkey " wurde gedrückt." <em>; Ersetzen Sie 159 mit dem Wert Ihrer Taste.</em>
+</pre>Siehe auch <a href="Hotkeys.htm#HotBraces">ThisHotkey</a>.</li>
 </ol>
 <p><strong>Umgekehrte Richtung</strong>: Das folgende Beispiel zeigt, wie eine beliebige Taste neubelegt werden kann, um sie zu einer "mysteriösen Taste" <em>werden zu lassen</em>:</p>
 <pre><em>; Ersetzen Sie 159 mit dem oben ermittelten Wert. Ersetzen Sie FF (falls erforderlich) mit dem
@@ -444,5 +446,37 @@ return</pre></li>
       Deaktivieren Sie oder entfernen Sie jede zusätzliche Software, die zur Tastatur oder Maus gehört, oder ersetzen Sie ihre Treiber mit einem Standard-Treiber vom Betriebssystem. Das setzt voraus, dass so ein Treiber für Ihre Tastatur oder Maus vorhanden ist und dass Sie ohne die mitgelieferten Features vom Treiber und von der Software leben können.</p>
   </li>
 </ol>
+
+<h2 id="IME">Feststelltaste und IME</h2>
+<p>Einige Konfigurationen des Windows IME (z. B. japanische Eingabe mit englischer Tastatur) verwenden die Feststelltaste, um zwischen den Modi umzuschalten. In solchen Fällen wird die Feststelltaste durch den IME unterdrückt und kann von AutoHotkey nicht erkannt werden. Allerdings können die Tastenkürzel <kbd>Alt</kbd>+<kbd>Feststell</kbd>, <kbd>Strg</kbd>+<kbd>Feststell</kbd> und <kbd>Umschalt</kbd>+<kbd>Feststell</kbd> mit einem Workaround deaktiviert werden. Senden Sie ein Tasten-Oben-Ereignis, um den Zustand des IME zu ändern, aber verhindern Sie andere Effekte, indem Sie dem Tastatur-Hook signalisieren, das Ereignis zu unterdrücken. Die folgende Funktion kann hierfür verwendet werden:</p>
+<pre filename="SendSuppressedKeyUp.ahk">
+<em>; Der Tastatur-Hook muss installiert sein.</em>
+#InstallKeybdHook
+SendSuppressedKeyUp(Taste) {
+    DllCall("keybd_event"
+        , "char", GetKeyVK(Taste)
+        , "char", GetKeySC(Taste)
+        , "uint", KEYEVENTF_KEYUP := 0x2
+        , "uptr", KEY_BLOCK_THIS := 0xFFC3D450)
+}
+</pre>
+<p>Wenn Sie die Funktion in das Skript kopieren oder als <em>SendSuppressedKeyUp.ahk</em> in einer <a href="Functions.htm#lib">Funktionsbibliothek</a> speichern, kann sie wie folgt verwendet werden:</p>
+<pre>
+<em>; Alt+ Tastenkürzel für den IME deaktivieren.</em>
+~LAlt::SendSuppressedKeyUp("LAlt")
+
+<em>; Hotkey testen:</em>
+!CapsLock::MsgBox A_ThisHotkey
+
+<em>; CapsLock via Neubelegung zu LCtrl ändern, so dass es mit IME kompatibel ist.</em>
+*CapsLock::
+    Send "{Blind}{LCtrl DownR}"
+    SendSuppressedKeyUp("LCtrl")
+    return
+*CapsLock up::
+    Send "{Blind}{LCtrl Up}"
+    return
+</pre>
+
 </body>
 </html>

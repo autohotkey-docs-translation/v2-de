@@ -198,7 +198,7 @@ DetectHiddenWindows False  <em>; Kann nach PostMessage wieder deaktiviert werden
 </div>
 
 <div class="ex" id="ExSendString">
-<p><a href="#ExSendString">#4</a>: Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript. Dies ist ein funktionierendes Beispiel. Um es zu nutzen, speichern und starten Sie beide folgenden Skripte und drücken Sie <kbd>Win</kbd>+<kbd>Leer</kbd>, um eine InputBox anzuzeigen, die den Benutzer zur Eingabe einer Zeichenkette auffordert.</p>
+<p><a href="#ExSendString">#4</a>: Sendet eine Zeichenkette mit beliebiger Länge an ein anderes Skript. Beide Skripte müssen die gleiche <a href="../Concepts.htm#native-encoding">native Codierung</a> verwenden. Dies ist ein funktionierendes Beispiel. Um es zu nutzen, speichern und starten Sie beide folgenden Skripte und drücken Sie <kbd>Win</kbd>+<kbd>Leer</kbd>, um eine InputBox anzuzeigen, die den Benutzer zur Eingabe einer Zeichenkette auffordert.</p>
 <p>Speichern Sie das folgende Skript als "<strong>Receiver.ahk</strong>" und starten Sie es:</p>
 <pre filename="Receiver.ahk">#SingleInstance
 OnMessage 0x4a, "Empfange_WM_COPYDATA"  <em>; 0x4a ist WM_COPYDATA</em>
@@ -216,15 +216,16 @@ Empfange_WM_COPYDATA(wParam, lParam, msg, hwnd)
 <pre filename="Sender.ahk">ZielSkriptTitel := "Receiver.ahk ahk_class AutoHotkey"
 
 #space::  <em>; Hotkey: WIN+LEERTASTE. Drücken Sie ihn, um eine InputBox zur Eingabe einer Zeichenkette anzuzeigen.</em>
-ib := InputBox("Tragen Sie den zu sendenden Text ein:", "Text via WM_COPYDATA senden")
-if ib.Result = "Cancel"  <em>; Benutzer hat die Abbrechen-Schaltfläche gedrückt.</em>
-    return
-Ergebnis := Sende_WM_COPYDATA(ib.Value, ZielSkriptTitel)
-if Ergebnis = ""
-    MsgBox "SendMessage fehlgeschlagen oder Zeit überschritten. Gibt es den folgenden Fenstertitel?:`n" ZielSkriptTitel
-else if (Ergebnis = 0)
-    MsgBox "Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde."
-return
+{
+    ib := InputBox("Tragen Sie den zu sendenden Text ein:", "Text via WM_COPYDATA senden")
+    if ib.Result = "Cancel"  <em>; Benutzer hat die Abbrechen-Schaltfläche gedrückt.</em>
+        return
+    Ergebnis := Sende_WM_COPYDATA(ib.Value, ZielSkriptTitel)
+    if Ergebnis = ""
+        MsgBox "SendMessage fehlgeschlagen oder Zeit überschritten. Gibt es den folgenden Fenstertitel?:`n" ZielSkriptTitel
+    else if (Ergebnis = 0)
+        MsgBox "Meldung wurde gesendet, aber das Zielfenster hat mit 0 geantwortet, was bedeuten könnte, dass sie ignoriert wurde."
+}
 
 Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; ByRef verbraucht in diesem Fall weniger Speicher.
 ; Diese Funktion sendet eine bestimmte Zeichenkette an ein bestimmtes Fenster und gibt die Anwort zurück.
@@ -233,8 +234,8 @@ Sende_WM_COPYDATA(ByRef ZuSendendeZeichenkette, ByRef ZielSkriptTitel)  <em>; By
     KopieDatenStrukt := BufferAlloc(3*A_PtrSize)  <em>; Richtet den Speicherbereich der Struktur ein.</em>
     <em>; Zuerst wird das cbData-Element der Struktur auf die Größe der Zeichenkette gesetzt, einschließlich dem Null-Terminator:</em>
     GrößeInBytes := (StrLen(ZuSendendeZeichenkette) + 1) * 2
-    NumPut( "UPtr", GrößeInBytes  <em>; Muss für das OS getan werden.</em>
-          , "UPtr", &amp;ZuSendendeZeichenkette  <em>; Lässt lpData auf die Zeichenkette selbst verweisen.</em>
+    NumPut( "Ptr", GrößeInBytes  <em>; Muss für das OS getan werden.</em>
+          , "Ptr", StrPtr(ZuSendendeZeichenkette)  <em>; Lässt lpData auf die Zeichenkette selbst verweisen.</em>
           , KopieDatenStrukt, A_PtrSize)
     Vorher_DetectHiddenWindows := A_DetectHiddenWindows
     Vorher_TitleMatchMode := A_TitleMatchMode

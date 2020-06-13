@@ -105,14 +105,16 @@
     <li>Ein Fenster sollte aufgetaucht sein, vermutlich der Texteditor. Wenn das der Fall ist, hattest du ERFOLG!
     <p>Nun, da du ein Skript erstellt hast, müssen wir noch etwas in die Datei einfügen. Eine Liste aller internen Funktionen und Variablen findest du unter <a href="#s5">Abschnitt 5</a>.</p>
     <p>Hier ein sehr einfaches Skript mit einem Hotkey, das, sobald man den Hotkey drückt, Text mithilfe der <a href="commands/Send.htm">Send</a>-Funktion sendet:</p>
-    <pre>^j::
-Send "Mein erstes Skript"
-return</pre>
+    <pre>
+^j::
+{
+    Send "Mein erstes Skript"
+}</pre>
     <p>Wir werden später noch etwas genauer darauf eingehen. Bis dahin erkläre ich dir, was der obige Code macht:</p>
     <ul>
         <li>Die erste Zeile: <code>^j::</code> ist der Hotkey. <code>^</code> symbolisiert <kbd>Strg</kbd>, <code>j</code> ist die Taste <kbd>J</kbd>. Alles <b>links</b> von <code>::</code> sind die Tasten, die du drücken musst.</li>
-        <li>Die zweite Zeile: <code>Send "Mein erstes Skript"</code> ist der Vorgang zum <strong>Senden</strong> von Tastendrücken. <code>Send</code> ist die Funktion, alles nach dem Leerzeichen und innerhalb der Anführungszeichen wird gesendet.</li>
-        <li>Die dritte Zeile: <code>return</code>. Dies wird dein bester Freund. Es <strong>stoppt</strong> sprichwörtlich den Code, die Zeilen darunter anzusteuern. Dadurch können viele Probleme verhindert werden, besonders wenn du damit anfängst, eine Menge Dinge in deinem Skript einzufügen.</li>
+        <li>Die Zeile mit: <code>Send "Mein erstes Skript"</code> ist der Vorgang zum <strong>Senden</strong> von Tastendrücken. <code>Send</code> ist die Funktion, alles nach dem Leerzeichen und innerhalb der Anführungszeichen wird gesendet.</li>
+        <li>Die Zeilen mit <code>{</code> und <code>}</code> markieren den Anfang und das Ende des <a href="Hotkeys.htm">Hotkeys</a>.</li>
     </ul>
     </li>
     <li>Speichere die Datei.</li>
@@ -145,33 +147,30 @@ return</pre>
 <h2 id="s2">2 - Hotkeys &amp; Hotstrings</h2>
 
 <p>Was ist ein Hotkey? Ein Hotkey ist eine Taste, die sich heiß anfühlt. ... kleiner Scherz. Ein Hotkey ist eine Taste oder Tastenkombination, die der Benutzer auf der Tastatur drücken kann, um einige Aktionen auszulösen. Zum Beispiel:</p>
-<pre>^j::
-Send "Mein erstes Skript"
-return</pre>
+<pre>^j::Send "Mein erstes Skript"</pre>
 <p>Was ist ein Hotstring? Hotstrings werden genutzt, um geschriebene Abkürzungen in lange Texte umzuwandeln (kurz Auto-Ersetzen) oder um eine geskriptete Aktion zu starten. Zum Beispiel:</p>
 <pre>::ftw::Free the whales</pre>
 <p>Der Unterschied zwischen den beiden Beispielen besteht darin, dass der Hotkey durch Drücken von <kbd>Strg</kbd>+<kbd>J</kbd> ausgelöst werden kann, während der Hotstring dein geschriebenes "ftw" in "Free the whales" umwandelt.</p>
 <p><i>"Also, wie genau erstellt eine Person wie ich einen Hotkey?"</i> Gute Frage. Ein Hotkey wird mit einem einzelnen Doppelpunktpaar erstellt. Die Taste oder Tastenkombination kommt auf die <b>linke</b> Seite von <code>::</code>. Der Inhalt muss darunter stehen, gefolgt von einem <code>return</code>.</p>
 <p class="note"><strong>Hinweis:</strong> Es gibt Ausnahmen, aber diese führen oft zu Problemen, als das sie nützlich sind. Deshalb wird im Tutorial nicht weiter darauf eingegangen, zumindest nicht im Moment.</p>
-<pre>Esc::
-MsgBox "Escape!!!!"
-return
-</pre>
+<pre>Esc::MsgBox "Escape!!!!"</pre>
 <p>Ein Hotstring hat auf jeder Seite des Textes, der ersetzt werden soll, jeweils ein Doppelpunktpaar. Der Text, der deinen geschriebenen Text ersetzen soll, muss auf der <b>rechten</b> Seite des zweiten Doppelpunktpaares erfolgen.</p>
 <p>Hotstrings können, wie bereits erwähnt, auch geskriptete Aktionen starten. Eine ausgefallene Bezeichnung für <i>"tue so ziemlich alles"</i>. Das gleiche gilt für Hotkeys.</p>
 <pre>::bzw::
-MsgBox "Du hast bzw eingegeben."
-return</pre>
+{
+    MsgBox "Du hast bzw eingegeben."
+}</pre>
 <p>Außerdem solltest du wissen, dass du jedem Hotkey, Hotstring, Label oder jedem anderen Element, über das wir noch nicht geredet haben, mehrere Codezeilen zuweisen kannst.</p>
 <pre>^j::
-MsgBox "Wow!"
-MsgBox "Das sind"
-Run "notepad.exe"
-WinActivate "Unbenannt - Editor"
-WinWaitActive "Unbenannt - Editor"
-Send "7 Zeilen{!}{Enter}"
-SendInput "innerhalb des STRG{+}J-Hotkeys."
-return</pre>
+{
+    MsgBox "Wow!"
+    MsgBox "Das sind"
+    Run "notepad.exe"
+    WinActivate "Unbenannt - Editor"
+    WinWaitActive "Unbenannt - Editor"
+    Send "7 Zeilen{!}{Enter}"
+    SendInput "innerhalb des STRG{+}J-Hotkeys."
+}</pre>
 
 <h3 id="s21">a. Tasten und ihre mysteriösen Symbole</h3>
 <p>Du wunderst dich vielleicht: <i>"Woher soll ich denn wissen, dass Zirkumflex (^) die <kbd>Strg</kbd>-Taste symbolisiert?!"</i>. Nun, gute Frage. Um dir beizubringen, was ^ und andere Symbole bedeuten, hilft dir die folgende Tabelle weiter:</p>
@@ -205,13 +204,9 @@ return</pre>
 <p>Zusätzlich findest du eine Liste aller/vieler Hotkey-Namen, die auf der <b>linken</b> Seite des Doppelpunktpaares eines Hotkeys verwendet werden können, unter <a href="KeyList.htm">Liste mit Tastatur-, Maus- und Joystick-Tasten</a>.</p>
 <p>Mithilfe von <code>&nbsp;&amp;&nbsp;</code> kann eine benutzerdefinierte Kombination aus zwei (und nur zwei) Tasten (außer Joystick-Tasten) definiert werden. Das folgende Beispiel zeigt, wie einer der Hotkeys ausgelöst werden kann, wenn Numpad0 gedrückt gehalten und danach Numpad1 oder Numpad2 gedrückt wird:</p>
 
-<pre>Numpad0 &amp; Numpad1::
-MsgBox "Du hast Numpad1 gedrückt, während du Numpad0 gedrückt hieltst."
-return
-
-Numpad0 &amp; Numpad2::
-Run "notepad.exe"
-return</pre>
+<pre>Numpad0 &amp; Numpad1::MsgBox "Sie haben Numpad1 gedrückt, während Sie Numpad0 gedrückt hielten."
+Numpad0 &amp; Numpad2::Run "notepad.exe"
+</pre>
 
 <p>Du fragst dich bestimmt jetzt, ob Hotstrings auch irgendwelche coole Modifikatoren haben. Ja, das haben sie! Hotstring-Modifikatoren gehören in das erste Doppelpunktpaar. Zum Beispiel:</p>
 <pre>:*:ftw::Free the whales</pre>
@@ -224,49 +219,35 @@ return</pre>
 #IfWinExist</pre>
 <p>Diese speziellen Befehle (auch "Direktiven" genannt) erstellen kontextabhängige Hotkeys und Hotstrings. Gib einfach einen Fenstertitel an. In einigen Fällen kann es jedoch sinnvoll sein, Kriterien wie HWND, Gruppe oder Klasse anzugeben. Solche Kriterien erfordern fortgeschrittenes Wissen und werden auf der folgenden Seite ausführlicher behandelt: <a href="misc/WinTitle.htm">Fenstertitel-Parameter &amp; Zuletzt Gefundenes Fenster</a>.</p>
 <pre>#If WinActive("Unbenannt - Editor")
-#Space::
-MsgBox "Du hast WIN+LEER im Texteditor gedrückt."
-return</pre>
+#Space::MsgBox "Du hast WIN+LEER im Texteditor gedrückt."</pre>
 <p>Um die Kontextabhängigkeit für nachfolgende Hotkeys oder Hotstrings auszuschalten, gib eine beliebige #IfWin-Direktive an und lass all ihre Parameter weg. Zum Beispiel:</p><pre><em>; Unbenannt - Editor</em>
 #If WinActive("Unbenannt - Editor")
-!q::
-MsgBox "Du hast ALT+Q im Texteditor gedrückt."
-return
-
+!q::MsgBox "Du hast ALT+Q im Texteditor gedrückt."
 <em>; Jedes andere Fenster, das nicht "Unbenannt - Editor" ist</em>
 #If
-!q::
-MsgBox "Du hast ALT+Q in einem beliebigen Fenster gedrückt."
-return</pre>
+!q::MsgBox "Du hast ALT+Q in einem beliebigen Fenster gedrückt."
+</pre>
 <p>Wenn #IfWin-Direktiven nie in einem Skript verwendet werden, sind Hotkeys und Hotstrings für alle Fenster wirksam.</p>
 <p>Die #IfWin-Direktiven sind von der Position abhängig: sie beeinflussen nur Hotkeys und Hotstrings, die sich im Skript physisch darunter befinden. Zudem schließen sie sich gegenseitig aus; das heißt, dass nur die aktuellste Direktive wirksam sein wird.</p>
 <pre><em>; Texteditor</em>
 #If WinActive("ahk_class Notepad")
-#Space::
-MsgBox "Du hast WIN+LEER im Texteditor gedrückt."
-return
+#Space::MsgBox "Du hast WIN+LEER im Texteditor gedrückt."
 ::msg::Du hast msg im Texteditor geschrieben
 
 <em>; MSPaint</em>
 #If WinActive("Unbenannt - Paint")
-#Space::
-MsgBox "Du hast WIN+LEER im Paint-Programm gedrückt!"
-return
+#Space::MsgBox "Du hast WIN+LEER im Paint-Programm gedrückt!"
 ::msg::Du hast msg im Paint-Programm geschrieben!</pre>
 <p class="note">Weitere Informationen und ähnliche Direktiven findest du auf der <a href="commands/_If.htm">#If</a>-Seite.</p>
 <h3 id="s23">c. Mehrere Hotkeys/Hotstrings pro Datei</h3>
 <p>Das kommt einigen Leuten aus irgendeinem Grund in den Sinn. Also werde ich es klarstellen: In AutoHotkey können <i>so viele</i> Hotkeys und Hotstrings wie möglich angegeben werden. Ob es nun 1, 3253 oder mehr sind - es spielt keine Rolle.</p>
-<pre>#i::
-Run "http://www.google.com/"
-return
-
+<pre>#i::Run "http://www.google.com/"
 ^p::
-Run "notepad.exe"
-return
+{
+    Run "notepad.exe"
+}
 
-~j::
-Send "ack"
-return
+~j::Send "ack"
 
 :*:acheiv::achiev
 ::achievment::achievement
@@ -282,12 +263,14 @@ return
 <pre class="NoIndent">::bzw::beziehungsweise  <em>; Ersetzt "bzw" mit "beziehungsweise", sobald du ein <a href="Hotstrings.htm#EndChars">vordefiniertes Endungszeichen</a> drückst.</em></pre>
 <pre class="NoIndent">:*:bzw::beziehungsweise  <em>; Ersetzt "bzw" mit "beziehungsweise", ohne dass ein Endungszeichen notwendig ist.</em></pre>
 <pre class="NoIndent">^n::  <em>; STRG+N-Hotkey</em>
-Run "notepad.exe"  <em>; Startet den Windows-Texteditor, sobald du STRG+N drückst.</em>
-return  <em>; Dies endet den Hotkey. Der Code darunter wird nicht ausgelöst.</em></pre>
+{
+    Run "notepad.exe"  <em>; Startet den Windows-Texteditor, sobald du STRG+N drückst.</em>
+}  <em>; Dies endet den Hotkey. Der Code darunter wird nicht ausgelöst.</em></pre>
 <pre class="NoIndent">^b::  <em>; STRG+B-Hotkey</em>
-Send "{Ctrl down}c{Ctrl up}"  <em>; Kopiert den markierten Text. ^c könnte man auch verwenden, allerdings ist diese Methode sicherer.</em>
-SendInput "[b]{Ctrl down}v{Ctrl up}[/b]" <em>; Umschließt den markierten Text mit BBCode-Tags, um ihn in einem Forum fett darzustellen.</em>
-return  <em>; Dies endet den Hotkey. Der Code darunter wird nicht ausgelöst.</em></pre>
+{
+    Send "{Ctrl down}c{Ctrl up}"  <em>; Kopiert den markierten Text. ^c könnte man auch verwenden, allerdings ist diese Methode sicherer.</em>
+    SendInput "[b]{Ctrl down}v{Ctrl up}[/b]" <em>; Umschließt den markierten Text mit BBCode-Tags, um ihn in einem Forum fett darzustellen.</em>
+}  <em>; Dies endet den Hotkey. Der Code darunter wird nicht ausgelöst.</em></pre>
 
 <h2 id="s3">3 - Senden von Tastendrücken</h2>
 <p>Du hast also vor, Tasten zu senden (virtuell zu drücken). Das können wir tun. Benutze die <a href="commands/Send.htm">Send</a>-Funktion. Diese Funktion sendet wortwörtlich Tastendrücke, um das Schreiben oder Drücken von Tasten zu simulieren.</p>
@@ -320,14 +303,11 @@ return  <em>; Dies endet den Hotkey. Der Code darunter wird nicht ausgelöst.</e
 <p>Das folgende Beispiel zeigt, was man mit einem Hotkey nicht machen sollte:</p>
 <pre><em>; Beim Erstellen eines Hotkeys...
 ; FALSCH</em>
-{LCtrl}::
-Send "AutoHotkey"
-return
+{LCtrl}::Send "AutoHotkey"
 
 <em>; RICHTIG</em>
-LCtrl::
-Send "AutoHotkey"
-return</pre>
+LCtrl::Send "AutoHotkey"
+</pre>
 <p>Ein häufiges Problem, das viele Leute haben, ist, dass sie davon ausgehen, dass die geschweiften Klammern nur zum Spaß gesetzt werden. Aber in Wirklichkeit <b>werden sie gebraucht</b>. Nur so kann AHK wissen, dass z. B. <code>{!}</code> als "Ausrufezeichen" und nicht als "drücke die <kbd>Alt</kbd>-Taste" interpretiert werden soll. Vergiss nicht, dass du mit der Tabelle auf der <a href="commands/Send.htm">Send</a>-Seite überprüfen kannst, ob alle Klammern richtig gesetzt sind. Zum Beispiel:</p>
 <pre>Send "Dieser Text wurde geschrieben{!}" <em>; Hast du bemerkt, dass das ! in geschweiften Klammern gesetzt ist? Wäre dies nicht so, würde AHK die ALT-Taste drücken.</em>
 </pre>

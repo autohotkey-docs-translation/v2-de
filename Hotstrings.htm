@@ -24,7 +24,7 @@
   <li><a href="#variant">Kontextabhängige Hotstrings</a></li>
   <li><a href="#AutoCorrect">AutoCorrect</a></li>
   <li><a href="#remarks">Bemerkungen</a></li>
-  <li><a href="#Function">Funktions-Hotstrings</a></li>
+  <li><a href="#Function">Benannte Funktions-Hotstrings</a></li>
   <li><a href="#Helper">Hotstring Helper</a></li>
 </ul>
 
@@ -35,12 +35,15 @@
 <p>Das Beispiel oben bewirkt, dass die Abkürzung bzw automatisch mit "beziehungsweise" ersetzt wird, sobald Sie sie eingeben (allerdings müssen nach dieser Abkürzung standardmäßig ein <a href="#EndChars">Endungszeichen</a> wie <kbd>Leer</kbd>, <kbd>.</kbd> oder <kbd>Enter</kbd> erfolgen).</p>
 <p id="auto">Das "beziehungsweise"-Beispiel oben ist ein sogenannter automatisch-ersetzender Hotstring, weil der eingegebene Text automatisch gelöscht und mit der angegebenen Zeichenkette nach dem zweiten Doppelpunkt-Paar ersetzt wird. Ein Hotstring kann auch definiert werden, um eine beliebige benutzerdefinierte Aktion wie in den folgenden Beispielen durchführen zu lassen. Beachten Sie, dass die Funktionen <u>unterhalb</u> des Hotstrings angegeben werden müssen:</p>
 <pre>::bzw::
-MsgBox 'Sie haben "bzw" eingegeben.'
-return
+{
+    MsgBox 'Sie haben "bzw" eingegeben.'
+}
 
 :*:]d::  <em>; Dieser Hotstring ersetzt "]d" mit dem heutigen Datum und der aktuellen Uhrzeit.</em>
-SendInput <a href="commands/FormatTime.htm">FormatTime</a>(, "d.M.yyyy HH:mm")  <em>; z. B. 21.6.2011 15:10</em>
-return</pre>
+{
+    SendInput <a href="commands/FormatTime.htm">FormatTime</a>(, "d.M.yyyy HH:mm")  <em>; z. B. 21.6.2011 15:10</em>
+}</pre>
+<p>Die geschweiften Klammern haben die gleiche Bedeutung wie bei <a href="Hotkeys.htm#Intro">Hotkeys</a>.</p>
 <p>Obwohl die beiden Beispiele oben keine automatisch-ersetzende Hotstrings sind, wird auch hier die eingegebene Abkürzung standardmäßig gelöscht. Dieses Löschen erfolgt durch automatisches Backspacing (wiederholendes Löschen des letzten Zeichens), das mit der <a href="#b0">b0-Option</a> deaktiviert werden kann.</p>
 
 <h2 id="EndChars">Endungszeichen</h2>
@@ -83,11 +86,12 @@ return</pre>
 <p>SendInput ist der Standardmodus, der mit den oben genannten Optionen überschrieben werden kann. Beachten Sie aber, dass im Gegensatz zur SI-Option SendEvent statt SendPlay verwendet wird, falls SendInput nicht zur Verfügung steht.</p>
 <p id="T"><strong>T</strong>: Sendet den Ersatztext im <a href="commands/Send.htm#SendText">Text-Modus</a>. Das heißt, dass jedes Zeichen via Zeichencode gesendet wird, ohne dass {Enter} in <kbd>Enter</kbd>, ^c in <kbd>Strg</kbd>+<kbd>C</kbd> und so weiter übersetzt wird und ohne dass ein Zeichen in einen Tastendruck übersetzt wird. Diese Option tritt bei Hotstrings, die einen <a href="#continuation">Fortsetzungsbereich</a> haben, automatisch in Kraft. Diese Option kann mit <strong>T0</strong> oder <strong>R0</strong> deaktiviert oder mit <strong>R</strong> überschrieben werden.</p>
 <p id="X"><strong>X</strong>: Execute (Ausführen). Anstelle eines Ersatztextes akzeptiert der Hotstring einen Befehl oder Ausdruck, den er ausführen kann. <code>:X:~mb::MsgBox</code> beispielsweise würde bewirken, dass ein Mitteilungsfenster angezeigt wird, wenn der Benutzer "~mb" schreibt, anstatt den Text mit dem Wort "MsgBox" automatisch zu ersetzen. Das ist besonders nützlich, wenn man eine große Anzahl von Hotstrings definiert, die Funktionen aufrufen, da sonst drei Zeilen pro Hotstring notwendig wären.</p>
-<p>Wenn die X-Option in Verbindung mit der <a href="commands/Hotstring.htm">Hotstring</a>-Funktion genutzt wird, bewirkt sie, dass der <em>Ersatz</em>-Parameter als Label- oder Funktionsname statt als Ersatztext interpretiert wird. Allerdings hat die X-Option diesen Effekt nur, wenn sie bei jedem Aufruf der Funktion angegeben ist.</p>
+<p>Wenn die X-Option in Verbindung mit der <a href="commands/Hotstring.htm">Hotstring</a>-Funktion genutzt wird, bewirkt sie, dass der <em>Ersatz</em>-Parameter als Funktionsname statt Ersatztext interpretiert wird. Allerdings hat die X-Option diesen Effekt nur, wenn sie bei jedem Aufruf der Funktion angegeben ist.</p>
 <p id="z"><strong>Z</strong>: Diese selten verwendete Option setzt die Hotstring-Erkennung jedes Mal zurück, wenn der Hotstring ausgelöst wird. Das heißt, dass das Skript auf einen völlig neuen Hotstring wartet und dass alles, was Sie zuvor eingegeben haben, verworfen wird. Dadurch wird verhindert, dass Hotstrings unbeabsichtigt ausgelöst werden können. Schauen Sie sich dazu das folgende Beispiel an:</p>
 <pre>:b0*?:11::
-SendInput "xx"
-return</pre>
+{
+    SendInput "xx"
+}</pre>
 <p>Wenn Sie mit diesem Beispiel drei aufeinanderfolgende Einsen (111) schreiben, wird der Hotstring zweimal ausgelöst, weil die mittlere 1 sowohl das <em>letzte</em> Zeichen vom ersten Auslösen als auch das <em>erste</em> Zeichen vom zweiten Auslösen ist. Sobald Sie den Buchstaben Z vor b0 einfügen, müssten Sie vier statt drei Einsen eingeben, um den Hotstring zweimal auslösen zu können. Mit <strong>Z0</strong> kann diese Option wieder deaktiviert werden.</p>
 <h2 id="continuation">Lange Ersatztexte</h2>
 <p>Wenn der Ersatztext eines Hotstrings relativ lang ist, kann er via <a href="Scripts.htm#continuation">Fortsetzungsbereich</a> in mehreren kurzen Zeilen aufgeteilt werden, um die Übersichtlichkeit und Wartbarkeit des Skripts zu erhöhen. Zum Beispiel:</p>
@@ -99,10 +103,10 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
 )</pre>
 <p>Siehe <a href="Scripts.htm#continuation">Fortsetzungsbereich</a>, wie diese Standardverhalten geändert werden können. Ein Fortsetzungsbereich führt außerdem dazu, dass der Hotstring standardmäßig den <a href="#T">Text-Modus</a> verwendet. Dieses Sonderverhalten kann nur überschrieben werden, wenn man bei jedem Hotstring, der ein Fortsetzungsbereich hat, eine gegensätzliche Option angibt (z. B. <code>:t0:text1::</code> oder <code>:r:text2::</code>).</p>
 <h2 id="variant">Kontextabhängige Hotstrings</h2>
-<p>Mit der <a href="commands/_If.htm">#If</a>-Direktive können bestimmte Hotstrings kontextabhängig gemacht werden. Solche Hotstrings werden je nach Bedingung (z. B. Typ des aktiven Fensters) unterschiedliche Ersatztexte senden, andere Aktionen ausführen oder überhaupt nichts tun. Zum Beispiel:</p>
-<pre>#If WinActive("ahk_class Notepad")
+<p>Mit der <a href="commands/_HotIf.htm">#HotIf</a>-Direktive können bestimmte Hotstrings kontextabhängig gemacht werden. Solche Hotstrings werden je nach Bedingung (z. B. Typ des aktiven Fensters) unterschiedliche Ersatztexte senden, andere Aktionen ausführen oder überhaupt nichts tun. Zum Beispiel:</p>
+<pre>#HotIf WinActive("ahk_class Notepad")
 ::bzw::Dieser Ersatztext wird nur im Texteditor erscheinen.
-#If
+#HotIf
 ::bzw::Dieser Ersatztext erscheint nur in einem Fenster, das nicht der Texteditor ist.</pre>
 
 <h2 id="AutoCorrect">AutoCorrect</h2>
@@ -114,6 +118,7 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
 <p>Aktuell werden innerhalb des Ersatztextes keine <a href="Variables.htm#Expressions">Ausdrücke</a> unterstützt. Um das zu umgehen, dürfen keine <a href="#auto">automatisch-ersetzende</a> Hotstrings benutzt werden. Schreiben Sie stattdessen eine <a href="commands/Send.htm#SendInput">SendInput</a>-Funktion unter der Abkürzung, gefolgt von einer Zeile, die nur das Wort Return enthält.</p>
 <p>Leer- oder Tabulatorzeichen am Ende des Ersatztextes werden standardmäßig verworfen. Damit sie trotzdem gesendet werden, muss ein weiteres Zeichen, ein umgekehrtes Häkchen (`), hinzugefügt werden. Zum Beispiel:</p>
 <pre>:*:bzw::beziehungsweise `</pre>
+<p id="ReplaceBrace">Bei einem automatisch-ersetzenden Hotstring, der nicht den <a href="#T">Text</a>- oder <a href="#raw">Raw</a>-Modus verwendet, muss im Ersatztext ein alleinstehendes <kbd>{</kbd> oder eines, das nur Leerraumzeichen davor hat, mit geschweiften Klammern umschlossen werden, zum Beispiel <code>:*:brace::{{}</code> und <code>:*:tab_brace:: {{}</code>. Ansonsten wird sie als geschweifte Startklammer für die Funktion des Hotstrings interpretiert. Siehe auch <a href="Hotkeys.htm#otb">Hotkeys - OTB</a>.</p>
 <p id="NoMouse">Standardmäßig wird ein linker oder rechter Mausklick die Hotstring-Erkennung zurücksetzen. Das heißt, dass das Skript auf einen völlig neuen Hotstring warten und dass alles, was Sie zuvor eingegeben haben, verworfen wird (wenn das unerwünscht ist, muss die Zeile <code><a href="commands/_Hotstring.htm">#Hotstring</a> NoMouse</code> irgendwo im Skript eingefügt werden). Dieses "Zurücksetzen bei einem Mausklick" ist standardmäßig so festgelegt, weil jeder Klick üblicherweise den Textcursor verschiebt oder den Tastaturfokus auf ein neues Steuerelement/Feld setzt. In solchen Fällen ist es generell wünschenswert: 1) einen Hotstring auch dann auslösen zu können, wenn die <a href="#Question">Fragezeichen-Option</a> fehlt; 2) einen Hotstring am Auslösen zu hindern, wenn Sie nach einem Mausklick etwas eingeben, das zufällig eine gültige Abkürzung aus der vorherigen Eingabe formt.</p>
 <p id="focus-reset">Der Hotstring-Erkenner überprüft jedes Mal das aktive Fenster, wenn ein Zeichen eingegeben wird, und setzt sich zurück, wenn ein anderes Fenster als zuvor aktiv ist. Wenn sich das aktive Fenster ändert, aber zurückgesetzt wird, bevor Zeichen eingegeben werden, wird die Änderung nicht erkannt (aber der Hotstring-Erkenner könnte aus einem anderen Grund zurückgesetzt werden). Man kann den Hotstring-Erkenner auch durch Aufrufen von <code><a href="commands/Hotstring.htm#Reset">Hotstring "Reset"</a></code> zurücksetzen.</p>
 <p>Die interne Variable <strong>A_EndChar</strong> enthält das Endungszeichen, mit dem Sie zuletzt einen nicht-automatisch-ersetzenden Hotstring ausgelöst haben. Wenn ein Hotstring nicht mit einem Endungszeichen ausgelöst werden musste (wegen der <a href="#Asterisk">*-Option</a>), wird die Variable leer sein. A_EndChar ist nützlich, wenn Sie Hotstrings haben, die die Send-Funktion verwenden oder sich je nach Endungszeichen unterschiedlich verhalten sollen. Mit <code>SendText A_EndChar</code> kann das Endungszeichen selbst gesendet werden (in diesem Fall <a href="commands/Send.htm">SendText</a>, um zu verhindern, dass Zeichen wie !{}, die eine besondere Bedeutung haben, interpretiert werden).</p>
@@ -124,7 +129,7 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
 <p>Die Reihenfolge, in der die Hotstrings definiert werden, bestimmt ihre relative Priorität zueinander. Das heißt, wenn Ihre Eingabe mehr als einen Hotstring auslösen kann, wird nur der erste im Skript aufgelistete Hotstring in Kraft treten. Verwandtes Thema: <a href="#variant">Kontextabhängige Hotstrings</a>.</p>
 <p>Jedes von Ihnen durchgeführte Backspacing wird bei der Erkennung von Hotstrings berücksichtigt. Die Navigationstasten <kbd>↑</kbd>, <kbd>→</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>Bild↑</kbd>, <kbd>Bild↓</kbd>, <kbd>Pos1</kbd> und <kbd>Ende</kbd> bewirken, dass der Hotstring-Erkennungsprozess zurückgesetzt wird. Das heißt, dass der Erkennungsprozess auf einen völlig neuen Hotstring warten wird.</p>
 <p>Ein Hotstring kann auch verwendet werden, wenn das aktive Fenster die Tastendrücke des Benutzers ignoriert. Sprich, der Hotstring kann ausgelöst werden, ohne dass die Abkürzung sichtbar sein muss. Auch hier kann die <kbd>Backspace</kbd>-Taste gedrückt werden, um den aktuellsten Tastendruck rückgängig zu machen (selbst wenn der Effekt nicht sehen ist).</p>
-<p id="label">Es ist möglich, ein Hotstring-Label als Ziel für <a href="commands/Gosub.htm">Gosub</a> oder <a href="commands/Goto.htm">Goto</a> zu definieren. Um das zu erreichen, muss das erste Doppelpunkt-Paar (einschließlich die Optionssymbole) und die Abkürzung angegeben werden. Zum Beispiel: <code>Gosub ::xyz</code>. Wenn das Ziel allerdings ein <a href="#auto">einzeiliger (automatisch-ersetzender) Hotstring</a> ist, wird nichts anderes als ein <a href="commands/Return.htm">return</a> ausgeführt.</p>
+<p id="label">Die Funktion eines Hotstrings kann vom Skript nur dann explizit aufgerufen werden, wenn die Funktion benannt wurde. Siehe <a href="#Function">benannte Funktions-Hotstrings</a>.</p>
 <p>Hotstrings werden nicht überwacht, und werden nicht ausgelöst, solange die Eingabeerfassung durch einen unsichtbaren <a href="commands/InputHook.htm">Input-Hook</a> blockiert wird.</p>
 <p id="InputLevel">Standardmäßig können Hotstrings nicht durch Tastendrücke ausgelöst werden, die ein AutoHotkey-Skript erzeugt hat. Dadurch entfällt die Möglichkeit einer Endlosschleife, in der Hotstrings sich gegenseitig immer und immer wieder auslösen werden. Dieses Verhalten kann mit <a href="commands/_InputLevel.htm">#InputLevel</a> und <a href="commands/SendLevel.htm">SendLevel</a> kontrolliert werden. Beachten Sie aber, dass automatisch-ersetzende Hotstrings immer eine Sendestufe von 0 haben und deshalb nie <a href="commands/_UseHook.htm">Hook-Hotkeys</a> oder Hotstrings auslösen können.</p>
 <p>Hotstrings können mithilfe der <a href="commands/Hotstring.htm">Hotstring</a>-Funktion dynamisch erstellt werden. Diese Funktion kann zudem im Skript vorhandene Hotstrings einzeln modifizieren, deaktivieren oder aktivieren.</p>
@@ -139,14 +144,14 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
 </ul>
 <p>Bekannte Einschränkung: Auf einigen Systemen kann es vorkommen, dass der Benutzer keine diakritischen Buchstaben (via toter Tasten) eingeben kann, wenn Hotstrings in Verbindung mit Java-Anwendungen benutzt werden. Um das zu umgehen, kann <a href="commands/Suspend.htm">Suspend</a> vorübergehend aktiviert werden (dieser Befehl deaktiviert alle Hotstrings).</p>
 
-<h2 id="Function">Funktions-Hotstrings</h2>
-<p>Es ist möglich, einem oder mehreren Hotstrings eine <a href="Functions.htm">Funktion</a> zuzuweisen, indem man sie einfach unterhalb des Hotkey-Labels definiert. Zum Beispiel:</p>
+<h2 id="Function">Benannte Funktions-Hotstrings</h2>
+<p>Wenn die Funktion eines Hotstrings aufgerufen werden soll, ohne den Hotstring selbst auszulösen, können Sie einem oder mehreren Hotstrings eine benannte <a href="Functions.htm">Funktion</a> zuweisen, indem Sie sie einfach unterhalb des Doppelpunktpaares definieren. Zum Beispiel:</p>
 <pre><em>; Dieses Beispiel zeigt zudem eine Möglichkeit, wie man die Konformität der Groß- und Kleinschreibung in einem Skript gewährleisten kann.</em>
 :C:BZW::  <em>; Alles großgeschrieben.</em>
 :C:Bzw::  <em>; Nur den ersten Buchstaben großgeschrieben.</em>
 : :bzw::  <em>; In einer beliebig anderen Kombination geschrieben.</em>
-    bzw_an_schreibung_anpassen() {
-        hs := A_ThisHotkey  <em>; Für den praktischen Grund und falls wir unterbrochen werden.</em>
+    bzw_an_schreibung_anpassen(hs) <em>; hs wird den Namen des Hotstrings enthalten, der die Funktion ausgelöst hat.</em>
+    {
         if (hs == ":C:BZW")
             Send "BEZIEHUNGSWEISE"
         else if (hs == ":C:Bzw")
@@ -155,6 +160,7 @@ Standardmäßig bleibt das CR-Zeilenumbruchszeichen (Enter) zwischen der vorheri
             Send "beziehungsweise"
     }
 </pre>
+<p>Wenn die Funktion <b>bzw_an_schreibung_anpassen</b> explizit vom Skript aufgerufen wird, muss dem ersten Parameter (<b>hs</b>) ein Wert übergeben werden.</p>
 <p>Zusätzliche Informationen finden Sie unter <a href="Hotkeys.htm#function-details">Funktions-Hotkeys</a>.</p>
 <p>Die <a href="commands/Hotstring.htm">Hotstring</a>-Funktion kann auch genutzt werden, um einem Hotstring eine Funktion oder ein Funktionsobjekt zuzuweisen.</p>
 

@@ -92,10 +92,11 @@
 <p>Jede Zeile, die unmittelbar beim Starten des Skripts ausgeführt werden soll, muss ganz oben im Skript vorkommen und vor dem ersten <a href="Hotkeys.htm">Hotkey</a>, <a href="Hotstrings.htm">Hotstring</a> oder <a href="commands/Return.htm">Return</a> stehen. Siehe <a href="Scripts.htm#auto">automatischer Ausführungsbereich</a> für weitere Details.</p>
 <p>Die erste auszuführende Zeile eines <a href="Hotkeys.htm">Hotkey</a>s darf nicht neben der Definition stehen, sondern muss <em>darunter</em> erfolgen. Zum Beispiel:</p>
 <pre>#space::  <em>; WIN+LEERTASTE</em>
-Run "Notepad"
-WinWaitActive "Unbenannt - Editor"
-WinMaximize
-return</pre>
+{
+    Run "Notepad"
+    WinWaitActive "Unbenannt - Editor"
+    WinMaximize
+}</pre>
 <h3 id="vista">Warum funktioniert mein Skript nicht in Windows <em>xxx</em>, obwohl es in einer vorherigen Version lief?</h3>
 <p>Dieses Problem tritt in mehreren Varianten auf:</p>
 <ul>
@@ -215,27 +216,29 @@ PostMessage 0x111, 65303,,, "Skript-Dateiname.ahk - AutoHotkey"  <em>; Reload (N
 <p>Um eine sich wiederholende Aktion innerhalb einer <a href="commands/Loop.htm">Schleife</a> zu stoppen, verwenden Sie den folgenden Hotkey, der seine eigene wiederholende Aktion sowohl startet als auch beendet. Das heißt, dass durch einmaliges Drücken des Hotkeys die Schleife begonnen und durch nochmaliges Drücken diese wieder beendet wird.</p>
 <pre>#MaxThreadsPerHotkey 3
 <strong>#z::  <em>; WIN+Z (passen Sie diesen Hotkey Ihren Bedürfnissen an).</em></strong>
-#MaxThreadsPerHotkey 1
-if WinZLaufenLassen  <em>; Bedeutet, dass ein darunterliegender <a href="misc/Threads.htm">Thread</a> bereits die untere Schleife ausführt.</em>
 {
-    WinZLaufenLassen := false  <em>; Signalisiert dem Thread, die Schleife zu stoppen.</em>
-    return  <em>; Beendet diesen Thread, damit der darunterliegende Thread zu einem fortgesetzt wird und zum anderen die obere Zuweisung sehen kann.</em>
+    static WinZLaufenLassen := false
+    if WinZLaufenLassen  <em>; Bedeutet, dass ein darunterliegender <a href="misc/Threads.htm">Thread</a> bereits die untere Schleife ausführt.</em>
+    {
+        WinZLaufenLassen := false  <em>; Signalisiert dem Thread, die Schleife zu stoppen.</em>
+        return  <em>; Beendet diesen Thread, damit der darunterliegende Thread zu einem fortgesetzt wird und zum anderen die obere Zuweisung sehen kann.</em>
+    }
+    <em>; Ansonsten:</em>
+    WinZLaufenLassen := true
+    Loop
+    {
+        <strong><em>; Die nächsten vier Zeilen sind die Aktionen, die wiederholt werden sollen (passen Sie sie Ihren Bedürfnissen an):</em></strong>
+        ToolTip "Drücken Sie erneut WIN+Z, um das hier zu stoppen."
+        Sleep 1000
+        ToolTip
+        Sleep 1000
+        <strong><em>; Lassen Sie den Rest aber unverändert.</em></strong>
+        if not WinZLaufenLassen  <em>; Der Benutzer hat die Schleife durch erneutes Drücken von WIN+Z gestoppt.</em>
+            break  <em>; Unterbricht die Schleife.</em>
+    }
+    WinZLaufenLassen := false  <em>; Setzt den Wert zum Wiederverwenden des Hotkeys zurück.</em>
 }
-<em>; Ansonsten:</em>
-WinZLaufenLassen := true
-Loop
-{
-    <strong><em>; Die nächsten vier Zeilen sind die Aktionen, die wiederholt werden sollen (passen Sie sie Ihren Bedürfnissen an):</em></strong>
-    ToolTip "Drücken Sie erneut WIN+Z, um das hier zu stoppen."
-    Sleep 1000
-    ToolTip
-    Sleep 1000
-    <strong><em>; Lassen Sie den Rest aber unverändert.</em></strong>
-    if not WinZLaufenLassen  <em>; Der Benutzer hat die Schleife durch erneutes Drücken von WIN+Z gestoppt.</em>
-        break  <em>; Unterbricht die Schleife.</em>
-}
-WinZLaufenLassen := false  <em>; Setzt den Wert zum Wiederverwenden des Hotkeys zurück.</em>
-return</pre>
+#MaxThreadsPerHotkey 1</pre>
 <h3 id="help">Wie kann die kontextabhängige Hilfe für AutoHotkey-Funktionen in einem beliebigen Editor verwendet werden?</h3>
 <p>Rajat hat dafür <a href="scripts/ContextSensitiveHelp.htm">dieses Skript</a> erstellt.</p>
 <h3 id="load">Wie kann man feststellen, dass eine Webseite fertig geladen ist?</h3>
@@ -301,12 +304,13 @@ Submit(Btn, *)
 <h3 id="DoublePress">Wie kann ich einen doppelten Tastendruck oder Mausklick erkennen?</h3>
 <p>Verwenden Sie die <a href="Variables.htm#h">internen Variablen für Hotkeys</a> wie folgt:</p>
 <pre>~Ctrl::
-    if (A_ThisHotkey = A_PriorHotkey &amp;&amp; A_TimeSincePriorHotkey &lt; 200)
+{
+    if (ThisHotkey = A_PriorHotkey &amp;&amp; A_TimeSincePriorHotkey &lt; 200)
         MsgBox "Doppeldruck"
-return</pre>
+}</pre>
 <h3 id="HotContext">Wie kann ein <a href="Hotkeys.htm">Hotkey</a> oder <a href="Hotstrings.htm">Hotstring</a> exklusiv für ein bestimmtes Programm gemacht werden? Mit anderen Worten möchte ich eine bestimmte Taste dazu bringen, etwas anderes zu tun, wenn ein bestimmtes Fenster aktiv ist.</h3>
-<p>Die bevorzugte Methode ist <a href="commands/_If.htm">#If</a>. Zum Beispiel:</p>
-<pre>#if WinActive("ahk_class Notepad")
+<p>Die bevorzugte Methode ist <a href="commands/_HotIf.htm">#HotIf</a>. Zum Beispiel:</p>
+<pre>#HotIf WinActive("ahk_class Notepad")
 ^a::MsgBox "Sie haben STRG+A gedrückt, während der Texteditor aktiv ist."
 </pre>
 <h3 id="HotPrefix">Wie kann man eine sonst funktionslose Präfix-Taste dazu bringen, ihre ursprüngliche Funktion durchzuführen?</h3>

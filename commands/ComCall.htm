@@ -171,16 +171,11 @@ class TaskbarList {
     
     <em>; Wird bei einer neuen Instanz von TaskbarList.new() aufgerufen.</em>
     __new() {
-        this.ptr := ComObjCreate(TaskbarList.CLSID, TaskbarList.IID)
-        <em>; Wenn ComObjError(0) verwendet wurde, könnte this.ptr Null sein.</em>
-        if !this.ptr
-            throw Exception("COM-bezogener Fehler")
+        this.comobj := ComObjCreate(TaskbarList.CLSID, TaskbarList.IID)
+        this.ptr := this.comobj.ptr
         <em>; Initialisierung über ITaskbarList anfordern.</em>
         this.HrInit()
     }
-    
-    <em>; Den Interface-Pointer freigeben, wenn dieses Objekt gelöscht wird.</em>
-    __delete() =&gt; this.ptr &amp;&amp; ObjRelease(this.ptr)
 }
 </pre>
 </div>

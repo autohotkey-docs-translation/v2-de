@@ -23,7 +23,6 @@
   <li><a href="#Gui">Gui</a>: Ermittelt das übergeordnete GUI-Fenster des Steuerelements.</li>
   <li><a href="#Hwnd">Hwnd</a>: Ermittelt die HWND-Nummer (eindeutige ID) des Steuerelements.</li>
   <li><a href="#Name">Name</a>: Ermittelt oder setzt den expliziten Namen des Steuerelements.</li>
-  <li><a href="#Pos">Pos</a>: Ruft die Position und Größe des Steuerelements ab.</li>
   <li><a href="#Text">Text</a>: Ermittelt oder setzt den Text bzw. Beschriftung des Steuerelements.</li>
   <li><a href="#Type">Type</a>: Ermittelt den Typ des Steuerelements.</li>
   <li><a href="#Value">Value</a>: Ermittelt oder setzt den Inhalt eines wertefähigen Steuerelements.</li>
@@ -35,10 +34,12 @@
   <li><a href="#Choose">Choose</a>: Wählt einen bestimmten Listeneintrag/Tab in einer ListBox, DropDownList, ComboBox oder einem Tab-Steuerelement aus.</li>
   <li><a href="#Delete">Delete</a>: Löscht einen bestimmten oder alle Listeneinträge/Tabs aus einer ListBox, DropDownList, ComboBox oder einem Tab-Steuerelement.</li>
   <li><a href="#Focus">Focus</a>: Setzt den Tastaturfokus auf das Steuerelement.</li>
-  <li><a href="#Move">Move</a>: Verschiebt das Steuerelement, ändert dessen Größe und/oder zeichnet es neu.</li>
+  <li><a href="#GetPos">GetPos</a>: Ruft die Position und Größe des Steuerelements ab.</li>
+  <li><a href="#Move">Move</a>: Verschiebt das Steuerelement und/oder ändert dessen Größe.</li>
   <li><a href="GuiOnEvent.htm">OnEvent</a>: Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn ein bestimmtes <a href="GuiOnEvent.htm#Control_Events">Ereignis</a> ausgelöst wird.</li>
   <li><a href="GuiOnNotify.htm">OnNotify</a>: Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn eine Steuerelementbenachrichtigung via <a href="https://msdn.microsoft.com/library/bb775583">WM_NOTIFY</a>-Meldung empfangen wird.</li>
   <li><a href="#Opt">Opt</a>: Setzt verschiedene Optionen und Styles, die das Aussehen und Verhalten des Steuerelements beeinflussen.</li>
+  <li><a href="#Redraw">Redraw</a>: Zeichnet den vom Steuerelement beanspruchten Fensterbereich neu.</li>
   <li><a href="#SetFont">SetFont</a>: Bestimmt Schriftart, Schriftgröße, Schriftstil und/oder Schriftfarbe des Steuerelements.</li>
   <li><a href="../commands/GuiControls.htm#DateTimeFormat">SetFormat</a>: Setzt das Anzeigeformat eines <a href="../commands/GuiControls.htm#DateTime">DateTime</a>-Steuerelements.</li>
   <li><a href="#UseTab">UseTab</a>: Verknüpft danach erstelle Steuerelemente mit einem bestimmten Tab eines Tab-Steuerelements.</li>
@@ -97,24 +98,20 @@
 
 <div class="methodShort" id="Move">
 <h2>Move</h2>
-<p>Verschiebt das Steuerelement, ändert dessen Größe und/oder zeichnet es neu.</p>
-<pre class="Syntax">GuiCtrl.<span class="func">Move</span>(Pos <span class="optional">, Zeichnen := False</span>)</pre>
+<p>Verschiebt das Steuerelement und/oder ändert dessen Größe.</p>
+<pre class="Syntax">GuiCtrl.<span class="func">Move</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
 <dl>
-  <dt>Pos</dt><dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine oder mehr der folgenden Optionsbuchstaben (jede Zahl muss dezimal sein):</p>
-  <p><strong>Xn</strong>: Geben Sie für <strong>n</strong> die neue X-Koordinate an, die relativ zum Clientbereich des GUI-Fensters ist (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen).</p>
-  <p><strong>Yn</strong>: Geben Sie für <strong>n</strong> die neue Y-Koordinate an, die relativ zum Clientbereich des GUI-Fensters ist (siehe oben).</p>
-  <p><strong>Wn</strong>: Geben Sie für <strong>n</strong> die neue Breite des Steuerelements an.</p>
-  <p><strong>Hn</strong>: Geben Sie für <strong>n</strong> die neue Höhe des Steuerelements an.</p></dd>
-  <dt>Zeichnen</dt><dd>
-    <p>Typ: <a href="../Concepts.htm#boolean">Integer (boolescher Wert)</a></p>
-    <p>Wenn dieser Parameter 1 (true) ist, wird der vom Steuerelement beanspruchte Fensterbereich neugezeichnet. Obwohl diese Methode bei wiederholtem und schnellem Aufruf ein ungewolltes Flackern erzeugen kann, ist sie in der Lage, fehlerhafte Darstellungen beim Zeichnen von bestimmten Steuerelementen wie <a href="../commands/GuiControls.htm#GroupBox">GroupBox</a> zu verhindern.</p>
-  </dd>
+  <dt>X, Y</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die neue Position, relativ zum Clientbereich des GUI-Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen).</p></dd>
+  <dt>Breite, Höhe</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die neue Größe.</p></dd>
 </dl>
+<p>Im Gegensatz zu <a href="../commands/ControlMove.htm">ControlMove</a> wendet diese Methode die <a href="Gui.htm#DPIScale">DPI-Skalierung</a> auf die Koordinaten an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
 <h3>Beispiele</h3>
-<pre>MeinEdit.Move("x10 y20 w200 h100", true)
-MeinEdit.Move("x" VarX+10 " y" VarY+5 " w" VarW*2 " h" VarH*1.5)</pre>
+<pre>MeinEdit.Move(10, 20, 200, 100)
+MeinEdit.Move(VarX+10, VarY+5, VarW*2, VarH*1.5)</pre>
 </div>
 
 <div class="methodShort" id="Focus">
@@ -161,14 +158,15 @@ ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
 
 <div class="methodShort" id="Add">
 <h2>Add</h2>
-<p>Erweitert die aktuelle Liste einer DropDownList, ListBox, ComboBox oder eines Tab-Steuerelements mit bestimmten Listeneinträgen/Tabs.</p>
-<pre class="Syntax">GuiCtrl.<span class="func">Add</span>(ArrayOderListe)</pre>
+<p>Erweitert eine DropDownList, ListBox oder ComboBox um Listeneinträge oder ein Tab-Steuerelement um Tabs.</p>
+<pre class="Syntax">GuiCtrl.<span class="func">Add</span>(Elemente)</pre>
 <dl>
-  <dt>ArrayOderListe</dt><dd>
-    <p>Typ: <a href="../Concepts.htm#objects">Array</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine via Vertikalstrich getrennte Liste von Listeneinträgen/Tabs (z. B. <code>"Rot|Grün|Blau"</code>) oder ein Array mit Listeneinträgen/Tabs (z. B. <code>["Rot", "Grün", "Blau"]</code>), die an das Ende der Liste des Steuerelements angefügt werden sollen. Verwenden Sie vorher <a href="#Delete">GuiCtrl.Delete</a>, um die Liste stattdessen zu ersetzen bzw. zu überschreiben. Wenn Sie Vertikalstriche nutzen, können Sie nach einem Listeneintrag/Tab zwei Vertikalstriche einfügen (z. B. <code>"Rot|Grün||Blau"</code>), um ihn vorab auswählen zu lassen, ansonsten können Sie auf <a href="#Choose">GuiCtrl.Choose</a> zurückgreifen. Das Trennzeichen zwischen den Textfeldern muss nicht zwingend ein Vertikalstrich sein. Mit <code>Gui.Opt("+<a href="Gui.htm#Delimiter">Delimiter</a>`n")</code> beispielsweise kann stattdessen ein Zeilenumbruchszeichen als Trennzeichen verwendet werden oder mit <code>Gui.Opt("+DelimiterTab")</code> stattdessen ein Tabulatorzeichen (`t) verwendet werden.</p>
+  <dt>Elemente</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#objects">Array</a></p>
+    <p>Ein Array mit Zeichenketten (z. B. <code>["Rot", "Grün", "Blau"]</code>), die an das Ende der Liste des Steuerelements angefügt werden sollen. Verwenden Sie vorher <a href="#Delete">GuiCtrl.Delete</a>, um die Liste stattdessen zu ersetzen bzw. zu überschreiben.</p>
   </dd>
 </dl>
+<p>Verwenden Sie <a href="#Choose">GuiCtrl.Choose</a>, um einen Listeneintrag/Tab auszuwählen.</p>
 <p><strong>Siehe auch:</strong> <a href="../commands/ListView.htm#Add">ListView.Add</a>, <a href="../commands/TreeView.htm#Add">TreeView.Add</a></p>
 </div>
 
@@ -182,7 +180,7 @@ ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
     <p>Dieser Parameter muss für den ersten Listeneintrag/Tab eine 1 sein, für den Zweiten eine 2, und so weiter. Lässt man diesen Parameter weg, werden alle Listeneinträge/Tabs gelöscht.</p>
   </dd>
 </dl>
-<p>Beachten Sie bei Tab-Steuerelementen, dass die in einem Tab enthaltenen Steuerelemente mit ihrer ursprünglichen Tabnummer verbunden bleiben; das heißt, dass sie nie dem tatsächlichen Anzeigenamen ihres Tabs zugeordnet werden. Das Umbenennen oder Entfernen eines Tabs ändert nicht die Tabnummer, zu der die darin enthaltenen Steuerelemente gehören. Wenn zum Beispiel die drei Tabs "Rot|Grün|Blau" vorhanden sind und der zweite Tab mit <code>MeinTab.Delete(2)</code> entfernt wird, werden die ursprünglich mit Grün verknüpften Untersteuerelemente mit Blau verknüpft. Infolgedessen sollten grundsätzlich nur Tabs am Ende einer Liste entfernt werden. Auf diese Weise entfernte Tabs können später wieder hinzugefügt werden, um ihnen ihre ursprünglichen Steuerelemente zurückzugeben.</p>
+<p>Beachten Sie bei Tab-Steuerelementen, dass die in einem Tab enthaltenen Steuerelemente mit ihrer ursprünglichen Tabnummer verbunden bleiben; das heißt, dass sie nie dem tatsächlichen Anzeigenamen ihres Tabs zugeordnet werden. Das Umbenennen oder Entfernen eines Tabs ändert nicht die Tabnummer, zu der die darin enthaltenen Steuerelemente gehören. Wenn zum Beispiel die drei Tabs <code>["Rot","Grün","Blau"]</code> vorhanden sind und der zweite Tab mit <code>MeinTab.Delete(2)</code> entfernt wird, werden die ursprünglich mit Grün verknüpften Untersteuerelemente mit Blau verknüpft. Infolgedessen sollten grundsätzlich nur Tabs am Ende einer Liste entfernt werden. Auf diese Weise entfernte Tabs können später wieder hinzugefügt werden, um ihnen ihre ursprünglichen Steuerelemente zurückzugeben.</p>
 <p><strong>Siehe auch:</strong> <a href="../commands/ListView.htm#Delete">ListView.Delete</a>, <a href="../commands/TreeView.htm#Delete">TreeView.Delete</a></p>
 </div>
 
@@ -255,6 +253,13 @@ ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
 
 </div>
 
+<div class="methodShort" id="Redraw">
+<h2>Redraw</h2>
+<p>Zeichnet den vom Steuerelement beanspruchten Fensterbereich neu.</p>
+<pre class="Syntax">GuiCtrl.<span class="func">Redraw</span>()</pre>
+<p>Obwohl diese Methode bei wiederholtem und schnellem Aufruf ein ungewolltes Flackern erzeugen kann, ist sie in der Lage, fehlerhafte Darstellungen beim Zeichnen von bestimmten Steuerelementen wie <a href="../commands/GuiControls.htm#GroupBox">GroupBox</a> zu verhindern.</p>
+</div>
+
 <div class="methodShort" id="SetFont">
 <h2>SetFont</h2>
 <p>Bestimmt Schriftart, Schriftgröße, Schriftstil und/oder Schriftfarbe des Steuerelements.</p>
@@ -286,13 +291,15 @@ ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
 <p>Hinweis: Um die gewünschte Wirkung zu erzielen, darf das Fenster weder minimiert noch versteckt sein.</p>
 </div>
 
-<div class="methodShort" id="Pos">
-<h2>Pos</h2>
+<div class="methodShort" id="GetPos">
+<h2>GetPos</h2>
 <p>Ruft die Position und Größe des Steuerelements ab.</p>
-<pre class="Syntax">PosGrößeObj := GuiCtrl.Pos</pre>
-<p>Die Position ist relativ zum Clientbereich des GUI-Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen). Die Informationen werden in ein <a href="../Objects.htm">Objekt</a> gespeichert. Zum Beispiel:</p>
-<pre>Wert := MeinEdit.Pos
-MsgBox "Die X-Koordinate ist " Wert.x ". Die Y-Koordinate ist " Wert.y ". Die Breite ist " Wert.w ". Die Höhe ist " Wert.h "."
+<pre class="Syntax">GuiCtrl.GetPos(<span class="optional">ByRef X, ByRef Y, ByRef Breite, ByRef Höhe</span>)</pre>
+<p>Im Gegensatz zu <a href="../commands/ControlGetPos.htm">ControlGetPos</a> wendet GetPos die <a href="Gui.htm#DPIScale">DPI-Skalierung</a> auf die zurückgegebenen Koordinaten an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
+<p>Die Position ist relativ zum Clientbereich des GUI-Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen).</p>
+<p>Beispiel:</p>
+<pre>MeinEdit.GetPos(x, y, w, h)
+MsgBox "Die X-Koordinate ist " x ". Die Y-Koordinate ist " y ". Die Breite ist " w ". Die Höhe ist " h "."
 </pre>
 </div>
 </body>

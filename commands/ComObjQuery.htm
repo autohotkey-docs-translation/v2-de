@@ -22,7 +22,7 @@
   <dt>ComObject</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Ein COM-Wrapper-Objekt oder roher Interface-Pointer.</p>
+    <p>Ein COM-Wrapper-Objekt, Interface-Pointer, oder ein Objekt mit einer <code>Ptr</code>-Eigenschaft, die einen Interface-Pointer zurückgibt.</p>
   </dd>
 
   <dt>IID</dt>
@@ -40,53 +40,53 @@
 </dl>
 
 <h2>Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Diese Funktion gibt einen Pointer zurück, der auf das angeforderten Interface verweist. Wenn der Pointer nicht abgerufen werden kann, wird 0 zurückgegeben.</p>
+<p>Typ: <a href="ComObject.htm#Returns">ComObject</a></p>
+<p>Diese Funktion gibt ein COM-Wrapper-Objekt des Typs VT_UNKNOWN (13) zurück.</p>
 
 <h2>Bemerkungen</h2>
 <p>Im Zwei-Parameter-Modus ist diese Funktion äquivalent zu <a href="https://msdn.microsoft.com/de-de/library/ms682521.aspx">IUnknown::QueryInterface</a>. Sind sowohl SID als auch IID angegeben, wird intern das <a href="https://msdn.microsoft.com/de-de/library/cc678965.aspx">IServiceProvider</a>-Interface angefordert und danach <a href="https://msdn.microsoft.com/de-de/library/cc678966.aspx">IServiceProvider::QueryService</a> aufgerufen. In beiden Fällen ist der Rückgabewert entweder 0 oder ein Pointer, der auf das angeforderte Interface verweist. Grundsätzlich muss dieser Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, wenn er vom Skript nicht länger benötigt wird.</p>
+<p><a href="ComCall.htm">ComCall</a> kann verwendet werden, um native Interface-Methoden aufzurufen.</p>
 
 <h2>Siehe auch</h2>
-<a href="ObjAddRef.htm">ObjRelease</a>, <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjError.htm">ComObjError</a>
+<p><a href="ComCall.htm">ComCall</a>, <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a></p>
 
 <h2>Beispiele</h2>
 <div class="ex" id="ExClassName">
 <p><a href="#ExClassName">#1</a>: Klassennamen eines Objekts ermitteln.</p>
-<pre>obj := ComObjCreate("Scripting.Dictionary")
+<pre>
+obj := ComObjCreate("Scripting.Dictionary")
 
 MsgBox "Interface-Name: " ComObjType(obj, "name")
 
 IID_IProvideClassInfo := "{B196B283-BAB4-101A-B69C-00AA00341D07}"
 
-<em>; Einen Pointer anfordern, der auf das IProvideClassInfo-Interface des Objekts verweist.</em>
-if !(pci := ComObjQuery(obj, IID_IProvideClassInfo))
+<em>; IProvideClassInfo-Interface des Objekts anfordern.</em>
+try
+    pci := ComObjQuery(obj, IID_IProvideClassInfo)
+catch
 {
     MsgBox "IProvideClassInfo-Interface wird nicht unterstützt."
     return
 }
 
 <em>; GetClassInfo aufrufen, um einen Pointer zu erhalten, der auf das ITypeInfo-Interface verweist.</em>
-DllCall(vtable(pci, 3), "ptr", pci, "ptr*", ti)
+ComCall(3, pci, "ptr*", ti := 0)
+
+<em>; ti wrappen, um automatische Säuberung zu ermöglichen.</em>
+ti := ComObject(13, ti)
 
 <em>; GetDocumentation aufrufen, um den vollständigen Typennamen des Objekts zu erhalten.</em>
-DllCall(vtable(ti, 12), "ptr", ti, "int", -1, "ptr*", name, "ptr", 0, "ptr", 0, "ptr", 0)
+ComCall(12, ti, "int", -1, "ptr*", pname := 0, "ptr", 0, "ptr", 0, "ptr", 0)
 
 <em>; Den BSTR-Pointer in eine brauchbare Zeichenkette umwandeln.</em>
-name := StrGet(name, "UTF-16")
+name := StrGet(pname, "UTF-16")
 
-<em>; Rohe Interface-Pointer freigeben.</em>
-ObjRelease(ti)
-ObjRelease(pci)
+<em>; Säuberung.</em>
+DllCall("oleaut32\SysFreeString", "ptr", pname)
+pci := ti := ""
 
 <em>; Den Typennamen anzeigen!</em>
 MsgBox "Klassenname: " name
-
-vtable(ptr, n) {
-    <em>; NumGet(ptr+0) gibt die Adresse der virtuellen Funktionstabelle
-    ; des Objekts (kurz: vtable) zurück. Der Rest des Ausdrucks ruft
-    ; die Adresse der n-ten Funktionsadresse aus der vtable ab.</em>
-    return NumGet(NumGet(ptr+0), n*A_PtrSize)
-}
 </pre>
 </div>
 

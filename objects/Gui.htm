@@ -19,7 +19,6 @@
 <p><strong>Eigenschaften:</strong></p>
 <ul>
   <li><a href="#BackColor">BackColor</a>: Ermittelt oder setzt die Hintergrundfarbe des Fensters.</li>
-  <li><a href="#ClientPos">ClientPos</a>: Ermittelt die Position und Größe des Clientbereichs eines GUI-Fensters.</li>
   <li><a href="#__Item">__Item</a>: Ermittelt ein <a href="GuiControl.htm">GuiControl-Objekt</a>, das zu einem Namen, einem Text, einer ClassNN-Bezeichnung oder einer HWND-Nummer (eindeutigen ID) gehört.</li>
   <li><a href="#FocusedCtrl">FocusedCtrl</a>: Ermittelt das <a href="GuiControl.htm">GuiControl-Objekt</a> des fokussierten Steuerelements in der GUI.</li>
   <li><a href="#Hwnd">Hwnd</a>: Ermittelt die HWND-Nummer (eindeutige ID) des GUI-Fensters.</li>
@@ -27,7 +26,6 @@
   <li><a href="#MarginY">MarginY</a>: Ermittelt oder setzt die Größe von vertikalen Abständen zwischen den Rändern und danach erstellten Steuerelementen.</li>
   <li><a href="#MenuBar">MenuBar</a>: Ermittelt oder setzt die Menüleiste des Fensters.</li>
   <li><a href="#Name">Name</a>: Ermittelt oder setzt einen benutzerdefinierten Namen für das GUI-Fenster.</li>
-  <li><a href="#Pos">Pos</a>: Ermittelt die Position und Größe des GUI-Fensters.</li>
   <li><a href="#Title">Title</a>: Ermittelt oder setzt den Titel des GUI-Fensters.</li>
 </ul>
 <p><strong>Methoden:</strong></p>
@@ -35,6 +33,8 @@
   <li><a href="#Add">Add</a>: Erstellt ein Steuerelement wie z. B. Text, Button oder CheckBox.</li>
   <li><a href="#Destroy">Destroy</a>: Entfernt das Fenster.</li>
   <li><a href="#Flash">Flash</a>: Lässt das Fenster und seine Taskleistenschaltfläche einmal aufblinken.</li>
+  <li><a href="#GetClientPos">GetClientPos</a>: Ermittelt die Position und Größe des Clientbereichs eines GUI-Fensters.</li>
+  <li><a href="#GetPos">GetPos</a>: Ermittelt die Position und Größe des GUI-Fensters.</li>
   <li><a href="#Hide">Hide</a>: Versteckt das Fenster.</li>
   <li><a href="#Maximize">Maximize</a>: Macht das Fenster wieder sichtbar und maximiert es.</li>
   <li><a href="#Minimize">Minimize</a>: Macht das Fenster wieder sichtbar und minimiert es.</li>
@@ -284,9 +284,8 @@ WinSetTransColor("EEAA99")</pre>
   <p><strong>AlwaysOnTop</strong>: Gibt dem Fenster die Eigenschaft, immer im Vordergrund bzw. immer vor allen anderen Fenstern sichtbar zu sein, was den gleichen Effekt hat wie <a href="../commands/WinSetAlwaysOnTop.htm">WinSetAlwaysOnTop</a>.</p>
   <p><strong>Border</strong>: Stattet das Fenster mit einem dünnen Rahmen aus. Diese Option benutzt man eher selten.</p>
   <p><strong>Caption</strong> (standardmäßig vorhanden): Stattet das Fenster mit einer Titelleiste und einem dicken Rahmen aus. Beachten Sie, dass die Titelleiste eines Fensters erst entfernt werden sollte, nachdem man bestimmte Farben des Fensters via <a href="../commands/WinSetTransColor.htm">WinSetTransColor</a> transparent gemacht hat.</p>
-  <p id="Delimiter"><strong>Delimiter</strong>: Bewirkt, dass das Fenster nicht den Vertikalstrich (|), sondern ein beliebig anderes Zeichen als Trennzeichen verwendet, wenn die Inhalte der Steuerelemente via <a href="#Add">Gui.Add</a> hinzugefügt oder via <a href="GuiControl.htm">GuiControl-Objekt</a> abgerufen werden. Geben Sie das gewünschte Trennzeichen direkt nach dem Wort Delimiter an. Zum Beispiel kann man mit <code>Gui.Opt("+Delimiter`n")</code> ein Zeilenumbruchszeichen als Trennzeichen definieren, das besonders gut für <a href="../Scripts.htm#continuation">Fortsetzungsbereiche</a> geeignet ist. Mit <code>Gui.Opt("+Delimiter|")</code> kann man wiederum das Standardtrennzeichen wiederherstellen. Wenn ein Leer- oder Tabulatorzeichen notwendig ist, kann man <code>Gui.Opt("+DelimiterSpace")</code> oder <code>Gui.Opt("+DelimiterTab")</code> angeben. Das Ändern des Trennzeichens wirkt sich auf alle vorhandenen und nachfolgenden <a href="../misc/Threads.htm">Threads</a> aus, die sich auf dieses bestimmte Fenster beziehen.</p>
   <p><strong>Disabled</strong>: Deaktiviert das Fenster, um den Benutzer daran zu hindern, mit den darin enthaltenen Steuerelementen zu interagieren. Diese Option wird oft bei Fenstern benutzt, die untergeordnete Fenster haben (siehe <a href="#Owner">Owner</a>).</p>
-  <p id="DPIScale"><strong>DPIScale</strong>: Verwenden Sie <code>Gui.Opt("-DPIScale")</code>, um die üblicherweise aktive DPI-Skalierung zu deaktivieren. Wenn die DPI-Skalierung auf einem System mit benutzerdefinierter DPI-Einstellung aktiviert ist, passen Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a> automatisch ihre Koordinaten und Größen an, um Steuerelemente in etwa gleich groß aussehen zu lassen (aber in höherer Auflösung). Bei einem DPI-Wert von beispielsweise 144 (150%) würde <code>E := Gui.Add("Edit", "w100")</code> das Gui-Steuerelement 150 Pixel breit machen (<a href="GuiControl.htm#Pos">E.Pos.W</a> enthält aber weiterhin 100). <a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> enthält die aktuelle DPI des Systems.</p>
+  <p id="DPIScale"><strong>DPIScale</strong>: Verwenden Sie <code>Gui.Opt("-DPIScale")</code>, um die üblicherweise aktive DPI-Skalierung zu deaktivieren. Wenn die DPI-Skalierung auf einem System mit benutzerdefinierter DPI-Einstellung aktiviert ist, passen Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a> automatisch ihre Koordinaten und Größen an, um Steuerelemente in etwa gleich groß aussehen zu lassen (aber in höherer Auflösung). Bei einem DPI-Wert von beispielsweise 144 (150%) würde <code>E := Gui.Add("Edit", "w100")</code> das Gui-Steuerelement 150 Pixel breit machen, aber <a href="GuiControl.htm#GetPos">E.GetPos(,,W)</a> würde <em>W</em> weiterhin auf 100 setzen. <a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> enthält die aktuelle DPI des Systems.</p>
   <p>Die DPI-Skalierung betrifft nur Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a>; das heißt, dass Koordinaten aus anderen Quellen wie ControlGetPos oder WinGetPos nicht funktionieren werden. Es gibt eine Reihe von Möglichkeiten, damit umzugehen:</p>
   <ul>
     <li>Vermeiden Sie hartcodierte Koordinaten, wenn möglich. Zum Beispiel können Sie zum Positionieren von Steuerelementen die Optionen <a href="#xp">xp</a>, <a href="#xs">xs</a>, <a href="#xm">xm</a> und <a href="#PosPlusMargin">x+m</a> nutzen und als Höhe <a href="#R">Textreihen</a> statt Pixel angeben.</li>
@@ -344,7 +343,7 @@ Gui := GuiCreate()
 Gui.MenuBar := Menüs
 Gui.Show "w300 h200"</pre>
 <p>In der ersten Zeile oben ist zu erkennen, dass nach <code>Ö&amp;ffnen</code> das Tastenkürzel <code>Ctrl+F</code> erfolgt (mit einem Tabulatorzeichen dazwischen). Wenn der Benutzer dieses Tastenkürzel drückt, wird die Aktion des Menüpunkts ausgeführt, ohne dass er erst dorthin navigieren muss. Tastenkürzel mit den Standardmodifikatoren Ctrl, Alt und Shift werden automatisch als <em>Keyboard Accelerator</em> für die GUI registriert. Keyboard Accelerators ohne Modifikatoren sind Groß-/Kleinschreibung-sensitiv und können nur durch ungewöhnliche Mitteln wie IME oder <kbd>Alt</kbd>+NNNN ausgelöst werden.</p>
-<p>Wenn eine bestimmte Tastenkombination nicht automatisch funktioniert, muss eventuell ein <a href="../commands/_If.htm">kontextabhängiger Hotkey</a> verwendet werden. Beachten Sie aber, dass solche Hotkeys üblicherweise nicht durch <a href="../commands/Send.htm">Send</a> ausgelöst werden können und dass sie, im Gegensatz zu einem typischen Keyboard Accelerator, andere Skripte stören können.</p>
+<p>Wenn eine bestimmte Tastenkombination nicht automatisch funktioniert, muss eventuell ein <a href="../commands/_HotIf.htm">kontextabhängiger Hotkey</a> verwendet werden. Beachten Sie aber, dass solche Hotkeys üblicherweise nicht durch <a href="../commands/Send.htm">Send</a> ausgelöst werden können und dass sie, im Gegensatz zu einem typischen Keyboard Accelerator, andere Skripte stören können.</p>
 <p>Verwenden Sie <code>Gui.MenuBar := ""</code> (bzw. weisen Sie eine leere Zeichenkette zu), um die aktuelle Menüleiste des Fensters zu entfernen.</p>
 </div>
 
@@ -366,18 +365,42 @@ Gui.Show "w300 h200"</pre>
 <pre class="Syntax">Gui.<span class="func">Restore</span>()</pre>
 </div>
 
-<div class="methodShort" id="Pos">
-<h2>Pos</h2>
-<p>Ermittelt die Position und Größe des GUI-Fensters.</p>
-<pre class="Syntax">PosGrößeObj := Gui.Pos</pre>
-<p><em>PosGrößeObj</em> ist ein <a href="../Objects.htm">Objekt</a> mit den Keys <strong>X</strong> (X-Koordinate), <strong>Y</strong> (Y-Koordinate), <strong>W</strong> (Breite) und <strong>H</strong> (Höhe). Die Koordinaten sind die obere linke Ecke des Fensters. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Fensters, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand des Fensters (in Pixel).</p>
+<div class="methodShort" id="Move">
+<h2>Move</h2>
+<p>Verschiebt das GUI-Fenster und/oder ändert dessen Größe.</p>
+<pre class="Syntax">Gui.<span class="func">Move</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
+<dl>
+  <dt>X, Y</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die neue Position (in Bildschirmkoordinaten).</p></dd>
+  <dt>Breite, Höhe</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die neue Größe.</p></dd>
+</dl>
+<p>Im Gegensatz zu <a href="../commands/WinMove.htm">WinMove</a> wendet diese Methode die <a href="Gui.htm#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
+<h3>Beispiele</h3>
+<pre>MeineGui.Move(10, 20, 200, 100)
+MeineGui.Move(VarX+10, VarY+5, VarW*2, VarH*1.5)
+
+<em>; Linke und rechte Seite um 10 Pixel erweitern.</em>
+MeineGui.GetPos(x,, w)
+MeineGui.Move(x-10,, w+20)</pre>
 </div>
 
-<div class="methodShort" id="ClientPos">
-<h2>ClientPos</h2>
+<div class="methodShort" id="GetPos">
+<h2>GetPos</h2>
+<p>Ermittelt die Position und Größe des GUI-Fensters.</p>
+<pre class="Syntax">Gui.<span class="func">GetPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
+<p>Jeder Parameter muss eine Variable sein, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Fensters. X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Fensters, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand des Fensters (in Pixel).</p>
+<p>Im Gegensatz zu <a href="../commands/WinGetPos.htm">WinGetPos</a> wendet GetPos die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
+</div>
+
+<div class="methodShort" id="GetClientPos">
+<h2>GetClientPos</h2>
 <p>Ermittelt die Position und Größe des Clientbereichs eines GUI-Fensters.</p>
-<pre class="Syntax">PosGrößeObj := Gui.ClientPos</pre>
-<p><em>PosGrößeObj</em> ist ein <a href="../Objects.htm">Objekt</a> mit den Keys <strong>X</strong> (X-Koordinate), <strong>Y</strong> (Y-Koordinate), <strong>W</strong> (Breite) und <strong>H</strong> (Höhe). Die Koordinaten sind die obere linke Ecke des Clientbereich des Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen). Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Clientbereichs, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand (in Pixel).</p>
+<pre class="Syntax">Gui.<span class="func">GetClientPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
+<p>Jeder Parameter muss eine Variable sein, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Clientbereich des Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen). X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Clientbereichs, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand (in Pixel).</p>
+<p>Im Gegensatz zu <a href="../commands/WinGetClientPos.htm">WinGetClientPos</a> wendet GetClientPos die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
 </div>
 
 <div class="methodShort" id="Flash">
@@ -501,7 +524,7 @@ VerarbeiteBenutzereingabe(this, *)
 <div class="ex" id="ExTab">
 <p><a href="#ExTab">#3</a>: Erstellt ein Tab-Steuerelement mit mehreren Tabs, die jeweils verschiedene Steuerelemente enthalten, mit denen Sie interagieren können:</p>
 <pre>Gui := GuiCreate()
-Tab := Gui.Add("Tab3",, "Erster Tab|Zweiter Tab|Dritter Tab")
+Tab := Gui.Add("Tab3",, ["Erster Tab","Zweiter Tab","Dritter Tab"])
 Gui.Add("Checkbox", "vMeineCheckBox", "Kontrollkästchen") 
 Tab.UseTab(2)
 Gui.Add("Radio", "vMeinRadio", "Optionsfeld 1")
@@ -550,7 +573,7 @@ StarteDatei(this, *)
 <pre>Gui := GuiCreate()
 Gui.Add("Edit", "v<strong>MeinEdit</strong>")
 <strong>MeinEdit</strong>_TT := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
-Gui.Add("DropDownList", "v<strong>MeineDDL</strong>", "Rot|Grün|Blau")
+Gui.Add("DropDownList", "v<strong>MeineDDL</strong>", ["Rot","Grün","Blau"])
 <strong>MeineDDL</strong>_TT := "Wählen Sie eine Farbe aus."
 Gui.Add("Checkbox", "vMeineCheckBox", "Dieses Steuerelement hat kein Tooltip.")
 Gui.OnEvent("Close", (*) =&gt; ExitApp())

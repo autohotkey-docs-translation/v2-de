@@ -110,21 +110,12 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     
     !<br>
     
-    ~<br>
-    
-    &amp;</strong></td>
+    ~</strong></td>
     <td>
       <p><strong>Unäres Minuszeichen (-)</strong>: Invertiert das Vorzeichen des Operanden.</p>
       <p><strong>Unäres Pluszeichen (+)</strong>: <code>+N</code> ist das gleiche wie <code>-(-N)</code>. Dieser Operator hat keinen Effekt, wenn er auf eine reine Zahl angewendet wird, aber er ist nützlich, um numerische Zeichenketten in reine Zahlen zu konvertieren.</p>
       <p><strong>Logisches NICHT (!)</strong>: Wenn dieser Operator bei einem Operanden angewendet wird, der leer oder 0 ist, ist das Ergebnis eine 1 (true). Ansonsten ist das Ergebnis eine 0 (false). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
       <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Handelt es sich bei den Operanden um eine Floating-Point-Zahl, wird er vor der Berechnung auf Integer-Größe gekürzt. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden.</p>
-      <p id="amp"><strong>Adresse (&amp;)</strong>: <code>&amp;MeineVar</code> ruft die Adresse des Inhalts von <em>MeineVar</em> im Speicher ab, wobei <em>MeineVar</em> eine benutzerdefinierte Variable ist. Der Inhalt von <em>MeineVar</em> kann eine Zeichenkette, ein 64-Bit-Integer, eine 64-Bit-Floating-Point-Zahl oder ein Objekt sein. Dieser Operator wird häufig in Verbindung mit <a href="commands/DllCall.htm#struct">DllCall-Strukturen</a> genutzt.</p>
-      <p>Die Adresse verliert in der Regel ihre Gültigkeit, wenn <em>MeineVar</em> mit irgendeinem <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> (inklusive ++ und --) neu zugewiesen wird oder als Ausgabevariable für eine interne Funktion verwendet wird. Die Adresse des Inhalts einer <a href="Functions.htm#Local">lokalen</a> Variablen einer Funktion verliert ihre Gültigkeit, wenn die Funktion ihr Ende erreicht hat. Die Adresse eines Objekts ist solange gültig, bis dessen letzte <a href="Objects.htm#Reference_Counting">Referenz</a> freigegeben wurde.</p> 
-	  <p>Der Adressoperator kann in Verbindung mit anderen Zeichenketten genutzt werden, wie z. B. <code>&amp;"Zeichenkette"</code>, <code>&amp;(x . y)</code> oder <code>&amp;A_LoopField</code>, allerdings gelten folgende Einschränkungen:</p>
-      <ul>
-        <li>Der adressierte Speicher sollte niemals geändert werden, z. B. wenn man ihn an einen DllCall-Ausgabeparameter übergibt.</li>
-        <li>Eine Adresse, die von einem temporären Wert stammt (auch die Rückgabewerte von internen Variablen), darf nur solange als gültig angesehen werden, bis die Auswertung des Ausdrucks oder die <a href="Language.htm#function-call-statements">Funktionsaufrufanweisung</a> abgeschlossen ist. Danach wird der Speicher eventuell für etwas anderes benutzt.</li>
-      </ul>
     </td>
   </tr>
   <tr id="MulDiv">
@@ -275,7 +266,7 @@ MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurü
     </td>
     <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable. Der einfachste Zuweisungsoperator ist der <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, der das Ergebnis eines Ausdrucks in eine Variable speichert. Eine Beschreibung dessen, was die anderen Operatoren tun, finden Sie in den entsprechenden Einträgen dieser Tabelle. <code>Var //= 2</code> beispielsweise führt eine <a href="#FloorDivide">Floor-Division</a> durch, um <em>Var</em> durch 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Ein weiteres Beispiel ist <code>Var <strong>.=</strong> "abc"</code>, was die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code> wäre.</p>
       <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Eine Zeile wie <code>Var1 := Var2 := 0</code> würde also erst eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
-    <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Eine auf diese Weise verwendete Zuweisung kann auch via Referenz (<a href="Functions.htm#ByRef">ByRef</a>) übergeben werden, oder ihre <a href="#amp">Adresse</a> zurückgeben; zum Beispiel: <code>&amp;(x:="abc")</code>.</p>
+    <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Eine auf diese Weise verwendete Zuweisung kann auch via Referenz (<a href="Functions.htm#ByRef">ByRef</a>) übergeben werden, oder ihre Adresse zurückgeben; zum Beispiel: <code>StrPtr(x:="abc")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: <code>not x := y</code> würde als <code>not (x := y)</code> ausgewertet werden. <code>++Var := X</code> würde als <code>++(Var := X)</code> ausgewertet werden; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> würde als <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code> ausgewertet werden.</p>
     <p>Eine Zuweisung funktioniert auch mit einer Eigenschaft eines Objekts, wie z. B. <code>meinArray.Length += n</code> oder <code>meinArray[i] .= t</code>. Wenn man einer Eigenschaft einen Wert zuweist, ist das Ergebnis des Teilausdrucks der Wert, der zugewiesen wird, nicht eine Variablenreferenz.</p>
     </td>
@@ -360,7 +351,7 @@ sumfn := Func("Sum")</pre>
   <li>Inaktivität des Benutzers: <a href="#TimeIdle">A_TimeIdle</a>, <a href="#TimeIdlePhysical">A_TimeIdlePhysical</a>, <a href="#TimeIdleKeyboard">A_TimeIdleKeyboard</a>, <a href="#TimeIdleMouse">A_TimeIdleMouse</a></li>
   <li>Hotkeys, Hotstrings und benutzerdefinierte Menüpunkte: <a href="#ThisHotkey">A_ThisHotkey</a>, <a href="#EndChar">A_EndChar</a>, <a href="#h">(...mehr...)</a></li>
   <li>Betriebssystem und Benutzerinformationen: <a href="#OSVersion">A_OSVersion</a>, <a href="#Screen">A_ScreenWidth</a>, <a href="#Screen">A_ScreenHeight</a>, <a href="#os">(...mehr...)</a></li>
-  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="misc/Clipboard.htm">Clipboard</a></li>
+  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="misc/Clipboard.htm">A_Clipboard</a></li>
   <li>Loop: <a href="#Index">A_Index</a>, <a href="#loop">(...mehr...)</a></li>
 </ul>
 <h3>Sonderzeichen</h3>
@@ -439,11 +430,6 @@ sumfn := Func("Sum")</pre>
     <td>A_AhkPath</td>
     <td><p>Bei nicht-kompilierten Skripten: Der vollständige Pfadname der EXE-Datei, mit der das aktuelle Skript gerade ausgeführt wird. Zum Beispiel: C:\Program Files\AutoHotkey\AutoHotkey.exe</p>
     <p>Bei <a href="Scripts.htm#ahk2exe">kompilierten Skripten</a>: Das gleiche wie oben, allerdings wird das AutoHotkey-Verzeichnis mithilfe des Registry-Eintrags <em>HKLM\SOFTWARE\AutoHotkey\InstallDir</em> ermittelt. Wenn dieser Eintrag nicht gefunden wird, ist A_AhkPath leer.</p></td>
-  </tr>
-  <tr id="IsUnicode">
-    <td>A_IsUnicode</td>
-    <td><p>Enthält 1, wenn Zeichenketten im Unicode-Format (16-Bit) sind, oder eine leere Zeichenkette (das als <a href="#Boolean">falsch</a> angesehen wird), wenn Zeichenketten im ANSI-Format (8-Bit) sind. Das Format der Zeichenketten ist abhängig davon, mit welcher AutoHotkey-Version das Skript ausgeführt wird oder mit welcher BIN-Datei es kompiliert wurde.</p>
-    <p>Derzeit basieren alle EXE-Dateien von AutoHotkey v2 auf Unicode (16-Bit), demzufolge enthält diese Variable immer eine 1.</p></td>
   </tr>
   <tr id="IsCompiled">
     <td>A_IsCompiled</td>
@@ -687,10 +673,10 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
 <table class="info">
   <tr id="ThisHotkey">
     <td>A_ThisHotkey</td>
-    <td><p>Der zuletzt ausgeführte <a href="Hotkeys.htm">Hotkey</a> oder <a href="Hotstrings.htm">nicht-automatisch-ersetzende Hotstring</a> (ansonsten leer), z. B. #z. Dieser Wert ändert sich, wenn der <a href="misc/Threads.htm">aktuelle Thread</a> von einem anderen Hotkey unterbrochen wird, deshalb ist es ratsam, diesen Wert sofort in eine andere Variable zu speichern, wenn der originale Wert später für eine andere Subroutine benötigt wird.</p>
-      <p>Jeder neu erstellte Hotkey -- entweder via <a href="commands/Hotkey.htm">Hotkey-Funktion</a> oder <a href="Hotkeys.htm">Zweifach-Doppelpunkt-Label</a> -- erhält einen fest zugewiesenen Namen, der eine Zeichenkette bestehend aus seinem Tastennamen und der Reihenfolge seiner Modifikatorsymbolen ist. Dieser Name wird von allen <a href="commands/_If.htm#variant">Varianten</a> des Hotkeys verwendet.</p>
+    <td><p>Der zuletzt ausgeführte <a href="Hotkeys.htm">Hotkey</a> oder <a href="Hotstrings.htm">nicht-automatisch-ersetzende Hotstring</a> (ansonsten leer), z. B. #z. Dieser Wert ändert sich, wenn der <a href="misc/Threads.htm">aktuelle Thread</a> von einem anderen Hotkey oder Hotstring unterbrochen wird, deshalb ist es in der Regel besser, den Parameter <a href="Hotkeys.htm#HotBraces">ThisHotkey</a> wenn möglich zu verwenden.</p>
+      <p>Jeder neu erstellte Hotkey -- entweder via <a href="commands/Hotkey.htm">Hotkey-Funktion</a> oder <a href="Hotkeys.htm">Zweifach-Doppelpunkt-Syntax</a> -- erhält einen fest zugewiesenen Namen, der eine Zeichenkette bestehend aus seinem Tastennamen und der Reihenfolge seiner Modifikatorsymbolen ist. Dieser Name wird von allen <a href="commands/_HotIf.htm#variant">Varianten</a> des Hotkeys verwendet.</p>
       <p>Jeder neu erstellte Hotstring erhält einen fest zugewiesenen Namen, der identisch zum verwendeten Text ist.</p>
-      <p>Siehe auch: <a href="#ThisLabel">A_ThisLabel</a></p></td>
+	  </td>
   </tr>
   <tr id="PriorHotkey">
     <td>A_PriorHotkey</td>
@@ -888,7 +874,7 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   </tr>
   <tr>
     <td>Clipboard</td>
-    <td><strong>Liest/Schreibt</strong> den Inhalt der system-internen Zwischenablage. Siehe <a href="misc/Clipboard.htm">Clipboard</a> für mehr Details.</td>
+    <td><strong>Liest/Schreibt</strong> den Inhalt der system-internen Zwischenablage. Siehe <a href="misc/Clipboard.htm">A_Clipboard</a> für mehr Details.</td>
   </tr>
   <tr id="LastError">
     <td>A_LastError</td>
@@ -898,6 +884,7 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   <tr id="TrueFalse">
     <td>True<br />False</td>
     <td><p>Enthalten 1 und 0. Sie können verwendet werden, um ein Skript besser lesbar zu machen. Siehe <a href="Concepts.htm#boolean">Boolesche Werte</a>, um mehr zu erfahren.</p>
+      <p>Diese sind eigentlich <a href="Language.htm#constants">Schlüsselwörter</a>, keine Variablen.</p>
     </td>
   </tr>
 </table>

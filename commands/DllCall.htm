@@ -168,20 +168,20 @@ DllCall("<strong>FreeLibrary</strong>", "Ptr", hModule)  <em>; Um Speicherplatz 
 Loop 500
     DllCall(<strong>MulDivProc</strong>, "Int", 3, "Int", 4, "Int", 3)</pre>
 <p>Wenn der erste Parameter von DllCall eine direkt geschriebene Zeichenkette wie <code>"MulDiv"</code> ist und die DLL der entsprechenden Funktion vor dem Skriptstart normal geladen wird, oder erfolgreich mit <a href="_DllLoad.htm">#DllLoad</a> geladen wurde, wird die Zeichenkette automatisch in eine Funktionsadresse aufgelöst. Diese interne Optimierung ist effektiver als das oben gezeigte Beispiel.</p>
-<p>Die Leistung von DllCall kann zudem verbessert werden, wenn eine Zeichenkettenvariable nicht als "<a href="#str">str</a>", sondern <a href="../Variables.htm#amp">via Adresse</a> (z. B. &amp;MeineVar) an eine Funktion übergeben wird (besonders wenn die Zeichenkette sehr lang ist); dies setzt aber Voraus, dass die Länge der Zeichenkette nicht von der Funktion geändert wird. Das folgende Beispiel wandelt eine Zeichenkette in Großbuchstaben um: <code>DllCall("CharUpper", "<strong>Ptr</strong>", <strong>&amp;</strong>MeineVar, "Ptr")</code>.</p>
+<p>Die Leistung von DllCall kann zudem verbessert werden, wenn eine Zeichenkettenvariable nicht als "<a href="#str">str</a>", sondern <a href="StrPtr.htm">via Adresse</a> (z. B. <code>StrPtr(MeineVar)</code>) an eine Funktion übergeben wird (besonders wenn die Zeichenkette sehr lang ist); dies setzt aber Voraus, dass die Länge der Zeichenkette nicht von der Funktion geändert wird. Das folgende Beispiel wandelt eine Zeichenkette in Großbuchstaben um: <code>DllCall("CharUpper", "<strong>Ptr</strong>", StrPtr(MeineVar), "Ptr")</code>.</p>
 
 <h2 id="struct">Strukturen und Arrays</h2>
 <p>Eine Struktur ist eine Sammlung von <em>Elementen</em> (Feldern), die nebeneinander im Speicher abgelegt sind. Die meisten Elemente sind für gewöhnlich Integer.</p>
 <p>Um Funktionen, die die Adresse einer Struktur (oder eines Speicherblock-Arrays) akzeptieren, aufzurufen, reservieren Sie Speicher auf irgendeine Weise und übergeben Sie die Speicheradresse an die Funktion. Empfohlen ist die Vorgehensweise via <a href="BufferAlloc.htm">BufferAlloc</a>-Funktion und <a href="../objects/Buffer.htm">Buffer</a>-Objekt. Es sind folgende Schritte dafür notwendig:</p>
 <p>1) Rufen Sie <code>MeineStrukt := BufferAlloc(123, 0)</code> auf, um Pufferspeicher für die Strukturdaten zu reservieren. Geben Sie für <code>123</code> die Größe der Struktur oder höher an (in Bytes). Die 0 im letzten Parameter ist optional und bewirkt, dass alle Strukturelemente mit einer binären Null initialisiert werden, um ein häufiges Aufrufen von NumPut wie im nächsten Schritt beschrieben zu verhindern.</p>
-<p>2) Wenn die Zielfunktion bereits beim Aufrufen bestimmte Werte in der Struktur benötigt, können Sie <code><a href="NumPut.htm">NumPut</a>("UInt", 123, MeineStrukt, 4)</code> verwenden, um ein Element auf einen bestimmten Wert zu setzen. Geben Sie für <code>123</code> den Integer an, der in das Strukturelement eingefügt werden soll (oder nutzen Sie <code>&amp;Var</code>, um die <a href="../Variables.htm#amp">Adresse</a> einer Variable zu speichern). Geben Sie für <code>4</code> den Offset des Strukturelements an (siehe Schritt #4, was ein "Offset" ist). Geben Sie für <code>"UInt"</code> den entsprechenden Typ an (zum Beispiel <code>"Ptr"</code>, wenn das Strukturelement ein Pointer oder Handle ist).</p>
-<p>3) Rufen Sie die Zielfunktion auf und übergeben Sie <em>MeineStrukt</em> als Ptr-Argument. Zum Beispiel: <code>DllCall("MeineDLL\MeineFunk", "Ptr", MeineStrukt)</code>. Die Funktion wird einige Strukturelemente auswerten und/oder ändern. Beachten Sie, dass der Adressoperator (&amp;) in diesem Fall nicht verwendet werden darf. Die Adresse des Pufferspeichers kann mit <code>MeineStrukt.Ptr</code> abgerufen werden, allerdings macht das DllCall automatisch.</p>
+<p>2) Wenn die Zielfunktion bereits beim Aufrufen bestimmte Werte in der Struktur benötigt, können Sie <code><a href="NumPut.htm">NumPut</a>("UInt", 123, MeineStrukt, 4)</code> verwenden, um ein Element auf einen bestimmten Wert zu setzen. Geben Sie für <code>123</code> den Integer an, der in das Strukturelement eingefügt werden soll (oder nutzen Sie <code>StrPtr(Var)</code>, um die Adresse einer Zeichenkette zu speichern). Geben Sie für <code>4</code> den Offset des Strukturelements an (siehe Schritt #4, was ein "Offset" ist). Geben Sie für <code>"UInt"</code> den entsprechenden Typ an (zum Beispiel <code>"Ptr"</code>, wenn das Strukturelement ein Pointer oder Handle ist).</p>
+<p>3) Rufen Sie die Zielfunktion auf und übergeben Sie <em>MeineStrukt</em> als Ptr-Argument. Zum Beispiel: <code>DllCall("MeineDLL\MeineFunk", "Ptr", MeineStrukt)</code>. Die Funktion wird einige Strukturelemente auswerten und/oder ändern. DllCall verwendet automatisch die Adresse des Puffers, die normalerweise mit <code>MeineStrukt.Ptr</code> abgerufen werden kann.</p>
 <p>4) Verwenden Sie <code>MeinInteger := <a href="NumGet.htm">NumGet</a>(MeineStrukt, 4, "UInt")</code>, um den Integer eines Strukturelements abzurufen. Geben Sie für <code>4</code> den Offset des Elements innerhalb der Struktur an. Das erste Element liegt immer auf Offset 0. Das zweite Element liegt auf Offset 0 plus der Größe des ersten Elements (in der Regel 4). Jedes Element, das danach erfolgt, liegt auf dem Offset des vorherigen Elements plus der Größe des vorherigen Elements. Die meisten Elemente -- wie z. B. DWORD, Int und <a href="#Int">andere Typen von 32-Bit-Integern</a> -- haben eine Größe von 4 Bytes. Geben Sie für <code>"UInt"</code> den entsprechenden Typ an oder lassen Sie den Parameter weg, wenn das Element ein Pointer oder Handle ist.</p>
 <p>Strukturbeispiele finden Sie im <a href="#ExStruct">Beispielabschnitt</a> weiter unten.</p>
 
 <h2 id="limits">Bekannte Einschränkungen</h2>
-<p>Wenn eine Variable <a href="../Variables.htm#amp">via Adresse</a> (z. B. <code>&amp;MeineVar</code>) an eine Funktion übergeben und ihre Länge von dieser Funktion geändert wird, kann es passieren, dass diese Variable bei späterem Gebrauch ein fehlerhaftes Verhalten aufweist. Um dies zu verhindern, gibt es folgende Lösungsmöglichkeiten: 1) Übergeben Sie <em>MeineVar</em> nicht als Ptr/Adresse, sondern als <a href="#str">"Str"</a>-Argument; 2) Rufen Sie <code><a href="VarSetStrCapacity.htm#neg1">VarSetStrCapacity</a>(MeineVar, -1)</code> auf, um die intern gespeicherte Länge der Variable nach dem Aufruf von DllCall zu aktualisieren.</p>
-<p>Eine binäre Null innerhalb einer Variable führt dazu, dass alle rechts befindlichen Daten versteckt werden; das heißt, dass solche Daten von den meisten internen Funktionen weder abgerufen noch geändert werden können. Solche Daten können aber mit dem <a href="../Variables.htm#amp">Adressoperator</a>, mit den Funktionen <a href="NumPut.htm">NumPut</a> und <a href="NumGet.htm">NumGet</a> oder mit DllCall selbst manipuliert werden.</p>
+<p>Wenn die Adresse einer Zeichenkette in einer Variable (z. B. <code>StrPtr(MeineVar)</code>) an eine Funktion übergeben wird und wenn diese Funktion die Länge des Variableninhalts ändert, kann es passieren, dass diese Variable bei späterem Gebrauch ein fehlerhaftes Verhalten aufweist. Um dies zu verhindern, gibt es folgende Lösungsmöglichkeiten: 1) Übergeben Sie <em>MeineVar</em> nicht als Ptr/Adresse, sondern als <a href="#str">"Str"</a>-Argument; 2) Rufen Sie <code><a href="VarSetStrCapacity.htm#neg1">VarSetStrCapacity</a>(MeineVar, -1)</code> auf, um die intern gespeicherte Länge der Variable nach dem Aufruf von DllCall zu aktualisieren.</p>
+<p>Eine binäre Null innerhalb einer Variable wird als Terminator behandelt und bewirkt, dass alle rechts befindlichen Daten von den meisten internen Funktionen weder abgerufen noch geändert werden können. Solche Daten können aber manipuliert werden, indem Sie die Adresse der Zeichenkette via <a href="StrPtr.htm">StrPtr</a> abrufen und diese Adresse an andere Funktionen wie <a href="NumPut.htm">NumPut</a>, <a href="NumGet.htm">NumGet</a>, <a href="StrGet.htm">StrGet</a>, <a href="StrPut.htm">StrPut</a> und DllCall selbst übergeben.</p>
 <p>Es ist möglich, dass eine Funktion, die die Adresse einer zuvor erhaltenen Zeichenkette zurückgibt, dieselbe Zeichenkette ungewollt auf einer anderen Speicheradresse zurückgibt. <code>CharLower(CharUpper(MeineVar))</code> beispielsweise würde bei einer Programmiersprache wie C++ bewirken, dass der Inhalt von <em>MeineVar</em> in Kleinbuchstaben umgewandelt wird. Nutzt man stattdessen DllCall wie unten gezeigt, bleibt der Inhalt von <em>MeineVar</em> groß geschrieben, weil CharLower eine andere/temporäre Zeichenkette verarbeitet hat, die identisch zum Inhalt von <em>MeineVar</em> ist:</p>
 <pre>MeineVar := "ABC"
 Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpper", "Str", MeineVar, "<strong><u>Str</u></strong>"), "Str")</pre>
@@ -240,17 +240,28 @@ MsgBox "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - CounterD
 
 <div class="ex" id="ExMouseSpeed">
 <p><a href="#ExMouseSpeed">#6</a>: Ein Hotkey, der vorübergehend die Geschwindigkeit des Mauszeigers verringert, um eine genauere Positionierung zu ermöglichen. Halten Sie <kbd>F1</kbd> gedrückt, um den Mauszeiger zu verlangsamen. Lassen Sie diese Taste wieder los, um die originale Geschwindigkeit wiederherzustellen.</p>
-<pre>F1::
-SPI_GETMOUSESPEED := 0x70
-SPI_SETMOUSESPEED := 0x71
-<em>; Ermittelt die aktuelle Geschwindigkeit, um sie später wiederherzustellen:</em>
-DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "Ptr*", OrigMausGeschw := 0, "UInt", 0)
-<em>; Verringert nun die Geschwindigkeit des Mauszeigers im vorletzten Parameter (im Bereich von 1 bis 20, 10 ist Standard):</em>
-DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", <strong>3</strong>, "UInt", 0)
-KeyWait "F1"  <em>; Verhindert, dass das Auto-Wiederholungs-Feature der Tastatur DllCall wiederholt aufruft.</em>
-return
 
-F1 up::DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em></pre>
+<pre>
+F1::
+F1 up::
+{
+    static SPI_GETMOUSESPEED := 0x70
+    static SPI_SETMOUSESPEED := 0x71
+    static OrigMouseSpeed := 0
+    
+    switch ThisHotkey
+    {
+    case "F1":
+        <em>; Ermittelt die aktuelle Geschwindigkeit, um sie später wiederherzustellen:</em>
+        DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "Ptr*", OrigMausGeschw, "UInt", 0)
+        <em>; Verringert nun die Geschwindigkeit des Mauszeigers im vorletzten Parameter (im Bereich von 1 bis 20, 10 ist Standard):</em>
+        DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", 3, "UInt", 0)
+        KeyWait "F1"  <em>; Verhindert, dass das Auto-Wiederholungs-Feature der Tastatur DllCall wiederholt aufruft.</em>
+        
+    case "F1 up":
+        DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", OrigMausGeschw, "UInt", 0)  <em>; Stellt die ursprüngliche Geschwindigkeit wieder her.</em>
+    }
+}</pre>
 </div>
 
 <div class="ex" id="ExWatchScrollBar">
@@ -282,8 +293,8 @@ if !hFile
     return
 }
 TestZeichenkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
-ZketteLänge := StrLen(TestZeichenkette) * (A_IsUnicode ? 2 : 1)
-DllCall("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZketteLänge, "UIntP", RealGeschriebeneBytes, "Ptr", 0)
+ZketteGröße := StrLen(TestZeichenkette) * 2
+DllCall("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZketteGröße, "UIntP", RealGeschriebeneBytes, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
@@ -298,7 +309,7 @@ if !hFile
     return
 }
 <em>; Reserviert einen Bereich im Speicher für die zu lesende Zeichenkette:</em>
-Puf := BufferAlloc(ZketteLänge)
+Puf := BufferAlloc(ZketteGröße)
 DllCall("ReadFile", "Ptr", hFile, "Ptr", Puf, "UInt", Puf.Size, "UIntP", RealGeleseneBytes, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " StrGet(Puf)</pre>
@@ -331,10 +342,10 @@ SystemCursor(cmd)  <em>; cmd = "Show|Hide|Toggle|Reload"</em>
     }
     switch cmd
     {
-      case "Show": visible := true
-      case "Hide": visible := false
-      case "Toggle": visible := !visible
-      default: return
+    case "Show": visible := true
+    case "Hide": visible := false
+    case "Toggle": visible := !visible
+    default: return
     }
     for id, handles in c
     {

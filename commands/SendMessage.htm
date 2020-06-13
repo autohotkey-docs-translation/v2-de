@@ -31,7 +31,7 @@
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
     <p>Die Parameter der Meldung. Lässt man einen Parameter weg, wird standardmäßig 0 verwendet.</p>
-    <p>Jeder Parameter muss ein <a href="../Concepts.htm#numbers">Integer</a> oder ein Objekt mit einer <a href="../objects/Buffer.htm#Ptr">Ptr</a>-Eigenschaft sein, wie z. B. ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt. Verwenden Sie für Meldungen, die einen Pointer zu einer Zeichenkette benötigen, ein Buffer-Objekt oder den <a href="../Variables.htm#amp">Adressoperator</a>. Wenn die in einer Variable enthaltene Zeichenkette durch die Übergabe der Variablenadresse an SendMessage geändert wird, muss danach die Länge der Variable durch Aufrufen von <a href="VarSetStrCapacity.htm#neg1">VarSetStrCapacity(MeineVar, -1)</a> aktualisiert werden.</p>
+    <p>Jeder Parameter muss ein <a href="../Concepts.htm#numbers">Integer</a> oder ein Objekt mit einer <a href="../objects/Buffer.htm#Ptr">Ptr</a>-Eigenschaft sein, wie z. B. ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt. Verwenden Sie für Meldungen, die einen Pointer zu einer Zeichenkette benötigen, ein Buffer-Objekt oder die <a href="StrPtr.htm">StrPtr</a>-Funktion. Wenn die in einer Variable enthaltene Zeichenkette durch die Übergabe der Variablenadresse an SendMessage geändert wird, muss danach die Länge der Variable durch Aufrufen von <a href="VarSetStrCapacity.htm#neg1">VarSetStrCapacity(MeineVar, -1)</a> aktualisiert werden.</p>
     <p>Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die niedrigen 32 Bits verwendet; das heißt, dass Werte gekürzt werden, wenn sie vorzeichenfähig sind und außerhalb des Bereichs von -2147483648 bis 4294967295 (-0x80000000 bis 0x7FFFFFFF) liegen oder wenn sie vorzeichenlos sind und außerhalb des Bereichs von 0 bis 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Concepts.htm#pure-numbers">der von AutoHotkey unterstützt wird</a>, verwendet werden.</p>
   </dd>
 
@@ -93,10 +93,10 @@
 <h2>Bemerkungen</h2>
 <p>Seien Sie vorsichtig, wenn Sie diese Funktion verwenden - das Senden einer Meldung an das falsche Fenster (oder Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht darauf abgestimmt, bestimmte Arten von Meldungen aus externen Quellen zu erwarten.</p>
 <p>SendMessage wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde. <a href="PostMessage.htm">PostMessage</a> hingegen setzt die Meldung in die Meldungswarteschlange des Zielfensters, ohne auf eine Bestätigung und Antwort zu warten.</p>
-<p>Zeichenkettenparameter müssen via <a href="../Variables.htm#amp">Adresse</a> übergeben werden. Zum Beispiel:</p>
+<p>Zeichenkettenparameter müssen via <a href="StrPtr.htm">Adresse</a> übergeben werden. Zum Beispiel:</p>
 <pre>Run "Notepad"
 WinWait "Unbenannt - Editor"
-SendMessage 0xC, 0, <strong>&amp;"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM_SETTEXT</em></pre>
+SendMessage 0xC, 0, StrPtr("Neuer Editor-Titel")  <em>; 0XC ist WM_SETTEXT</em></pre>
 <p>Um allen Fenstern im Betriebssystem eine Meldung zu senden - einschließlich solcher, die versteckt oder deaktiviert sind - fügen Sie <code>ahk_id 0xFFFF</code> in <em>Fenstertitel</em> ein (0xFFFF ist HWND_BROADCAST). Diese Technik sollte nur für Meldungen benutzt werden, die zum Broadcasten geeignet sind, wie z. B.:</p>
 <pre>SendMessage 0x1A,,,, "ahk_id 0xFFFF"  <em>; 0x1A ist WM_SETTINGCHANGE</em></pre>
 <p>Mit <a href="OnMessage.htm">OnMessage</a> kann ein Skript eine Meldung abfangen.</p>
@@ -111,10 +111,11 @@ SendMessage 0xC, 0, <strong>&amp;"Neuer Editor-Titel"</strong>  <em>; 0XC ist WM
 <div class="ex" id="ExMonitorPower">
 <p><a href="#ExMonitorPower">#1</a>: Schaltet den Bildschirm via Hotkey aus. Ersetzen Sie in der SendMessage-Zeile die Zahl 2 mit -1, um den Bildschirm einzuschalten, oder ersetzen Sie sie mit 1, um den Energiesparmodus des Bildschirms zu aktivieren.</p>
 <pre>#o::  <em>; Win+O-Hotkey</em>
-Sleep 1000  <em>; Gibt dem Benutzer die Chance, die Tasten loszulassen (falls das Loslassen der Tasten den Bildschirm wieder aufwecken sollte).
-; Schaltet den Bildschirm aus:</em>
-SendMessage 0x112, 0xF170, 2,, "Program Manager"  <em>; 0x112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.</em>
-return</pre>
+{
+    Sleep 1000  <em>; Gibt dem Benutzer die Chance, die Tasten loszulassen (falls das Loslassen der Tasten den Bildschirm wieder aufwecken sollte).
+    ; Schaltet den Bildschirm aus:</em>
+    SendMessage 0x112, 0xF170, 2,, "Program Manager"  <em>; 0x112 ist WM_SYSCOMMAND, 0xF170 ist SC_MONITORPOWER.</em>
+}</pre>
 </div>
 
 <div class="ex" id="ExScreenSave">
