@@ -132,14 +132,14 @@ Hotkey "^!c", "MeineFunkFürAlleAnderenFenster"</pre>
 <h2>Siehe auch</h2>
 <p><a href="../Hotkeys.htm#Symbols">Hotkey-Symbole</a>, <a href="HotIf.htm">HotIf</a>, <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a>, <a href="_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="Suspend.htm">Suspend</a>, <a href="IsFunc.htm">IsFunc</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread</a>, <a href="Critical.htm">Critical</a>, <a href="Gosub.htm">Gosub</a>, <a href="Return.htm">Return</a>, <a href="../objects/Menu.htm">Menu-Objekt</a>, <a href="SetTimer.htm">SetTimer</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a href="#ExBasic">#1</a></p>
 <pre>Hotkey "^!z", "MeineFunk"
 
 MeineFunk(ThisHotkey)
 {
-    MsgBox "Sie haben " A_ThisHotkey " gedrückt."
+    MsgBox "Sie haben " ThisHotkey " gedrückt."
 }</pre>
 </div>
 
@@ -153,18 +153,31 @@ HotIfWinActive "ahk_class Notepad"
 Hotkey "^!c", "MeineFunkFürNotepad"  <em>; Erstellt STRG+ALT+C als Hotkey, der nur im Texteditor funktioniert.</em></pre>
 </div>
 
-<div class="ex" id="ExampleIfFn">
-<p><a href="#ExampleIfFn">#3</a>: Mit dieser GUI können Sie primitive Drei-Tasten-Kombinations-Hotkeys registrieren:</p>
+<div class="ex" id="ExIfWin">
+<p><a href="#ExIfWin">#3</a>: ALT+W als Hotkey erstellen, der nur im Texteditor funktioniert.</p>
 <pre>
-Gui := GuiCreate()
-Gui.Add("Text", "xm", "Präfixtaste:")
-Gui.Add("Edit", "yp x100 w100 vPräfix", "Space")
-Gui.Add("Text", "xm", "Suffix-Hotkey:")
-Gui.Add("Edit", "yp x100 w100 vSuffix", "f &amp; j")
-Gui.Add("Button", "Default", "Registrieren").OnEvent("Click", "RegistriereHotkey")
-Gui.OnEvent("Close", (*) =&gt; ExitApp())
-Gui.OnEvent("Escape", (*) =&gt; ExitApp())
-Gui.Show()
+HotIfWinActive "ahk_class Notepad"
+Hotkey "!w", "ZeilenumbruchUmschalten"  <em>; !w = Alt+W</em>
+
+ZeilenumbruchUmschalten(ThisHotkey)
+{
+    MenuSelect "A",, "Format", "Zeilenumbruch"
+}
+</pre>
+</div>
+
+<div class="ex" id="ExampleIfFn">
+<p><a href="#ExampleIfFn">#4</a>: Mit dieser GUI können Sie primitive Drei-Tasten-Kombinations-Hotkeys registrieren:</p>
+<pre>
+HkGui := Gui.New()
+HkGui.Add("Text", "xm", "Präfixtaste:")
+HkGui.Add("Edit", "yp x100 w100 vPräfix", "Space")
+HkGui.Add("Text", "xm", "Suffix-Hotkey:")
+HkGui.Add("Edit", "yp x100 w100 vSuffix", "f &amp; j")
+HkGui.Add("Button", "Default", "Registrieren").OnEvent("Click", "RegistriereHotkey")
+HkGui.OnEvent("Close", (*) =&gt; ExitApp())
+HkGui.OnEvent("Escape", (*) =&gt; ExitApp())
+HkGui.Show()
 
 RegistriereHotkey(this, *)
 {

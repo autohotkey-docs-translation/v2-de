@@ -36,21 +36,21 @@
 <h2 id="Text">Text</h2>
 <p>Beschreibung: Ein Bereich mit randlosem Text, den der Benutzer nicht editieren kann. Oft verwendet, um andere Steuerelemente zu beschriften.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Text",, "Bitte tragen Sie Ihren Namen ein:")</pre>
+<pre>MeineGui.Add("Text",, "Bitte tragen Sie Ihren Namen ein:")</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_text.png" alt="Text" />
 <p>Geben Sie im letzten Parameter eine Zeichenkette an, die im Steuerelement angezeigt werden soll. Die Zeichenkette kann Zeilenumbruchszeichen (`n) enthalten, um neue Zeilen zu beginnen. Außerdem kann mithilfe eines <a href="../Scripts.htm#continuation">Fortsetzungsbereichs</a> eine lange Zeile in mehreren kurzen Zeilen aufgeteilt werden.</p>
 <p>Wenn in <em>Optionen</em> eine Breite (W), aber keine <a href="../objects/Gui.htm#R">Zeilen (R)</a> oder Höhe (H) angegeben ist, wird der Text bei Bedarf umbrochen und die Höhe des Steuerelements automatisch gesetzt.</p>
 
 <p>Das <a href="../objects/GuiOnEvent.htm#Click">Click-Ereignis</a> kann genutzt werden, um das Anklicken des Textes abzufangen und zu verarbeiten. Zum Beispiel:</p>
-<pre>Gui := GuiCreate()
-FakeLink := Gui.Add("Text", "", "Klicken Sie hier, um Google zu starten.")
+<pre>MeineGui := Gui.New()
+FakeLink := MeineGui.Add("Text", "", "Klicken Sie hier, um Google zu starten.")
 FakeLink.SetFont("underline cBlue")
 FakeLink.OnEvent("Click", "LaunchGoogle")
 
 <em>; Alternativ kann auch das <a href="#Link">Link</a>-Steuerelement verwendet werden:</em>
-Gui.Add("Link",, 'Klicken Sie &lt;a href="www.google.com"&gt;hier&lt;/a&gt;, um Google zu starten.')
-Gui.Show()
+MeineGui.Add("Link",, 'Klicken Sie &lt;a href="www.google.com"&gt;hier&lt;/a&gt;, um Google zu starten.')
+MeineGui.Show()
 
 LaunchGoogle(*) {
     Run("www.google.com")
@@ -58,23 +58,23 @@ LaunchGoogle(*) {
 <p>Text-Steuerelemente unterstützen auch das <a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick-Ereignis</a>.</p>
 <p id="SS_NOTIFY">Nur Text-Steuerelemente mit dem SS_NOTIFY-Style (0x100) senden Klick- und Doppelklickbenachrichtigungen, daher wird <a href="../objects/GuiOnEvent.htm">OnEvent</a> automatisch diesen Style hinzufügen, wenn ein Click- oder DoubleClick-Callback registriert wird. Der SS_NOTIFY-Style bewirkt, dass der Text des Steuerelements bei einem Doppelklick in die Zwischenablage kopiert wird.</p>
 <p>Mit einem Und-Zeichen (&amp;) kann einer der Buchstaben im Text unterstrichen werden. Zum Beispiel:</p>
-<pre>Gui.Add("Text",, "&amp;Vorname:")
-Gui.Add("Edit")</pre>
+<pre>MeineGui.Add("Text",, "&amp;Vorname:")
+MeineGui.Add("Edit")</pre>
 <p>Das Beispiel oben führt dazu, dass der Buchstabe V unterstrichen und das <a href="../objects/Gui.htm#ShortcutKey">Tastenkürzel</a> <kbd>Alt</kbd>+<kbd>V</kbd> aktiviert wird. Dieses Tastenkürzel kann der Benutzer drücken, um den Tastaturfokus auf das erste danach erstellte eingabefähige Steuerelement zu setzen. Um stattdessen ein Und-Zeichen im Text des Steuerelements darzustellen, sind zwei aufeinanderfolgende Und-Zeichen (&amp;&amp;) erforderlich. Fügen Sie <a href="../misc/Styles.htm#SS_NOPREFIX">0x80</a> in den Optionen des Steuerelements ein, um die Sonderbehandlung der Und-Zeichen komplett zu deaktivieren.</p>
 <p>Unter <a href="../objects/Gui.htm#OtherOptions">Allgemeine Optionen</a> finden Sie weitere Optionen wie <em>Right</em>, <em>Center</em> und <em>Hidden</em>. Siehe auch: <a href="../objects/Gui.htm#PosSize">Position und Größe von Steuerelementen anpassen</a>.</p>
 
 <h2 id="Edit">Edit</h2>
 <p>Beschreibung: Ein Eingabefeld, das der Benutzer zum Eintragen eines formatlosen Textes nutzen kann.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Edit", "r9 vMeinEdit w135", "Der Text innerhalb des Eingabefelds (lassen Sie diesen Parameter weg, um ein leeres Feld anzuzeigen).")</pre>
+<pre>MeineGui.Add("Edit", "r9 vMeinEdit w135", "Der Text innerhalb des Eingabefelds (lassen Sie diesen Parameter weg, um ein leeres Feld anzuzeigen).")</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_edit.png" alt="Edit" />
 <p>Das Steuerelement wird als mehrzeilig erkannt, wenn es mehr als eine Textzeile enthält. <code>r3</code> beispielsweise in <em>Optionen</em> bewirkt, dass ein dreizeiliges Eingabefeld mit folgenden Standardeigenschaften erstellt wird: vertikale Scrollleiste; automatischer Zeilenumbruch; <kbd>Enter</kbd> erzeugt einen Zeilenumbruch, anstatt die <a href="#DefaultButton">Standardschaltfläche</a> des Fensters auszulösen.</p>
-<p>Fügen Sie im letzten Parameter entweder ein einzelnes LF (`n) oder CR+LF (`r`n) ein, um eine neue Zeile innerhalb eines mehrzeiligen Eingabefeldes zu beginnen. Beide Varianten erzeugen direkt geschriebene CR+LF-Paare (`r`n) innerhalb des Eingabefeldes. Nutzt man jedoch <a href="../objects/Gui.htm#Submit">Gui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um den Inhalt des Steuerelements abzurufen, werden CR+LF-Paare (`r`n) immer in einzelne Zeilenumbruchszeichen (`n) umgewandelt. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann diese End-of-Line-Umwandlung umgangen werden. Um den Inhalt des Eingabefeldes in eine Datei zu schreiben, können Sie wie folgt vorgehen: <code><a href="FileAppend.htm">FileAppend</a>(MeinEingabefeld.Text, "C:\Gespeicherte Datei.txt")</code>.</p>
+<p>Fügen Sie im letzten Parameter entweder ein einzelnes LF (`n) oder CR+LF (`r`n) ein, um eine neue Zeile innerhalb eines mehrzeiligen Eingabefeldes zu beginnen. Beide Varianten erzeugen direkt geschriebene CR+LF-Paare (`r`n) innerhalb des Eingabefeldes. Nutzt man jedoch <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um den Inhalt des Steuerelements abzurufen, werden CR+LF-Paare (`r`n) immer in einzelne Zeilenumbruchszeichen (`n) umgewandelt. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann diese End-of-Line-Umwandlung umgangen werden. Um den Inhalt des Eingabefeldes in eine Datei zu schreiben, können Sie wie folgt vorgehen: <code><a href="FileAppend.htm">FileAppend</a>(MeinEingabefeld.Text, "C:\Gespeicherte Datei.txt")</code>.</p>
 <p>Jeder beim Schreiben verursachte automatische Zeilenumbruch, sofern aktiv (Standardeinstellung bei mehrzeiligen Eingabefeldern), ist rein visueller Natur; das heißt, dass dadurch keine physischen Zeilenumbruchszeichen erzeugt werden (nur das Drücken von <kbd>Enter</kbd> ist dazu in der Lage).</p>
 <p>Jedes Mal, wenn der Benutzer den Inhalt des Steuerelements ändert, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst.</p>
 <p>TIPP: Verwenden Sie <a href="FileRead.htm">FileRead</a> und <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um den Inhalt einer Textdatei in ein Eingabefeld zu laden. Zum Beispiel:</p>
-<pre>MeinEdit := Gui.Add("Edit", "R20")
+<pre>MeinEdit := MeineGui.Add("Edit", "R20")
 MeinEdit.Value := FileRead("C:\Meine Datei.txt")</pre>
 
 <h3>Edit-Optionen</h3>
@@ -85,7 +85,7 @@ MeinEdit.Value := FileRead("C:\Meine Datei.txt")</pre>
 <p id="EditNum"><strong>Number</strong>: Verhindert, dass der Benutzer etwas anderes als Zahlen in das Feld eintragen kann (allerdings ist es immer noch möglich, nicht-numerische Werte via Zwischenablage einzufügen). Eine numerische Benutzereingabe kann auch erzwungen werden, wenn Sie dem Eingabefeld ein <a href="#UpDown">UpDown</a>-Steuerelement zuweisen.</p>
 <p><strong>Password</strong>: Versteckt die Benutzereingabe (z. B. für eine Passworteingabe); das heißt, dass jedes Zeichen, das der Benutzer eingibt, mit einem Maskierungszeichen ersetzt wird. Wenn Sie ein anderes Maskierungszeichen benötigen, können Sie direkt nach dem Wort Password das gewünschte Zeichen angeben. <code>Password*</code> bewirkt beispielsweise, dass als Maskierungszeichen nicht der vollflächige Kreis, sondern das Sternchen verwendet wird. Hinweis: Diese Option funktioniert nicht bei mehrzeiligen Eingabefeldern.</p>
 <p><strong>ReadOnly</strong>: Verhindert, dass der Benutzer den Inhalt des Steuerelements ändern kann. Der Text kann aber weiterhin gescrollt, markiert und in die Zwischenablage kopiert werden.</p>
-<p><strong>Tn</strong>: Mit dem Buchstaben T können Tabstopps innerhalb eines <a href="#EditMulti">mehrzeiligen Eingabefeldes</a> gesetzt werden (Tabstopps sind Ansprungspositionen für direkt geschriebene Tabulatorzeichen und ermöglichen somit, den Text in Spalten aufzuteilen). Wenn der Buchstabe T nicht verwendet wird, werden Tabstopps auf je 32 Dialogeinheiten gesetzt (die Breite jeder "Dialogeinheit" ist systemintern festgelegt). Wenn der Buchstabe T nur einmal verwendet wird, werden Tabstopps auf je <strong>n</strong> Dialogeinheiten innerhalb der verfügbaren Breite des Steuerelements gesetzt. <code>Gui.Add("Edit", "vMeinEdit r16 t64")</code> beispielsweise verdoppelt den Standardabstand zwischen den Tabstopps. Geben Sie den Buchstaben T mehrmals wie folgt an, um benutzerdefinierte Tabstopps zu setzen: <code>Gui.Add("Edit", "vMeinEdit r16 t8 t16 t32 t64 t128")</code>. Für jede absolute Spaltenposition in der Liste wird ein Tabstopp gesetzt, bis zu einem Maximum von 50 Tabstopps. Hinweis: Tabstopps funktionieren nur bei mehrzeiligen Eingabefeldern.</p>
+<p><strong>Tn</strong>: Mit dem Buchstaben T können Tabstopps innerhalb eines <a href="#EditMulti">mehrzeiligen Eingabefeldes</a> gesetzt werden (Tabstopps sind Ansprungspositionen für direkt geschriebene Tabulatorzeichen und ermöglichen somit, den Text in Spalten aufzuteilen). Wenn der Buchstabe T nicht verwendet wird, werden Tabstopps auf je 32 Dialogeinheiten gesetzt (die Breite jeder "Dialogeinheit" ist systemintern festgelegt). Wenn der Buchstabe T nur einmal verwendet wird, werden Tabstopps auf je <strong>n</strong> Dialogeinheiten innerhalb der verfügbaren Breite des Steuerelements gesetzt. <code>MeineGui.Add("Edit", "vMeinEdit r16 t64")</code> beispielsweise verdoppelt den Standardabstand zwischen den Tabstopps. Geben Sie den Buchstaben T mehrmals wie folgt an, um benutzerdefinierte Tabstopps zu setzen: <code>MeineGui.Add("Edit", "vMeinEdit r16 t8 t16 t32 t64 t128")</code>. Für jede absolute Spaltenposition in der Liste wird ein Tabstopp gesetzt, bis zu einem Maximum von 50 Tabstopps. Hinweis: Tabstopps funktionieren nur bei mehrzeiligen Eingabefeldern.</p>
 <p><strong>Uppercase</strong>: Die vom Benutzer geschriebenen Zeichen werden automatisch in Großbuchstaben umgewandelt.</p>
 <p><strong>WantCtrlA</strong>: Geben Sie <code>-WantCtrlA</code> (minus WantCtrlA) an, um zu verhindern, dass der Benutzer den gesamten Text im Eingabefeld via <kbd>Strg</kbd>+<kbd>A</kbd> markieren kann.</p>
 <p id="WantReturn"><strong>WantReturn</strong>: Geben Sie <code>-WantReturn</code> (minus WantReturn) an, um zu verhindern, dass <kbd>Enter</kbd> von einem mehrzeiligen Eingabefeld erfasst wird. Das Drücken von <kbd>Enter</kbd> wäre dann das gleiche wie, als würde man die <a href="#DefaultButton">Standardschaltfläche</a> des Fensters (falls vorhanden) drücken. Um dennoch eine neue Zeile zu beginnen, kann der Benutzer <kbd>Strg</kbd>+<kbd>Enter</kbd> drücken.</p>
@@ -97,14 +97,14 @@ MeinEdit.Value := FileRead("C:\Meine Datei.txt")</pre>
 <h2 id="UpDown">UpDown</h2>
 <p>Beschreibung: Zwei Pfeile als Schaltflächen, die der Benutzer drücken kann, um einen Wert zu erhöhen oder zu verringern. Standardmäßig fügt sich ein UpDown automatisch an das zuvor hinzugefügte Steuerelement an. Dieses zuvor hinzugefügte Steuerelement wird auch als <em>Buddy</em> bezeichnet. Das bekannteste Beispiel dafür ist der "Spinner" (Drehrad) - ein <a href="#Edit">Eingabefeld</a> mit UpDown-Steuerelement.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Edit")
-Gui.Add("UpDown", "vMeinUpDown Range1-10", 5)</pre>
+<pre>MeineGui.Add("Edit")
+MeineGui.Add("UpDown", "vMeinUpDown Range1-10", 5)</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_updown.png" alt="UpDown" />
 <p>Das Beispiel oben führt dazu, dass das Eingabefeld als Buddy des UpDown-Steuerelements festgelegt wird. Jedes Mal, wenn der Benutzer eine der Pfeilschaltflächen drückt, wird die Zahl im Eingabefeld automatisch erhöht oder verringert.</p>
 <p>Das Buddy-Steuerelement kann auch ein <a href="#Text">Text</a>- oder <a href="#ListBox">ListBox</a>-Steuerelement sein. Bei anderen Steuerelementen (wie z. B. ComboBox oder DropDownList) werden Features wie das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis aufgrund von Einschränkungen im Betriebssystem eventuell nicht korrekt funktionieren.</p>
 <p>Geben Sie im letzten Parameter die Startposition des UpDown-Steuerelements an (lässt man diese weg, beginnt das Steuerelement bei 0 oder beim niedrigsten zulässigen Bereichswert).</p>
-<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">Gui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um die aktuelle numerische Position des UpDown-Steuerelements abzurufen. Wenn das UpDown-Steuerelement mit einem Eingabefeld verbunden ist, empfiehlt es sich, den aktuellen Wert des UpDown-Steuerelements und nicht den des Eingabefelds abzurufen. So wird garantiert, dass immer eine im gültigen Bereich liegende Nummer zurückgegeben wird, selbst wenn der Benutzer etwas in das Eingabefeld eingetragen hat, das nicht-numerisch ist oder außerhalb des gültigen Bereichs liegt. Beachten Sie zudem, dass Zahlen länger als 3 Ziffern standardmäßig mit einem <a href="../misc/Styles.htm#UpDownSep">Tausendertrennzeichen</a> (z. B. Punkt) in Dreiergruppen eingeteilt werden. Diese Trennzeichen werden vom Eingabefeld zurückgegeben, nicht vom UpDown-Steuerelement.</p>
+<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um die aktuelle numerische Position des UpDown-Steuerelements abzurufen. Wenn das UpDown-Steuerelement mit einem Eingabefeld verbunden ist, empfiehlt es sich, den aktuellen Wert des UpDown-Steuerelements und nicht den des Eingabefelds abzurufen. So wird garantiert, dass immer eine im gültigen Bereich liegende Nummer zurückgegeben wird, selbst wenn der Benutzer etwas in das Eingabefeld eingetragen hat, das nicht-numerisch ist oder außerhalb des gültigen Bereichs liegt. Beachten Sie zudem, dass Zahlen länger als 3 Ziffern standardmäßig mit einem <a href="../misc/Styles.htm#UpDownSep">Tausendertrennzeichen</a> (z. B. Punkt) in Dreiergruppen eingeteilt werden. Diese Trennzeichen werden vom Eingabefeld zurückgegeben, nicht vom UpDown-Steuerelement.</p>
 <p>Jedes Mal, wenn der Benutzer auf eine der Pfeilschaltflächen klickt oder eine Pfeiltaste auf der Tastatur drückt, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst.</p>
 
 <h3>UpDown-Optionen</h3>
@@ -112,7 +112,7 @@ Gui.Add("UpDown", "vMeinUpDown Range1-10", 5)</pre>
 <p><strong>Left</strong>: Positioniert das UpDown-Steuerelement auf die linke statt rechte Seite des Buddy-Steuerelements.</p>
 <p><strong>Range</strong>: Setzt den Bereich auf etwas anderes als 0 bis 100. Geben Sie nach dem Wort Range den Minimal- und Maximalwert an (mit einem Bindestrich dazwischen). <code>Range1-1000</code> beispielsweise erlaubt eine Zahl zwischen 1 und 1000; <code>Range-50-50</code> eine Zahl zwischen -50 und 50; und <code>Range-10--5</code> eine Zahl zwischen -10 und -5. Der Minimal- und Maximalwert können vertauscht werden, um die Schrittrichtung der Pfeile umzukehren. Der größte zulässige Bereich ist -2147483648-2147483647. Wenn das Buddy-Steuerelement eine <a href="#ListBox">ListBox</a> ist, wird der Standardbereich im vertikalen Modus auf 32767-0 und im horizontalen Modus (<a href="#Horz">Horz</a>) auf 0-32767 festgelegt.</p>
 <p><strong>Wrap</strong>: Veranlasst das Steuerelement, zum anderen Ende des gültigen Bereichs zu springen, wenn der Benutzer versucht, den Minimal- oder Maximalwert zu überschreiten. Wenn <em>Wrap</em> nicht angegeben ist, stoppt das Steuerelement beim Erreichen des Minimal- oder Maximalwerts.</p>
-<p><strong>16</strong>: Geben Sie -16 (minus 16) an, um ein vertikales UpDown-Steuerelement zu isolieren bzw. vom Buddy-Steuerelement zu trennen. Dies bewirkt auch, dass sich das Steuerelement nicht an die Größe des Buddy-Steuerelements anpasst, sondern eine eigene Breite, Höhe und Position aufweist bzw. haben kann. Ein isoliertes UpDown-Steuerelement speichert intern seine aktuelle Position. Um diese Position abzurufen, können Sie zum Beispiel <a href="../objects/Gui.htm#Submit">Gui.Submit</a> nutzen.</p>
+<p><strong>16</strong>: Geben Sie -16 (minus 16) an, um ein vertikales UpDown-Steuerelement zu isolieren bzw. vom Buddy-Steuerelement zu trennen. Dies bewirkt auch, dass sich das Steuerelement nicht an die Größe des Buddy-Steuerelements anpasst, sondern eine eigene Breite, Höhe und Position aufweist bzw. haben kann. Ein isoliertes UpDown-Steuerelement speichert intern seine aktuelle Position. Um diese Position abzurufen, können Sie zum Beispiel <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> nutzen.</p>
 <p id="UpDownSep"><strong>0x80</strong>: Fügen Sie <code>0x80</code> in <em>Optionen</em> ein, um zu verhindern, dass mit einem Tausendertrennzeichen die dezimalen Ziffern des Buddy-Steuerelements in Dreiergruppen eingeteilt werden. Normalerweise ist dieser Style nicht notwendig, denn man kann den aktuellen Wert auch vom UpDown-Steuerelement selbst abrufen, um einen Wert ohne Tausendertrennzeichen zu erhalten.</p>
 <p><strong>Andere Schrittweiten als 1</strong>: In <a href="http://numeric.nerim.net/AutoHotkey/Scripts/UpDown%20-%20Non-unitary%20increments.ahk">diesem Skript</a> zeigt NumEric, wie man die Schrittweite eines UpDown-Steuerelements auf einen anderen Wert als 1 ändert (z. B. 5 oder 0.1).</p>
 <p>Siehe auch: <a href="../objects/Gui.htm#PosSize">Position und Größe von Steuerelementen anpassen</a>.</p>
@@ -120,34 +120,34 @@ Gui.Add("UpDown", "vMeinUpDown Range1-10", 5)</pre>
 <span id="Pic"></span><h2 id="Picture">Picture (oder Pic)</h2>
 <p>Beschreibung: Ein Bereich zum Anzeigen eines Bildes (siehe weiter unten, welche Dateitypen unterstützt werden). Der letzte Parameter ist der Dateiname des Bildes. Wenn kein absoluter Pfad angegeben ist, wird das Bild im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Picture", "w300 h-1", "C:\Meine Bilder\Firmenlogo.gif")</pre>
+<pre>MeineGui.Add("Picture", "w300 h-1", "C:\Meine Bilder\Firmenlogo.gif")</pre>
 <p>Lassen Sie die Optionen W und/oder H weg, um die tatsächliche Breite und/oder Höhe des Bildes beizubehalten. Ansonsten wird das Bild auf die angegebene Breite und/oder Höhe skaliert (diese Breite und Höhe bestimmen auch, welches Symbol aus einer mit mehreren Symbolen bestückten ICO-Datei geladen werden soll). Geben Sie -1 für eine der Abmessungen und eine positive Zahl für die jeweils andere an, um das Bild unter Beibehaltung des Seitenverhältnisses zu verkleinern oder zu vergrößern. <code>w200 h-1</code> beispielsweise macht das Bild 200 Pixel breit und bewirkt, dass dessen Höhe automatisch gesetzt wird. Wenn das Bild nicht geladen oder dargestellt werden kann (z. B. weil die Datei nicht gefunden wurde), wird das Steuerelement leer gelassen und dessen Breite und Höhe auf 0 gesetzt.</p>
 <p>Picture-Steuerelemente unterstützen das <a href="../objects/GuiOnEvent.htm#Click">Click</a>- und <a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>-Ereignis, mit der gleichen <a href="#SS_NOTIFY">Einschränkung</a> wie bei Text-Steuerelementen.</p>
 <p>Um ein Bild als Hintergrund für andere Steuerelemente zu nutzen, sollte das Bild normalerweise vor solchen Steuerelementen hinzugefügt werden. Wenn solche Steuerelemente allerdings eingabefähig sind und das Bild den <a href="#SS_NOTIFY">SS_NOTIFY-Style</a> hat (der automatisch via <a href="../objects/GuiOnEvent.htm">OnEvent</a> hinzugefügt wird), muss das Bild nach diesen Steuerelementen erstellt werden und <code>0x4000000</code> (WS_CLIPSIBLINGS) in den <em>Optionen</em> des Picture-Steuerelements eingefügt werden. Mit diesem Trick kann ein Bild auch als Hintergrund für ein <a href="#Tab">Tab</a>- oder <a href="ListView.htm">ListView</a>-Steuerelement festgelegt werden.</p>
-<p id="IconSupport"><strong>Symbole, Cursor und animierte Cursor</strong>: Symbole und Cursor können aus folgenden Dateitypen geladen werden: ICO, CUR, ANI, EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten. Um anstelle der ersten Symbolgruppe eine andere in der Datei zu nutzen, müssen Sie in <em>Optionen</em> das Wort Icon einfügen und direkt danach die Nummer der Gruppe angeben. Die folgende Beispielanweisung lädt das Standardsymbol aus der zweiten Symbolgruppe: <code>Gui.Add("Picture", "Icon2", "C:\Meine Anwendung.exe")</code>.</p>
+<p id="IconSupport"><strong>Symbole, Cursor und animierte Cursor</strong>: Symbole und Cursor können aus folgenden Dateitypen geladen werden: ICO, CUR, ANI, EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten. Um anstelle der ersten Symbolgruppe eine andere in der Datei zu nutzen, müssen Sie in <em>Optionen</em> das Wort Icon einfügen und direkt danach die Nummer der Gruppe angeben. Die folgende Beispielanweisung lädt das Standardsymbol aus der zweiten Symbolgruppe: <code>MeineGui.Add("Picture", "Icon2", "C:\Meine Anwendung.exe")</code>.</p>
 <p id="PicAltSubmit">Fügen Sie in <em>Optionen</em> das Wort AltSubmit ein, um zum Laden des Bildes die Microsoft-Datei GDIPlus.dll zu verwenden und dadurch eine alternative Darstellung von GIF-, BMP- und Symbolbildern zu gewährleisten. So kann zum Beispiel eine GIF-Datei mit transparentem Hintergrund als transparente Bitmap geladen werden, die den Effekt von <a href="../objects/Gui.htm#BackgroundTrans">BackgroundTrans</a> zulässt (Symbole unterstützen Transparenz ohne AltSubmit).</p>
 <p>Die ohne GDIPlus unterstützten Bildformate sind GIF, JPG, BMP, ICO, CUR und ANI. GDIPlus wird standardmäßig für andere Bildformate wie PNG, TIF, Exif, WMF und EMF verwendet.</p>
 <p><strong>Animierte GIF-Bilder</strong>: Animierte GIF-Dateien werden zwar in einem Picture-Steuerelement angezeigt, aber nicht animiert. Um dieses Problem zu lösen, benötigen Sie die AniGIF-DLL-Datei (die für den nicht-kommerziellen Gebrauch kostenlos zur Verfügung steht). Beispiele dazu finden Sie im <a href="https://www.autohotkey.com/boards/viewtopic.php?t=6457">AutoHotkey-Forum</a>. Alternativ können Sie dafür auch das <a href="#ActiveX">ActiveX</a>-Steuerelement nutzen. Zum Beispiel:</p>
 <pre><em>; Geben Sie unten den Pfad zur GIF-Datei an, die animiert werden soll (lokale Dateien sind auch möglich):</em>
 pic := "http://www.animatedgif.net/cartoons/A_5odie_e0.gif"
-Gui := GuiCreate()
-Gui.Add("ActiveX", "w100 h150", "mshtml:&lt;img src='" pic "' /&gt;")
-Gui.Show</pre>
+MeineGui := Gui.New()
+MeineGui.Add("ActiveX", "w100 h150", "mshtml:&lt;img src='" pic "' /&gt;")
+MeineGui.Show</pre>
 <p>Anstelle eines Dateinamens kann auch ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> verwendet werden. Zum Beispiel <code>"HBITMAP:" handle</code>.</p>
 
 <h2 id="Button">Button</h2>
 <p>Beschreibung: Eine Schaltfläche, die gedrückt werden kann, um eine Aktion auszulösen. Geben Sie im letzten Parameter den sichtbaren Namen der Schaltfläche an, der Zeilenumbruchszeichen (`n) zum Starten neuer Zeilen enthalten kann.</p>
 <p>Zum Beispiel:</p>
-<pre>MeinBtn := Gui.Add("Button", "Default w80", "OK")
+<pre>MeinBtn := MeineGui.Add("Button", "Default w80", "OK")
 MeinBtn.OnEvent("Click", "MeinBtn_Click")  <em>; Ruft MeinBtn_Click beim Anklicken auf.</em>
 </pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_button.png" alt="Button" />
 <p>Das <a href="../objects/GuiOnEvent.htm#Click">Click</a>-Ereignis wird jedes Mal ausgelöst, wenn der Benutzer auf die Schaltfläche klickt oder <kbd>Leer</kbd> oder <kbd>Enter</kbd> drückt, während die Schaltfläche den Fokus hat.</p>
 <p>Die Ereignisse <a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>, <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt. Da diese Ereignisse nur ausgelöst werden, wenn das Steuerelement den BS_NOTIFY-Style (0x4000) hat, wird <a href="../objects/GuiOnEvent.htm">OnEvent</a> diesen Style automatisch hinzufügen.</p>
-<p id="DefaultButton">Das Wort <strong>Default</strong> in den <em>Optionen</em> des Beispiels oben bewirkt, dass "OK" zur Standardschaltfläche gemacht wird. Das <a href="../objects/GuiOnEvent.htm#Click">Click-Ereignis</a> der Standardschaltfläche wird jedes Mal automatisch ausgelöst, wenn der Benutzer <kbd>Enter</kbd> drückt, es sei denn, der Tastaturfokus liegt auf einer anderen Schaltfläche oder einem mehrzeiligen Eingabefeld mit aktiviertem <a href="#WantReturn">WantReturn</a>-Style. Um später eine andere Schaltfläche zur Standardschaltfläche zu machen, können Sie wie folgt vorgehen: <code>Gui["Abbrechen"].<a href="../objects/GuiControl.htm#Opt">Opt</a>("+Default")</code>. Um das Fenster später so zu ändern, dass es keine Standardschaltfläche hat, benötigen sie folgende Anweisung: <code>Gui["OK"].Opt("-Default")</code>.</p>
+<p id="DefaultButton">Das Wort <strong>Default</strong> in den <em>Optionen</em> des Beispiels oben bewirkt, dass "OK" zur Standardschaltfläche gemacht wird. Das <a href="../objects/GuiOnEvent.htm#Click">Click-Ereignis</a> der Standardschaltfläche wird jedes Mal automatisch ausgelöst, wenn der Benutzer <kbd>Enter</kbd> drückt, es sei denn, der Tastaturfokus liegt auf einer anderen Schaltfläche oder einem mehrzeiligen Eingabefeld mit aktiviertem <a href="#WantReturn">WantReturn</a>-Style. Um später eine andere Schaltfläche zur Standardschaltfläche zu machen, können Sie wie folgt vorgehen: <code>MeineGui["Abbrechen"].<a href="../objects/GuiControl.htm#Opt">Opt</a>("+Default")</code>. Um das Fenster später so zu ändern, dass es keine Standardschaltfläche hat, benötigen sie folgende Anweisung: <code>MeineGui["OK"].Opt("-Default")</code>.</p>
 <p>Sie können ein Und-Zeichen (&amp;) im Namen der Schaltfläche nutzen, um einen der Buchstaben zu unterstreichen. Zum Beispiel:</p>
-<pre>Gui.Add("Button",, "&amp;Pause")</pre>
+<pre>MeineGui.Add("Button",, "&amp;Pause")</pre>
 <p>Das Beispiel oben führt dazu, dass der Buchstabe P unterstrichen und das <a href="../objects/Gui.htm#ShortcutKey">Tastenkürzel</a> <kbd>Alt</kbd>+<kbd>P</kbd> aktiviert wird. Um ein Und-Zeichen im Text des Steuerelements darzustellen, sind zwei aufeinanderfolgende Und-Zeichen (&amp;&amp;) erforderlich.</p>
 
 <p>Bekannte Einschränkung: Bestimmte Desktop-Designs können den Text dieses Steuerelements nicht ordnungsgemäß darstellen. Wenn dies der Fall ist, können Sie versuchsweise <code>-Wrap</code> (minus Wrap) in den Optionen des Steuerelements einfügen. Dadurch wird allerdings auch verhindert, dass das Steuerelement mehr als eine Textzeile enthalten kann.</p>
@@ -155,7 +155,7 @@ MeinBtn.OnEvent("Click", "MeinBtn_Click")  <em>; Ruft MeinBtn_Click beim Anklick
 <h2 id="Checkbox">CheckBox</h2>
 <p>Beschreibung: Ein kleines Feld zum Setzen oder Entfernen eines Häkchens, um An/Aus, Ja/Nein etc. darzustellen.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("CheckBox", "vSendenAnRechnungsadresse", "An Rechnungsadresse versenden?")</pre>
+<pre>MeineGui.Add("CheckBox", "vSendenAnRechnungsadresse", "An Rechnungsadresse versenden?")</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_check.png" alt="CheckBox" />
 <p>Der letzte Parameter ist eine Beschriftung, die neben der CheckBox angezeigt wird, um dem Benutzer eine Frage zu stellen oder die Funktion der CheckBox zu beschreiben. Diese Beschriftung kann Zeilenumbruchszeichen (`n) zum Starten neuer Zeilen enthalten. Wenn in <em>Optionen</em> eine Breite (W) angegeben ist, aber keine <a href="../objects/Gui.htm#R">Reihen (R)</a> oder Höhe (H), werden Textzeilen bei Bedarf umbrochen und die Höhe des Steuerelements automatisch gesetzt.</p>
@@ -168,71 +168,71 @@ MeinBtn.OnEvent("Click", "MeinBtn_Click")  <em>; Ruft MeinBtn_Click beim Anklick
 <h2 id="Radio">Radio</h2>
 <p>Beschreibung: Ein Optionsfeld in Form eines kleinen leeren Kreises, das ein- oder ausgeschaltet sein kann.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Radio", "vMeineRadioGruppe", "Artikel erst versenden, wenn sie auf Lager sind.")</pre>
+<pre>MeineGui.Add("Radio", "vMeineRadioGruppe", "Artikel erst versenden, wenn sie auf Lager sind.")</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_radio.png" alt="Radio" />
 <p>Solche Steuerelemente befinden sich üblicherweise in <em>Radio-Gruppen</em>, die jeweils aus zwei oder mehr Radio-Buttons bestehen. Klickt der Benutzer einen Radio-Button an, um ihn einzuschalten, werden alle anderen Radio-Buttons in der Gruppe automatisch ausgeschaltet (der Benutzer kann zudem mit den Pfeiltasten innerhalb einer Gruppe navigieren). Eine Radio-Gruppe wird automatisch erstellt und umfasst eine Reihe von nacheinander erstellten Radio-Buttons. Um eine neue Gruppe zu beginnen, fügen Sie das Wort <strong>Group</strong> in den <em>Optionen</em> des ersten Radio-Buttons ein -- oder fügen Sie dazwischen einfach ein Steuerelement ein, das kein Radio-Button ist, um automatisch eine neue Gruppe beginnen zu lassen.</p>
 <p>Der letzte Parameter ist die Beschriftung auf der rechten Seite des Radio-Buttons. Diese Beschriftung dient üblicherweise dazu, dem Benutzer eine Frage zu stellen oder die Funktion des Radio-Buttons zu beschreiben, und kann Zeilenumbruchszeichen (`n) zum Starten neuer Zeilen enthalten. Wenn in <em>Optionen</em> eine Breite (W) angegeben ist, aber keine Zeilen (R) oder Höhe (H), werden Textzeilen bei Bedarf umbrochen und die Höhe des Steuerelements automatisch gesetzt.</p>
 <p>Fügen Sie das Wort <strong>Checked</strong> in <em>Optionen</em> ein, um den Button zu Beginn im eingeschalteten Zustand darzustellen. Direkt nach dem Wort Checked kann optional eine 0 oder 1 erfolgen, um den Startzustand zu bestimmen: 0 für ausgeschaltet und 1 für eingeschaltet. In diesem Fall ist <code>"Checked"</code> das gleiche wie <code>"Checked" VarMitEins</code>.</p>
-<p><a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> gibt 1 zurück, wenn das Steuerelement eingeschaltet ist, oder 0, wenn es ausgeschaltet ist. Um stattdessen die Positionsnummer des eingeschalteten Radio-Buttons innerhalb einer Radio-Gruppe abzurufen, geben Sie einem der Radio-Buttons einen <a href="../objects/GuiControl.htm#Name">Namen</a> und verwenden Sie <a href="../objects/Gui.htm#submit-radio">Gui.Submit</a>.</p>
+<p><a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> gibt 1 zurück, wenn das Steuerelement eingeschaltet ist, oder 0, wenn es ausgeschaltet ist. Um stattdessen die Positionsnummer des eingeschalteten Radio-Buttons innerhalb einer Radio-Gruppe abzurufen, geben Sie einem der Radio-Buttons einen <a href="../objects/GuiControl.htm#Name">Namen</a> und verwenden Sie <a href="../objects/Gui.htm#submit-radio">MeineGui.Submit</a>.</p>
 <p>Das <a href="../objects/GuiOnEvent.htm#Click">Click</a>-Ereignis wird jedes Mal ausgelöst, wenn der Benutzer einen Button einschaltet. Das Ereignis-Callback muss, im Gegensatz zum Einzelvariablenmodus im vorherigen Abschnitt, für jeden Radio-Button in einer Radio-Gruppe registriert werden, bei dem es aufgerufen werden soll. Dadurch können auf einfache Weise Klicks bestimmter Radio-Buttons ignoriert werden. </p>
 <p>Die Ereignisse <a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>, <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt. Da diese Ereignisse nur ausgelöst werden, wenn das Steuerelement den BS_NOTIFY-Style (0x4000) hat, wird <a href="../objects/GuiOnEvent.htm">OnEvent</a> diesen Style automatisch hinzufügen.</p>
 <p>Bekannte Einschränkung: Bestimmte Desktop-Designs können den Text eines Radio-Buttons nicht ordnungsgemäß darstellen. Wenn dies der Fall ist, können Sie versuchsweise <code>-Wrap</code> (minus Wrap) in den Optionen des Steuerelements einfügen. Dadurch wird allerdings auch verhindert, dass das Steuerelement mehr als eine Textzeile enthalten kann.</p>
 
 <span id="DDL"></span><h2 id="DropDownList">DropDownList (oder DDL)</h2>
-<p>Beschreibung: Eine aufklappbare Liste mit Auswahlmöglichkeiten. Geben Sie im letzten Parameter von <a href="../objects/Gui.htm#Add">Gui.Add</a> ein <a href="../objects/Array.htm">Array</a> in Form von <code>["Auswahl1", "Auswahl2", "Auswahl3"]</code> an.</p>
+<p>Beschreibung: Eine aufklappbare Liste mit Auswahlmöglichkeiten. Geben Sie im letzten Parameter von <a href="../objects/Gui.htm#Add">MeineGui.Add</a> ein <a href="../objects/Array.htm">Array</a> in Form von <code>["Auswahl1","Auswahl2","Auswahl3"]</code> an.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("DropDownList", "vFarbauswahl", ["Schwarz","Weiß","Rot","Grün","Blau"])
+<pre>MeineGui.Add("DropDownList", "vFarbauswahl", ["Schwarz","Weiß","Rot","Grün","Blau"])
 </pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_ddl.png" alt="DDL" />
-<p>Wenn einer der Listeneinträge beim ersten Erscheinen des Fensters vorab ausgewählt sein soll, fügen Sie in <em>Optionen</em> das Wort <strong>Choose</strong> ein, gefolgt von der Nummer des gewünschten Listeneintrags. <code>Choose5</code> beispielsweise bewirkt, dass der fünfte Listeneintrag vorab ausgewählt wird (wie bei anderen Optionen auch kann hier eine Variable genutzt werden, wie z. B. <code>"Choose" Var</code>). Nachdem das Steuerelement erstellt wurde, kann man mit <a href="../objects/GuiControl.htm#Value">Value</a>, <a href="../objects/GuiControl.htm#Text">Text</a> oder <a href="../objects/GuiControl.htm#Choose">Choose</a> einen anderen Listeneintrag auswählen, und mit <a href="../objects/GuiControl.htm#Add">Add</a> oder <a href="../objects/GuiControl.htm#Delete">Delete</a> Listeneinträge hinzufügen oder entfernen.</p>
+<p>Wenn einer der Listeneinträge beim ersten Erscheinen des Fensters vorab ausgewählt sein soll, fügen Sie in <em>Optionen</em> das Wort <strong>Choose</strong> ein, gefolgt von der Nummer des gewünschten Listeneintrags. <code>Choose5</code> beispielsweise bewirkt, dass der fünfte Listeneintrag vorab ausgewählt wird (wie bei anderen Optionen auch kann hier eine Variable genutzt werden, wie z. B. <code>"Choose" Var</code>). Nachdem das Steuerelement erstellt wurde, kann man mit <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> oder <a href="../objects/GuiControl.htm#Choose">GuiCtrl.Choose</a> einen anderen Listeneintrag auswählen, und mit <a href="../objects/GuiControl.htm#Add">GuiCtrl.Add</a> oder <a href="../objects/GuiControl.htm#Delete">GuiCtrl.Delete</a> Listeneinträge hinzufügen oder entfernen.</p>
 <p>Fügen Sie das Wort <strong>Uppercase</strong> oder <strong>Lowercase</strong> in <em>Optionen</em> ein, um alle Listeneinträge automatisch in Groß- oder Kleinbuchstaben umzuwandeln. Fügen Sie das Wort <strong>Sort</strong> ein, um die Listeneinträge automatisch in alphabetischer Reihenfolge zu sortieren (das hat auch Einfluss auf Listeneinträge, die nachträglich via <a href="../objects/GuiControl.htm#Add">GuiCtrl.Add</a> hinzugefügt werden). Die Sort-Option ermöglicht zudem eine inkrementelle Suche, wenn die Liste aufgeklappt ist; diese Suche erlaubt die Auswahl eines Listeneintrags durch Eingabe der ersten Zeichen seines Namens.</p>
-<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">Gui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um die Positionsnummer des aktuell ausgewählten Listeneintrags abzurufen (der erste Eintrag ist 1, der zweite ist 2 und so weiter), oder 0, wenn keiner ausgewählt ist. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Text abgerufen werden.</p>
+<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um die Positionsnummer des aktuell ausgewählten Listeneintrags abzurufen (der erste Eintrag ist 1, der zweite ist 2 und so weiter), oder 0, wenn keiner ausgewählt ist. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Text abgerufen werden.</p>
 <p>Jedes Mal, wenn der Benutzer einen anderen Listeneintrag auswählt, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst. Die Ereignisse <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt.</p>
 <p>Verwenden Sie die <a href="../objects/Gui.htm#R">R- oder H-Option</a>, um die Höhe der aufklappbaren Liste zu bestimmen. <code>R5</code> beispielsweise macht die Liste 5 Reihen hoch, während <code>H400</code> die Gesamthöhe des Auswahlfeldes und der Liste auf 400 Pixel setzt. Lässt man R und H weg, wird die Liste automatisch auf Basis der verfügbaren Höhe des Desktops vergrößert.</p>
 <p id="ComboBoxHeight">Das folgende Beispiel zeigt, wie die Höhe des Auswahlfeldes oder die Höhe jedes Listeneintrags mithilfe der <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb775911">CB_SETITEMHEIGHT</a>-Meldung geändert werden kann:</p>
-<pre>Gui := GuiCreate()
-DDL := Gui.Add("DDL", "vcbx w200 Choose1", ["Eins", "Zwei"])
+<pre>MeineGui := Gui.New()
+DDL := MeineGui.Add("DDL", "vcbx w200 Choose1", ["Eins","Zwei"])
 <em>; CB_SETITEMHEIGHT = 0x153</em>
 PostMessage(0x153, -1, 50, DDL)  <em>; Setzt die Höhe des Auswahlfeldes.</em>
 PostMessage(0x153, 0, 50, DDL)  <em>; Setzt die Höhe jedes Listeneintrags.</em>
-Gui.Show("h70")</pre>
+MeineGui.Show("h70")</pre>
 
 <h2 id="ComboBox">ComboBox</h2>
 <p>Beschreibung: Eine aufklappbare Liste mit Auswahlmöglichkeiten und ein Eingabefeld zum Eintragen eines formatlosen Textes.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("ComboBox", "vFarbauswahl", ["Rot","Grün","Blau","Schwarz","Weiß"])
+<pre>MeineGui.Add("ComboBox", "vFarbauswahl", ["Rot","Grün","Blau","Schwarz","Weiß"])
 </pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_combo.png" alt="ComboBox" />
 <p>Zusätzlich zu den DropDownList-Optionen weiter oben kann das Wort <strong>Limit</strong> in <em>Optionen</em> eingefügt werden, um die Benutzereingabe auf die sichtbare Breite des Eingabefeldes der ComboBox zu beschränken. Zudem kann das Wort <strong>Simple</strong> eingefügt werden, um die aufklappbare Liste der ComboBox als ListBox unterhalb des Eingabefeldes darzustellen.</p>
-<p><a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> gibt die Positionsnummer des aktuell ausgewählten Listeneintrags zurück (der erste Eintrag ist 1, der zweite ist 2 und so weiter), oder 0, wenn der im Steuerelement enthaltene Text mit keinem Listeneintrag übereinstimmt. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Inhalt des Eingabefeldes der ComboBox abgerufen werden. <a href="../objects/Gui.htm#Submit">Gui.Submit</a> speichert den Text. Wenn allerdings das Wort <strong>AltSubmit</strong> in den <em>Optionen</em> des Steuerelements vorhanden ist und stimmt der Text mit einem Listeneintrag überein, wird stattdessen die Positionsnummer des Listeneintrags gespeichert.</p>
+<p><a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> gibt die Positionsnummer des aktuell ausgewählten Listeneintrags zurück (der erste Eintrag ist 1, der zweite ist 2 und so weiter), oder 0, wenn der im Steuerelement enthaltene Text mit keinem Listeneintrag übereinstimmt. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Inhalt des Eingabefeldes der ComboBox abgerufen werden. <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> speichert den Text. Wenn allerdings das Wort <strong>AltSubmit</strong> in den <em>Optionen</em> des Steuerelements vorhanden ist und stimmt der Text mit einem Listeneintrag überein, wird stattdessen die Positionsnummer des Listeneintrags gespeichert.</p>
 <p>Jedes Mal, wenn der Benutzer einen neuen Listeneintrag auswählt oder den Text des Steuerelements ändert, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst. Die Ereignisse <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt.</p>
 
 <h2 id="ListBox">ListBox</h2>
-<p>Beschreibung: Ein Listenfeld mit Auswahlmöglichkeiten. Geben Sie im letzten Parameter von <a href="../objects/Gui.htm#Add">Gui.Add</a> ein <a href="../objects/Array.htm">Array</a> in Form von <code>["Auswahl1", "Auswahl2", "Auswahl3"]</code> an.</p>
+<p>Beschreibung: Ein Listenfeld mit Auswahlmöglichkeiten. Geben Sie im letzten Parameter von <a href="../objects/Gui.htm#Add">MeineGui.Add</a> ein <a href="../objects/Array.htm">Array</a> in Form von <code>["Auswahl1","Auswahl2","Auswahl3"]</code> an.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("ListBox", "r5 vFarbwahl", ["Rot","Grün","Blau","Schwarz","Weiß"])
+<pre>MeineGui.Add("ListBox", "r5 vFarbwahl", ["Rot","Grün","Blau","Schwarz","Weiß"])
 </pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_list.png" alt="ListBox" />
-<p id="ChooseLB">Fügen Sie jeweils zwei Vertikalstriche an, um einen oder mehrere Listeneinträge vorab auszuwählen (zum Auswählen mehrere Listeneinträge ist die <a href="#ListBoxMulti">Multi</a>-Option notwendig). Alternativ können Sie in <em>Optionen</em> das Wort <strong>Choose</strong> einfügen und direkt danach die Nummer des Listeneintrags angeben, der vorab ausgewählt sein soll. <code>Choose5</code> beispielsweise bewirkt, dass der fünfte Listeneintrag vorab ausgewählt wird. Nachdem das Steuerelement erstellt wurde, kann man mit <a href="../objects/GuiControl.htm#Value">Value</a>, <a href="../objects/GuiControl.htm#Text">Text</a> oder <a href="../objects/GuiControl.htm#Choose">Choose</a> einen anderen Listeneintrag auswählen, und mit <a href="../objects/GuiControl.htm#Add">Add</a> oder <a href="../objects/GuiControl.htm#Delete">Delete</a> Listeneinträge hinzufügen oder entfernen.</p>
-<p>Wenn die <a href="#ListBoxMulti">Multi</a>-Option fehlt, gibt <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> die Positionsnummer des aktuell ausgewählten Listeneintrags zurück (der erste Eintrag ist 1, der zweite ist 2 und so weiter), oder 0, wenn keiner ausgewählt ist. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Text des ausgewählten Listeneintrags abgerufen werden. Wenn das Wort <a href="#ListBoxMulti">Multi</a> in den Optionen vorhanden ist, wird <a href="../objects/GuiControl.htm#Value">Value</a> und <a href="../objects/GuiControl.htm#Text">Text</a> einen Array mit Listeneinträgen anstelle eines einzelnen Listeneintrags zurückgeben.</p>
-<p><a href="../objects/Gui.htm#Submit">Gui.Submit</a> speichert standardmäßig den <a href="../objects/GuiControl.htm#Text">Text</a> des Steuerelements. Wenn allerdings das Wort <strong>AltSubmit</strong> in dessen <em>Optionen</em> vorhanden ist, speichert es stattdessen den <a href="../objects/GuiControl.htm#Value">Wert</a> des Steuerelements.</p>
+<p id="ChooseLB">Wenn einer der Listeneinträge beim ersten Erscheinen des Fensters vorab ausgewählt sein soll, fügen Sie in <em>Optionen</em> das Wort <strong>Choose</strong> ein, gefolgt von der Nummer des gewünschten Listeneintrags. <code>Choose5</code> beispielsweise bewirkt, dass der fünfte Listeneintrag vorab ausgewählt wird. Um mehrere Listeneinträge vorab auszuwählen, verwenden Sie <a href="../objects/GuiControl.htm#Choose">GuiCtrl.Choose</a> mehrmals (erfordert die <a href="#ListBoxMulti">Multi</a>-Option). Nachdem das Steuerelement erstellt wurde, kann man mit <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> oder <a href="../objects/GuiControl.htm#Choose">GuiCtrl.Choose</a> einen anderen Listeneintrag auswählen, und mit <a href="../objects/GuiControl.htm#Add">GuiCtrl.Add</a> oder <a href="../objects/GuiControl.htm#Delete">GuiCtrl.Delete</a> Listeneinträge hinzufügen oder entfernen.</p>
+<p>Wenn die <a href="#ListBoxMulti">Multi</a>-Option fehlt, gibt <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> die Positionsnummer des aktuell ausgewählten Listeneintrags zurück (der erste Eintrag ist 1, der zweite ist 2 und so weiter), oder 0, wenn keiner ausgewählt ist. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Text des ausgewählten Listeneintrags abgerufen werden. Wenn das Wort <a href="#ListBoxMulti">Multi</a> in den Optionen vorhanden ist, wird <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> und <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> einen Array mit Listeneinträgen anstelle eines einzelnen Listeneintrags zurückgeben.</p>
+<p><a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> speichert standardmäßig <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a>. Wenn allerdings das Wort <strong>AltSubmit</strong> in den <em>Optionen</em> des Steuerelements vorhanden ist, speichert es stattdessen <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>.</p>
 <p>Jedes Mal, wenn der Benutzer einen oder mehrere Listeneinträge aus- oder abwählt, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst. Die Ereignisse <a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>, <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt.</p>
 <p id="LBRedraw">Um das Hinzufügen sehr vieler Listeneinträge leistungsfähiger zu machen, können Sie vor der Operation <code>MeineListBox.Opt("-Redraw")</code> und nach der Operation <code>MeineListBox.Opt("+Redraw")</code> verwenden.</p>
 
 <h3>ListBox-Optionen</h3>
 <p><strong>Choose</strong>: Siehe <a href="#ChooseLB">oben</a>.</p>
-<p id="ListBoxMulti"><strong>Multi</strong>: Erlaubt das Auswählen mehrerer Listeneinträge mit UMSCHALT oder STRG modifizierten Klicks (um eine Mehrfachauswahl ohne diesen Modifikatoren zu ermöglichen, müssen Sie stattdessen die <a href="../misc/Styles.htm#LBS_MULTIPLESEL">Nummer 8</a> angeben). In diesem Fall gibt <a href="../objects/Gui.htm#Submit">Gui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> ein Array mit Positionsnummern der ausgewählten Listeneinträge zurück. <code>[1, 2, 3]</code> beispielsweise bedeutet, dass die ersten drei Listeneinträge ausgewählt sind. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen ein Array mit Namen der ausgewählten Listeneinträge abgerufen werden. um einzelne Listeneinträge aus dem Array zu extrahieren, können Sie <code>MeineListBox.Text[1]</code> (1 ist der erste Listeneintrag) oder wie folgt eine <a href="For.htm">For-Schleife</a> verwenden:</p>
+<p id="ListBoxMulti"><strong>Multi</strong>: Erlaubt das Auswählen mehrerer Listeneinträge mit UMSCHALT oder STRG modifizierten Klicks (um eine Mehrfachauswahl ohne diesen Modifikatoren zu ermöglichen, müssen Sie stattdessen die <a href="../misc/Styles.htm#LBS_MULTIPLESEL">Nummer 8</a> angeben). In diesem Fall gibt <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> ein Array mit Positionsnummern der ausgewählten Listeneinträge zurück. <code>[1, 2, 3]</code> beispielsweise bedeutet, dass die ersten drei Listeneinträge ausgewählt sind. Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen ein Array mit Namen der ausgewählten Listeneinträge abgerufen werden. um einzelne Listeneinträge aus dem Array zu extrahieren, können Sie <code>MeineListBox.Text[1]</code> (1 ist der erste Listeneintrag) oder wie folgt eine <a href="For.htm">For-Schleife</a> verwenden:</p>
 <pre>For Index, Feld in MeineListBox.Text
 {
     MsgBox "Auswahl Nr. " Index " ist " Feld
 }</pre>
-<p><strong>ReadOnly</strong>: Verhindert, dass Listeneinträge beim Auswählen farblich hervorgehoben werden (<a href="../objects/Gui.htm#Submit">Gui.Submit</a>, <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> oder <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> geben aber weiterhin die ausgewählten Listeneinträge zurück).</p>
+<p><strong>ReadOnly</strong>: Verhindert, dass Listeneinträge beim Auswählen farblich hervorgehoben werden (<a href="../objects/Gui.htm#Submit">MeineGui.Submit</a>, <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> oder <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> geben aber weiterhin die ausgewählten Listeneinträge zurück).</p>
 <p><strong>Sort</strong>: Sortiert die Listeneinträge automatisch in alphabetischer Reihenfolge (das hat auch Einfluss auf Listeneinträge, die nachträglich via <a href="../objects/GuiControl.htm#Add">GuiCtrl.Add</a> hinzugefügt werden). Die Sort-Option ermöglicht zudem eine inkrementelle Suche, mit der ein Listeneintrag durch Eingabe der ersten Zeichen seines Namens ausgewählt werden kann.</p>
-<p><strong>Tn</strong>: Mit dem Buchstaben T können Tabstopps gesetzt werden, um den Text in Spalten aufzuteilen. Wenn der Buchstabe T nicht verwendet wird, werden Tabstopps auf je 32 Dialogeinheiten gesetzt (die Breite jeder "Dialogeinheit" ist systemintern festgelegt). Wenn der Buchstabe T nur einmal verwendet wird, werden Tabstopps auf je <strong>n</strong> Dialogeinheiten innerhalb der verfügbaren Breite des Steuerelements gesetzt. <code>Gui.Add("ListBox", "vMeineListBox t64")</code> beispielsweise verdoppelt den Standardabstand zwischen den Tabstopps. Geben Sie den Buchstaben T mehrmals wie folgt an, um benutzerdefinierte Tabstopps zu setzen: <code>Gui.Add("ListBox", "vMeineListBox t8 t16 t32 t64 t128")</code>. Für jede absolute Spaltenposition in der Liste wird ein Tabstopp gesetzt, bis zu einem Maximum von 50 Tabstopps.</p>
+<p><strong>Tn</strong>: Mit dem Buchstaben T können Tabstopps gesetzt werden, um den Text in Spalten aufzuteilen. Wenn der Buchstabe T nicht verwendet wird, werden Tabstopps auf je 32 Dialogeinheiten gesetzt (die Breite jeder "Dialogeinheit" ist systemintern festgelegt). Wenn der Buchstabe T nur einmal verwendet wird, werden Tabstopps auf je <strong>n</strong> Dialogeinheiten innerhalb der verfügbaren Breite des Steuerelements gesetzt. <code>MeineGui.Add("ListBox", "vMeineListBox t64")</code> beispielsweise verdoppelt den Standardabstand zwischen den Tabstopps. Geben Sie den Buchstaben T mehrmals wie folgt an, um benutzerdefinierte Tabstopps zu setzen: <code>MeineGui.Add("ListBox", "vMeineListBox t8 t16 t32 t64 t128")</code>. Für jede absolute Spaltenposition in der Liste wird ein Tabstopp gesetzt, bis zu einem Maximum von 50 Tabstopps.</p>
 <p><strong>0x100</strong>: Fügen Sie 0x100 in <em>Optionen</em> ein, um den LBS_NOINTEGRALHEIGHT-Style einzuschalten. Dieser Style bewirkt, dass die ListBox in der angegebenen Höhe sein muss. Wenn dieser Style nicht verwendet wird, wird die Höhe entsprechend angepasst, damit die Reihe am Listenende vollständig zu sehen ist. Dieser Style verhindert zudem, dass die ListBox automatisch nach Ändern der Schrift kleiner gemacht wird.</p>
 <p>Optionen zum Ändern der Anzahl von Textzeilen (oder der Höhe und Breite) finden Sie unter <a href="../objects/Gui.htm#PosSize">Position und Größe von Steuerelementen anpassen</a>.</p>
 
@@ -242,14 +242,14 @@ Gui.Show("h70")</pre>
 <h2 id="Link">Link</h2>
 <p>Beschreibung: Ein Text-Steuerelement, das ähnlich wie ein Web-Browser anklickbare Links enthalten kann. Umschließen Sie einen beliebigen Bereich im Text des Steuerelements mit <code>&lt;A&gt;</code> und <code>&lt;/A&gt;</code>, um einen anklickbaren Link zu erzeugen. Obwohl diese Schreibweise wie HTML aussieht, unterstützen Link-Steuerelemente nur den Start-Tag <code>&lt;A&gt;</code> (optional mit einem ID- und/oder HREF-Attribut) und den End-Tag <code>&lt;/A&gt;</code>.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Link",, 'Das ist ein &lt;a href="https://www.autohotkey.com"&gt;Link&lt;/a&gt;')
-Gui.Add("Link",, 'Links können überall im Text angegeben werden, wie &lt;a id="A"&gt;hier&lt;/a&gt; oder &lt;a id="B"&gt;dort&lt;/a&gt;')</pre>
+<pre>MeineGui.Add("Link",, 'Das ist ein &lt;a href="https://www.autohotkey.com"&gt;Link&lt;/a&gt;')
+MeineGui.Add("Link",, 'Links können überall im Text angegeben werden, wie &lt;a id="A"&gt;hier&lt;/a&gt; oder &lt;a id="B"&gt;dort&lt;/a&gt;')</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_link.png" alt="Link" />
 
 <p>Jedes Mal, wenn der Benutzer einen Link anklickt, wird das <a href="../objects/GuiOnEvent.htm#Click">Click</a>-Ereignis ausgelöst. Wenn das Steuerelement kein Click-Callback hat (das mit <a href="../objects/GuiOnEvent.htm">OnEvent</a> registriert wurde), wird der Wert des HREF-Attributs des Links automatisch über die <a href="Run.htm">Run</a>-Funktion ausgeführt.</p>
-<pre>Gui := GuiCreate()
-Link := Gui.Add("Link",
+<pre>MeineGui := Gui.New()
+Link := MeineGui.Add("Link",
     , 'Klicken Sie folgende Links, um &lt;a href="notepad" id="notepad"&gt;Notepad&lt;/a&gt; auszuführen oder die '
     . '&lt;a id="help" href="https://www.autohotkey.com/docs/"&gt;Online-Hilfe&lt;/a&gt; zu öffnen.')
 Link.OnEvent("Click", "Link_Click")
@@ -258,17 +258,17 @@ Link_Click(Ctrl, ID, HREF)
     if MsgBox("ID: " ID "`nHREF: " HREF "`n`nSoll dieser Link ausgeführt werden?",, "y/n") = "yes"
         Run(HREF)
 }
-Gui.Show()</pre>
+MeineGui.Show()</pre>
 
 <h2 id="Hotkey">Hotkey</h2>
 <p>Beschreibung: Ein Eingabefeld, das der Benutzer zur Eingabe einer Tastenkombination verwenden kann, die später als Hotkey dienen soll. Drückt der Benutzer beispielsweise <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd> auf der deutschen Tastatur, würde dies dazu führen, dass "STRG + ALT + C" im Eingabefeld angezeigt wird.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Hotkey", "vGewählterHotkey")</pre>
+<pre>MeineGui.Add("Hotkey", "vGewählterHotkey")</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_hotkey.png" alt="Hotkey" />
 <p><a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> gibt die Modifikatoren und den Namen des Hotkeys zurück, die kompatibel mit der <a href="Hotkey.htm">Hotkey</a>-Funktion sind. Beispiele: <code>^!C</code>, <code>+!Home</code>, <code>+^Down</code>, <code>^Numpad1</code>, <code>!NumpadEnd</code>. Wenn kein Hotkey im Steuerelement vorhanden ist, wird eine leere Zeichenkette zurückgegeben.</p>
 <p class="note"><strong>Hinweis</strong>: Einige Tasten zeigen dasselbe an, obwohl sie als verschiedene Namen abgerufen werden. Zum Beispiel wird sowohl <code>^Numpad7</code> als auch <code>^NumpadHome</code> als "STRG + 7 (ZEHNERTASTATUR)" erkannt.</p>
-<p>Standardmäßig ist das Steuerelement zu Beginn leer. Um das zu ändern, können Sie im letzten Parameter eine Tastenkombination in Form von Modifikatorsymbolen und einem Tastennamen angeben; zum Beispiel: <code>Gui.Add("Hotkey", "vGewählterHotkey", "^!p")</code><br>
+<p>Standardmäßig ist das Steuerelement zu Beginn leer. Um das zu ändern, können Sie im letzten Parameter eine Tastenkombination in Form von Modifikatorsymbolen und einem Tastennamen angeben; zum Beispiel: <code>MeineGui.Add("Hotkey", "vGewählterHotkey", "^!p")</code><br>
 Die einzigen unterstützten Modifikatoren sind ^ (STRG), ! (ALT) und + (UMSCHALT). Weitere verfügbare Tastennamen finden Sie in der <a href="../KeyList.htm">Tastenliste</a>.</p>
 <p>Jedes Mal, wenn der Benutzer den Inhalt des Steuerelements ändert (durch Drücken einer Taste), wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst.</p>
 <p class="note"><strong>Hinweis</strong>: Das Ereignis wird auch ausgelöst, wenn ein unvollständiger Hotkey vorhanden ist. Wenn der Benutzer beispielsweise <kbd>Strg</kbd> gedrückt hält, wird das Ereignis einmal ausgelöst und <a href="../objects/GuiControl.htm#Value">Value</a> nur ein Zirkumflex (^) zurückgeben. Wenn der Benutzer dann den Hotkey vervollständigt, wird das Ereignis nochmals ausgelöst und <a href="../objects/GuiControl.htm#Value">Value</a> den vollständigen Hotkey zurückgeben.</p>
@@ -289,7 +289,7 @@ Die einzigen unterstützten Modifikatoren sind ^ (STRG), ! (ALT) und + (UMSCHALT
 <h2 id="DateTime">DateTime</h2>
 <p>Beschreibung: Ein Eingabefeld, das der Benutzer zur Eingabe eines Datums und/oder einer Uhrzeit verwenden kann. Ein ausklappbarer Kalender ist ebenfalls vorhanden.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("DateTime", "vMeinDateTime", "LongDate")
+<pre>MeineGui.Add("DateTime", "vMeinDateTime", "LongDate")
 </pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_datetime.png" alt="DateTime" />
@@ -309,12 +309,12 @@ Die einzigen unterstützten Modifikatoren sind ^ (STRG), ! (ALT) und + (UMSCHALT
 </div>
 
 <h3>DateTime-Verwendung</h3>
-<p id="ChooseDT">Wenn anstelle des heutigen Datums ein anderes vorab ausgewählt sein soll, muss in <em>Optionen</em> das Wort <strong>Choose</strong> eingefügt und direkt danach ein Datum im YYYYMMDD-Format angegeben werden. <code>Choose20050531</code> beispielsweise bewirkt, dass der 31. Mai 2005 vorab ausgewählt wird (wie bei anderen Optionen auch kann hier eine Variable genutzt werden, wie z. B. <code>"Choose" Var</code>). Fügen Sie <strong>ChooseNone</strong> ein, damit weder das heutige Datum noch ein anderes ausgewählt ist. <em>ChooseNone</em> stattet das Steuerelement zudem mit einer CheckBox aus, die zu Beginn im nicht-abgehakten Zustand angezeigt wird. Wenn kein Datum im Steuerelement ausgewählt ist, wird <a href="../objects/Gui.htm#Submit">Gui.Submit</a> und <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> einen leeren Wert (leere Zeichenkette) abrufen.</p>
+<p id="ChooseDT">Wenn anstelle des heutigen Datums ein anderes vorab ausgewählt sein soll, muss in <em>Optionen</em> das Wort <strong>Choose</strong> eingefügt und direkt danach ein Datum im YYYYMMDD-Format angegeben werden. <code>Choose20050531</code> beispielsweise bewirkt, dass der 31. Mai 2005 vorab ausgewählt wird (wie bei anderen Optionen auch kann hier eine Variable genutzt werden, wie z. B. <code>"Choose" Var</code>). Fügen Sie <strong>ChooseNone</strong> ein, damit weder das heutige Datum noch ein anderes ausgewählt ist. <em>ChooseNone</em> stattet das Steuerelement zudem mit einer CheckBox aus, die zu Beginn im nicht-abgehakten Zustand angezeigt wird. Wenn kein Datum im Steuerelement ausgewählt ist, wird <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> und <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> einen leeren Wert (leere Zeichenkette) abrufen.</p>
 <p>Die Uhrzeit des Tages kann auch angegeben werden. Allerdings genügt es nicht, nur den Zeitbereich des Zeitstempels zu verwenden - der Datumsbereich muss ebenfalls vorhanden sein. Das Format des Zeitbereichs ist HH24MISS (Stunden, Minuten, Sekunden). HH24 repräsentiert hierbei eine Stunde im 24-Stunden-Format; zum Beispiel 09 für 9 Uhr früh oder 21 für 9 Uhr abends. Die resultierende Datum-Zeit-Zeichenkette ist im <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Format.</p>
 <p>Bei Datumsangaben im YYYYMMDDHH24MISS-Format ist nur der führende Teil erforderlich. Die restlichen weggelassenen Elemente werden mit folgenden Standardwerten ersetzt: MM mit Monat 01, DD mit Tag 01, HH24 mit Stunde 00, MI mit Minute 00 und SS mit Sekunde 00.</p>
 <p>Das Heute-Feld im unteren Bereich des ausklappbaren Kalenders kann angeklickt werden, um das heutige Datum auszuwählen. Das Monat-Jahr-Feld im oberen Bereich ist nützlich, um einen anderen Monat oder ein anderes Jahr anzusteuern.</p>
 <p id="DateTime_Keyboard_Navigation">Navigation mit der Tastatur: Mit den Pfeiltasten <kbd>↑</kbd>/<kbd>↓</kbd>, den Ziffernblocktasten <kbd>+</kbd>/<kbd>-</kbd> und <kbd>Pos1</kbd>/<kbd>Ende</kbd> können die Werte des Steuerelements erhöht oder verringert werden. Verwenden Sie <kbd>←</kbd> und <kbd>→</kbd>, um innerhalb des Steuerelements von einem Feld zum anderen zu gelangen. Nutzen Sie innerhalb des ausklappbaren Kalenders die Pfeiltasten, um von einem Tag zum anderen zu gelangen; <kbd>Bild↑</kbd>/<kbd>Bild↓</kbd>, um zum vorherigen/nächsten Monat zu wechseln; und <kbd>Pos1</kbd>/<kbd>Ende</kbd>, um den ersten/letzten Tag des Monats auszuwählen.</p>
-<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">Gui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um das Datum und die Uhrzeit des aktuell ausgewählten Feldes im <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Format abzurufen. Die Zeichenkette enthält immer das Datum und die Uhrzeit, egal ob diese tatsächlich im Steuerelement sichtbar sind oder nicht.</p>
+<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um das Datum und die Uhrzeit des aktuell ausgewählten Feldes im <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Format abzurufen. Die Zeichenkette enthält immer das Datum und die Uhrzeit, egal ob diese tatsächlich im Steuerelement sichtbar sind oder nicht.</p>
 <p>Jedes Mal, wenn der Benutzer das Datum oder die Uhrzeit ändert, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst. Die Ereignisse <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt.</p>
 
 <h3>DateTime-Optionen</h3>
@@ -327,19 +327,19 @@ Die einzigen unterstützten Modifikatoren sind ^ (STRG), ! (ALT) und + (UMSCHALT
 <h2 id="MonthCal">MonthCal</h2>
 <p>Beschreibung: Ein hohes und breites Steuerelement, das alle Tage des Monats im Kalenderformat anzeigt. Der Benutzer kann ein einzelnes Datum oder einen Datumsbereich auswählen.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("MonthCal", "vMeinKalender")</pre>
+<pre>MeineGui.Add("MonthCal", "vMeinKalender")</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_monthcal.png" alt="MonthCal" />
 <p>Wenn anstelle des heutigen Datums ein anderes vorab ausgewählt sein soll, muss im dritten Parameter ein Datum im YYYYMMDD-Format angegeben werden (z. B. <code>20050531</code>). Wenn ein Datumsbereich vorab ausgewählt sein soll, muss ein Datum, ein Bindestrich und noch ein Datum angegeben werden (z. B. <code>"20050525-20050531"</code>).</p>
 <p>In der Regel lohnt es sich nicht, Breite (W) und Höhe (H) für ein MonthCal-Steuerelement zu definieren, denn es passt automatisch seine Größe an, um genau einen Monat darzustellen. Mit <code>R2</code> oder höher in <em>Optionen</em> können mehrere übereinander angeordnete Monate dargestellt werden. Mit <code>W-2</code> (W minus 2) oder höher können mehrere nebeneinander angeordnete Monate dargestellt werden. Diese Optionen können gleichzeitig vorhanden sein, um das Steuerelement in beide Richtungen zu erweitern.</p>
 <p>Das Heute-Feld im unteren Bereich des Steuerelements kann angeklickt werden, um das heutige Datum auszuwählen. Das Monat-Jahr-Feld im oberen Bereich ist nützlich, um einen anderen Monat oder ein anderes Jahr auszuwählen.</p>
 <p>Navigation mit der Tastatur: Die Tastaturnavigation im MonthCal-Steuerelement wird vollständig unterstützt, sofern es den Tastaturfokus hat. Welche Tastenkürzel unterstützt werden, finden Sie unter <a href="#DateTime_Keyboard_Navigation">DateTime's Tastaturnavigation</a> (innerhalb des ausklappbaren Kalenders).</p>
-<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">Gui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um das Datum des aktuell ausgewählten Feldes im YYYYMMDD-Format (ohne den Zeitbereich HH24MISS) abzurufen. Falls die <a href="#MonthCalMulti">Mehrfachauswahl</a>-Option aktiv ist, wird stattdessen das Start- und Enddatum gespeichert, mit einem Bindestrich dazwischen (z. B. <code>20050101-20050108</code>). Wählt man in einem Kalender mit aktiver Mehrfachauswahl nur ein einziges Datum aus, sind Start- und Enddatum identisch. Mit <a href="StrSplit.htm">StrSplit</a> können Start- und Enddatum voneinander getrennt werden. Die folgende Beispielanweisung speichert das Startdatum in Datum[1] und das Enddatum in Datum[2]: <code>Datum := StrSplit(MeinMonthCal.Value, "-")</code>.</p>
+<p>Nutzen Sie <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> oder <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>, um das Datum des aktuell ausgewählten Feldes im YYYYMMDD-Format (ohne den Zeitbereich HH24MISS) abzurufen. Falls die <a href="#MonthCalMulti">Mehrfachauswahl</a>-Option aktiv ist, wird stattdessen das Start- und Enddatum gespeichert, mit einem Bindestrich dazwischen (z. B. <code>20050101-20050108</code>). Wählt man in einem Kalender mit aktiver Mehrfachauswahl nur ein einziges Datum aus, sind Start- und Enddatum identisch. Mit <a href="StrSplit.htm">StrSplit</a> können Start- und Enddatum voneinander getrennt werden. Die folgende Beispielanweisung speichert das Startdatum in Datum[1] und das Enddatum in Datum[2]: <code>Datum := StrSplit(MeinMonthCal.Value, "-")</code>.</p>
 <p>Das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis wird ausgelöst, wenn der Benutzer die Auswahl ändert.</p>
 <p>Bei Datumsangaben im YYYYMMDD-Format kann MM und/oder DD weggelassen werden, um zu bewirken, dass diese jeweils als 1 interpretiert werden. <code>200205</code> beispielsweise wird als 20020501 behandelt, und <code>2005</code> als 20050101.</p>
 
 <h3>MonthCal-Optionen</h3>
-<p id="MonthCalMulti"><strong>Multi</strong>: Mehrfachauswahl. Ermöglicht dem Benutzer, mit UMSCHALT modifizierte Klicks oder durch Ziehen des Mauszeigers einen Bereich angrenzender Datumsfelder auszuwählen (der Benutzer kann aber weiterhin ein einzelnes Datum auswählen). Diese Option wird automatisch wirksam, wenn ein Datumsbereich im letzten Parameter angegeben ist. Zum Beispiel: <code>Gui.Add("MonthCal", "vMeinKalender", "20050101-20050108")</code>. Diese Option kann nicht mehr geändert werden, nachdem das Steuerelement erstellt wurde.</p>
+<p id="MonthCalMulti"><strong>Multi</strong>: Mehrfachauswahl. Ermöglicht dem Benutzer, mit UMSCHALT modifizierte Klicks oder durch Ziehen des Mauszeigers einen Bereich angrenzender Datumsfelder auszuwählen (der Benutzer kann aber weiterhin ein einzelnes Datum auswählen). Diese Option wird automatisch wirksam, wenn ein Datumsbereich im letzten Parameter angegeben ist. Zum Beispiel: <code>MeineGui.Add("MonthCal", "vMeinKalender", "20050101-20050108")</code>. Diese Option kann nicht mehr geändert werden, nachdem das Steuerelement erstellt wurde.</p>
 <p><strong>Range</strong>: Beschränkt die Datumsauswahl auf einem bestimmten Zeitraum. Geben Sie nach dem Wort Range das Start- und Enddatum im YYYYMMDD-Format an (mit einem Bindestrich dazwischen). <code>Range20050101-20050615</code> beispielsweise bewirkt, dass nur innerhalb der ersten 5,5 Monate des Jahres 2005 ein Datum oder Datumsbereich ausgewählt werden darf. Das Start- oder Enddatum kann weggelassen werden, um die Auswahl im Kalender nur in eine Richtung zu beschränken. <code>Range20010101</code> beispielsweise verhindert, dass ein Datum vor 2001 ausgewählt werden kann, während <code>Range-20091231</code> (führender Bindestrich) verhindert, dass ein Datum nach 2009 ausgewählt werden kann. Fehlt diese Option, kann ein beliebiges Datum zwischen den Jahren 1601 und 9999 ausgewählt werden.</p>
 <p><strong>4</strong>: Fügen Sie eine 4 in <em>Optionen</em> ein, um Wochennummern (1-52) auf der linken Seite jeder Tagesreihe anzuzeigen. Woche 1 ist laut Definition die erste Woche mit mindestens vier Tage.</p>
 <p><strong>8</strong>: Fügen Sie eine 8 in <em>Optionen</em> ein, um das Hervorheben des heutigen Datums im Steuerelement zu verhindern.</p>
@@ -348,12 +348,12 @@ Die einzigen unterstützten Modifikatoren sind ^ (STRG), ! (ALT) und + (UMSCHALT
 <h2 id="Slider">Slider</h2>
 <p>Beschreibung: Ein Regler, den der Benutzer entlang einer vertikalen oder horizontalen Linie verschieben kann. Ein typischer Schieberegler ist zum Beispiel der Lautstärkeregler im Tray-Bereich der Taskleiste.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Slider", "vMeinSchieberegler", 50)</pre>
+<pre>MeineGui.Add("Slider", "vMeinSchieberegler", 50)</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_slider.png" alt="Slider" />
 <p>Geben Sie im letzten Parameter die Startposition des Schiebereglers an. Wenn der letzte Parameter weggelassen wird oder leer ist, beginnt der Schieberegler bei 0 oder beim niedrigsten zulässigen Bereichswert.</p>
 <p>Der Benutzer kann den Regler wie folgt verschieben: 1) mit dem Mauszeiger ziehen; 2) auf den Linienbereich klicken; 3) das Mausrad drehen, während das Steuerelement den Fokus hat; 4) folgende Tasten drücken, während das Steuerelement den Fokus hat: <kbd>↑</kbd>, <kbd>→</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>Bild↑</kbd>, <kbd>Bild↓</kbd>, <kbd>Pos1</kbd> und <kbd>Ende</kbd>.</p>
-<p>Nutzen Sie <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> oder <a href="../objects/Gui.htm#Submit">Gui.Submit</a>, um die aktuelle numerische Position des Schiebereglers abzurufen.</p>
+<p>Nutzen Sie <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> oder <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a>, um die aktuelle numerische Position des Schiebereglers abzurufen.</p>
 
 <h3 id="slider-change">Erkennen von Änderungen</h3>
 <p>Standardmäßig wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis des Schiebereglers ausgelöst, wenn der Benutzer aufgehört hat, den Regler zu verschieben (z. B. beim Loslassen der Maus nach einem Ziehvorgang). Wenn das Wort <strong>AltSubmit</strong> in den Optionen des Steuerelements vorhanden ist, wird das Change-Ereignis zudem ausgelöst (sehr häufig), wenn der Regler jedes Mal verschoben wird, während der Benutzer ihn mit der Maus zieht.</p>
@@ -397,12 +397,12 @@ Die einzigen unterstützten Modifikatoren sind ^ (STRG), ! (ALT) und + (UMSCHALT
 <h2 id="Progress">Progress</h2>
 <p>Beschreibung: Ein zweifarbiger Balken, der den Fortschritt einer Operation visuell darstellt.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Progress", "w200 h20 cBlue vMeinFortschritt", 75)</pre>
+<pre>MeineGui.Add("Progress", "w200 h20 cBlue vMeinFortschritt", 75)</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_progress.png" alt="Progress" />
 <p>Geben Sie im dritten Parameter die Startposition des Balkens an (lässt man diese weg, beginnt der Balken bei 0 oder beim niedrigsten zulässigen Bereichswert). Die Position des Balkens kann später wie folgt geändert werden (basierend auf einen Fortschrittsbalken mit dem <a href="../objects/GuiControl.htm#Name">Namen</a> MeinFortschritt):</p>
-<pre>Gui["MeinFortschritt"].<a href="../objects/GuiControl.htm#Value">Value</a> += 20  <em>; Erhöht die aktuelle Position um 20.</em>
-Gui["MeinFortschritt"].Value := 50  <em>; Setzt die aktuelle Position auf 50.</em></pre>
+<pre>MeineGui["MeinFortschritt"].<a href="../objects/GuiControl.htm#Value">Value</a> += 20  <em>; Erhöht die aktuelle Position um 20.</em>
+MeineGui["MeinFortschritt"].Value := 50  <em>; Setzt die aktuelle Position auf 50.</em></pre>
 <p>Bei horizontalen Fortschrittsbalken ist die Dicke des Balkens identisch zur Höhe des Steuerelements. Bei vertikalen Fortschrittsbalken ist sie identisch zur Breite des Steuerelements.</p>
 
 <h3>Progress-Optionen</h3>
@@ -416,7 +416,7 @@ Gui["MeinFortschritt"].Value := 50  <em>; Setzt die aktuelle Position auf 50.</e
 <h2 id="GroupBox">GroupBox</h2>
 <p>Beschreibung: Ein rechteckiger Rahmen, der in der Regel mehrere Steuerelemente umschließt, um ihre Zusammengehörigkeit zu verdeutlichen. Geben Sie im letzten Parameter den Titel des Rahmens an, der in der oberen linken Ecke angezeigt werden soll.</p>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("GroupBox", "w200 h100", "Geographische Kriterien")
+<pre>MeineGui.Add("GroupBox", "w200 h100", "Geographische Kriterien")
 </pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_group.png" alt="GroupBox" />
@@ -432,7 +432,7 @@ Gui["MeinFortschritt"].Value := 50  <em>; Setzt die aktuelle Position auf 50.</e
   <li><strong>Tab</strong>: Tab wird aus Gründen der Abwärtskompatibilität beibehalten, da Tab2/Tab3 und Tab <a href="#Tab_vs">unterschiedliche Verhaltensmerkmale</a> aufweisen.</li>
 </ul>
 <p>Zum Beispiel:</p>
-<pre>Gui.Add("Tab3",, ["Allgemein","Ansicht","Einstellungen"])</pre>
+<pre>MeineGui.Add("Tab3",, ["Allgemein","Ansicht","Einstellungen"])</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_tab.png" alt="Tab" />
 <p id="ChooseTab">Geben Sie im letzten Parameter ein <a href="../objects/Array.htm">Array</a> mit Tabnamen an. Wenn einer der Tabs beim ersten Erscheinen des Fensters vorab ausgewählt sein soll, fügen Sie in <em>Optionen</em> das Wort <strong>Choose</strong> ein, gefolgt von der Nummer des gewünschten Tabs. <code>Choose5</code> beispielsweise bewirkt, dass der fünfte Tab vorab ausgewählt wird (wie bei anderen Optionen auch kann hier eine Variable genutzt werden, wie z. B. <code>"Choose" Var</code>). Nachdem das Steuerelement erstellt wurde, kann man <a href="../objects/GuiControl.htm#Value">Value</a>, <a href="../objects/GuiControl.htm#Text">Text</a> oder <a href="../objects/GuiControl.htm#Choose">Choose</a> benutzen, um das ausgewählte Tab zu ändern, und <a href="../objects/GuiControl.htm#Add">Add</a> oder <a href="../objects/GuiControl.htm#Delete">Delete</a>, um Tabs hinzuzufügen oder zu entfernen.</p>
@@ -444,7 +444,7 @@ Tab.UseTab("Name")  <em>; Zukünftige Steuerelemente werden einem Tab zugeordnet
 Tab.UseTab("Name", true)  <em>; Das gleiche wie oben, aber mit exakter Übereinstimmung (nicht Groß/Kleinschreibung-sensitiv).</em></pre>
 <p>Es ist auch möglich, jedes dieser Beispiele oben (außer <em>Name</em>) zu nutzen, um Steuerelemente einem nicht-existierenden Tab oder Tab-Steuerelement zuzuordnen. In diesem Fall aber werden die unten beschriebenen Optionen zur relativen Positionierung nicht unterstützt.</p>
 <p id="Tab_Positioning1"><strong>Positionierung</strong>: Das erste untergeordnete Steuerelement eines Tabs bekommt standardmäßig eine spezielle Position zugewiesen, wenn: 1) die X- und Y-Koordinaten weggelassen werden - in diesem Fall wird das erste untergeordnete Steuerelement in die obere linke Innenecke des Tab-Steuerelements positioniert (mit vordefinierten <a href="../objects/Gui.htm#MarginX">Abständen</a>) und nachfolgende untergeordnete Steuerelemente unterhalb des vorherigen Steuerelements positioniert; 2) die Positionierungsoptionen <a href="../objects/Gui.htm#PosPlus">X+n und/oder Y+n</a> angegeben sind - in diesem Fall wird das untergeordnete Steuerelement relativ zur oberen linken Innenecke des Tab-Steuerelements positioniert. Die Angabe von <code>x+10 y+10</code> beispielsweise bewirkt, dass das Steuerelement von der oberen linken Ecke aus 10 Pixel nach rechts und 10 Pixel nach unten positioniert wird.</p>
-<p><strong>Aktueller Tab</strong>: <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> gibt die Positionsnummer des aktuell ausgewählten Tabs zurück (der erste Tab ist 1, der Zweite ist 2 und so weiter). Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Text abgerufen werden. <a href="../objects/Gui.htm#Submit">Gui.Submit</a> speichert standardmäßig den <a href="../objects/GuiControl.htm#Text">Text</a> des Steuerelements. Wenn allerdings das Wort <strong>AltSubmit</strong> in dessen <em>Optionen</em> vorhanden ist, speichert es stattdessen den <a href="../objects/GuiControl.htm#Value">Wert</a> des Steuerelements.</p>
+<p><strong>Aktueller Tab</strong>: <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> gibt die Positionsnummer des aktuell ausgewählten Tabs zurück (der erste Tab ist 1, der Zweite ist 2 und so weiter). Mit <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a> kann stattdessen der Text abgerufen werden. <a href="../objects/Gui.htm#Submit">MeineGui.Submit</a> speichert standardmäßig <a href="../objects/GuiControl.htm#Text">GuiCtrl.Text</a>. Wenn allerdings das Wort <strong>AltSubmit</strong> in den <em>Optionen</em> des Steuerelements vorhanden ist, speichert es stattdessen <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a>.</p>
 <p><strong>Erkennen einer Tab-Auswahl</strong>: Jedes Mal, wenn der Benutzer einen anderen Tab auswählt, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst.</p>
 <p id="Tab_Keyboard"><strong>Navigation mit der Tastatur</strong>: Der Benutzer kann <kbd>Strg</kbd>+<kbd>Bild↑</kbd>/<kbd>Bild↓</kbd> drücken, um von Tab zu Tab zu navigieren; befindet sich der Tastaturfokus auf einem Steuerelement, das keinem Tab-Steuerelement zugeordnet ist, wird das erste Tab-Steuerelement des Fensters angesteuert. <kbd>Strg</kbd>+<kbd>Tab</kbd> und <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>Tab</kbd> können auch genutzt werden, allerdings werden diese nicht funktionieren, wenn das aktuell fokussierte Steuerelement ein mehrzeiliges Eingabefeld ist.</p>
 <p id="Tab_Limits"><strong>Einschränkungen</strong>: Jedes Fenster kann höchstens 255 Tab-Steuerelemente enthalten. Jedes Tab-Steuerelement kann höchstens 256 Tabs (Ebenen) enthalten. Es ist nicht möglich, ein Tab-Steuerelement in ein anderes Tab-Steuerelement einzufügen.</p>
@@ -458,7 +458,7 @@ Tab.UseTab("Name", true)  <em>; Das gleiche wie oben, aber mit exakter Übereins
 <p id="Tab_Autosize"><strong>Größenberechnung</strong>: Wenn das Tab3-Steuerelement keine spezifische Breite und/oder Höhe hat, werden diese automatisch berechnet, sobald eines der folgenden Dinge nach dem Erstellen des Steuerelements eintritt:</p>
 <ul>
   <li>Das erste Mal, wenn das Tab3-Steuerelement nicht mehr das aktuelle Tab-Steuerelement ist. Zum Beispiel wenn <a href="#TabCmd">GuiCtrl.UseTab</a> (mit oder ohne Parameter) aufgerufen oder ein anderes Tab-Steuerelement erstellt wird.</li>
-  <li>Das erste Mal, wenn <a href="../objects/Gui.htm#Show">Gui.Show</a> für diese bestimmte GUI aufgerufen wird.</li>
+  <li>Das erste Mal, wenn <a href="../objects/Gui.htm#Show">MeineGui.Show</a> für diese bestimmte GUI aufgerufen wird.</li>
 </ul>
 <p>Zum Errechnen der Größe werden untergeordnete Steuerelemente, die bereits existieren, plus Standardabstände einbezogen. Die Größenberechnung erfolgt nur ein einziges Mal, egal ob später neue Steuerelemente hinzugefügt werden. Wenn das Tab3-Steuerelement leer ist, bekommt es wie Tab oder Tab2 eine Standardgröße zugewiesen.</p>
 <p>Die Größe von Tab- und Tab2-Steuerelementen wird nicht automatisch berechnet; sie erhalten eine willkürliche Standardgröße.</p>
@@ -494,7 +494,7 @@ Tab.UseTab("Name", true)  <em>; Das gleiche wie oben, aber mit exakter Übereins
 <h2 id="StatusBar">StatusBar</h2>
 <p>Beschreibung: Eine Leiste mit Text und/oder Symbolen am unteren Rand eines Fensters, die üblicherweise verwendet wird, um geänderte Zustände zu melden.</p>
 <p>Zum Beispiel:</p>
-<pre>SB := Gui.Add("StatusBar",, "Starttext der Leiste (kann leer gelassen werden).")
+<pre>SB := MeineGui.Add("StatusBar",, "Starttext der Leiste (kann leer gelassen werden).")
 SB.SetText("Es sind " . Reihenanzahl . " Reihen markiert.")</pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_status.png" alt="StatusBar" />
@@ -539,7 +539,7 @@ SB.SetText("Es sind " . Reihenanzahl . " Reihen markiert.")</pre>
 <p>Lässt man <em>Segmentnummer</em> weg, wird standardmäßig das erste Segment verwendet. Ansonsten kann ein Integer im Bereich von 1 bis 256 angegeben werden.</p></dd></dl>
 <p>Hinweis: Der Icon-Handle (HICON) ist eine Systemressource, die für die meisten Skripte nicht relevant ist und automatisch zerstört wird, sobald das Fenster der Statusleiste zerstört wird. Außerdem wird ein altes Symbol automatisch zerstört, wenn es via <code>SB.SetIcon()</code> mit einem neuen ersetzt wird. Dies kann wie folgt verhindert werden:
 </p>
-<pre>Gui.Opt("+LastFound")
+<pre>MeineGui.Opt("+LastFound")
 <a href="SendMessage.htm">SendMessage</a>(0x40F, Segmentnummer - 1, HICON, "msctls_statusbar321")  <em>; 0x40F ist SB_SETICON.</em></pre></div>
 
 <div class="methodShort" id="SB_SetProgress">
@@ -548,25 +548,25 @@ SB.SetText("Es sind " . Reihenanzahl . " Reihen markiert.")</pre>
 
 <h3 id="StatusBar_Usage">StatusBar-Verwendung</h3>
 <p><strong>Reagieren auf Mausklicks</strong>: Jedes Mal, wenn der Benutzer auf die Leiste klickt, wird das <a href="../objects/GuiOnEvent.htm#Click">Click</a>-, <a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>- oder <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu</a>-Ereignis ausgelöst, und im <em>Info</em>- oder <em>Element</em>-Parameter die Segmentnummer gespeichert. Allerdings kann es vorkommen, dass die Segmentnummer eine sehr große Zahl ist, wenn der Benutzer den rechts befindlichen Größenziehpunkt an bestimmten Stellen anklickt.</p>
-<p><strong>Schrift und Farbe</strong>: Obwohl Schriftgröße, Schriftart und Schriftstil über <a href="../objects/Gui.htm#SetFont">Gui.SetFont</a> festgelegt werden können (wie bei den meisten anderen Steuerelementen auch), kann die Textfarbe nicht geändert werden. Um die Hintergrundfarbe der Statusleiste zu ändern, können Sie in <em>Optionen</em> das Wort <strong>Background</strong> einfügen und direkt danach einen Farbnamen (siehe <a href="../misc/Colors.htm">Farbentabelle</a>) oder RGB-Wert (das 0x-Präfix ist optional) angeben. Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>, <code>BackgroundDefault</code>.</p>
-<p><strong>Statusleiste verstecken</strong>: Um die Leiste bereits bei ihrer Erstellung zu verstecken, können Sie <code>MeineStatusleiste := Gui.Add("StatusBar", "Hidden")</code> verwenden. Um die Leiste irgendwann nach ihrer Erstellung zu verstecken, können Sie <code>MeineStatusleiste.Visible := false</code> verwenden. Mit <code>MeineStatusleiste.Visible := true</code> kann sie wieder sichtbar gemacht werden. Hinweis: Die Höhe des Fensters wird nicht reduziert, wenn die Leiste versteckt wird. Falls das gewünscht ist, verwenden Sie einfach <code>Gui.Show("<a href="../objects/Gui.htm#AutoSize">AutoSize</a>")</code>.</p>
+<p><strong>Schrift und Farbe</strong>: Obwohl Schriftgröße, Schriftart und Schriftstil über <a href="../objects/Gui.htm#SetFont">MeineGui.SetFont</a> festgelegt werden können (wie bei den meisten anderen Steuerelementen auch), kann die Textfarbe nicht geändert werden. Um die Hintergrundfarbe der Statusleiste zu ändern, können Sie in <em>Optionen</em> das Wort <strong>Background</strong> einfügen und direkt danach einen Farbnamen (siehe <a href="../misc/Colors.htm">Farbentabelle</a>) oder RGB-Wert (das 0x-Präfix ist optional) angeben. Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>, <code>BackgroundDefault</code>.</p>
+<p><strong>Statusleiste verstecken</strong>: Um die Leiste bereits bei ihrer Erstellung zu verstecken, können Sie <code>MeineStatusleiste := MeineGui.Add("StatusBar", "Hidden")</code> verwenden. Um die Leiste irgendwann nach ihrer Erstellung zu verstecken, können Sie <code>MeineStatusleiste.Visible := false</code> verwenden. Mit <code>MeineStatusleiste.Visible := true</code> kann sie wieder sichtbar gemacht werden. Hinweis: Die Höhe des Fensters wird nicht reduziert, wenn die Leiste versteckt wird. Falls das gewünscht ist, verwenden Sie einfach <code>MeineGui.Show("<a href="../objects/Gui.htm#AutoSize">AutoSize</a>")</code>.</p>
 <p><strong>Styles (selten verwendet)</strong>: Weitere Styles finden Sie in der <a href="../misc/Styles.htm#StatusBar">Style-Tabelle der Statusleiste</a>.</p>
 <p><strong>Bekannte Einschränkungen:</strong>: 1) Wenn die Statusleiste andere Steuerelemente überlappt, kann es vorkommen, das diese Steuerelemente die Statusleiste überdecken. Um das zu verhindern, gibt es zum Beispiel die Möglichkeit, solche Steuerelemente mit dem <a href="../objects/GuiOnEvent.htm#Size">Size</a>-Ereignis dynamisch verkleinern zu lassen. 2) Jedes Fenster kann höchstens eine Statusleiste enthalten.</p>
 <p><strong>Beispiel</strong>: <a href="TreeView.htm#ExAdvanced">Beispiel #1</a> im unteren Bereich der TreeView-Seite zeigt eine segmentierte Statusleiste.</p>
 <span id="IE_Control"></span><h2 id="ActiveX">ActiveX</h2>
 <p>ActiveX-Komponenten wie das MSIE-Browser-Steuerelement können wie folgt in ein GUI-Fenster eingebettet werden:</p>
-<pre>Gui := GuiCreate()
-WB := Gui.Add("ActiveX", "w980 h640", "<a href="https://msdn.microsoft.com/de-de/library/aa752085">Shell.Explorer</a>").Value  <em>; Der letzte Parameter ist der Name der ActiveX-Komponente.</em>
+<pre>MeineGui := Gui.New()
+WB := MeineGui.Add("ActiveX", "w980 h640", "<a href="https://msdn.microsoft.com/de-de/library/aa752085">Shell.Explorer</a>").Value  <em>; Der letzte Parameter ist der Name der ActiveX-Komponente.</em>
 WB.<a href="https://msdn.microsoft.com/de-de/library/aa752093">Navigate</a>("https://www.autohotkey.com/boards/")  <em>; Nur für das Web-Browser-Steuerelement anwendbar.</em>
-Gui.Show()</pre>
+MeineGui.Show()</pre>
 <p>Nach dem Erstellen des Steuerelements kann das ActiveX-Objekt via <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> abgerufen werden.</p>
 <p>Das folgende Beispiel zeigt, wie man <a href="ComObjConnect.htm">ComObjConnect</a> nutzen kann, um die Ereignisse des Objekts zu verarbeiten:</p>
-<pre>Gui := GuiCreate()
-URL := Gui.Add("Edit", "w930 r1", "https://www.autohotkey.com/boards/")
-Gui.Add("Button", "x+6 yp w44 Default", "Go").OnEvent("Click", "ButtonLaden")
-WB := Gui.Add("ActiveX", "xm w980 h640", "Shell.Explorer").Value
+<pre>MeineGui := Gui.New()
+URL := MeineGui.Add("Edit", "w930 r1", "https://www.autohotkey.com/boards/")
+MeineGui.Add("Button", "x+6 yp w44 Default", "Go").OnEvent("Click", "ButtonLaden")
+WB := MeineGui.Add("ActiveX", "xm w980 h640", "Shell.Explorer").Value
 <strong>ComObjConnect</strong>(WB, WB_events)  <em>; Verbindet die WB-Ereignisse mit dem Klassenobjekt WB_events.</em>
-Gui.Show()
+MeineGui.Show()
 <em>; Fortfahren, um die Startseite zu laden:</em>
 ButtonLaden()
 
@@ -585,25 +585,25 @@ class WB_events {
 
 <h2 id="Custom">Custom</h2>
 <p>Bietet die Möglichkeit, ein AutoHotkey-fremdes Steuerelement in ein GUI-Fenster einzubetten. Um das zu bewerkstelligen, müssen Sie in <em>Optionen</em> das Wort <strong>Class</strong> einfügen und direkt danach den Win32-Klassennamen des gewünschten Steuerelements angeben. Beispiele:</p>
-<pre>Gui.Add("Custom", "ClassComboBoxEx32")  <em>; <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb775740">ComboBoxEx</a>-Steuerelement.</em>
-Gui.Add("Custom", "ClassScintilla")  <em>; <a href="http://scintilla.org/">Scintilla</a>-Steuerelement. Die SciLexer.dll-Bibliothek muss vorab geladen sein.</em></pre>
-<p>AutoHotkey verwendet die Standard-Text-Routinen des Systems, wenn Texte im Steuerelement via <code>Gui.Add</code> oder <code>GuiCtrl.Value</code> abgerufen/ersetzt werden.</p>
+<pre>MeineGui.Add("Custom", "ClassComboBoxEx32")  <em>; <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb775740">ComboBoxEx</a>-Steuerelement.</em>
+MeineGui.Add("Custom", "ClassScintilla")  <em>; <a href="https://scintilla.org/">Scintilla</a>-Steuerelement. Die SciLexer.dll-Bibliothek muss vorab geladen sein.</em></pre>
+<p>AutoHotkey verwendet die Standard-Text-Routinen des Systems, wenn Texte im Steuerelement via <code>MeineGui.Add</code> oder <code>GuiCtrl.Value</code> abgerufen/ersetzt werden.</p>
 <p><strong>Ereignisse</strong>: Da die Bedeutung eines Benachrichtigungscodes abhängig vom Steuerelement ist, das diesen gesendet hat, unterstützen Custom-Steuerelemente kein <a href="../objects/GuiOnEvent.htm">OnEvent</a>. Wenn das Steuerelement allerdings Benachrichtigungen in Form von WM_NOTIFY- oder WM_COMMAND-Meldungen sendet, kann das Skript <a href="../objects/GuiOnNotify.htm">OnNotify</a> oder <a href="../objects/GuiOnCommand.htm">OnCommand</a> nutzen, um diese abzufangen und zu verarbeiten.</p>
 <p>Das folgende Beispiel zeigt, wie ein <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb761374">IP-Adressen-Steuerelement</a> hinzugefügt und verwendet werden kann:</p>
-<pre>Gui := GuiCreate()
-IP := Gui.Add("Custom", "ClassSysIPAddress32 r1 w150 vIP")
+<pre>MeineGui := Gui.New()
+IP := MeineGui.Add("Custom", "ClassSysIPAddress32 r1 w150 vIP")
 IP.OnCommand(0x300, "IP_EditChange")  <em>; 0x300 = EN_CHANGE</em>
 IP.OnNotify(-860, "IP_FieldChange")  <em>; -860 = IPN_FIELDCHANGED</em> 
-Gui.Add("Text", "wp vIPText")
-Gui.Add("Text", "wp y+m vIPField")
-Gui.Add("Button", "Default", "OK").OnEvent("Click", "OK_Click")
-Gui.Show()
+MeineGui.Add("Text", "wp vIPText")
+MeineGui.Add("Text", "wp y+m vIPField")
+MeineGui.Add("Button", "Default", "OK").OnEvent("Click", "OK_Click")
+MeineGui.Show()
 
 IPCtrlSetAddress(IP, SysGetIPAddresses()[1])
 
 OK_Click(this, *)
 {
-    this.Gui.Hide()
+    this.MeineGui.Hide()
     MsgBox("Sie haben " IPCtrlGetAddress(this.Gui["IP"]) " ausgewählt.")
     ExitApp()
 }
@@ -649,7 +649,7 @@ IPCtrlGetAddress(GuiCtrl)
 }</pre>
 
 <h2>Siehe auch</h2>
-<p><a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="GuiCreate.htm">GuiCreate</a>, <a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../objects/Menu.htm">Menu-Objekt</a></p>
+<p><a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="../objects/Gui.htm#New">Gui.New</a>, <a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../objects/Menu.htm">Menu-Objekt</a></p>
 
 </body>
 </html>

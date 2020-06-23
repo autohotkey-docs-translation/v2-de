@@ -1,5 +1,5 @@
-﻿; Easy Access to Favorite Folders -- by Savage
-; http://www.autohotkey.com
+﻿; Easy Access to Favorite Folders (based on the v1 script by Savage)
+; https://www.autohotkey.com
 ; When you click the middle mouse button while certain types of
 ; windows are active, this script displays a menu of your favorite
 ; folders.  Upon selecting a favorite, the script will instantly
@@ -64,7 +64,7 @@ else  ; Read the menu items directly from this script file.
 f_AtStartingPos := false
 f_MenuItemCount := 0
 f_Paths := []
-f_Menu := MenuCreate()
+f_Menu := Menu.New()
 Loop Read, f_FavoritesFile
 {
     if f_FileExt != "Exe"

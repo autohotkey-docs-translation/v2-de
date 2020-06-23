@@ -34,10 +34,10 @@
 <p>Eine typische TreeView sieht wie folgt aus:</p>
 <img src="../static/ctrl_treeview.png" alt="TreeView" />
 <p>Die Syntax zur Erstellung einer TreeView ist:</p>
-<pre class="Syntax" id="GuiAdd">TV := Gui.<span class="func">Add</span>("TreeView", Optionen)</pre>
+<pre class="Syntax" id="GuiAdd">TV := GuiObj.<span class="func">Add</span>("TreeView", Optionen)</pre>
 <p>Das folgende Skript zeigt, wie eine einfache Hierarchie von Elementen erstellt und angezeigt werden kann:</p>
-<pre>Gui := GuiCreate()
-TV := Gui.Add("TreeView")
+<pre>MeineGui := Gui.New()
+TV := MeineGui.Add("TreeView")
 <span class="red">P1</span> := <a href="#Add">TV.Add</a>("Erstes Oberelement")
 P1C1 := TV.Add("Erstes Unterelement von Oberelement 1", <span class="red">P1</span>)  <em>; Geben Sie P1 an, um dieses Element unterzuordnen.</em>
 P2 := TV.Add("Zweites Oberelement")
@@ -45,7 +45,7 @@ P2C1 := TV.Add("Erstes Unterelement von Oberelement 2", P2)
 P2C2 := TV.Add("Zweites Unterelement von Oberelement 2", P2)
 P2C2C1 := TV.Add("Erstes Unterelement von Unterelement 2", P2C2)
 
-Gui.Show  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
+MeineGui.Show  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
 <h2 id="Options">Optionen und Styles für den <em>Optionen</em>-Parameter</h2>
 <p><strong>Background</strong>: Geben Sie das Wort Background an und fügen Sie direkt danach einen Farbnamen (siehe <a href="../misc/Colors.htm">Farbentabelle</a>) oder einen RGB-Wert (das 0x-Präfix ist optional) ein. Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Wenn diese Option nicht vorhanden ist, verwendet TreeView als Hintergrundfarbe standardmäßig die Standardhintergrundfarbe des Systems. Mit <code>BackgroundDefault</code> oder <code>-Background</code> kann die Standardhintergrundfarbe des Systems gesetzt werden (in der Regel weiß). Mit <code>TV.Opt("+BackgroundDefault")</code> beispielsweise kann die Standardfarbe wiederhergestellt werden.</p>
 <p><strong>Buttons</strong>: Geben Sie <code>-Buttons</code> (minus Buttons) an, um die Plus- oder Minuszeichen zu entfernen, die jeweils auf der linken Seite eines Elements mit Unterelementen zu finden sind.</p>
@@ -53,16 +53,16 @@ Gui.Show  <em>; Anzeigen des Fensters mit TreeView.</em></pre>
 <p id="Checked"><strong>Checked</strong>: Fügt links neben jedem Element eine CheckBox hinzu. Beim <a href="#Add">Hinzufügen</a> eines Elements kann das Wort <em>Check</em> in die Optionen eingefügt werden, um die CheckBox zu Beginn im abgehakten Zustand anzuzeigen. Der Benutzer kann die CheckBox entweder anklicken oder die Leertaste drücken, um sie in den abgehakten oder nicht-abgehakten Zustand zu versetzen. Um herauszufinden, welches Element aktuell in der TreeView abgehakt ist, rufen Sie <a href="#GetNext">TV.GetNext</a> oder <a href="#Get">TV.Get</a> auf.</p>
 <p><strong>HScroll</strong>: Geben Sie <code>-HScroll</code> (minus HScroll) an, um das horizontale Scrollen im Steuerelement zu deaktivieren (zusätzlich wird das Steuerelement keine horizontale Scrollbalken anzeigen).</p>
 <p id="ImageList"><strong>ImageList</strong>: Mit dieser Option können Symbole in eine ListView eingefügt werden. Geben Sie das Wort <em>ImageList</em> an und fügen Sie direkt danach eine ImageListID ein, die von <a href="ListView.htm#IL_Create">IL_Create</a> zurückgegeben wird. Diese Option funktioniert nur beim Erstellen einer TreeView (allerdings hat <a href="#SetImageList">TV.SetImageList</a> diese Einschränkung nicht). Hier ein funktionierendes Beispiel:</p>
-<pre>Gui := GuiCreate()
+<pre>MeineGui := Gui.New()
 ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(10)  <em>; Erstellt eine ImageList für anfänglich 10 Symbole.</em>
 Loop 10  <em>; Lädt die ImageList mit einigen vordefinierten Systemsymbolen.</em>
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
-TV := Gui.Add("TreeView", "ImageList" . ImageListID)
+TV := MeineGui.Add("TreeView", "ImageList" . ImageListID)
 <a href="#Add">TV.Add</a>("Elementname", 0, "Icon4")  <em>; Fügt ein Element in die TreeView ein und gibt ihm ein Ordnersymbol.</em>
-Gui.Show</pre>
+MeineGui.Show</pre>
 <p><strong>Lines</strong>: Geben Sie <code>-Lines</code> (minus Lines) an, um die Verbindungslinien zwischen den Ober- und Unterelementen zu entfernen. Das Entfernen solcher Linien verhindert allerdings auch, dass die Plus-/Minuszeichen bei auf oberster Ebene befindlichen Elementen angezeigt werden.</p>
 <p id="ReadOnly"><strong>ReadOnly</strong>: Geben Sie <code>-ReadOnly</code> (minus ReadOnly) an, um die Texte/Namen aller Elemente editierbar zu machen. Um ein Element zu editieren, wählen Sie es aus und drücken Sie <kbd>F2</kbd> (siehe die <a href="#WantF2">WantF2</a>-Option unten). Oder klicken Sie das Element einmal an, um es auszuwählen, warten Sie mindestens eine halbe Sekunde und klicken Sie dann das Element nochmals an, um es zu editieren. Das folgende Beispiel zeigt, wie ein Element, nachdem es editiert wurde, in Bezug auf seine Nachbarelemente alphabetisch neu positioniert werden kann:</p>
-<pre>TV := Gui.Add("TreeView", "-ReadOnly")
+<pre>TV := MeineGui.Add("TreeView", "-ReadOnly")
 TV.OnEvent("ItemEdit", "MeinTree_Edit")  <em>; Ruft MeinTree_Edit auf, wann immer der Benutzer mit dem Editieren eines Elements fertig ist.</em>
 <em>; ...</em>
 MeinTree_Edit(TV, Element)
@@ -283,11 +283,11 @@ Loop
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p id="Enter">Um die Eingabe einer <kbd>Enter</kbd>-Taste bei einer fokussierten TreeView zu erfassen, können Sie eine <a href="GuiControls.htm#DefaultButton">Standardschaltfläche</a> nutzen (die man natürlich verstecken kann). Zum Beispiel:</p>
-<pre>Gui.Add("Button", "Hidden Default", "OK").OnEvent("Click", "ButtonOK")
+<pre>MeineGui.Add("Button", "Hidden Default", "OK").OnEvent("Click", "ButtonOK")
 ...
 ButtonOK(*) {
     global
-    if Gui.FocusedCtrl != TV
+    if MeineGui.FocusedCtrl != TV
         return
     MsgBox("Sie haben ENTER gedrückt. Die ID des ausgewählten Elements ist " TV.GetSelection())
 }</pre>
@@ -299,7 +299,7 @@ ButtonOK(*) {
 <p>Schauen Sie sich das <a href="../objects/GuiControl.htm">GuiControl-Objekt</a> an, um in Erfahrung zu bringen, wie eine TreeView größer/kleiner gemacht, versteckt oder ihre Schrift geändert werden kann.</p>
 <p>Tree View eXtension (TVX) erweitert TreeViews mit der Möglichkeit, Elemente zu verschieben, einzufügen und zu löschen. Siehe dazu <a href="https://www.autohotkey.com/forum/topic19021.html">www.autohotkey.com/forum/topic19021.html</a>.</p>
 <h2>Siehe auch</h2>
-<p><a href="ListView.htm">ListView</a>, <a href="GuiControls.htm">Andere Steuerelemente</a>, <a href="GuiCreate.htm">GuiCreate</a>, <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu-Ereignis</a>, <a href="../objects/GuiControl.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../misc/Styles.htm#TreeView">Style-Tabelle von TreeView</a></p>
+<p><a href="ListView.htm">ListView</a>, <a href="GuiControls.htm">Andere Steuerelemente</a>, <a href="../objects/Gui.htm#New">Gui.New</a>, <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu-Ereignis</a>, <a href="../objects/GuiControl.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../misc/Styles.htm#TreeView">Style-Tabelle von TreeView</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 
@@ -311,31 +311,31 @@ Stammordner := A_MyDocuments
 TreeViewBreite := 280
 ListViewBreite := A_ScreenWidth/2 - TreeViewBreite - 30
 
-<em>; Erstellt das GUI-Fenster und zeigt das Quellverzeichnis (Stammordner) in der Titelleiste:</em>
-Gui := GuiCreate("+Resize", Stammordner)  <em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen.</em>
+<em>; Erstellt das MeineGui-Fenster und zeigt das Quellverzeichnis (Stammordner) in der Titelleiste:</em>
+MeineGui := Gui.New("+Resize", Stammordner)  <em>; Erlaubt dem Benutzer, das Fenster zu maximieren oder dessen Größe beliebig anzupassen.</em>
 
 <em>; Erstellt eine ImageList und fügt einige vordefinierte Systemsymbole ein:</em>
 ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(5)
 Loop 5 
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
 <em>; Erstellt eine <a href="#GuiAdd">TreeView</a> und ListView, um den Windows Explorer nachzuahmen:</em>
-TV := <a href="#GuiAdd">Gui.Add</a>("TreeView", "r20 w" TreeViewBreite " <a href="#ImageList">ImageList</a>" ImageListID " vTV")
-LV := Gui.Add("ListView", "r20 w" ListViewBreite " x+10 vLV", "Name|Bearbeitet")
+TV := <a href="#GuiAdd">MeineGui.Add</a>("TreeView", "r20 w" TreeViewBreite " <a href="#ImageList">ImageList</a>" ImageListID " vTV")
+LV := MeineGui.Add("ListView", "r20 w" ListViewBreite " x+10 vLV", ["Name","Bearbeitet"])
 
 <em>; Erstellt eine <a href="GuiControls.htm#StatusBar">Statusleiste</a>, um Infos über die Anzahl an Dateien und ihre Gesamtgrößen anzuzeigen:</em>
-SB := Gui.Add("StatusBar", "vSB")
+SB := MeineGui.Add("StatusBar", "vSB")
 <a href="GuiControls.htm#SB_SetParts">SB.SetParts</a>(60, 85)  <em>; Erstellt drei Bereiche in der Leiste (der dritte Bereich füllt die restliche Breite).</em>
 
 <em>; Fügt Ordner und deren Unterordner in die Baumstruktur ein. Zeigt ein Ladebildschirm an, wenn es etwas länger dauert:</em>
-M := GuiCreate("ToolWindow -SysMenu", "Lade Baumstruktur ..."), M.Show()
-VerzListe := SetzeUnterordnerInBaum(TV, Stammordner, {})
+M := Gui.New("ToolWindow -SysMenu", "Lade Baumstruktur ..."), M.Show()
+VerzListe := SetzeUnterordnerInBaum(TV, Stammordner, Map.New())
 M.Hide()
 
 <em>; Ruft TV_ItemSelect auf, wann immer ein neues Element ausgewählt wird:</em>
 TV.OnEvent("ItemSelect", Func("TV_ItemSelect").bind(VerzListe))
 
 <em>; Ruft Gui_Size auf, wann immer die Fenstergröße geändert wird:</em>
-Gui.OnEvent("Size", "Gui_Size")
+MeineGui.OnEvent("Size", "Gui_Size")
 
 <em>; Setzt die Spaltenbreiten der ListView (optional):</em>
 Spalte2Breite := 70  <em>; Kürzen, um nur den YYYYMMDD-Teil sichtbar zu machen.</em>
@@ -343,7 +343,7 @@ LV.ModifyCol(1, ListViewBreite - Spalte2Breite - 30)  <em>; Genug Platz für ver
 LV.ModifyCol(2, Spalte2Breite)
 
 <em>; Zeigt das Fenster. Das Skript wird benachrichtigt, wann immer Benutzer eine geeignete Aktion durchführt:</em>
-Gui.Show
+MeineGui.Show
 
 SetzeUnterordnerInBaum(TV, Ordner, VerzListe, OberelementID := 0)
 {
@@ -361,6 +361,8 @@ SetzeUnterordnerInBaum(TV, Ordner, VerzListe, OberelementID := 0)
 
 TV_ItemSelect(VerzListe, TV, Element)  <em>; Diese Funktion wird aufgerufen, wenn ein neues Element ausgewählt wird.</em>
 {
+    local
+    
     <em>; Dateien in die ListView einfügen:</em>
     LV := TV.Gui["LV"]
     LV.Delete  <em>; Alle Reihen leeren.</em>
@@ -385,8 +387,9 @@ Gui_Size(this, MinMax, Breite, Höhe)  <em>; Vergrößert/Verkleinert die ListVi
     if MinMax = -1  <em>; Das Fenster wurde minimiert.  Keine Aktion notwendig.</em>
         return
     <em>; Ansonsten wurde die Größe des Fensters geändert oder maximiert. Die Größe des Steuerelements anpassen.</em>
-    this["TV"].Move("H" Höhe - 30)  <em>; -30 für Statusleiste und Abstände.</em>
-    this["LV"].Move("H" Höhe - 30 " W" Breite - this["TV"].Pos.W - 30)
+    this["TV"].GetPos(,, TV_W)
+    this["TV"].Move(,,, Höhe - 30)  <em>; -30 für Statusleiste und Abstände.</em>
+    this["LV"].Move(,, Breite - TV_W - 30, Höhe - 30)
 }</pre>
 
 </div>

@@ -16,33 +16,37 @@
 
 <p>Aktiviert oder deaktiviert die Zeilenprotokollierung, oder zeigt die aktuell ausgeführten Skriptzeilen an.</p>
 
-<pre class="Syntax"><span class="func">ListLines</span> <span class="optional">OnOff</span></pre>
+<pre class="Syntax"><span class="func">ListLines</span> <span class="optional">Modus</span></pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>OnOff</dt>
+  <dt>Modus</dt>
   <dd>
-      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette (leer)</a></p>
       <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird der Verlauf der aktuell ausgeführten Zeilen angezeigt. Der erste Parameter beeinflusst wie folgt nur das Verhalten des <a href="../misc/Threads.htm">aktuellen Threads</a>:</p>
-      <p><strong>On</strong> oder 1 (<a href="../Variables.htm#True">true</a>): Fügt danach ausgeführte Zeilen in den Verlauf ein. Diese Einstellung gilt anfangs für alle Skripte.</p>      
-      <p><strong>Off</strong> oder 0 (<a href="../Variables.htm#False">false</a>): Lässt danach ausgeführte Zeilen im Verlauf weg.</p></dd>
+      <p><code>1</code> oder <code>True</code>: Fügt danach ausgeführte Zeilen in den Verlauf ein. Diese Einstellung gilt anfangs für alle Skripte.</p>      
+      <p><code>0</code> oder <code>False</code>: Lässt danach ausgeführte Zeilen im Verlauf weg.</p></dd>
 
 </dl>
 
 <h2>Bemerkungen</h2>
 <p>ListLines (ohne Parameter) ist das gleiche wie, als würde man den Menüpunkt "View-&gt;Lines most recently executed" im Hauptfenster auswählen. Solche Informationen können helfen, <a href="../Scripts.htm#debug">ein Skript zu debuggen</a> (Fehler zu finden und zu beseitigen).</p>
-<p>Mit <code>ListLines OnOff</code> können bestimmte Zeilen im Verlauf weggelassen werden, um zu verhindern, dass sich der Verlauf zu schnell füllt (z. B. bei einer Schleife mit vielen schnellen Iterationen). Die Leistung ist um einige Prozentpunkte reduziert, während die Protokollierung aktiv ist.</p>
+<p>Mit <code>ListLines Modus</code> können bestimmte Zeilen im Verlauf weggelassen werden, um zu verhindern, dass sich der Verlauf zu schnell füllt (z. B. bei einer Schleife mit vielen schnellen Iterationen). Die Zeile, die ListLines aufgerufen hat, wird ebenfalls aus dem Zeilenverlauf entfernt, um die Übersicht zu wahren. Die Leistung ist eventuell um einige Prozentpunkte reduziert, während die Protokollierung aktiv ist.</p>
 <p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="../objects/Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) verwendet zu Beginn die Standardeinstellung der Funktion. Um diese zu ändern, muss die Funktion im automatischen Ausführungsbereich (ganz oben im Skript) angegeben werden.</p>
 <p>Die interne Variable A_ListLines enthält 1, wenn ListLines eingeschaltet ist, oder 0, wenn nicht.</p>
 <p>Im Zusammenhang dazu enthalten die internen Variablen <a href="../Variables.htm#LineNumber">A_LineNumber</a> und <a href="../Variables.htm#LineFile">A_LineFile</a> die aktuell ausgeführte Zeilennummer und den Dateinamen, auf der sie sich bezieht.</p>
+
 <h2>Siehe auch</h2>
 <p><a href="KeyHistory.htm">KeyHistory</a>, <a href="ListHotkeys.htm">ListHotkeys</a>, <a href="ListVars.htm">ListVars</a></p>
 <h2>Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a href="#ExBasic">#1</a></p>
-<pre>ListLines
-ListLines "Off"
-ListLines False</pre>
+<pre>x := "Diese Zeile ist protokolliert"
+ListLines False
+x := "Diese Zeile ist nicht protokolliert"
+ListLines True
+ListLines
+MsgBox</pre>
 </div>
 
 </body>

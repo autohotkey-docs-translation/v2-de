@@ -63,13 +63,13 @@ Addieren 2, 3  <em>; Runde Klammern können am Anfang einer Zeile weggelassen we
 <p>Mit der <a href="commands/IsByRef.htm">IsByRef</a>-Funktion kann festgestellt werden, ob der Aufrufer eine Variable für einen bestimmten ByRef-Parameter bereitgestellt hat.</p>
 <p>Bekannte Einschränkungen:</p>
 <ul>
-  <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/Clipboard.htm">A_Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">interne Variablen</a> an eine Funktion via Referenz zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
+  <li>Es ist nicht möglich, Objekteigenschaften (z. B. <code>foo.bar</code>), <a href="misc/A_Clipboard.htm">A_Clipboard</a> oder andere <a href="Variables.htm#BuiltIn">interne Variablen</a> an eine Funktion via Referenz zu übergeben. Stattdessen wird sich die Funktion so verhalten, als hätte man <em>ByRef</em> weggelassen.</li>
   <li id="recurse">Eine Funktion kann sich selbst rekursiv aufrufen. Beachten Sie aber, dass, wenn sie sich selbst ihre eigenen <a href="#Local">lokalen Variablen</a> oder ByRef-lose Parameter via <em>ByRef</em> übergibt, der <em>ByRef</em>-Parameter des neuen Ablegers auf seine eigene lokale Variable mit selben Namen verweist, anstatt auf dem Namen des vorherigen Ablegers. Allerdings tritt dieses Problem nicht auf, wenn eine Funktion sich selbst eine <a href="#Global">globale Variable</a>, <a href="#static">statische Variable</a> oder einen <em>ByRef</em>-Parameter übergibt.</li>
   <li>Variablen, die innerhalb eines Funktionsparameters aufgelöst werden müssen (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können von links oder rechts befindlichen Parametern geändert werden, bevor sie an die Funktion übergeben werden. <code>MeineFunk(Var, Var++)</code> würde beispielsweise unerwartet 0 und 1 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, auch dann, wenn der erste Parameter der Funktion kein <em>ByRef</em> ist. Dieses unlogische Verhalten wird eventuell in einer zukünftigen Version geändert.</li>
   <li>ByRef wird nicht direkt unterstützt, wenn die Funktion von einem COM-Clienten aufgerufen wurde oder wenn eine COM-Methode aufgerufen wird. Stattdessen erhält oder muss das Skript ein <a href="commands/ComObject.htm#ByRef">Wrapper-Objekt</a> übergeben, das den <a href="commands/ComObjType.htm">VarTyp</a> und die Adresse des Wertes enthält.</li>
 </ul>
 <h2 id="optional">Optionale Parameter</h2>
-<p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden. Um das zu tun, müssen Sie <code>:=</code> anfügen, gefolgt vom Standardwert des Parameters, der Folgendes sein kann: <code>True</code>, <code>False</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie "fox" oder "".</p>
+<p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden. Um das zu tun, müssen Sie <code>:=</code> anfügen, gefolgt vom Standardwert des Parameters, der Folgendes sein kann: <code>true</code>, <code>false</code>, <code>unset</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie "fox" oder "".</p>
 <p>Die folgende Funktion hat einen Z-Parameter, der als optional gekennzeichnet ist:</p>
 <pre>Addieren(X, Y, Z := 0) {
     return X + Y + Z
@@ -81,6 +81,18 @@ MeineFunk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin 
     MsgBox X ", " Y ", " Z
 }</pre>
 <p id="OptionalByRef"> <a href="#ByRef">ByRef-Parameter</a> können auch optional sein; zum Beispiel: <code>MeineFunk(ByRef p1 := "")</code>. Jedes Mal, wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt; das heißt, dass die Funktion sich so verhalten wird, als wäre das Schlüsselwort "ByRef" nicht vorhanden.</p>
+<p id="unset"><strong>Unset:</strong> Um genau festzustellen, ob der Aufrufer einen Parameter weggelassen hat, geben Sie <code>unset</code> als Standardwert an und ermitteln Sie mit <a href="commands/IsSet.htm">IsSet</a>, ob der Parameter einen Wert erhalten hat, wie unten gezeigt:</p>
+<pre>
+MeineFunk(p := unset) {
+    if IsSet(p)
+        MsgBox "Aufrufer hat " p " übergeben"
+    else
+        MsgBox "Aufrufer hat nichts übergeben"
+}
+
+MeineFunk(42)
+MeineFunk
+</pre>
 
 <h2 id="return">Werte an den Aufrufer zurückgeben</h2>
 <p>Wie in der <a href="#intro">Einführung</a> bereits erwähnt, kann eine Funktion einen Wert via <a href="commands/Return.htm">Return</a> an ihren Aufrufer zurückgeben.</p>
@@ -163,7 +175,7 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
 <h3 id="Local">Lokale Variablen</h3>
 <p>Lokale Variablen sind funktionsspezifisch und nur innerhalb dieser Funktion sichtbar. Folglich kann eine lokale Variable, die denselben Namen hat wie eine globale Variable, etwas anderes als die globale Variable enthalten. Verschiedene Funktionen können bedenkenlos die gleichen Variablennamen benutzen.</p>
 <p>Alle lokalen Variablen, die nicht <a href="#static">statisch</a> sind, werden automatisch freigegeben (leer gemacht), wenn die Funktion ihr Ende erreicht hat, mit Ausnahme von Variablen, die an ein <a href="#closures">Closure</a> gebunden sind.</p>
-<p>Interne Variablen wie <a href="misc/Clipboard.htm">A_Clipboard</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a> sind nie lokal (sie sind von überall aus erreichbar) und können nicht neu deklariert werden. (Dies gilt nicht für interne Klassen wie <a href="objects/Object.htm">Object</a>; sie sind als <a href="#SuperGlobal">superglobale</a> Variablen definiert.)</p>
+<p>Interne Variablen wie <a href="misc/A_Clipboard.htm">A_Clipboard</a> und <a href="Variables.htm#TimeIdle">A_TimeIdle</a> sind nie lokal (sie sind von überall aus erreichbar) und können nicht neu deklariert werden. (Dies gilt nicht für interne Klassen wie <a href="objects/Object.htm">Object</a>; sie sind als <a href="#SuperGlobal">superglobale</a> Variablen definiert.)</p>
 <p id="AssumeLocal">Funktionen sind standardmäßig im <strong>Assume-Local</strong>-Modus. Variablen, die innerhalb einer Assume-Local-Funktion zugegriffen oder erstellt werden, sind standardmäßig lokal, aber es gibt folgende Ausnahmen:</p>
 <ul>
   <li><a href="#SuperGlobal">Superglobale</a> Variablen, inklusive <a href="Objects.htm#Custom_Classes">Klassen</a>.</li>
@@ -202,12 +214,12 @@ MsgBox Verbinden("`n", <b class="blue">Teilzeichenketten*</b>)</pre>
     global LogDateiname
     FileAppend Zeilenanzahl ": " TextZuLog "`n", LogDateiname
 }</pre>
-<p id="InitStatic">Eine statische Variable kann auf derselben Zeile sowohl deklariert als auch initialisiert werden, indem man mithilfe von <code>:=</code> einen <a href="Variables.htm#Expressions">Ausdruck</a> zuweist. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Jede statische Variable wird nur einmal initialisiert. Die Initialisierung von statischen Variablen erfolgt in der Reihenfolge ihrer aktuellen Position innerhalb der Skriptdatei, aber vor dem automatischen Ausführungsbereich des Skripts.</p>
+<p id="InitStatic">Es ist möglich, eine statische Variable bei ihrer Deklaration zu initialisieren. Fügen Sie einfach auf der rechten Seite des Variablennamens den Operator <code>:=</code> und einen beliebigen <a href="Variables.htm#Expressions">Ausdruck</a> an. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Statische Deklarationen werden genauso ausgewertet wie lokale Deklarationen (<code>local</code>), außer dass nach erfolgreicher Auswertung einer statischen Initialisierung (oder einer Gruppe von verbundenen Initialisierungen) diese effektiv aus der Ablaufsteuerung entfernt und kein zweites Mal ausgeführt wird.</p>
 <p id="AssumeStatic"><strong>Assume-Static-Modus</strong>: Eine Funktion kann so definiert werden, dass sie all ihre Variablen (außer ihre Parameter) statisch behandelt. Dazu muss in der ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
 <pre>ErmittleVomStatischenArray(Elementnummer)
 {
     <strong>static</strong>
-    static ErsterAufruf := true  <em>; Die Initialisierung einer statischen Deklaration wird nur einmal ausgeführt (beim Start).</em>
+    static ErsterAufruf := true  <em>; Jede Initialisierung einer statischen Deklaration wird nur einmal ausgeführt.</em>
     if ErsterAufruf  <em>; Erstellt ein statisches Array beim ersten Aufruf, aber nicht mehr danach.</em>
     {
         ErsterAufruf := false
@@ -234,8 +246,8 @@ ZeigeForceStatic()
 <p>Mehrere Variablen können mithilfe eines Kommas auf derselben Zeile deklariert werden. Zum Beispiel:</p>
 <pre>global LogDateiname, MaxVersuche := 5
 static GesamtVersuche := 0, VorherErgebnis</pre>
-<p id="DeclareInit">Eine lokale oder globale Variable kann auf derselben Zeile sowohl deklariert als auch initialisiert werden, indem man mithilfe von <code>:=</code> einen <a href="Variables.htm#Expressions">Ausdruck</a> zuweist. Im Gegensatz zu <a href="#InitStatic">statischen Initialisierungen</a> werden die Initialisierungen von lokalen oder globalen Variablen bei jedem Funktionsaufruf ausgeführt, aber nur, wenn die Ablaufsteuerung sie tatsächlich erreicht. Eine Zeile wie <code>local x := 0</code> hätte also den gleichen Effekt wie, als würde man zwei einzelne Zeilen schreiben: <code>local x</code>, gefolgt von <code>x := 0</code>.</p>
-<p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> unmittelbar beim Starten des Skripts verarbeitet werden, kann eine Variable nicht mithilfe einer <a href="commands/If.htm">IF-Anweisung</a> deklariert werden. Das heißt, dass eine Deklaration innerhalb eines IF- oder ELSE-<a href="commands/Block.htm">Blocks</a> auf alle Zeilen zwischen der Deklaration und der geschweiften Endklammer der Funktion eine Auswirkung hat. Beachten Sie zudem, dass es zurzeit nicht möglich ist, eine dynamische Variable zu deklarieren, wie z. B. <code>global Array%i%</code>.</p>
+<p id="DeclareInit">Es ist möglich, eine lokale oder globale Variable bei ihrer Deklaration zu initialisieren. Fügen Sie einfach auf der rechten Seite des Variablennamens eine Zuweisung an. Im Gegensatz zu <a href="#InitStatic">statischen Initialisierungen</a> werden die Initialisierungen von lokalen oder globalen Variablen jedes Mal ausgeführt, wenn die Funktion aufgerufen wird. Eine Zeile wie <code>local x := 0</code> hätte also den gleichen Effekt wie, als würde man zwei einzelne Zeilen schreiben: <code>local x</code>, gefolgt von <code>x := 0</code>. Statische Initialisierungen benötigen <code>:=</code>, während lokale und globale Initialisierungen jeden <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> unterstützen.</p>
+<p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> unmittelbar beim Starten des Skripts verarbeitet werden, kann eine Variable nicht mithilfe einer <a href="commands/If.htm">IF-Anweisung</a> deklariert werden. Das heißt, dass eine Deklaration innerhalb eines IF- oder ELSE-<a href="commands/Block.htm">Blocks</a> bedingungslos für alle Zeilen zwischen der Deklaration und der geschweiften Endklammer der Funktion wirksam wird (aber alle in der Deklaration enthaltenen Initialisierungen sind immer noch bedingt). Beachten Sie zudem, dass eine dynamische Variable nicht deklariert werden kann, wie z. B. <code>global Array%i%</code>.</p>
 
 <h2 id="DynCall">Dynamisches Aufrufen einer Funktion</h2>
 <p>Eine Funktion (auch eine <a href="#BuiltIn">interne Funktion</a>) kann dynamisch via Prozentzeichen aufgerufen werden. <code>%Var%(x, "Fuchs")</code> beispielsweise wird aufgerufen, wenn <em>Var</em> den Namen oder die <a href="Objects.htm#Function_References">Referenz</a> einer gültigen Funktion enthält. <code>Funk%A_Index%()</code> kann hingegen Funk1(), Funk2() und so weiter aufrufen, je nachdem, welcher Wert in A_Index aktuell enthalten ist.</p>

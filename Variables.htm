@@ -203,7 +203,7 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
   <tr>
     <td align="center"><strong>IS</strong><br><strong>IN</strong><br><strong>CONTAINS</strong></td>
     <td id="is">
-      <p><code><i>Wert</i> <strong>is</strong> <i>Typ</i></code>: Gibt wahr zurück (1), wenn <em>Wert</em> der angegebene <em>Typ</em> ist, oder ansonsten falsch (0). Einzelheiten finden Sie unter <a href="commands/is.htm"><em>Wert</em> is <em>Typ</em></a>.</p>
+      <p><code><i>Wert</i> <strong>is</strong> <i>Klasse</i></code> ist True (1), wenn <em>Wert</em> eine Instanz von <em>Klasse</em> ist, ansonsten False (0). <em>Klasse</em> muss ein <a href="objects/Object.htm">Object</a>-Objekt mit einer eigenen <a href="objects/Class.htm#Prototype">Prototype</a>-Eigenschaft sein, aber in der Regel wird die Eigenschaft implizit via Klassendefinition definiert. Diese Operation ist grundsätzlich äquivalent zu <code><i>Wert</i>.HasBase(<i>Klasse</i>.Prototype)</code>, außer dass der Wert die Art und Weise seiner Behandlung nicht überschreiben kann und das Ergebnis für COM-Objekte immer False ist.</p>
       <p><code id="in"><strong>in</strong></code> und <code id="contains"><strong>contains</strong></code> sind für die zukünftige Verwendung reserviert.</p>
     </td>
   </tr>
@@ -332,7 +332,7 @@ sumfn := Func("Sum")</pre>
     <td style="text-align:center"><strong>{a: b, c: d}</strong></td>
     <td>
       <p><strong>Direkte Objekt-Schreibweise</strong>. Erstellt ein <a href="objects/Object.htm">Object</a>-Objekt. Jedes Paar besteht aus einem direkt geschriebenen Eigenschaftsnamen <code>a</code> und einem Eigenschaftswertausdruck <code>b</code>. <code>x := {a: b}</code> beispielsweise ist äquivalent zu <code>x := Object("a", b)</code> oder <code>x := Object(), x.a := b</code>. <a href="objects/Object.htm#Base">Base</a> kann innerhalb der direkten Objektschreibweise gesetzt werden, aber alle anderen Eigenschaften werden als <em>eigene Werteigenschaften</em> gesetzt, mit der Gefahr oder Möglichkeit, dass die vom Base-Objekt geerbten Eigenschaften überschrieben werden.</p>
-      <p class="warning"><strong>Hinweis:</strong> Wenn der Eigenschaftsname kein gültiger Identifikator ist, wird er als Ausdruck interpretiert, was aber bei einem zukünftigen Update eventuell geändert wird. Wenn ein Ausdruck oder eine Variable für einen Eigenschaftsnamen benötigt wird, verwenden Sie eine separate Zuweisung (<code>x.%a% := b</code>) oder die Object-Funktion (<code>Object(a, b)</code>).</p>
+      <p>Um einen dynamischen Eigenschaftsnamen zu verwenden, umschließen Sie den Teilausdruck mit Prozentzeichen. Zum Beispiel: <code>{%NameVar%: WertVar}</code>.</p>
     </td>
   </tr>
 </table>
@@ -351,7 +351,7 @@ sumfn := Func("Sum")</pre>
   <li>Inaktivität des Benutzers: <a href="#TimeIdle">A_TimeIdle</a>, <a href="#TimeIdlePhysical">A_TimeIdlePhysical</a>, <a href="#TimeIdleKeyboard">A_TimeIdleKeyboard</a>, <a href="#TimeIdleMouse">A_TimeIdleMouse</a></li>
   <li>Hotkeys, Hotstrings und benutzerdefinierte Menüpunkte: <a href="#ThisHotkey">A_ThisHotkey</a>, <a href="#EndChar">A_EndChar</a>, <a href="#h">(...mehr...)</a></li>
   <li>Betriebssystem und Benutzerinformationen: <a href="#OSVersion">A_OSVersion</a>, <a href="#Screen">A_ScreenWidth</a>, <a href="#Screen">A_ScreenHeight</a>, <a href="#os">(...mehr...)</a></li>
-  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="misc/Clipboard.htm">A_Clipboard</a></li>
+  <li>Sonstiges: <a href="#Cursor">A_Cursor</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="#Clipboard">A_Clipboard</a>, <a href="#misc">(...mehr...)</a></li>
   <li>Loop: <a href="#Index">A_Index</a>, <a href="#loop">(...mehr...)</a></li>
 </ul>
 <h3>Sonderzeichen</h3>
@@ -390,7 +390,7 @@ sumfn := Func("Sum")</pre>
   <tr id="ScriptName">
     <td>A_ScriptName</td>
     <td>
-      <p><strong>Lesen/Schreiben:</strong> Der Standardtitel für MsgBox, InputBox, FileSelect, DirSelect und GuiCreate. Wenn dieser Variable nicht vom Skript gesetzt wurde, wird standardmäßig der Dateiname des aktuellen Skripts verwendet, aber ohne Pfad, z. B. MeinSkript.ahk.</p>
+      <p><strong>Lesen/Schreiben:</strong> Der Standardtitel für MsgBox, InputBox, FileSelect, DirSelect und Gui.New. Wenn dieser Variable nicht vom Skript gesetzt wurde, wird standardmäßig der Dateiname des aktuellen Skripts verwendet, aber ohne Pfad, z. B. MeinSkript.ahk.</p>
       <p>Wenn der Skripttext nicht aus der Datei, sondern <a href="Scripts.htm#stdin">aus der Standardeingabe (stdin) gelesen wird</a>, ist der Standardwert "*".</p>
     </td>
   </tr>
@@ -676,7 +676,7 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
     <td><p>Der zuletzt ausgeführte <a href="Hotkeys.htm">Hotkey</a> oder <a href="Hotstrings.htm">nicht-automatisch-ersetzende Hotstring</a> (ansonsten leer), z. B. #z. Dieser Wert ändert sich, wenn der <a href="misc/Threads.htm">aktuelle Thread</a> von einem anderen Hotkey oder Hotstring unterbrochen wird, deshalb ist es in der Regel besser, den Parameter <a href="Hotkeys.htm#HotBraces">ThisHotkey</a> wenn möglich zu verwenden.</p>
       <p>Jeder neu erstellte Hotkey -- entweder via <a href="commands/Hotkey.htm">Hotkey-Funktion</a> oder <a href="Hotkeys.htm">Zweifach-Doppelpunkt-Syntax</a> -- erhält einen fest zugewiesenen Namen, der eine Zeichenkette bestehend aus seinem Tastennamen und der Reihenfolge seiner Modifikatorsymbolen ist. Dieser Name wird von allen <a href="commands/_HotIf.htm#variant">Varianten</a> des Hotkeys verwendet.</p>
       <p>Jeder neu erstellte Hotstring erhält einen fest zugewiesenen Namen, der identisch zum verwendeten Text ist.</p>
-	  </td>
+      </td>
   </tr>
   <tr id="PriorHotkey">
     <td>A_PriorHotkey</td>
@@ -857,7 +857,7 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
     <td>Die Anzahl der Pixel pro logischen Zoll entlang der Bildschirmbreite. Dieser Wert bezieht sich auf alle Bildschirme eines Systems. Standardmäßig gilt ein DPI-Wert von 96, abhängig von der Textgrößeneinstellung des Systems. Siehe auch GUI's <a href="objects/Gui.htm#DPIScale">-DPIScale</a>-Option.</td>
   </tr>
 </table>
-<h3>Sonstiges</h3>
+<h3 id="misc">Sonstiges</h3>
 <table class="info">
   <tr id="Cursor">
     <td>A_Cursor</td>
@@ -872,9 +872,9 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
 <p>Hinweis: Jeder <a href="misc/Threads.htm">Thread</a> verwaltet seinen eigenen Wert für A_EventInfo (im Gegensatz zu Variablen wie A_ThisHotkey). Das heißt, dass die aktuellen Werte solcher Variablen für jeden Thread erhalten bleiben, egal ob er zwischenzeitlich von einem anderen Thread unterbrochen wird.</p>
       <p><strong>Lesen/Schreiben:</strong> A_EventInfo kann auch vom Skript gesetzt werden, aber akzeptiert werden nur vorzeichenlose Integer innerhalb eines Pointer-Bereichs (32-Bit oder 64-Bit, je nach Version von AutoHotkey).</p></td>
   </tr>
-  <tr>
-    <td>Clipboard</td>
-    <td><strong>Liest/Schreibt</strong> den Inhalt der system-internen Zwischenablage. Siehe <a href="misc/Clipboard.htm">A_Clipboard</a> für mehr Details.</td>
+  <tr id="Clipboard">
+    <td>A_Clipboard</td>
+    <td><strong>Liest/Schreibt</strong> den Inhalt der system-internen Zwischenablage. Weitere Informationen finden Sie unter <a href="misc/A_Clipboard.htm">A_Clipboard</a>.</td>
   </tr>
   <tr id="LastError">
     <td>A_LastError</td>
@@ -883,7 +883,7 @@ VirtuelleHöhe := <a href="commands/SysGet.htm">SysGet</a>(79)
   </tr>
   <tr id="TrueFalse">
     <td>True<br />False</td>
-    <td><p>Enthalten 1 und 0. Sie können verwendet werden, um ein Skript besser lesbar zu machen. Siehe <a href="Concepts.htm#boolean">Boolesche Werte</a>, um mehr zu erfahren.</p>
+    <td><p>Enthalten 1 und 0. Sie können verwendet werden, um ein Skript besser lesbar zu machen. Weitere Informationen finden Sie unter <a href="Concepts.htm#boolean">Boolesche Werte</a>.</p>
       <p>Diese sind eigentlich <a href="Language.htm#constants">Schlüsselwörter</a>, keine Variablen.</p>
     </td>
   </tr>

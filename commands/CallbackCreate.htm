@@ -139,17 +139,17 @@ EnumWindowsProc(hwnd, lParam)
 <pre>Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 Pinsel := DllCall("CreateSolidBrush", "UInt", Texthintergrundfarbe)
 
-Gui := GuiCreate()
-Text := Gui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.")
+MeineGui := Gui.New()
+Text := MeineGui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.")
 
 <em>; 64-Bit-Skripte müssen SetWindowLongPtr statt SetWindowLong aufrufen:</em>
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
 WindowProcNeu := <strong>CallbackCreate</strong>("WindowProc")  <em>; Vermeide den Fast-Modus beim Setzen der Unterklasse.</em>
-WindowProcAlt := DllCall(SetWindowLong, "Ptr", Gui.Hwnd, "Int", -4  <em>; -4 ist GWL_WNDPROC</em>
+WindowProcAlt := DllCall(SetWindowLong, "Ptr", MeineGui.Hwnd, "Int", -4  <em>; -4 ist GWL_WNDPROC</em>
     , "Ptr", WindowProcNeu, "Ptr") <em>; Rückgabewert muss auf "Ptr" oder "UPtr" statt auf "Int" gesetzt werden.</em>
 
-Gui.Show
+MeineGui.Show
 
 WindowProc(hwnd, uMsg, wParam, lParam)
 {

@@ -133,11 +133,10 @@ MeinEdit.Move(VarX+10, VarY+5, VarW*2, VarH*1.5)</pre>
     <p>Wenn <em>Wert</em> eine 0 oder leer ist, wird die aktuelle Auswahl entfernt.</p></dd>
 </dl>
 <p>Das folgende Beispiel zeigt, wie <u>alle</u> Listeneinträge in einer <a href="../commands/GuiControls.htm#ListBoxMulti">Mehrfachauswahl-ListBox</a> aus- oder abgewählt werden können:</p>
-<pre>Gui.Opt("+LastFound")  <em>; Verhindert, dass unten der Fenstertitel angegeben werden muss.</em>
-<a href="../commands/PostMessage.htm">PostMessage</a> 0x185, 1, -1, ListBox  <em>; Wählt alle Listeneinträge aus. 0x185 ist LB_SETSEL.</em>
-<a href="../commands/PostMessage.htm">PostMessage</a> 0x185, 0, -1, ListBox  <em>; Wählt alle Listeneinträge ab.</em>
+<pre>PostMessage 0x185, 1, -1, ListBox  <em>; Wählt alle Listeneinträge aus. 0x185 ist LB_SETSEL.</em>
+PostMessage 0x185, 0, -1, ListBox  <em>; Wählt alle Listeneinträge ab.</em>
 ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
-<p>Im Gegensatz zu <a href="../commands/ControlChoose.htm">ControlChoose</a> kann diese Methode keine <a href="GuiOnEvent.htm#Change">Change</a>- oder <a href="GuiOnEvent.htm#DoubleClick">DoubleClick</a>-Ereignisse auslösen.</p>
+<p>Im Gegensatz zu <a href="../commands/ControlChooseIndex.htm">ControlChooseIndex</a> kann diese Methode keine <a href="GuiOnEvent.htm#Change">Change</a>- oder <a href="GuiOnEvent.htm#DoubleClick">DoubleClick</a>-Ereignisse auslösen.</p>
 </div>
 
 <div class="methodShort" id="UseTab">
@@ -163,7 +162,7 @@ ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
 <dl>
   <dt>Elemente</dt><dd>
     <p>Typ: <a href="../Concepts.htm#objects">Array</a></p>
-    <p>Ein Array mit Zeichenketten (z. B. <code>["Rot", "Grün", "Blau"]</code>), die an das Ende der Liste des Steuerelements angefügt werden sollen. Verwenden Sie vorher <a href="#Delete">GuiCtrl.Delete</a>, um die Liste stattdessen zu ersetzen bzw. zu überschreiben.</p>
+    <p>Ein Array mit Zeichenketten (z. B. <code>["Rot","Grün","Blau"]</code>), die an das Ende der Liste des Steuerelements angefügt werden sollen. Verwenden Sie vorher <a href="#Delete">GuiCtrl.Delete</a>, um die Liste stattdessen zu ersetzen bzw. zu überschreiben.</p>
   </dd>
 </dl>
 <p>Verwenden Sie <a href="#Choose">GuiCtrl.Choose</a>, um einen Listeneintrag/Tab auszuwählen.</p>
@@ -202,7 +201,7 @@ ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
 
 <h3>Edit</h3>
 <p><em>ErmittelterWert</em> ist der aktuelle Inhalt des <a href="../commands/GuiControls.htm#Edit">Edit</a>-Steuerelements. Bei mehrzeiligen Steuerelementen werden alle Zeilenumbrüche im Text in reine LF-Zeichen (`n) umgewandelt, anstatt wie üblich in CR+LF (`r`n), das von Nicht-GUI-Funktionen wie <a href="../commands/ControlGetText.htm">ControlGetText</a> und <a href="../commands/ControlSetText.htm">ControlSetText</a> verwendet wird.</p>
-<p><em>NeuerWert</em> ist der neue Inhalt. Bei mehrzeiligen Steuerelementen wird jedes LF-Zeichen (`n) in <em>NeuerWert</em>, das kein CR-Zeichen (`r) davor hat, automatisch in CR+LF (`r`n) umgewandelt, um eine korrekte Darstellung zu gewährleisten. In der Regel sollte das keine Probleme bereiten, weil beim Verwenden von <code>Gui.Submit</code> oder beim Abrufen des Wertes diese Übersetzung automatisch rückgängig gemacht wird, indem CR+LF mit LF (`n) ersetzt wird.</p>
+<p><em>NeuerWert</em> ist der neue Inhalt. Bei mehrzeiligen Steuerelementen wird jedes LF-Zeichen (`n) in <em>NeuerWert</em>, das kein CR-Zeichen (`r) davor hat, automatisch in CR+LF (`r`n) umgewandelt, um eine korrekte Darstellung zu gewährleisten. In der Regel sollte das keine Probleme bereiten, weil beim Verwenden von <a href="Gui.htm#Submit">Gui.Submit</a> oder beim Abrufen des Wertes diese Übersetzung automatisch rückgängig gemacht wird, indem CR+LF mit LF (`n) ersetzt wird.</p>
   <p>Mit <a href="#Text">GuiCtrl.Text</a> kann der Text abgerufen oder gesetzt werden, ohne dass eine Übersetzung zwischen `n und `r`n erfolgt.</p>
 
 <h3>Hotkey</h3>
@@ -294,9 +293,9 @@ ListBox.Choose(0)  <em>; Wählt alle Listeneinträge ab.</em></pre>
 <div class="methodShort" id="GetPos">
 <h2>GetPos</h2>
 <p>Ruft die Position und Größe des Steuerelements ab.</p>
-<pre class="Syntax">GuiCtrl.GetPos(<span class="optional">ByRef X, ByRef Y, ByRef Breite, ByRef Höhe</span>)</pre>
-<p>Im Gegensatz zu <a href="../commands/ControlGetPos.htm">ControlGetPos</a> wendet GetPos die <a href="Gui.htm#DPIScale">DPI-Skalierung</a> auf die zurückgegebenen Koordinaten an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
-<p>Die Position ist relativ zum Clientbereich des GUI-Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen).</p>
+<pre class="Syntax">GuiCtrl.GetPos(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
+<p>Jeder Parameter muss eine Variable sein, in der die jeweilige Koordinate gespeichert werden soll. Die Position ist relativ zum Clientbereich des GUI-Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen).</p>
+<p>Im Gegensatz zu <a href="../commands/ControlGetPos.htm">ControlGetPos</a> wendet diese Methode die <a href="Gui.htm#DPIScale">DPI-Skalierung</a> auf die zurückgegebenen Koordinaten an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
 <p>Beispiel:</p>
 <pre>MeinEdit.GetPos(x, y, w, h)
 MsgBox "Die X-Koordinate ist " x ". Die Y-Koordinate ist " y ". Die Breite ist " w ". Die Höhe ist " h "."

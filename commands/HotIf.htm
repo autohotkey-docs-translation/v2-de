@@ -3,6 +3,7 @@
 <head>
 <title>HotIf - Syntax &amp; Verwendung | AutoHotkey v2</title>
 <meta name="description" content="Die HotIf-Funktion spezifiziert die Kriterien für danach erstellte oder modifizierte Hotkey-Varianten." />
+<meta name="ahk:equiv-v1" content="commands/Hotkey.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -45,7 +46,7 @@
   <dd>
     <p>Setzt die Kriterien auf ein angegebenes <a href="../objects/Functor.htm">Funktionsobjekt</a>. Danach erstellte Hotkeys werden nur ausgeführt, wenn der Aufruf des angegebenen Funktionsobjekts eine Zahl ungleich 0 zurückgibt. Das ist wie <code>HotIf "Ausdruck"</code>, außer dass jeder Hotkey mehrere <a href="Hotkey.htm#variant">Varianten</a> haben kann (eine pro Objekt). <em>Funktionsobjekt</em> muss ein Objekt mit einer <em>Call</em>-Methode sein, die einen Parameter akzeptiert - den <a href="../Hotkeys.htm#HotBraces">Namen</a> des Hotkeys.</p>
     <p>Sobald das Objekt an die HotIf-Funktion übergeben wurde, wird es nie gelöscht (aber Speicher vom Betriebssystem zurückgefordert, wenn der Prozess beendet wird).</p>
-    <p>Das <a href="#ExampleIfFn">Drei-Tasten-Kombinations-Beispiel</a> unten benutzt diesen Modus von HotIf.</p>
+    <p>Das <a href="Hotkey.htm#ExampleIfFn">Hotkey-Beispiel "Drei-Tasten-Kombination"</a> benutzt diesen Modus von HotIf.</p>
   </dd>
 
 </dl>
@@ -64,7 +65,7 @@
   <dt>(alle Parameter weglassen)</dt>
   <dd><p>Setzt leere Kriterien (deaktiviert die Kontextabhängigkeit).</p></dd>
 
-  <dt id="IfWin">Fenstertitel, Fenstertext</dt>
+  <dt>Fenstertitel, Fenstertext</dt>
   <dd>
     <p>Spezifiziert den Fenstertitel und andere Kriterien zum Identifizieren eines Fensters. Je nach aufgerufener Funktion sind die betroffenen Hotkeys und Hotstrings nur aktiv, wenn das Fenster aktiv ist, existiert, nicht aktiv ist oder nicht existiert.</p>
     <p>Da die Parameter ausgewertet werden, bevor die Funktion aufgerufen wird, wird jede Variablenreferenz zu diesem Zeitpunkt dauerhaft wirksam. Das heißt, dass nachfolgende Änderungen an den Variableninhalten nicht von vorhandenen Hotkeys gesehen werden können.</p>
@@ -74,7 +75,7 @@
 </dl>
 
 <h2>Fehlerbehandlung</h2>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em></em> der Parameter von HotIf ungültig ist, z. B. wenn er nicht mit einem vorhandenen Ausdruck übereinstimmt und keine gültige Callback-Funktion ist.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn der Parameter von HotIf ungültig ist, z. B. wenn er nicht mit einem vorhandenen Ausdruck übereinstimmt und keine gültige Callback-Funktion ist.</p>
 
 <h2 id="remarks">Allgemeine Bemerkungen</h2>
 <p>HotIf erlaubt das Erstellen oder Ändern von kontextabhängigen <a href="../Hotkeys.htm">Hotkeys</a>, während das Skript läuft (die <a href="_HotIf.htm">#HotIf</a>-Direktive ist hingegen von der Position abhängig und wird bereits vor dem Ausführen des Skripts wirksam). Zum Beispiel:</p>
@@ -89,39 +90,7 @@ Hotkey "^!e", "MeinLabel"  <em>; Erstellt einen Hotkey, der nur im Texteditor fu
 <p><a href="Hotkey.htm">Hotkey</a> (Funktion), <a href="../Hotkeys.htm">Hotkeys</a> (allgemein), <a href="_HotIf.htm">#HotIf</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
 <h2 id="examples">Beispiele</h2>
-<div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#1</a></p>
-<pre>
-HotIfWinActive "ahk_class Notepad"
-Hotkey "!w", "ZeilenumbruchUmschalten"  <em>; Erstellt ALT+W als Hotkey, der nur im Texteditor funktioniert.</em>
-
-ZeilenumbruchUmschalten(ThisHotkey)
-{
-    MenuSelect "A",, "Format", "Zeilenumbruch"
-}
-</pre>
-</div>
-
-<div class="ex" id="ExampleIfFn">
-<p><a href="#ExampleIfFn">#2</a>: Mit dieser GUI können Sie primitive Drei-Tasten-Kombinations-Hotkeys registrieren:</p>
-<pre>
-Gui := GuiCreate()
-Gui.Add("Text", "xm", "Präfixtaste:")
-Gui.Add("Edit", "yp x100 w100 vPräfix", "Space")
-Gui.Add("Text", "xm", "Suffix-Hotkey:")
-Gui.Add("Edit", "yp x100 w100 vSuffix", "f &amp; j")
-Gui.Add("Button", "Default", "Registrieren").OnEvent("Click", "RegistriereHotkey")
-Gui.OnEvent("Close", (*) =&gt; ExitApp())
-Gui.OnEvent("Escape", (*) =&gt; ExitApp())
-Gui.Show()
-
-RegistriereHotkey(this, *)
-{
-    Gespeichert := this.Gui.Submit(false)
-    HotIf (*) =&gt; GetKeyState(Gespeichert.Präfix)
-    Hotkey Gespeichert.Suffix, (ThisHotkey) =&gt; MsgBox(ThisHotkey)
-}</pre>
-</div>
+<p>Beispiele finden Sie unter <a href="Hotkey.htm#ExOther">Hotkey</a>.</p>
 
 </body>
 </html>

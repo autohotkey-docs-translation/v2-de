@@ -13,9 +13,14 @@
 </head>
 <body>
 
-<h1>GUI-Objekt</h1>
-<p>Ermöglicht eine Schnittstelle zum Erstellen und Verwalten von Fenstern, und Erstellen von Steuerelementen. Solche Fenster können zur Dateneingabe oder als individuelle Benutzerschnittstellen verwendet werden. <a href="../commands/GuiCreate.htm">GuiCreate</a> und <a href="../commands/GuiFromHwnd.htm">GuiFromHwnd</a> geben ein Objekt dieses Typs zurück.</p>
+<h1>Gui-Objekt</h1>
+<p>Ermöglicht eine Schnittstelle zum Erstellen und Verwalten von Fenstern, und Erstellen von Steuerelementen. Solche Fenster können zur Dateneingabe oder als individuelle Benutzerschnittstellen verwendet werden.</p>
+<p>Alle Gui-Objekte sind Instanzen der <code>Gui</code>-Klasse. Gui-Objekte können mit <a href="../objects/Gui.htm#New">Gui.New()</a> erstellt und mit <a href="../commands/GuiFromHwnd.htm">GuiFromHwnd</a> abgerufen werden.</p>
 
+<p><strong>Statische Methoden:</strong></p>
+<ul>
+  <li><a href="#New">New</a>: Erstellt eine neue GUI.</li>
+</ul>
 <p><strong>Eigenschaften:</strong></p>
 <ul>
   <li><a href="#BackColor">BackColor</a>: Ermittelt oder setzt die Hintergrundfarbe des Fensters.</li>
@@ -38,6 +43,7 @@
   <li><a href="#Hide">Hide</a>: Versteckt das Fenster.</li>
   <li><a href="#Maximize">Maximize</a>: Macht das Fenster wieder sichtbar und maximiert es.</li>
   <li><a href="#Minimize">Minimize</a>: Macht das Fenster wieder sichtbar und minimiert es.</li>
+  <li><a href="#Move">Move</a>: Verschiebt das GUI-Fenster und/oder ändert dessen Größe.</li>
   <li><a href="#__Enum">__Enum</a>: Ermöglicht es, Steuerelemente des GUI-Fensters schrittweise durchzugehen.</li>
   <li><a href="GuiOnEvent.htm">OnEvent</a>: Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn das entsprechende Ereignis ausgelöst wird.</li>
   <li><a href="#Opt">Opt</a>: Setzt verschiedene Optionen und Styles, die das Aussehen und Verhalten des GUI-Fensters beeinflussen.</li>
@@ -55,20 +61,50 @@
   <li><a href="#Examples">Beispiele</a></li>
 </ul>
 
+<p class="note"><strong>Hinweis:</strong> Der Name <code>MeineGui</code> wird hier für Instanzen der Gui-Klasse verwendet, aber Sie können auch einen anderen gültigen Variablennamen verwenden. Der Name <code>Gui</code> sollte nicht genutzt werden, außer um auf die Gui-Klasse selbst zu verweisen.</p>
+
+<div class="methodShort" id="New">
+<h2>Gui.New</h2>
+<p>Erstellt ein neues Gui-Objekt und gibt es zurück.</p>
+<pre class="Syntax">MeineGui := <span class="func">Gui.New</span>(<span class="optional">Optionen, Titel := <a href="../Variables.htm#ScriptName">A_ScriptName</a>, EreignisObj</span>)</span></pre>
+<dl>
+  <dt>Optionen</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Dieser Parameter kann Optionen enthalten, die von <a href="#Opt">Gui.Opt</a> unterstützt werden.</p>
+  </dd>
+  <dt>Titel</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Der Fenstertitel. Lässt man diesen Parameter weg, wird standardmäßig der aktuelle Wert von <a href="../Variables.htm#ScriptName">A_ScriptName</a> verwendet.</p>
+  </dd>
+  <dt id="EventObj">EreignisObj</dt><dd>
+    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Ein "Event-Sink" oder Objekt, mit dem Ereignisse verbunden werden sollen. Wenn <em>EreignisObj</em> angegeben ist, können <a href="../objects/GuiOnEvent.htm">OnEvent</a>, OnNotify und OnCommand benutzt werden, um Methoden für <em>EreignisObj</em> zu registrieren, die beim Auslösen eines Ereignisses aufgerufen werden  sollen. Wenn dieser Parameter weggelassen wird oder leer ist, wird jede Zeichenkette, die an OnEvent's <em>Funktion</em>-Parameter übergeben wird, als Funktionsname interpretiert.</p>
+  </dd>
+</dl>
+</div>
+
+<div class="methodShort" id="__New">
+<h2>__New</h2>
+<p>Konstruiert eine neue Gui-Instanz.</p>
+<pre class="Syntax">MeineGui.<span class="func">__New</span>(<span class="optional">Optionen, Titel := <a href="../Variables.htm#ScriptName">A_ScriptName</a>, EreignisObj</span>)</span></pre>
+<p>Eine Gui-Unterklasse kann __New überschreiben und <code>super.__New(Optionen, Titel, this)</code> aufrufen, um ihre eigenen Ereignisse zu behandeln. In solchen Fällen werden Ereignisse für das Hauptfenster (z.B. Close) keinen expliziten Gui-Parameter übergeben, da <code>this</code> bereits eine Referenz zur Gui enthält.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn das Fenster bereits konstruiert oder zerstört wurde.</p>
+</div>
+
 <div class="methodShort" id="Add">
 <h2>Add</h2>
 <p>Fügt ein Steuerelement in das GUI-Fenster ein, und gibt ein  <a href="GuiControl.htm">GuiControl-Objekt</a> zurück.</p>
-<pre class="Syntax">Gui.<span class="func">Add</span>(Steuerelement <span class="optional">, Optionen, Text</span>)
-Gui.<span class="func">Add</span>Steuerelement(<span class="optional">Optionen, Text</span>)</pre>
+<pre class="Syntax">MeineGui.<span class="func">Add</span>(Steuerelement <span class="optional">, Optionen, Text</span>)
+MeineGui.<span class="func">Add</span>Steuerelement(<span class="optional">Optionen, Text</span>)</pre>
 <dl>
   <dt>Steuerelement</dt><dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Dies kann folgendes sein: <a href="../commands/GuiControls.htm#Text">Text</a>, <a href="../commands/GuiControls.htm#Edit">Edit</a>, <a href="../commands/GuiControls.htm#UpDown">UpDown</a>, <a href="../commands/GuiControls.htm#Picture">Picture</a>, <a href="../commands/GuiControls.htm#Button">Button</a>, <a href="../commands/GuiControls.htm#Checkbox">Checkbox</a>, <a href="../commands/GuiControls.htm#Radio">Radio</a>, <a href="../commands/GuiControls.htm#DropDownList">DropDownList</a>, <a href="../commands/GuiControls.htm#ComboBox">ComboBox</a>, <a href="../commands/GuiControls.htm#ListBox">ListBox</a>, <a href="../commands/ListView.htm">ListView</a>, <a href="../commands/TreeView.htm">TreeView</a>, <a href="../commands/GuiControls.htm#Link">Link</a>, <a href="../commands/GuiControls.htm#Hotkey">Hotkey</a>, <a href="../commands/GuiControls.htm#DateTime">DateTime</a>, <a href="../commands/GuiControls.htm#MonthCal">MonthCal</a>, <a href="../commands/GuiControls.htm#Slider">Slider</a>, <a href="../commands/GuiControls.htm#Progress">Progress</a>, <a href="../commands/GuiControls.htm#GroupBox">GroupBox</a>, <a href="../commands/GuiControls.htm#Tab">Tab</a>, <a href="../commands/GuiControls.htm#StatusBar">StatusBar</a>, <a href="../commands/GuiControls.htm#ActiveX">ActiveX</a>, <a href="../commands/GuiControls.htm#Custom">Custom</a></p>
   <p>Zum Beispiel:</p>
-  <pre>Gui := GuiCreate()
-Gui.Add("Text",, "Bitte tragen Sie Ihren Namen ein:")
-Gui.AddEdit("vName")
-Gui.Show</pre></dd>
+  <pre>MeineGui := Gui.New()
+MeineGui.Add("Text",, "Bitte tragen Sie Ihren Namen ein:")
+MeineGui.AddEdit("vName")
+MeineGui.Show</pre></dd>
   <dt>Optionen</dt><dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p id="PosSize"><strong>Position und Größe von Steuerelementen ändern</strong></p>
@@ -90,13 +126,13 @@ Gui.Show</pre></dd>
   <p id="xp"><strong>xp+n</strong>, <strong>yp+n</strong>, <strong>xp-n</strong> und <strong>yp-n</strong> (hierbei ist <strong>n</strong> eine beliebige Zahl) können genutzt werden, um Steuerelemente relativ zur linken oberen Ecke des zuvor hinzugefügten Steuerelements zu positionieren. Dies ist zum Beispiel nützlich, um Steuerelemente mit einer <a href="../commands/GuiControls.htm#GroupBox">GroupBox</a> zu umschließen.</p>
   <p id="xm"><strong>xm</strong> und <strong>ym</strong> können genutzt werden, um ein Steuerelement an den ganz linken bzw. obersten <a href="#MarginX">Abstand (Margin)</a> des Fensters zu positionieren (nach diesen Optionen kann ein Plus-/Minuszeichen und eine Zahl erfolgen). Wenn man <strong>ym</strong> ohne X-Position angibt, wird das Steuerelement an den obersten Abstand, aber auf die rechte Seite aller zuvor hinzugefügten Steuerelementen positioniert, was als Beginn einer neuen "Spalte" gesehen werden kann. Umgekehrt gilt das gleiche (xm ohne Y-Position).</p>
   <p id="xs"><strong>xs</strong> und <strong>ys</strong>: Diese haben einen ähnlichen Effekt wie <strong>xm</strong> und <strong>ym</strong>, allerdings beziehen sie sich auf Koordinaten, die von einem zuvor hinzugefügten Steuerelement stammen, dessen Optionen das Wort <a href="#Section">Section</a> enthält (das erste Steuerelement eines Fensters beginnt immer eine neue Sektion, egal ob dessen Optionen dieses Wort enthält). Wenn man <strong>ys</strong> ohne X-Position angibt, wird das Steuerelement auf die zuvor gespeicherte Y-Position, aber auf die rechte Seite aller nach dem Gebrauch des Wortes <a href="#Section">Section</a> hinzugefügten Steuerelementen positioniert, was als Beginn einer neuen "Spalte" gesehen werden kann. Zum Beispiel:</p>
-  <pre>Gui := GuiCreate()
-Gui.Add("Edit", "w600")  <em>; Fügt ein ziemlich breites Eingabefeld in den obersten Bereich des Fensters ein.</em>
-Gui.Add("Text", "<strong>section</strong>", "Vorname:")  <em>; Speichert die Position dieses Steuerelements und beginnt eine neue Sektion.</em>
-Gui.Add("Text",, "Nachname:")
-Gui.Add("Edit", "<strong>ys</strong>")  <em>; Beginnt eine neue Spalte innerhalb dieser Sektion.</em>
-Gui.Add("Edit")
-Gui.Show</pre>
+  <pre>MeineGui := Gui.New()
+MeineGui.Add("Edit", "w600")  <em>; Fügt ein ziemlich breites Eingabefeld in den obersten Bereich des Fensters ein.</em>
+MeineGui.Add("Text", "<strong>section</strong>", "Vorname:")  <em>; Speichert die Position dieses Steuerelements und beginnt eine neue Sektion.</em>
+MeineGui.Add("Text",, "Nachname:")
+MeineGui.Add("Edit", "<strong>ys</strong>")  <em>; Beginnt eine neue Spalte innerhalb dieser Sektion.</em>
+MeineGui.Add("Edit")
+MeineGui.Show</pre>
   <p>Umgekehrt gilt das gleiche (<strong>xs</strong> ohne Y-Position).</p>
   <p>Nach <strong>xs</strong> und <strong>ys</strong> kann optional ein Plus-/Minuszeichen und eine Zahl erfolgen. Außerdem ist es möglich, das Wort <a href="#Section">Section</a> und xs/ys in den Optionen eines Steuerelements anzugeben, damit das Steuerelement gleichzeitig auf die alte Sektion zugreifen kann und eine neue Sektion für nachfolgende Steuerelemente etabliert.</p>
   
@@ -133,7 +169,7 @@ Gui.Show</pre>
 <div class="methodShort" id="Show">
 <h2>Show</h2>
 <p>Diese Methode wird das Fenster standardmäßig sichtbar machen, entminimieren (falls notwendig) und <a href="../commands/WinActivate.htm">aktivieren</a>.</p>
-<pre class="Syntax">Gui.<span class="func">Show</span>(<span class="optional">Optionen</span>)</pre>
+<pre class="Syntax">MeineGui.<span class="func">Show</span>(<span class="optional">Optionen</span>)</pre>
 <dl>
   <dt>Optionen</dt><dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
@@ -144,17 +180,17 @@ Gui.Show</pre>
   <p><strong>Xn</strong>: Geben Sie für <strong>n</strong> die X-Position des Fensters auf dem Bildschirm an (in Pixel). Position 0 ist die erste linke sichtbare Pixelspalte auf dem Bildschirm.</p>
   <p><strong>Yn</strong>: Geben Sie für <strong>n</strong> die Y-Position des Fensters auf dem Bildschirm an (in Pixel). Position 0 ist die erste obere sichtbare Pixelzeile auf dem Bildschirm.</p>
   <p><strong>Center</strong>: Zentriert das Fenster horizontal und vertikal auf dem Bildschirm.</p>
-  <p><strong>xCenter</strong>: Zentriert das Fenster horizontal auf dem Bildschirm. Zum Beispiel: <code>Gui.Show("xCenter y0")</code>.</p>
+  <p><strong>xCenter</strong>: Zentriert das Fenster horizontal auf dem Bildschirm. Zum Beispiel: <code>MeineGui.Show("xCenter y0")</code>.</p>
   <p><strong>yCenter</strong>: Zentriert das Fenster vertikal auf dem Bildschirm.</p>
   <p id="AutoSize"><strong>AutoSize</strong>: Passt die Größe des Fensters automatisch an die Größe und Position aller darin enthaltenen sichtbaren Steuerelemente an. Diese Option ist besonders hilfreich, wenn neue Steuerelemente hinzugefügt werden, oder wenn bereits vorhandene Steuerelemente größer, kleiner, sichtbar oder unsichtbar gemacht werden. Zum Beispiel:<br>
-    <code>Gui.Show("AutoSize Center")</code></p>
+    <code>MeineGui.Show("AutoSize Center")</code></p>
   <p><em><strong>Zusätzlich kann eine der folgenden Optionen angegeben werden:</strong></em></p>
   <p><strong>Minimize</strong>: Minimiert das Fenster und aktiviert das darunterliegende Fenster.</p>
   <p><strong>Maximize</strong>: Maximiert und aktiviert das Fenster.</p>
   <p><strong>Restore</strong>: Entminimiert oder entmaximiert das Fenster, falls nötig. Das Fenster wird zudem sichtbar gemacht und aktiviert, falls nötig.</p>
   <p><strong>NoActivate</strong>: Entminimiert oder entmaximiert das Fenster, falls nötig. Das Fenster wird zudem sichtbar gemacht, ohne es zu aktivieren.</p>
   <p><strong>NA</strong>: Macht das Fenster sichtbar, ohne es zu aktivieren. Wenn das Fenster minimiert ist, bleibt es minimiert, aber wird eventuell in der Z-Rangordnung nach oben steigen (die aktuelle Rangordnung kann via Alt-Tab-Fenster überprüft werden). Wenn das Fenster zuvor versteckt war, bewirkt diese Option, dass es über dem aktiven Fenster erscheint, obwohl das aktive Fenster nicht deaktiviert ist.</p>
-  <p><strong>Hide</strong>: Versteckt das Fenster und aktiviert das darunterliegende Fenster. Funktionsgemäß ist das identisch mit <a href="#Hide">Gui.Hide</a>. Diese Option hat aber den Vorteil, dass es ein verstecktes Fenster verschieben oder größer/kleiner machen kann, ohne es sichtbar zu machen. Zum Beispiel: <code>Gui.Show("Hide x55 y66 w300 h200")</code>.</p></dd>
+  <p><strong>Hide</strong>: Versteckt das Fenster und aktiviert das darunterliegende Fenster. Funktionsgemäß ist das identisch mit <a href="#Hide">Gui.Hide</a>. Diese Option hat aber den Vorteil, dass es ein verstecktes Fenster verschieben oder größer/kleiner machen kann, ohne es sichtbar zu machen. Zum Beispiel: <code>MeineGui.Show("Hide x55 y66 w300 h200")</code>.</p></dd>
 </dl>
 </div>
 
@@ -185,7 +221,7 @@ Gui.Show</pre>
 <h2>Destroy</h2>
 <p>Entfernt das Fenster und alle darin enthaltenen Steuerelemente, um die entsprechenden Speicher- und Systemressourcen freizugeben.</p>
 <pre class="Syntax">Gui.<span class="func">Destroy</span>()</pre>
-<p>Selbst wenn man <code>Gui.Destroy()</code> nicht verwendet - das Fenster wird automatisch zerstört, sobald das Gui-Objekt gelöscht wird (weitere Details finden Sie unter <a href="#deleted">Allgemeine Bemerkungen</a>). Alle GUI-Fenster werden automatisch zerstört, sobald das Skript beendet wird.</p>
+<p>Selbst wenn man <code>MeineGui.Destroy()</code> nicht verwendet - das Fenster wird automatisch zerstört, sobald das Gui-Objekt gelöscht wird (weitere Details finden Sie unter <a href="#deleted">Allgemeine Bemerkungen</a>). Alle GUI-Fenster werden automatisch zerstört, sobald das Skript beendet wird.</p>
 </div>
 
 <div class="methodShort" id="SetFont">
@@ -198,7 +234,7 @@ Gui.Show</pre>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Null oder mehr Optionen. Jede Option ist entweder ein einzelner Buchstabe, gefolgt von einem Wert, oder ein einzelnes Wort. Mehrere Optionen müssen mit einem Leerzeichen voneinander getrennt werden. Zum Beispiel: <code>cBlue s12 bold</code>.</p>
   <p>Folgende Wörter werden unterstützt: <strong>bold</strong>, <em>italic</em>, <s>strike</s>, <u>underline</u> und norm (übersetzt: fett, kursiv, durchgestrichen, unterstrichen und normal). <em>Norm</em> stellt die normale Breite/Dicke der Schrift wieder her und schaltet italic, strike und underline aus (Farbe und Größe bleiben unberührt). Man kann norm zum Beispiel nutzen, um alle Attribute auszuschalten und danach bestimmte Attribute wieder einzuschalten. <code>norm italic</code> beispielsweise würde die Schrift normalisieren und danach kursiv machen.</p>
-  <p><strong>C</strong>: Der Name einer Farbe (siehe <a href="../misc/Colors.htm">Farbentabelle</a>) oder ein RGB-Wert, oder das Wort Default, um die Standardfarbe des Systems zu setzen (üblicherweise schwarz). Beispielwerte: <code>cRed</code>, <code>cFFFFAA</code>, <code>cDefault</code>. Hinweis: <a href="../commands/GuiControls.htm#Button">Button-Steuerelemente</a> können nicht mit einer benutzerdefinierten Farbe versehen werden. Alternativ kann man auch die C-Option nutzen, um die Schriftfarbe für einzelne Steuerelemente bei ihrer Erstellung zu bestimmen. Zum Beispiel: <code>Gui.Add("Text", "cRed", "Mein Text")</code>.</p>
+  <p><strong>C</strong>: Der Name einer Farbe (siehe <a href="../misc/Colors.htm">Farbentabelle</a>) oder ein RGB-Wert, oder das Wort Default, um die Standardfarbe des Systems zu setzen (üblicherweise schwarz). Beispielwerte: <code>cRed</code>, <code>cFFFFAA</code>, <code>cDefault</code>. Hinweis: <a href="../commands/GuiControls.htm#Button">Button-Steuerelemente</a> können nicht mit einer benutzerdefinierten Farbe versehen werden. Alternativ kann man auch die C-Option nutzen, um die Schriftfarbe für einzelne Steuerelemente bei ihrer Erstellung zu bestimmen. Zum Beispiel: <code>MeineGui.Add("Text", "cRed", "Mein Text")</code>.</p>
   <p><strong>S</strong>: Größe (in Punkten). Zum Beispiel: <code>s12</code> (muss dezimal sein).</p>
   <p><strong>W</strong>: Breite (Dicke). Eine Zahl im Bereich von 1 bis 1000 (400 ist normal und 700 ist fett). Zum Beispiel: <code>w600</code> (muss dezimal sein).</p>
   <p id="fontq"><strong>Q</strong>: Textdarstellungsqualität. Zum Beispiel: <code>q3</code>. Nach Q muss eine Zahl aus der folgenden Tabelle erfolgen:</p>
@@ -228,9 +264,9 @@ Gui.Show</pre>
   <dt>Schriftname</dt><dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p><em>Schriftname</em> ist der Name einer beliebigen Schrift, z. B. eine aus der <a href="../misc/FontsStandard.htm">Schriftentabelle</a>. Wenn <em>Schriftname</em> weggelassen wird oder im System nicht vorhanden ist, wird die zuvor gesetzte Schriftart verwendet (wenn es keine gibt, wird die Standard-GUI-Schriftart des Systems verwendet). Dieses Verhalten ist nützlich, um ein GUI-Fenster, das für mehrere Systeme gedacht ist, eine ähnliche Schrift verwenden zu lassen, selbst wenn in einigen dieser Systeme die bevorzugte Schrift fehlt. Das folgende Beispiel bewirkt, dass Verdana gegenüber Arial bevorzugt wird, welches wiederum gegenüber MS Sans Serif bevorzugt wird:</p>
-  <pre>Gui.SetFont(, "MS sans serif")
-Gui.SetFont(, "Arial")
-Gui.SetFont(, "Verdana")  <em>; Bevorzugte Schrift.</em></pre></dd>
+  <pre>MeineGui.SetFont(, "MS sans serif")
+MeineGui.SetFont(, "Arial")
+MeineGui.SetFont(, "Verdana")  <em>; Bevorzugte Schrift.</em></pre></dd>
 </dl>
 <p>Pro forma ist noch zu erwähnen, dass das Betriebssystem vorgefertigte Dialogfenster anbietet, die der Benutzer zum Auswählen einer Farbe, einer Schrift oder eines Symbols verwenden kann. Solche Dialogfenster können via <a href="../commands/DllCall.htm">DllCall</a> angezeigt werden, wie auf <a href="https://github.com/majkinetor/mm-autohotkey/tree/master/Dlg">GitHub</a> gezeigt.</p>
 </div>
@@ -238,24 +274,24 @@ Gui.SetFont(, "Verdana")  <em>; Bevorzugte Schrift.</em></pre></dd>
 <div class="methodShort" id="BackColor">
 <h2>BackColor</h2>
 <p>Ermittelt oder setzt die Hintergrundfarbe des Fensters.</p>
-<pre class="Syntax">ErmittelteFarbe := Gui.BackColor</pre>
-<pre class="Syntax">Gui.BackColor := NeueFarbe</pre>
+<pre class="Syntax">ErmittelteFarbe := MeineGui.BackColor</pre>
+<pre class="Syntax">MeineGui.BackColor := NeueFarbe</pre>
 <p><em>ErmittelteFarbe</em> ist ein 6-stelliger RGB-Wert der aktuellen Farbe, die zuvor von dieser Eigenschaft gesetzt wurde, oder eine leere Zeichenkette, wenn die Standardfarbe genutzt wird.</p>
 <p><em>NeueFarbe</em> ist entweder eine der 16 <a href="../misc/Colors.htm">HTML-Hauptfarben</a>, ein hexadezimaler RGB-Farbwert (das 0x-Präfix ist optional), ein reiner numerischer RGB-Farbwert, oder das Wort Default (oder eine leere Zeichenkette) für dessen Standardfarbe. Beispielwerte: <code>"Silver"</code>, <code>"FFFFAA"</code>, <code>0xFFFFAA</code>, <code>"Default"</code>, <code>""</code>.</p>
 <p>Ein Fenster benutzt als Hintergrundfarbe standardmäßig die vordefinierte Farbe einer Schaltfläche.</p>
 <p>Die Farbe der <a href="#MenuBar">Menüleiste</a> und aller darin enthaltenen Untermenüs können wie folgt geändert werden: <code>MeineMenüleiste.<a href="Menu.htm#SetColor">SetColor</a> "White"</code>.</p>
 <p>Mit <a href="../commands/WinSetTransColor.htm">WinSetTransColor</a> kann der Hintergrund transparent gemacht werden. Wenn Sie dies jedoch tun, ohne zuvor eine benutzerdefinierte Fensterfarbe via <a href="#BackColor">Gui.BackColor</a> zugewiesen zu haben, werden Button-Steuerelemente ebenfalls transparent. Um das zu verhindern, weisen Sie zunächst eine benutzerdefinierte Farbe zu und machen Sie diese dann transparent. Zum Beispiel:</p>
-<pre>Gui.BackColor := "EEAA99"
-WinSetTransColor("EEAA99")</pre>
-<p>Die folgende Zeile kann hinzugefügt werden, um zusätzlich den Rahmen und die Titelleiste eines Fensters zu entfernen: <code>Gui.Opt("-Caption")</code></p>
+<pre>MeineGui.BackColor := "EEAA99"
+WinSetTransColor("EEAA99", MeineGui)</pre>
+<p>Die folgende Zeile kann hinzugefügt werden, um zusätzlich den Rahmen und die Titelleiste eines Fensters zu entfernen: <code>MeineGui.Opt("-Caption")</code></p>
 <p>Weiter unten finden Sie das Beispiel einer Bildschirmanzeige (OSD), die zeigt, wie diese Methode praktisch eingesetzt werden kann.</p>
 </div>
 
 <div class="methodShort" id="MarginX">
 <h2>MarginX</h2>
 <p>Ermittelt oder setzt die Größe von horizontalen Abständen zwischen den Rändern und danach erstellten Steuerelementen.</p>
-<pre class="Syntax">ErmittelterWert := Gui.MarginX</pre>
-<pre class="Syntax">Gui.MarginX := NeuerWert</pre>
+<pre class="Syntax">ErmittelterWert := MeineGui.MarginX</pre>
+<pre class="Syntax">MeineGui.MarginX := NeuerWert</pre>
 <p><em>ErmittelterWert</em> ist die Anzahl der Pixel, die aktuell für den horizontalen Abstand gesetzt ist.</p>
 <p><em>NeuerWert</em> ist die Anzahl der Pixel, die auf der linken und rechten Seite des Fensters freigelassen werden sollen, wenn Steuerelemente aufgrund fehlender <a href="#XY">X-Koordinate</a> automatisch positioniert werden. Dieser Abstand wird auch genutzt, um den horizontalen Abstand zwischen automatisch positionierten Steuerelementen zu bestimmen. Außerdem wird dieser Abstand zur Berechnung der Fenstergröße herangezogen, wenn <a href="#Show">Gui.Show</a> das erste Mal verwendet wird (wenn keine explizite Größe angegeben ist).</p>
 <p>Standardmäßig ist dieser Abstand proportional zur Größe der aktuell ausgewählten <a href="#SetFont">Schrift</a> (1.25 mal Schriftbreite für Links &amp; Rechts).</p>
@@ -264,8 +300,8 @@ WinSetTransColor("EEAA99")</pre>
 <div class="methodShort" id="MarginY">
 <h2>MarginY</h2>
 <p>Ermittelt oder setzt die Größe von vertikalen Abständen zwischen den Rändern und danach erstellten Steuerelementen.</p>
-<pre class="Syntax">ErmittelterWert := Gui.MarginY</pre>
-<pre class="Syntax">Gui.MarginY := NeuerWert</pre>
+<pre class="Syntax">ErmittelterWert := MeineGui.MarginY</pre>
+<pre class="Syntax">MeineGui.MarginY := NeuerWert</pre>
 <p><em>ErmittelterWert</em> ist die Anzahl der Pixel, die aktuell für den vertikalen Abstand gesetzt ist.</p>
 <p><em>NeuerWert</em> ist die Anzahl der Pixel, die auf der oberen und unteren Seite des Fensters freigelassen werden sollen, wenn Steuerelemente aufgrund fehlender <a href="#XY">Y-Koordinate</a> automatisch positioniert werden. Dieser Abstand wird auch genutzt, um den vertikalen Abstand zwischen automatisch positionierten Steuerelementen zu bestimmen. Außerdem wird dieser Abstand zur Berechnung der Fenstergröße herangezogen, wenn <a href="#Show">Gui.Show</a> das erste Mal verwendet wird (wenn keine explizite Größe angegeben ist).</p>
 <p>Standardmäßig ist dieser Abstand proportional zur Größe der aktuell ausgewählten <a href="#SetFont">Schrift</a> (0.75 mal Schrifthöhe für Unten &amp; Oben).</p>
@@ -274,40 +310,40 @@ WinSetTransColor("EEAA99")</pre>
 <div class="methodShort" id="Opt">
 <h2>Opt</h2>
 <p>Setzt eine oder mehrere Optionen für das GUI-Fenster.</p>
-<pre class="Syntax">Gui.<span class="func">Opt</span>(Optionen)</pre>
+<pre class="Syntax">MeineGui.<span class="func">Opt</span>(Optionen)</pre>
 <dl>
   <dt>Optionen</dt><dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
   <p>Aus Leistungsgründen ist es besser, alle Optionen auf einer Zeile zu setzen, bevor das Fenster erstellt wird (das heißt, bevor andere Methoden wie <a href="#Add">Gui.Add</a> verwendet werden).</p>
   <p>Der Effekt dieser Methode ist kumulativ (summierend); das heißt, dass diese Methode nur die explizit angegebenen Optionen ändert, alle anderen bleiben unverändert.</p>
-  <p>Geben Sie ein Pluszeichen an, um die Option hinzuzufügen, oder ein Minuszeichen, um sie zu entfernen. Zum Beispiel: <code>Gui.Opt("+Resize -MaximizeBox")</code>.</p>
+  <p>Geben Sie ein Pluszeichen an, um die Option hinzuzufügen, oder ein Minuszeichen, um sie zu entfernen. Zum Beispiel: <code>MeineGui.Opt("+Resize -MaximizeBox")</code>.</p>
   <p><strong>AlwaysOnTop</strong>: Gibt dem Fenster die Eigenschaft, immer im Vordergrund bzw. immer vor allen anderen Fenstern sichtbar zu sein, was den gleichen Effekt hat wie <a href="../commands/WinSetAlwaysOnTop.htm">WinSetAlwaysOnTop</a>.</p>
   <p><strong>Border</strong>: Stattet das Fenster mit einem dünnen Rahmen aus. Diese Option benutzt man eher selten.</p>
   <p><strong>Caption</strong> (standardmäßig vorhanden): Stattet das Fenster mit einer Titelleiste und einem dicken Rahmen aus. Beachten Sie, dass die Titelleiste eines Fensters erst entfernt werden sollte, nachdem man bestimmte Farben des Fensters via <a href="../commands/WinSetTransColor.htm">WinSetTransColor</a> transparent gemacht hat.</p>
   <p><strong>Disabled</strong>: Deaktiviert das Fenster, um den Benutzer daran zu hindern, mit den darin enthaltenen Steuerelementen zu interagieren. Diese Option wird oft bei Fenstern benutzt, die untergeordnete Fenster haben (siehe <a href="#Owner">Owner</a>).</p>
-  <p id="DPIScale"><strong>DPIScale</strong>: Verwenden Sie <code>Gui.Opt("-DPIScale")</code>, um die üblicherweise aktive DPI-Skalierung zu deaktivieren. Wenn die DPI-Skalierung auf einem System mit benutzerdefinierter DPI-Einstellung aktiviert ist, passen Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a> automatisch ihre Koordinaten und Größen an, um Steuerelemente in etwa gleich groß aussehen zu lassen (aber in höherer Auflösung). Bei einem DPI-Wert von beispielsweise 144 (150%) würde <code>E := Gui.Add("Edit", "w100")</code> das Gui-Steuerelement 150 Pixel breit machen, aber <a href="GuiControl.htm#GetPos">E.GetPos(,,W)</a> würde <em>W</em> weiterhin auf 100 setzen. <a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> enthält die aktuelle DPI des Systems.</p>
+  <p id="DPIScale"><strong>DPIScale</strong>: Verwenden Sie <code>MeineGui.Opt("-DPIScale")</code>, um die üblicherweise aktive DPI-Skalierung zu deaktivieren. Wenn die DPI-Skalierung auf einem System mit benutzerdefinierter DPI-Einstellung aktiviert ist, passen Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a> automatisch ihre Koordinaten und Größen an, um Steuerelemente in etwa gleich groß aussehen zu lassen (aber in höherer Auflösung). Bei einem DPI-Wert von beispielsweise 144 (150%) würde <code>E := MeineGui.Add("Edit", "w100")</code> das Gui-Steuerelement 150 Pixel breit machen, aber <code>E.GetPos(,,W)</code> würde <em>W</em> weiterhin auf 100 setzen. <a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> enthält die aktuelle DPI des Systems.</p>
   <p>Die DPI-Skalierung betrifft nur Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a>; das heißt, dass Koordinaten aus anderen Quellen wie ControlGetPos oder WinGetPos nicht funktionieren werden. Es gibt eine Reihe von Möglichkeiten, damit umzugehen:</p>
   <ul>
     <li>Vermeiden Sie hartcodierte Koordinaten, wenn möglich. Zum Beispiel können Sie zum Positionieren von Steuerelementen die Optionen <a href="#xp">xp</a>, <a href="#xs">xs</a>, <a href="#xm">xm</a> und <a href="#PosPlusMargin">x+m</a> nutzen und als Höhe <a href="#R">Textreihen</a> statt Pixel angeben.</li>
-    <li>Sie können die Skalierung jederzeit aktivieren (<code>Gui.Opt("+DPIScale")</code>) und deaktivieren (<code>Gui.Opt("-DPIScale")</code>). Die Änderung der Einstellung hat keinen Einfluss auf bereits gesetzte Positionen oder Größen.</li>
+    <li>Sie können die Skalierung jederzeit aktivieren (<code>MeineGui.Opt("+DPIScale")</code>) und deaktivieren (<code>MeineGui.Opt("-DPIScale")</code>). Die Änderung der Einstellung hat keinen Einfluss auf bereits gesetzte Positionen oder Größen.</li>
     <li>Passen Sie die Koordinaten manuell an. <code>x*(A_ScreenDPI/96)</code> beispielsweise wandelt logische Koordinaten bzw. GUI-Koordinaten (in diesem Fall x) in physische Koordinaten bzw. Nicht-GUI-Koordinaten um.</li>
   </ul>
   <p id="LastFound"><strong>LastFound</strong>: Definiert das Fenster als das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> (obwohl das in einem <a href="GuiOnEvent.htm#Threads">GUI-Thread</a> nicht notwendig ist, weil dies automatisch geschieht), damit Funktionen wie <a href="../commands/WinGetStyle.htm">WinGetStyle</a> und <a href="../commands/WinSetTransparent.htm">WinSetTransparent</a> mit diesem Fenster interagieren können, sogar wenn es versteckt ist (das heißt, dass <a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> nicht notwendig ist). Diese Option ist besonders nützlich, um die Eigenschaften des Fensters zu ändern, bevor es angezeigt wird. Zum Beispiel:</p>
-  <pre>Gui.Opt("+LastFound")
-WinSetTransColor(BeliebigeFarbe " 150")
-Gui.Show()</pre>
+  <pre>MeineGui.Opt("+LastFound")
+WinSetTransColor(BeliebigeFarbe " 150", MeineGui)
+MeineGui.Show()</pre>
   <p id="MaximizeBox"><strong>MaximizeBox</strong>: Aktiviert die Titelleistenschaltfläche zum Maximieren des Fensters. Diese Option ist auch Bestandteil von <em>Resize</em> (siehe unten).</p>
   <p id="MinimizeBox"><strong>MinimizeBox</strong> (standardmäßig vorhanden): Aktiviert die Titelleistenschaltfläche zum Minimieren des Fensters.</p>
-  <p id="MinSize"><strong>MinSize</strong> und <strong>MaxSize</strong>: Legt die minimale und/oder maximale Größe des Fensters fest, z. B. wenn der Benutzer die Kanten des Fensters zieht, um es kleiner oder größer zu machen. Geben Sie das Wort <em>MinSize</em> und/oder <em>MaxSize</em> ohne Suffix an, um die aktuelle Größe des Fensters als Grenzwert zu nutzen (wenn das Fenster keine aktuelle Größe hat, wird die gesetzte Größe des ersten <a href="#Show">Gui.Show</a> verwendet). Alternativ können Sie auch die Breite, ein X und dann die Höhe anfügen; zum Beispiel: <code>Gui.Opt("+Resize +MinSize640x480")</code>. Diese Dimensionen (in Pixel) spezifizieren die Größe des Clientbereichs des Fensters (das ist der Bereich ohne Rahmen, Titelleiste und <a href="#MenuBar">Menüleiste</a>). Jede Zahl muss im dezimalen Format sein.</p>
+  <p id="MinSize"><strong>MinSize</strong> und <strong>MaxSize</strong>: Legt die minimale und/oder maximale Größe des Fensters fest, z. B. wenn der Benutzer die Kanten des Fensters zieht, um es kleiner oder größer zu machen. Geben Sie das Wort <em>MinSize</em> und/oder <em>MaxSize</em> ohne Suffix an, um die aktuelle Größe des Fensters als Grenzwert zu nutzen (wenn das Fenster keine aktuelle Größe hat, wird die gesetzte Größe des ersten <a href="#Show">Gui.Show</a> verwendet). Alternativ können Sie auch die Breite, ein X und dann die Höhe anfügen; zum Beispiel: <code>MeineGui.Opt("+Resize +MinSize640x480")</code>. Diese Dimensionen (in Pixel) spezifizieren die Größe des Clientbereichs des Fensters (das ist der Bereich ohne Rahmen, Titelleiste und <a href="#MenuBar">Menüleiste</a>). Jede Zahl muss im dezimalen Format sein.</p>
   <p>Die Breite oder Höhe kann weggelassen werden, um sie unverändert zu lassen (z. B. <code>+MinSize640x</code> oder <code>+MinSizex480</code>). Darüber hinaus kann Min/MaxSize mehrfach angegeben werden, um eine Dimension mit der aktuellen Größe des Fensters und die andere mit einer expliziten Größe zu versehen. <code>+MinSize +MinSize640x</code> beispielsweise verwendet die aktuelle Größe des Fensters für die Höhe und 640 Pixel für die Breite.</p>
-  <p>Wenn <em>MinSize</em> und <em>MaxSize</em> nie genutzt werden, gelten die Standardwerte des Betriebssystems (ähnlich wie <code>Gui.Opt("-MinSize -MaxSize")</code>, was auch die Standardwerte wiederherstellt). Hinweis: Das Fenster muss <a href="#Resize">+Resize</a> haben, damit der Benutzer es kleiner oder größer machen kann.</p>
-  <p id="OwnDialogs"><strong>OwnDialogs</strong>: <code>Gui.Opt("+OwnDialogs")</code> bewirkt, dass alle nachfolgenden <a href="../commands/MsgBox.htm">MsgBox</a>-, <a href="../commands/InputBox.htm">InputBox</a>-, <a href="../commands/FileSelect.htm">FileSelect</a>- oder <a href="../commands/DirSelect.htm">DirSelect</a>-Dialogfenster im aktuellen <a href="../misc/Threads.htm">Thread</a> (z. B. eine ereignisbehandelnde Funktion eines Button-Steuerelements) dem aktuellen Fenster untergeordnet werden. Solche Dialogfenster werden dabei modal; das heißt, dass der Benutzer das Dialogfenster schließen muss, bevor er weiter mit dem GUI-Fenster interagieren kann. Ein <a href="../commands/ToolTip.htm">ToolTip</a> kann hingegen nicht modal gemacht werden, selbst wenn es einem Fenster untergeordnet wird; dieses befinden sich immer über dem Hauptfenster. Untergeordnete Dialogfenster werden automatisch zerstört, sobald das Hauptfenster <a href="#Destroy">zerstört</a> wird.</p>
-  <p>Normalerweise ist es nicht notwendig, diese Einstellung wieder zu deaktivieren, weil sie keine Auswirkung auf andere <a href="../misc/Threads.htm">Threads</a> hat. Verwenden Sie je nach Bedarf <code>Gui.Opt("-OwnDialogs")</code>, um ein Thread sowohl untergeordnete als auch nicht-untergeordnete Dialogfenster anzeigen zu lassen.</p>
+  <p>Wenn <em>MinSize</em> und <em>MaxSize</em> nie genutzt werden, gelten die Standardwerte des Betriebssystems (ähnlich wie <code>MeineGui.Opt("-MinSize -MaxSize")</code>, was auch die Standardwerte wiederherstellt). Hinweis: Das Fenster muss <a href="#Resize">+Resize</a> haben, damit der Benutzer es kleiner oder größer machen kann.</p>
+  <p id="OwnDialogs"><strong>OwnDialogs</strong>: <code>MeineGui.Opt("+OwnDialogs")</code> bewirkt, dass alle nachfolgenden <a href="../commands/MsgBox.htm">MsgBox</a>-, <a href="../commands/InputBox.htm">InputBox</a>-, <a href="../commands/FileSelect.htm">FileSelect</a>- oder <a href="../commands/DirSelect.htm">DirSelect</a>-Dialogfenster im aktuellen <a href="../misc/Threads.htm">Thread</a> (z. B. eine ereignisbehandelnde Funktion eines Button-Steuerelements) dem aktuellen Fenster untergeordnet werden. Solche Dialogfenster werden dabei modal; das heißt, dass der Benutzer das Dialogfenster schließen muss, bevor er weiter mit dem GUI-Fenster interagieren kann. Ein <a href="../commands/ToolTip.htm">ToolTip</a> kann hingegen nicht modal gemacht werden, selbst wenn es einem Fenster untergeordnet wird; dieses befinden sich immer über dem Hauptfenster. Untergeordnete Dialogfenster werden automatisch zerstört, sobald das Hauptfenster <a href="#Destroy">zerstört</a> wird.</p>
+  <p>Normalerweise ist es nicht notwendig, diese Einstellung wieder zu deaktivieren, weil sie keine Auswirkung auf andere <a href="../misc/Threads.htm">Threads</a> hat. Verwenden Sie je nach Bedarf <code>MeineGui.Opt("-OwnDialogs")</code>, um ein Thread sowohl untergeordnete als auch nicht-untergeordnete Dialogfenster anzeigen zu lassen.</p>
   <p id="Owner"><strong>Owner</strong>: Mit <em>+Owner</em> kann das Fenster einem anderen Fenster untergeordnet werden. Ein untergeordnetes Fenster hat standardmäßig keine eigene Taskleistenschaltfläche und befindet sich, sofern sichtbar, immer über dem Hauptfenster. Es wird automatisch zerstört, sobald das Hauptfenster zerstört wird. <em>Owner</em> kann vor oder nach Erstellen des Hauptfensters verwendet werden. Es gibt zwei Möglichkeiten, wie man <em>+Owner</em> nutzen kann:</p>
-  <pre>Gui.Opt("+Owner" AndereGui.Hwnd)  <em>; Definiert die GUI als Unterfenster von <i>AndereGui</i>.</em>
-Gui.Opt("+Owner")  <em>; Definiert die GUI als Unterfenster vom <a href="../Variables.htm#ScriptHwnd">Hauptfenster des Skripts</a>, um deren Taskleistenschaltfläche zu verstecken.</em></pre>
+  <pre>MeineGui.Opt("+Owner" AndereGui.Hwnd)  <em>; Definiert die GUI als Unterfenster von <i>AndereGui</i>.</em>
+MeineGui.Opt("+Owner")  <em>; Definiert die GUI als Unterfenster vom <a href="../Variables.htm#ScriptHwnd">Hauptfenster des Skripts</a>, um deren Taskleistenschaltfläche zu verstecken.</em></pre>
   <p>Verwenden Sie <code>+Owner</code> und direkt danach die <a href="#Hwnd">HWND-Nummer (eindeutige ID)</a> eines beliebigen nicht-untergeordneten Fensters.</p>
-  <p>Um dem Benutzer die Interaktion mit dem Hauptfenster zu verbieten, während ein untergeordnetes Fenster angezeigt wird, nutzen Sie <code>Gui.Opt("+Disabled")</code>. Später kann man die Interaktion mit dem Hauptfenster, nachdem das untergeordnete Fenster geschlossen oder entfernt wurde, wieder mit <code>Gui.Opt("-Disabled")</code> erlauben. Dies sollte aber erfolgen, bevor das untergeordnete Fenster geschlossen bzw. zerstört wird, damit das übergeordnete Fenster automatisch reaktiviert werden kann.</p>
+  <p>Um dem Benutzer die Interaktion mit dem Hauptfenster zu verbieten, während ein untergeordnetes Fenster angezeigt wird, nutzen Sie <code>MeineGui.Opt("+Disabled")</code>. Später kann man die Interaktion mit dem Hauptfenster, nachdem das untergeordnete Fenster geschlossen oder entfernt wurde, wieder mit <code>MeineGui.Opt("-Disabled")</code> erlauben. Dies sollte aber erfolgen, bevor das untergeordnete Fenster geschlossen bzw. zerstört wird, damit das übergeordnete Fenster automatisch reaktiviert werden kann.</p>
   <p id="Parent"><strong>Parent</strong>: Verwenden Sie <code>+Parent</code> und direkt danach die <a href="#Hwnd">HWND-Nummer (eindeutige ID)</a> eines beliebigen Fensters oder Steuerelements, um der GUI eines dieser Genannten überzuordnen. Mit <code>-Parent</code> kann die GUI wieder in ein nicht-untergeordnetes Fenster umgewandelt werden. Diese Option funktioniert auch, nachdem das Fenster erstellt wurde.</p>
   <p id="Resize"><strong>Resize</strong>: Aktiviert die Größenänderung des Fensters und die Titelleistenschaltfläche zum Maximieren des Fensters. Mit <code>+Resize -MaximizeBox</code> kann die Aktivierung der Schaltfläche zum Maximieren des Fensters verhindert werden.</p>
   <p><strong>SysMenu</strong> (standardmäßig vorhanden): Geben Sie <code>-SysMenu</code> (minus SysMenu) an, um das Systemmenü und Symbol in der oberen linken Ecke des Fensters zu entfernen. Die Titelleistenschaltflächen zum Minimieren, Maximieren und Schließen des Fensters werden auch entfernt.</p>
@@ -321,54 +357,54 @@ Gui.Opt("+Owner")  <em>; Definiert die GUI als Unterfenster vom <a href="../Vari
 <div class="methodShort" id="FocusedCtrl">
 <h2>FocusedCtrl</h2>
 <p>Ermittelt das <a href="GuiControl.htm">GuiControl-Objekt</a> des fokussierten Steuerelements in der GUI.</p>
-<pre class="Syntax">GuiCtrlObj := Gui.FocusedCtrl</pre>
+<pre class="Syntax">GuiCtrlObj := MeineGui.FocusedCtrl</pre>
 <p>Hinweis: Um die gewünschte Wirkung zu erzielen, darf das Fenster weder minimiert noch versteckt sein.</p>
 </div>
 
 <div class="methodShort" id="MenuBar">
 <h2>MenuBar</h2>
 <p>Ermittelt oder setzt die Menüleiste des Fensters.</p>
-<pre class="Syntax">Gui.MenuBar := Menüleiste</pre>
-<pre class="Syntax">Menüleiste := Gui.MenuBar</pre>
-<p><em>Menüleiste</em> ist ein <a href="Menu.htm">MenuBar-Objekt</a>, das mit der <a href="../commands/MenuBarCreate.htm">MenuCreate</a>-Funktion erstellt wurde. Zum Beispiel:</p>
-<pre>Dateimenü := MenuCreate()
+<pre class="Syntax">MeineGui.MenuBar := Menüleiste</pre>
+<pre class="Syntax">Menüleiste := MeineGui.MenuBar</pre>
+<p><em>Menüleiste</em> ist ein <a href="Menu.htm">MenuBar-Objekt</a>, das mit <a href="Menu.htm#New">MenuBar.New()</a> erstellt wurde. Zum Beispiel:</p>
+<pre>Dateimenü := Menu.New()
 Dateimenü.Add "Ö&amp;ffnen`tCtrl+F", (*) =&gt; FileSelect()  <em>; Siehe untere Bemerkungen zu Ctrl+F.</em>
 Dateimenü.Add "&amp;Beenden", (*) =&gt; ExitApp()
-Hilfsmenü := MenuCreate()
+Hilfsmenü := Menu.New()
 Hilfsmenü.Add "Inf&amp;o", (*) =&gt; MsgBox("Nicht implementiert")
-Menüs := MenuBarCreate()
+Menüs := MenuBar.New()
 Menüs.Add "&amp;Datei", Dateimenü  <em>; Fügt die zwei oben erstellten Untermenüs hinzu.</em>
 Menüs.Add "&amp;?", Hilfsmenü
-Gui := GuiCreate()
-Gui.MenuBar := Menüs
-Gui.Show "w300 h200"</pre>
+MeineGui := Gui.New()
+MeineGui.MenuBar := Menüs
+MeineGui.Show "w300 h200"</pre>
 <p>In der ersten Zeile oben ist zu erkennen, dass nach <code>Ö&amp;ffnen</code> das Tastenkürzel <code>Ctrl+F</code> erfolgt (mit einem Tabulatorzeichen dazwischen). Wenn der Benutzer dieses Tastenkürzel drückt, wird die Aktion des Menüpunkts ausgeführt, ohne dass er erst dorthin navigieren muss. Tastenkürzel mit den Standardmodifikatoren Ctrl, Alt und Shift werden automatisch als <em>Keyboard Accelerator</em> für die GUI registriert. Keyboard Accelerators ohne Modifikatoren sind Groß-/Kleinschreibung-sensitiv und können nur durch ungewöhnliche Mitteln wie IME oder <kbd>Alt</kbd>+NNNN ausgelöst werden.</p>
 <p>Wenn eine bestimmte Tastenkombination nicht automatisch funktioniert, muss eventuell ein <a href="../commands/_HotIf.htm">kontextabhängiger Hotkey</a> verwendet werden. Beachten Sie aber, dass solche Hotkeys üblicherweise nicht durch <a href="../commands/Send.htm">Send</a> ausgelöst werden können und dass sie, im Gegensatz zu einem typischen Keyboard Accelerator, andere Skripte stören können.</p>
-<p>Verwenden Sie <code>Gui.MenuBar := ""</code> (bzw. weisen Sie eine leere Zeichenkette zu), um die aktuelle Menüleiste des Fensters zu entfernen.</p>
+<p>Verwenden Sie <code>MeineGui.MenuBar := ""</code> (bzw. weisen Sie eine leere Zeichenkette zu), um die aktuelle Menüleiste des Fensters zu entfernen.</p>
 </div>
 
 <div class="methodShort" id="Minimize">
 <h2>Minimize</h2>
 <p>Macht das Fenster wieder sichtbar (falls notwendig) und minimiert es.</p>
-<pre class="Syntax">Gui.<span class="func">Minimize</span>()</pre>
+<pre class="Syntax">MeineGui.<span class="func">Minimize</span>()</pre>
 </div>
 
 <div class="methodShort" id="Maximize">
 <h2>Maximize</h2>
 <p>Macht das Fenster wieder sichtbar (falls notwendig) und maximiert es.</p>
-<pre class="Syntax">Gui.<span class="func">Maximize</span>()</pre>
+<pre class="Syntax">MeineGui.<span class="func">Maximize</span>()</pre>
 </div>
 
 <div class="methodShort" id="Restore">
 <h2>Restore</h2>
 <p>Macht das Fenster wieder sichtbar (falls notwendig) und stellt dessen ursprünglichen Zustand wieder her, falls es zuvor minimiert oder maximiert war.</p>
-<pre class="Syntax">Gui.<span class="func">Restore</span>()</pre>
+<pre class="Syntax">MeineGui.<span class="func">Restore</span>()</pre>
 </div>
 
 <div class="methodShort" id="Move">
 <h2>Move</h2>
 <p>Verschiebt das GUI-Fenster und/oder ändert dessen Größe.</p>
-<pre class="Syntax">Gui.<span class="func">Move</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
+<pre class="Syntax">MeineGui.<span class="func">Move</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
 <dl>
   <dt>X, Y</dt><dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
@@ -378,7 +414,7 @@ Gui.Show "w300 h200"</pre>
     <p>Die neue Größe.</p></dd>
 </dl>
 <p>Im Gegensatz zu <a href="../commands/WinMove.htm">WinMove</a> wendet diese Methode die <a href="Gui.htm#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
-<h3>Beispiele</h3>
+<p>Beispiele:</p>
 <pre>MeineGui.Move(10, 20, 200, 100)
 MeineGui.Move(VarX+10, VarY+5, VarW*2, VarH*1.5)
 
@@ -390,23 +426,23 @@ MeineGui.Move(x-10,, w+20)</pre>
 <div class="methodShort" id="GetPos">
 <h2>GetPos</h2>
 <p>Ermittelt die Position und Größe des GUI-Fensters.</p>
-<pre class="Syntax">Gui.<span class="func">GetPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
+<pre class="Syntax">MeineGui.<span class="func">GetPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
 <p>Jeder Parameter muss eine Variable sein, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Fensters. X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Fensters, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand des Fensters (in Pixel).</p>
-<p>Im Gegensatz zu <a href="../commands/WinGetPos.htm">WinGetPos</a> wendet GetPos die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
+<p>Im Gegensatz zu <a href="../commands/WinGetPos.htm">WinGetPos</a> wendet diese Methode die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
 </div>
 
 <div class="methodShort" id="GetClientPos">
 <h2>GetClientPos</h2>
 <p>Ermittelt die Position und Größe des Clientbereichs eines GUI-Fensters.</p>
-<pre class="Syntax">Gui.<span class="func">GetClientPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
+<pre class="Syntax">MeineGui.<span class="func">GetClientPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
 <p>Jeder Parameter muss eine Variable sein, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Clientbereich des Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen). X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Clientbereichs, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand (in Pixel).</p>
-<p>Im Gegensatz zu <a href="../commands/WinGetClientPos.htm">WinGetClientPos</a> wendet GetClientPos die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
+<p>Im Gegensatz zu <a href="../commands/WinGetClientPos.htm">WinGetClientPos</a> wendet diese Methode die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
 </div>
 
 <div class="methodShort" id="Flash">
 <h2>Flash</h2>
 <p>Lässt die Taskleistenschaltfläche des Fensters einmal aufblinken.</p>
-<pre class="Syntax">Gui.<span class="func">Flash</span>(<span class="optional">Blinken := True</span>)</pre>
+<pre class="Syntax">MeineGui.<span class="func">Flash</span>(<span class="optional">Blinken := True</span>)</pre>
 <dl>
   <dt>Blinken</dt><dd>
     <p>Typ: <a href="../Concepts.htm#boolean">Integer (boolescher Wert)</a></p>
@@ -416,7 +452,7 @@ MeineGui.Move(x-10,, w+20)</pre>
 <p>Das folgende Beispiel lässt das Fenster dreimal aufblinken, weil jedes Paar von "Gui Flash" die Farben des Fensters invertiert und wiederherstellt:</p>
 <pre>Loop 6
 {
-    Gui.Flash
+    MeineGui.Flash
     Sleep 500  <em>; Dieser Wert ist ziemlich empfindlich; Änderungen können zu unerwarteten Ergebnissen führen.</em>
 }</pre>
 </div>
@@ -424,21 +460,21 @@ MeineGui.Move(x-10,, w+20)</pre>
 <div class="methodShort" id="Hwnd">
 <h2>Hwnd</h2>
 <p>Ermittelt die HWND-Nummer (eindeutige ID) des GUI-Fensters.</p>
-<pre class="Syntax">AktuellerHwnd := Gui.Hwnd</pre>
+<pre class="Syntax">AktuelleHwnd := MeineGui.Hwnd</pre>
 <p>Die HWND-Nummer einer GUI wird oft in Verbindung mit <a href="../commands/PostMessage.htm">PostMessage</a>, <a href="../commands/SendMessage.htm">SendMessage</a> und <a href="../commands/DllCall.htm">DllCall</a> genutzt. Außerdem kann diese Nummer direkt als <a href="../misc/WinTitle.htm#ahk_id">ahk_id-Fenstertitel</a> verwendet werden.</p></div>
 
 <div class="methodShort" id="Title">
 <h2>Title</h2>
 <p>Ermittelt oder setzt den Titel des GUI-Fensters.</p>
-<pre class="Syntax">ErmittelterTitel := Gui.Title</pre>
-<pre class="Syntax">Gui.Title := NeuerTitel</pre>
+<pre class="Syntax">ErmittelterTitel := MeineGui.Title</pre>
+<pre class="Syntax">MeineGui.Title := NeuerTitel</pre>
 </div>
 
 <div class="methodShort" id="Name">
 <h2>Name</h2>
 <p>Ermittelt oder setzt einen benutzerdefinierten Namen für das GUI-Fenster.</p>
-<pre class="Syntax">ErmittelterName := Gui.Name</pre>
-<pre class="Syntax">Gui.Name := NeuerName</pre>
+<pre class="Syntax">ErmittelterName := MeineGui.Name</pre>
+<pre class="Syntax">MeineGui.Name := NeuerName</pre>
 </div>
 
 <div class="methodShort" id="__Item">
@@ -464,22 +500,22 @@ MeineGui.Move(x-10,, w+20)</pre>
   </dd>
 </dl>
 <p>Zum Beispiel:</p>
-<pre>For Hwnd, GuiCtrlObj in GuiObj
+<pre>For Hwnd, GuiCtrlObj in MeineGui
     MsgBox "Steuerelement #" A_Index " ist " GuiCtrlObj.ClassNN</pre>
 </div>
 
 <h2 id="Navigate">Navigation mit der Tastatur</h2>
 <p>Mit der <kbd>Tab</kbd>-Taste ist es möglich, den Tastaturfokus jeweils auf das nächste eingabefähige Steuerelement in einem GUI-Fenster zu setzen (Steuerelemente mit deaktiviertem <a href="#Tabstop">Tabstop</a>-Style werden übersprungen). In welcher Reihenfolge die Steuerelemente navigiert werden, ist abhängig davon, zu welchem Zeitpunkt sie hinzugefügt wurden. Wenn das Fenster zum ersten Mal angezeigt wird, bekommt das erste eingabefähige Steuerelement mit aktiviertem Tabstop-Style (was auf die meisten zutrifft) den Tastaturfokus.</p>
 <p id="ShortcutKey">Bestimmte Steuerelemente können ein Und-Zeichen (&amp;) enthalten, um ein Tastenkürzel zu erstellen, das im Text des Steuerelements je nach Systemeinstellungen als unterstrichenes Zeichen dargestellt wird. Um so ein Tastenkürzel auszulösen, muss der Benutzer die <kbd>Alt</kbd>-Taste gedrückt halten und dann das entsprechende Zeichen auf der Tastatur drücken. Drückt man das Tastenkürzel von einem Button, einer CheckBox oder einem Radio-Button, ist der Effekt das gleiche wie, als würde man das Steuerelement anklicken. Drückt man das Tastenkürzel von einer GroupBox oder einem Text-Steuerelement, wird der Tastaturfokus auf das erste eingabefähige <a href="#Tabstop">Tabstop</a>-Steuerelement gesetzt, welches danach erstellt wurde. Wenn mehrere Steuerelemente das gleiche Tastenkürzel verwenden und drückt man dieses, springt der Tastaturfokus zwischen solchen Steuerelementen abwechselnd hin und her.</p>
-<p>Geben Sie zwei aufeinanderfolgende Und-Zeichen an, um ein direkt geschriebenes Und-Zeichen in einem der oben genannten Steuerelementen anzuzeigen. Zum Beispiel: <code>Gui.Add("Button",, "Speichern &amp;&amp; Beenden")</code>.</p>
+<p>Geben Sie zwei aufeinanderfolgende Und-Zeichen an, um ein direkt geschriebenes Und-Zeichen in einem der oben genannten Steuerelementen anzuzeigen. Zum Beispiel: <code>MeineGui.Add("Button",, "Speichern &amp;&amp; Beenden")</code>.</p>
 
 <h2 id="Appear">Fensterdarstellung</h2>
 <p>Ein GUI-Fenster verwendet als Symbol das Tray-Symbol, welches zum Zeitpunkt der Erstellung des Fensters wirksam war. Daher muss, sofern ein anderes Symbol angezeigt werden soll, das Tray-Symbol vor der Erstellung des Fensters geändert werden. Zum Beispiel: <code><a href="../commands/TraySetIcon.htm">TraySetIcon</a>("MeinSymbol.ico")</code>. Es ist auch möglich, ein Fenster mit einem anderen großen Symbol zu versehen (das große Symbol wird im Alt-Tab-Fenster angezeigt). Dazu verwendet man <a href="../commands/LoadPicture.htm">LoadPicture</a> und <a href="../commands/SendMessage.htm">SendMessage</a>; zum Beispiel:</p>
 <pre>Symbolgröße := 32  <em>; Die ideale Größe für Alt-Tab variiert je nach System und Windows-Version.</em>
 hIcon := LoadPicture("Mein Symbol.ico", "Icon1 w" Symbolgröße " h" Symbolgröße, Bildtyp)
-Gui := GuiCreate("+LastFound")
-SendMessage(0x80, 1, hIcon)  <em>; 0x80 ist WM_SETICON; und 1 bedeutet ICON_BIG (0 wäre ICON_SMALL).</em>
-Gui.Show()</pre>
+MeineGui := Gui.New()
+SendMessage(0x80, 1, hIcon, MeineGui)  <em>; 0x80 ist WM_SETICON; und 1 bedeutet ICON_BIG (0 wäre ICON_SMALL).</em>
+MeineGui.Show()</pre>
 <p>Aufgrund von systeminternen Einschränkungen werden CheckBox-, Radio- und GroupBox-Steuerelemente mit benutzerdefinierter Textfarbe im klassischen Design dargestellt.</p>
 <p>Verwandtes Thema: <a href="#MarginX">Margin</a> (Abstände innerhalb eines Fensters).</p>
 
@@ -491,28 +527,28 @@ Gui.Show()</pre>
 <p>Wenn das Skript aus irgendeinem Grund nicht <a href="../Scripts.htm#persistent">persistent</a> ist, wird es beendet, nachdem das letzte sichtbare GUI-Fenster geschlossen wurde; entweder erst, wenn der letzte Threads endet, oder sofort, wenn keine Threads laufen.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="../commands/GuiCreate.htm">GuiCreate</a>, <a href="GuiControl.htm">GuiControl-Objekt</a>, <a href="../commands/GuiFromHwnd.htm">GuiFromHwnd</a>, <a href="../commands/GuiCtrlFromHwnd.htm">GuiCtrlFromHwnd</a>, <a href="../commands/GuiControls.htm">Steuerelemente</a>, <a href="../commands/ListView.htm">ListView</a>, <a href="../commands/TreeView.htm">TreeView</a>, <a href="Menu.htm">Menu-Objekt</a>, <a href="../commands/Control.htm">Control-Funktionen</a>, <a href="../commands/MsgBox.htm">MsgBox</a>, <a href="../commands/FileSelect.htm">FileSelect</a>, <a href="../commands/DirSelect.htm">DirSelect</a></p>
+<p><a href="GuiControl.htm">GuiControl-Objekt</a>, <a href="../commands/GuiFromHwnd.htm">GuiFromHwnd</a>, <a href="../commands/GuiCtrlFromHwnd.htm">GuiCtrlFromHwnd</a>, <a href="../commands/GuiControls.htm">Steuerelemente</a>, <a href="../commands/ListView.htm">ListView</a>, <a href="../commands/TreeView.htm">TreeView</a>, <a href="Menu.htm">Menu-Objekt</a>, <a href="../commands/Control.htm">Control-Funktionen</a>, <a href="../commands/MsgBox.htm">MsgBox</a>, <a href="../commands/FileSelect.htm">FileSelect</a>, <a href="../commands/DirSelect.htm">DirSelect</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExPopup">
 <p><a href="#ExPopup">#1</a>: Zeigt ein Begrüßungsfenster an:</p>
-<pre>Gui := GuiCreate(, "Fenstertitel")
-Gui.Opt("+AlwaysOnTop +Disabled -SysMenu +Owner")  <em>; +Owner verhindert eine Taskleistenschaltfläche.</em>
-Gui.Add("Text",, "Beliebiger Text.")
-Gui.Show("NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster seinen Aktivzustand verliert.</em></pre>
+<pre>MeineGui := Gui.New(, "Fenstertitel")
+MeineGui.Opt("+AlwaysOnTop +Disabled -SysMenu +Owner")  <em>; +Owner verhindert eine Taskleistenschaltfläche.</em>
+MeineGui.Add("Text",, "Beliebiger Text.")
+MeineGui.Show("NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster seinen Aktivzustand verliert.</em></pre>
 </div>
 
 <div class="ex" id="ExInputBox">
 <p><a href="#ExInputBox">#2</a>: Ein einfaches Eingabefenster zum Abfragen des Vor- und Nachnamens:</p>
-<pre>Gui := GuiCreate(, "Einfaches Eingabebeispiel")
-Gui.Add("Text",, "Vorname:")
-Gui.Add("Text",, "Nachname:")
-Gui.Add("Edit", "vVorname ym")  <em>; Die ym-Option beginnt eine neue Spalte für Steuerelemente.</em>
-Gui.Add("Edit", "vNachname")
-Gui.Add("Button", "default", "OK").OnEvent("Click", (*) =&gt; VerarbeiteBenutzereingabe(Gui))
-Gui.OnEvent("Close", "VerarbeiteBenutzereingabe")
-Gui.Show()
+<pre>MeineGui := Gui.New(, "Einfaches Eingabebeispiel")
+MeineGui.Add("Text",, "Vorname:")
+MeineGui.Add("Text",, "Nachname:")
+MeineGui.Add("Edit", "vVorname ym")  <em>; Die ym-Option beginnt eine neue Spalte für Steuerelemente.</em>
+MeineGui.Add("Edit", "vNachname")
+MeineGui.Add("Button", "default", "OK").OnEvent("Click", (*) =&gt; VerarbeiteBenutzereingabe(Gui))
+MeineGui.OnEvent("Close", "VerarbeiteBenutzereingabe")
+MeineGui.Show()
 
 VerarbeiteBenutzereingabe(this, *)
 {
@@ -523,20 +559,20 @@ VerarbeiteBenutzereingabe(this, *)
 
 <div class="ex" id="ExTab">
 <p><a href="#ExTab">#3</a>: Erstellt ein Tab-Steuerelement mit mehreren Tabs, die jeweils verschiedene Steuerelemente enthalten, mit denen Sie interagieren können:</p>
-<pre>Gui := GuiCreate()
-Tab := Gui.Add("Tab3",, ["Erster Tab","Zweiter Tab","Dritter Tab"])
-Gui.Add("Checkbox", "vMeineCheckBox", "Kontrollkästchen") 
+<pre>MeineGui := Gui.New()
+Tab := MeineGui.Add("Tab3",, ["Erster Tab","Zweiter Tab","Dritter Tab"])
+MeineGui.Add("Checkbox", "vMeineCheckBox", "Kontrollkästchen") 
 Tab.UseTab(2)
-Gui.Add("Radio", "vMeinRadio", "Optionsfeld 1")
-Gui.Add("Radio",, "Optionsfeld 2")
+MeineGui.Add("Radio", "vMeinRadio", "Optionsfeld 1")
+MeineGui.Add("Radio",, "Optionsfeld 2")
 Tab.UseTab(3)
-Gui.Add("Edit", "vMeinEdit r5")  <em>; r5 bedeutet 5 Reihen hoch.</em>
+MeineGui.Add("Edit", "vMeinEdit r5")  <em>; r5 bedeutet 5 Reihen hoch.</em>
 Tab.UseTab()  <em>; nachfolgende Steuerelemente werden nicht als Teil des Tab-Steuerelements angesehen.</em>
-Btn := Gui.Add("Button", "default xm", "OK")  <em>; xm positioniert die Schaltfläche in die untere linke Ecke.</em>
+Btn := MeineGui.Add("Button", "default xm", "OK")  <em>; xm positioniert die Schaltfläche in die untere linke Ecke.</em>
 Btn.OnEvent("Click", (*) =&gt; VerarbeiteBenutzereingabe(Gui))
-Gui.OnEvent("Close", "VerarbeiteBenutzereingabe")
-Gui.OnEvent("Escape", "VerarbeiteBenutzereingabe")
-Gui.Show()
+MeineGui.OnEvent("Close", "VerarbeiteBenutzereingabe")
+MeineGui.OnEvent("Escape", "VerarbeiteBenutzereingabe")
+MeineGui.Show()
 
 VerarbeiteBenutzereingabe(this, *)
 {
@@ -547,14 +583,14 @@ VerarbeiteBenutzereingabe(this, *)
 
 <div class="ex" id="ExListBox">
 <p><a href="#ExListBox">#4</a>: Erstellt eine ListBox mit Dateien aus einem Verzeichnis:</p>
-<pre>Gui := GuiCreate()
-Gui.Add("Text",, "Wählen Sie eine Datei aus der unteren Liste aus.")
-LB := Gui.Add("ListBox", "w640 r10 vDatei")
+<pre>MeineGui := Gui.New()
+MeineGui.Add("Text",, "Wählen Sie eine Datei aus der unteren Liste aus.")
+LB := MeineGui.Add("ListBox", "w640 r10 vDatei")
 LB.OnEvent("DoubleClick", "StarteDatei")
 Loop Files, "C:\*.*"  <em>; Ordner und Platzhaltermuster je nach Bedarf anpassen.</em>
     LB.Add(A_LoopFilePath)
-Gui.Add("Button", "Default", "OK").OnEvent("Click", "StarteDatei")
-Gui.Show()
+MeineGui.Add("Button", "Default", "OK").OnEvent("Click", "StarteDatei")
+MeineGui.Show()
 
 StarteDatei(this, *)
 {
@@ -570,27 +606,30 @@ StarteDatei(this, *)
 
 <div class="ex" id="ExToolTip">
 <p><a href="#ExToolTip">#5</a>: Zeigt eine kontextabhängige Hilfe an (via ToolTip), wenn man den Mauszeiger über ein bestimmtes Steuerelement bewegt:</p>
-<pre>Gui := GuiCreate()
-Gui.Add("Edit", "v<strong>MeinEdit</strong>")
-<strong>MeinEdit</strong>_TT := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
-Gui.Add("DropDownList", "v<strong>MeineDDL</strong>", ["Rot","Grün","Blau"])
-<strong>MeineDDL</strong>_TT := "Wählen Sie eine Farbe aus."
-Gui.Add("Checkbox", "vMeineCheckBox", "Dieses Steuerelement hat kein Tooltip.")
-Gui.OnEvent("Close", (*) =&gt; ExitApp())
-Gui.Show()
-<a href="../commands/OnMessage.htm">OnMessage</a>(0x200, "WM_MOUSEMOVE")
+<pre>
+MeineGui := Gui.New()
+MeinEdit := MeineGui.Add("Edit")
+<em>; ToolTip-Text in eine benutzerdefinierte Eigenschaft speichern:</em>
+MeinEdit.ToolTip := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
+MeineDDL := MeineGui.Add("DropDownList", "", ["Rot","Grün","Blau"])
+MeineDDL.ToolTip := "Wählen Sie eine Farbe aus."
+MeineGui.Add("Checkbox", "vMeineCheckBox", "Dieses Steuerelement hat kein Tooltip.")
+MeineGui.OnEvent("Close", (*) =&gt; ExitApp())
+MeineGui.Show()
+OnMessage(0x200, "WM_MOUSEMOVE")
 
 WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
 {
-    global  
-    static AltesHwnd
+    static AltesHwnd := 0
     if (Hwnd != AltesHwnd)
     {
-        Text := "", <a href="../commands/ToolTip.htm">ToolTip</a>() <em>; Schließt alle offenen Tooltips.</em>
+        Text := "", ToolTip() <em>; Schließt alle offenen Tooltips.</em>
         AktSteuerelement := GuiCtrlFromHwnd(Hwnd)
         if AktSteuerelement
         {
-            Text := %AktSteuerelement.Name%_TT
+            if !AktSteuerelement.HasProp("ToolTip")
+                return <em>; Kein Tooltip für dieses Steuerelement.</em>
+            Text := AktSteuerelement.ToolTip
             SetTimer () =&gt; ToolTip(Text), -1000
             SetTimer () =&gt; ToolTip(), -4000 <em>; Entfernt das ToolTip.</em>
         }
@@ -601,16 +640,16 @@ WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
 
 <div class="ex" id="ExOSD">
 <p><a href="#ExOSD">#6</a>: Erstellt eine Bildschirmanzeige (OSD) mittels transparentem Fenster:</p>
-<pre>Gui := GuiCreate()
-Gui.Opt("+LastFound +AlwaysOnTop -Caption +ToolWindow")  <em>; +ToolWindow entfernt die Taskleistenschaltfläche und die Möglichkeit, via ALT+TAB angesteuert zu werden.</em>
-Gui.BackColor := "EEAA99"  <em>; Kann eine beliebige RGB-Farbe sein (wird weiter unten transparent gemacht).</em>
-Gui.SetFont("s32")  <em>; Setzt eine große Schriftgröße (32 Punkte).</em>
-KoordText := Gui.Add("Text", "cLime", "XXXXX YYYYY")  <em>; XX &amp; YY dienen zum automatischen Anpassen der Fenstergröße.
+<pre>MeineGui := Gui.New()
+MeineGui.Opt("+AlwaysOnTop -Caption +ToolWindow")  <em>; +ToolWindow entfernt die Taskleistenschaltfläche und die Möglichkeit, via ALT+TAB angesteuert zu werden.</em>
+MeineGui.BackColor := "EEAA99"  <em>; Kann eine beliebige RGB-Farbe sein (wird weiter unten transparent gemacht).</em>
+MeineGui.SetFont("s32")  <em>; Setzt eine große Schriftgröße (32 Punkte).</em>
+KoordText := MeineGui.Add("Text", "cLime", "XXXXX YYYYY")  <em>; XX &amp; YY dienen zum automatischen Anpassen der Fenstergröße.
 ; Macht alle Pixel dieser Farbe unsichtbar und den Text selbst transparent (150):</em>
-WinSetTransColor(Gui.BackColor " 150")
+WinSetTransColor(MeineGui.BackColor " 150", MeineGui)
 SetTimer(() =&gt; AktualisiereOSD(KoordText), 200)
 AktualisiereOSD(KoordText)  <em>; Führt die Aktualisierung sofort durch, anstatt auf den Timer zu warten.</em>
-Gui.Show("x0 y400 NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster seinen Aktivzustand verliert.</em>
+MeineGui.Show("x0 y400 NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster seinen Aktivzustand verliert.</em>
 
 AktualisiereOSD(GuiCtrl)
 {
@@ -621,14 +660,14 @@ AktualisiereOSD(GuiCtrl)
 
 <div class="ex" id="ExProgressBar">
 <p><a href="#ExProgressBar">#7</a>: Ein animierter Fortschrittsbalken auf einem Hintergrundbild:</p>
-<pre>Gui := GuiCreate()
-Gui.BackColor := "White"
-Gui.Add("Picture", "x0 y0 h350 w450", A_WinDir "\Web\Wallpaper\Windows\img0.jpg")
-MeinBtn := Gui.Add("Button", "Default xp+20 yp+250", "Animation starten")
-MyBtn.OnEvent("Click", "AnimiereLeiste")
-Gui.Add("Progress", "w416 vMeinProgress")
-Gui.Add("Text", "wp vMeinText")  <em>; wp bedeutet "vorherige Breite verwenden".</em>
-Gui.Show()
+<pre>MeineGui := Gui.New()
+MeineGui.BackColor := "White"
+MeineGui.Add("Picture", "x0 y0 h350 w450", A_WinDir "\Web\Wallpaper\Windows\img0.jpg")
+MeinBtn := MeineGui.Add("Button", "Default xp+20 yp+250", "Animation starten")
+MeinBtn.OnEvent("Click", "AnimiereLeiste")
+MeineGui.Add("Progress", "w416 vMeinProgress")
+MeineGui.Add("Text", "wp vMeinText")  <em>; wp bedeutet "vorherige Breite verwenden".</em>
+MeineGui.Show()
 
 AnimiereLeiste(this, *)
 {
@@ -648,13 +687,13 @@ AnimiereLeiste(this, *)
 
 <div class="ex" id="ExImageViewer">
 <p><a href="#ExImageViewer">#8</a>: Ein einfacher Bildbetrachter:</p>
-<pre>Gui := GuiCreate("+Resize")
-MeinBtn := Gui.Add("Button", "default", "Neues Bild &amp;laden")
+<pre>MeineGui := Gui.New("+Resize")
+MeinBtn := MeineGui.Add("Button", "default", "Neues Bild &amp;laden")
 MeinBtn.OnEvent("Click", "LadeNeuesBild")
-Gui.Add("Radio", "ym+5 x+10 checked vMeinRadio", "&amp;Originalgröße")
-Gui.Add("Radio", "ym+5 x+10", "&amp;Kompletter Bildschirm")
-Gui.Add("Pic", "xm vMeinPic")
-Gui.Show()
+MeineGui.Add("Radio", "ym+5 x+10 checked vMeinRadio", "&amp;Originalgröße")
+MeineGui.Add("Radio", "ym+5 x+10", "&amp;Kompletter Bildschirm")
+MeineGui.Add("Pic", "xm vMeinPic")
+MeineGui.Show()
 
 LadeNeuesBild(this, *)
 {
@@ -675,58 +714,58 @@ LadeNeuesBild(this, *)
         Höhe := -1  <em>; "Seitenverhältnis beibehalten" erscheint sinnvoll.</em>
     }
     PicCtrl.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
-    Gui.Title := Datei
-    Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
+    MeineGui.Title := Datei
+    MeineGui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
 }</pre>
 </div>
 
 <div class="ex" id="ExEditor">
 <p><a href="#ExEditor">#9</a>: Ein einfacher Texteditor mit Menüleiste:</p>
 <pre><em>; Macht diese Variablen für alle unteren Funktionen zugänglich:</em>
-global Gui, Dateimenü, HauptEdit, AktuellerDateiname, Über
+global MeineGui, Dateimenü, HauptEdit, AktuellerDateiname, Über
 
-<em>; Erstellt das GUI-Fenster:</em>
-Gui := GuiCreate("+Resize", "Unbenannt")  <em>; Macht die Größe des Fensters veränderbar.</em>
+<em>; Erstellt das MeineGui-Fenster:</em>
+MeineGui := Gui.New("+Resize", "Unbenannt")  <em>; Macht die Größe des Fensters veränderbar.</em>
 
 <em>; Untermenüs für die Menüleiste erstellen:</em>
-Dateimenü := MenuCreate()
+Dateimenü := Menu.New()
 Dateimenü.Add("&amp;Neu", "MenüDateiNeu")
 Dateimenü.Add("&amp;Öffnen", "MenüDateiÖffnen")
 Dateimenü.Add("&amp;Speichern", "MenüDateiSpeichern")
 Dateimenü.Add("Speichern &amp;unter...", "MenüDateiSpeichernUnter")
 Dateimenü.Add() <em>; Trennlinie.</em>
 Dateimenü.Add("E&amp;xit", "MenüDateiBeenden")
-Hilfsmenü := MenuCreate()
+Hilfsmenü := Menu.New()
 Hilfsmenü.Add("Inf&amp;o", "MenüHilfeÜber")
 
 <em>; Fügt die Untermenüs in die Menüleiste ein:</em>
-MeineMenüleiste := MenuBarCreate()
+MeineMenüleiste := MenuBar.New()
 MeineMenüleiste.Add("&amp;Datei", Dateimenü)
 MeineMenüleiste.Add("&amp;?", Hilfsmenü)
 
 <em>; Heftet die Menüleiste an das Fenster an:</em>
-Gui.MenuBar := MeineMenüleiste
+MeineGui.MenuBar := MeineMenüleiste
 
 <em>; Erstellt das Haupt-Eingabefeld:</em>
-HauptEdit := Gui.Add("Edit", "WantTab W600 R20")
+HauptEdit := MeineGui.Add("Edit", "WantTab W600 R20")
 
 <em>; Ereignisse hinzufügen:</em>
-Gui.OnEvent("DropFiles", "Gui_DropFiles")
-Gui.OnEvent("Size", "Gui_Size")
+MeineGui.OnEvent("DropFiles", "Gui_DropFiles")
+MeineGui.OnEvent("Size", "Gui_Size")
 
 MenüDateiNeu()  <em>; Standardeinstellungen abrufen.</em>
-Gui.Show()  <em>; Zeigt das Fenster an.</em>
+MeineGui.Show()  <em>; Zeigt das Fenster an.</em>
 
 MenüDateiNeu(*)
 {
     HauptEdit.Value := ""  <em>; Eingabefeld leeren.</em>
     Dateimenü.Disable("3&amp;")  <em>; Ergraut &amp;Speichern.</em>
-    Gui.Title := "Unbenannt"
+    MeineGui.Title := "Unbenannt"
 }
 
 MenüDateiÖffnen(*)
 {
-    Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
+    MeineGui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
     AusgewählterDateiname := FileSelect(3,, "Datei öffnen", "Text-Dokumente (*.txt)")
     if AusgewählterDateiname = "" <em>; Keine Datei ausgewählt.</em>
         return
@@ -740,7 +779,7 @@ MenüDateiSpeichern(*)
 
 MenüDateiSpeichernUnter(*)
 {
-    Gui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
+    MeineGui.Opt("+OwnDialogs")  <em>; Zwingt den Benutzer, das FileSelect-Dialogfenster zu schließen, bevor er zum Hauptfenster zurückkehren kann.</em>
     AusgewählterDateiname := FileSelect("S16",, "Datei speichern", "Text-Dokumente (*.txt)")
     if AusgewählterDateiname = "" <em>; Keine Datei ausgewählt.</em>
         return
@@ -754,8 +793,8 @@ MenüDateiBeenden(*)  <em>; Benutzer hat "Exit" im Dateimenü ausgewählt.</em>
 
 MenüHilfeÜber(*)
 {
-    Über := GuiCreate("+owner" Gui.Hwnd)  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
-    Gui.Opt("+Disabled")  <em>; Deaktiviert die Interaktion mit dem Hauptfenster.</em>
+    Über := Gui.New("+owner" MeineGui.Hwnd)  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
+    MeineGui.Opt("+Disabled")  <em>; Deaktiviert die Interaktion mit dem Hauptfenster.</em>
     Über.Add("Text",, "Beliebiger Text.")
     Über.Add("Button", "Default", "OK").OnEvent("Click", "Über_Close")
     Über.OnEvent("Close", "Über_Close")
@@ -774,7 +813,7 @@ leseInhalt(Dateiname)
     }
     HauptEdit.Value := Dateiinhalt  <em>; Fügt den Text in das Steuerelement ein.</em>
     Dateimenü.Enable("3&amp;")  <em>; Aktiviert &amp;Speichern.</em>
-    Gui.Title := Dateiname  <em>; Zeigt den Dateinamen in der Titelleiste an.</em>
+    MeineGui.Title := Dateiname  <em>; Zeigt den Dateinamen in der Titelleiste an.</em>
     return Dateiname
 }
 
@@ -792,22 +831,22 @@ speichereInhalt(Dateiname)
         return
     }
     ; Bei Erfolg den Dateinamen in der Titelleiste anzeigen (falls es mit DateiSpeichernUnter aufgerufen wurde):</em>
-    Gui.Title := Dateiname
+    MeineGui.Title := Dateiname
     return Dateiname
 }
 
 Über_Close(*)
 {
-    Gui.Opt("-Disabled")  <em>; Reaktiviert die Interaktion mit dem Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
+    MeineGui.Opt("-Disabled")  <em>; Reaktiviert die Interaktion mit dem Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
     Über.Destroy()  <em>; Entfernt das Über-Fenster.</em>
 }
 
-Gui_DropFiles(Gui, Ctrl, DateiArray, *)  <em>; Ziehen &amp; Ablegen unterstützen.</em>
+Gui_DropFiles(ThisGui, Ctrl, DateiArray, *)  <em>; Ziehen &amp; Ablegen unterstützen.</em>
 {
     AktuellerDateiname := leseInhalt(DateiArray[1])  <em>; Nur die erste Datei nehmen (sofern mehrere Dateien vorhanden sind).</em>
 }
 
-Gui_Size(Gui, MinMax, Breite, Höhe)
+Gui_Size(ThisGui, MinMax, Breite, Höhe)
 {
     if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
         return

@@ -45,7 +45,6 @@
 	<li><a href="#SetBase">ObjSetBase</a>: Setzt das <a href="../Objects.htm#delegation">Base-Objekt</a> des Objekts.</li>
   <li><a href="#GetCapacity">ObjGetCapacity</a>, <a href="#SetCapacity">ObjSetCapacity</a>: Ermittelt oder setzt die Kapazität von Eigenschaften eines Objekts.</li>
   <li><a href="#OwnPropCount">ObjOwnPropCount</a>: Ruft die Anzahl von eigenen Eigenschaften ab, die in einem Objekt enthalten sind.</li>
-	<li>Veraltet: <a href="#RawGet">ObjRawGet</a>, <a href="#RawSet">ObjRawSet</a>: Ermittelt oder setzt die eigene Werteigenschaft eines Objekts, umgeht alle Metafunktionen und überschreibt eventuell Eigenschaften-Accessor-Funktionen.</li>
   <li>ObjHasOwnProp, ObjOwnMethods, ObjOwnProps: Äquivalent zur entsprechenden vordefinierten Methode, kann aber nicht überschrieben werden.</li>
 </ul>
 
@@ -78,7 +77,7 @@
 </div>
 
 <div class="methodShort" id="DefineProp"><h2>DefineProp</h2>
-<p>Definiert eine neue dynamische Eigenschaft.</p>
+<p>Definiert eine neue eigene Eigenschaft.</p>
 <pre class="Syntax">Obj.<span class="func">DefineProp</span>(Name, Deskriptor)</pre>
 <dl>
   <dt>Name</dt>
@@ -89,12 +88,14 @@
   <dt>Deskriptor</dt>
   <dd>
     <p>Typ: Object</p>
-    <p>Ein Objekt mit keine oder mehr der folgenden eigenen Eigenschaften:</p>
+    <p>Ein Objekt mit eine der folgenden eigenen Eigenschaften, oder sowohl <em>Get</em> als auch <em>Set</em>:</p>
     <p><code>Get</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, wenn der Wert der Eigenschaft abgerufen wird.</p>
     <p><code>Set</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, wenn der Eigenschaft ein Wert zugewiesen wird. Der zweite Parameter ist der Wert, der zugewiesen wird.</p>
+    <p><code>Value</code>: Ein beliebiger Wert, der der Eigenschaft zugewiesen werden soll.</p>
   </dd>
 </dl>
-<p>Wenn <em>Get</em> oder <em>Set</em> nicht definiert ist, kann es von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist, ist die Eigenschaft schreibgeschützt (der Versuch, die Eigenschaft zu setzen, löst eine Ausnahme aus).</p>
+<p>Diese Methode kann verwendet werden, um eine Werteigenschaft in eine dynamische Eigenschaft umzuwandeln oder umgekehrt, aber es ist nicht möglich, sowohl einen Wert als auch einen Getter/Setter anzugeben.</p>
+<p>Wenn nur <em>Get</em> oder <em>Set</em> definiert ist, kann dessen Gegenstück von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist, ist die Eigenschaft schreibgeschützt (der Versuch, die Eigenschaft zu setzen, löst eine Ausnahme aus).</p>
 <p>Wie bei allen Methoden ist <code>this</code> der erste Parameter von <em>Get</em> oder <em>Set</em> (das Zielobjekt). Bei <em>Set</em> ist <code>value</code> der zweite Parameter (der Wert, der zugewiesen wird). Diese Parameter werden automatisch von Methoden- und Eigenschaftsdefinitionen innerhalb einer Klasse definiert, müssen aber bei Verwendung normaler Funktionen explizit definiert werden.</p>
 <p>Die Eigenschaften <code>MaxParams</code> und <code>IsVariadic</code> der Funktionsobjekte werden ausgewertet, um festzustellen, ob die Eigenschaft Parameter akzeptieren darf. Wenn <code>MaxParams</code> von <em>get</em> 1 ist oder von <em>set</em> 2 ist und <code>IsVariadic</code> False oder undefiniert ist, kann die Eigenschaft keine Parameter akzeptieren; sie werden stattdessen an die <a href="../Objects.htm#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet.</p>
 </div>
@@ -126,7 +127,7 @@
 </div>
 
 <div class="methodShort" id="GetOwnPropDesc"><h2>GetOwnPropDesc</h2>
-<p>Gibt einen Deskriptor für eine bestimmte Eigenschaft zurück, der kompatibel mit <a href="#DefineProp">DefineProp</a> ist.</p>
+<p>Gibt einen Deskriptor für eine bestimmte eigene Eigenschaft zurück, der kompatibel mit <a href="#DefineProp">DefineProp</a> ist.</p>
 <pre class="Syntax">Obj.<span class="func">GetOwnPropDesc</span>(Name)</pre>
 <dl>
   <dt>Name</dt>
@@ -137,13 +138,15 @@
   <dt>Rückgabewert</dt>
   <dd>
     <p>Typ: Object</p>
-    <p>Ein neues Objekt mit keine oder mehr der folgenden eigenen Eigenschaften:</p>
-    <p><code>Get</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Wert der Eigenschaft abgerufen wird, sofern dies in <em>Obj</em> definiert ist.</p>
-    <p><code>Set</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Eigenschaft ein Wert zugewiesen wird, sofern dies in <em>Obj</em> definiert ist.</p>
-    <p>Wenn die Eigenschaft eine Werteigenschaft ist, ist der Rückgabewert eine leere Zeichenkette.</p>
+    <p>Bei einer dynamischen Eigenschaft ist der Rückgabewert ein neues Objekt mit einer oder beiden der folgenden eigenen Eigenschaften:<br>
+    <code>Get</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Wert der Eigenschaft abgerufen wird, sofern dies in <em>Obj</em> definiert ist.<br>
+    <code>Set</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Eigenschaft ein Wert zugewiesen wird, sofern dies in <em>Obj</em> definiert ist.</p>
+    <p>Bei einer Werteigenschaft ist der Rückgabewert ein neues Objekt mit einer Eigenschaft namens <code>Value</code>. In solchen Fällen gilt: <code>Obj.GetOwnPropDesc(Name).Value == Obj.%Name%</code>.</p>
   </dd>
 </dl>
+<p></p>
 <p>Das Ändern des zurückgegebenen Objekts hat keinen Einfluss auf <em>Obj</em>, es sei denn, <a href="#DefineProp">DefineProp</a> wird aufgerufen.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn <em>Obj</em> eine Eigenschaft mit diesem Namen nicht besitzt. Das Skript kann ermitteln, ob eine Eigenschaft dynamisch ist, indem es <code>not Deskriptor.HasProp("Value")</code> überprüft, wobei <em>Deskriptor</em> der Rückgabewert von GetOwnPropDesc ist.</p>
 </div>
 
 <div class="methodShort" id="HasOwnMethod"><h2>HasOwnMethod</h2>
@@ -209,23 +212,6 @@
 </div>
 
 <h2>Funktionen</h2>
-
-<div class="methodShort" id="RawGet"><h2>ObjRawGet</h2>
-<p>Ruft den Wert einer eigenen Eigenschaft eines Objekts ab.</p>
-<p class="warning"><strong>Veraltet:</strong> Diese Funktion wird möglicherweise in einer zukünftigen Version entfernt oder ersetzt.</p>
-<pre class="Syntax">Wert := <span class="func">ObjRawGet</span>(Obj, Name)</pre>
-<p>Wenn das Objekt keine Eigenschaft mit diesem Namen besitzt oder handelt es sich um eine dynamische Eigenschaft, ist der Rückgabewert eine leere Zeichenkette. Es werden keine <a href="../Objects.htm#Meta_Functions">Metafunktionen</a> oder <a href="../Objects.htm#Custom_Classes_property">Eigenschaftsfunktionen</a> aufgerufen. Geerbte Eigenschaften werden nicht berücksichtigt.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em>Obj</em> vom falschen Typ ist.</p>
-</div>
-
-<div class="methodShort" id="RawSet"><h2>ObjRawSet</h2>
-<p>Erstellt eine neue Werteigenschaft oder setzt den Wert einer bestehenden.</p>
-<p class="warning"><strong>Veraltet:</strong> Diese Funktion wird möglicherweise in einer zukünftigen Version entfernt oder ersetzt.</p>
-<pre class="Syntax"><span class="func">ObjRawSet</span> Obj, Name, Wert</pre>
-<p>Diese Funktion wurde bereitgestellt, um den Skripten die Möglichkeit zu bieten, die __Set-<a href="../Objects.htm#Meta_Functions">Metafunktion</a> und <a href="../Objects.htm#Custom_Classes_property">Eigenschaften</a> zu umgehen. Falls dies nicht notwendig ist, sollte stattdessen eine normale Zuweisung verwendet werden. Zum Beispiel: <code>Obj.%Name% := Wert</code></p>
-<p>Da der Zweck darin besteht, Metafunktionen zu umgehen, ist dies nur eine Funktion, keine Methode. Das Aufrufen einer internen Methode ruft generell auch die __Call-Metafunktion auf.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn <em>Obj</em> vom falschen Typ ist.</p>
-</div>
 
 <div class="methodShort" id="SetBase"><h2>ObjSetBase</h2>
 <p>Setzt das <a href="../Objects.htm#delegation">Base-Objekt</a> des Objekts.</p>

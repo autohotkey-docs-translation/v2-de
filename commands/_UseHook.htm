@@ -16,16 +16,15 @@
 
 <p>Bewirkt, dass alle oder einige Tastatur-<a href="../Hotkeys.htm">Hotkeys</a> mit dem Hook implementiert werden.</p>
 
-<pre class="Syntax"><span class="func">#UseHook</span> <span class="optional">OnOff</span></pre>
+<pre class="Syntax"><span class="func">#UseHook</span> <span class="optional">Einstellung</span></pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>OnOff</dt>
+  <dt>Einstellung</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Geben Sie eines der folgenden Wörter an (lässt man diesen Parameter weg, wird standardmäßig On verwendet):</p>
-    <p><strong>On</strong>: Der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> wird genutzt, um alle Tastatur-Hotkeys zwischen hier und der nächsten Direktive <code>#UseHook OFF</code> (falls vorhanden) zu implementieren.</p>
-    <p><strong>Off</strong>: Hotkeys werden mit der Standardmethode (RegisterHotkey() wenn möglich, ansonsten der Tastatur-Hook) implementiert.</p>
+    <p>Geben Sie einen der folgenden direkt geschriebenen Werte an (lässt man diesen Parameter weg, wird standardmäßig <strong>True</strong> verwendet):</p>
+    <p><strong>True</strong> oder <strong>1</strong>: Der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> wird genutzt, um alle Tastatur-Hotkeys zwischen hier und der nächsten Direktive <code>#UseHook false</code> (falls vorhanden) zu implementieren.</p>
+    <p><strong>False</strong> oder <strong>0</strong>: Hotkeys werden mit der Standardmethode (RegisterHotkey() wenn möglich, ansonsten der Tastatur-Hook) implementiert.</p>
   </dd>
 
 </dl>
@@ -34,9 +33,8 @@
 <p>Normalerweise wird die Windows-API-Funktion RegisterHotkey() wann immer möglich genutzt, um einen Tastatur-Hotkey zu implementieren. Allerdings ist die Reaktionsfähigkeit von Hotkeys unter Umständen besser, wenn stattdessen der <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> verwendet wird.</p>
 <p>Diese Direktive auf ON zu setzen ist das gleiche wie, als würde man in den Definitionen der Hotkeys, die davon betroffen sein sollen, das <a href="../Hotkeys.htm#prefixdollar">$-Präfix</a> nutzen.</p>
 <p><code>#UseHook</code> sollte wie alle anderen Direktiven nicht positioniert werden -- Direktiven werden nur einmal beim Start des Skripts verarbeitet -- als wäre sie eine Funktion (beispielsweise ist es sinnlos, die Direktive in eine Subroutine zu setzen). Positionieren Sie diese Direktive stattdessen direkt vor dem ersten Hotkey, der von ihr beeinflusst werden soll.</p>
-<p>Standardmäßig können Hotkeys, die den <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> nutzen, nicht durch die <a href="Send.htm">Send</a>-Funktion ausgelöst werden. Ebenso können Maus-Hotkeys nicht durch interne Funktionen wie <a href="Click.htm">Click</a> ausgelöst werden, weil solche Hotkeys immer den <a href="_InstallMouseHook.htm">Maus-Hook</a> nutzen. Um das zu umgehen, können Sie <a href="Gosub.htm">Gosub</a> nutzen, um direkt zur Subroutine des Hotkeys zu springen. Zum Beispiel: <code>Gosub #LButton</code>.</p>
+<p>Standardmäßig können Hotkeys, die den <a href="_InstallKeybdHook.htm">Tastatur-Hook</a> nutzen, nicht durch die <a href="Send.htm">Send</a>-Funktion ausgelöst werden. Ebenso können Maus-Hotkeys nicht durch interne Funktionen wie <a href="Click.htm">Click</a> ausgelöst werden, weil solche Hotkeys immer den <a href="_InstallMouseHook.htm">Maus-Hook</a> nutzen. Um das zum Beispiel zu umgehen, <a href="../Hotkeys.htm#Function">geben Sie der Funktion des Hotkeys einen Namen</a> und rufen Sie diese direkt auf.</p>
 <p><a href="_InputLevel.htm">#InputLevel</a> und <a href="SendLevel.htm">SendLevel</a> ermöglichen zusätzliche Kontrolle darüber, welche Hotkeys und Hotstrings von der Send-Funktion ausgelöst werden können.</p>
-<p>Wenn diese Direktive im Skript nicht angegeben ist, wird sie sich so verhalten, als wäre sie auf OFF gesetzt.</p>
 
 <h2>Siehe auch</h2>
 <p><a href="_InstallKeybdHook.htm">#InstallKeybdHook</a>, <a href="_InstallMouseHook.htm">#InstallMouseHook</a>, <a href="ListHotkeys.htm">ListHotkeys</a>, <a href="_InputLevel.htm">#InputLevel</a></p>
@@ -46,7 +44,7 @@
 <pre>#UseHook  <em>; Bewirkt, dass die nachfolgenden Hotkeys den Hook verwenden.</em>
 #x::MsgBox "Dieser Hotkey wird mit dem Hook implementiert."
 #y::MsgBox "Dieser Hotkey auch."
-#UseHook off
+#UseHook false
 #z::MsgBox "Aber dieser nicht."</pre>
 </div>
 

@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>ControlChoose - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die ControlChoose-Funktion wählt in einer ListBox oder ComboBox einen Listeneintrag über dessen Positionsnummer aus." />
-<meta name="ahk:equiv-v1" content="commands/Control.htm#Choose" />
+<title>ControlGetIndex - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die ControlGetIndex-Funktion gibt die Indexnummer des aktuell ausgewählten Listeneintrags oder Tabs im ListBox-, ComboBox- oder Tab-Steuerelement zurück." />
+<meta name="ahk:equiv-v1" content="commands/ControlGet.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -13,19 +13,14 @@
 </head>
 <body>
 
-<h1>ControlChoose</h1>
+<h1>ControlGetIndex</h1>
 
-<p>Wählt via Positionsnummer einen Listeneintrag in einer ListBox oder ComboBox aus.</p>
+<p>Gibt die Indexnummer des aktuell ausgewählten Listeneintrags oder Tabs im ListBox-, ComboBox- oder Tab-Steuerelement zurück.</p>
 
-<pre class="Syntax"><span class="func">ControlChoose</span> N, Steuerelement <span class="optional">, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span></pre>
+<pre class="Syntax">Index := <span class="func">ControlGetIndex</span>(Steuerelement <span class="optional">, Fenstertitel, Fenstertext, Titelausnahme, Textausnahme</span>)</pre>
 
 <h2>Parameter</h2>
 <dl>
-    <dt>N</dt>
-    <dd>
-        <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-        <p>Die Indexnummer des Listeneintrags, also 1 für den ersten Listeneintrag, 2 für den Zweiten, und so weiter. Um alle Listeneinträge abzuwählen, geben Sie 0 an.</p>
-    </dd>
     <dt>Steuerelement</dt>
     <dd>
         <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
@@ -53,17 +48,30 @@
     </dd>
 </dl>
 
+<h2>Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt die Indexnummer des aktuell ausgewählten Listeneintrags oder Tabs zurück. Der erste Listeneintrag oder Tab ist 1, der Zweite ist 2 und so weiter. Wenn kein Listeneintrag oder Tab ausgewählt wurde, ist der Rückgabewert 0.</p>
+
 <h2>Fehlerbehandlung</h2>
-<p>Es wird eine Ausnahme ausgelöst, wenn das Fenster oder Steuerelement nicht gefunden oder die Änderung nicht angewendet werden konnte.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn ein Fehler auftritt oder wenn das Fenster oder Steuerelement nicht gefunden werden konnte.</p>
 
 <h2>Bemerkungen</h2>
-<p>Das folgende Beispiel zeigt, wie alle Elemente innerhalb einer <em>Mehrfachauswahl</em>-ListBox ausgewählt werden können:</p>
-<pre class="NoIndent"><a href="PostMessage.htm">PostMessage</a>(0x185, 1, -1, "ListBox1", Fenstertitel)  <em>; Wählt alle ListBox-Einträge aus. 0x185 ist LB_SETSEL.</em></pre>
-<p>Um die Zuverlässigkeit zu verbessern, wird nach jeder Benutzung dieser Funktion automatisch eine Verzögerung durchgeführt. Diese Verzögerung kann via <a href="SetControlDelay.htm">SetControlDelay</a> oder durch direktes Ändern des <a href="../Variables.htm#ControlDelay">A_ControlDelay</a>-Wertes geändert werden. Schauen Sie sich die <a href="SetControlDelay.htm#Remarks">Bemerkungen zu SetControlDelay</a> an, um mehr zu erfahren.</p>
+<p>Das folgende Beispiel zeigt, wie man stattdessen die Gesamtanzahl der Tabs (Seiten) eines Tab-Steuerelements abrufen kann:</p>
+<pre>TabCount := <a href="SendMessage.htm">SendMessage</a>(0x1304,,, "SysTabControl321", Fenstertitel)  <em>; 0x1304 ist TCM_GETITEMCOUNT.</em></pre>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2>Siehe auch</h2>
-<p><a href="ControlChooseString.htm">ControlChooseString</a>, <a href="ControlGetChoice.htm">ControlGetChoice</a>, <a href="../objects/GuiControl.htm#Choose">Choose-Methode (GuiControl-Objekt)</a>, <a href="Control.htm">Control-Funktionen</a></p>
+<p><a href="ControlChooseIndex.htm">ControlChooseIndex</a>, <a href="ControlGetChoice.htm">ControlGetChoice</a>, <a href="ControlChooseString.htm">ControlChooseString</a>, <a href="../objects/GuiControl.htm#Value">Value-Eigenschaft (GuiControl-Objekt)</a>, <a href="../objects/GuiControl.htm#Choose">Choose-Methode (GuiControl-Objekt)</a>, <a href="Control.htm">Control-Funktionen</a></p>
+
+<h2>Beispiele</h2>
+
+<div class="ex" id="ExTab">
+<p><a href="#ExTab">#1</a>: Ruft den aktiven Tab des ersten Tab-Steuerelements ab.</p>
+<pre>
+WelcherTab := ControlGetIndex("SysTabControl321", "Beliebiger Fenstertitel")
+MsgBox "Tab #" WelcherTab " ist aktiv."
+</pre>
+</div>
 
 </body>
 </html>
