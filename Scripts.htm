@@ -150,7 +150,7 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
     <p><strong>Rechtsklick</strong>: Klicken Sie mit der rechten Maustaste auf eine .ahk-Datei und wählen Sie "Compile Script" aus (nur verfügbar, wenn die Option "Script Compiler" in der Installation von AutoHotkey ausgewählt wurde). Nach einer kurzen Zeit wird im Verzeichnis des Skripts eine gleichnamige EXE-Datei erstellt. Hinweis: Das Erstellen der EXE-Datei erfolgt mit den Einstellungen (Symbol, .bin-Datei, <a href="#mpress">Komprimierung</a>), die Sie zuletzt für Methode #1 benutzt hatten.</p>
   </li>
   <li id="ahk2exeCmd">
-    <p><strong>Befehlszeile</strong>: Der Compiler kann von der Befehlszeile aus mit folgenden Parameterpaaren gestartet werden (das erste ist Pflicht, während die anderen optional sind):</p>
+    <p><strong>Befehlszeile</strong>: Der Compiler kann von der Befehlszeile aus mit den unten gezeigten Parametern gestartet werden. Jeder Befehlszeilenparameter, außer <code class="no-highlight">/gui</code>, führt dazu, dass das Skript sofort kompiliert wird.</p>
     <style>
       #param_pairs td:not(:last-child) {
         white-space: nowrap;
@@ -162,8 +162,8 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
         <th>Bedeutung</th>
       </tr>
       <tr id="SlashIn">
-        <td>/in <i>Skriptname</i><br>/inGui <i>Skriptname</i></td>
-        <td>(Eines davon muss angegeben werden.) Der Pfad und Name des Skripts, das kompiliert werden soll. <code>/in</code> kompiliert das Skript sofort. <span class="ver">[v1.1.33+]:</span> <code>/inGui</code> wird zuerst das GUI-Interface anzeigen.</td>
+        <td>/in <i>Skriptname</i></td>
+        <td>Der Pfad und Name des Skripts, das kompiliert werden soll. Dies muss angegeben werden, sobald mindestens einer der anderen Parameter verwendet wird, es sei denn, es wird <code class="no-highlight">/gui</code> verwendet.</td>
       </tr>
       <tr id="SlashOut">
         <td>/out <i>EXE_Name</i></td>
@@ -179,15 +179,19 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
       </tr>
       <tr id="SlashCp">
         <td>/cp <i>Zeichensatz</i></td>
-        <td>Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Weitere Informationen finden Sie unter <a href="https://msdn.microsoft.com/de-de/library/dd317756.aspx">Zeichensatz</a>. Beachten Sie, dass Unicode-Skripte mit einer Byte-Order-Markierung (BOM) beginnen sollten, was die Verwendung dieses Parameters überflüssig macht.</td>
+        <td>Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Eine Liste möglicher Werte finden Sie unter <a href="https://docs.microsoft.com/de-de/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>. Beachten Sie, dass Unicode-Skripte mit einer Byte-Order-Markierung (BOM) beginnen sollten, was die Verwendung dieses Parameters überflüssig macht.</td>
       </tr>
       <tr id="SlashCompress">
         <td>/compress <i>n</i></td>
-        <td><span class="ver">[v1.1.33+]:</span> Soll die EXE-Datei <a href="#mpress">komprimiert</a> werden? 0 = nein, 1 = MPRESS verwenden (falls vorhanden), 2 = UPX verwenden (falls vorhanden). Standardmäßig wird die zuletzt in der GUI-Oberfläche verwendete Einstellung verwendet.</td>
+        <td>Soll die EXE-Datei <a href="#mpress">komprimiert</a> werden? 0 = nein, 1 = MPRESS verwenden (falls vorhanden), 2 = UPX verwenden (falls vorhanden). Standardmäßig wird die zuletzt in der GUI-Oberfläche verwendete Einstellung verwendet.</td>
       </tr>
       <tr id="SlashAhk">
         <td>/ahk <i>Dateiname</i></td>
-        <td><span class="ver">[v1.1.33+]:</span> Der Pfad\Name der AutoHotkey.exe-Datei, die zum Kompilieren des Skripts verwendet werden soll. Standardmäßig wird die AutoHotkey.exe-Datei im Verzeichnis eine Navigationsebene höher verwendet. Wenn sie dort nicht finden ist, wird die installierte Autohotkey.exe-Datei verwendet.</td>
+        <td>Der Pfad\Name der AutoHotkey.exe-Datei, die zum Kompilieren des Skripts verwendet werden soll. Standardmäßig wird die AutoHotkey.exe-Datei im Verzeichnis eine Navigationsebene höher verwendet. Wenn sie dort nicht finden ist, wird die installierte Autohotkey.exe-Datei verwendet.</td>
+      </tr>
+      <tr id="SlashGui">
+        <td>/gui</td>
+        <td>Zeigt die GUI, anstatt sofort zu kompilieren. Die anderen Parameter können verwendet werden, um die zuletzt in der GUI verwendeten Einstellungen zu überschreiben. <code>/in</code> ist in diesem Fall optional.</td>
       </tr>
       <tr id="SlashMpress">
         <td class="warning"><strong>Veraltet:</strong><br>/mpress <i>0oder1</i></td>
@@ -210,7 +214,7 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
 <p>Den Quellcode sowie neuere Versionen des Compilers finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe">GitHub</a>.</p>
 
 <h3 id="CompilerDirectives">Skript-Compiler-Direktiven</h3>
-<p><span class="ver">[v1.1.33+]:</span> Skript-Compiler-Direktiven ermöglichen es dem Benutzer, genaue Angaben darüber zu machen, wie ein Skript kompiliert werden soll. Einige der Features sind:</p>
+<p>Skript-Compiler-Direktiven ermöglichen es dem Benutzer, genaue Angaben darüber zu machen, wie ein Skript kompiliert werden soll. Einige der Features sind:</p>
 <ul>
   <li>Möglichkeiten zum Ändern der Versionsinformationen (z. B. Name, Beschreibung, Version...).</li>
   <li>Möglichkeiten, um Ressourcen zum kompilierten Skript hinzuzufügen.</li>
@@ -220,7 +224,7 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
 <p>Weitere Informationen finden Sie unter <a href="misc/Ahk2ExeDirectives.htm">Skript-Compiler-Direktiven</a>.</p>
 
 <h3 id="mpress">Komprimieren von kompilierten Skripten</h3>
-<p>Ahk2Exe kann optional MPRESS- oder in <span class="ver">[v1.1.33+]</span> UPX-Freeware verwenden, um kompilierte Skripte zu komprimieren. Wenn <strong>MPRESS.exe</strong> und/oder <strong>UPX.exe</strong> in den Compiler-Unterordner von AutoHotkey kopiert wurde, kann die EXE-Datei via <code>/compress</code>-Parameter oder GUI-Einstellung komprimiert werden. </p>
+<p>Ahk2Exe kann optional MPRESS- oder UPX-Freeware verwenden, um kompilierte Skripte zu komprimieren. Wenn <strong>MPRESS.exe</strong> und/oder <strong>UPX.exe</strong> in den Compiler-Unterordner von AutoHotkey kopiert wurde, kann die EXE-Datei via <code>/compress</code>-Parameter oder GUI-Einstellung komprimiert werden. </p>
 <p><strong>MPRESS</strong>'s offizielle Webseite (Downloads und Information): <a href="http://www.matcode.com/mpress.htm">http://www.matcode.com/mpress.htm</a><br>MPRESS Mirror: <a href="https://www.autohotkey.com/mpress/">https://www.autohotkey.com/mpress/</a></p>
 <p><strong>UPX</strong>'s offizielle Webseite (Downloads und Information): <a href="https://upx.github.io/">https://upx.github.io/</a></p>
 <p><strong>Hinweis:</strong> Eine auf diese Weise komprimierte EXE-Datei unterbindet eine einfache Einsicht in den Quellcode des Skripts mithilfe eines Texteditors wie z. B. Notepad oder PE-Resource-Editor. Allerdings kann es nicht verhindern, dass der Quellcode mit Tools extrahiert werden kann, die speziell dafür entwickelt worden sind.</p>
@@ -244,10 +248,10 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
     <td>Ja</td>
   </tr>
   <tr id="ErrorStdOut">
-    <td>/ErrorStdOut<span class="optional">=<em>Codierung</em></span></td>
+    <td>/ErrorStdOut<br><br>/ErrorStdOut=<em>Codierung</em></td>
     <td>
       <p>Sendet alle Syntaxfehler, die den Start eines Skripts verhindern, zur Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details. Diese Option kann mit /iLib kombiniert werden, um die Gültigkeit des Skripts zu überprüfen, ohne es auszuführen.</p>
-      <p><span class="ver">[v1.1.33+]:</span> Es kann optional eine <a href="commands/FileEncoding.htm">Codierung</a> angegeben werden. <code>/ErrorStdOut=UTF-8</code> beispielsweise kodiert Meldungen als UTF-8, bevor sie in die Standardfehlerausgabe geschrieben werden.</p>
+      <p>Es kann optional eine <a href="commands/FileEncoding.htm">Codierung</a> angegeben werden. <code>/ErrorStdOut=UTF-8</code> beispielsweise kodiert Meldungen als UTF-8, bevor sie in die Standardfehlerausgabe geschrieben werden.</p>
     </td>
     <td>Ja</td>
   </tr>
@@ -260,7 +264,7 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
     <td>/CP<i>n</i></td>
     <td>
       <p>Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Weitere Informationen finden Sie unter <a href="#cp">Zeichensatz einer Skript-Datei</a>.</p>
-      <p><span class="ver">[v1.1.33+]:</span> Wenn "Default to UTF-8" im Installer aktiviert ist, wird der Dateityp ".ahk" mit einer Befehlszeile registriert, die <code>/CP65001</code> enthält. Dies führt dazu, dass alle Skripte, die über die Shell (Explorer) gestartet werden, standardmäßig UTF-8 verwenden, wenn keine UTF-16-Byte-Order-Markierung vorhanden ist. Skripte, die direkt über AutoHotkey.exe gestartet werden, verwenden weiterhin standardmäßig <code>CP0</code>, da der Parameter <code>/CP65001</code> nicht vorhanden ist.</p>
+      <p>Wenn "Default to UTF-8" im Installer aktiviert ist, wird der Dateityp ".ahk" mit einer Befehlszeile registriert, die <code>/CP65001</code> enthält. Dies führt dazu, dass alle Skripte, die über die Shell (Explorer) gestartet werden, standardmäßig UTF-8 verwenden, wenn keine UTF-16-Byte-Order-Markierung vorhanden ist. Skripte, die direkt über AutoHotkey.exe gestartet werden, verwenden weiterhin standardmäßig <code>CP0</code>, da der Parameter <code>/CP65001</code> nicht vorhanden ist.</p>
     </td>
     <td>Nein</td>
   </tr>
@@ -315,8 +319,8 @@ FileAppend Var, "C:\Meine Datei.txt"</pre>
 <p>Damit ASCII-fremde Zeichen korrekt aus der Datei gelesen werden können, muss die Codierung, die beim Speichern der Datei verwendet wurde (meistens via Texteditor), mit der Codierung übereinstimmen, die AutoHotkey beim Lesen der Datei verwendet. Wenn sie nicht übereinstimmen, werden Zeichen falsch dekodiert. AutoHotkey entscheidet anhand folgender Regeln, welche Codierung verwendet werden soll:</p>
 <ul>
   <li>Beginnt die Datei mit einer UTF-8- oder UTF-16-Byte-Order-Markierung (BOM), wird der entsprechende Zeichensatz verwendet und die <a href="#CPn">/CP<i>n</i></a>-Option ignoriert.</li>
-  <li>Wenn die <a href="#CPn">/CP<i>n</i></a>-Option via Befehlszeile übergeben wurde, wird der Zeichensatz <i>n</i> verwendet. Eine Liste von gültigen numerischen Zeichensatzidentifikatoren finden Sie unter <a href="https://msdn.microsoft.com/de-de/library/dd317756.aspx">MSDN</a>.
-  <p class="note"><strong>Hinweis:</strong> Die Option "Default to UTF-8" im Installer von AutoHotkey <span class="ver">[v1.1.33+]</span> fügt <code>/CP65001</code> zu den Befehlszeilen aller Skripte hinzu, die über die Shell (Explorer) gestartet werden.</p></li>
+  <li>Wenn die <a href="#CPn">/CP<i>n</i></a>-Option via Befehlszeile übergeben wurde, wird der Zeichensatz <i>n</i> verwendet. Eine Liste möglicher Werte finden Sie unter <a href="https://docs.microsoft.com/de-de/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>.
+  <p class="note"><strong>Hinweis:</strong> Die Option "Default to UTF-8" im AutoHotkey-Installer fügt <code>/CP65001</code> zu den Befehlszeilen aller Skripte hinzu, die über die Shell (Explorer) gestartet werden.</p></li>
   <li>In allen anderen Fällen wird UTF-8 verwendet (dieses Standardverhalten unterscheidet sich von AutoHotkey v1).</li>
 </ul>
 <p>Beachten Sie, dass die oben genannten Punkte nur für Skript-Dateien gelten, die AutoHotkey geladen hat, nicht für die Dateibearbeitung im Skript selbst. <a href="commands/FileEncoding.htm">FileEncoding</a> steuert die Standardcodierung von Dateien, die das Skript liest oder schreibt, während <a href="commands/IniRead.htm">IniRead</a> und <a href="commands/IniWrite.htm">IniWrite</a> immer auf Basis von UTF-16 oder ANSI arbeiten.</p>

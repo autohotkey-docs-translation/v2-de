@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>NumPut - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die NumPut-Funktion speichert eine binäre Nummer auf eine bestimmte Adresse + Offset." />
+<meta name="description" content="Die NumPut-Funktion speichert eine oder mehrere Nummern im Binärformat auf eine bestimmte Adresse + Offset." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -13,10 +13,8 @@
 <body>
 
 <h1>NumPut</h1>
-<p>Speichert eine binäre Nummer auf eine bestimmte Adresse + Offset.</p>
+<p>Speichert eine oder mehrere Nummern im Binärformat auf eine bestimmte Adresse + Offset.</p>
 <pre class="Syntax"><span class="func">NumPut</span> Typ, Nummer, <span class="optional">Typ2, Nummer2, ...</span> Ziel <span class="optional">, Offset := 0</span></pre>
-<p class="warning"><strong>Veraltet:</strong> Die folgende Syntax wird zugunsten der oberen Syntax bald entfernt.</p>
-<pre class="Syntax"><span class="func">NumPut</span> Nummer, Ziel <span class="optional">, Offset := 0</span><span class="optional">, Typ := "UPtr"</span></pre>
 
 <h2>Parameter</h2>
 <dl>
@@ -24,7 +22,7 @@
   <dt>Typ</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Eine der folgenden Zeichenketten (standardmäßig UPtr, wenn dieser Parameter weggelassen wird):<br>
+      <p>Eine der folgenden Zeichenketten:<br>
     UInt, UInt64, Int, Int64, Short, UShort, Char, UChar, Double, Float, Ptr oder UPtr</p>
       <p>Bei allen Integer-Typen oder bei der Übergabe von reinen Integern hat der Unterschied zwischen vorzeichenfähig und vorzeichenlos keinen Einfluss auf das Ergebnis, weil zum Darstellen von vorzeichenfähigen Integern das Zweierkomplement genutzt wird.</p>
       <p>Diese Typen müssen in Anführungszeichen gesetzt werden, wenn sie als direkt geschriebene Zeichenketten verwendet werden.</p>
@@ -54,13 +52,12 @@
 
 <h2>Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Diese Funktion gibt die Adresse ganz rechts des zuletzt geschriebenen Elements zurück. Dieser Rückgabewert wird häufig verwendet, wenn eine Folge von Nummern unterschiedlichen Typs geschrieben wird, wie in einer Struktur für <a href="DllCall.htm">DllCall</a>. In einigen Fällen ist es jedoch einfacher und effizienter, den Multi-Parameter-Modus wie unten beschrieben zu verwenden.</p>
+<p>Diese Funktion gibt die Adresse ganz rechts des zuletzt geschriebenen Elements zurück. Dieser Rückgabewert kann genutzt werden, wenn eine nicht zusammenhängende Zahlenfolge geschrieben wird, wie in einer Struktur für <a href="DllCall.htm">DllCall</a>, bei der einige Felder nicht gesetzt sind. In vielen Fällen ist es jedoch einfacher und effizienter, stattdessen mehrere <em>Typ</em>-<em>Nummer</em>-Paare anzugeben. Die Übergabe der Adresse zurück an NumPut ist weniger sicher als die Übergabe eines Buffer-ähnlichen Objekts mit einem aktualisierten <em>Offset</em>.</p>
 
 <h2>Allgemeine Bemerkungen</h2>
 <p>Um eine Sequenz von Zahlen zu schreiben, kann <em>Typ</em> und <em>Nummer</em> nach der ersten <em>Nummer</em> beliebig oft wiederholt werden. Jede Zahl wird auf das nächste Byte nach der vorherigen Zahl geschrieben, ohne Auffüllen. Beim Erstellen einer Struktur für <a href="DllCall.htm">DllCall</a> ist zu beachten, dass einige Felder aufgrund von Datenausrichtungsanforderungen möglicherweise explizit aufgefüllt werden müssen.</p>
 <p>Überschreitet ein Integer den Gültigkeitsbereich des angegebenen <em>Typ</em>s, werden seine höchstwertigen Bytes ignoriert; z. B. würde <code>NumPut(257, buf, 0, "Char")</code> nur die Zahl 1 speichern.</p>
 <p>Es wird eventuell eine Ausnahme ausgelöst, wenn die Zieladresse ungültig ist. Allerdings ist es möglich, dass einige ungültige Adressen nicht als solches erkannt werden, was zu unvorhersehbaren Verhalten führen könnte. Die Übergabe eines <a href="../objects/Buffer.htm">Buffer</a>-Objekts anstelle einer Adresse stellt sicher, dass die Zieladresse immer validiert werden kann.</p>
-<p class="warning"><strong>Veraltet:</strong> Wenn nur drei Parameter vorhanden sind und wenn <em>Nummer</em> der erste Parameter ist, kann der dritte Parameter entweder <em>Offset</em> oder <em>Typ</em> sein. Zum Beispiel wäre <code>NumPut(x, buf, "int")</code> gültig.</p>
 
 <h2>Siehe auch</h2>
 <p><a href="NumGet.htm">NumGet</a>, <a href="DllCall.htm">DllCall</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a></p>
