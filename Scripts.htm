@@ -32,7 +32,7 @@
 </ul>
 <h2 id="intro">Einführung</h2>
 <p>Jedes Skript ist eine reine Textdatei mit mehreren Zeilen, die das Programm (AutoHotkey.exe) ausführen soll. Solche Skripte können <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten oder sogar nur aus diesen bestehen. Falls keine Hotkeys und Hotstrings vorhanden sind, wird ein Skript, sobald es gestartet wird, seine Funktionen von oben nach unten und der Reihe nach ausführen.</p>
-<p>Das Programm lädt das Skript zeilenweise in den Speicher. Jede Zeile kann bis zu 16383 Zeichen lang sein. Während des Ladevorgangs wird das Skript <a href="misc/Performance.htm">optimiert</a> und überprüft, ob es gültig ist. Wenn das Programm auf einen Syntaxfehler stößt, wird er angezeigt. Solche Fehler müssen korrigiert werden, bevor das Skript ausgeführt werden kann.</p>
+<p>Das Programm lädt das Skript zeilenweise in den Speicher. Während des Ladevorgangs wird das Skript <a href="misc/Performance.htm">optimiert</a> und überprüft, ob es gültig ist. Wenn das Programm auf einen Syntaxfehler stößt, wird er angezeigt. Solche Fehler müssen korrigiert werden, bevor das Skript ausgeführt werden kann.</p>
 <h2 id="auto">Der oberste Bereich des Skripts (automatischer Ausführungsbereich)</h2>
 <p>Das Skript startet, sofern es erfolgreich geladen wurde, bei der ersten Zeile und endet, wenn es entweder ein <a href="commands/Return.htm">Return</a>, <a href="commands/Exit.htm">Exit</a>, oder das physische Ende des Skripts erreicht hat (je nachdem was zuerst kommt). Dieser oberste Bereich des Skripts wird auch als <em>automatischer Ausführungsbereich</em> bezeichnet.</p>
 <p id="persistent">Ein Skript ohne <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, sichtbare <a href="objects/Gui.htm">GUIs</a>, aktive <a href="commands/OnMessage.htm">Meldungsüberwachungen</a>, aktive <a href="commands/SetTimer.htm">Timer</a>, aktiver <a href="commands/OnClipboardChange.htm">OnClipboardChange</a>-Callback-Funktion, benutzerdefinierte Tray-<a href="objects/Menu.htm">Menüpunkte</a> und <a href="commands/_Persistent.htm">#Persistent</a>-Direktive wird beendet, sobald es den automatischen Ausführungsbereich durchgeführt hat. Ansonsten läuft das Skript im Leerlauf weiter, wo es nur noch auf Ereignisse wie Hotkeys, Hotstrings, <a href="objects/GuiOnEvent.htm">GUI-Ereignisse</a>, <a href="objects/Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="commands/SetTimer.htm">Timer</a> reagieren kann. Ändern sich diese Bedingungen, nachdem das Ende des automatischen Ausführungsbereichs erreicht wurde (zum Beispiel beim Deaktivieren des letzten Timers), könnte sich das Skript schließen, sobald der letzte laufende Thread endet oder das letzte GUI-Fenster geschlossen wird.</p>
@@ -124,16 +124,6 @@ Standardmäßig befindet sich das CR-Zeichen (Enter) zwischen der vorherigen und
     &nbsp;; Das ist <strong>kein</strong> Kommentar; es ist direkt geschrieben. Fügen Sie das Wort <i>Comments</i> in die Zeile darüber ein, um es zu einem Kommentar zu machen.
 )", "C:\Datei.txt"   <em>; Kommentar.</em></pre>
 <p>Der oben genannte Punkt ist der Grund, warum Semikolons innerhalb eines Fortsetzungsbereichs nie mit einem <a href="misc/EscapeChar.htm">Escapezeichen</a> versehen werden müssen.</p>
-<p>Ein Fortsetzungsbereich kann keine Zeile erzeugen, deren Länge 16383 Zeichen überschreitet (das Programm warnt Sie bei dem Versuch, sobald es gestartet wird). Diese Einschränkung kann zum Beispiel mit mehreren Verkettungen umgangen werden. Zum Beispiel:</p>
-<pre>Var := "
-(
-...
-)"
-Var .= "`n  <em>; Füge mithilfe eines weiteren Fortsetzungsbereichs mehr Text hinzu.</em>
-(
-...
-)"
-FileAppend Var, "C:\Meine Datei.txt"</pre>
 <p>Aufgrund der Tatsache, dass eine runde Endklammer das Ende eines Fortsetzungsbereichs kennzeichnet, muss eine direkt geschriebene runde Endklammer mit einem Escapezeichen (Akzent/umgekehrtes Häkchen) versehen werden: <code>`)</code>. Dies kann jedoch nicht mit der <a href="#accent">Akzent-Option (`)</a> kombiniert werden.</p>
 <p>Unmittelbar nach einem Fortsetzungsbereich kann eine Zeile angegeben werden, die die runde Startklammer eines weiteren Fortsetzungsbereichs enthält. Auf diese Weise können unterschiedliche Optionen beim Konstruieren einer einzelnen Zeile angewendet werden.</p>
 <p>Die stückweise Konstruktion eines Fortsetzungsbereichs via <a href="commands/_Include.htm">#Include</a> wird nicht unterstützt.</p>

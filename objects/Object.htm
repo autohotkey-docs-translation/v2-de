@@ -203,6 +203,20 @@
     <p>Wenn die Eigenschaft eine Getter-Methode hat, wird sie aufgerufen, um den Wert zu ermitteln (es sei denn, <em>Wert</em> wird weggelassen).</p>
   </dd>
 </dl>
+<p>Dynamische Eigenschaften sind in der Enumeration enthalten. Allerdings:</p>
+<ul>
+  <li>Da nur die eigenen Eigenschaften des Objekts enumeriert werden, muss die Eigenschaft direkt in <em>Obj</em> definiert werden.</li>
+  <li>Wenn nur die erste Variable angegeben wurde, wird der Name der Eigenschaft zurückgegeben und ihr Getter nicht aufgerufen.</li>
+  <li>Wenn zwei Variablen angegeben wurden, versucht der Enumerator, den Getter der Eigenschaft aufzurufen, um den Wert abzurufen.
+    <ul>
+      <li>Wenn der Getter Parameter benötigt, wird die Eigenschaft übersprungen.</li>
+      <li>Wenn <em>Obj</em> nur einen Setter und keinen Getter für diese Eigenschaft enthält, wird sie übersprungen.</li>
+      <li>Wenn <em>Obj</em> ein Klassenprototypobjekt ist, sollte (und in einigen Fällen kann) der Getter nicht aufgerufen werden; daher wird die Eigenschaft übersprungen.</li>
+      <li>Wenn der Getter eine Ausnahme auslöst, wird sie propagiert (nicht unterdrückt). Der Aufrufer kann die Enumeration bei der nächsten Eigenschaft nur fortsetzen, wenn er eine Referenz zum Enumerator gespeichert hat (also nicht, wenn er den Enumerator direkt an eine For-Schleife übergeben hat, da in diesem Fall der Enumerator freigegeben wird, wenn die For-Schleife abbricht).</li>
+    </ul>
+  </li>
+</ul>
+<p>Um eigene Eigenschaften zu enumerieren, ohne Eigenschafts-Getter aufzurufen, übergeben Sie nur eine einzige Variable an die For-Schleife oder den Enumerator. <a href="#GetOwnPropDesc">GetOwnPropDesc</a> kann genutzt werden, um Werteigenschaften von dynamischen Eigenschaften zu unterscheiden und gleichzeitig den Wert oder den Getter/Setter abzurufen.</p>
 <p>Die Standardimplementierung dieser Methode ist auch als Funktion definiert: <code>ObjOwnProps(Obj)</code>.</p>
 </div>
 
