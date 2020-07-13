@@ -79,7 +79,8 @@ Loop read, "C:\Dokumente\Adressenliste.txt", "C:\Dokumente\Familie-Adressen.txt"
 
 <div class="ex" id="ExURL">
 <p><a href="#ExURL">#3</a>: Das folgende Beispiel zeigt, wie alle FTP- und HTTP-URLs aus einer Text- oder HTML-Datei extrahiert werden können:</p>
-<pre>Quelldatei := FileSelect(3,, "Wähle eine Text- oder HTML-Datei zum Analysieren aus:")
+<pre>
+Quelldatei := FileSelect(3,, "Wähle eine Text- oder HTML-Datei zum Analysieren aus:")
 if Quelldatei = ""
     return  <em>; In diesem Fall beenden.</em>
 
@@ -96,67 +97,60 @@ if FileExist(Zieldatei)
 Linkanzahl := 0
 Loop read, Quelldatei, Zieldatei
 {
-    URLSuchZeichenkette := A_LoopReadLine
-    Gosub URLSuche
+    URLSuche(A_LoopReadLine)
 }
 MsgBox Linkanzahl ' Links wurden gefunden und in "' Zieldatei '" geschrieben.'
 return
 
 
-URLSuche:
-<em>; Das wird auf diese Weise gemacht, weil einige URLs andere URLs eingebettet haben:</em>
-URLStart1 := InStr(URLSuchZeichenkette, "https://")
-URLStart2 := InStr(URLSuchZeichenkette, "http://")
-URLStart3 := InStr(URLSuchZeichenkette, "ftp://")
-URLStart4 := InStr(URLSuchZeichenkette, "www.")
-
-<em>; Findet die Startposition ganz links:</em>
-URLStart := URLStart1  <em>; Setzt den Standardwert.</em>
-Loop
+URLSuche(URLSuchZeichenkette)
 {
-    <em>; Es kommt der Leistung zugute (zumindest in einem Skript mit vielen Variablen), wenn</em>
-    <em>; "URLStart%A_Index%" nur einmal aufgelöst wird:</em>
-    ArrayElement := URLStart%A_Index%
-    if ArrayElement = ""  <em>; Ende des <a href="../misc/Arrays.htm#pseudo">Pseudo-Arrays</a> erreicht.</em>
-        break
-    if !ArrayElement  <em>; Dieses Element ist disqualifiziert.</em>
-        continue
-    if !URLStart
-        URLStart := ArrayElement
-    else <em>; URLStart beinhaltet eine gültige Position, also mit ArrayElement vergleichen.</em>
+    <em>; Das wird auf diese Weise gemacht, weil einige URLs andere URLs eingebettet haben:
+    ; Findet die Startposition ganz links:</em>
+    URLStart := 0  <em>; Setzt den Standardwert.</em>
+    for URLPräfix in ["https://", "http://", "ftp://", "www."]
     {
-        if ArrayElement
-            if ArrayElement &lt; URLStart
-                URLStart := ArrayElement
+        DiesePos := InStr(URLSuchZeichenkette, URLPräfix)
+        if !DiesePos  <em>; Dieses Präfix ist disqualifiziert.</em>
+            continue
+        if !URLStart
+            URLStart := DiesePos
+        else <em>; URLStart beinhaltet eine gültige Position, also mit DiesePos vergleichen.</em>
+        {
+            if DiesePos &amp;&amp; DiesePos &lt; URLStart
+                URLStart := DiesePos
+        }
     }
+
+    if !URLStart  <em>; Keine URLs in der URLSuchZeichenkette.</em>
+        return
+
+    <em>; Extrahiert ansonsten diese URL:</em>
+    URL := SubStr(URLSuchZeichenkette, URLStart)  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
+    Loop parse, URL, " `t&lt;&gt;"  <em>; Findet das erste Leer-, Tab- oder Winkelzeichen (falls vorhanden).</em>
+    {
+        URL := A_LoopField
+        break  <em>; Führt nur eine Schleifeniteration durch, um das erste "Feld" zu holen.</em>
+    }
+    <em>; Wenn die obige Schleife aufgrund eines nicht-vorhandenen Endungszeichen keine Iteration hat,
+    ; bleibt der Inhalt der URL-Variable unberührt.
+
+    ; Wenn die URL mit einem Anführungszeichen endet, wird sie entfernt.  Vorerst wird StrReplace verwendet, aber
+    ; beachten Sie, dass Anführungszeichen in URLs legitim sind, so dass sie dadurch
+    ; beschädigt werden könnten:</em>
+    SaubereURL := StrReplace(URL, '"')
+    FileAppend SaubereURL "`n"
+    global Linkanzahl += 1
+
+    <em>; Schaut nach, ob noch andere URLs in dieser Zeile vorkommen:</em>
+    ZuEntfernendeZeichen := StrLen(URL)
+    ZuEntfernendeZeichen += URLStart
+    URLSuchZeichenkette := SubStr(URLSuchZeichenkette, ZuEntfernendeZeichen)
+    
+    <em>; Ruft sich nochmals selbst auf:</em>
+    URLSuche(URLSuchZeichenkette)
 }
-
-if !URLStart  <em>; Keine URLs in der URLSuchZeichenkette.</em>
-    return
-
-<em>; Extrahiert ansonsten diese URL:</em>
-URL := SubStr(URLSuchZeichenkette, URLStart)  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
-Loop parse, URL, " `t&lt;&gt;"  <em>; Findet das erste Leer-, Tab- oder Winkelzeichen (falls vorhanden).</em>
-{
-    URL := A_LoopField
-    break  <em>; Führt nur eine Schleifeniteration durch, um das erste "Feld" zu holen.</em>
-}
-<em>; Wenn die obige Schleife aufgrund eines nicht-vorhandenen Endungszeichen keine Iteration hat,
-; bleibt der Inhalt der URL-Variable unberührt.</em>
-
-<em>; Wenn die URL mit einem Anführungszeichen endet, wird sie entfernt.  Vorerst wird StrReplace verwendet, aber
-; beachten Sie, dass Anführungszeichen in URLs legitim sind, so dass sie dadurch
-; beschädigt werden könnten:</em>
-SaubereURL := StrReplace(URL, '"')
-FileAppend SaubereURL "`n"
-Linkanzahl += 1
-
-<em>; Schaut nach, ob noch andere URLs in dieser Zeile vorkommen:</em>
-ZuEntfernendeZeichen := StrLen(URL)
-ZuEntfernendeZeichen += URLStart
-URLSuchZeichenkette := SubStr(URLSuchZeichenkette, ZuEntfernendeZeichen)
-Gosub URLSuche  <em>; Ruft sich nochmals selbst auf.</em>
-return</pre>
+</pre>
 </div>
 
 </body>

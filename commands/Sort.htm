@@ -67,7 +67,7 @@ C:\AAA\BBB.txt</pre>
 <pre class="Syntax">MeineFunktion(Erster, Zweiter <span class="optional">, Offset</span>)</pre>
 <p>Geht die Funktion davon aus, dass der erste Parameter größer als der zweite ist, sollte sie einen positiven Integer zurückgeben. Geht die Funktion davon aus, dass die zwei Parameter gleich groß sind, sollte sie eine 0, "" oder nichts zurückgeben. Ansonsten sollte sie einen negativen Integer zurückgeben. Falls ein Dezimalpunkt im Rückgabewert vorhanden ist, wird dieser Teil ignoriert (z. B. ist 0.8 das gleiche wie 0).</p>
 <p>Ist der dritte Parameter vorhanden, erhält er den Offset (in Zeichen) vom ersten zum zweiten Element aus der originalen/unsortierten Liste (siehe Beispiele).</p>
-<p>Die Funktion verwendet die gleichen globalen Einstellungen (z. B. <a href="StringCaseSense.htm">StringCaseSense</a>) wie die Sort-Funktion, mit der diese aufgerufen wurde.</p>
+<p>Die Funktion verwendet die gleichen globalen (oder thread-spezifischen) Einstellungen wie die Sort-Funktion, mit der diese aufgerufen wurde.</p>
 <p class="note"><strong>Hinweis</strong>: Alle Optionen außer <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> werden ignoriert, wenn ein <em>Callback</em> vorhanden ist (allerdings haben <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch Einfluss darauf, wie <a href="#unique">Duplikate</a> erkannt werden).</p>
 
 <h2>Bemerkungen</h2>
@@ -107,16 +107,17 @@ Inhalt := ""  <em>; Gibt den Speicher frei.</em></pre>
 
 <div class="ex" id="ExCustom">
 <p><a href="#ExCustom">#4</a>: Die folgenden Beispiele demonstrieren die benutzerdefinierte Sortierung mit einer Callback-Funktion.</p>
-<pre>MeineVar := "def`nabc`nmno`nFGH`nco-op`ncoop`ncop`ncon`n"
-MsgBox <strong>Sort</strong>(MeineVar,, "StringSort")
-StringSort(a1, a2, *)
+<pre>MeineVar := "Dies`nist`neine`nBeispiel`nZeichenkette,`ndie`nsortiert`nwerden`nsoll"
+MsgBox <strong>Sort</strong>(MeineVar,, "SortierenNachLänge")
+SortierenNachLänge(a1, a2, *)
 {
-    return a1 &gt; a2 ? 1 : a1 &lt; a2 ? -1 : 0  <em>; Sortiert alphabetisch, basierend auf die Einstellung von <a href="StringCaseSense.htm">StringCaseSense</a>.</em>
+    a1 := StrLen(a1), a2 := StrLen(a2)
+    return a1 &gt; a2 ? 1 : a1 &lt; a2 ? -1 : 0  <em>; Sortiert nach den oben ermittelten Längen.</em>
 }
 
 MeineVar := "5,3,7,9,1,13,999,-4"
-MsgBox <strong>Sort</strong>(MeineVar, "D,", "IntegerSort")
-IntegerSort(a1, a2, *)
+MsgBox <strong>Sort</strong>(MeineVar, "D,", "SortierenNachInteger")
+SortierenNachInteger(a1, a2, *)
 {
     return a1 - a2  <em>; Sortiert in aufsteigender numerischer Reihenfolge. Diese Methode funktioniert nur, wenn die Differenz einen vorzeichenfähigen 64-Bit-Integer nicht überschreiten kann.</em>
 }
@@ -129,7 +130,7 @@ UmgekehrteRichtung(a1, a2, offset)
 }
 
 MeineVar := "a bbb cc"
-<em>; Sortiert in aufsteigender Längenreihenfolge; verwendet eine <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a>:</em>
+<em>; Sortiert nach Länge in aufsteigender Reihenfolge; verwendet eine <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a>:</em>
 MsgBox <strong>Sort</strong>(MeineVar, "D ", (a,b,*) =&gt; StrLen(a) - StrLen(b))
 </pre>
 </div>

@@ -92,10 +92,10 @@ MsgBox "Klassenname: " name
 
 <div class="ex" id="ExIE">
 <p><a href="#ExIE">#2</a>: Ein vorhandenes Internet-Explorer-Fenster automatisieren.</p>
-<pre>sURL := "https://www.autohotkey.com/boards/"
+<pre>
+sURL := "https://www.autohotkey.com/boards/"
 if WebBrowser := GetWebBrowser()
     WebBrowser.Navigate(sURL)
-return
 
 GetWebBrowser()
 {
@@ -104,9 +104,11 @@ GetWebBrowser()
     lResult := SendMessage(msg, 0, 0, "Internet Explorer_Server1", "ahk_class IEFrame")
     if !lResult
         return  <em>; IE nicht gefunden.</em>
+    static IID_IHTMLDocument2 := GUID("{332C4425-26CB-11D0-B483-00C04FD90119}")
+    static VT_UNKNOWN := 13
     DllCall("oleacc\ObjectFromLresult", "Ptr", lResult
-        , "Ptr", GUID(IID_IHTMLDocument2,"{332C4425-26CB-11D0-B483-00C04FD90119}")
-        , "Ptr", 0, "Ptr*", pdoc)
+        , "Ptr", IID_IHTMLDocument2, "Ptr", 0
+        , "Ptr*", pdoc := ComObject(VT_UNKNOWN, 0))
     
     <em>; WebBrowserApp-Service anfordern. In diesem bestimmten Fall sind
     ; SID und IID identisch, was nicht immer so ist.</em>
@@ -114,18 +116,20 @@ GetWebBrowser()
     static SID_SWebBrowserApp := IID_IWebBrowserApp
     pweb := ComObjQuery(pdoc, SID_SWebBrowserApp, IID_IWebBrowserApp)
     
-    <em>; Document-Objekt-Pointer freigeben.</em>
-    ObjRelease(pdoc)
-    
-    <em>; WebBrowser-Objekt in verwendbarer Form zurückgeben:</em>
-    static VT_DISPATCH := 9, F_OWNVALUE := 1
-    return ComObject(VT_DISPATCH, pweb, F_OWNVALUE)
+    <em>; WebBrowser-Objekt als IDispatch in verwendbarer Form zurückgeben:
+    ; Dies funktioniert nur, weil IWebBrowserApp von IDispatch abgeleitet ist.
+    ; pweb wird dessen ptr automatisch freigeben, also AddRef nutzen, um dem entgegenzuwirken.</em>
+    ObjAddRef(pweb.ptr)
+    static VT_DISPATCH := 9
+    return ComObject(VT_DISPATCH, pweb.ptr)
 }
 
-GUID(ByRef GUID, sGUID) <em>; Wandelt eine Zeichenkette in eine binäre GUID um und gibt ihre Adresse zurück.</em>
+GUID(sGUID) <em>; Wandelt eine Zeichenkette in eine binäre GUID um und gibt sie via Buffer-Objekt zurück.</em>
 {
     GUID := BufferAlloc(16, 0)
-    return DllCall("ole32\CLSIDFromString", "WStr", sGUID, "Ptr", GUID) &gt;= 0 ? GUID : ""
+    if DllCall("ole32\CLSIDFromString", "WStr", sGUID, "Ptr", GUID) &lt; 0
+        throw Exception("Ungültiger Parameter #1", -1, sGUID)
+    return GUID
 }
 </pre>
 </div>

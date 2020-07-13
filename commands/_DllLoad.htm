@@ -29,18 +29,22 @@
     <p>Bekannte Einschränkung: Beim Kompilieren eines Skripts werden Variablen vom Compiler ausgewertet; das heißt, dass sie von dem abweichen können, was das Skript bei der endgültigen Ausführung zurückgeben würde. Folgende Variablen werden unterstützt: A_AhkPath, A_AppData, A_AppDataCommon, A_ComputerName, A_ComSpec, A_Desktop, A_DesktopCommon, A_IsCompiled, A_LineFile, A_MyDocuments, A_ProgramFiles, A_Programs, A_ProgramsCommon, A_ScriptDir, A_ScriptFullPath, A_ScriptName, A_Space, A_StartMenu, A_StartMenuCommon, A_Startup, A_StartupCommon, A_Tab, A_Temp, A_UserName, A_WinDir.</p>
     <p><strong>Datei:</strong> Der absolute oder relative Pfad der DLL- oder EXE-Datei, die geladen werden soll. Wenn ein relativer Pfad angegeben ist, verwendet die Direktive die Suchstrategie der Systemfunktion <a href="https://docs.microsoft.com/de-de/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryw">LoadLibraryW</a> zum Suchen der Datei. Hinweis: <a href="SetWorkingDir.htm">SetWorkingDir</a> hat keine Auswirkung auf #DllLoad, da #DllLoad bereits vor Beginn der Skriptausführung ausgewertet wird.</p>
     <p><strong>Verzeichnis:</strong> Geben Sie ein Verzeichnis anstelle einer Datei an, um die Suchstrategie für alle nachfolgenden #DllLoad-Direktiven ohne absolutem Pfad zu ändern. Die neue Suchstrategie ist das gleiche wie, als hätte man <em>Verzeichnis</em> an die Systemfunktion <a href="https://docs.microsoft.com/de-de/windows/win32/api/winbase/nf-winbase-setdlldirectoryw">SetDllDirectoryW</a> übergeben. Lässt man diesen Parameter weg, wird die ursprüngliche Suchstrategie wiederhergestellt.</p>
+    <p class="note"><strong>Hinweis:</strong> Dieser Parameter ist kein Ausdruck, kann aber in Anführungszeichen gesetzt werden (entweder 'einfach' oder "doppelt").</p>
   </dd>
 </dl>
 <h2>Bemerkungen</h2>
 <p>Eine mit dieser Direktive geladene DLL- oder EXE-Datei kann nicht mehr mit der Systemfunktion <a href="https://docs.microsoft.com/de-de/windows/win32/api/libloaderapi/nf-libloaderapi-freelibrary">FreeLibrary</a> entladen werden. Wenn das Skript beendet wird, werden alle geladenen Dateien automatisch entladen.</p>
-<p>Vor dem <em>Dateiname</em>-Parameter kann optional <code>*i</code> und ein einzelnes Leerzeichen gesetzt werden, um alle Fehler zu ignorieren, die beim Laden der Datei auftreten könnten. Zum Beispiel: <code>#DllLoad *i MeineDLL</code>. Diese Option sollte nur verwenden werden, wenn die DLL- oder EXE-Datei nicht für die Ausführung des Hauptskripts relevant ist.</p>
+<p>Der <em>Dateiname</em>-Parameter kann optional mit <code>*i</code> und einem einzelnen Leerzeichen beginnen, um alle Fehler zu ignorieren, die beim Laden der Datei auftreten könnten. Diese Option sollte nur verwendet werden, wenn das Skript trotz des Fehlers ausführbar ist, z. B. wenn die DLL oder EXE nicht unbedingt erforderlich ist, oder wenn das Skript dafür ausgelegt ist, den Fehler zu erkennen. Zum Beispiel:</p>
+<pre>#DllLoad "*i MeineDLL"
+if !DllCall("GetModuleHandle", "str", "MeineDLL")
+    MsgBox "MeineDLL konnte nicht geladen werden!"</pre>
 <p>Wenn für <em>DateiName</em> nur der Name einer DLL-Datei angegeben ist (also ohne Pfad und Dateiendung), wird <em>.dll</em> an den Dateinamen angehängt. Um das zu verhindern, muss direkt nach dem Dateinamen ein Punkt (.) erfolgen.</p>
 <h2>Siehe auch</h2>
 <p><a href="DllCall.htm">DllCall</a></p>
 <h2>Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a href="#ExBasic">#1</a></p>
-<pre>#DllLoad %A_MyDocuments%\MeineDLL.dll</pre>
+<pre>#DllLoad "%A_MyDocuments%\MeineDLL.dll"</pre>
 </div>
 
 </body>

@@ -116,7 +116,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><strong>Unäres Minuszeichen (-)</strong>: Invertiert das Vorzeichen des Operanden.</p>
       <p><strong>Unäres Pluszeichen (+)</strong>: <code>+N</code> ist das gleiche wie <code>-(-N)</code>. Dieser Operator hat keinen Effekt, wenn er auf eine reine Zahl angewendet wird, aber er ist nützlich, um numerische Zeichenketten in reine Zahlen zu konvertieren.</p>
       <p><strong>Logisches NICHT (!)</strong>: Wenn dieser Operator bei einem Operanden angewendet wird, der leer oder 0 ist, ist das Ergebnis eine 1 (true). Ansonsten ist das Ergebnis eine 0 (false). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
-      <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Handelt es sich bei den Operanden um eine Floating-Point-Zahl, wird er vor der Berechnung auf Integer-Größe gekürzt. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden.</p>
+      <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden. Handelt es sich bei dem Operanden um eine Floating-Point-Zahl, wird eine Ausnahme ausgelöst.</p>
     </td>
   </tr>
   <tr id="MulDiv">
@@ -130,7 +130,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     <td><p><strong>Multiplizieren (*)</strong>: Das Ergebnis ist ein Integer, wenn beide Eingabewerte Integer sind; ansonsten ist es eine Floating-Point-Zahl.</p>
       <p><strong>Andere Einsatzmöglichkeiten</strong>: Das Sternchensymbol (*) kann auch in <a href="Functions.htm#VariadicCall">variadischen Funktionsaufrufen</a> genutzt werden.</p>
       <p id="divide"><strong>Echtes Dividieren (/)</strong>: Die echte Division liefert immer eine Floating-Point-Zahl, auch dann, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>3/2</code> gleich 1.5 statt 1, und <code>4/2</code> gleich 2.0 statt 2.</p>
-      <p id="FloorDivide"><strong>Floor-Dividieren (//)</strong>: Der Doppelschrägstrich-Operator verwendet eine sehr leistungsfähige Integer-Division, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der beiden Eingabewerte eine Floating-Point-Zahl ist, wird eine Floating-Point-Division durchgeführt und das Ergebnis auf den am nächsten links befindlichen Integer gekürzt. Zum Beispiel wäre <code>5//3.0</code> gleich 1.0 und <code>5.0//-3</code> gleich -2.0. Obwohl das Ergebnis dieser Floating-Point-Division ein Integer ist, wird es in nachfolgenden Operationen als Floating-Point-Zahl behandelt. Um stattdessen eine Division mit Rest (Modulo) durchzuführen, siehe <a href="commands/Math.htm#Mod">Mod</a>.</p>
+      <p id="IntegerDivide"><strong>Integer-Dividieren (//)</strong>: Der Doppelschrägstrich-Operator verwendet eine sehr leistungsfähige Integer-Division. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der Eingabewerte im Floating-Point-Format ist, wird eine Ausnahme ausgelöst. Um stattdessen eine Division mit Rest (Modulo) durchzuführen, siehe <a href="commands/Math.htm#Mod">Mod</a>.</p>
     <p>Die <a href="#AssignOp">Operatoren *= und /=</a> sind Kurzschreibweisen zum Multiplizieren oder Dividieren eines Variablenwertes mit einem anderen Wert. <code>Var *= 2</code> liefert zum Beispiel das gleiche Ergebnis wie <code>Var := Var * 2</code> (allerdings ist die erste Schreibweise performanter).</p>
     <p>Eine Division durch Null bewirkt, dass eine Ausnahme ausgelöst wird.</p></td>
   </tr>
@@ -146,7 +146,10 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     <td style="text-align:center"><strong>&lt;&lt;<br>
     
     &gt;&gt;</strong></td>
-    <td><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong> und <strong>nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Jeder Floating-Point-Eingabewert wird vor der Berechnung auf einen Integer gekürzt. Die bitweise Verschiebung nach links (<strong>&lt;&lt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren. Die bitweise Verschiebung nach rechts (<strong>&gt;&gt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden; zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2. Wenn <em>Wert2</em> kleiner als 0 oder größer als 63 ist (nach dem Kürzen), wird eine Ausnahme ausgelöst.</td>
+    <td>
+      <p><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong> und <strong>nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Die bitweise Verschiebung nach links (<strong>&lt;&lt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren. Die bitweise Verschiebung nach rechts (<strong>&gt;&gt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden; zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2. Wenn <em>Wert2</em> kleiner als 0 oder größer als 63 ist (nach dem Kürzen), wird eine Ausnahme ausgelöst.</p>
+      <p>Wenn einer der Eingabewerte eine Floating-Point-Zahl ist, wird eine Ausnahme ausgelöst.</p>
+    </td>
   </tr>
   <tr id="bitwise">
     <td style="text-align:center"><strong>&amp;<br>
@@ -157,9 +160,9 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     
     </strong></td>
     <td>
-      <p><strong>Bitweises UND (&amp;)</strong>, <strong>bitweises exklusives ODER (^)</strong> und <strong>bitweises ODER (|)</strong>. Von diesen drei Operatoren hat <strong>&amp;</strong> die höchste Priorität und <strong>|</strong> die niedrigste Priorität. Jeder Floating-Point-Eingabewert wird vor der Berechnung auf einen Integer gekürzt.</p>
+      <p><strong>Bitweises UND (&amp;)</strong>, <strong>bitweises exklusives ODER (^)</strong> und <strong>bitweises ODER (|)</strong>. Von diesen drei Operatoren hat <strong>&amp;</strong> die höchste Priorität und <strong>|</strong> die niedrigste Priorität.</p>
+      <p>Wenn einer der Eingabewerte eine Floating-Point-Zahl ist, wird eine Ausnahme ausgelöst.</p>
       <p>Siehe auch: <a href="#unary">Bitweises NICHT (~)</a></p>
-      <p><strong>Andere Einsatzmöglichkeiten</strong>: Wenn das Und-Zeichen keinen Wert (oder Teilausdruck, der einen Wert zurückgibt) davor hat, wird es stattdessen als <a href="#unary">Adressoperator</a> interpretiert.</p>
     </td>
   </tr>
   <tr id="concat">
@@ -184,8 +187,7 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
     
     &gt;= &lt;=</strong></td>
     <td>
-      <p><strong>Größer (&gt;)</strong>, <strong>kleiner (&lt;)</strong>, <strong>größer gleich (&gt;=)</strong> und <strong>kleiner gleich (&lt;=)</strong>. Wenn einer der beiden Eingabewerte nicht-numerisch ist (oder wenn beide Eingabewerte Zeichenketten sind), werden sie alphabetisch verglichen. Zum Beispiel wäre 2 &lt; "10" <em>True</em>, während "2" &lt; "10" <em>False</em> ist. Der Vergleich ist nur Groß-/Kleinschreibung-sensitiv, wenn <a href="commands/StringCaseSense.htm">StringCaseSense</a> eingeschaltet ist. Siehe auch: <a href="commands/Sort.htm">Sort</a></p>
-      <p>Diese Operatoren vergleichen die Zeichenketten nur bis zur ersten binären Null.</p>
+      <p><strong>Größer (&gt;)</strong>, <strong>kleiner (&lt;)</strong>, <strong>größer gleich (&gt;=)</strong> und <strong>kleiner gleich (&lt;=)</strong>. Die Eingabewerte werden numerisch verglichen. Es wird eine Ausnahme ausgelöst, wenn einer der Eingabewerte weder eine Zahl noch eine numerische Zeichenkette ist.</p>
     </td>
   </tr>
   <tr id="equal">
@@ -197,8 +199,9 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
       
       !==</strong></td>
     <td>
-      <p><strong>nicht-Groß-/Kleinschreibung-sensitiv gleich (=) / ungleich (!=)</strong> und <strong>Groß-/Kleinschreibung-sensitiv gleich (==) / ungleich (!==)</strong>. Die Operatoren <strong>==</strong> und <strong>=</strong> verhalten sich gleich, wenn beide Eingabewerte numerisch sind, es sei denn, einer der Eingabewerte ist nicht numerisch, dann ist <strong>==</strong> immer Groß-/Kleinschreibung-sensitiv und <strong>=</strong> immer nicht-Groß-/Kleinschreibung-sensitiv (die Methode der Nichtsensitivität ist abhängig von <a href="commands/StringCaseSense.htm">StringCaseSense</a>). Die Operatoren <strong>!=</strong> und <strong>!==</strong> verhalten sich identisch zu ihren Counterparts ohne <strong>!</strong>, außer dass das Ergebnis invertiert ist.</p>
+      <p><strong>nicht-Groß-/Kleinschreibung-sensitiv gleich (=) / ungleich (!=)</strong> und <strong>Groß-/Kleinschreibung-sensitiv gleich (==) / ungleich (!==)</strong>. Die Operatoren <strong>==</strong> und <strong>=</strong> verhalten sich gleich, wenn beide Eingabewerte numerisch sind, es sei denn, einer der Eingabewerte ist nicht numerisch, dann ist <strong>==</strong> immer Groß-/Kleinschreibung-sensitiv und <strong>=</strong> immer nicht-Groß-/Kleinschreibung-sensitiv. Die Operatoren <strong>!=</strong> und <strong>!==</strong> verhalten sich identisch zu ihren Counterparts ohne <strong>!</strong>, außer dass das Ergebnis invertiert ist.</p>
       <p>Mit den Operatoren <strong>==</strong> und <strong>!==</strong> können Zeichenketten verglichen werden, die binäre Nullen enthalten. Alle anderen Vergleichsoperatoren, außer <strong>~=</strong>, vergleichen Zeichenketten nur bis zur ersten binären Null.</p>
+      <p>Bei nicht-Groß-/Kleinschreibung-sensitiven Vergleichen werden nur die ASCII-Buchstaben von A bis Z und die entsprechenden Kleinbuchstaben gleichwertig behandelt. Um stattdessen einen Vergleich gemäß den Regeln der aktuellen Sprach- und Regionseinstellungen des Benutzers durchzuführen, nutzen Sie <a href="commands/StrCompare.htm">StrCompare</a> und fügen Sie "Locale" in dessen <em>GroßKleinSensitiv</em>-Parameter ein.</p>
     </td>
   </tr>
   <tr>
@@ -265,7 +268,7 @@ MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurü
         
         &lt;&lt;=</strong>
     </td>
-    <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable. Der einfachste Zuweisungsoperator ist der <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, der das Ergebnis eines Ausdrucks in eine Variable speichert. Eine Beschreibung dessen, was die anderen Operatoren tun, finden Sie in den entsprechenden Einträgen dieser Tabelle. <code>Var //= 2</code> beispielsweise führt eine <a href="#FloorDivide">Floor-Division</a> durch, um <em>Var</em> durch 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Ein weiteres Beispiel ist <code>Var <strong>.=</strong> "abc"</code>, was die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code> wäre.</p>
+    <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable. Der einfachste Zuweisungsoperator ist der <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, der das Ergebnis eines Ausdrucks in eine Variable speichert. Eine Beschreibung dessen, was die anderen Operatoren tun, finden Sie in den entsprechenden Einträgen dieser Tabelle. <code>Var //= 2</code> beispielsweise führt eine <a href="#IntegerDivide">Integer-Division</a> durch, um <em>Var</em> durch 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Ein weiteres Beispiel ist <code>Var <strong>.=</strong> "abc"</code>, was die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code> wäre.</p>
       <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Eine Zeile wie <code>Var1 := Var2 := 0</code> würde also erst eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
     <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Eine auf diese Weise verwendete Zuweisung kann auch via Referenz (<a href="Functions.htm#ByRef">ByRef</a>) übergeben werden, oder ihre Adresse zurückgeben; zum Beispiel: <code>StrPtr(x:="abc")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: <code>not x := y</code> würde als <code>not (x := y)</code> ausgewertet werden. <code>++Var := X</code> würde als <code>++(Var := X)</code> ausgewertet werden; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> würde als <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code> ausgewertet werden.</p>
@@ -419,10 +422,6 @@ sumfn := Func("Sum")</pre>
     <td>A_ThisFunc</td>
     <td>Der Name der <a href="Functions.htm">benutzerdefinierten Funktion</a>, die gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeineFunktion. Siehe auch: <a href="commands/IsFunc.htm">IsFunc</a></td>
   </tr>
-  <tr id="ThisLabel">
-    <td>A_ThisLabel</td>
-    <td>Der Name des <a href="misc/Labels.htm">Labels</a> (Subroutine), das gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeinLabel. Diese Variable wird jedes Mal aktualisiert, wenn das Skript <a href="commands/Gosub.htm">Gosub</a>/<a href="commands/Return.htm">Return</a> oder <a href="commands/Goto.htm">Goto</a> ausführt. Sie wird auch aktualisiert, wenn ein Label automatisch durch <a href="commands/SetTimer.htm">Timer</a>, <a href="objects/GuiOnEvent.htm#Threads">GUI-Threads</a>, <a href="objects/Menu.htm">Menüpunkte</a>, <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> aufgerufen wird. A_ThisLabel wird jedoch nicht aktualisiert, wenn die Skriptausführung in eines der oben genannten Label "hineinfällt"; in diesem Fall behält A_ThisLabel ihren vorherigen Wert. Siehe auch: <a href="#ThisHotkey">A_ThisHotkey</a> und <a href="commands/IsLabel.htm">IsLabel</a></td>
-  </tr>
   <tr id="AhkVersion">
     <td>A_AhkVersion</td>
     <td>Enthält die Version des AutoHotkey-Programms, mit dem das Skript ausgeführt wird, z. B. 1.0.22. Wird diese Variable in einem <a href="Scripts.htm#ahk2exe">kompilierten Skript</a> verwendet, meldet sie die Version des AutoHotkey-Programms, mit der das Skript ursprünglich kompiliert wurde. Aufgrund der Struktur der Versionsnummer kann ein Skript mithilfe von "&gt;" oder "&gt;=" überprüfen, ob A_AhkVersion größer als eine bestimmte Versionsnummer ist. Zum Beispiel: <code>if (A_AhkVersion &gt;= "1.0.25.07")</code>.</td>
@@ -553,10 +552,6 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
   <tr id="DetectHiddenText">
     <td>A_DetectHiddenText</td>
     <td>Kann genutzt werden, um abzurufen oder festzulegen, ob versteckter Text in einem Fenster erkannt werden soll. Mögliche Werte sind 0 (deaktiviert) und 1 (aktiviert). Einzelheiten finden Sie unter <a href="commands/DetectHiddenText.htm">DetectHiddenText</a>.</td>
-  </tr>
-  <tr id="StringCaseSense">
-    <td>A_StringCaseSense</td>
-    <td>Kann genutzt werden, um die Groß-/Kleinschreibung-Sensitivität für Zeichenkettenvergleiche abzurufen oder zu setzen. Mögliche Werte sind 0 (deaktiviert), 1 (aktiviert) und Locale. Einzelheiten finden Sie unter <a href="commands/StringCaseSense.htm">StringCaseSense</a>.</td>
   </tr>
   <tr id="FileEncoding">
     <td>A_FileEncoding</td>

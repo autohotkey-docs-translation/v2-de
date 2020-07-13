@@ -31,7 +31,7 @@
   <li><a href="#BuiltIn">Interne Funktionen</a></li>
 </ul>
 <h2 id="intro">Einführung und einfache Beispiele</h2>
-<p id="define">Eine Funktion ist so etwas Ähnliches wie eine Subroutine (<a href="commands/Gosub.htm">GoSub</a>), allerdings mit dem Unterschied, dass eine Funktion zusätzlich mit Parametern (Eingabewerten) aufgerufen werden kann. Eine Funktion kann außerdem einen Wert direkt an ihren Aufrufer zurückgeben. Das folgende Beispiel ist eine einfache Funktion, die zwei Zahlen akzeptiert und ihre Summe zurückgibt:</p>
+<p id="define">Eine Funktion ist so etwas Ähnliches wie eine Subroutine, allerdings mit dem Unterschied, dass eine Funktion zusätzlich mit Parametern (Eingabewerten) aufgerufen werden kann. Eine Funktion kann außerdem einen Wert direkt an ihren Aufrufer zurückgeben. Das folgende Beispiel ist eine einfache Funktion, die zwei Zahlen akzeptiert und ihre Summe zurückgibt:</p>
 <pre>Addieren(x, y)
 {
     <a href="commands/Return.htm">return</a> x + y
@@ -345,12 +345,6 @@ timertest()
 </pre>
 <p id="circular-closure">Es ist ratsam, eine Referenz zu einem Closure nicht in eine der freien Variablen des Closure zu speichern, da dies einen <a href="Objects.htm#Circular_References">Zirkelbezug</a> erzeugt, der unterbrochen werden muss, bevor das Closure freigegeben werden kann, z. B. indem man die Variable leert.</p>
 
-<h3 id="gosub">Verwenden von Subroutinen innerhalb einer Funktion</h3>
-<p>Eine Funktion kann auch Subroutinen enthalten, die zwar mehr Einschränkungen aufweisen als verschachtelte Funktionen, aber eventuell schneller ausgeführt werden können. Sie können wie alle Subroutinen via <a href="commands/Gosub.htm">GoSub</a> gestartet und via <a href="commands/Return.htm">Return</a> beendet werden (in diesem Fall gilt das Return nicht für die Funktion, sondern für das GoSub).</p>
-<p id="GosubPublic">Wenn eine Funktion <a href="commands/Gosub.htm">GoSub</a> verwendet, um zu einer öffentlichen Subroutine zu springen (also eine, die außerhalb der geschweiften Funktionsklammern zu finden ist), sind alle externen Variablen global und die <a href="#Local">lokalen Variablen</a> der Funktion erst wieder zugänglich, wenn die Subroutine ihr Ende erreicht hat. Allerdings wird A_ThisFunc weiterhin den Namen der Funktion enthalten.</p>
-<p>Ein <a href="commands/Goto.htm">Goto</a> kann nicht verwendet werden, um innerhalb einer Funktion zu einer externen Subroutine zu springen, allerdings kann eine Funktion via <a href="commands/Gosub.htm">Gosub</a> zu einer externen Subroutine springen und von dort aus ein Goto durchführen.</p>
-<p>Ein <a href="commands/Goto.htm">Goto</a> ist trotz seines schlechten Rufes zum Beispiel nützlich, um innerhalb einer Funktion auf eine andere Position zu springen. Dies kann dazu beitragen, komplexe Funktionen zu vereinfachen, die mehrere Returns haben und vor einem Return aufgeräumt werden müssen.</p>
-
 <h2 id="remarks">Return, Exit und allgemeine Bemerkungen</h2>
 <p>Wenn der Ausführungsablauf die geschweifte Endklammer der Funktion vor einem <a href="commands/Return.htm">Return</a> erreicht hat, endet die Funktion und gibt eine leere Zeichenkette zurück. Es wird auch ein leerer Wert zurückgegeben, wenn die Funktion den Parameter von <a href="commands/Return.htm">Return</a> explizit weglässt.</p>
 <p>Wenn eine Funktion ein <a href="commands/Exit.htm">Exit</a> zum Beenden des <a href="misc/Threads.htm">aktuellen Threads</a> verwendet, erhält ihr Aufrufer überhaupt keinen Rückgabewert. Das <code>Var</code> in <code>Var := Addieren(2, 3)</code> bliebe beispielsweise unverändert, wenn <code>Addieren()</code> via Exit beendet wird. Das gleiche passiert, wenn eine Funktion einen Laufzeitfehler verursacht, wie z. B. das <a href="commands/Run.htm">Ausführen</a> einer nicht-existierenden Datei (sofern dieser Fehler nicht von einer <a href="commands/Try.htm">Try</a>/<a href="commands/Catch.htm">Catch</a>-Anweisung abgefangen wurde).</p>
@@ -364,9 +358,10 @@ timertest()
 <pre>Addieren(x, y) {
     return x + y
 }</pre>
+
 <h2 id="include">Skripte mittels #Include auf die gleichen Funktionen zugreifen lassen</h2>
-<p>Die <a href="commands/_Include.htm">#Include</a>-Direktive kann verwendet werden (<em>auch am Anfang eines Skripts</em>), um Funktionen aus einer externen Datei zu laden.</p>
-<p>Erklärung: Wenn der Ausführungsablauf des Skripts eine Funktionsdefinition erreicht, wird sie übersprungen (dies passiert sofort) und die Ausführung bei der Zeile nach der geschweiften Endklammer fortgesetzt. Die Ausführung kann demzufolge nie in eine Funktionsdefinition geraten. Eine oder mehrere Funktionsdefinitionen im obersten Bereich eines Skripts haben keinen Einfluss auf den <a href="Scripts.htm#auto">automatischen Ausführungsbereich</a>.</p>
+<p>Die <a href="commands/_Include.htm">#Include</a>-Direktive kann verwendet werden, um Funktionen aus einer externen Datei zu laden.</p>
+
 <h2 id="lib">Funktionsbibliotheken: Standard- und Benutzerbibliothek</h2>
 <p>Ein Skript kann eine Funktion in einer externen Datei aufrufen, ohne <a href="commands/_Include.htm">#Include</a> verwenden zu müssen. Damit dies funktioniert, muss eine Datei, die den gleichen Namen hat wie die Funktion, in einem der folgenden Bibliotheksverzeichnisse vorkommen:</p>
 <pre><a href="Variables.htm#ScriptDir">A_ScriptDir</a> "\Lib\"  <em>; Lokale Bibliothek.</em>

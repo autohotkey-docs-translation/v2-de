@@ -19,7 +19,6 @@
 <ul>
   <li><a href="#install">Was kann ich tun, wenn AutoHotkey nicht installiert wird?</a></li>
   <li><a href="#rightclick">Wie stelle ich die Kontextmenüoptionen für .ahk-Dateien wieder her?</a></li>
-  <li><a href="#autoexec">Warum werden einige Zeilen in meinem Skript nie ausgeführt?</a></li>
   <li><a href="#vista">Warum funktioniert mein Skript nicht in Windows <em>xxx</em>, obwohl es in einer vorherigen Version lief?</a></li>
   <li><a href="#uac">Wie umgehe ich Probleme, die von der Benutzerkontensteuerung (UAC) erzeugt werden?</a></li>
   <li><a href="#DefaultScript">Ich kann mein Skript nicht über das Tray-Symbol editieren, weil es sich aufgrund eines Fehlers nicht starten lässt. Kann ich mein Skript noch irgendwo anders finden?</a></li>
@@ -88,15 +87,6 @@
 <p>Oder <a href="misc/remove-userchoice.reg" download="remove-userchoice.reg">diesen Registry-Patch</a> ausführen.</p>
 <p>Es ist eventuell auch notwendig, die Standardwerte in der Registry zu reparieren, indem Sie entweder AutoHotkey neu installieren oder das AutoHotkey-Setup (aus dem Startmenü) ausführen und <em>apply</em> oben im Fenster auswählen.</p>
 
-<h3 id="autoexec">Warum werden einige Zeilen in meinem Skript nie ausgeführt?</h3>
-<p>Jede Zeile, die unmittelbar beim Starten des Skripts ausgeführt werden soll, muss ganz oben im Skript vorkommen und vor dem ersten <a href="Hotkeys.htm">Hotkey</a>, <a href="Hotstrings.htm">Hotstring</a> oder <a href="commands/Return.htm">Return</a> stehen. Siehe <a href="Scripts.htm#auto">automatischer Ausführungsbereich</a> für weitere Details.</p>
-<p>Die erste auszuführende Zeile eines <a href="Hotkeys.htm">Hotkey</a>s darf nicht neben der Definition stehen, sondern muss <em>darunter</em> erfolgen. Zum Beispiel:</p>
-<pre>#space::  <em>; WIN+LEERTASTE</em>
-{
-    Run "Notepad"
-    WinWaitActive "Unbenannt - Editor"
-    WinMaximize
-}</pre>
 <h3 id="vista">Warum funktioniert mein Skript nicht in Windows <em>xxx</em>, obwohl es in einer vorherigen Version lief?</h3>
 <p>Dieses Problem tritt in mehreren Varianten auf:</p>
 <ul>
@@ -138,10 +128,9 @@
 <p>Wenn man versucht, ein Programm zu starten, das im Ordner <code>A_WinDir "\System32"</code> liegt, und die 32-Bit-Version von AutoHotkey auf einem 64-Bit-System benutzt, kann es passieren, dass der <a href="https://msdn.microsoft.com/de-de/library/aa384187">File System Redirector</a> Probleme bereiten wird. Um das zu umgehen, können Sie stattdessen <code>A_WinDir "\SysNative"</code> verwenden; dieser Pfad führt zu einem virtuellen Verzeichnis, das nur 32-Bit-Programme in einem 64-Bit-System sehen können.</p>
 
 <h3 id="nonascii">Warum werden die ASCII-fremden Zeichen in meinen Skript falsch angezeigt oder gesendet?</h3>
-<p>Kurze Antwort: Speichern Sie das Skript als UTF-8 mit BOM.</p>
-<p>Obwohl AutoHotkey Unicode-Text unterstützt, ist es auf Abwärtskompatibilität ausgelegt; das heißt, dass es standardmäßig die ANSI-Codierung bevorzugt, und nicht das international empfohlene UTF-8. AutoHotkey wird eine UTF-8-Datei nicht automatisch erkennen, es sei denn, sie beginnt mit einer Byte-Order-Markierung.</p>
-<p>Das heißt, dass UTF-8-Dateien, die keine Byte-Order-Markierung haben, fehlinterpretiert und infolgedessen ASCII-fremde Zeichen falsch dekodiert werden. Um das zu umgehen, müssen Sie die Datei als UTF-8 mit BOM abspeichern oder <a href="Scripts.htm#cp">die Befehlszeilenoption /CP65001 hinzufügen</a>.</p>
-<p>Um in Notepad eine Datei als UTF-8 mit BOM abzuspeichern, wählen Sie <em>UTF-8</em> in der DropDown-Liste für <em>Codierung</em> aus, die im Dialogfenster "Speichern unter" zu finden ist.</p>
+<p>Kurze Antwort: Speichern Sie das Skript im UTF-8-Format.</p>
+<p>ASCII-fremde Zeichen haben je nach gewählter Codierung unterschiedliche Binärwerte. Damit solche Zeichen korrekt interpretiert werden können, muss sowohl Ihr Texteditor als auch AutoHotkey quasi <em>den gleichen Zeichensatz</em> verwenden. AutoHotkey v2 verwendet standardmäßig UTF-8 für alle Skriptdateien, allerdings können Sie dieses Standardverhalten mit der <a href="Scripts.htm#cp">Befehlszeilenoptionen /CP</a> überschreiben.</p>
+<p>Um in Notepad eine Datei im UTF-8-Format abzuspeichern, wählen Sie <em>UTF-8</em> oder <em>UTF-8 mit BOM</em> in der aufklappbaren Liste <em>Codierung</em> aus, die im Dialogfenster "Speichern unter" zu finden ist. Beachten Sie, dass Notepad in Windows 10 Version 1903 und höher standardmäßig UTF-8 verwendet.</p>
 <p>Um andere UTF-8-Dateien ohne Byte-Order-Markierung zu lesen, können Sie <code><a href="commands/FileEncoding.htm">FileEncoding</a> UTF-8-RAW</code>, die <code>*P65001</code>-Option mit <a href="commands/FileRead.htm">FileRead</a> oder <code>"UTF-8-RAW"</code> im dritten Parameter von <a href="commands/FileOpen.htm">FileOpen</a> verwenden. Das <code>-RAW</code>-Suffix kann weggelassen werden, aber in diesem Fall haben alle neu erstellten Dateien eine Byte-Order-Markierung.</p>
 <p>Beachten Sie, dass INI-Dateien, die mit den Standard-INI-Funktionen angesteuert werden, kein UTF-8 unterstützen; sie müssen als ANSI oder UTF-16 gespeichert werden.</p>
 

@@ -124,55 +124,51 @@ Until Result = "No"</pre>
 <p><a href="#ExRegSearch">#3</a>: Dieses Beispiel sucht in der gesamten Registry nach einem oder mehreren bestimmten Werten.</p>
 <pre>
 RegSuche("Notepad")
-return
 
 RegSuche(Ziel)
 {
-    RegSucheFortfahren := true
     Loop Reg, "HKEY_LOCAL_MACHINE", "KVR"
     {
-        Gosub RegEintragUntersuchen
-        if !RegSucheFortfahren  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+        if !RegEintragUntersuchen()  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
             return
     }
     Loop Reg, "HKEY_USERS", "KVR"
     {
-        Gosub RegEintragUntersuchen
-        if !RegSucheFortfahren  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+        if !RegEintragUntersuchen()  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
             return
     }
     Loop Reg, "HKEY_CURRENT_CONFIG", "KVR"
     {
-        Gosub RegEintragUntersuchen
-        if !RegSucheFortfahren  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
+        if !RegEintragUntersuchen()  <em>; Teilt uns mit, dass sie gestoppt werden soll.</em>
             return
     }
     <em>; Hinweis: Ich glaube nicht, dass man zusätzlich noch HKEY_CURRENT_USER durchsuchen muss,
     ; wenn man HKEY_USERS durchsucht.  Des Weiteren ist HKEY_CLASSES_ROOT eine Kombination aus
     ; HKEY_LOCAL_MACHINE und HKEY_CURRENT_USER, daher ist es unnötig, alle drei zu durchsuchen.</em>
-    return
 
-RegEintragUntersuchen:
-    if A_LoopRegType = "KEY"  <em>; Entfernen Sie diese zwei Zeilen, wenn Sie die Key-Namen auch überprüfen lassen wollen.</em>
-        return
-    try
-        RegWert := RegRead()
-    catch
-        return
-    if InStr(RegWert, Ziel)
+    RegEintragUntersuchen()
     {
-        Result := MsgBox(
-        (
-        "Der folgende Treffer wurde gefunden:
-        " A_LoopRegKey "\" A_LoopRegName "
-        Wert = " RegWert "
-        
-        Weiter?"
-        ),, "y/n")
-        if Result = "No"
-            RegSucheFortfahren := false  <em>; Teilt unserem Aufrufer mit, die Suche zu stoppen.</em>
+        if A_LoopRegType = "KEY"  <em>; Entfernen Sie diese zwei Zeilen, wenn Sie die Key-Namen auch überprüfen lassen wollen.</em>
+            return true
+        try
+            RegWert := RegRead()
+        catch
+            return true
+        if InStr(RegWert, Ziel)
+        {
+            Result := MsgBox(
+            (
+            "Der folgende Treffer wurde gefunden:
+            " A_LoopRegKey "\" A_LoopRegName "
+            Wert = " RegWert "
+            
+            Weiter?"
+            ),, "y/n")
+            if Result = "No"
+                return false  <em>; Teilt unserem Aufrufer mit, die Suche zu stoppen.</em>
+        }
+        return true
     }
-    return
 }
 </pre>
 </div>
