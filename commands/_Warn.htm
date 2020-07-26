@@ -34,7 +34,16 @@
     <pre>#Warn
 <em>;y := ""  ; Dies würde die Warnung unterdrücken.</em>
 x := y    <em>; y hat keinen Wert zugewiesen bekommen.</em></pre>
+    <p id="VarUnset"><strong>VarUnset</strong>: Warnt vor dem Ausführen des Skripts, wenn die jeweils erste Referenz zu einer Variable nie auf eine der folgenden Arten verwendet wird:</p>
+    <ul>
+      <li>Als Ziel einer direkten, nicht-dynamischen Zuweisung, wie z. B. <code>MeineVar := ""</code>.</li>
+      <li>Übergabe an einen Ausgabe- oder ByRef-Parameter in einem nicht-dynamischen Funktionsaufruf.</li>
+      <li>Übergabe an IsSet in einem nicht-dynamischen Funktionsaufruf. Zum Beispiel wird ein Skript, das <code>IsSet(MeineBibl_Global)</code> enthält, nicht vor weiteren Referenzen zur gleichen Variable warnen, aber möglicherweise vor anderen Variablen mit dem Namen <code>MeineBibl_Global</code>.</li>
+      <li>Übergabe an ein Parameter eines dynamischen Funktionsaufrufs oder Methodenaufrufs (unabhängig davon, ob es sich um ByRef handelt oder nicht, da dies nicht beim Laden des Skripts ermittelt werden kann).</li>
+    </ul>
+    <p class="warning"><strong>Bekannte Einschränkung:</strong> Obwohl kurzschlussfähige Operatoren wie <code>&amp;&amp;</code>, <code>||</code> und ternäre Operatoren eine Variablenreferenz für eine Zuweisung oder einen ByRef-Parameter erzeugen können, wird derzeit nur die rechte Verzweigung als zugewiesen identifiziert. <code>MouseGetPos(b ? x1 : x2)</code> beispielsweise kann lediglich <code>x2</code> als zugewiesen markieren.</p>
     <p id="LocalSameAsGlobal"><strong>LocalSameAsGlobal</strong>: Warnt vor dem Ausführen des Skripts, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn vergessen wurde, eine globale Variable innerhalb einer Funktion vor dem Zugriffsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden. Diese Warnung wird niemals für Variablen angezeigt, die sich innerhalb einer <a href="../Functions.htm#ForceLocal">Force-Local</a>-Funktion befinden.</p>
+    <p>Diese Warnung ist standardmäßig deaktiviert.</p>
     <pre>#Warn
 g := 1
 ShowG() {       <em>; Die Warnung wird sogar angezeigt, wenn die Funktion nicht aufgerufen wird.</em>
@@ -59,7 +68,7 @@ ShowG() {       <em>; Die Warnung wird sogar angezeigt, wenn die Funktion nicht 
 
 </dl>
 <h2>Bemerkungen</h2>
-	<p>Standardmäßig sind alle Warnungen deaktiviert.</p>
+	<p>Standardmäßig sind alle Warnungen aktiviert und verwenden den MsgBox-Modus, mit Ausnahme der LocalSameAsGlobal-Warnung, die deaktiviert ist.</p>
 	<p>Warnungen können weder aktiviert noch deaktiviert werden, während das Skript läuft; die Einstellungen werden beim Laden des Skripts festgelegt. Folglich ist die Position der Direktive innerhalb des Skripts ohne Bedeutung (und kann wie alle anderen Direktiven nicht bedingt ausgeführt werden).</p>
 	<p>Die Anordnung der #Warn-Direktiven ist allerdings entscheidend: die letzte Direktive, die eine bestimmte Warnung setzt, bestimmt den Modus dieser Warnung. Die zwei unteren Anweisungen beispielsweise haben den kombinierten Effekt, dass alle Warnungen außer UseUnsetGlobal aktiviert werden:</p>
 <pre>#Warn All
@@ -71,7 +80,7 @@ ShowG() {       <em>; Die Warnung wird sogar angezeigt, wenn die Funktion nicht 
 <div class="ex" id="ExBasic">
 <p><a href="#ExBasic">#1</a></p>
 <pre>
-#Warn All, Off                    <em>; Deaktiviert alle Warnungen.  Das ist der voreingestellte Zustand.</em>
+#Warn All, Off                    <em>; Deaktiviert alle Warnungen.  Nicht empfohlen.</em>
 #Warn                             <em>; Aktiviert alle Warnungstypen; zeigt alle Warnungen in einem Mitteilungsfenster an.</em>
 #Warn UseUnsetLocal, OutputDebug  <em>; Warnt bei einer leeren lokalen Variable; sendet Warnung zum OutputDebug.</em>
 </pre>
