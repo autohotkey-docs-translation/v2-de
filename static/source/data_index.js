@@ -855,6 +855,7 @@ indexData = [
   ["SendPlay","commands/Send.htm#SendPlayDetail",2],
   ["SendText","commands/Send.htm",2],
   ["Set-Direktive (Ahk2Exe)","misc/Ahk2ExeDirectives.htm#Set",99],
+  ["Set-Methode (Map)","objects/Map.htm#Set"],
   ["SetCapacity-Methode (Objekt)","objects/Object.htm#SetCapacity"],
   ["SetCapsLockState","commands/SetNumScrollCapsLockState.htm",2],
   ["SetControlDelay","commands/SetControlDelay.htm",2],

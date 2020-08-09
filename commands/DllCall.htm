@@ -231,10 +231,10 @@ MsgBox Format("{:010}", 432)
 
 <div class="ex" id="ExQPC">
 <p><a href="#ExQPC">#5</a>: Zeigt, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</p>
-<pre>DllCall("QueryPerformanceFrequency", "Int64*", freq)
-DllCall("QueryPerformanceCounter", "Int64*", CounterDavor)
+<pre>DllCall("QueryPerformanceFrequency", "Int64*", freq := 0)
+DllCall("QueryPerformanceCounter", "Int64*", CounterDavor := 0)
 Sleep 1000
-DllCall("QueryPerformanceCounter", "Int64*", CounterDanach)
+DllCall("QueryPerformanceCounter", "Int64*", CounterDanach := 0)
 MsgBox "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - CounterDavor) / freq * 1000 " ms"</pre>
 </div>
 
@@ -270,7 +270,8 @@ F1 up::
 
 BeobachteScrollleiste()
 {
-    FokusHwnd := ControlGetFocus("A")
+    FokusHwnd := 0
+    try FokusHwnd := ControlGetFocus("A")
     if !FokusHwnd  <em>; Kein fokussiertes Steuerelement.</em>
         return
     <em>; Zeigt die vertikale oder horizontale Position der Scrollleiste in einem ToolTip an:</em>
@@ -337,7 +338,7 @@ SystemCursor(cmd)  <em>; cmd = "Show|Hide|Toggle|Reload"</em>
                 , "Int", 32, "Int", 32
                 , "Ptr", BufferAlloc(32*4, 0xFF)
                 , "Ptr", BufferAlloc(32*4, 0))
-            c[id] := {"default": h_default, "blank": h_blank}
+            c[id] := {default: h_default, blank: h_blank}
         }
     }
     switch cmd
@@ -436,18 +437,18 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 IID_ITaskbarList  := "{56FDF342-FD6D-11d0-958A-006097C9A090}"
 CLSID_TaskbarList := "{56FDF344-FD6D-11d0-958A-006097C9A090}"
 
-<em>; Erstellt ein TaskbarList-Objekt und speichert seine Adresse in tbl.</em>
+<em>; Erstellt das TaskbarList-Objekt.</em>
 tbl := <a href="ComObjCreate.htm">ComObjCreate</a>(CLSID_TaskbarList, IID_ITaskbarList)
 
 activeHwnd := WinExist("A")
 
-DllCall(vtable(tbl,3), "ptr", tbl)                     <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774650.aspx">HrInit</a>()</em>
-DllCall(vtable(tbl,5), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774648.aspx">DeleteTab</a>(activeHwnd)</em>
+DllCall(vtable(tbl.ptr,3), "ptr", tbl)                     <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774650.aspx">HrInit</a>()</em>
+DllCall(vtable(tbl.ptr,5), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774648.aspx">DeleteTab</a>(activeHwnd)</em>
 Sleep 3000
-DllCall(vtable(tbl,4), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774646.aspx">AddTab</a>(activeHwnd)</em>
+DllCall(vtable(tbl.ptr,4), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774646.aspx">AddTab</a>(activeHwnd)</em>
 
 <em>; Nicht-gewrappte Objekte müssen manuell freigegeben werden.</em>
-ObjRelease(tbl)
+ObjRelease(tbl.ptr)
 
 vtable(ptr, n) {
     <em>; NumGet(ptr, "ptr") gibt die Adresse der virtuellen Funktionstabelle

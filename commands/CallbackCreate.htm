@@ -113,9 +113,7 @@ DieFunk(params) {
 <h2>Beispiele</h2>
 <div class="ex" id="ExWinList">
 <p><a href="#ExWinList">#1</a>: Das folgende Skript zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
-<pre><em>; Aus Leistungs- und Speichergründen wird CallbackCreate nur einmal für einen bestimmten Callback aufgerufen:</em>
-if not EnumAdresse  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird:</em>
-    EnumAdresse := <strong>CallbackCreate</strong>("EnumWindowsProc", "Fast")
+<pre>EnumAdresse := <strong>CallbackCreate</strong>("EnumWindowsProc", "Fast")  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird.</em>
 
 DetectHiddenWindows True  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
 
@@ -125,11 +123,11 @@ MsgBox Ausgabe  <em>; Zeigt die gesammelten Informationen von Callback an.</em>
     
 EnumWindowsProc(hwnd, lParam)
 {
-    global Ausgabe
-    Titel := WinGetTitle("ahk_id " hwnd)
-    Klasse := WinGetClass("ahk_id " hwnd)
+    global Ausgabe := ""
+    Titel := WinGetTitle(hwnd)
+    Klasse := WinGetClass(hwnd)
     if Titel
-        Ausgabe .= "HWND: " . hwnd . "`tTitel: " . Titel . "`tKlasse: " . Klasse . "`n"
+        Ausgabe .= "HWND: " hwnd "`tTitel: " Titel "`tKlasse: " Klasse "`n"
     return true  <em>; Setzt EnumWindows() fort, bis alle Fenster abgearbeitet wurden.</em>
 }</pre>
 </div>

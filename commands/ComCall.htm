@@ -95,14 +95,8 @@
 IID_ITaskbarList  := "{56FDF342-FD6D-11d0-958A-006097C9A090}"
 CLSID_TaskbarList := "{56FDF344-FD6D-11d0-958A-006097C9A090}"
 
-<em>; Erstellt ein TaskbarList-Objekt und speichert seine Adresse in tbl.</em>
+<em>; Erstellt das TaskbarList-Objekt.</em>
 tbl := <a href="ComObjCreate.htm">ComObjCreate</a>(CLSID_TaskbarList, IID_ITaskbarList)
-
-<em>; Da oben eine IID angegeben wurde, ist tbl ein Pointer (ein Integer).
-; Der Pointer kann gewrappt werden, so dass er automatisch freigegeben wird,
-; wenn das Skript keine Referenz mehr zum Wrapper-Objekt hat.
-; Dieses Beispiel wird weiterhin funktionieren, wenn die folgende Zeile entfernt wird:</em>
-tbl := ComObject(13, tbl)
 
 activeHwnd := WinExist("A")
 
@@ -111,19 +105,9 @@ ComCall(5, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.co
 Sleep 3000
 ComCall(4, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774646.aspx">AddTab</a>(activeHwnd)</em>
 
-if IsObject(tbl)  <em>; Wurde ComObject(13, tbl) verwendet?</em>
-{
-    <em>; Wenn mit dem Objekt fertig, ersetze einfach alle Referenzen mit
-    ; einem anderen Wert (oder wenn es sich um eine lokale Variable handelt, einfach return):</em>
-    tbl := ""
-}
-else
-{
-    <em>; Da der Pointer nicht gewrappt war, muss er manuell freigegeben werden
-    ; (obwohl jeglicher Speicher, der vom Objekt oder von der entsprechenden
-    ; Bibliothek verwendet wird, beim Beenden des Programms ohnehin zurückgewonnen wird).</em>
-    ObjRelease(tbl)
-}
+<em>; Wenn mit dem Objekt fertig, ersetze einfach alle Referenzen mit
+; einem anderen Wert (oder wenn es sich um eine lokale Variable handelt, einfach return):</em>
+tbl := ""
 </pre>
 </div>
 

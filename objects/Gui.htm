@@ -461,7 +461,7 @@ MeineGui.Move(x-10,, w+20)</pre>
 <h2>Hwnd</h2>
 <p>Ermittelt die HWND-Nummer (eindeutige ID) des GUI-Fensters.</p>
 <pre class="Syntax">AktuelleHwnd := MeineGui.Hwnd</pre>
-<p>Die HWND-Nummer einer GUI wird oft in Verbindung mit <a href="../commands/PostMessage.htm">PostMessage</a>, <a href="../commands/SendMessage.htm">SendMessage</a> und <a href="../commands/DllCall.htm">DllCall</a> genutzt. Außerdem kann diese Nummer direkt als <a href="../misc/WinTitle.htm#ahk_id">ahk_id-Fenstertitel</a> verwendet werden.</p></div>
+<p>Die HWND-Nummer einer GUI wird oft in Verbindung mit <a href="../commands/PostMessage.htm">PostMessage</a>, <a href="../commands/SendMessage.htm">SendMessage</a> und <a href="../commands/DllCall.htm">DllCall</a> genutzt. Außerdem kann diese Nummer direkt in einem <a href="../misc/WinTitle.htm#ahk_id">Fenstertitel-Parameter</a> verwendet werden.</p></div>
 
 <div class="methodShort" id="Title">
 <h2>Title</h2>
@@ -550,9 +550,9 @@ MeineGui.Add("Button", "default", "OK").OnEvent("Click", (*) =&gt; VerarbeiteBen
 MeineGui.OnEvent("Close", "VerarbeiteBenutzereingabe")
 MeineGui.Show()
 
-VerarbeiteBenutzereingabe(this, *)
+VerarbeiteBenutzereingabe(thisGui, *)
 {
-    Gespeichert := this.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
+    Gespeichert := thisGui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
     MsgBox("Sie haben '" Gespeichert.Vorname " " Gespeichert.Nachname "' eingegeben.")
 }</pre>
 </div>
@@ -574,9 +574,9 @@ MeineGui.OnEvent("Close", "VerarbeiteBenutzereingabe")
 MeineGui.OnEvent("Escape", "VerarbeiteBenutzereingabe")
 MeineGui.Show()
 
-VerarbeiteBenutzereingabe(this, *)
+VerarbeiteBenutzereingabe(thisGui, *)
 {
-    Gespeichert := this.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
+    Gespeichert := thisGui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
     MsgBox("Ihre Eingaben sind:`n" Gespeichert.MeineCheckBox "`n" Gespeichert.MeinRadio "`n" Gespeichert.MeinEdit)
 }</pre>
 </div>
@@ -588,13 +588,13 @@ MeineGui.Add("Text",, "Wählen Sie eine Datei aus der unteren Liste aus.")
 LB := MeineGui.Add("ListBox", "w640 r10 vDatei")
 LB.OnEvent("DoubleClick", "StarteDatei")
 Loop Files, "C:\*.*"  <em>; Ordner und Platzhaltermuster je nach Bedarf anpassen.</em>
-    LB.Add(A_LoopFilePath)
+    LB.Add([A_LoopFilePath])
 MeineGui.Add("Button", "Default", "OK").OnEvent("Click", "StarteDatei")
 MeineGui.Show()
 
-StarteDatei(this, *)
+StarteDatei(thisCtrl, *)
 {
-    Gespeichert := this.Gui.Submit()
+    Gespeichert := thisCtrl.Gui.Submit()
     if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n" Gespeichert.Datei,, 4) = "No"
         return
     <em>; Ansonsten versuchen zu starten:</em>
@@ -611,9 +611,9 @@ MeineGui := Gui.New()
 MeinEdit := MeineGui.Add("Edit")
 <em>; ToolTip-Text in eine benutzerdefinierte Eigenschaft speichern:</em>
 MeinEdit.ToolTip := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
-MeineDDL := MeineGui.Add("DropDownList", "", ["Rot","Grün","Blau"])
+MeineDDL := MeineGui.Add("DropDownList",, ["Rot","Grün","Blau"])
 MeineDDL.ToolTip := "Wählen Sie eine Farbe aus."
-MeineGui.Add("Checkbox", "vMeineCheckBox", "Dieses Steuerelement hat kein Tooltip.")
+MeineGui.Add("Checkbox",, "Dieses Steuerelement hat kein Tooltip.")
 MeineGui.OnEvent("Close", (*) =&gt; ExitApp())
 MeineGui.Show()
 OnMessage(0x200, "WM_MOUSEMOVE")
@@ -669,10 +669,10 @@ MeineGui.Add("Progress", "w416 vMeinProgress")
 MeineGui.Add("Text", "wp vMeinText")  <em>; wp bedeutet "vorherige Breite verwenden".</em>
 MeineGui.Show()
 
-AnimiereLeiste(this, *)
+AnimiereLeiste(thisCtrl, *)
 {
-    ProgressCtrl := this.Gui["MeinProgress"]
-    TextCtrl := this.Gui["MeinText"]
+    ProgressCtrl := thisCtrl.Gui["MeinProgress"]
+    TextCtrl := thisCtrl.Gui["MeinText"]
     Loop Files, A_WinDir "\*.*"
     {
         if (A_Index &gt; 100)
@@ -695,10 +695,10 @@ MeineGui.Add("Radio", "ym+5 x+10", "&amp;Kompletter Bildschirm")
 MeineGui.Add("Pic", "xm vMeinPic")
 MeineGui.Show()
 
-LadeNeuesBild(this, *)
+LadeNeuesBild(thisCtrl, *)
 {
-    RadioCtrl := this.Gui["MeinRadio"]
-    PicCtrl := this.Gui["MeinPic"]
+    RadioCtrl := thisCtrl.Gui["MeinRadio"]
+    PicCtrl := thisCtrl.Gui["MeinPic"]
     Datei := FileSelect(,, "Bild auswählen:", "Bilder (*.gif; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)")
     if Datei = ""
         return
@@ -713,8 +713,8 @@ LadeNeuesBild(this, *)
         Höhe := -1  <em>; "Seitenverhältnis beibehalten" erscheint sinnvoll.</em>
     }
     PicCtrl.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
-    this.Gui.Title := Datei
-    this.Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
+    thisCtrl.Gui.Title := Datei
+    thisCtrl.Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
 }</pre>
 </div>
 
@@ -840,12 +840,12 @@ speichereInhalt(Dateiname)
     Über.Destroy()  <em>; Entfernt das Über-Fenster.</em>
 }
 
-Gui_DropFiles(ThisGui, Ctrl, DateiArray, *)  <em>; Ziehen &amp; Ablegen unterstützen.</em>
+Gui_DropFiles(thisGui, Ctrl, DateiArray, *)  <em>; Ziehen &amp; Ablegen unterstützen.</em>
 {
     AktuellerDateiname := leseInhalt(DateiArray[1])  <em>; Nur die erste Datei nehmen (sofern mehrere Dateien vorhanden sind).</em>
 }
 
-Gui_Size(ThisGui, MinMax, Breite, Höhe)
+Gui_Size(thisGui, MinMax, Breite, Höhe)
 {
     if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
         return
