@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>RegExReplace - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die RegExReplace-Funktion ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb einer Zeichenkette." />
+<meta name="description" content="Die RegExReplace-Funktion ersetzt ein oder mehr Vorkommen eines Suchmusters (regulärer Ausdruck) innerhalb einer Zeichenkette." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -14,7 +14,7 @@
 
 <h1>RegExReplace</h1>
 
-<p>Ersetzt Vorkommen eines Musters (regulärer Ausdruck) innerhalb einer Zeichenkette.</p>
+<p>Ersetzt ein oder mehr Vorkommen eines Suchmusters (regulärer Ausdruck) innerhalb einer Zeichenkette.</p>
 
 <pre class="Syntax">NeueZkette := <span class="func">RegExReplace</span>(Heuhaufen, NadelRegEx <span class="optional">, Ersatz := "", AusgabeVarAnzahl := "", Limit := -1, Startposition := 1</span>)</pre>
 <h2>Parameter</h2>
@@ -29,43 +29,43 @@
   <dt>NadelRegEx</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Ein Muster im PCRE-Format (Perl-kompatibler regulärer Ausdruck), das gesucht werden soll. Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Musters (falls vorhanden) müssen am Anfang der Zeichenkette eingefügt werden, gefolgt von einer runden Endklammer. Zum Beispiel würde das Muster "<span class="red">i)</span>abc.*123" die nicht-Groß-/Kleinschreibung-sensitive Option einschalten und nach einer Zeichenkette suchen, die sich zusammensetzt aus "abc", null oder mehr Vorkommen eines beliebigen Zeichens und "123". Wenn es keine Optionen gibt, ist das ")" optional; zum Beispiel wäre ")abc" das gleiche wie "abc".</p>
+    <p>Ein Suchmuster im PCRE-Format (Perl-kompatibler regulärer Ausdruck). Die <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> des Suchmusters (falls vorhanden) müssen am Anfang der Zeichenkette stehen, gefolgt von dem Zeichen ")". Das Suchmuster "<span class="red">i)</span>abc.*123" beispielsweise deaktiviert die Groß-/Kleinschreibung-Sensitivität und sucht nach einer Zeichenkette, die sich zusammensetzt aus "abc", null oder mehr Vorkommen eines beliebigen Zeichens und "123". Wenn keine Optionen vorhanden sind, ist das Zeichen ")" optional; zum Beispiel ist ")abc" das gleiche wie "abc".</p>
     <p><em>NadelRegEx</em> kann keine binären Nullen enthalten, allerdings kann man <code>\x00</code> als Platzhalter für eine binäre Null innerhalb von <em>Heuhaufen</em> verwenden.</p>
   </dd>
 
   <dt>Ersatz</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p id="BackRef">Eine reine Zeichenkette (also kein regulärer Ausdruck), die jede gefundene Übereinstimmung ersetzen soll. Sie kann Rückreferenzen wie z. B. $1 enthalten; $1 würde die Teilzeichenkette aus dem <em>Heuhaufen</em> einbringen, die zum ersten <a href="../misc/RegEx-QuickRef.htm#subpat">Teilmuster</a> passt. $0 bis $9 sind die einfachsten Rückreferenzen - $0 ist die Teilzeichenkette des gesamten Musters, $1 ist die Teilzeichenkette des ersten Teilmusters, $2 ist die zweite, und so weiter. Bei Rückreferenzen über 9 (und optional auch solche unter 9) müssen die Nummern in geschweiften Klammern gesetzt werden, zum Beispiel: ${10}, ${11}, und so weiter. Bei <a href="RegExMatch.htm#NamedSubPat">benannten Teilmustern</a> müssen die Namen in geschweiften Klammern gesetzt werden; z. B. ${Teilmustername}. Um ein direkt geschriebenes $ anzugeben, verwenden Sie $$ (dieses Zeichen ist das einzige, das so eine Sonderbehandlung benötigt; alle anderen Zeichen müssen nicht mit einem Escapezeichen versehen werden).</p>
-    <p>Um die Groß-/Kleinschreibung eines Teilmusters zu ändern, muss nach $ eines der folgenden Zeichen erfolgen: U oder u (Großschreibung), L oder l (Kleinschreibung), T oder t (Titelschreibung; das heißt, dass bei jedem Wort das erste Zeichen großgeschrieben und die restlichen Zeichen kleingeschrieben sind). Zum Beispiel würden sowohl $U1 als auch $U{1} das erste Teilmuster in eine großgeschriebene Version umwandeln.</p>
-    <p>Rückreferenzen, die nicht existieren, und solche, die mit nichts im <em>Heuhaufen</em> übereinstimmen - z. B. eines der Teilmuster in "(abc)|(xyz)" - werden in leere Zeichenketten umgewandelt.</p>
+    <p id="BackRef">Eine reine Zeichenkette (kein regulärer Ausdruck), mit der jede Übereinstimmung ersetzt werden soll. Diese Zeichenkette kann Rückreferenzen enthalten, wie z. B. $1, die die in <em>Heuhaufen</em> gefundene Teilzeichenkette des ersten <a href="../misc/RegEx-QuickRef.htm#subpat">Teilsuchmusters</a> verwendet. $0 bis $9 sind die einfachsten Rückreferenzen - $0 ist die Teilzeichenkette des gesamten Suchmusters, $1 ist die Teilzeichenkette des ersten Teilsuchmusters, $2 ist die zweite, und so weiter. Rückreferenznummern über 9 (und optional auch solche unter 9) müssen in geschweiften Klammern gesetzt werden; zum Beispiel ${10}, ${11} und so weiter. Handelt es sich um einen <a href="RegExMatch.htm#NamedSubPat">benannten Teilsuchmuster</a>, umschließen Sie den Namen mit geschweiften Klammern; zum Beispiel ${Teilsuchmustername}. Um ein direkt geschriebenes $ anzugeben, verwenden Sie $$ (dieses Zeichen ist das einzige, das so eine Sonderbehandlung voraussetzt; das Escapezeichen "\" wird nie benötigt).</p>
+    <p>Um die Groß-/Kleinschreibung eines Teilsuchmusters zu ändern, fügen Sie unmittelbar nach dem $-Zeichen einen der folgenden Buchstaben an: U oder u (Großschreibung), L oder l (Kleinschreibung), T oder t (Titelschreibung; erster Buchstabe pro Wort groß, die restlichen klein). $U1 und $U{1} beispielsweise repräsentieren die großgeschriebene Variante des ersten Teilsuchmusters.</p>
+    <p>Nicht existierende Rückreferenzen und solche, für deren Teilsuchmuster keine Übereinstimmung in <em>Heuhaufen</em> gefunden wurde - z. B. eines der Teilsuchmuster in "(abc)|(xyz)" - werden als leere Zeichenketten wiedergegeben.</p>
   </dd>
 
   <dt>AusgabeVarAnzahl</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#variables">Variable</a></p>
-    <p>Geben Sie eine Variable an, in der die Anzahl gespeichert werden soll, wie oft der Heuhaufen ersetzt wurde (0, wenn keine).</p>
+    <p>Geben Sie eine Variable an, in der die Anzahl erfolgter Ersetzungen gespeichert werden soll (0, wenn nichts ersetzt wurde).</p>
   </dd>
 
   <dt>Limit</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Lässt man <em>Limit</em> weg, wird standardmäßig -1 verwendet. Dieser Wert bewirkt, dass <strong>alle</strong> gefundenen Vorkommen des Musters in <em>Heuhaufen</em> ersetzt werden. Ansonsten kann man angeben, wie oft der Heuhaufen ersetzt werden soll. Der <em>Heuhaufen</em>-Bereich rechts neben der letzten Ersetzung bleibt unverändert.</p>
+    <p>Lässt man <em>Limit</em> weg, wird standardmäßig -1 verwendet. Dieser Wert bewirkt, dass <strong>alle</strong> in <em>Heuhaufen</em> gefundenen Vorkommen des Suchmusters ersetzt werden. Ansonsten können Sie die maximal zulässige Anzahl von Ersetzungen angeben. Der <em>Heuhaufen</em>-Bereich rechts neben der letzten Ersetzung bleibt unverändert.</p>
   </dd>
 
   <dt>Startposition</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Lässt man <em>Startposition</em> weg, wird standardmäßig 1 verwendet (das erste Zeichen von <em>Heuhaufen</em>). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge von <em>Heuhaufen</em> überschreitet, beginnt die Suche bei einer leeren Zeichenkette am <em>Heuhaufen</em>-Ende (wodurch nichts ersetzt werden kann).</p>
-    <p>Geben Sie eine negative <em>Startposition</em> an, um die Suche auf dieser Position von rechts aus gezählt zu beginnen. Zum Beispiel würde -1 beim letzten Zeichen und -2 beim vorletzten Zeichen beginnen. Wenn <em>Startposition</em> das linke <em>Heuhaufen</em>-Ende überschreitet, wird der gesamte <em>Heuhaufen</em> durchsucht.</p>
-    <p>Egal welchen Wert man als <em>Startposition</em> verwendet - der Rückgabewert ist immer eine komplette Kopie von <em>Heuhaufen</em>; der einzige Unterschied könnte sein, dass mehr von seiner linken Seite unverändert bleibt, verglichen zu den Auswirkungen, wenn die <em>Startposition</em> eine 1 wäre.</p>
+    <p>Lässt man <em>Startposition</em> weg, wird standardmäßig 1 verwendet (das erste Zeichen der <em>Heuhaufen</em>-Zeichenkette). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> die Länge der <em>Heuhaufen</em>-Zeichenkette überschreitet, beginnt die Suche bei der leeren Zeichenkette am Ende der <em>Heuhaufen</em>-Zeichenkette (was in der Regel zu keiner Ersetzung führt).</p>
+    <p>Geben Sie eine negative <em>Startposition</em> an, um die Suche auf dieser Position von rechts aus gezählt zu beginnen. Zum Beispiel kann -1 angegeben werden, um beim letzten Zeichen zu beginnen, -2, um beim vorletzten Zeichen zu beginnen, und so weiter. Wenn <em>Startposition</em> versucht, über das linke Ende von <em>Heuhaufen</em> hinauszugehen, wird die gesamte <em>Heuhaufen</em>-Zeichenkette durchsucht.</p>
+    <p>Egal welchen Wert man als <em>Startposition</em> verwendet - der Rückgabewert ist immer eine Kopie der kompletten <em>Heuhaufen</em>-Zeichenkette; der einzige Unterschied besteht darin, dass ein größerer Teil ihrer linken Seite unverändert bleibt, wenn für <em>Startposition</em> ein anderer Wert als 1 verwendet wird.</p>
   </dd>
 
 </dl>
 
 <h2>Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt eine Version von <em>Heuhaufen</em> zurück, deren Inhalte von der Operation ersetzt wurden. Wenn nichts ersetzt werden konnte, wird <em>Heuhaufen</em> unverändert zurückgegeben.</p>
+<p>Diese Funktion gibt eine veränderte Version der <em>Heuhaufen</em>-Zeichenkette zurück. Wenn nichts ersetzt werden konnte, wird die <em>Heuhaufen</em>-Zeichenkette unverändert zurückgegeben.</p>
 
 <h2 id="Errors">Fehler</h2>
 <p>Eine <a href="Throw.htm#Exception">Ausnahme</a> wird ausgelöst, wenn:</p>
@@ -73,19 +73,19 @@
   <li>das Suchmuster einen Syntaxfehler enthält; oder</li>
   <li>ein Fehler während der <em>Ausführung</em> des regulären Ausdrucks auftrat.</li>
 </ul>
-<p>Siehe <a href="RegExMatch.htm#Errors">RegExMatch</a>, um mehr darüber zu erfahren.</p>
+<p>Einzelheiten finden Sie unter <a href="RegExMatch.htm#Errors">RegExMatch</a>.</p>
 
 <h2>Optionen</h2>
-<p>Unter den <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> finden Sie Modifikatoren wie z. B. "<span class="red">i)</span>abc", der die Groß-/Kleinschreibung-Sensitivität im Muster "abc" ausschalten würde.</p>
+<p>Unter <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> finden Sie Modifikatoren wie z. B. "<span class="red">i)</span>abc", was die Groß-/Kleinschreibung-Sensitivität im Suchmuster "abc" ausschaltet.</p>
 <h2>Leistung</h2>
 <p>Um einfache Teilzeichenketten zu ersetzen, verwenden Sie <a href="StrReplace.htm">StrReplace</a>, weil es schneller als RegExReplace ist.</p>
-<p>Wenn Ihnen die maximale Anzahl an Ersetzungen bekannt ist, können Sie diese im <em>Limit</em>-Parameter angeben, um die Leistung zu verbessern, weil die Suche früh stoppen kann (dies könnte auch die Speicherauslastung auf dem System während der Operation reduzieren). Wenn Sie beispielsweise wissen, dass nur eine Übereinstimmung am Anfang einer langen Zeichenkette sein kann, könnten Sie ein Limit von 1 angeben.</p>
-<p>Um die Leistung zu verbessern, werden die 100 zuletzt verwendeten regulären Ausdrücke zwischengespeichert (in kompilierter Form).</p>
-<p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann manchmal die Leistung eines regulären Ausdrucks verbessern, der häufig verwendet wird (z. B. in einer Schleife).</p>
+<p>Wenn Sie wissen, wie hoch die maximale Anzahl der Ersetzungen sein wird, geben Sie diesen Wert im <em>Limit</em>-Parameter an, um zugunsten der Leistung die Suche frühzeitig zu stoppen (dies könnte auch die Speicherauslastung des Systems während der Operation verringern). Geben Sie zum Beispiel ein Limit von 1 an, wenn Sie genau wissen, dass nur eine Übereinstimmung in der Nähe des Anfangs einer großen Zeichenkette gefunden wird.</p>
+<p>Zur Verbesserung der Leistung werden die 100 zuletzt verwendeten regulären Ausdrücke zwischengespeichert (in kompilierter Form).</p>
+<p>Die <a href="../misc/RegEx-QuickRef.htm#Study">S-Option</a> kann in bestimmten Fällen die Leistung eines häufig verwendeten regulären Ausdrucks verbessern (z. B. in einer Schleife).</p>
 <h2>Bemerkungen</h2>
-<p>Die meisten Zeichen wie abc123 können direkt in einem regulären Ausdruck verwendet werden. Bei den Zeichen <strong>\.*?+[{|()^$</strong> muss man allerdings einen umgekehrten Schrägstrich davorsetzen, um sie als direkt geschriebenen Text zu behandeln. Zum Beispiel wäre <strong>\.</strong> ein direkt geschriebener Punkt und <strong>\\</strong> ein direkt geschriebener umgekehrter Schrägstrich. Mithilfe von \Q...\E kann eine komplette Zeichenkette angegeben werden, ohne darin ein Zeichen mit einem umgekehrten Schrägstrich versehen zu müssen. Zum Beispiel: <code>\QDirekt geschriebener Text\E</code>.</p>
-<p>Innerhalb eines regulären Ausdrucks kann bei bestimmten Sonderzeichen wie Tab und Newline das verwendete Escapezeichen sowohl ein umgekehrtes Häkchen (`) als auch ein umgekehrter Schrägstrich (\) sein. Zum Beispiel ist `t das gleiche wie \t.</p>
-<p>Um die Grundlagen von regulären Ausdrücken kennenzulernen (oder das Gedächtnis ein wenig aufzufrischen), siehe <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.</p>
+<p>Die meisten Zeichen wie abc123 können direkt in einem regulären Ausdruck verwendet werden. Um aber die Zeichen <strong>\.*?+[{|()^$</strong> als direkt geschriebenen Text zu behandeln, setzen Sie einen umgekehrten Schrägstrich davor. Zum Beispiel ist <strong>\.</strong> ein direkt geschriebener Punkt und <strong>\\</strong> ein direkt geschriebener umgekehrter Schrägstrich. Verwenden Sie \Q...\E, um alle Zeichen als direkt geschriebenen Text zu behandeln. Zum Beispiel: <code>\QDirekt geschriebener Text\E</code>.</p>
+<p>Innerhalb eines regulären Ausdrucks können zum Escapen von Sonderzeichen wie Tabulator und Zeilenumbruch sowohl ein umgekehrtes Häkchen (`) als auch ein umgekehrter Schrägstrich (\) verwendet werden. Zum Beispiel ist `t das gleiche wie \t.</p>
+<p>Grundlagen zum Thema "Reguläre Ausdrücke" finden Sie unter <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>.</p>
 <h2>Siehe auch</h2>
 <p><a href="RegExMatch.htm">RegExMatch</a>, <a href="../misc/RegEx-QuickRef.htm">RegEx-Kurzübersicht</a>, <a href="../misc/RegExCallout.htm">Callouts in regulären Ausdrücken</a>, <a href="StrReplace.htm">StrReplace</a>, <a href="InStr.htm">InStr</a></p>
 <p>Häufige Quellen von Textdaten: <a href="FileRead.htm">FileRead</a>, <a href="Download.htm">Download</a>, <a href="../misc/A_Clipboard.htm">A_Clipboard</a>, <a href="GuiControls.htm#Edit">GUI-Eingabefelder</a></p>
