@@ -33,7 +33,7 @@
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Geben Sie keine oder mehr der folgenden Wörter oder Zeichen an. Trennen Sie diese Optionen jeweils mit einem Leerzeichen (z.B. <code>"C Fast"</code>).</p>
-    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass bei jedem Aufruf von <em>Funktionsname</em> ein neuer <a href="../misc/Threads.htm">Thread</a> gestartet wird. Trotz der daraus resultierenden höheren Leistung sollte diese Option nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wird, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Der Grund dafür ist, dass <em>Funktionsname</em> in der Lage sein wird, globale Einstellungen wie <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> eines Threads zu ändern, der zum Zeitpunkt des Aufrufs aktiv war. Weitere Informationen finden Sie unter <a href="#Threads">Bemerkungen</a>.</p>
+    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass bei jedem Aufruf von <em>FunktionName</em> ein neuer <a href="../misc/Threads.htm">Thread</a> gestartet wird. Trotz der daraus resultierenden höheren Leistung sollte diese Option nicht verwendet werden, wenn der Thread, in dem <em>Adresse</em> aufgerufen wird, variiert (z. B. wenn das Callback durch eine eingehende Meldung ausgelöst wurde). Der Grund dafür ist, dass <em>FunktionName</em> in der Lage sein wird, globale Einstellungen wie <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> eines Threads zu ändern, der zum Zeitpunkt des Aufrufs aktiv war. Weitere Informationen finden Sie unter <a href="#Threads">Bemerkungen</a>.</p>
     <p><strong>CDecl</strong> oder <strong>C</strong>: Macht <em>Adresse</em> konform mit der "C"-Aufrufkonvention. Diese Option lässt man üblicherweise weg, weil die meisten Callbacks die Standardaufrufkonvention verwenden. 64-Bit-Versionen von AutoHotkey, die die x64-Aufrufkonvention verwenden, ignorieren diese Option.</p>
     <p><strong>&amp;</strong>: Bewirkt, dass die Parameter nicht einzeln, sondern als Parameterliste in Form einer Adresse (ein einzelner Integer) an <em>Funktion</em> übergeben wird. Parameterwerte können mithilfe von <a href="NumGet.htm">NumGet</a> abgerufen werden. Wenn man die standardmäßige 32-Bit-Aufrufkonvention verwendet, muss <em>ParamAnzahl</em> die Größe der Parameterliste als DWORDs spezifizieren (die Anzahl der Bytes geteilt durch 4).</p>
   </dd>
@@ -82,7 +82,7 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
     <em>;...</em>
 }</pre>
 <p>Wenn ein eingehender Parameter von seinem Aufrufer als Zeichenkette vorgesehen ist, dann ist das, was tatsächlich ankommt, die Adresse der Zeichenkette. Mit <a href="StrGet.htm">StrGet</a> kann die Zeichenkette selbst abgerufen werden:</p>
-<pre>MeineZeichenkette := StrGet(MeinParameter)</pre>
+<pre>MeineZkette := StrGet(MeinParameter)</pre>
 <p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, können die einzelnen Elemente durch Befolgen der Schritte in <a href="DllCall.htm#struct">DllCall-Strukturen</a> extrahiert werden.</p>
 
 <p id="Indirect"><strong>Parameter via Adresse abrufen:</strong> Wenn die <code>&amp;</code>-Option genutzt wird, erhält die Funktion die <i>Adresse</i> des ersten Callback-Parameters. Zum Beispiel:</p>
@@ -134,8 +134,8 @@ EnumWindowsProc(hwnd, lParam)
 
 <div class="ex" id="ExSubclassGUI">
 <p><a href="#ExSubclassGUI">#2</a>: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
-<pre>Texthintergrundfarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
-Pinsel := DllCall("CreateSolidBrush", "UInt", Texthintergrundfarbe)
+<pre>TextHintergrundFarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
+TextHintergrundPinsel := DllCall("CreateSolidBrush", "UInt", TextHintergrundFarbe)
 
 MeineGui := Gui.New()
 Text := MeineGui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.")
@@ -152,11 +152,11 @@ MeineGui.Show
 WindowProc(hwnd, uMsg, wParam, lParam)
 {
     Critical
-    global Text, Texthintergrundfarbe, Pinsel, WindowProcAlt
+    global Text, TextHintergrundFarbe, TextHintergrundPinsel, WindowProcAlt
     if (uMsg = 0x138 &amp;&amp; lParam = Text.Hwnd)  <em>; 0x138 ist WM_CTLCOLORSTATIC.</em>
     {
-        DllCall("SetBkColor", "Ptr", wParam, "UInt", Texthintergrundfarbe)
-        return Pinsel  <em>; Gibt HBRUSH zurück, um dem OS mitzuteilen, dass wir HDC geändert haben.</em>
+        DllCall("SetBkColor", "Ptr", wParam, "UInt", TextHintergrundFarbe)
+        return TextHintergrundPinsel  <em>; Gibt HBRUSH zurück, um dem OS mitzuteilen, dass wir HDC geändert haben.</em>
     }
     <em>; Ansonsten (da oben nichts zurückgegeben wurde) werden alle unbehandelten Ereignisse an das originale WindowProc übergeben.</em>
     return DllCall("CallWindowProc", "Ptr", WindowProcAlt, "Ptr", hwnd, "UInt", uMsg, "Ptr", wParam, "Ptr", lParam)

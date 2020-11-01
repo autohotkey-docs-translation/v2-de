@@ -16,17 +16,17 @@
 
 <p>Verschiebt eine oder mehrere Dateien, oder benennt sie um.</p>
 
-<pre class="Syntax"><span class="func">FileMove</span> Quellmuster, Zielmuster <span class="optional">, Überschreiben</span></pre>
+<pre class="Syntax"><span class="func">FileMove</span> QuelleMuster, ZielMuster <span class="optional">, Überschreiben</span></pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>Quellmuster</dt>
+  <dt>QuelleMuster</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Name einer Datei oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>Quellmuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
+    <p>Name einer Datei oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>QuelleMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
   </dd>
 
-  <dt>Zielmuster</dt>
+  <dt>ZielMuster</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Name oder Suchmuster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
@@ -46,7 +46,7 @@
 </dl>
 
 <h2>Fehlerbehandlung</h2>
-<p>Es wird eine Ausnahme ausgelöst, wenn Dateien nicht verschoben werden konnten. In diesem Fall wird <a href="Throw.htm#Exception">Exception.Extra</a> auf die Anzahl der Misserfolge gesetzt. Wenn keine einzige Datei gefunden wurde und enthält <em>Quellmuster</em> weder <code>*</code> noch <code>?</code> als Platzhalter, wird eine Ausnahme ausgelöst. Das heißt, dass das Verschieben eines Platzhaltermusters wie <code>"*.txt"</code> auch dann als Erfolg gewertet wird, wenn keine Dateien gefunden wurden.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn Dateien nicht verschoben werden konnten. In diesem Fall wird <a href="Throw.htm#Exception">Exception.Extra</a> auf die Anzahl der Misserfolge gesetzt. Wenn keine einzige Datei gefunden wurde und enthält <em>QuelleMuster</em> weder <code>*</code> noch <code>?</code> als Platzhalter, wird eine Ausnahme ausgelöst. Das heißt, dass das Verschieben eines Platzhaltermusters wie <code>"*.txt"</code> auch dann als Erfolg gewertet wird, wenn keine Dateien gefunden wurden.</p>
 <p>Im Gegensatz zu <a href="FileCopy.htm">FileCopy</a> wird das Verschieben einer Datei auf sich selbst immer als Erfolg angesehen, selbst wenn der Überschreibmodus nicht aktiv ist.</p>
 <p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
@@ -66,35 +66,35 @@ FileMove "C:\Ordner1\*.txt, "D:\Neuer Ordner\*.bkp"  <em>; Verschiebt und änder
 
 <div class="ex" id="ExMoveAll">
 <p><a href="#ExMoveAll">#2</a>: Das folgende Beispiel verschiebt alle Dateien und Unterordner in einen anderen Ordner:</p>
-<pre>Fehleranzahl := VerschiebeDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
-if Fehleranzahl != 0
-    MsgBox Fehleranzahl " Dateien/Ordner konnten nicht verschoben werden."
+<pre>FehlerAnzahl := VerschiebeDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
+if FehlerAnzahl != 0
+    MsgBox FehlerAnzahl " Dateien/Ordner konnten nicht verschoben werden."
 
-VerschiebeDateienUndOrdner(Quellmuster, Zielordner, Überschreiben := false)
-<em>; Verschiebt alle Dateien und Ordner vom Quellmuster in dem Zielordner und
+VerschiebeDateienUndOrdner(QuelleMuster, ZielOrdner, Überschreiben := false)
+<em>; Verschiebt alle Dateien und Ordner von QuelleMuster in dem ZielOrdner und
 ; gibt die Anzahl an Dateien/Ordnern zurück, die nicht verschoben werden konnten.</em>
 {
-    Fehleranzahl := 0
+    FehlerAnzahl := 0
     if Überschreiben = 1
         Überschreiben := 2  <em>; Siehe <a href="DirMove.htm">DirMove</a> zum Thema Modus 1 vs 2.</em>
     <em>; Zuerst alle Dateien verschieben (aber nicht die Ordner):</em>
     try
-        FileMove Quellmuster, Zielordner, Überschreiben
+        FileMove QuelleMuster, ZielOrdner, Überschreiben
     catch Fehler
-        Fehleranzahl := Fehler.Extra
+        FehlerAnzahl := Fehler.Extra
     <em>; Jetzt alle Ordner verschieben:</em>
-    Loop Files, Quellmuster, "D"  <em>; D bedeutet "nur Ordner".</em>
+    Loop Files, QuelleMuster, "D"  <em>; D bedeutet "nur Ordner".</em>
     {
         try
-            DirMove A_LoopFilePath, Zielordner "\" A_LoopFileName, Überschreiben
+            DirMove A_LoopFilePath, ZielOrdner "\" A_LoopFileName, Überschreiben
         catch
         {
-            Fehleranzahl += 1
+            FehlerAnzahl += 1
             <em>; Jeden Problemordner mit Namen anzeigen.</em>
-            MsgBox A_LoopFilePath " kann nicht nach " Zielordner " verschoben werden."
+            MsgBox A_LoopFilePath " kann nicht nach " ZielOrdner " verschoben werden."
         }
     }
-    return Fehleranzahl
+    return FehlerAnzahl
 }</pre>
 </div>
 

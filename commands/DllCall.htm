@@ -16,7 +16,7 @@
 
 <p>Ruft eine Funktion aus einer DLL-Datei auf, wie z. B. eine API-Funktion von Windows.</p>
 
-<pre class="Syntax">Ergebnis := <span class="func">DllCall</span>("<span class="optional">DllDatei\</span>Funktion" <span class="optional">, Typ1, Arg1, Typ2, Arg2, "Cdecl Rückgabetyp"</span>)</pre>
+<pre class="Syntax">Ergebnis := <span class="func">DllCall</span>("<span class="optional">DllDatei\</span>Funktion" <span class="optional">, Typ1, Arg1, Typ2, Arg2, "Cdecl RückgabeTyp"</span>)</pre>
 <h2>Parameter</h2>
 <dl>
 
@@ -36,13 +36,13 @@
       <p>Jedes dieser Paare repräsentiert einen einzelnen Parameter, der an die Funktion übergeben werden soll. Die Anzahl der Paare ist unbegrenzt. Geben Sie für <em>Typ</em> einen Typ aus der unteren <a href="#types">Typentabelle</a> an. Geben Sie für <em>Arg</em> einen Wert an, der an die Funktion übergeben werden soll.</p>
   </dd>
 
-  <dt>Cdecl Rückgabetyp</dt>
+  <dt>Cdecl RückgabeTyp</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
       <p id="cdecl">Das Wort <em>Cdecl</em> wird normalerweise weggelassen, da die meisten Funktionen eher die Standardaufrufkonvention als die C-Aufrufkonvention verwenden (Funktionen wie wsprintf, die eine unterschiedliche Anzahl von Argumenten akzeptieren, sind so eine Ausnahme). Beachten Sie, dass die meisten objektorientierten C++-Funktionen die <i>thiscall</i>-Konvention nutzen, die in AutoHotkey nicht unterstützt wird.</p>
       <p>Das Wort <em>Cdecl</em> muss vor dem Rückgabetyp (falls vorhanden) stehen. Trennen Sie alle Wörter jeweils mit einem Leer- oder Tabulatorzeichen. Zum Beispiel: <code>"Cdecl Str"</code>.</p>
       <p>Da eine separate C-Aufrufkonvention im 64-Bit-Code nicht existiert, ist die Angabe von <i>Cdecl</i> in 64-Bit-Versionen von AutoHotkey wirkungslos.</p>
-      <p><em>Rückgabetyp</em>: Wenn die Funktion einen vorzeichenfähigen 32-Bit-Integer (Int), BOOL oder nichts zurückgibt, kann <em>Rückgabetyp</em> weggelassen werden. Ansonsten können Sie einen der Argumenttypen aus der unteren <a href="#types">Typentabelle</a> angeben. Das <a href="#asterisk">Sternchen-Suffix</a> wird ebenfalls unterstützt.</p>
+      <p><em>RückgabeTyp</em>: Wenn die Funktion einen vorzeichenfähigen 32-Bit-Integer (Int), BOOL oder nichts zurückgibt, kann <em>RückgabeTyp</em> weggelassen werden. Ansonsten können Sie einen der Argumenttypen aus der unteren <a href="#types">Typentabelle</a> angeben. Das <a href="#asterisk">Sternchen-Suffix</a> wird ebenfalls unterstützt.</p>
   </dd>
 
 </dl>
@@ -139,7 +139,7 @@ str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufe
 </tr>
 </table>
 
-<h2 id="error">Fehler</h2>
+<h2 id="error">Fehlerbehandlung</h2>
 <p>DllCall löst eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> aus, wenn eine der folgenden Bedingungen zutrifft:</p>
 <ul>
   <li>Der <a href="#HRESULT">HRESULT</a>-Rückgabetyp wurde verwendet und die Funktion hat einen Fehlerwert (wie durch das <a href="https://docs.microsoft.com/de-de/windows/win32/api/winerror/nf-winerror-failed">FAILED-Makro</a> definiert) zurückgegeben. <code>Exception.Extra</code> enthält den hexadezimalen Fehlercode.</li>
@@ -266,9 +266,9 @@ F1 up::
 
 <div class="ex" id="ExWatchScrollBar">
 <p><a href="#ExWatchScrollBar">#7</a>: Überwacht das fokussierte Steuerelement und zeigt die Position seiner vertikalen Scrollleiste an (in Echzeit).</p>
-<pre>SetTimer "BeobachteScrollleiste", 100
+<pre>SetTimer "ScrollleisteÜberwachen", 100
 
-BeobachteScrollleiste()
+ScrollleisteÜberwachen()
 {
     FokusHwnd := 0
     try FokusHwnd := ControlGetFocus("A")
@@ -282,20 +282,20 @@ BeobachteScrollleiste()
 <div class="ex" id="ExFile">
 <p><a href="#ExFile">#8</a>: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher. Diese Methode kann genutzt werden, um die Performance beim gleichzeitigen Lesen oder Schreiben mehrerer Dateien zu verbessern. Alternativ kann das gleiche mit <a href="FileOpen.htm">FileOpen</a> erreicht werden. Siehe dazu das <a href="FileOpen.htm#ExWriteRead">Beispiel</a>.</p>
 <pre>
-Dateiname := FileSelect("S16",, "Neue Datei erstellen:")
-if Dateiname = ""
+DateiName := FileSelect("S16",, "Neue Datei erstellen:")
+if DateiName = ""
     return
 GENERIC_WRITE := 0x40000000  <em>; Öffnet eine Datei zum Schreiben.</em>
 CREATE_ALWAYS := 2  <em>; Erstellt eine neue Datei (überschreibt eine vorhandene Datei).</em>
-hFile := DllCall("CreateFile", "Str", Dateiname, "UInt", GENERIC_WRITE, "UInt", 0, "Ptr", 0, "UInt", CREATE_ALWAYS, "UInt", 0, "Ptr", 0, "Ptr")
+hFile := DllCall("CreateFile", "Str", DateiName, "UInt", GENERIC_WRITE, "UInt", 0, "Ptr", 0, "UInt", CREATE_ALWAYS, "UInt", 0, "Ptr", 0, "Ptr")
 if !hFile
 {
-    MsgBox "Kann '" Dateiname "' nicht zum Schreiben öffnen."
+    MsgBox "Kann '" DateiName "' nicht zum Schreiben öffnen."
     return
 }
-TestZeichenkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
-ZketteGröße := StrLen(TestZeichenkette) * 2
-DllCall("WriteFile", "Ptr", hFile, "Str", TestZeichenkette, "UInt", ZketteGröße, "UIntP", RealGeschriebeneBytes := 0, "Ptr", 0)
+TestZkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
+ZketteGröße := StrLen(TestZkette) * 2
+DllCall("WriteFile", "Ptr", hFile, "Str", TestZkette, "UInt", ZketteGröße, "UIntP", RealGeschriebeneBytes := 0, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
@@ -303,10 +303,10 @@ GENERIC_READ := 0x80000000  <em>; Öffnet die Datei zum Lesen.</em>
 OPEN_EXISTING := 3  <em>; Dieser Modus bewirkt, dass die zu öffnende Datei bereits existieren muss.</em>
 FILE_SHARE_READ := 0x1 <em>; Dieser und der nächste Modus bestimmen, ob andere Prozesse die bereits geöffnete Datei öffnen können.</em>
 FILE_SHARE_WRITE := 0x2
-hFile := DllCall("CreateFile", "Str", Dateiname, "UInt", GENERIC_READ, "UInt", FILE_SHARE_READ|FILE_SHARE_WRITE, "Ptr", 0, "UInt", OPEN_EXISTING, "UInt", 0, "Ptr", 0)
+hFile := DllCall("CreateFile", "Str", DateiName, "UInt", GENERIC_READ, "UInt", FILE_SHARE_READ|FILE_SHARE_WRITE, "Ptr", 0, "UInt", OPEN_EXISTING, "UInt", 0, "Ptr", 0)
 if !hFile
 {
-    MsgBox "Kann '" Dateiname "' nicht zum Lesen öffnen."
+    MsgBox "Kann '" DateiName "' nicht zum Lesen öffnen."
     return
 }
 <em>; Reserviert einen Bereich im Speicher für die zu lesende Zeichenkette:</em>

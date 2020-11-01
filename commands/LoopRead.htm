@@ -17,24 +17,24 @@
 
 <p>Ruft die Zeilen einer Textdatei einzeln ab.</p>
 
-<pre class="Syntax"><span class="func">Loop Read</span> Eingabedatei <span class="optional">, Ausgabedatei</span></pre>
+<pre class="Syntax"><span class="func">Loop Read</span> EingabeDatei <span class="optional">, AusgabeDatei</span></pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>Eingabedatei</dt>
+  <dt>EingabeDatei</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Name der Textdatei, die von der Schleife gelesen werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Die Zeilen einer Datei können entweder mit einem CR-LF-Paar (`r`n), nur mit einem LF-Zeichen (`n) oder nur mit einem CR-Zeichen (`r) enden.</p>
   </dd>
 
-  <dt>Ausgabedatei</dt>
+  <dt>AusgabeDatei</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
       <p>Name der Datei, die während des Schleifenvorgangs offen bleibt. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
       <p>Innerhalb der Schleife kann die <a href="FileAppend.htm">FileAppend</a>-Funktion ohne <em>Dateiname</em>-Parameter benutzt werden, um den zu schreibenden Text an die spezielle Datei anzufügen. Diese Art von Anfügen ist leistungsfähiger als <a href="FileAppend.htm">FileAppend</a> im 2-Parameter-Modus, weil es verhindert, dass die Datei bei jeder Operation geschlossen und neu geöffnet wird. Achten Sie darauf, ein LF-Zeichen (`n) oder ein CR-LF-Paar (`r`n) nach dem Text einzufügen, falls notwendig.</p>
       <p>Die Datei wird nie geöffnet, wenn nichts zu schreiben ist. Zum Beispiel wenn die Schleife nie durchlaufen wird oder nie die <a href="FileAppend.htm">FileAppend</a>-Funktion aufruft.</p>
       <p><strong>Optionen</strong>: Der EOL-Umwandlungsmodus (EOL = End Of Line = Zeilenende) und die Kodierung der Ausgabedatei sind abhängig davon, welche Optionen zu Beginn an <a href="FileAppend.htm">FileAppend</a> übergeben wurden (also der erste Aufruf ohne <em>Dateiname</em>). Nachfolgende Aufrufe ignorieren den <em>Optionen</em>-Parameter. Standardmäßig erfolgt keine EOL-Umwandlung; das heißt, dass LF-Zeichen (`n) unverändert geschrieben werden, es sei denn, die  <code>"`n"</code>-Option ist vorhanden.</p>
-      <p><strong>Standardausgabe (stdout)</strong>: Ein Sternchen (*) im Parameter <em>Ausgabedatei</em> bewirkt, dass ein von <a href="FileAppend.htm">FileAppend</a> geschriebener Text zur Standardausgabe (stdout) gesendet wird. Zwar kann so eine Ausgabe auf eine Datei umgeleitet, an eine EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">originellen Texteditoren</a> abgefangen werden, allerdings erscheint sie nicht in der Eingabeaufforderung, von wo aus sie gestartet wurde. Siehe <a href="FileAppend.htm">FileAppend</a> für mehr Details.</p>
+      <p><strong>Standardausgabe (stdout)</strong>: Ein Sternchen (*) im Parameter <em>AusgabeDatei</em> bewirkt, dass ein von <a href="FileAppend.htm">FileAppend</a> geschriebener Text zur Standardausgabe (stdout) gesendet wird. Zwar kann so eine Ausgabe auf eine Datei umgeleitet, an eine EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">originellen Texteditoren</a> abgefangen werden, allerdings erscheint sie nicht in der Eingabeaufforderung, von wo aus sie gestartet wurde. Siehe <a href="FileAppend.htm">FileAppend</a> für mehr Details.</p>
   </dd>
 
 </dl>
@@ -43,7 +43,7 @@
 <p>Eine Datei-lesende Schleife ist nützlich, wenn Sie alle Zeilen in einer Textdatei einzeln abarbeiten wollen. Die Datei wird die ganze Zeit offen gelassen, um zu verhindern, dass sie für jede neue Zeile neu eingelesen werden muss.</p>
 <p id="LoopReadLine">Die interne Variable <strong>A_LoopReadLine</strong> ist nur in einer Datei-lesenden Schleife von Bedeutung. Sie enthält den Inhalt der aktuellen Zeile ohne das CR-LF-Paar (`r`n) am Ende. Wenn eine innere Datei-lesende Schleife von einer äußeren Datei-lesenden Schleife umschlossen ist, wird die Zeile von der innersten Schleife Vorrang haben.</p>
 <p>Es können Zeilen mit einer Länge von bis zu 65534 Zeichen gelesen werden. Wenn eine Zeile diese Länge überschreitet, werden die restlichen Zeichen während des nächsten Schleifendurchlaufs gelesen.</p>
-<p>In einer Datei-lesenden Schleife wird oft die <a href="StrSplit.htm">StrSplit</a>-Funktion oder eine <a href="LoopParse.htm">parsende Schleife</a> verwendet, um den Inhalt von jeder Zeile zu parsen, die in <em>Eingabedatei</em> gefunden wurde. Wenn jede Zeile in <em>Eingabedatei</em> beispielsweise aus mehreren tab-getrennten Feldern besteht, können solche Felder wie folgt einzeln abgerufen werden:</p>
+<p>In einer Datei-lesenden Schleife wird oft die <a href="StrSplit.htm">StrSplit</a>-Funktion oder eine <a href="LoopParse.htm">parsende Schleife</a> verwendet, um den Inhalt von jeder Zeile zu parsen, die in <em>EingabeDatei</em> gefunden wurde. Wenn jede Zeile in <em>EingabeDatei</em> beispielsweise aus mehreren tab-getrennten Feldern besteht, können solche Felder wie folgt einzeln abgerufen werden:</p>
 <pre>Loop read, "C:\Datenbank-Export.txt"
 {
     Loop parse, A_LoopReadLine, A_Tab
@@ -80,37 +80,37 @@ Loop read, "C:\Dokumente\Adressenliste.txt", "C:\Dokumente\Familie-Adressen.txt"
 <div class="ex" id="ExURL">
 <p><a href="#ExURL">#3</a>: Das folgende Beispiel zeigt, wie alle FTP- und HTTP-URLs aus einer Text- oder HTML-Datei extrahiert werden können:</p>
 <pre>
-Quelldatei := FileSelect(3,, "Wähle eine Text- oder HTML-Datei zum Analysieren aus:")
-if Quelldatei = ""
+QuelleDatei := FileSelect(3,, "Wähle eine Text- oder HTML-Datei zum Analysieren aus:")
+if QuelleDatei = ""
     return  <em>; In diesem Fall beenden.</em>
 
-SplitPath Quelldatei,, Quelldateipfad,, QuelldateiOhneEndung
-Zieldatei := Quelldateipfad "\" QuelldateiOhneEndung " Extrahierte Links.txt"
+SplitPath QuelleDatei,, QuelleDateiPfad,, QuelleDateiOhneEnd
+ZielDatei := QuelleDateiPfad "\" QuelleDateiOhneEnd " Extrahierte Links.txt"
 
-if FileExist(Zieldatei)
+if FileExist(ZielDatei)
 {
-    Result := MsgBox("Vorhandene Datei überschreiben? Drücken Sie Nein, um die Links nur anzufügen.`n`nDATEI: " Zieldatei,, 4)
+    Result := MsgBox("Vorhandene Datei überschreiben? Drücken Sie Nein, um die Links nur anzufügen.`n`nDATEI: " ZielDatei,, 4)
     if Result = "Yes"
-        FileDelete Zieldatei
+        FileDelete ZielDatei
 }
 
-Linkanzahl := 0
-Loop read, Quelldatei, Zieldatei
+LinksAnzahl := 0
+Loop read, QuelleDatei, ZielDatei
 {
     URLSuche(A_LoopReadLine)
 }
-MsgBox Linkanzahl ' Links wurden gefunden und in "' Zieldatei '" geschrieben.'
+MsgBox LinksAnzahl ' Links wurden gefunden und in "' ZielDatei '" geschrieben.'
 return
 
 
-URLSuche(URLSuchZeichenkette)
+URLSuche(URLSuchZkette)
 {
     <em>; Das wird auf diese Weise gemacht, weil einige URLs andere URLs eingebettet haben:
     ; Findet die Startposition ganz links:</em>
     URLStart := 0  <em>; Setzt den Standardwert.</em>
     for URLPräfix in ["https://", "http://", "ftp://", "www."]
     {
-        DiesePos := InStr(URLSuchZeichenkette, URLPräfix)
+        DiesePos := InStr(URLSuchZkette, URLPräfix)
         if !DiesePos  <em>; Dieses Präfix ist disqualifiziert.</em>
             continue
         if !URLStart
@@ -122,11 +122,11 @@ URLSuche(URLSuchZeichenkette)
         }
     }
 
-    if !URLStart  <em>; Keine URLs in der URLSuchZeichenkette.</em>
+    if !URLStart  <em>; Keine URLs in der URLSuchZkette.</em>
         return
 
     <em>; Extrahiert ansonsten diese URL:</em>
-    URL := SubStr(URLSuchZeichenkette, URLStart)  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
+    URL := SubStr(URLSuchZkette, URLStart)  <em>; Entfernt den beginnenden/irrelevanten Teil.</em>
     Loop parse, URL, " `t&lt;&gt;"  <em>; Findet das erste Leer-, Tab- oder Winkelzeichen (falls vorhanden).</em>
     {
         URL := A_LoopField
@@ -140,15 +140,15 @@ URLSuche(URLSuchZeichenkette)
     ; beschädigt werden könnten:</em>
     SaubereURL := StrReplace(URL, '"')
     FileAppend SaubereURL "`n"
-    global Linkanzahl += 1
+    global LinksAnzahl += 1
 
     <em>; Schaut nach, ob noch andere URLs in dieser Zeile vorkommen:</em>
-    ZuEntfernendeZeichen := StrLen(URL)
-    ZuEntfernendeZeichen += URLStart
-    URLSuchZeichenkette := SubStr(URLSuchZeichenkette, ZuEntfernendeZeichen)
+    WegzulassendeZeichen := StrLen(URL)
+    WegzulassendeZeichen += URLStart
+    URLSuchZkette := SubStr(URLSuchZkette, WegzulassendeZeichen)
     
     <em>; Ruft sich nochmals selbst auf:</em>
-    URLSuche(URLSuchZeichenkette)
+    URLSuche(URLSuchZkette)
 }
 </pre>
 </div>

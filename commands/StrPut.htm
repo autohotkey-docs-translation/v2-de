@@ -16,17 +16,17 @@
 
 <p>Kopiert eine Zeichenkette in einen Speicherbereich oder Puffer unter Beachtung eines bestimmten Zeichensatzes.</p>
 
-<pre class="Syntax"><span class="func">StrPut</span> Zeichenkette <span class="optional">, Codierung := <i>Keine</i></span> 
-<span class="func">StrPut</span> Zeichenkette, Ziel <span class="optional">, Länge</span> <span class="optional">, Codierung := <i>Keine</i></span>
+<pre class="Syntax"><span class="func">StrPut</span> Zkette <span class="optional">, Codierung := <i>Keine</i></span> 
+<span class="func">StrPut</span> Zkette, Ziel <span class="optional">, Länge</span> <span class="optional">, Codierung := <i>Keine</i></span>
 </pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>Zeichenkette</dt>
+  <dt>Zkette</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Eine beliebige Zeichenkette. Wenn eine Zahl angegeben ist, wird sie automatisch in eine Zeichenkette umgewandelt.</p>
-    <p><em>Zeichenkette</em> wird standardmäßig in der <a href="../Concepts.htm#string-encoding">nativen Codierung</a> vermutet.</p>
+    <p><em>Zkette</em> wird standardmäßig in der <a href="../Concepts.htm#string-encoding">nativen Codierung</a> vermutet.</p>
   </dd>
 
   <dt>Ziel</dt>
@@ -43,7 +43,7 @@
     <p>Die maximale Anzahl der zu schreibenden <a href="../Concepts.htm#character">Zeichen</a>, einschließlich des <a href="../Concepts.htm#null-termination">Null-Terminators</a>, falls notwendig.</p>
     <p>Wenn <em>Länge</em> 0 oder kleiner als die nach der Konvertierung voraussichtliche Länge (oder die Länge der Quellzeichenkette, wenn die Konvertierung nicht erforderlich ist) ist, wird eine Ausnahme ausgelöst.</p>
     <p><em>Länge</em> darf nicht weggelassen werden, es sei denn, man weiß, dass die Pufferspeichergröße ausreicht, z. B. wenn der Pufferspeicher basierend auf einen vorherigen Aufruf von StrPut, das die gleiche <em>Quelle</em> und <em>Codierung</em> hat, reserviert wurde.</p>
-    <p class="warning"><strong>Hinweis:</strong> Wenn <em>Codierung</em> angegeben ist, sollte <em>Länge</em> mit der Pufferspeichergröße übereinstimmen (in Zeichen), <strong>nicht</strong> mit der Länge der <em>Zeichenkette</em> oder einer Teilzeichenkette, da sie bei der Konvertierung eventuell länger gemacht wird.</p>
+    <p class="warning"><strong>Hinweis:</strong> Wenn <em>Codierung</em> angegeben ist, sollte <em>Länge</em> mit der Pufferspeichergröße übereinstimmen (in Zeichen), <strong>nicht</strong> mit der Länge von <em>Zkette</em> oder einer Teilzeichenkette, da sie bei der Konvertierung eventuell länger gemacht wird.</p>
     <p class="warning"><strong>Hinweis:</strong> <em>Länge</em> wird in Zeichen gemessen, während Pufferspeichergrößen normalerweise in Bytes gemessen werden, ebenso wie der Rückgabewert von StrPut. Um die Pufferspeichergröße in Bytes anzugeben, muss ein <a href="../objects/Buffer.htm">Buffer</a>-ähnliches Objekt im <em>Ziel</em>-Parameter verwendet werden.</p>
   </dd>
 
@@ -63,7 +63,7 @@
 <p>Es wird eine <a href="Catch.htm#RuntimeErrors">Ausnahme</a> ausgelöst, wenn ungültige Parameter erkannt werden oder die Konvertierung nicht durchgeführt werden kann.</p>
 
 <h2>Bemerkungen</h2>
-<p>Beachten Sie, dass der <i>Zeichenkette</i>-Parameter immer davon ausgeht, die <a href="../Concepts.htm#string-encoding">native Codierung</a> der aktuell genutzten Version von AutoHotkey zu verwenden, wohingegen <i>Codierung</i> die Codierung der auf das angegebene <i>Ziel</i> geschriebenen Zeichenkette spezifiziert. Wenn keine <em>Codierung</em> angegeben ist, wird die Zeichenkette gemessen oder kopiert, ohne dass eine Umwandlung stattfindet.</p>
+<p>Beachten Sie, dass der <i>Zkette</i>-Parameter immer davon ausgeht, die <a href="../Concepts.htm#string-encoding">native Codierung</a> der aktuell genutzten Version von AutoHotkey zu verwenden, wohingegen <i>Codierung</i> die Codierung der auf das angegebene <i>Ziel</i> geschriebenen Zeichenkette spezifiziert. Wenn keine <em>Codierung</em> angegeben ist, wird die Zeichenkette gemessen oder kopiert, ohne dass eine Umwandlung stattfindet.</p>
 
 <h2>Siehe auch</h2>
 <p><a href="../Concepts.htm#string-encoding">Zeichenkettencodierung</a>, <a href="StrGet.htm">StrGet</a>, <a href="../Compat.htm">Skript-Kompatibilität</a>, <a href="FileEncoding.htm">FileEncoding</a>, <a href="DllCall.htm">DllCall</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a></p>
@@ -80,12 +80,12 @@ StrPut(Zkette, Adresse, 0)      <em>; Nicht unterstützt (maximal 0 Zeichen)</em
 <div class="ex" id="ExEncoding">
 <p><a href="#ExEncoding">#2</a>: StrPut kann einmal aufgerufen werden, um die erforderliche Pufferspeichergröße für eine Zeichenkette in einer bestimmten Codierung zu berechnen, und danach nochmal, um die Zeichenkette zu codieren und sie in den Pufferspeicher zu schreiben. Um diesen Vorgang zu vereinfachen, können Sie eine der folgenden Funktionen in Ihre <a href="../Functions.htm#lib">Bibliothek</a> aufnehmen:</p>
 <pre filename="StrBuf.ahk"><em>; Gibt ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt zurück, das die Zeichenkette enthält:</em>
-StrBuf(Zeichenkette, Codierung)
+StrBuf(Zkette, Codierung)
 {
     <em>; Berechnet erforderliche Größe und reserviert Pufferspeicher.</em>
-    buf := BufferAlloc(StrPut(Zeichenkette, Codierung))
+    buf := BufferAlloc(StrPut(Zkette, Codierung))
     <em>; Kopiert oder wandelt die Zeichenkette um.</em>
-    StrPut(Zeichenkette, buf, Codierung)
+    StrPut(Zkette, buf, Codierung)
     return buf
 }</pre>
 </div>

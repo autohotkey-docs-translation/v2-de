@@ -16,17 +16,17 @@
 
 <p>Kopiert eine oder mehrere Dateien.</p>
 
-<pre class="Syntax"><span class="func">FileCopy</span> Quellmuster, Zielmuster <span class="optional">, Überschreiben</span></pre>
+<pre class="Syntax"><span class="func">FileCopy</span> QuelleMuster, ZielMuster <span class="optional">, Überschreiben</span></pre>
 <h2>Parameter</h2>
 <dl>
 
-  <dt>Quellmuster</dt>
+  <dt>QuelleMuster</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Name einer Datei oder eines Ordners, oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>Quellmuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
+    <p>Name einer Datei oder eines Ordners, oder ein Platzhaltermuster wie C:\Temp\*.tmp. Wenn kein absoluter Pfad angegeben ist, wird <em>QuelleMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
   </dd>
 
-  <dt>Zielmuster</dt>
+  <dt>ZielMuster</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Name oder Suchmuster des Ziels. Wenn kein absoluter Pfad angegeben ist, wird das Ziel im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
@@ -46,7 +46,7 @@
 </dl>
 
 <h2>Fehlerbehandlung</h2>
-<p>Es wird eine Ausnahme ausgelöst, wenn Dateien nicht kopiert werden konnten. In diesem Fall wird <a href="Throw.htm#Exception">Exception.Extra</a> auf die Anzahl der Misserfolge gesetzt. Wenn keine einzige Datei gefunden wurde und enthält <em>Quellmuster</em> weder <code>*</code> noch <code>?</code> als Platzhalter, wird eine Ausnahme ausgelöst. Das heißt, dass das Kopieren eines Platzhaltermusters wie <code>"*.txt"</code> auch dann als Erfolg gewertet wird, wenn keine Dateien gefunden wurden.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn Dateien nicht kopiert werden konnten. In diesem Fall wird <a href="Throw.htm#Exception">Exception.Extra</a> auf die Anzahl der Misserfolge gesetzt. Wenn keine einzige Datei gefunden wurde und enthält <em>QuelleMuster</em> weder <code>*</code> noch <code>?</code> als Platzhalter, wird eine Ausnahme ausgelöst. Das heißt, dass das Kopieren eines Platzhaltermusters wie <code>"*.txt"</code> auch dann als Erfolg gewertet wird, wenn keine Dateien gefunden wurden.</p>
 <p>Im Gegensatz zu <a href="FileMove.htm">FileMove</a> wird das Kopieren einer Datei auf sich selbst immer als Fehler gewertet, auch dann, wenn der Überschreibmodus aktiv ist.</p>
 <p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
@@ -65,33 +65,33 @@ FileCopy "C:\Ordner1\*.txt", "D:\Neuer Ordner\*.bkp"  <em>; Kopiert eine Datei m
 
 <div class="ex" id="ExCopyAll">
 <p><a href="#ExCopyAll">#2</a>: Das folgende Beispiel kopiert alle Dateien und Unterordner in einen anderen Ordner:</p>
-<pre>Fehleranzahl := KopiereDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
-if Fehleranzahl != 0
-    MsgBox Fehleranzahl " Dateien/Ordner konnten nicht kopiert werden."
+<pre>FehlerAnzahl := KopiereDateienUndOrdner("C:\Mein Ordner\*.*", "D:\Zielordner für Dateien &amp; Ordner")
+if FehlerAnzahl != 0
+    MsgBox FehlerAnzahl " Dateien/Ordner konnten nicht kopiert werden."
 
-KopiereDateienUndOrdner(Quellmuster, Zielordner, Überschreiben := false)
-<em>; Kopiert alle Dateien und Ordner von Quellmuster in einen Ordner mit den Namen Zielordner und
+KopiereDateienUndOrdner(QuelleMuster, ZielOrdner, Überschreiben := false)
+<em>; Kopiert alle Dateien und Ordner von QuelleMuster in einen Ordner mit den Namen ZielOrdner und
 ; gibt die Anzahl an Dateien/Ordnern zurück, die nicht kopiert werden konnten.</em>
 {
-    Fehleranzahl := 0
+    FehlerAnzahl := 0
     <em>; Zuerst alle Dateien kopieren (aber nicht die Ordner):</em>
     try
-        FileCopy Quellmuster, Zielordner, Überschreiben
+        FileCopy QuelleMuster, ZielOrdner, Überschreiben
     catch Fehler
-        Fehleranzahl := Fehler.Extra
+        FehlerAnzahl := Fehler.Extra
     <em>; Jetzt alle Ordner kopieren:</em>
-    Loop Files, Quellmuster, "D"  <em>; D bedeutet "nur Ordner".</em>
+    Loop Files, QuelleMuster, "D"  <em>; D bedeutet "nur Ordner".</em>
     {
         try
-            DirCopy A_LoopFilePath, Zielordner "\" A_LoopFileName, Überschreiben
+            DirCopy A_LoopFilePath, ZielOrdner "\" A_LoopFileName, Überschreiben
         catch
         {
-            Fehleranzahl += 1
+            FehlerAnzahl += 1
             <em>; Jeden Problemordner mit Namen anzeigen.</em>
-            MsgBox A_LoopFilePath " kann nicht nach " Zielordner " kopiert werden."
+            MsgBox A_LoopFilePath " kann nicht nach " ZielOrdner " kopiert werden."
         }
     }
-    return Fehleranzahl
+    return FehlerAnzahl
 }</pre>
 </div>
 

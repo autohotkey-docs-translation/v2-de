@@ -154,7 +154,7 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
 <p>Typ: <a href="../objects/File.htm">File</a></p>
 <p>Der Rückgabewert ist ein neues <a href="../objects/File.htm">File-Objekt</a>, das das offene Handle in der Datei kapselt. Verwenden Sie die Methoden und Eigenschaften dieses Objekts, um auf den Inhalt der Datei zuzugreifen.</p>
 
-<h2 id="Errors">Fehler</h2>
+<h2 id="Errors">Fehlerbehandlung</h2>
 <p>Wenn die Datei nicht geöffnet werden kann, wird eine <a href="Throw.htm#Exception">Ausnahme</a> ausgelöst. Die <code>Message</code>-Eigenschaft des Exception-Objekts basiert auf dem Fehlercode, der von der <code>Extra</code>-Eigenschaft des Exception-Objekts abgerufen werden kann.</p>
 
 <h2>Bemerkungen</h2>
@@ -169,34 +169,34 @@ FileOpen("**", "w")  <em>; für stderr</em></pre>
 
 <div class="ex" id="ExWriteRead">
 <p><a href="#ExWriteRead">#1</a>: Dieses Skript schreibt etwas Text in eine Datei und liest ihn zurück in den Speicher (es stellt die gleiche Funktionalität wie <a href="DllCall.htm#ExFile">dieses DllCall-Beispiel</a> bereit):</p>
-<pre>Dateiname := FileSelect("S16",, "Neue Datei erstellen:")
-if (Dateiname = "")
+<pre>DateiName := FileSelect("S16",, "Neue Datei erstellen:")
+if (DateiName = "")
     return
 try
-    File := FileOpen(Dateiname, "w")
+    File := FileOpen(DateiName, "w")
 catch Fehler
 {
-    MsgBox "Kann '" Dateiname "' nicht zum Schreiben öffnen."
+    MsgBox "Kann '" DateiName "' nicht zum Schreiben öffnen."
         . "`n`nFehler " Fehler.Extra ": " Fehler.Message
     return
 }
-TestZeichenkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
-File.Write(TestZeichenkette)
+TestZkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
+File.Write(TestZkette)
 File.Close()
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
 try
-    File := FileOpen(Dateiname, "r-d") <em>; Liest die Datei ("r"), gibt alle Zugriffe außer Löschen ("-d") frei</em>
+    File := FileOpen(DateiName, "r-d") <em>; Liest die Datei ("r"), gibt alle Zugriffe außer Löschen ("-d") frei</em>
 catch Fehler
 {
-    MsgBox "Kann '" Dateiname "' nicht zum Lesen öffnen."
+    MsgBox "Kann '" DateiName "' nicht zum Lesen öffnen."
         . "`n`nFehler " Fehler.Extra ": " Fehler.Message
     return
 }
-ZuLesendeZeichen := StrLen(TestZeichenkette)
-TestZeichenkette := File.Read(ZuLesendeZeichen)
+ZuLesendeZeichen := StrLen(TestZkette)
+TestZkette := File.Read(ZuLesendeZeichen)
 File.Close()
-MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " TestZeichenkette</pre>
+MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " TestZkette</pre>
 </div>
 
 <div class="ex" id="ExReadLine">
@@ -214,8 +214,8 @@ stdin  := FileOpen("*", "r")
 stdout := FileOpen("*", "w")
 stdout.Write("Bitte Anfrage eingeben.`n\&gt; ")
 stdout.Read(0) <em>; Schreibpuffer leeren.</em>
-Abfrage := RTrim(stdin.ReadLine(), "`n")
-stdout.WriteLine("Die Anfrage war '" Abfrage "'. Einen schönen Tag noch.")
+query := RTrim(stdin.ReadLine(), "`n")
+stdout.WriteLine("Die Anfrage war '" query "'. Einen schönen Tag noch.")
 stdout.Read(0) <em>; Schreibpuffer leeren.</em>
 Sleep 5000
 </pre>

@@ -1056,7 +1056,7 @@ indexData = [
   ["WinSetTransparent","commands/WinSetTransparent.htm",2],
   ["WinShow","commands/WinShow.htm",2],
   ["WinSize (via WinMove)","commands/WinMove.htm"],
-  ["WinTitle","misc/WinTitle.htm"],["Fenstertitel","misc/WinTitle.htm"],
+  ["WinTitle","misc/WinTitle.htm"],["FensterTitel","misc/WinTitle.htm"],
   ["WinWait","commands/WinWait.htm",2],
   ["WinWaitActive","commands/WinWaitActive.htm",2],
   ["WinWaitClose","commands/WinWaitClose.htm",2],
