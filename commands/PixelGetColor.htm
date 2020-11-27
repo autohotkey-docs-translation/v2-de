@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>PixelGetColor - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die PixelGetColor-Funktion ermittelt die Farbe des Pixels auf bestimmte X/Y-Koordinaten." />
+<meta name="description" content="Die PixelGetColor-Funktion ruft die Farbe eines bestimmten Pixels auf dem Bildschirm ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -14,7 +14,7 @@
 
 <h1>PixelGetColor</h1>
 
-<p>Ermittelt die Farbe des Pixels auf bestimmte X/Y-Koordinaten.</p>
+<p>Ruft die Farbe eines bestimmten Pixels auf dem Bildschirm ab.</p>
 
 <pre class="Syntax">Farbe := <span class="func">PixelGetColor</span>(X, Y <span class="optional">, Modus</span>)</pre>
 <h2>Parameter</h2>
@@ -23,15 +23,15 @@
   <dt>X, Y</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die X/Y-Koordinaten des Pixels. Koordinaten sind relativ zum aktiven Fenster, sofern das nicht mit <a href="CoordMode.htm">CoordMode</a> geändert wurde.</p>
+    <p>Die X- und Y-Koordinate des Pixels. Standardmäßig sind Koordinaten relativ zum aktiven Fenster, was aber mit <a href="CoordMode.htm">CoordMode</a> geändert werden kann.</p>
   </dd>
 
   <dt>Modus</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Dieser Parameter kann null oder mehrere der folgenden Wörter enthalten. Sind mehrere Wörter vorhanden, müssen sie mit einem Leerzeichen voneinander getrennt werden (z. B. <code>"Alt Slow"</code>).</p>
-      <p><strong>Alt</strong>: Eine alternative Methode zum Abrufen der Farbe - sie sollte verwendet werden, wenn die normale Methode ungültige oder ungenaue Farben bei bestimmten Fenstern erzeugt. Diese Methode ist ca. 10% langsamer als die normale Methode.</p>
-      <p><strong>Slow</strong>: Eine aufwendigere Methode zum Abrufen der Farbe - sie könnte in bestimmten Vollbild-Anwendungen funktionieren, wo andere versagen. Diese Methode ist ca. dreimal langsamer als die normale Methode. Hinweis: <em>Slow</em> hat Vorrang vor <em>Alt</em>, also muss <em>Alt</em> in diesem Fall nicht angegeben werden.</p>
+      <p>Dieser Parameter kann null oder mehr der folgenden Wörter enthalten. Sind mehrere Wörter vorhanden, müssen sie mit einem Leerzeichen voneinander getrennt werden (z. B. <code>"Alt Slow"</code>).</p>
+      <p><strong>Alt</strong>: Eine alternative Abrufmethode, die nur verwendet werden sollte, wenn die normale Methode ungültige oder ungenaue Farben bei bestimmten Fenstern liefert. Diese Methode ist ca. 10 Prozent langsamer als die normale Methode.</p>
+      <p><strong>Slow</strong>: Eine aufwendigere Abrufmethode, die bei bestimmten Vollbildanwendungen nützlich sein kann und nur verwendet werden sollte, wenn die anderen Methoden versagen. Diese Methode ist ca. dreimal langsamer als die normale Methode. Hinweis: <em>Slow</em> hat Vorrang vor <em>Alt</em>, also muss <em>Alt</em> in diesem Fall nicht angegeben werden.</p>
     </dd>
 
 </dl>
@@ -41,15 +41,15 @@
 <p>Diese Funktion gibt eine hexadezimale numerische Zeichenkette zurück, die die RGB-Farbe (Rot-Grün-Blau) des Pixels repräsentiert. Die Farbe Lila beispielsweise ist als 0x800080 definiert, weil sie eine Blau- und Rot-Intensität von 0x80 (128) und eine Grün-Intensität von 0x00 (0) hat.</p>
 
 <h2>Fehlerbehandlung</h2>
-<p>Es wird eine Ausnahme ausgelöst, wenn es ein Problem beim Abrufen der Farbe des Pixels gab.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn die Farbe des Pixels aufgrund eines Problems nicht abgerufen werden konnte.</p>
 
 <h2>Bemerkungen</h2>
-<p>Der Pixel muss sichtbar sein; das heißt, dass es nicht möglich ist, die Pixelfarbe eines Fensters zu ermitteln, das sich hinter einem anderen Fenster befindet. Pixel, die unterhalb des Mauszeigers sind, werden in der Regel erkannt. Videospielmauszeiger hingegen behindern die Sicht auf darunterliegende Pixel in den meisten Fällen.</p>
-<p>Mit "Window Spy" (über das Tray-Menü aufrufbar) oder dem Beispiel weiter unten können die aktuellen Farben auf dem Bildschirm ermittelt werden.</p>
+<p>Das Pixel muss sichtbar sein; das heißt, dass es nicht möglich ist, die Farbe des Pixels in einem Fenster abzurufen, das hinter einem anderen Fenster liegt. Pixel unterhalb des Mauszeigers werden in der Regel erkannt. Videospielmauszeiger hingegen verdecken meistens die Sicht auf darunterliegende Pixel.</p>
+<p>Verwenden Sie das Tool Window Spy (das über das Tray-Menü erreichbar ist) oder das Beispiel ganz unten, um Farben zu identifizieren, die gerade auf dem Bildschirm sichtbar sind.</p>
 <p>Bekannte Einschränkungen:</p>
 <ul>
-  <li>Ein Fenster, das <a href="WinSetTransparent.htm">teilweise transparent</a> ist oder eine als unsichtbar markierte Farbe enthält (<a href="WinSetTransColor.htm">WinSetTransColor</a>), gibt nicht die eigenen Farben, sondern die des dahinterliegenden Fensters zurück.</li>
-  <li>Es kann sein, dass PixelGetColor ungenaue Ergebnisse bei bestimmten Anwendungen erzeugt. In diesem Fall kann man das Wort <em>Alt</em> oder <em>Slow</em> im letzten Parameter ausprobieren.</li>
+  <li>Ein Fenster, das <a href="WinSetTransparent.htm">teilweise transparent</a> ist oder in dem eine seiner Farben als unsichtbar markiert ist (<a href="WinSetTransColor.htm">WinSetTransColor</a>), gibt nicht die eigenen Farben, sondern die des dahinterliegenden Fensters zurück.</li>
+  <li>PixelGetColor liefert bei bestimmten Anwendungen möglicherweise keine genauen Ergebnisse. Versuchen Sie in diesem Fall, das Wort <em>Alt</em> oder <em>Slow</em> im letzten Parameter anzugeben.</li>
 </ul>
 <h2>Siehe auch</h2>
 <p><a href="PixelSearch.htm">PixelSearch</a>, <a href="ImageSearch.htm">ImageSearch</a>, <a href="CoordMode.htm">CoordMode</a>, <a href="MouseGetPos.htm">MouseGetPos</a></p>
