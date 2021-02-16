@@ -18,7 +18,7 @@
 
 <pre class="Syntax"><span class="func">Loop Files</span> DateiMuster <span class="optional">, Modus</span></pre>
 
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>DateiMuster</dt>
@@ -26,21 +26,23 @@
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
       <p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie "C:\Temp\*.tmp". Wenn kein absoluter Pfad angegeben ist, wird <em>DateiMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
       <p>Sowohl Sternchen als auch Fragezeichen werden als Platzhalter unterstützt. Eine Übereinstimmung erfolgt, wenn das Suchmuster entweder im langen/normalen oder <a href="#LoopFileShortName">8.3-kurzen Dateinamen</a> erscheint.</p>
-      <p>Wenn dieser Parameter eine einzelne Datei oder ein Ordner ist (also ohne Platzhalter), und enthält <em>Modus</em> ein <code>R</code>, werden mehrere Übereinstimmungen gefunden, wenn der angegebene Dateiname in mehreren Ordnern vorkommt.</p>
+      <p>Wenn dieser Parameter eine einzelne Datei oder ein Ordner ist (also ohne Platzhalter), und enthält <em>Modus</em> ein R, werden mehrere Übereinstimmungen gefunden, wenn der angegebene Dateiname in mehreren Ordnern vorkommt.</p>
   </dd>
 
   <dt>Modus</dt>
   <dd>
-      <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Eine optionale Zeichenkette, die aus folgenden Buchstaben bestehen kann:</p>
-      <p><code>D</code>: Verzeichnisse (Ordner) einbeziehen.<br>
-      <code>F</code>: Dateien einbeziehen. Lässt man sowohl F als auch D weg, werden nur Dateien einbezogen, keine Ordner.<br>
-      <code>R</code>: Unterverzeichnisse (Unterordner) werden auch mit einbezogen. Es werden alle Unterordner rekursiv durchwandert, nicht nur solche, die dem <em>DateiMuster</em> entsprechen. Lässt man R weg, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</p>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, werden nur Dateien einbezogen und Unterverzeichnisse nicht rekursiv durchwandert. Ansonsten können Sie einen oder mehrere der folgenden Buchstaben angeben:</p>
+    <ul>
+      <li>D = Verzeichnisse (Ordner) einbeziehen.</li>
+      <li>F = Dateien einbeziehen. Lässt man sowohl F als auch D weg, werden nur Dateien einbezogen, keine Ordner.</li>
+      <li>R = Unterverzeichnisse (Unterordner) werden rekursiv durchwandert. Es werden alle Unterordner rekursiv durchwandert, nicht nur solche, die dem <em>DateiMuster</em> entsprechen. Lässt man R weg, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</li>
+    </ul>
   </dd>
-  
+
 </dl>
 
-<h2>Verfügbare Sondervariablen innerhalb einer Dateimuster-Schleife</h2>
+<h2 id="Special_Variables">Verfügbare Sondervariablen innerhalb einer Dateimuster-Schleife</h2>
 <p>Die folgenden Variablen existieren innerhalb einer Dateimuster-Schleife. Wenn eine innere Dateimuster-Schleife von einer äußeren Dateimuster-Schleife umschlossen ist, wird die Datei von der innersten Schleife Vorrang haben:</p>
 <table class="info">
   <tr id="LoopFileName">
@@ -105,7 +107,7 @@
   </tr>
 </table>
 
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Eine Dateimuster-Schleife ist nützlich, wenn Sie mehrere Dateien und/oder Ordner einzeln abarbeiten wollen.</p>
 <p>Alle übereinstimmenden Dateien werden abgerufen, einschließlich versteckter Dateien. Aber Betriebssystem-Features wie der DIR-Befehl ignorieren versteckte Dateien. Um versteckte, systemspezifische und/oder schreibgeschützte Dateien innerhalb einer Schleife zu überspringen, können Sie zum Beispiel Folgendes innerhalb der Schleife verwenden:</p>
 <pre>if A_LoopFileAttrib ~= "[HRS]"  <em>; Überspringt jede Datei, die H (versteckt), R (schreibgeschützt) oder S (system-spezifisch) ist. Siehe <a href="../Variables.htm#regex">Tilde-Operator</a>.</em>
@@ -121,12 +123,12 @@ Loop Parse, DateiListe, "`n"
 <p>Dateien und Ordner mit einem kompletten Pfad länger als 259 Zeichen werden übersprungen, als wären sie nicht vorhanden. Dieses Problem tritt jedoch nur selten auf, weil das Betriebssystem solche Pfadnamen normalerweise nicht erlaubt.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="SplitPath.htm">SplitPath</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#1</a></p>
+<p><a href="#ExBasic">#1</a>: Meldet den vollständigen Pfad jeder Textdatei, die sich in einem Verzeichnis und in dessen Unterverzeichnissen befindet.</p>
 <pre>Loop Files, A_ProgramFiles "\*.txt", "R"  <em>; Unterordner rekursiv durchwandern.</em>
 {
     Result := MsgBox(Dateiname = " A_LoopFilePath "`n`nWeiter?",, "y/n")
@@ -136,7 +138,7 @@ Loop Parse, DateiListe, "`n"
 </div>
 
 <div class="ex" id="ExSize">
-<p><a href="#ExSize">#2</a>: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern:</p>
+<p><a href="#ExSize">#2</a>: Berechnet die Größe eines Ordners mitsamt der Dateien in seinen Unterordnern.</p>
 <pre>OrdnerGrößeKB := 0
 WelcherOrdner := DirSelect()  <em>; Fordert den Benutzer auf, einen Ordner auszuwählen.</em>
 Loop Files, WelcherOrdner "\*.*", "R"
@@ -145,7 +147,7 @@ MsgBox "Der Ordner " WelcherOrdner " hat eine Größe von " OrdnerGrößeKB " KB
 </div>
 
 <div class="ex" id="ExSortName">
-<p><a href="#ExSortName">#3</a>: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann):</p>
+<p><a href="#ExSortName">#3</a>: Ruft Dateinamen ab, sortiert nach Name (siehe nächstes Beispiel, wie nach Datum sortiert werden kann).</p>
 <pre>DateiListe := ""  <em>; Initialisiert sie als leere Variable.</em>
 Loop Files, "C:\*.*"
     DateiListe .= A_LoopFileName "`n"
@@ -161,7 +163,7 @@ Loop Parse, DateiListe, "`n"
 </div>
 
 <div class="ex" id="ExSortDate">
-<p><a href="#ExSortDate">#4</a>: Ruft Dateinamen ab, sortiert nach Änderungsdatum:</p>
+<p><a href="#ExSortDate">#4</a>: Ruft Dateinamen ab, sortiert nach Änderungsdatum.</p>
 <pre>DateiListe := ""
 Loop Files, A_MyDocuments "\Fotos\*.*", "FD"  <em>; Bezieht Dateien und Ordner mit ein</em>
     DateiListe .= A_LoopFileTimeModified "`t" A_LoopFileName "`n"
@@ -178,7 +180,7 @@ Loop Parse, DateiListe, "`n"
 </div>
 
 <div class="ex" id="ExFileCopy">
-<p><a href="#ExFileCopy">#5</a>: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück, in das Ziel:</p>
+<p><a href="#ExFileCopy">#5</a>: Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück, in das Ziel.</p>
 <pre>KopiereWennNeuer:
 <em>; Der Aufrufer hat die Variablen KopieQuelleMuster und KopieZiel für uns gesetzt.</em>
 Loop Files, KopieQuelleMuster

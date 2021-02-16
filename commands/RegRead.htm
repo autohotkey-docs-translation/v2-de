@@ -18,7 +18,7 @@
 
 <pre class="Syntax">Wert := <span class="func">RegRead</span>(<span class="optional">KeyName, ValueName</span>)
 </pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>KeyName</dt>
@@ -32,20 +32,20 @@
   <dt>ValueName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der Name des Wertes, der abgerufen werden soll. Wenn dieser Parameter weggelassen wird oder leer ist, wird der Standardwert des Keys abgerufen (außer wie oben erwähnt). Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt. Wenn es keinen Standardwert gibt (also wenn das RegEdit-Tool "Wert nicht festgelegt" anzeigt), wird eine Ausnahme ausgelöst.</p>
+    <p>Der Name des Wertes, der abgerufen werden soll. Wenn dieser Parameter weggelassen wird oder leer ist, wird der Standardwert des Keys abgerufen (außer wie oben erwähnt). Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt. Wenn es keinen Standardwert gibt (also wenn das RegEdit-Tool "Wert nicht festgelegt" anzeigt), wird ein <a href="../objects/Error.htm#OSError">OSError</a> ausgelöst.</p>
   </dd>
 
 </dl>
 
-<h2>Rückgabewert</h2>
+<h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>Diese Funktion gibt einen Wert des angegebenen Registry-Keys zurück.</p>
 
-<h2>Fehlerbehandlung</h2>
-<p>Bei Misserfolg (z. B. ein nicht-existierender Key oder Wert) wird eine Ausnahme ausgelöst.</p>
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Bei Misserfolg (z. B. ein nicht-existierender Key oder Wert) wird ein <a href="../objects/Error.htm#OSError">OSError</a> ausgelöst.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Zurzeit werden nur die folgenden Werttypen unterstützt: REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD und REG_BINARY.</p>
 <p>REG_DWORD-Werte werden immer als positive Dezimalzahlen dargestellt. Wenn die Zahl dazu gedacht war, negativ zu sein, können Sie sie mit <code>AusgabeVar := AusgabeVar &lt;&lt; 32 &gt;&gt; 32</code> oder ähnlichem in einen vorzeichenfähigen 32-Bit-Integer umwandeln.</p>
 <p>Beim Lesen eines REG_BINARY-Keys ist das Ergebnis eine Zeichenkette mit hexadezimalen Zeichen. Zum Beispiel würde ein REG_BINARY-Wert von 01,a9,ff,77 als Zeichenkette 01A9FF77 gelesen werden.</p>
@@ -54,28 +54,28 @@
 <p>In den Bemerkungen zur <a href="LoopReg.htm#remote">Registry-Schleife</a> finden Sie Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
 <p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript oder umgekehrt gelesen und geschrieben werden.</p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniRead.htm">IniRead</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Liest einen Wert aus der Registry und speichert ihn in <var>Testwert</var>.</p>
+<pre>Testwert := RegRead("HKEY_LOCAL_MACHINE\Software\BeliebigeAnwendung", "Testwert")</pre>
+</div>
 
 <div class="ex" id="ExProgramFiles">
-<p><a href="#ExProgramFiles">#1</a>: Ermittelt den Pfad des Programm-Ordners.</p>
+<p><a href="#ExProgramFiles">#2</a>: Ermittelt und meldet den Pfad des "Program Files"-Ordners. Eine alternative Methode finden Sie unter <a href="EnvGet.htm#ExProgramFiles">EnvGet-Beispiel #2</a>.</p>
 <pre><em>; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners
 ; zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
 <a href="SetRegView.htm">SetRegView</a> 64
 
 ProgramFilesDir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "ProgramFilesDir")
-MsgBox "Programme sind in: " ProgramFilesDir
-
-<em>; Ein anderer Weg, um den Pfad des Programm-Ordners zu ermitteln:</em>
-ProgramFilesDir := EnvGet(<a href="../Variables.htm#Is64bitOS">A_Is64bitOS</a> ? "ProgramW6432" : "ProgramFiles")
-MsgBox "Programme sind in: " ProgramFilesDir
-</pre>
+MsgBox "Programme sind in: " ProgramFilesDir</pre>
 </div>
 
+
 <div class="ex" id="ExType">
-<p><a href="#ExType">#2</a>: Das folgende Beispiel ermittelt den TYP eines Registry-Wertes (z. B. REG_SZ oder REG_DWORD).</p>
+<p><a href="#ExType">#3</a>: Ermittelt den TYP eines Registry-Wertes (z. B. REG_SZ oder REG_DWORD).</p>
 <pre>MsgBox RegKeyTyp("HKCU", "Environment", "TEMP")
 return
 

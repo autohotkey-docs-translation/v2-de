@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>OnExit - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die OnExit-Funktion bestimmt eine Callback-Funktion oder Subroutine, die automatisch aufgerufen werden soll, wenn das Skript beendet wird." />
+<meta name="description" content="Die OnExit-Funktion bestimmt eine Funktion, die automatisch aufgerufen werden soll, wenn das Skript beendet wird." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -17,7 +17,7 @@
 <p>Bestimmt eine <a href="../Functions.htm">Funktion</a>, die automatisch aufgerufen werden soll, wenn das Skript beendet wird.</p>
 
 <pre class="Syntax"><span class="func">OnExit</span> Func <span class="optional">, HinzufügenEntfernen</span></pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Func</dt>
@@ -30,15 +30,17 @@
   <dt>HinzufügenEntfernen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Geben Sie einen der folgenden Werte an:<br>
-  <strong>1</strong> (Standard): Rufen Sie die Funktion nach anderen zuvor registrierten Funktionen auf.<br>
-  <strong>-1</strong>: Rufen Sie die Funktion vor anderen zuvor registrierten Funktionen auf.<br>
-  <strong>0</strong>: Rufen Sie die Funktion nicht auf.</p>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig 1 (die Funktion nach anderen zuvor registrierten Funktionen aufrufen) verwendet. Ansonsten können Sie eine der folgenden Zahlen angeben:</p>
+    <ul>
+      <li>1 = Die Funktion nach anderen zuvor registrierten Funktionen aufrufen.</li>
+      <li>-1 = Die Funktion vor anderen zuvor registrierten Funktionen aufrufen.</li>
+      <li>0 = Die Funktion nicht aufrufen.</li>
+    </ul>
   </dd>
 
 </dl>
 
-<h2>Bemerkungen</h2>
+<h2 id="Remarks">Bemerkungen</h2>
 <p>Es können beliebig viele OnExit-Funktionen registriert werden. Eine OnExit-Funktion sollte in der Regel nicht ExitApp aufrufen; wäre dies der Fall, würde das Skript sofort beendet werden.</p>
 <p>OnExit-Funktionen werden aufgerufen, wenn das Skript in irgendeiner Form beendet wird (nur nicht, wenn das Beenden von so etwas wie "Task beenden" erzwungen wird). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Beenden auffordert.</p>
 <p>Mit <code>OnMessage(0x11, "WM_QUERYENDSESSION")</code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden (siehe <a href="OnMessage.htm#ExShutdown">OnMessage-Beispiel #2</a> für ein funktionsfähiges Beispiel).</p>
@@ -82,19 +84,14 @@
   </tr>
 </table>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="OnError.htm">OnError</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="Shutdown.htm">Shutdown</a>, <a href="_Persistent.htm">#Persistent</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Return.htm">Return</a></p>
 
 <h2 id="Examples">Beispiele</h2>
-<div class="ex" id="ExAdvanced">
-<p><a href="#ExAdvanced">#1</a>: Das folgende Beispiel verwendet <a href="_Persistent.htm">#Persistent</a> , um zu verhindern, dass das Skript automatisch beendet wird. Nachdem Sie das Skript gestartet haben, können Sie einen Rechtsklick auf das Infobereichssymbol machen und dann <em>Exit</em> auswählen, um die OnExit-Funktion zu testen. Klicken Sie danach auf "Ja", um das Skript zu beenden, oder auf "Nein", um es weiter laufen zu lassen.</p>
-<pre>#Persistent
-
-<em>; Registriert eine Funktion, die bei Exit aufgerufen werden soll:</em>
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Fragt den Benutzer vor dem Beenden des Skripts. Um dieses Beispiel zu testen, klicken Sie mit der rechten Maustaste auf das Tray-Symbol und dann auf Exit.</p>
+<pre class="NoIndent"><a href="_Persistent.htm">#Persistent</a>  <em>; Verhindert, dass sich das Skript automatisch beendet.</em>
 OnExit("ExitFunk")
-
-<em>; Registriert ein Objekt, das bei Exit aufgerufen werden soll:</em>
-OnExit(<a href="ObjBindMethod.htm">ObjBindMethod</a>(MeinObjekt, "Beenden"))
 
 ExitFunk(ExitGrund, ExitCode)
 {
@@ -105,7 +102,13 @@ ExitFunk(ExitGrund, ExitCode)
             return 1  <em>; OnExit-Funktionen müssen ungleich null zurückgeben, um ein Exit zu verhindern.</em>
     }
     <em>; Rufen Sie ExitApp nicht auf -- dies würde verhindern, dass andere OnExit-Funktionen aufgerufen werden können.</em>
-}
+}</pre>
+</div>
+
+<div class="ex" id="ExFnObj">
+<p><a href="#ExFnObj">#2</a>: Registriert ein Objekt, das bei Exit aufgerufen werden soll.</p>
+<pre><a href="_Persistent.htm">#Persistent</a>  <em>; Verhindert, dass sich das Skript automatisch beendet.</em>
+OnExit(<a href="ObjBindMethod.htm">ObjBindMethod</a>(MeinObjekt, "Beenden"))
 
 class MeinObjekt
 {

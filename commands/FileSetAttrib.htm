@@ -17,13 +17,24 @@
 <p>Ändert die Attribute von ein oder mehreren Dateien oder Ordnern. Platzhalter werden unterstützt.</p>
 
 <pre class="Syntax"><span class="func">FileSetAttrib</span> Attribute <span class="optional">, DateiMuster, Modus</span></pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Attribute</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Attribute, die geändert werden sollen (siehe Bemerkungen).</p>
+    <p>Attribute, die geändert werden sollen. Zum Beispiel <code>+HA-R</code>.</p>
+    <p>Um Attribute einfach ein-, aus- oder umzuschalten, präfixieren Sie einen oder mehrere der folgenden Attributsbuchstaben mit einem Pluszeichen (+), Minuszeichen (-) bzw. Zirkumflex (^):</p>
+    <ul>
+      <li>R = READONLY (schreibgeschützt)</li>
+      <li>A = ARCHIVE (archiviert)</li>
+      <li>S = SYSTEM (Systemdatei)</li>
+      <li>H = HIDDEN (versteckt)</li>
+      <li>N = NORMAL (nur ohne die anderen Attribute gültig)</li>
+      <li>O = OFFLINE</li>
+      <li>T = TEMPORARY (temporär)</li>
+    </ul>
+    <p class="note"><strong>Hinweis</strong>: Zurzeit kann der Komprimierungsstatus von Dateien mit dieser Funktion nicht geändert werden.</p>
   </dd>
 
   <dt>DateiMuster</dt>
@@ -36,59 +47,41 @@
   <dt>Modus</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Keine oder mehrere der folgenden Buchstaben:</p>
-    <p><code>D</code>: Verzeichnisse (Ordner) einbeziehen.<br>
-    <code>F</code>: Dateien einbeziehen. Lässt man sowohl F als auch D weg, werden nur Dateien einbezogen, keine Ordner.<br>
-    <code>R</code>: Unterordner werden rekursiv durchsucht; das heißt, dass zusätzlich alle tieferen Navigationsebenen des angegebenen Platzhaltermusters durchsucht werden, um Dateien und Ordner zu finden, die dem <em>DateiMuster</em> entsprechen. Alle Unterordner werden durchsucht, nicht nur solche, die dem <em>DateiMuster</em> entsprechen. Lässt man R weg, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</p>
-    <p class="note"><strong>Hinweis</strong>: Wenn <em>DateiMuster</em> ein einzelner Ordner anstelle eines Platzhaltermusters ist, wird er immer mit einbezogen, unabhängig von dieser Einstellung.</p>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, werden nur Dateien einbezogen und Unterverzeichnisse nicht rekursiv durchwandert. Ansonsten können Sie null oder mehr der folgenden Buchstaben angeben:</p>
+    <ul>
+      <li>D = Verzeichnisse (Ordner) einbeziehen.</li>
+      <li>F = Dateien einbeziehen. Lässt man sowohl F als auch D weg, werden nur Dateien einbezogen, keine Ordner.</li>
+      <li>R = Unterordner werden rekursiv durchwandert; das heißt, dass zusätzlich alle tieferen Navigationsebenen des angegebenen Platzhaltermusters durchsucht werden, um Dateien und Ordner zu finden, die dem <em>DateiMuster</em> entsprechen. Es werden alle Unterordner rekursiv durchwandert, nicht nur solche, die dem <em>DateiMuster</em> entsprechen. Lässt man R weg, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</li>
+    </ul>
   </dd>
 
 </dl>
 
-<h2>Fehlerbehandlung</h2>
-<p>Es wird eine Ausnahme ausgelöst, wenn Dateien nicht geändert werden konnten. In diesem Fall wird <a href="Throw.htm#Exception">Exception.Extra</a> auf die Anzahl der Misserfolge gesetzt.</p>
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Es wird ein <a href="../objects/Error.htm">Error</a> ausgelöst, wenn Dateien nicht geändert werden konnten, wobei dessen <a href="../objects/Error.htm#Extra">Extra</a>-Eigenschaft auf die Anzahl der Misserfolge gesetzt wird.</p>
 <p>Wenn Dateien gefunden wurden, wird <a href="../Variables.htm#LastError">A_LastError</a> entweder auf Null (0) oder unmittelbar nach dem letzten Fehler auf das Ergebnis der Systemfunktion GetLastError() gesetzt. Ansonsten enthält A_LastError einen Fehlercode, der eventuell kenntlich macht, warum keine Dateien gefunden wurden.</p>
 
-<h2>Bemerkungen</h2>
-<p>Der <em>Attribute</em>-Parameter ist eine Ansammlung von Operatoren und Attributsbuchstaben.</p>
-<p><em>Operatoren</em>:</p>
-<table class="info">
-  <tr>
-    <td>+</td>
-    <td>Aktiviert das Attribut</td>
-  </tr>
-  <tr>
-    <td>-</td>
-    <td>Deaktiviert das Attribut</td>
-  </tr>
-  <tr>
-    <td>^</td>
-    <td>Schaltet das Attribut um (auf den entgegengesetzten Wert)</td>
-  </tr>
-  <tr>
-    <td></td>
-    <td>Wenn die Attributsbuchstaben keinen Operator davor haben, werden die Attribute der Datei mit den angegebenen Attributen ersetzt. Um alle Attribute zu entfernen, genügt ein "N".</td>
-  </tr>
-</table>
-<p><br>
-  <em>Attributsbuchstaben</em>:<br>
-  R = READONLY (schreibgeschützt)<br>
-  A = ARCHIVE (archiviert)<br>
-  S = SYSTEM (Systemdatei)<br>
-  H = HIDDEN (versteckt)<br>
-  N = NORMAL (nur ohne die anderen Attribute gültig)<br>
-  O = OFFLINE<br>
-T = TEMPORARY (temporär)</p>
-<p class="note"><strong>Hinweis</strong>: Zurzeit kann der Komprimierungsstatus von Dateien mit dieser Funktion nicht geändert werden.</p>
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="FileGetAttrib.htm">FileGetAttrib</a>, <a href="FileGetTime.htm">FileGetTime</a>, <a href="FileSetTime.htm">FileSetTime</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileGetVersion.htm">FileGetVersion</a>, <a href="LoopFiles.htm">Dateimuster-Schleife</a></p>
-<h2>Beispiele</h2>
-<div class="ex" id="ExBasic">
-<p><a href="#ExBasic">#1</a></p>
-<pre>FileSetAttrib "+RH", "C:\MeineDateien\*.*", "DF"  <em>; +RH ist identisch mit +R+H</em>
-FileSetAttrib "^H", "C:\MeineDateien"  <em>; Schaltet das HIDDEN-Attribut des Ordners um.</em>
-FileSetAttrib "-R+A", "C:\Neue Textdatei.txt"
-FileSetAttrib "+A", "C:\*.ini", "R"  <em>; Alle INI-Dateien auf Laufwerk C: rekursiv durchgehen.</em></pre>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExTurnOnMultiple">
+<p><a href="#ExTurnOnMultiple">#1</a>: Schaltet die Attribute "schreibgeschützt" und "versteckt" für alle Dateien und Verzeichnisse ein (Unterverzeichnisse werden nicht rekursiv durchwandert).</p>
+<pre>FileSetAttrib "+RH", "C:\MeineDateien\*.*", "DF"  <em>; +RH ist identisch mit +R+H</em></pre>
+</div>
+
+<div class="ex" id="ExToggle">
+<p><a href="#ExToggle">#2</a>: Schaltet das Attribut "versteckt" eines einzelnen Verzeichnisses um.</p>
+<pre>FileSetAttrib "^H", "C:\MeineDateien"</pre>
+</div>
+
+<div class="ex" id="ExMixed">
+<p><a href="#ExMixed">#3</a>: Schaltet bei einer einzelnen Datei das Attribut "schreibgeschützt" aus und das Attribut "archiviert" ein.</p>
+<pre>FileSetAttrib "-R+A", "C:\Neue Textdatei.txt"</pre>
+</div>
+
+<div class="ex" id="ExRecurse">
+<p><a href="#ExRecurse">#4</a>: Geht rekursiv alle INI-Dateien auf dem C-Laufwerk durch und schaltet deren "archiviert"-Attribut ein.</p>
+<pre>FileSetAttrib "+A", "C:\*.ini", "R"</pre>
 </div>
 
 </body>

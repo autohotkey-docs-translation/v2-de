@@ -47,13 +47,13 @@
 <p>Das Eigenschaftsfenster eines Audiogeräts kann via <a href="#mmsys">Sound-Systemsteuerung</a> geöffnet werden.</p>
 <p>Audiotreiber sind in der Lage, andere Regler wie Bass und Höhen sichtbar zu machen. Allerdings haben gewöhnliche Audiotreiber üblicherweise nur Lautstärke- und Stummschaltungsregler oder überhaupt keine Komponenten. Lautstärke- und Stummschaltungsregler werden direkt über <a href="SoundGetVolume.htm">SoundGetVolume</a>, <a href="SoundSetVolume.htm">SoundSetVolume</a>, <a href="SoundGetMute.htm">SoundGetMute</a> und <a href="SoundSetMute.htm">SoundSetMute</a> unterstützt. Alle anderen Regler werden nur indirekt unterstützt, nämlich über <a href="SoundGetInterface.htm">SoundGetInterface</a> und <a href="ComCall.htm">ComCall</a>.</p>
 
-<h3>Fortgeschrittene Details</h3>
+<h3 id="Advanced_Details">Fortgeschrittene Details</h3>
 <p>Komponenten werden über die <a href="https://docs.microsoft.com/de-de/windows/win32/coreaudio/devicetopology-api">DeviceTopology API</a> ausfindig gemacht, die ein Diagramm von <em>Konnektoren</em> und <em>Untereinheiten</em> aufzeigt. Jede der oben gezeigten Komponenten hat einen Konnektor - genau dieser Konnektor definiert den Namen der Komponente. Jeder Regler (z. B. Lautstärke oder Stummschaltung) wird von einer Untereinheit repräsentiert, die zwischen dem Konnektor und dem Endpunkt liegt. Daten "fließen" vom oder zum Konnektor und werden geändert, während sie durch jede Untereinheit fließen, z. B. um die Lautstärke zu ändern oder alle Klänge zu unterdrücken (stumm zu schalten).</p>
 <p>Die SoundGet- und SoundSet-Funktionen identifizieren Komponenten, indem sie das <em>Gerätetopologie</em>-Diagramm schrittweise durchgehen und Konnektoren mit dem angegebenen Namen zählen (oder alle Konnektoren, wenn kein Name angegeben ist). Sobald der passende Konnektor gefunden wurde, wird ein Regler-Interface (z. B. IAudioVolumeLevel oder IAudioMute) abgerufen, indem jede Untereinheit auf diesem spezifischen Zweig des Diagramms abgefragt wird, beginnend beim nächstmöglichen Konnektor.</p>
 <p>Untereinheiten, die für mehrere Konnektoren gelten, werden ausgeschlossen - wie z. B. Untereinheiten, die für die Master-Lautstärke/Stummschaltung-Regler zuständig sind. Ein Konnektor wird gezählt, wenn (und nur wenn) er mindestens eine eigene Untereinheit hat, auch wenn die Untereinheit nicht vom gewünschten Typ ist.</p>
 <p>In der Praxis führt dies dazu, dass die Verfügbarkeit und Reihenfolge der Komponenten identisch zur Auflistung im <a href="#components">Pegel-Tab</a> ist. Dieser Vorgang basiert jedoch auf Beobachtungen, Versuch und Irrtum, so dass die Richtigkeit nicht zu 100 % gewährleistet werden kann.</p>
 
-<h2>Allgemeine Parameter</h2>
+<h2 id="Common_Parameters">Allgemeine Parameter</h2>
 <dl>
 
   <dt id="component">Komponente</dt>
@@ -67,7 +67,7 @@
       <li>Wenn dieser Parameter weggelassen wird oder leer ist, agiert die Funktion mit den Master-Lautstärke/Stummschaltung-Reglern oder einem Interface, das via <a href="https://docs.microsoft.com/de-de/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdevice-activate">IMMDevice::Activate</a> zurückgegeben werden kann.</li>
     </ul>
     <p>Wenn nur eine Indexnummer angegeben ist, werden die Anzeigenamen ignoriert. Zum Beispiel verwenden <code>1</code>, <code>"1"</code> und <code>":1"</code> die erste Komponente unabhängig vom Namen, während <code>""</code> auf die Master-Regler zugreift.</p>
-    <p>Wenn das Audiogerät die angegebene <em>Komponente</em> nicht besitzt, wird eine Ausnahme ausgelöst.</p>
+    <p>Wenn das Audiogerät die angegebene <em>Komponente</em> nicht besitzt, wird ein <a href="../objects/Error.htm#TargetError">TargetError</a> ausgelöst.</p>
   </dd>
 
   <dt id="device">Gerät</dt>
@@ -85,7 +85,7 @@
 
 </dl>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExSoundcard">
 <p><a href="#ExSoundcard">#1</a>: Soundkartenanalyse. Das folgende Skript kann verwendet werden, um die Namen der verfügbaren Audiogeräte und Komponenten zu ermitteln und herauszufinden, ob das Gerät oder die Komponente Lautstärke- und/oder Stummschaltungsregler unterstützt. Es zeigt die Ergebnisse in einer einfachen ListView an. Die aktuellen Lautstärke- und Stummschaltungseinstellungen werden nur angezeigt, wenn sie abgerufen werden können, aber werden nicht in Echtzeit aktualisiert.</p>
 <pre filename="soundcard.ahk">

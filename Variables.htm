@@ -14,7 +14,7 @@
 <body>
 <h1>Variablen und Ausdrücke</h1>
 
-<h2>Inhaltsverzeichnis</h2>
+<h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#Intro">Variablen</a></li>
   <li><a href="#Expressions">Ausdrücke (Expressions)</a></li>
@@ -68,7 +68,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
 
 <h2 id="Operators">Operatoren innerhalb von Ausdrücken</h2>
 <p class="note">Allgemeine Informationen über Operatoren finden Sie unter <a href="Language.htm#operators">Operatoren</a>.</p>
-<p>Sofern nicht anders unten angegeben, werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte innerhalb einer mathematischen Operation <strong>nicht</strong> als 0 interpretiert. Stattdessen wird eine Ausnahme ausgelöst. Wenn <a href="commands/Try.htm">Try</a> nicht verwendet wird, führt die unbehandelte Ausnahme standardmäßig zu einem ein Fehlerdialogfenster.</p>
+<p>Sofern nicht anders unten angegeben, werden leere Werte (leere Zeichenketten) oder nicht-numerische Werte innerhalb einer mathematischen Operation <strong>nicht</strong> als 0 interpretiert. Stattdessen wird ein <a href="objects/Error.htm#TypeError">TypeError</a> ausgelöst. Wenn <a href="commands/Try.htm">Try</a> nicht verwendet wird, führt die unbehandelte Ausnahme standardmäßig zu einem Fehlerdialogfenster.</p>
 
 <h3 id="operators">Ausdrucksoperatoren (in absteigender Priorität)</h3>
 <table class="info">
@@ -80,7 +80,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><code>%Ausdr%()</code> führt einen <a href="Functions.htm#DynCall">dynamischen Funktionsaufruf</a> aus.</p>
       <p><code>x.%Ausdr%</code> greift auf eine Eigenschaft des Objekts <em>x</em> zu und <code>x.%Expr%()</code> ruft eine Methode auf.</p>
       <p>Ansonsten ruft <code>%Ausdr%</code> dynamisch eine Variable via Name ab. Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der komplette oder teilweise vorhandene Name einer Variable sein, die abgerufen werden soll.</p>
-      <p>Wenn die Variable noch nicht existieren sollte, wird eine leere Variable erstellt. Eine <a href="commands/Throw.htm#Exception">Ausnahme</a> wird ausgelöst, wenn der Name <a href="Concepts.htm#names">ungültig</a> ist.</p>
+      <p>Wenn die Variable noch nicht existieren sollte, wird eine leere Variable erstellt. Es wird ein <a href="objects/Error.htm">Error</a> ausgelöst, wenn der Name <a href="Concepts.htm#names">ungültig</a> ist.</p>
       <p>Meistens wird das verwendet, um auf Elemente eines <a href="misc/Arrays.htm#pseudo">Pseudo-Arrays</a> zu verweisen.</p>
       <p>Obwohl diese Vorgehensweise historisch gesehen als "Doppel-Dereferenzierung" bekannt ist, ist dieser Begriff ungenau, wenn <em>Ausdr</em> keine Variable enthält (erste Dereferenzierung), und wenn die resultierende Variable, die das Ziel einer Zuweisung ist, nicht dereferenziert wird (zweite Dereferenzierung).</p>
     </td>
@@ -113,7 +113,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p><strong>Unäres Minuszeichen (-)</strong>: Invertiert das Vorzeichen des Operanden.</p>
       <p><strong>Unäres Pluszeichen (+)</strong>: <code>+N</code> ist das gleiche wie <code>-(-N)</code>. Dieser Operator hat keinen Effekt, wenn er auf eine reine Zahl angewendet wird, aber er ist nützlich, um numerische Zeichenketten in reine Zahlen zu konvertieren.</p>
       <p><strong>Logisches NICHT (!)</strong>: Wenn dieser Operator bei einem Operanden angewendet wird, der leer oder 0 ist, ist das Ergebnis eine 1 (true). Ansonsten ist das Ergebnis eine 0 (false). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
-      <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden. Handelt es sich bei dem Operanden um eine Floating-Point-Zahl, wird eine Ausnahme ausgelöst.</p>
+      <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden. Handelt es sich bei dem Operanden um eine Floating-Point-Zahl, wird ein <a href="objects/Error.htm#TypeError">TypeError</a> ausgelöst.</p>
     </td>
   </tr>
   <tr id="MulDiv">
@@ -124,9 +124,9 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     <td><p><strong>Multiplizieren (*)</strong>: Das Ergebnis ist ein Integer, wenn beide Eingabewerte Integer sind; ansonsten ist es eine Floating-Point-Zahl.</p>
       <p><strong>Andere Einsatzmöglichkeiten</strong>: Das Sternchensymbol (*) kann auch in <a href="Functions.htm#VariadicCall">variadischen Funktionsaufrufen</a> genutzt werden.</p>
       <p id="divide"><strong>Echtes Dividieren (/)</strong>: Die echte Division liefert immer eine Floating-Point-Zahl, auch dann, wenn beide Eingabewerte Integer sind. Zum Beispiel wäre <code>3/2</code> gleich 1.5 statt 1, und <code>4/2</code> gleich 2.0 statt 2.</p>
-      <p id="IntegerDivide"><strong>Integer-Dividieren (//)</strong>: Der Doppelschrägstrich-Operator verwendet eine sehr leistungsfähige Integer-Division. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der Eingabewerte im Floating-Point-Format ist, wird eine Ausnahme ausgelöst. Um stattdessen eine Division mit Rest (Modulo) durchzuführen, siehe <a href="commands/Math.htm#Mod">Mod</a>.</p>
+      <p id="IntegerDivide"><strong>Integer-Dividieren (//)</strong>: Der Doppelschrägstrich-Operator verwendet eine sehr leistungsfähige Integer-Division. Zum Beispiel wäre <code>5//3</code> gleich 1 und <code>5//-3</code> gleich -1. Wenn einer der Eingabewerte im Floating-Point-Format ist, wird ein <a href="objects/Error.htm#TypeError">TypeError</a> ausgelöst. Um stattdessen eine Division mit Rest (Modulo) durchzuführen, siehe <a href="commands/Math.htm#Mod">Mod</a>.</p>
     <p>Die <a href="#AssignOp">Operatoren *= und /=</a> sind Kurzschreibweisen zum Multiplizieren oder Dividieren eines Variablenwertes mit einem anderen Wert. <code>Var *= 2</code> liefert zum Beispiel das gleiche Ergebnis wie <code>Var := Var * 2</code> (allerdings ist die erste Schreibweise performanter).</p>
-    <p>Eine Division durch Null bewirkt, dass eine Ausnahme ausgelöst wird.</p></td>
+    <p>Eine Division durch Null bewirkt, dass ein <a href="objects/Error.htm#ZeroDivisionError">ZeroDivisionError</a> ausgelöst wird.</p></td>
   </tr>
   <tr id="AddSub">
     <td style="text-align:center"><strong>+<br>
@@ -140,7 +140,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     &gt;&gt;</strong></td>
     <td>
       <p><strong>Bitweise Verschiebung nach links (&lt;&lt;)</strong> und <strong>nach rechts (&gt;&gt;)</strong>. Anwendungsbeispiel: <code>Wert1 &lt;&lt; Wert2</code>. Die bitweise Verschiebung nach links (<strong>&lt;&lt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" multiplizieren. Die bitweise Verschiebung nach rechts (<strong>&gt;&gt;</strong>) wäre das gleiche wie, als würde man <em>Wert1</em> mit "2, potenziert um <em>Wert2</em>" dividieren und dann das Ergebnis auf den am nächsten links befindlichen Integer runden; zum Beispiel wäre <code>-3&gt;&gt;1</code> gleich -2. Wenn <em>Wert2</em> kleiner als 0 oder größer als 63 ist (nach dem Kürzen), wird eine Ausnahme ausgelöst.</p>
-      <p>Wenn einer der Eingabewerte eine Floating-Point-Zahl ist, wird eine Ausnahme ausgelöst.</p>
+      <p>Wenn einer der Eingabewerte eine Floating-Point-Zahl ist, wird ein <a href="objects/Error.htm#TypeError">TypeError</a> ausgelöst.</p>
     </td>
   </tr>
   <tr id="bitwise">
@@ -150,7 +150,7 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     </strong></td>
     <td>
       <p><strong>Bitweises UND (&amp;)</strong>, <strong>bitweises exklusives ODER (^)</strong> und <strong>bitweises ODER (|)</strong>. Von diesen drei Operatoren hat <strong>&amp;</strong> die höchste Priorität und <strong>|</strong> die niedrigste Priorität.</p>
-      <p>Wenn einer der Eingabewerte eine Floating-Point-Zahl ist, wird eine Ausnahme ausgelöst.</p>
+      <p>Wenn einer der Eingabewerte eine Floating-Point-Zahl ist, wird ein <a href="objects/Error.htm#TypeError">TypeError</a> ausgelöst.</p>
       <p>Siehe auch: <a href="#unary">Bitweises NICHT (~)</a></p>
     </td>
   </tr>
@@ -175,7 +175,7 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
     <td style="text-align:center"><strong>&gt;&nbsp;&nbsp;&nbsp;&lt;<br>
     &gt;= &lt;=</strong></td>
     <td>
-      <p><strong>Größer (&gt;)</strong>, <strong>kleiner (&lt;)</strong>, <strong>größer gleich (&gt;=)</strong> und <strong>kleiner gleich (&lt;=)</strong>. Die Eingabewerte werden numerisch verglichen. Es wird eine Ausnahme ausgelöst, wenn einer der Eingabewerte weder eine Zahl noch eine numerische Zeichenkette ist.</p>
+      <p><strong>Größer (&gt;)</strong>, <strong>kleiner (&lt;)</strong>, <strong>größer gleich (&gt;=)</strong> und <strong>kleiner gleich (&lt;=)</strong>. Die Eingabewerte werden numerisch verglichen. Es wird ein <a href="objects/Error.htm#TypeError">TypeError</a> ausgelöst, wenn einer der Eingabewerte weder eine Zahl noch eine numerische Zeichenkette ist.</p>
     </td>
   </tr>
   <tr id="equal">
@@ -319,7 +319,7 @@ sumfn := Func("Sum")</pre>
 <h2 id="BuiltIn">Interne Variablen</h2>
 <p>Die folgenden Variablen sind fest in das Programm integriert und normal abrufbar.</p>
 <p class="note">Allgemeine Informationen finden Sie unter <a href="Concepts.htm#built-in-variables">Interne Variablen</a>.</p>
-<h3>Inhaltsverzeichnis</h3>
+<h3 id="BuiltIn_TOC">Inhaltsverzeichnis</h3>
 <ul>
   <li>Sonderzeichen: <a href="#Space">A_Space</a>, <a href="#Tab">A_Tab</a></li>
   <li>Skript-Eigenschaften: <a href="#Args">Befehlszeilenparameter</a>, <a href="#WorkingDir">A_WorkingDir</a>, <a href="#ScriptDir">A_ScriptDir</a>, <a href="#ScriptName">A_ScriptName</a>, <a href="#prop">(...mehr...)</a></li>
@@ -331,7 +331,7 @@ sumfn := Func("Sum")</pre>
   <li>Sonstiges: <a href="#Clipboard">A_Clipboard</a>, <a href="#Cursor">A_Cursor</a>, <a href="#EventInfo">A_EventInfo</a>, <a href="#misc">(...mehr...)</a></li>
   <li>Loop: <a href="#Index">A_Index</a>, <a href="#loop">(...mehr...)</a></li>
 </ul>
-<h3>Sonderzeichen</h3>
+<h3 id="Special_Characters">Sonderzeichen</h3>
 <table class="info">
   <tr id="Space">
     <td>A_Space</td>
@@ -610,7 +610,7 @@ MsgBox VerstricheneZeit " Millisekunden sind verstrichen."</pre>
     <td>Leer, wenn A_IconFile leer ist. Ansonsten ist die Nummer der Symbolgruppe enthalten, die in A_IconFile verwendet wird (üblicherweise 1).</td>
   </tr>
 </table>
-<h3>Inaktivität des Benutzers</h3>
+<h3 id="User_Idle_Time">Inaktivität des Benutzers</h3>
 <table class="info">
   <tr id="TimeIdle">
     <td>A_TimeIdle</td>

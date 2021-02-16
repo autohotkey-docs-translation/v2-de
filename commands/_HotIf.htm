@@ -19,7 +19,7 @@
 <p>Erstellt kontextabhängige <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a>. Solche Hotkeys führen je nach Bedingung (ein <a href="../Language.htm#expressions">Ausdruck</a>) unterschiedliche (oder gar keine) Aktionen durch.</p>
 
 <pre class="Syntax"><span class="func">#HotIf</span> <span class="optional">Ausdruck</span></pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Ausdruck</dt>
@@ -109,30 +109,31 @@ Hotkey "#n", "On"   <em>; Schaltet denselben Hotkey wieder ein.</em>
 </ul>
 
 <h2 id="general-remarks">Allgemeine Bemerkungen</h2>
-<p>Wenn nötig, stellt #HotIf außerdem die ursprüngliche Funktion der Präfixtasten wieder her (eine <a href="../Hotkeys.htm#prefix">Präfixtaste</a> ist beispielsweise die <kbd>A</kbd>-Taste bei einem Hotkey wie <code>a &amp; b</code>). Dies geschieht immer dann, wenn für ein bestimmtes Präfix keine aktivierten Hotkeys verfügbar sind.</p>
+<p>Wenn nötig, stellt #HotIf außerdem die ursprüngliche Funktion der Präfixtasten wieder her (eine <a href="../Hotkeys.htm#prefix">Präfixtaste</a> ist beispielsweise <kbd>A</kbd> bei einem Hotkey wie <code>a &amp; b</code>). Dies geschieht immer dann, wenn für ein bestimmtes Präfix keine aktivierten Hotkeys verfügbar sind.</p>
 <p>Die Tastatur- oder Maustaste eines via #HotIf deaktivierten Hotkeys sind im <a href="KeyHistory.htm">Tastenverlauf</a> innerhalb der Spalte "Type" mit einem Rautezeichen (#) gekennzeichnet. Solche Informationen können helfen, ein Skript zu debuggen (Fehler zu finden und zu beseitigen).</p>
 <p><a href="../Hotkeys.htm#alttab">Alt-Tab-Hotkeys</a> werden nicht von #HotIf beeinflusst: sie gelten für alle Fenster.</p>
 <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> kann via #HotIf gesetzt werden. Zum Beispiel:</p>
 <pre>#HotIf <a href="WinExist.htm">WinExist</a>("ahk_class Notepad")
 #n::<a href="WinActivate.htm">WinActivate</a>  <em>; Aktiviert das gefundene Fenster von WinExist().</em></pre>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p>Mit <a href="_HotIfTimeout.htm">##HotIfTimeout</a> kann der Standardwert des Zeitlimits überschrieben werden.</p>
 <p><a href="Hotkey.htm">Hotkey-Funktion</a>, <a href="../Hotkeys.htm">Hotkeys</a>, <a href="../Hotstrings.htm">Hotstrings</a>, <a href="Suspend.htm">Suspend</a>, <a href="WinActive.htm">WinActive</a>, <a href="WinExist.htm">WinExist</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a></p>
 
 <h2 id="Examples">Beispiele</h2>
-
-<div class="ex" id="ExVolume">
-<p><a href="#ExVolume">#1</a>: Anpassen der Lautstärke durch Drehen des Mausrades innerhalb der Taskleiste:</p>
-<pre>
-<em>; Beispiel 0: WinActive.</em>
-#HotIf WinActive("ahk_class Notepad")
+<div class="ex" id="ExBasic">
+<p><a href="#ExBasic">#1</a>: Erstellt zwei Hotkeys und einen Hotstring, die nur funktionieren, wenn der Texteditor aktiv ist, und einen Hotkey, der für ein beliebiges Fenster außer dem Texteditor funktioniert.</p>
+<pre>#HotIf WinActive("ahk_class Notepad")
 ^!a::MsgBox "Sie haben STRG+ALT+A gedrückt, während der Texteditor aktiv ist."
 #c::MsgBox "Sie haben WIN+C gedrückt, während der Texteditor aktiv ist."
 ::bzw::Dieser Ersatztext für "bzw" wird nur im Texteditor erscheinen.
 #HotIf
-#c::MsgBox "Sie haben WIN+C in einem Fenster gedrückt, das nicht der Texteditor ist."
+#c::MsgBox "Sie haben WIN+C in einem Fenster gedrückt, das nicht der Texteditor ist."</pre>
+</div>
 
+<div class="ex" id="ExVolume">
+<p><a href="#ExVolume">#2</a>: Ermöglicht das Anpassen der Lautstärke durch Drehen des Mausrads über der Taskleiste.</p>
+<pre>
 #HotIf MausIstÜber("ahk_class Shell_TrayWnd")
 WheelUp::Send "{Volume_Up}"
 WheelDown::Send "{Volume_Down}"
@@ -145,7 +146,7 @@ MausIstÜber(FensterTitel) {
 </div>
 
 <div class="ex" id="ExWordDelete">
-<p><a href="#ExWordDelete">#2</a>: Einfaches wort-löschendes Tastenkürzel für alle Eingabefelder:</p>
+<p><a href="#ExWordDelete">#3</a>: Einfaches wortlöschendes Tastenkürzel für alle Eingabefelder.</p>
 <pre>
 #HotIf AktivesSteuerelementIstKlasse("Edit")
 ^BS::Send "^+{Left}{Del}"
@@ -162,7 +163,7 @@ AktivesSteuerelementIstKlasse(Klasse) {
 </div>
 
 <div class="ex" id="ExContextInsens">
-<p><a href="#ExContextInsens">#3</a>: Kontextunabhängiger Hotkey.</p>
+<p><a href="#ExContextInsens">#4</a>: Kontextunabhängiger Hotkey.</p>
 <pre>
 #HotIf
 Esc::ExitApp
@@ -170,7 +171,7 @@ Esc::ExitApp
 </div>
 
 <div class="ex" id="ExDynamic">
-<p><a href="#ExDynamic">#4</a>: Dynamische Hotkeys. Dieses Beispiel benötigt die MausIstÜber-Funktion von <a href="#ExVolume">Beispiel #1</a>:</p>
+<p><a href="#ExDynamic">#5</a>: Dynamische Hotkeys. Dieses Beispiel benötigt die MausIstÜber-Funktion von <a href="#ExVolume">Beispiel #2</a>.</p>
 <pre>
 NumpadAdd::
 {

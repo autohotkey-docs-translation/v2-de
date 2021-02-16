@@ -18,7 +18,7 @@
 <p>Erstellt eine Maschinencode-Adresse, die, wenn aufgerufen, den Aufruf an eine <a href="../Functions.htm">Funktion</a> im Skript weiterleitet.</p>
 
 <pre class="Syntax">Adresse := <span class="func">CallbackCreate</span>(Funktion <span class="optional">, Optionen := "", ParamAnzahl := Funktion.MinParams</span>)</pre>
-<h2>Parameter</h2>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
   <dt>Funktion</dt>
@@ -46,11 +46,11 @@
 
 </dl>
 
-<h2>Rückgabewert</h2>
+<h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>CallbackCreate gibt eine Maschinencode-Adresse zurück. Diese Adresse wird üblicherweise via <a href="DllCall.htm">DllCall</a> an eine externe Funktion übergeben oder via <a href="NumPut.htm">NumPut</a> in eine Struktur geschrieben, kann aber auch direkt von DllCall aufgerufen werden. Übergibt man die Adresse an <a href="#CallbackFree">CallbackFree</a>, wird das Callback gelöscht.</p>
 
-<h2>Fehlerbehandlung</h2>
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Diese Funktion scheitert und löst eine Ausnahme unter folgenden Bedingungen aus:</p>
 <ul>
   <li><em>Funktion</em> ist kein Objekt oder kein gültiger Funktionsname, oder hat weder eine <code>MinParams</code>-Eigenschaft noch eine <code>Call</code>-Methode.</li>
@@ -59,7 +59,7 @@
   <li><em>ParamAnzahl</em> wird weggelassen und: 1) <em>Funktion</em> hat keine <code>MinParams</code>-Eigenschaft; oder 2) die <code>&amp;</code>-Option wird in Verbindung mit der standardmäßigen 32-Bit-Aufrufkonvention genutzt.</li>
 </ul>
 
-<h2>Die Parameter der Callback-Funktion</h2>
+<h2 id="The_Callback_Functions_Parameters">Die Parameter der Callback-Funktion</h2>
 <p>Eine <a href="../Functions.htm">Funktion</a>, die einer Callback-Adresse zugewiesen wurde, kann bis zu 31 Parameter akzeptieren. <a href="../Functions.htm#optional">Optionale Parameter</a> sind erlaubt; dies ist nützlich, wenn die Funktion von mehr als einem Aufrufer aufgerufen wird.</p>
 <p>Die korrekte Interpretation der Parameter erfordert ein gewisses Verständnis dafür, wie die x86-Aufrufkonventionen funktionieren. Da Autohotkey keine typisierten Parameter besitzt, wird davon ausgegangen, dass die Parameterliste des Callbacks aus Integern besteht und dass einige Neuinterpretationen gemacht werden müssen.</p>
 
@@ -94,7 +94,7 @@ DieFunk(params) {
 }</pre>
 <p>Die meisten Callbacks in 32-Bit-Programmen verwenden die <em>stdcall</em>-Aufrufkonvention, die eine feste Anzahl von Parametern voraussetzt. In solchen Fällen muss <em>ParamAnzahl</em> auf die Größe der Parameterliste gesetzt werden, wobei Int64 und Double als zwei 32-Bit-Parameter zählen. Bei <em>Cdecl</em>- oder 64-Bit-Aufrufkonventionen hat <em>ParamAnzahl</em> keine Wirkung.</p>
 
-<h2>Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
+<h2 id="What_the_Function_Should_Return">Was die Funktion per <em>Return</em> zurückgeben sollte</h2>
 <p>Wenn die Funktion ein <a href="Return.htm">Return</a> ohne Parameter verwendet oder einen leeren Wert wie "" zurückgibt (oder überhaupt kein Return verwendet), wird 0 an den Aufrufer des Callbacks zurückgegeben. Ansonsten sollte die Funktion einen Integer zurückgeben, der dann an den Aufrufer zurückgegeben wird. AutoHotkey 32-Bit kürzt Rückgabewerte auf das 32-Bit-Format, während AutoHotkey 64-Bit Rückgabewerte im 64-Bit-Format unterstützt. Zurückgegebene Strukturen größer als diesen Wert werden nicht unterstützt.</p>
 
 <h2 id="Threads">Fast vs. Slow</h2>
@@ -107,13 +107,13 @@ DieFunk(params) {
 <pre>CallbackFree(Adresse)</pre>
 <p>Dadurch wird auch sichergestellt, dass Callback's Referenz zum Funktionsobjekt des Skripts freigegeben wird.</p>
 
-<h2>Siehe auch</h2>
+<h2 id="Related">Siehe auch</h2>
 <p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort-Callback</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste mit Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExWinList">
-<p><a href="#ExWinList">#1</a>: Das folgende Skript zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
-<pre>EnumAdresse := <strong>CallbackCreate</strong>("EnumWindowsProc", "Fast")  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird.</em>
+<p><a href="#ExWinList">#1</a>: Zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
+<pre>EnumAdresse := CallbackCreate("EnumWindowsProc", "Fast")  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird.</em>
 
 DetectHiddenWindows True  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
 
@@ -133,7 +133,7 @@ EnumWindowsProc(hwnd, lParam)
 </div>
 
 <div class="ex" id="ExSubclassGUI">
-<p><a href="#ExSubclassGUI">#2</a>: Das folgende Skript zeigt, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
+<p><a href="#ExSubclassGUI">#2</a>: Demonstriert, wie ein GUI-Fenster zu einer Unterklasse gemacht werden kann, wenn man dessen WindowProc an einen neuen WindowProc weiterleitet. In diesem Fall wird die Hintergrundfarbe des Text-Steuerelements auf eine benutzerdefinierte Farbe gesetzt.</p>
 <pre>TextHintergrundFarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 TextHintergrundPinsel := DllCall("CreateSolidBrush", "UInt", TextHintergrundFarbe)
 
@@ -143,7 +143,7 @@ Text := MeineGui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hint
 <em>; 64-Bit-Skripte müssen SetWindowLongPtr statt SetWindowLong aufrufen:</em>
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
-WindowProcNeu := <strong>CallbackCreate</strong>("WindowProc")  <em>; Vermeide den Fast-Modus beim Setzen der Unterklasse.</em>
+WindowProcNeu := CallbackCreate("WindowProc")  <em>; Vermeide den Fast-Modus beim Setzen der Unterklasse.</em>
 WindowProcAlt := DllCall(SetWindowLong, "Ptr", MeineGui.Hwnd, "Int", -4  <em>; -4 ist GWL_WNDPROC</em>
     , "Ptr", WindowProcNeu, "Ptr") <em>; Rückgabewert muss auf "Ptr" oder "UPtr" statt auf "Int" gesetzt werden.</em>
 

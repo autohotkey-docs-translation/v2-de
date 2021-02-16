@@ -16,50 +16,37 @@
 
 <p>Signalisiert das Vorkommen eines Fehlers. Dieses Signal kann mit einer <a href="Try.htm">Try</a>-<a href="Catch.htm">Catch</a>-Anweisung abgefangen werden.</p>
 
-<pre class="Syntax"><span class="func">Throw</span> <span class="optional">Ausdruck</span></pre>
-<h2>Parameter</h2>
+<pre class="Syntax"><span class="func">Throw</span> <span class="optional">Wert</span></pre>
+<h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Ausdruck</dt>
-  <dd><p>Ein Wert, der in <a href="Catch.htm">Catch</a>'s AusgabeVar gespeichert werden soll.</p>
-      <p>Da dieser Parameter ein <a href="../Variables.htm#Expressions">Ausdruck</a> ist, wären alle folgenden Zeilen gültige Beispiele:</p>
+  <dt>Wert</dt>
+  <dd><p>Ein Wert, der ausgelöst werden soll; typischerweise ein <a href="../objects/Error.htm">Error</a>-Objekt. Zum Beispiel:</p>
+<pre>throw ValueError.new("Parameter #1 ungültig", -1, derSchlechteParam)</pre>
+      <p>Da dieser Parameter ein <a href="../Variables.htm#Expressions">Ausdruck</a> ist, sind alle folgenden Zeilen ebenfalls gültig:</p>
 <pre>throw 3
 throw "direkt geschriebene Zeichenkette"
 throw MeineVar
 throw i + 1
 throw { what: "Benutzerdefinierter Fehler", file: A_LineFile, line: A_LineNumber } <em>; Übergibt ein <a href="../objects/Object.htm">Objekt</a></em></pre>
-<p>Lässt man diesen Parameter weg, wird ein <a href="#Exception">Exception-Objekt</a> mit einer Standardmeldung ausgelöst.</p>
-<p>Das Leer- oder Tabulatorzeichen nach <code>throw</code> ist optional, wenn der Ausdruck in runden Klammern gesetzt ist, wie z. B. <code>throw(Exception("Fehler"))</code>.</p></dd>
+<p>Lässt man diesen Parameter weg, wird ein <a href="../objects/Error.htm">Error</a> mit einer Standardmeldung ausgelöst.</p>
+</dd>
 
 </dl>
 
-<h2 id="Exception">Exception()</h2>
-<p>Erstellt ein Objekt mit Eigenschaften, die auch bei durch <a href="Catch.htm#RuntimeErrors">Laufzeitfehler</a> erzeugten Ausnahmen üblich sind.</p>
-<pre class="Syntax"><span class="func">Exception</span>(Message <span class="optional">, What, Extra</span>)</pre>
-<p>Dieses Objekt enthält die folgenden Eigenschaften:</p>
-<ul>
-  <li><strong>Message:</strong> Eine Fehlermeldung.</li>
-  <li><strong>What:</strong> Was die Ausnahme ausgelöst hat. Enthält normalerweise den Namen einer Funktion, aber ist leer bei Ausnahmen, die aufgrund eines Fehlers in einem Ausdruck ausgelöst werden (z. B. wenn ein mathematischer Operator für einen nicht-numerischen Wert verwendet wird).</li>
-  <li><strong>Extra:</strong> Zusätzliche Informationen über den Fehler, falls verfügbar.</li>
-  <li><strong>File:</strong> Der automatisch gesetzte vollständige Pfad der Skriptdatei, die die fehlerhafte Zeile enthält.</li>
-  <li><strong>Line:</strong> Die automatisch gesetzte Nummer der fehlerhaften Zeile.</li>
-</ul>
-<p>Lässt man <em>What</em> weg, wird standardmäßig der Name der aktuellen Funktion verwendet. Ansonsten kann eine Zeichenkette oder ein negativer Offset vom Anfang der Aufrufliste angegeben werden. Zum Beispiel bewirkt ein Wert von -1, dass <code>Exception.What</code> auf die aktuelle Funktion gesetzt wird, und dass <code>Exception.Line</code> und <code>Exception.File</code> auf die Zeile und Datei gesetzt wird, die sie aufgerufen hat. Wenn das Skript jedoch <a href="../Scripts.htm#ahk2exe">kompiliert</a> oder der Offset ungültig ist, wird <em>What</em> einfach in eine Zeichenkette umgewandelt.</p>
-<p>Wenn eine Ausnahme aufgrund eines Skriptfehlers automatisch ausgelöst wird, ist <em>What</em> in der Regel leer.</p>
-<p><em>Message</em> und <em>Extra</em> werden in Zeichenketten umgewandelt. Diese werden in einem Fehlerdialogfenster angezeigt, wenn die Ausnahme ausgelöst aber nicht abgefangen wurde.</p>
-<pre>try
-    IrgendeineFunktion()
-catch e
-    MsgBox("Fehler in " e.What ", das auf Zeile " e.Line " aufgerufen wurde.")
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Das Leer- oder Tabulatorzeichen nach <code>throw</code> ist optional, wenn der Ausdruck in runden Klammern gesetzt ist, wie z. B. <code>throw(Error.new())</code>.</p>
+<p>Wenn <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a> verwendet wird, wird <em>Wert</em> dem AusgabeVar von <a href="Catch.htm">Catch</a> zugewiesen.</p>
+<p>Wenn <a href="Try.htm">Try</a> nicht verwendet wird (oder mit <a href="Finally.htm">Finally</a>, aber ohne <a href="Catch.htm">Catch</a> verwendet wird), geschieht Folgendes:</p>
+<ol>
+  <li>Alle aktiven <a href="OnError.htm">OnError</a>-Callbacks werden aufgerufen. Jedes Callback kann <em>Wert</em> inspizieren und weitere Callbacks und Standardbehandlungen entweder unterdrücken oder erlauben.</li>
+  <li>Standardmäßig wird eine Fehlermeldung angezeigt, welche sich danach richtet, was ausgelöst wurde. Wenn <em>Wert</em> ein <a href="../objects/Object.htm">Object</a> ist und eine Werteigenschaft namens <em>Message</em> besitzt, wird deren Wert als Meldung verwendet. Wenn <em>Wert</em> eine nicht-numerische Zeichenkette ist, wird diese als Meldung verwendet. In allen anderen Fällen wird eine Standardmeldung verwendet. Wenn <em>Wert</em> numerisch ist, wird es unterhalb der Standardmeldung angezeigt.</li>
+</ol>
 
-IrgendeineFunktion() {
-    throw Exception("Fehlschlag", -1)
-}</pre>
+<h2 id="Related">Siehe auch</h2>
+<p><a href="../objects/Error.htm">Error-Objekt</a>, <a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Finally.htm">Finally</a>, <a href="OnError.htm">OnError</a></p>
 
-<h2>Siehe auch</h2>
-<p><a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Finally.htm">Finally</a>, <a href="OnError.htm">OnError</a></p>
-
-<h2>Beispiele</h2>
+<h2 id="Examples">Beispiele</h2>
 <p>Siehe <a href="Try.htm#Examples">Try</a>.</p>
 
 </body>
