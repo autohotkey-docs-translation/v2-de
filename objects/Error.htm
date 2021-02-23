@@ -14,26 +14,56 @@
 <body>
 
 <h1>Error-Objekt</h1>
+<pre class="NoIndent">class Error extends Object</pre>
 
-<p>Error-Objekte werden von internem Code <a href="../commands/Throw.htm">ausgelöst</a>, wenn ein Laufzeitfehler auftritt, aber sie können auch explizit vom Skript ausgelöst werden.</p>
+<p>Error-Objekte werden von internem Code <a href="../commands/Throw.htm">ausgelöst</a>, wenn ein Laufzeitfehler auftritt, aber sie können auch explizit vom Skript ausgelöst werden. Die folgenden Eigenschaften sind standardmäßig vorhanden:</p>
 
 <p id="Message"><strong>Message:</strong> Eine Fehlermeldung.</p>
 <p id="What"><strong>What:</strong> Was die Ausnahme ausgelöst hat. Enthält normalerweise den Namen einer Funktion, aber ist leer bei Ausnahmen, die aufgrund eines Fehlers in einem Ausdruck ausgelöst werden (z. B. wenn ein mathematischer Operator für einen nicht-numerischen Wert verwendet wird).</p>
 <p id="Extra"><strong>Extra:</strong> Ein Zeichenkettenwert, der sich auf den Fehler bezieht, falls vorhanden. Wenn dieser Wert in eine nicht-leere Zeichenkette umgewandelt werden kann, wird im Standard-Fehlerdialogfenster eine Zeile mit "Specifically:" gefolgt von dieser Zeichenkette angezeigt.</p>
 <p id="File"><strong>File:</strong> Der vollständige Pfad der Skriptdatei, die die Zeile enthält, in der der Fehler aufgetreten ist bzw. in der das Error-Objekt konstruiert wurde.</p>
 <p id="Line"><strong>Line:</strong> Die Nummer der Zeile, in der der Fehler aufgetreten ist bzw. in der das Error-Objekt konstruiert wurde.</p>
+<p id="Stack"><strong>Stack:</strong> Eine Zeichenkette, die den Aufrufstapel zum Zeitpunkt der Erstellung des Error-Objekts repräsentiert. Jede Zeile kann wie folgt formatiert sein:</p>
+<dl>
+  <dt><code><i>File</i> (<i>Line</i>) : [<i>What</i>] <i>Quellcode</i>`r`n</code></dt>
+  <dd>Repräsentiert einen Aufruf der <em>What</em>-Funktion. <em>File</em> und <em>Line</em> kennzeichnen die aktuelle Skriptzeile in dieser Stapeltiefe. <em>Quellcode</em> ist eine Annäherung an den Quellcode in dieser Zeile, wie er in <a href="../commands/ListLines.htm">ListLines</a> angezeigt werden würde.</dd>
+  <dt><code>&gt; <i>What</i>`r`n</code></dt>
+  <dd>Repräsentiert den Start eines Threads, typischerweise die direkte Ursache für den Funktionsaufruf darüber.</dd>
+  <dt><code>... <i>N</i> more</code></dt>
+  <dd>Weist darauf hin, dass der Stack-Trace gekürzt wurde und dass es <em>n</em> weitere Stack-Einträge gibt, die nicht angezeigt werden. Aktuell kann die <code>Stack</code>-Eigenschaft nicht mehr als 2047 Zeichen umfassen.</dd>
+</dl>
 
-<p>Das Standard-Fehlerdialogfenster benötigt diese als Werteigenschaften, die nicht von einem Base-Objekt geerbt wurden.</p>
+<p class="warning"><strong>Hinweis:</strong> Das Standardfehlerfenster erfordert, dass <em>Message</em>, <em>Extra</em>, <em>File</em> und <em>Line</em> <a href="Object.htm">eigene Werteigenschaften</a> sind.</p>
 
 <h2 id="new">Error.New() / Exception()</h2>
-<p>Erstellt ein <a href="../objects/Error.htm">Error</a>-Objekt.</p>
+<p>Erstellt ein Error-Objekt.</p>
 <pre class="Syntax">NewError := <span class="func"><i>Error</i>.New</span>(Message <span class="optional">, What, Extra</span>)
 NewError := <span class="func">Exception</span>(Message <span class="optional">, What, Extra</span>)</pre>
 <p><em><strong>Error</strong></em> kann mit einer der unter <a href="#error-types">Error-Typen</a> aufgeführten Unterklassen ersetzt werden.</p>
 <p>Die Parameter entsprechen direkt den oben beschriebenen Eigenschaften, können aber bei Error-Unterklassen, die die Methode __New überschreiben, abweichen.</p>
-<p>Lässt man <em>What</em> weg, wird standardmäßig der Name der aktuellen Funktion verwendet. Ansonsten kann eine Zeichenkette oder ein negativer Offset vom Anfang der Aufrufliste angegeben werden. Zum Beispiel bewirkt ein Wert von -1, dass <code>NewError.What</code> auf die aktuelle Funktion gesetzt wird, und dass <code>NewError.Line</code> und <code>NewError.File</code> auf die Zeile und Datei gesetzt wird, die sie aufgerufen hat. Wenn das Skript jedoch <a href="../Scripts.htm#ahk2exe">kompiliert</a> oder der Offset ungültig ist, wird <em>What</em> einfach in eine Zeichenkette umgewandelt.</p>
-<p>Wenn eine Ausnahme automatisch aufgrund eines Skriptfehlers (und nicht durch eine benannte interne Funktion) ausgelöst wird, ist <em>What</em> in der Regel leer.</p>
 <p><em>Message</em> und <em>Extra</em> werden in Zeichenketten umgewandelt. Diese werden in einem Fehlerdialogfenster angezeigt, wenn die Ausnahme ausgelöst aber nicht abgefangen wurde.</p>
+<p><em>What</em> kennzeichnet die Quelle des Fehlers. Es kann eine beliebige Zeichenkette sein, sollte aber ein negativer Integer oder der Name einer laufenden Funktion sein. Die Angabe von -1 kennzeichnet die aktuelle Funktion, -2 kennzeichnet die Funktion, die sie aufgerufen hat, usw. Wenn das Skript <a href="../Scripts.htm#ahk2exe">kompiliert</a> ist oder der Wert keinen gültigen Stack-Frame identifiziert, wird der Wert lediglich in eine Zeichenkette umgewandelt und an <code>NewError.What</code> zugewiesen. Ansonsten wird der identifizierte Stack-Frame wie folgt verwendet, um die anderen Eigenschaften zu bestimmen:</p>
+<ul>
+  <li><code>NewError.What</code> enthält den Namen der Funktion.</li>
+  <li><code>NewError.Line</code> und <code>NewError.File</code> kennzeichnen die Zeile, die die Funktion <em>aufgerufen</em> hat.</li>
+  <li><code>NewError.Stack</code> enthält einen partiellen Stack-Trace, mit dem angegebenen Stack-Frame ganz oben.</li>
+</ul>
+<p>Die Verwendung des <em>What</em>-Parameters ermöglicht einer komplexen Funktion, Hilfsfunktionen zu verwenden, um ihre Arbeit oder Parametervalidierung auszuführen, während diese internen Details aus allen gemeldeten Fehlerinformationen weggelassen werden. Zum Beispiel:</p>
+<pre>MeineFunktion(a, b) {
+    CheckArg "a", a
+    CheckArg "b", b
+    <em>;...</em>
+    CheckArg(name, value) {
+        if value &lt; 0
+            throw ValueError.new(name " ist negativ", "MeineFunktion", value)
+    }
+}
+
+try
+    MeineFunktion(1, -1)  <em>; err.Line kennzeichnet diese Zeile.</em>
+catch err
+    MsgBox Format("{1}: {2}.`n`nFile:`t{3}`nLine:`t{4}`nWhat:`t{5}`nStack:`n{6}"
+        , type(err), err.Message, err.File, err.Line, err.What, err.Stack)</pre>
 <pre>try
     IrgendeineFunktion()
 catch e

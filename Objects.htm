@@ -54,7 +54,7 @@ ul.list_of_p li { margin: 1em 0; }
 MeinArray := Array(Element1, Element2, ..., ElementN)</pre>
 <p>Abrufen eines Elements (oder <em>Array-Elements</em>):</p>
 <pre>Wert := MeinArray[Index]</pre>
-<p>Ändern eines Elementwertes (muss bereits im Array existieren):</p>
+<p>Ändern eines Elementwertes (<code>Index</code> muss zwischen 1 und Länge liegen, oder ein äquivalenter umgekehrter Index):</p>
 <pre>MeinArray[Index] := Wert</pre>
 <p>Einfügen eines oder mehrerer Elemente ab einem bestimmten Index mittels <a href="objects/Array.htm#InsertAt">InsertAt</a>-Methode:</p>
 <pre>MeinArray.InsertAt(Index, Wert, Wert2, ...)</pre>
@@ -214,7 +214,7 @@ obj_test(this) {
 <p>Obwohl ein Base-Objekt gemeinhin auch als Prototyp bekannt ist, verwenden wir den Begriff "<a href="objects/Class.htm#Prototype">Prototyp</a> einer Klasse" für das Objekt, auf dem jede Instanz der Klasse basiert, und "Base" für das Objekt, auf dem eine Instanz basiert.</p>
 <p class="note">Das Objektdesign von AutoHotkey wurde hauptsächlich von JavaScript und Lua beeinflusst, und etwas C#. Wir verwenden <code><i>obj</i>.base</code> anstelle von JavaScript's <code><i>obj</i>.__proto__</code> und <code><i>cls</i>.Prototype</code> anstelle von JavaScript's <code><i>func</i>.prototype</code>. (Klassenobjekte werden anstelle von Konstruktorfunktionen verwendet.)</p>
 
-<p>Das Base eines Objekts wird auch verwendet, um dessen Typ oder Klasse zu identifizieren. Zum Beispiel erstellt <code>x := []</code> ein Objekt <em>basierend auf</em> <code>Array.Prototype</code>; das heißt, dass die Ausdrücke <code>x is Array</code> und <code>x.HasBase(Array.Prototype)</code> True sind und <code>type(x)</code> "Array" zurückgibt.</p>
+<p>Das Base eines Objekts wird auch verwendet, um dessen Typ oder Klasse zu identifizieren. Zum Beispiel erstellt <code>x := []</code> ein Objekt <em>basierend auf</em> <code>Array.Prototype</code>; das heißt, dass die Ausdrücke <code>x is Array</code> und <code>x.HasBase(Array.Prototype)</code> True sind und <code>type(x)</code> "Array" zurückgibt. Der Protoyp jeder Klasse basiert auf dem Prototyp ihrer Base-Klasse, also ist <code>x.HasBase(Object.Prototype)</code> ebenfalls True.</p>
 <p>Es kann eine beliebige Instanz von Object oder eine abgeleitete Klasse ein Base-Objekt sein, allerdings kann ein Objekt nur <a href="objects/Object.htm#Base">als Base</a> eines Objekts mit dem gleichen nativen Typ zugewiesen werden. Auf diese Weise wird sichergestellt, dass interne Methoden immer den nativen Typ eines Objekts identifizieren und nur auf Objekte angewendet werden können, die die richtige binäre Struktur aufweisen.</p>
 <p>Base-Objekte können auf zwei verschiedene Arten definiert werden:</p>
 <ul>
@@ -354,7 +354,7 @@ Methode()
 <p>Wenn eine Eigenschaft keine Parameter akzeptieren kann (die eckigen Klammern werden weggelassen oder sind leer), werden Parameter automatisch an die <a href="#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet. <code>this.Eigenschaft[x]</code> beispielsweise hätte die gleiche Wirkung wie <code>(this.Eigenschaft)[x]</code> oder <code>y := this.Eigenschaft, y[x]</code>.</p>
 <p>Um statische Eigenschaften zu definieren, muss vor dem Eigenschaftsnamen das separate Schlüsselwort <code>static</code> verwendet werden. In diesem Fall verweist <code>this</code> auf die Klasse selbst oder eine Unterklasse.</p>
 <p>Der Rückgabewert von <em>set</em> wird ignoriert. <code>Wert := obj.Eigenschaft := 42</code> beispielsweise wird immer <code>Wert := 42</code> zuweisen, egal was die Eigenschaft macht, es sei denn, sie löst eine Ausnahme aus oder beendet den Thread.</p>
-<p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_super">super.Eigenschaft</a></code> benutzen, um auf die via eigene Base-Klasse definierte Eigenschaft zugreifen zu können. Wenn <em>Get</em> oder <em>Set</em> nicht definiert ist, kann es von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist, ist die Eigenschaft schreibgeschützt (der Versuch, die Eigenschaft zu setzen, löst eine Ausnahme aus).</p>
+<p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_super">super.Eigenschaft</a></code> benutzen, um auf die via eigene Base-Klasse definierte Eigenschaft zugreifen zu können. Wenn <em>Get</em> oder <em>Set</em> nicht definiert ist, kann es von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist (oder von einer geerbten Werteigenschaft verschleiert wird), führt der Versuch, die Eigenschaft zu setzen, zum Auslösen einer Ausnahme.</p>
 <p>Intern sind <em>get</em> und <em>set</em> zwei unterschiedliche Methoden, die sich untereinander keine Variablen teilen können (es sei denn, man speichert sie in <code>this</code>).</p>
 <p>Siehe auch: <a href="objects/Object.htm#DefineProp">DefineProp</a></p>
 <p><a href="#Meta_Functions">Metafunktionen</a> bieten eine breitere Auswahl an Möglichkeiten für den kontrollierten Zugriff auf Eigenschaften und Methoden eines Objekts, allerdings sind sie komplizierter und fehleranfälliger.</p>
@@ -371,7 +371,7 @@ Methode()
 
 <h3 id="__Enum">__Enum-Methode</h3>
 <pre class="Syntax">__Enum(AnzahlVars)</pre>
-<p>Die __Enum-Methode wird aufgerufen, wenn das Objekt an eine <a href="commands/For.htm">For-Schleife</a> übergeben wird. Diese Methode sollte einen <a href="objects/Enumerator.htm">Enumerator</a> zurückgeben, der Elemente im Objekt, wie z. B. Array-Elemente, zurückgeben wird. Wenn es undefiniert bleibt, kann das Objekt nicht direkt an eine For-Schleife übergeben werden.</p>
+<p>Die __Enum-Methode wird aufgerufen, wenn das Objekt an eine <a href="commands/For.htm">For-Schleife</a> übergeben wird. Diese Methode sollte einen <a href="objects/Enumerator.htm">Enumerator</a> zurückgeben, der Elemente im Objekt, wie z. B. Array-Elemente, zurückgeben wird. Wenn es undefiniert bleibt, kann das Objekt nicht direkt an eine For-Schleife übergeben werden, es sei denn, es hat eine <a href="objects/Enumerator.htm#Call">Enumerator-kompatible Call-Methode</a>.</p>
 <p><em>AnzahlVars</em> enthält die Anzahl der Variablen, die an die For-Schleife übergeben wurden. Wenn <em>AnzahlVars</em> 2 ist, wird erwartet, dass der Enumerator dem ersten Parameter den Key oder Index eines Elements und dem zweiten Parameter den Wert zuweist. Jeder Key oder Index sollte als Parameter der <a href="#__Item">__Item</a>-Eigenschaft akzeptiert werden. Dadurch können <a href="AHKL_DBGPClients.htm">DBGp-basierte Debugger</a> ein bestimmtes Element abrufen oder setzen, nachdem sie via Enumerator aufgelistet wurden.</p>
 
 <h3 id="__Item">__Item-Eigenschaft</h3>
@@ -448,7 +448,7 @@ class <i>KlasseName</i> {
 <ul>
   <li><i>Call</i>: Löse einen <a href="objects/Error.htm#MethodError">MethodError</a> aus.</li>
   <li>Wenn Parameter angegeben wurden, löse eine Ausnahme aus (es gibt kein Objekt, an das die Parameter weitergeleitet werden können).</li>
-  <li><i>Get</i>: Gib eine leere Zeichenkette zurück (Standardverhalten bei Funktionen ohne <code>return</code>).</li>
+  <li><i>Get</i>: Löse einen <a href="objects/Error.htm#PropertyError">PropertyError</a> aus.</li>
   <li><i>Set</i>: Definiere eine neue Eigenschaft mit dem angegebenen Wert, z. B. durch Aufruf von <a href="objects/Object.htm#DefineProp">DefineProp</a>. </li>
 </ul>
 <p>Es kann ein beliebiges <a href="objects/Functor.htm">aufrufbare Objekt</a> als Metafunktion verwendet werden, indem es an <a href="objects/Object.htm#DefineMethod">DefineMethod</a> übergeben wird.</p>
@@ -464,48 +464,19 @@ class <i>KlasseName</i> {
 <p>Zum Beispiel kann ein "Proxy-Objekt" mit Eigenschaften erstellt werden, die den aktuellen Wert über das Netzwerk (oder über einen anderen Kanal) abfragen. Ein Remote-Server sendet eine Antwort zurück, die den Wert der Eigenschaft enthält, und das Proxy-Objekt übergibt den Wert an seinen Aufrufer. Auch wenn der Name jeder Eigenschaft im Voraus bekannt war, wäre es unlogisch, jede Eigenschaft einzeln in der Proxy-Klasse zu definieren, da jede Eigenschaft dasselbe tun würde (eine Netzwerkanfrage senden). Metafunktionen bekommen den Namen der Eigenschaft als Parameter, demzufolge sind sie eine gute Lösung für dieses Problem.</p>
 
 <h2 id="primitive">Primitive Werte</h2>
-<p>Primitive Werte, wie Zeichenketten und Zahlen, können keine eigenen Eigenschaften und Methoden haben. Allerdings unterstützen primitive Werte die gleiche Art von <a href="#delegation">Delegation</a> wie Objekte. Das heißt, dass jede Eigenschaft oder Methode, die einen primitiven Wert aufruft, an das <em>Prototypobjekt</em>, das dem Typ dieses Wertes entspricht, oder mit anderen Worten das <em>Base-Objekt</em> des Wertes, delegiert wird. Es existieren folgende Prototypobjekte:</p>
+<p>Primitive Werte, wie Zeichenketten und Zahlen, können keine eigenen Eigenschaften und Methoden haben. Allerdings unterstützen primitive Werte die gleiche Art von <a href="#delegation">Delegation</a> wie Objekte. Das heißt, dass jede Eigenschaft oder Methode, die einen primitiven Wert aufruft, an ein vordefiniertes Prototypobjekt delegiert wird, das auch über die <a href="objects/Class.htm#Prototype">Prototype</a>-Eigenschaft der entsprechenden Klasse zugänglich ist. Die folgenden Klassen beziehen sich auf primitive Werte:</p>
 <ul style="line-height: 1.5">
-  <li>Any <ul style="padding-left: 1.7em">
-    <li>Primitive <ul style="padding-left: 1.7em">
-      <li>Number <ul style="padding-left: 1.7em">
-        <li>Float</li>
-        <li>Integer</li>
-      </ul></li>
-      <li>String</li>
+  <li>Primitive (extends <a href="objects/Any.htm">Any</a>) <ul style="padding-left: 1.7em">
+    <li>Number <ul style="padding-left: 1.7em">
+      <li>Float</li>
+      <li>Integer</li>
     </ul></li>
+    <li>String</li>
   </ul></li>
 </ul>
-<p>Allerdings sind diese Objekte derzeit nur über die <code>Base</code>-Eigenschaft eines primitiven Wertes (oder eines abgeleiteten Prototypobjekts) zugänglich. <a href="objects/Object.htm">Object.Prototype</a> basiert ebenfalls auf dem Any-Prototypen, so dass alle Methoden oder Eigenschaften, die in diesem Prototyp definiert sind, von Werten aller Typen außer ComObject geerbt werden. Ebenso erben alle primitiven Werte von Primitive, und alle Zahlen von Number.</p>
-<p>Obwohl die Überprüfung der <a href="commands/Type.htm">Type</a>-Zeichenkette in der Regel schneller ist, kann der Typ eines Wertes getestet werden, indem überprüft wird, ob der Wert ein Base hat. <code>n.HasBase(0.base.base)</code> beispielsweise ist True, wenn <em>n</em> ein reiner Integer oder eine reine Floating-Point-Zahl ist, aber False, wenn <em>n</em> eine numerische Zeichenkette ist, da der String-Prototyp nicht vom Number-Prototyp ableitet. <code>IsNumber(n)</code> hingegen ist True, wenn <em>n</em> eine Zahl oder numerische Zeichenkette ist.</p>
-<p>Anstatt über Zahlen und Zeichenketten auf die Prototypobjekte zu verweisen, kann der folgende Code genutzt werden, um die fehlenden Klassen zu erstellen:</p>
-<pre><em>; Primitive Klassen definieren.</em>
-global Any := Class.new()
-     , Primitive := Class.new()
-     , String := Class.new()
-     , Number := Class.new()
-     , Integer := Class.new()
-     , Float := Class.new()
-
-<em>; Hierarchie für primitive Klassen definieren.</em>
-Primitive.base := Any
-  , Number.base := Primitive
-    , Integer.base := Number
-    , Float.base := Number
-  , String.base := Primitive
-
-<em>; Die vorhandenen Prototypobjekte einbinden.</em>
-Any.Prototype := (
-    Primitive.Prototype := (
-      Number.Prototype := (
-        Integer.Prototype := 0.base,
-        Float.Prototype := 0.0.base
-      ).base,
-      String.Prototype := "".base
-    ).base
-  ).base
-</pre>
-<p>Der <a href="Variables.htm#is"><code>is</code></a>-Operator kann mit diesen Klassen verwendet werden. <code>n is Number</code> beispielsweise ist äquivalent zu <code>n.HasBase(Number.Prototype)</code>, außer wenn die HasBase-Methode für <em>n</em> überschrieben wurde. Beachten Sie, dass <code>x is Any</code> normalerweise für jeden Wert innerhalb der Typenhierarchie von AutoHotkey True, aber für COM-Objekte False ist.</p>
+<p>Obwohl die Überprüfung der <a href="commands/Type.htm">Type</a>-Zeichenkette in der Regel schneller ist, kann der Typ eines Wertes getestet werden, indem überprüft wird, ob der Wert ein Base hat. <code>n.HasBase(Number.Prototype)</code> oder <code>n is Number</code> beispielsweise ist True, wenn <em>n</em> ein reiner Integer oder eine reine Floating-Point-Zahl ist, aber False, wenn <em>n</em> eine numerische Zeichenkette ist, da String nicht von Number ableitet. <code>IsNumber(n)</code> hingegen ist True, wenn <em>n</em> eine Zahl oder numerische Zeichenkette ist.</p>
+<p><a href="objects/Any.htm#GetBase">ObjGetBase</a> und die <a href="objects/Any.htm#Base">Base</a>-Eigenschaft geben eines der vordefinierten Prototypobjekte zurück, wenn es angebracht ist.</p>
+<p>Beachten Sie, dass <code>x is Any</code> normalerweise für jeden Wert innerhalb der Typenhierarchie von AutoHotkey True, aber für COM-Objekte False ist.</p>
 
 <h3 id="primitive-extension">Hinzufügen von Eigenschaften und Methoden</h3>
 <p>Eigenschaften und Methoden können für alle Werte eines bestimmten Typs hinzugefügt werden, indem das Prototypobjekt dieses Typs geändert wird. Da aber ein primitiver Wert kein Object-Objekt ist und keine eigenen Eigenschaften oder Methoden haben kann, können die primitiven Prototypobjekte nicht von <code>Object.Prototype</code> ableiten. Mit anderen Worten sind Methoden wie <a href="objects/Object.htm#DefineProp">DefineProp</a> und <a href="objects/Object.htm#DefineMethod">DefineMethod</a> standardmäßig nicht zugänglich. Diese können indirekt aufgerufen werden. Zum Beispiel:</p>

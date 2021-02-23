@@ -14,12 +14,12 @@
 <body>
 
 <h1>Class-Objekt</h1>
+<pre class="NoIndent">class Class extends Object</pre>
 
 <p>Ein <strong>Class</strong>-Objekt repräsentiert eine Klassendefinition; es enthält statische Methoden und Eigenschaften.</p>
-<p>Die folgende Dokumentation verwendet <code>Cls</code> als Platzhalter für jedes Class-Objekt. Beachten Sie, dass "class" nicht als Variablenname verwendet werden sollte, da es genutzt wird, um auf die Class-Klasse selbst zu verweisen. Normalerweise verweist man via Name auf ein Class-Objekt, der in dessen <a href="../Objects.htm#Custom_Classes">Klassendefinition</a> angegeben ist.</p>
 <p>Jedes Class-Objekt <a href="../Objects.htm#Custom_Objects">basiert auf</a> dem, was auch immer es erweitert, oder auf <a href="Object.htm">Object</a>, wenn es nicht angegeben ist. Das globale Klassenobjekt <code>Object</code> basiert auf <code>Class.Prototype</code>, das wiederum auf <code>Object.Prototype</code> basiert, so dass Klassen Methoden und Eigenschaften von jedem dieser Base-Objekte erben können.</p>
 <p>"Statische" Methoden und Eigenschaften sind alle Methoden und Eigenschaften, die dem Class-Objekt selbst gehören (und daher nicht für eine bestimmte Instanz gelten), während Methoden und Eigenschaften für Instanzen der Klasse dem <a href="#Prototype">Prototyp</a> der Klasse gehören.</p>
-<p>Klassen haben typischerweise die folgenden Eigenschaften:</p>
+<p>"ClassObj" wird hier stellvertretend für ein beliebiges Class-Objekt verwendet, da "Class" die Klasse selbst ist. Normalerweise verweist man auf ein Class-Objekt via Name, der in dessen <a href="../Objects.htm#Custom_Classes">Klassendefinition</a> angegeben ist.</p>
 
 <p><strong>Methoden:</strong></p>
 <ul>
@@ -34,26 +34,27 @@
 
 <div class="methodShort" id="New"><h2>New</h2>
 <p>Konstruiert eine neue Instanz der Klasse.</p>
-<pre class="Syntax">Obj := Cls.<span class="func">New</span>(Params*)</pre>
+<pre class="Syntax">Obj := ClassObj.<span class="func">New</span>(Params*)</pre>
 <p>Diese statische Methode wird typischerweise von der <a href="Object.htm">Object</a>-, <a href="Array.htm">Array</a>- oder <a href="Map.htm">Map</a>-Klasse geerbt. Es führt die folgenden Funktionen aus:</p>
 <ul>
   <li>Speicher zuweisen und die binäre Struktur des Objekts initialisieren, was vom nativen Typ des Objekts abhängt (z. B. ob es ein Array oder Map-Objekt ist, oder nur ein Objekt).</li>
-  <li>Das Base des neuen Objekts auf <a href="#Prototype">Cls.Prototype</a> setzen.</li>
+  <li>Das Base des neuen Objekts auf <a href="#Prototype">ClassObj.Prototype</a> setzen.</li>
   <li>Die __Init-Methode des neuen Objekts aufrufen, falls sie eine hat. Diese Methode wird automatisch via Klassendefinitionen erzeugt; sie enthält alle im Klassenkörper definierten Instanzvariableninitialisierer.</li>
   <li>Die __Init-Methode des neuen Objekts aufrufen, falls sie eine hat. Alle Parameter, die an New übergebenen werden, werden an __New weitergeleitet.</li>
   <li>Das neue Objekt zurückgeben.</li>
 </ul>
 <p>New kann innerhalb einer Klassendefinition überschrieben werden, indem eine statische Methode definiert wird, wie z. B. <code>static New()</code>. Dadurch können Klassen die Konstruktion neuer Instanzen ändern oder verhindern.</p>
-<p>Beachten Sie, dass <code>Class.New()</code> genutzt werden kann, um ein neues Class-Objekt basierend auf <code>Class.Prototype</code> zu erstellen. Dieses neue Objekt hat jedoch zunächst keine New-Methode, da es keine Unterklasse von <a href="Object.htm">Object</a> ist. Um es zu einer Unterklasse des Objekts zu machen, können Sie es <a href="Object.htm#Base">Base</a> zuweisen, oder Sie kopieren die New-Methode mit <a href="Any.htm#GetMethod">GetMethod</a> und <a href="Object.htm#DefineMethod">DefineMethod</a>. Ein <a href="#Prototype">Prototyp</a> muss ebenfalls erstellt und der Klasse zugewiesen werden, bevor es mit der Standard-New-Methode instanziiert werden kann.</p>
+<p>Beachten Sie, dass <code>Class.New()</code> (in diesem Fall tatsächlich "Class") genutzt werden kann, um ein neues Class-Objekt basierend auf <code>Class.Prototype</code> zu erstellen. Dieses neue Objekt hat jedoch zunächst keine New-Methode, da es keine Unterklasse von <a href="Object.htm">Object</a> ist. Um es zu einer Unterklasse von Object zu machen, können Sie es <a href="Object.htm#Base">Base</a> zuweisen, oder Sie reimplementieren die New-Methode oder kopieren Sie sie von einer anderen Klasse. Ein <a href="#Prototype">Prototyp</a> muss ebenfalls erstellt und der Klasse zugewiesen werden, bevor es mit der Standard-New-Methode instanziiert werden kann.</p>
 </div>
 
 <h2 id="Properties">Eigenschaften</h2>
 
 <div class="methodShort" id="Prototype"><h2>Prototype</h2>
 <p>Ermittelt oder setzt das Objekt, auf dem alle Instanzen der Klasse basieren.</p>
-<pre class="Syntax">Proto := Cls.<span class="func">Prototype</span></pre>
-<pre class="Syntax">Cls.<span class="func">Prototype</span> := Proto</pre>
+<pre class="Syntax">Proto := ClassObj.<span class="func">Prototype</span></pre>
+<pre class="Syntax">ClassObj.<span class="func">Prototype</span> := Proto</pre>
 <p>Der Prototyp der Klasse enthält standardmäßig alle Instanzmethoden und dynamischen Eigenschaften, die in der Klassendefinition definiert sind, und kann genutzt werden, um Referenzen zu Methoden oder Eigenschaft-Getters/Setters abzurufen oder neue zu definieren. Das Skript kann zudem neue Werteigenschaften definieren, die als Standardeigenschaftswerte für alle Instanzen fungieren.</p>
+<p>Der Protoyp einer Klasse basiert normalerweise auf dem Prototyp ihrer Base-Klasse, also gilt <code>ClassObj.Prototype.base == ClassObj.base.Prototype</code>.</p>
 <p>Prototype wird automatisch als eine eigene Eigenschaft eines Class-Objekts, das via Klassendefinition erzeugt wurde, definiert.</p>
 </div>
 
