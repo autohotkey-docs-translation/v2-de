@@ -333,7 +333,7 @@ indexData = [
   ["ContextMenu (Gui-Ereignis)","objects/GuiOnEvent.htm#ContextMenu"],
   ["continuation sections","Scripts.htm#continuation"],["Fortsetzungsbereiche","Scripts.htm#continuation"],
   ["Continue","commands/Continue.htm",3,"S"],
-  ["control flow","Language.htm#control-flow"],["Ablaufsteuerung","Language.htm#control-flow"],
+  ["control flow","Language.htm#control-flow"],["Kontrollfluss","Language.htm#control-flow"],
   ["Control-Funktionen","commands/Control.htm"],
   ["ControlAddItem","commands/ControlAddItem.htm",2],
   ["ControlChooseIndex","commands/ControlChooseIndex.htm",2],
