@@ -63,6 +63,22 @@
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Die ID des Fensters, das sich unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<p>Wenn eine Region für ein Fenster festgelegt wird, das dem Skript gehört, kann das System automatisch die Methode ändern, die es zum Rendern des Fensterrahmens verwendet, und dadurch das Aussehen des Fensters ändern. Der Effekt ähnelt dem unten gezeigten Workaround #2, der das Fenster aber erst beeinflusst, wenn seine Region zurückgesetzt ist.</p>
+<p><strong>Bekannte Einschränkung</strong>: Eine Region für ein Fenster zu setzen, das nicht zum Skript gehört, kann zu unerwarteten Ergebnissen führen, wenn das Fenster eine Titelleiste hat und die Systemeinstellung "Desktopgestaltung" aktiviert ist. Das liegt daran, dass der sichtbare Rahmen nicht wirklich Teil des Fensters ist, sondern von einem separaten Systemprozess gerendert wird, der als "Desktop Window Manager" (kurz DWM; zu Deutsch Desktopfenster-Manager) bezeichnet wird. Beachten Sie, dass die Desktopgestaltung in Windows 8 und höher <a href="https://docs.microsoft.com/de-de/windows/compatibility/desktop-window-manager-is-always-on">immer aktiviert</a> ist. Sie können einen der beiden folgenden Workarounds verwenden:</p>
+<pre><em>; #1: Titelleiste des Fensters entfernen.</em>
+WinSetStyle "-0xC00000", "Fenstertitel"
+
+<em>; Um es rückgängig zu machen:</em>
+WinSetStyle "+0xC00000", "Fenstertitel"</pre>
+<pre><em>; #2: DWM-Rendering des Fensterrahmens deaktivieren.</em>
+DllCall("dwmapi\DwmSetWindowAttribute", "ptr", WinExist("Fenstertitel")
+  , "uint", DWMWA_NCRENDERING_POLICY := 2, "int*", DWMNCRP_DISABLED := 1, "uint", 4)
+  
+<em>; Um es rückgängig zu machen (was auch dazu führen kann, dass jede gesetzte Region ignoriert wird):</em>
+DllCall("dwmapi\DwmSetWindowAttribute", "ptr", WinExist("Fenstertitel")
+  , "uint", DWMWA_NCRENDERING_POLICY := 2, "int*", DWMNCRP_ENABLED := 2, "uint", 4)
+</pre>
+
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Win.htm">Win-Funktionen</a>, <a href="Control.htm">Control-Funktionen</a></p>
