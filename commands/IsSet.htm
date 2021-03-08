@@ -17,14 +17,15 @@
 
 <p>Gibt eine Nummer ungleich 0 zurück, wenn eine bestimmte Variable einen Wert zugewiesen bekommen hat.</p>
 
-<pre class="Syntax">IsSet := <span class="func">IsSet</span>(Var)</pre>
+<pre class="Syntax">VarIstGesetzt := <span class="func">IsSet</span>(&amp;Var)</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Var</dt>
+  <dt>&amp;Var</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#variables">Variable</a></p>
-    <p>Eine Referenz zu der Variable. Zum Beispiel: <code>IsSet(MyVar)</code>.</p>
+    <p>Typ: <a href="../Concepts.htm#variable-references">VarRef</a></p>
+    <p>Eine Referenz zu der Variable. Zum Beispiel: <code>IsSet(&amp;MeineVar)</code>.</p>
+    <p class="note"><strong>Hinweis:</strong> Verwenden Sie den <a href="../Variables.htm#ref">Referenzoperator (&amp;)</a>, wenn Sie eine Variable direkt überprüfen, aber nicht, wenn Sie eine Variable übergeben, die eine VarRef <em>enthält</em>.</p>
   </dd>
 
 </dl>
@@ -34,21 +35,36 @@
 <p>Diese Funktion gibt 1 (true) zurück, wenn <em>Var</em> einen Wert zugewiesen bekommen hat, ansonsten 0 (false).</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Eine Variable ohne zugewiesenen Wert wird auch als <a href="../Concepts.htm#uninitialized-variables">nicht initialisierte Variable</a> bezeichnet. Der Versuch, auf eine nicht initialisierte Variable zuzugreifen (mit fast allen anderen Mitteln außer dieser Funktion) führt dazu, dass standardmäßig eine <a href="_Warn.htm#UseUnset">Warnung</a> angezeigt wird, aber in einer zukünftigen Version wird diese Warnung mit einem Fehler ersetzt.</p>
-<p>IsSet kann genutzt werden, um zu prüfen, ob eine Variable eine Initialisierung erfordert, z. B. um eine globale oder statische Variable bei der ersten Verwendung zu initialisieren.</p>
+<p>Eine Variable ohne zugewiesenen Wert wird auch als <a href="../Concepts.htm#uninitialized-variables">nicht initialisierte Variable</a> bezeichnet. Der Versuch, eine nicht initialisierte Variable zu lesen, führt dazu, dass eine Ausnahme ausgelöst wird. IsSet kann genutzt werden, um dies zu vermeiden, z. B. um eine globale oder statische Variable bei der ersten Verwendung zu initialisieren.</p>
+<p>Beim Überprüfen einer globalen Variable innerhalb einer Funktion ist es in der Regel erforderlich, die Variable zu <a href="../Functions.htm#Global">deklarieren</a>. Andernfalls würde die Verwendung des <a href="../Variables.htm#ref">Referenzoperators (&amp;)</a> dazu führen, dass eine lokale Variable erstellt wird. Diese Deklaration ist bereits notwendig, wenn der globalen Variable innerhalb der Funktion ein Wert zugewiesen werden soll.</p>
 <p class="note"><strong>Hinweis:</strong> <a href="../Functions.htm#InitStatic">Statische Initialisierungen</a> wie z. B. <code>static mein_statisches_array := []</code> werden nur einmal ausgewertet, nämlich dann, wenn sie das erste Mal während der Ausführung des Skripts erreicht werden, so dass IsSet in der Regel nicht verwendet werden muss.</p>
-<p><strong>Bekannte Einschränkung:</strong> Wenn der MsgBox-Warnmodus aktiv ist, hat das Auslösen der Warnmeldung für eine bestimmte Variable den Nebeneffekt, dass diese Variable initialisiert wird, um weitere Warnungen zu verhindern. Dies bewirkt, dass IsSet für nachfolgende Aufrufe True zurückgibt.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../Functions.htm#ByRef">ByRef-Parameter</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Meldet eine Nummer ungleich 0, wenn <var>MeineVar</var> einen Wert zugewiesen bekommen hat.</p>
-<pre>MsgBox Funktion(MeineVar)
+<pre>
+Loop 2
+    if !IsSet(&amp;MeineVar)  <em>; Ist dies die erste "Nutzung" von MeineVar?</em>
+        MeineVar := A_Index  <em>; Bei "Erstnutzung" initialisieren.</em>
+MsgBox Funktion1(&amp;MeineVar)
+MsgBox Funktion2(&amp;MeineVar)
 
-Funktion(ByRef Param)
+Funktion1(&amp;Param)  ; ByRef-Parameter.
 {
-    return IsSet(Param)
+    if IsSet(&amp;Param)  <em>; Eine Referenz zum Ziel von Param übergeben.</em>
+        return Param  <em>; ByRef-Parameter werden automatisch dereferenziert.</em>
+    else
+        return "ungesetzt"
+}
+
+Function2(Param)
+{
+    if IsSet(Param)  <em>; Die in Param enthaltene VarRef übergeben.</em>
+        return %Param%  ; Param explizit dereferenzieren.
+    else
+        return "ungesetzt"
 }</pre>
 </div>
 

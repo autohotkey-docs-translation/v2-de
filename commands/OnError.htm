@@ -72,7 +72,7 @@
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Protokolliert Fehler, die vom Skript verursacht werden, in eine Textdatei, anstatt sie dem Benutzer anzuzeigen.</p>
 <pre>
-OnError "FehlerProtokollieren"
+OnError FehlerProtokollieren
 i := Integer("Fehler_verursachen")
 
 FehlerProtokollieren(Exception, Modus) {
@@ -88,7 +88,7 @@ FehlerProtokollieren(Exception, Modus) {
 <pre>
 AccumulateErrors()
 {
-    local ea := ErrorAccumulator.new()
+    local ea := ErrorAccumulator()
     ea.Start()
     return ea
 }
@@ -96,7 +96,7 @@ AccumulateErrors()
 class ErrorAccumulator
 {
     Errors := []                        <em>; Array für akkumulierte Fehler.</em>
-    _cb := Func("AccumulateError").Bind(this.Errors)
+    _cb := AccumulateError.Bind(this.Errors)
     Start() =&gt; OnError(this._cb, -1)    <em>; Unsere cb vor allen anderen registrieren.</em>
     Stop() =&gt; OnError(this._cb, 0)      <em>; Unsere cb deregistrieren.</em>
     Last =&gt; this.Errors[-1]             <em>; Aktuellster Fehler.</em>
@@ -128,7 +128,7 @@ FensterNeuanordnen()
     local err := AccumulateErrors()
 
     <em>; Einige Dinge tun, die fehlschlagen könnten...</em>
-    MonitorGetWorkArea , Links, Oben, Rechts, Unten
+    MonitorGetWorkArea , &amp;Links, &amp;Oben, &amp;Rechts, &amp;Unten
     Breite := (Rechts-Links)//2, Höhe := Unten-Oben
     WinMove Links, Oben, Breite, Höhe, A_ScriptFullPath
     WinMove Links+Breite, Oben, Breite, Höhe, "Hilfe für AutoHotkey v2"

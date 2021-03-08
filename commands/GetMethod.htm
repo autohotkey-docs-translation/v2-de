@@ -37,11 +37,18 @@
 <p>Diese Funktion gibt das Funktionsobjekt, das die Implementierung der Methode enthält, zurück.</p>
 
 <h2 id="Errors">Fehlerbehandlung</h2>
-<p>Wenn die Methode nicht gefunden wurde, wird ein <a href="../objects/Error.htm#MethodError">MethodError</a> ausgelöst.</p>
+<p>Wenn die Methode nicht gefunden wurde oder nicht abgerufen werden kann, ohne einen Eigenschaft-Getter aufzurufen, wird ein <a href="../objects/Error.htm#MethodError">MethodError</a> ausgelöst.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die Methode kann vordefiniert (intern), innerhalb einer Klassendefinition oder durch Aufrufen von <a href="../objects/Object.htm#DefineMethod">DefineMethod</a> definiert sein. Geerbte Methoden werden in die Suche einbezogen. Methoden, die via __Call-<a href="../Objects.htm#Meta_Functions">Metafunktion</a> implementiert wurden, können nicht erkannt werden und haben eventuell gar kein entsprechendes Funktionsobjekt.</p>
-<p>Beim Aufruf des Funktionsobjekts ist es notwendig, einen Wert für den normalerweise versteckten <em>this</em>-Parameter zu übergeben. Zum Beispiel <code>%Methode%(Wert)</code>.</p>
+<p>Methoden können auf eine der folgenden Arten definiert werden:</p>
+<ul>
+  <li>Eine eigene Werteigenschaft des Objekts oder eines seiner Base-Objekte, wobei der Wert ein Objekt ist. Dies ist der häufigste Fall und wird für interne Methoden und Methoden in Klassendefinitionen verwendet. Daher ist es meist bequemer, die Eigenschaft einfach abzurufen, anstatt GetMethod aufzurufen.
+  <p class="warning"><strong>Hinweis:</strong> GetMethod verifiziert nicht, ob das Objekt aufrufbar ist.</p></li>
+  <li>Eine dynamische Eigenschaft, die durch Übergabe eines Deskriptors wie <code>{Call: fn}</code> an <a href="../objects/Object.htm#DefineProp">DefineProp</a> definiert wird, wobei <em>fn</em> die Methode implementiert.</li>
+  <li>Eine dynamische Eigenschaft mit einem Getter, der ein Funktionsobjekt zurückgibt. Dieser Fall wird von GetMethod nicht unterstützt.</li>
+  <li>Behandlung innerhalb einer __Call-<a href="../Objects.htm#Meta_Functions">Metafunktion</a>. Methoden, die auf diese Weise implementiert werden, können nicht erkannt werden und haben möglicherweise nicht einmal ein entsprechendes Funktionsobjekt, weshalb sie von GetMethod nicht unterstützt werden.</li>
+</ul>
+<p>Beim Aufruf des Funktionsobjekts ist es notwendig, einen Wert für den normalerweise versteckten <em>this</em>-Parameter zu übergeben. Zum Beispiel <code>Methode(Wert, Params*)</code>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../Objects.htm">Objekte</a>, <a href="HasMethod.htm">HasMethod</a>, <a href="HasBase.htm">HasBase</a>, <a href="HasProp.htm">HasProp</a></p>
@@ -52,7 +59,7 @@
 <pre>
 Methode := GetMethod({}, "GetMethod")  <em>; Sie ist auch eine Methode.</em>
 MsgBox Methode.MaxParams  <em>; Nimmt 2 Parameter, einschließlich 'this'.</em>
-MsgBox Methode = Func("GetMethod")  <em>; Tatsächlich das gleiche Objekt in diesem Fall.</em>
+MsgBox Methode = GetMethod  <em>; Tatsächlich das gleiche Objekt in diesem Fall.</em>
 </pre>
 </div>
 

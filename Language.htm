@@ -50,7 +50,6 @@
     <li><a href="#dynamic-variables">Dynamische Variablen</a>
     <ul>
       <li><a href="#pseudo-arrays">Pseudo-Arrays</a></li>
-      <li><a href="#associative-pseudo-arrays">Assoziative Pseudo-Arrays</a></li>
     </ul></li>
     <li><a href="#labels">Label</a></li>
   </ul></li>
@@ -64,8 +63,8 @@ Methods?
 
 <h2 id="general-conventions">Allgemeine Konventionen</h2>
 <p><strong>Namen:</strong> Variablen- und Funktionsnamen sind nicht Groß-/Kleinschreibung-sensitiv (zum Beispiel wäre <code>AktuellesDatum</code> das gleiche wie <code>aktuellesdatum</code>). Einzelheiten wie maximale Länge und verwendbare Zeichen finden Sie unter <a href="Concepts.htm#names">Namen</a>.</p>
-<p><strong>Keine typisierten Variablen:</strong> Variablen haben keinen explizit definierten Typ; stattdessen kann ein beliebiger Wert in eine beliebige Variable (außer interne Variable) gespeichert werden. Zahlen können je nach Situation automatisch in Zeichenketten (Text) umgewandelt werden und umgekehrt.</p>
-<p><strong>Deklarationen sind optional:</strong> Im Normalfall müssen Variablen nicht deklariert werden (in <a href="Functions.htm">Funktionen</a> gibt es Ausnahmen); Variablen werden erstellt, sobald sie verwendet werden (und enthalten zu Beginn eine leere Zeichenkette).</p>
+<p><strong>Keine typisierten Variablen:</strong> Variablen haben keinen explizit definierten Typ; stattdessen kann ein beliebiger Wert in eine beliebige Variable (außer Konstante und interne Variable) gespeichert werden. Zahlen können je nach Situation automatisch in Zeichenketten (Text) umgewandelt werden und umgekehrt.</p>
+<p><strong>Deklarationen sind optional:</strong> Im Normalfall müssen Variablen nicht deklariert werden (in <a href="Functions.htm">Funktionen</a> gibt es Ausnahmen). Allerdings wird der Versuch, eine Variable zu lesen, bevor ihr ein Wert zugewiesen wurde, als Fehler angesehen.</p>
 <p><strong>Leer- und Tabulatorzeichen werden größtenteils ignoriert:</strong> Einrückungen (Leer- und Tabulatorzeichen am Anfang) sind wichtig, um den Code besser lesbar zu machen, allerdings werden sie nicht vom Programm benötigt und werden in der Regel ignoriert. Leer- und Tabulatorzeichen werden <em>grundsätzlich</em> am Ende einer Zeile und innerhalb eines Ausdrucks (außer zwischen Anführungszeichen) ignoriert. Allerdings sind solche Zeichen in einigen Fällen signifikant:</p>
 <ul>
   <li><a href="#function-calls">Funktions</a>- und Methodenaufrufe verlangen, dass zwischen dem Funktions-/Methodennamen und <code>(</code> kein Leerzeichen steht.</li>
@@ -124,7 +123,7 @@ MsgBox "Diese Zeile ist nicht auskommentiert."
 <pre>MsgBox Format("Sie verwenden AutoHotkey v{1} {2}-Bit.", A_AhkVersion, A_PtrSize*8)
 </pre>
 <p>Um einer Variable einen Wert zuzuweisen, müssen Sie den <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> <code>:=</code> verwenden, wie z. B. in <code>MeineVar := "Beliebiger Text"</code>.</p>
-<p><em>Prozentzeichen</em> innerhalb eines Ausdrucks werden genutzt, um <a href="#dynamic-variables">dynamische Variablenreferenzen</a> und <a href="Functions.htm#DynCall">dynamische Funktionsaufrufe</a> zu erzeugen, allerdings werden sie selten benötigt.</p>
+<p><em>Prozentzeichen</em> innerhalb eines Ausdrucks werden genutzt, um <a href="#dynamic-variables">dynamische Variablenreferenzen</a> zu erzeugen, allerdings werden sie selten benötigt.</p>
 
 <h3 id="constants">Konstanten</h3>
 <p>Eine Konstante ist nichts anderes als ein unveränderlicher Wert, dem ein symbolischer Name gegeben ist. AutoHotkey hat momentan die folgenden Konstanten:</p>
@@ -147,25 +146,25 @@ MsgBox "Diese Zeile ist nicht auskommentiert."
 
 <h3 id="function-calls">Funktionsaufrufe</h3>
 <p class="note">Eine allgemeine Erläuterung zu Funktionen und verwandter Fachbegriffe finden Sie unter <a href="Concepts.htm#functions">Funktionen</a>.</p>
-<p><em>Funktionen</em> nehmen eine unterschiedliche Anzahl von Eingabewerten, führen eine Aktion oder Berechnung durch und geben dann ein Ergebnis via <a href="Concepts.htm#return-a-value"><em>Return</em></a> zurück. Die Eingabewerte einer Funktion werden als <a href="Concepts.htm#parameters"><em>Parameter</em></a> oder <em>Argumente</em> bezeichnet. Um eine Funktion <a href="Concepts.htm#call"><em>aufzurufen</em></a>, geben Sie einfach ihren Namen an, gefolgt von ihren Parametern, die in Klammern gesetzt sind. <code>GetKeyState("Shift")</code> beispielsweise gibt 1 zurück (wird zu dieser Zahl ausgewertet), wenn <kbd>Umschalt</kbd> gedrückt gehalten wird, oder 0, wenn nicht.</p>
-<p class="warning"><strong>Hinweis:</strong> Zwischen dem Funktionsnamen und der runden Startklammer darf kein Leerzeichen stehen.
+<p><em>Funktionen</em> nehmen eine unterschiedliche Anzahl von Eingabewerten, führen eine Aktion oder Berechnung durch und geben dann ein Ergebnis via <a href="Concepts.htm#return-a-value"><em>Return</em></a> zurück. Die Eingabewerte einer Funktion werden als <a href="Concepts.htm#parameters"><em>Parameter</em></a> oder <em>Argumente</em> bezeichnet. Um eine Funktion <a href="Concepts.htm#call"><em>aufzurufen</em></a>, geben Sie einfach die Zielfunktion an, gefolgt von in Klammern gesetzten Parametern. <code>GetKeyState("Shift")</code> beispielsweise gibt 1 zurück (wird zu dieser Zahl ausgewertet), wenn <kbd>Umschalt</kbd> gedrückt gehalten wird, oder 0, wenn nicht.</p>
+<p class="warning"><strong>Hinweis:</strong> Zwischen der Funktion und der runden Startklammer darf kein Leerzeichen stehen.
 </p>
 <p>Für Programmieranfänger mag die Forderung nach Klammern zunächst kryptisch oder umständlich erscheinen, aber gerade sie ermöglichen es, einen Funktionsaufruf mit anderen Operationen zu kombinieren. Zum Beispiel wird der Ausdruck <code>GetKeyState("Shift", "P") and GetKeyState("Ctrl", "P")</code> erst eine 1 zurückgeben, wenn beide Tasten physisch gedrückt gehalten werden.</p>
-<p>Funktionsnamen und Variablennamen sind voneinander getrennt. Zum Beispiel kann <code>Round</code> sowohl ein Variablen- als auch ein Funktionsname sein; das heißt, dass <code>Round := 1</code> keinerlei Auswirkung auf <code>Round(n)</code> haben wird.</p>
-<p>Im Gegensatz zu normalen <a href="Functions.htm#Global">globalen Variablen</a> können Funktionen standardmäßig aus anderen Funktionen heraus aufgerufen werden. <a href="Functions.htm#nested">Verschachtelte Funktionen</a> (eine Funktion, die in einer anderen Funktion <em>definiert</em> ist) sind jedoch nur via Name innerhalb der umschließenden Funktion zugänglich.</p>
+<p>Obwohl ein Funktionsaufrufausdruck normalerweise mit einem direkt geschriebenen Funktionsnamen beginnt, kann das Ziel des Aufrufs ein beliebiger Ausdruck sein, der ein <a href="objects/Functor.htm">Funktionsobjekt</a> erzeugt. Im Ausdruck <code>GetKeyState("Shift")</code> ist <em>GetKeyState</em> eigentlich eine Variablenreferenz, obwohl sie üblicherweise auf eine schreibgeschützte Variable verweist, die eine interne Funktion enthält.</p>
 
 <h4 id="function-call-statements">Funktionsaufrufanweisungen</h4>
 <p>Wenn der Rückgabewert der Funktion nicht benötigt wird und der Funktionsname am Zeilenanfang geschrieben wird (oder in anderen Kontexten, wo eine <a href="Concepts.htm#statement">Anweisung</a> erlaubt ist, wie z. B. nach einem <code>else</code> oder einem <a href="Hotkeys.htm">Hotkey</a>), können die Klammern weggelassen werden. In diesem Fall wird der Rest der Zeile als Parameterliste der Funktion übernommen. Zum Beispiel:</p>
 <pre>Ergebnis := MsgBox("Hierfür sind Klammern erforderlich.",, "OKCancel")
 MsgBox "Hierfür nicht. Das Ergebnis war " Ergebnis "."</pre>
 <p>Die runden Klammern können auch beim Aufrufen einer <a href="Concepts.htm#methods">Methode</a> weggelassen werden, wenn das Zielobjekt entweder eine Variable oder eine direkt benannte Eigenschaft ist, wie z. B. <code>meineVar.meineMethode</code> oder <code>meineVar.meineEigenschaft.meineMethode</code>.</p>
+<p>Bei Funktionsaufrufausdrücken muss das Ziel einer Funktionsaufrufanweisung keine vordefinierte Funktion sein; es kann stattdessen eine Variable sein, die ein <a href="objects/Functor.htm">Funktionsobjekt</a> enthält.</p>
 
 <h4 id="optional-parameters">Optionale Parameter</h4>
 <p>Optionale Parameter können einfach leer gelassen werden, allerdings ist das trennende Komma weiterhin notwendig, es sei denn, alle nachfolgenden Parameter werden ebenfalls weggelassen. Zum Beispiel kann die <a href="commands/Run.htm">Run</a>-Funktion ein bis vier Parameter akzeptieren. Alle folgenden Zeilen sind gültig:</p>
 <pre>
 Run "notepad.exe", "C:\"
 Run "notepad.exe",, "Min"
-Run("notepad.exe", , , notepadPID)
+Run("notepad.exe", , , &amp;notepadPID)
 </pre>
 
 <h3 id="operators-for-objects">Operatoren für Objekte</h3>
@@ -306,9 +305,14 @@ SageHallo  <em>; SageHallo-Funktion aufrufen.</em></pre>
     <pre>SageHallo() =&gt; MsgBox("Hallo!")</pre>
   </li>
 </ul>
-<p>Variablen in Funktionen sind standardmäßig <a href="Functions.htm#Local">lokal</a> für diese Funktion, außer wenn sie sich auf eine lokale Variable einer äußeren Funktion innerhalb einer <a href="Functions.htm#nested">verschachtelten Funktion</a> beziehen, oder auf eine beliebige Variable, wenn <code>=&gt;</code> im globalen Gültigkeitsbereich verwendet wird (nicht innerhalb einer Klasse oder einer anderen Funktion).</p>
+<p>Variablen in Funktionen sind standardmäßig <a href="Functions.htm#Local">lokal</a> für diese Funktion, außer in den folgenden Fällen:</p>
+<ul>
+  <li>Wenn die Funktion eine <a href="Functions.htm#AssumeGlobal">Assume-Global</a>-Funktion ist.</li>
+  <li>Wenn eine Variable referenziert, aber nicht als Ziel einer <a href="Variables.htm#AssignOp">Zuweisung</a> oder des Referenzoperators (<code>&amp;var</code>) verwendet wird.</li>
+  <li>Wenn auf eine lokale Variable einer äußeren Funktion innerhalb einer <a href="Functions.htm#nested">verschachtelten Funktion</a> verwiesen wird.</li>
+</ul>
 <p>Eine Funktion kann optional <a href="Concepts.htm#parameters">Parameter akzeptieren</a>. Parameter werden definiert, indem man sie innerhalb von runden Klammern auflistet. Zum Beispiel:</p>
-<pre>MeineFunktion(ErsterParameter, Zweiter, ByRef Dritter, Vierter:="")
+<pre>MeineFunktion(ErsterParameter, Zweiter, &amp;Dritter, Vierter:="")
 {
     <em>;...</em>
     return "ein Wert"
@@ -316,7 +320,7 @@ SageHallo  <em>; SageHallo-Funktion aufrufen.</em></pre>
 </pre>
 <p>Wie bei Funktionsaufrufen auch, darf zwischen dem Funktionsnamen und der runden Startklammer kein Leerzeichen stehen.</p>
 <p>Der Zeilenumbruch zwischen der runden Endklammer und der geschweiften Startklammer ist optional. Es kann eine beliebige Anzahl von Leerraumzeichen oder Kommentaren zwischen den beiden sein.</p>
-<p><a href="Functions.htm#ByRef">ByRef</a> zeigt an, dass der Parameter eine Variablenreferenz akzeptiert, wodurch dieser Parameter ein Alias für jede Variable sein kann, die der Aufrufer übergibt. Wenn der Aufrufer keine Variable übergibt, verhält sich der Parameter wie eine normale lokale Variable. ByRef-Parameter können auch optional sein.</p>
+<p>Der <a href="Functions.htm#ByRef">ByRef-Marker (&amp;)</a> kennzeichnet, dass der Aufrufer eine Variablenreferenz übergeben muss. Innerhalb der Funktion wird jegliche Referenz, die auf den Parameter verweist, tatsächlich auf die Variable des Aufrufers zugreifen. Dies ähnelt dem Weglassen von <code>&amp;</code> und der expliziten <a href="Variables.htm#deref">Dereferenzierung</a> des Parameters innerhalb der Funktion (z. B. <code>%Dritter%</code>), allerdings werden in diesem Fall die Prozentzeichen weggelassen. Wenn der Parameter optional ist und der Aufrufer ihn weglässt, verhält sich der Parameter wie eine normale lokale Variable.</p>
 <p>Um einen <a href="Functions.htm#optional">optionalen</a> Parameter anzugeben, müssen Sie nach dem Parameternamen <code>:=</code> anfügen, gefolgt von einer direkt geschriebenen, in Anführungszeichen gesetzte Zeichenkette, einer Zahl, <code>true</code>, <code>false</code> oder <code>unset</code>.</p>
 <p>Die Funktion kann <a href="Functions.htm#return">einen Wert via Return zurückgeben</a>. Wenn sie das nicht tut, gibt sie standardmäßig eine leere Zeichenkette zurück.</p>
 <p>Eine Funktionsdefinition muss nicht vor dem Aufruf dieser Funktion stehen.</p>
@@ -326,12 +330,13 @@ SageHallo  <em>; SageHallo-Funktion aufrufen.</em></pre>
 <p>Die <a href="commands/_Include.htm">#Include</a>-Direktive veranlasst das Skript, sich so zu verhalten, als wäre der Inhalt einer bestimmten Datei an genau dieser Stelle vorhanden. Dies wird oft verwendet, um Code in separaten Dateien aufzuteilen oder um Skriptbibliotheken anderer Benutzer zu nutzen.</p>
 <p>Eine #Include-Datei kann <a href="#global-code">globalen Code</a> enthalten, der während der <a href="Scripts.htm#auto">Startphase des Skripts</a> ausgeführt werden soll, allerdings wird, analog zum Code in der Hauptskriptdatei, solcher Code nur ausgeführt, wenn der automatisch ausführende Thread nicht bereits vor der #Include-Direktive beendet wird (z. B. mit einem bedingungslosen <code>Return</code>). Es wird standardmäßig eine <a href="commands/_Warn.htm#Unreachable">Warnung</a> angezeigt, wenn ein Code aufgrund eines vorhergehenden <code>Return</code> nicht ausgeführt werden kann.</p>
 <p>Im Gegensatz zu C/C++ macht #Include nichts, wenn die Datei bereits von einer früheren Direktive eingebunden wurde. Um den Inhalt einer Datei mehrfach einzubinden, verwenden Sie <a href="commands/_Include.htm">#IncludeAgain</a>.</p>
-<p>Skriptdateien, die Funktionen enthalten, können <em>automatisch</em> ohne #Include eingebunden werden, wenn sie in einem Standardverzeichnis gespeichert und entsprechend benannt sind. Der Effekt ist das gleiche wie, als würde man #Include am Ende der Hauptskriptdatei nutzen. Weitere Informationen finden Sie unter <a href="Functions.htm#lib">Funktionsbibliotheken</a>.</p>
+<p>Um die gemeinsame Nutzung von Skripten zu erleichtern, sucht #Include an vordefinierten Standorten nach einem Bibliotheksskript. Weitere Informationen finden Sie unter <a href="Scripts.htm#lib">Skriptbibliotheksordner</a>.</p>
 
 <h2 id="misc">Verschiedenes</h2>
 
 <h3 id="dynamic-variables">Dynamische Variablen</h3>
 <p>Eine <em>dynamische Variablenreferenz</em> nimmt einen Textwert und interpretiert ihn als Namen einer Variable.</p>
+<p class="note"><strong>Hinweis:</strong> Eine Variable kann nicht durch eine dynamische Referenz <em>erstellt</em> werden, aber existierende Variablen können zugewiesen werden.</p>
 <p>Die bekannteste Form einer dynamischen Variablenreferenz nennt sich <em>Doppelreferenzierung</em> oder <em>double-deref</em>. Bevor man eine Doppelreferenzierung durchführen kann, muss der Name der Zielvariable in einer zweiten Variable gespeichert sein. Diese zweite Variable kann genutzt werden, um der Zielvariable indirekt einen Wert via Doppelreferenzierung zuzuweisen. Zum Beispiel:</p>
 <pre>Ziel := 42
 ZweiteVar := "Ziel"
@@ -355,10 +360,15 @@ MeinArray3 := "C"
 Loop 3
     MsgBox MeinArray%A_Index%  <em>; Zeigt A, dann B, dann C.</em>
 </pre>
-<p>Da es sich bei den einzelnen Elementen um normale Variablen handelt, kann man zwar einen Wert zuweisen oder abrufen, aber keine Elemente <em>entfernen</em> oder <em>einfügen</em>. Aufgrund der Tatsache, dass das Pseudo-Array eigentlich nicht existiert, kann es nicht an eine Funktion übergeben oder von einer Funktion zurückgegeben werden, oder als Ganzes kopiert werden. Aus diesen Gründen ist es in der Regel ratsam, <a href="Objects.htm#Usage_Simple_Arrays">normale Arrays</a> wenn möglich zu verwenden.</p>
-
-<h4 id="associative-pseudo-arrays">Assoziative Pseudo-Arrays</h4>
-<p>Der "Index", mit dem der endgültige Variablenname gebildet wurde, muss nicht numerisch sein; er kann auch ein Buchstabe oder Schlüsselwort sein, um das Pseudo-Array ähnlich zu einem <a href="Objects.htm#Usage_Associative_Arrays">assoziativen Array</a> oder einem <a href="Objects.htm">Objekt</a> zu machen.</p>
+<p>Der "Index", mit dem der endgültige Variablenname gebildet wurde, muss nicht numerisch sein; er kann auch ein Buchstabe oder Schlüsselwort sein.</p>
+<p>Aus diesen Gründen ist es in der Regel ratsam, ein <a href="Objects.htm#Usage_Simple_Arrays">Array</a> oder <a href="Objects.htm#Usage_Associative_Arrays">Map</a> anstelle eines Pseudo-Arrays zu verwenden:</p>
+<ul>
+  <li>Da es sich bei den einzelnen Elementen um normale Variablen handelt, kann man zwar einen Wert zuweisen oder abrufen, aber keine Elemente <em>entfernen</em> oder <em>einfügen</em>.</li>
+  <li>Da das Pseudo-Array nur ein Konzept und kein Einzelwert ist, kann es nicht an eine Funktion übergeben oder von einer Funktion zurückgegeben werden, oder als Ganzes kopiert werden.</li>
+  <li>Ein Pseudo-Array kann nicht als Ganzes deklariert werden, daher werden einige "Elemente" möglicherweise zu <a href="Functions.htm#Global">globalen</a> (oder <a href="Functions.htm#capture-var">erfassten</a>) Variablen aufgelöst, andere hingegen nicht.</li>
+  <li>Wenn eine Variable nicht-dynamisch referenziert, aber nur dynamisch zugewiesen wird, wird möglicherweise eine <a href="commands/_Warn.htm#VarUnset">Ladezeitwarnung</a> angezeigt. Solche Warnungen sind ein sehr effektives Mittel, um Fehler aufzudecken, daher ist es nicht ratsam, sie zu deaktivieren.</li>
+  <li>Aktuelle Versionen der Sprache bieten keine Möglichkeit, neue Variablen dynamisch zu erstellen. Dies dient zum einen dazu, bewährte Verfahren zu fördern, und zum anderen, um Inkonsistenzen zwischen dynamischen und nicht-dynamischen Variablenreferenzen in Funktionen zu vermeiden.</li>
+</ul>
 
 <h3 id="labels">Label</h3>
 <p>Ein Label identifiziert eine Codezeile. Es kann verwendet werden, um als Ziel für <a href="commands/Goto.htm">Goto</a> zu dienen oder <a href="#named-loops">eine Schleife zu spezifizieren</a>, um aus dieser auszubrechen oder bei ihr fortzufahren. Ein Label besteht aus einem <a href="Concepts.htm#names">Namen</a>, gefolgt von einem Doppelpunkt:</p>

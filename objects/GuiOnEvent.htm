@@ -33,10 +33,10 @@
   
   <dt>Callback</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../objects/Functor.htm">Funktionsobjekt</a></p>
     <p>Eine Funktion, Methode oder ein Objekt, das aufgerufen werden soll, wenn das Ereignis ausgelöst wird.</p>
-    <p>Wenn dieser Parameter eine Zeichenkette ist, dann ist seine Bedeutung abhängig davon, ob die GUI ein <a href="../objects/Gui.htm#EventObj">Event-Sink</a> hat (also ob <a href="../objects/Gui.htm#New">Gui.New</a>'s <em>EreignisObj</em>-Parameter angegeben wurde). Wenn die GUI ein Event-Sink hat, muss die Zeichenkette der Name einer Methode sein, die zu einem Event-Sink gehört; ansonsten muss sie der Name einer Funktion sein.</p>
-    <p>Wenn man in diesem Fall trotzdem eine Funktion registrieren möchte, muss eine <a href="Func.htm">Funktionsreferenz</a> übergeben werden.</p>
+    <p>Wenn die GUI ein Event-Sink hat (also wenn der <em>EreignisObj</em>-Parameter von <a href="../objects/Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode sein, die zu einem Event-Sink gehört.</p>
+    <p>Ansonsten muss dieser Parameter ein <a href="../objects/Functor.htm">Funktionsobjekt</a> sein.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
@@ -108,9 +108,9 @@
 <pre class="Syntax">Gui_<span class="func">Close</span>(GuiObj)</pre>
 <p>Standardmäßig wird das Fenster automatisch versteckt, sobald das Callback ausgeführt wurde, oder wenn keine Callbacks registriert sind. Ein Callback kann das verhindern, indem es eine 1 (oder <code>True</code>) zurückgibt; dadurch wird auch verhindert, dass die restlichen Callbacks aufgerufen werden. Das Callback kann das Fenster via <a href="Gui.htm#Hide">Gui.Hide</a> sofort verstecken, oder das Fenster via <a href="Gui.htm#Destroy">Gui.Destroy</a> zerstören.</p>
 <p>Das folgende Beispiel zeigt, wie man eine GUI dazu bringen kann, den Benutzer zu fragen, ob das Fenster geschlossen werden soll:</p>
-<pre>MeineGui := Gui.New()
+<pre>MeineGui := Gui()
 MeineGui.AddText("", "Drücken Sie Alt+F4 oder die X-Schaltfläche in der Titelleiste.")
-MeineGui.OnEvent("Close", "MeineGui_Close")
+MeineGui.OnEvent("Close", MeineGui_Close)
 MeineGui_Close(thisGui) {  <em>; Dieser Parameter ist optional.</em>
     if MsgBox("Wollen Sie die GUI wirklich schließen?",, "y/n") = "No"
         return true  <em>; true = 1</em>

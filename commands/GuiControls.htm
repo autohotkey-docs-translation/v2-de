@@ -43,10 +43,10 @@
 <p>Wenn in <em>Optionen</em> eine Breite (W), aber keine <a href="../objects/Gui.htm#R">Zeilen (R)</a> oder Höhe (H) angegeben ist, wird der Text bei Bedarf umbrochen und die Höhe des Steuerelements automatisch gesetzt.</p>
 
 <p>Das <a href="../objects/GuiOnEvent.htm#Click">Click-Ereignis</a> kann genutzt werden, um das Anklicken des Textes abzufangen und zu verarbeiten. Zum Beispiel:</p>
-<pre>MeineGui := Gui.New()
+<pre>MeineGui := Gui()
 FakeLink := MeineGui.Add("Text", "", "Klicken Sie hier, um Google zu starten.")
 FakeLink.SetFont("underline cBlue")
-FakeLink.OnEvent("Click", "LaunchGoogle")
+FakeLink.OnEvent("Click", LaunchGoogle)
 
 <em>; Alternativ kann auch das <a href="#Link">Link</a>-Steuerelement verwendet werden:</em>
 MeineGui.Add("Link",, 'Klicken Sie &lt;a href="www.google.com"&gt;hier&lt;/a&gt;, um Google zu starten.')
@@ -133,7 +133,7 @@ MeineGui.Add("UpDown", "vMeinUpDown Range1-10", 5)</pre>
 <p><strong>Animierte GIF-Bilder</strong>: Animierte GIF-Dateien werden zwar in einem Picture-Steuerelement angezeigt, aber nicht animiert. Um dieses Problem zu lösen, benötigen Sie die AniGIF-DLL-Datei (die für den nicht-kommerziellen Gebrauch kostenlos zur Verfügung steht). Beispiele dazu finden Sie im <a href="https://www.autohotkey.com/boards/viewtopic.php?t=6457">AutoHotkey-Forum</a>. Alternativ können Sie dafür auch das <a href="#ActiveX">ActiveX</a>-Steuerelement nutzen. Zum Beispiel:</p>
 <pre><em>; Geben Sie unten den Pfad zur GIF-Datei an, die animiert werden soll (lokale Dateien sind auch möglich):</em>
 pic := "http://www.animatedgif.net/cartoons/A_5odie_e0.gif"
-MeineGui := Gui.New()
+MeineGui := Gui()
 MeineGui.Add("ActiveX", "w100 h150", "mshtml:&lt;img src='" pic "' /&gt;")
 MeineGui.Show</pre>
 <p>Anstelle eines Dateinamens kann auch ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> verwendet werden. Zum Beispiel <code>"HBITMAP:" handle</code>.</p>
@@ -142,7 +142,7 @@ MeineGui.Show</pre>
 <p>Beschreibung: Eine Schaltfläche, die gedrückt werden kann, um eine Aktion auszulösen. Geben Sie im letzten Parameter den sichtbaren Namen der Schaltfläche an, der Zeilenumbruchszeichen (`n) zum Starten neuer Zeilen enthalten kann.</p>
 <p>Zum Beispiel:</p>
 <pre>MeinBtn := MeineGui.Add("Button", "Default w80", "OK")
-MeinBtn.OnEvent("Click", "MeinBtn_Click")  <em>; Ruft MeinBtn_Click beim Anklicken auf.</em>
+MeinBtn.OnEvent("Click", MeinBtn_Click)  <em>; Ruft MeinBtn_Click beim Anklicken auf.</em>
 </pre>
 <p>Erscheinungsbild:</p>
 <img src="../static/ctrl_button.png" alt="Button" />
@@ -195,7 +195,7 @@ MeinBtn.OnEvent("Click", "MeinBtn_Click")  <em>; Ruft MeinBtn_Click beim Anklick
 <p>Jedes Mal, wenn der Benutzer einen anderen Listeneintrag auswählt, wird das <a href="../objects/GuiOnEvent.htm#Change">Change</a>-Ereignis ausgelöst. Die Ereignisse <a href="../objects/GuiOnEvent.htm#Focus">Focus</a> und <a href="../objects/GuiOnEvent.htm#LoseFocus">LoseFocus</a> werden auch unterstützt.</p>
 <p>Verwenden Sie die <a href="../objects/Gui.htm#R">R- oder H-Option</a>, um die Höhe der aufklappbaren Liste zu bestimmen. <code>R5</code> beispielsweise macht die Liste 5 Zeilen hoch, während <code>H400</code> die Gesamthöhe des Auswahlfeldes und der Liste auf 400 Pixel setzt. Lässt man R und H weg, wird die Liste automatisch auf Basis der verfügbaren Höhe des Desktops vergrößert.</p>
 <p id="ComboBoxHeight">Das folgende Beispiel zeigt, wie die Höhe des Auswahlfeldes oder die Höhe jedes Listeneintrags mithilfe der <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb775911">CB_SETITEMHEIGHT</a>-Meldung geändert werden kann:</p>
-<pre>MeineGui := Gui.New()
+<pre>MeineGui := Gui()
 DDL := MeineGui.Add("DDL", "vcbx w200 Choose1", ["Eins","Zwei"])
 <em>; CB_SETITEMHEIGHT = 0x0153</em>
 PostMessage(0x0153, -1, 50, DDL)  <em>; Setzt die Höhe des Auswahlfeldes.</em>
@@ -251,11 +251,11 @@ MeineGui.Add("Link",, 'Links können überall im Text angegeben werden, wie &lt;
 <img src="../static/ctrl_link.png" alt="Link" />
 
 <p>Jedes Mal, wenn der Benutzer einen Link anklickt, wird das <a href="../objects/GuiOnEvent.htm#Click">Click</a>-Ereignis ausgelöst. Wenn das Steuerelement kein Click-Callback hat (das mit <a href="../objects/GuiOnEvent.htm">OnEvent</a> registriert wurde), wird der Wert des HREF-Attributs des Links automatisch über die <a href="Run.htm">Run</a>-Funktion ausgeführt.</p>
-<pre>MeineGui := Gui.New()
+<pre>MeineGui := Gui()
 Link := MeineGui.Add("Link",
     , 'Klicken Sie folgende Links, um &lt;a href="notepad" id="notepad"&gt;Notepad&lt;/a&gt; auszuführen oder die '
     . '&lt;a id="help" href="https://www.autohotkey.com/docs/"&gt;Online-Hilfe&lt;/a&gt; zu öffnen.')
-Link.OnEvent("Click", "Link_Click")
+Link.OnEvent("Click", Link_Click)
 Link_Click(Ctrl, ID, HREF)
 {
     if MsgBox("ID: " ID "`nHREF: " HREF "`n`nSoll dieser Link ausgeführt werden?",, "y/n") = "yes"
@@ -561,15 +561,15 @@ SB.SetText("Es sind " . ZeilenAnzahl . " Zeilen markiert.")</pre>
 <p><strong>Beispiel</strong>: <a href="TreeView.htm#ExAdvanced">Beispiel #1</a> im unteren Bereich der TreeView-Seite zeigt eine segmentierte Statusleiste.</p>
 <span id="IE_Control"></span><h2 id="ActiveX">ActiveX</h2>
 <p>ActiveX-Komponenten wie das MSIE-Browser-Steuerelement können wie folgt in ein GUI-Fenster eingebettet werden. Einzelheiten über die hier verwendete ActiveX-Komponente und ihre Methode finden Sie unter <a href="https://msdn.microsoft.com/de-de/library/aa752085">WebBrowser object (Microsoft Docs)</a> und <a href="https://msdn.microsoft.com/de-de/library/aa752093">Navigate method (Microsoft Docs)</a>.</p>
-<pre>MeineGui := Gui.New()
+<pre>MeineGui := Gui()
 WB := MeineGui.Add("ActiveX", "w980 h640", "Shell.Explorer").Value  <em>; Der letzte Parameter ist der Name der ActiveX-Komponente.</em>
 WB.Navigate("https://www.autohotkey.com/boards/")  <em>; Nur für das Web-Browser-Steuerelement anwendbar.</em>
 MeineGui.Show()</pre>
 <p>Nach dem Erstellen des Steuerelements kann das ActiveX-Objekt via <a href="../objects/GuiControl.htm#Value">GuiCtrl.Value</a> abgerufen werden.</p>
 <p>Um die Ereignisse des Objekts zu verarbeiten, verwenden Sie <a href="ComObjConnect.htm">ComObjConnect</a> wie folgt. Einzelheiten über das hier verwendete Ereignis finden Sie unter <a href="https://msdn.microsoft.com/de-de/library/aa768334">NavigateComplete2 event (Microsoft Docs)</a>.</p>
-<pre>MeineGui := Gui.New()
+<pre>MeineGui := Gui()
 URL := MeineGui.Add("Edit", "w930 r1", "https://www.autohotkey.com/boards/")
-MeineGui.Add("Button", "x+6 yp w44 Default", "Go").OnEvent("Click", "ButtonLaden")
+MeineGui.Add("Button", "x+6 yp w44 Default", "Go").OnEvent("Click", ButtonLaden)
 WB := MeineGui.Add("ActiveX", "xm w980 h640", "Shell.Explorer").Value
 ComObjConnect(WB, WB_events)  <em>; Verbindet die WB-Ereignisse mit dem Klassenobjekt WB_events.</em>
 MeineGui.Show()
@@ -596,13 +596,13 @@ MeineGui.Add("Custom", "ClassScintilla")  <em>; <a href="https://scintilla.org/"
 <p>AutoHotkey verwendet die Standard-Text-Routinen des Systems, wenn Texte im Steuerelement via <code>MeineGui.Add</code> oder <code>GuiCtrl.Value</code> abgerufen/ersetzt werden.</p>
 <p><strong>Ereignisse</strong>: Da die Bedeutung eines Benachrichtigungscodes abhängig vom Steuerelement ist, das diesen gesendet hat, unterstützen Custom-Steuerelemente kein <a href="../objects/GuiOnEvent.htm">OnEvent</a>. Wenn das Steuerelement allerdings Benachrichtigungen in Form von WM_NOTIFY- oder WM_COMMAND-Meldungen sendet, kann das Skript <a href="../objects/GuiOnNotify.htm">OnNotify</a> oder <a href="../objects/GuiOnCommand.htm">OnCommand</a> nutzen, um diese abzufangen und zu verarbeiten.</p>
 <p>Das folgende Beispiel zeigt, wie ein <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb761374">IP-Adressen-Steuerelement</a> hinzugefügt und verwendet werden kann:</p>
-<pre>MeineGui := Gui.New()
+<pre>MeineGui := Gui()
 IP := MeineGui.Add("Custom", "ClassSysIPAddress32 r1 w150 vIP")
-IP.OnCommand(0x300, "IP_EditChange")  <em>; 0x300 = EN_CHANGE</em>
-IP.OnNotify(-860, "IP_FieldChange")  <em>; -860 = IPN_FIELDCHANGED</em> 
+IP.OnCommand(0x300, IP_EditChange)  <em>; 0x300 = EN_CHANGE</em>
+IP.OnNotify(-860, IP_FieldChange)  <em>; -860 = IPN_FIELDCHANGED</em> 
 MeineGui.Add("Text", "wp vIPText")
 MeineGui.Add("Text", "wp y+m vIPField")
-MeineGui.Add("Button", "Default", "OK").OnEvent("Click", "OK_Click")
+MeineGui.Add("Button", "Default", "OK").OnEvent("Click", OK_Click)
 MeineGui.Show()
 
 IPCtrlSetAddress(IP, SysGetIPAddresses()[1])
@@ -655,7 +655,7 @@ IPCtrlGetAddress(GuiCtrl)
 }</pre>
 
 <h2 id="Related_Pages">Siehe auch</h2>
-<p><a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="../objects/Gui.htm#New">Gui.New</a>, <a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../objects/Menu.htm">Menu-Objekt</a></p>
+<p><a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="../objects/Gui.htm#Call">Gui()</a>, <a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../objects/Menu.htm">Menu-Objekt</a></p>
 
 </body>
 </html>

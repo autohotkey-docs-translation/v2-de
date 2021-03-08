@@ -114,7 +114,7 @@ tbl := ""
 <div class="ex" id="ExTaskbarClass">
 <p><a class="ex_number" href="#ExTaskbarClass"></a> Demonstriert einige Techniken zum Wrappen von COM-Interfaces. Äquivalent zum vorherigen Beispiel.</p>
 <pre>
-tbl := TaskbarList.new()
+tbl := TaskbarList()
 
 activeHwnd := WinExist("A")
 
@@ -138,22 +138,22 @@ class TaskbarList {
         ; was die Methoden benutzerfreundlicher macht, ohne dass Wrapper-Funktionen erforderlich sind.
         ; HrInit selbst hat keine Parameter, also nur den Index binden,
         ; und der Aufrufer wird implizit 'this' bereitstellen.</em>
-        proto.DefineMethod "HrInit", Func("ComCall").Bind(3)
+        proto.HrInit := ComCall.Bind(3)
         
         <em>; Lassen Sie einen Parameter leer, damit der Aufrufer einen Wert bereitstellen kann.
         ; In diesem Fall ist der leere Parameter 'this' (normalerweise versteckt).</em>
-        proto.DefineMethod "AddTab", Func("ComCall").Bind(4,, "ptr")
+        proto.AddTab := ComCall.Bind(4,, "ptr")
         
         <em>; Ein Object- oder Map-Objekt kann genutzt werden, um Wiederholungen zu reduzieren.</em>
         for name, args in Map(
             "DeleteTab", [5,,"ptr"],
             "ActivateTab", [6,,"ptr"],
             "SetActiveAlt", [7,,"ptr"]) {
-            proto.DefineMethod name, Func("ComCall").Bind(args*)
+            proto.%name% := ComCall.Bind(args*)
         }
     }
     
-    <em>; Wird bei einer neuen Instanz von TaskbarList.new() aufgerufen.</em>
+    <em>; Wird bei einer neuen Instanz von TaskbarList() aufgerufen.</em>
     __new() {
         this.comobj := ComObjCreate(TaskbarList.CLSID, TaskbarList.IID)
         this.ptr := this.comobj.ptr

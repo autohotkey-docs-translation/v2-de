@@ -25,7 +25,7 @@
   <dt>Ausdruck</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#boolean">Boolescher Wert</a></p>
-    <p>Beliebiger gültiger <a href="../Variables.htm#Expressions">Ausdruck</a>. Dies wird zum Rückgabewert einer impliziten Funktion, die einen Parameter hat (<a href="../Hotkeys.htm#HotBraces">ThisHotkey</a>). So wie es auch bei Hotkey-Funktionen der Fall ist, sind Variablenreferenzen <a href="../Functions.htm#AssumeLocal">standardmäßig lokal</a>, daher müssen Sie, wenn Sie eine globale Variable verwenden wollen, diese außerhalb des Ausdrucks <a href="../Functions.htm#SuperGlobal">deklarieren</a>.</p>
+    <p>Beliebiger gültiger <a href="../Variables.htm#Expressions">Ausdruck</a>. Dies wird zum Rückgabewert einer impliziten Funktion, die einen Parameter hat (<a href="../Hotkeys.htm#HotBraces">ThisHotkey</a>). Die Funktion kann globale Variablen nicht direkt verändern (da sie wie üblich eine <a href="../Functions.htm#AssumeLocal">Assume-Local</a>-Funktion ist und keine Deklarationen enthalten darf), kann aber andere Funktionen aufrufen, die dies tun.</p>
   </dd>
 
 </dl>
@@ -140,7 +140,7 @@ WheelUp::Send "{Volume_Up}"
 WheelDown::Send "{Volume_Down}"
 
 MausIstÜber(FensterTitel) {
-    MouseGetPos ,, Fenster
+    MouseGetPos ,, &amp;Fenster
     return WinExist(FensterTitel " ahk_id " Fenster)
 }
 </pre>
@@ -172,14 +172,14 @@ Esc::ExitApp
 </div>
 
 <div class="ex" id="ExDynamic">
-<p><a class="ex_number" href="#ExDynamic"></a> Dynamische Hotkeys. Dieses Beispiel benötigt die MausIstÜber-Funktion von <a href="#ExVolume">Beispiel #2</a>.</p>
+<p><a class="ex_number" href="#ExDynamic"></a> Dynamische Hotkeys. Dieses Beispiel sollte mit <a href="#ExVolume">Beispiel #2</a> kombiniert werden, bevor es ausgeführt wird.</p>
 <pre>
 NumpadAdd::
 {
     static zweimalhoch := false
     HotIf 'MausIstÜber("ahk_class Shell_TrayWnd")'
     if (zweimalhoch := !zweimalhoch)
-        Hotkey "WheelUp", "ZweimalHoch"
+        Hotkey "WheelUp", ZweimalHoch
     else
         Hotkey "WheelUp", "WheelUp"
     return

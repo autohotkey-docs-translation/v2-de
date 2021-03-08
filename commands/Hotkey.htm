@@ -84,7 +84,7 @@
   </tr>
   <tr>
     <td>This AltTab hotkey must have exactly one modifier/prefix</td>
-    <td rowspan="2">Der <em>TasteName</em>-Parameter ist nicht für die Verwendung mit <a href="../Hotkeys.htm#alttab">AltTab oder ShiftAltTab</a> geeignet. Es müssen immer zwei Tasten kombiniert werden. Zum Beispiel: <code>RControl &amp; RShift::AltTab</code>. <a href="../objects/Error.htm#Extra">Exception.Extra</a> enthält <em>TasteName</em>.</td>
+    <td rowspan="2">Der <em>TasteName</em>-Parameter ist nicht für die Verwendung mit <a href="../Hotkeys.htm#alttab">AltTab oder ShiftAltTab</a> geeignet. Es ist eine Kombination aus (maximal) zwei Tasten erforderlich. Zum Beispiel: <code>RControl &amp; RShift::AltTab</code>. <a href="../objects/Error.htm#Extra">Exception.Extra</a> enthält <em>TasteName</em>.</td>
   </tr>
   <tr>
     <td>This AltTab hotkey must specify which key (L or R).</td>
@@ -124,22 +124,22 @@ catch
 <h2 id="variant">Hotkey-Varianten (-Duplikate)</h2>
 <p>Ein bestimmter Hotkey kann mehr als einmal erstellt werden, wenn für jede Definition ein anderes If-Kriterium angegeben wird. Auch bekannt als <em>Hotkey-Varianten</em>. Zum Beispiel:</p>
 <pre>HotIfWinActive "ahk_class Notepad"
-Hotkey "^!c", "MeineFunkFürNotepad"
+Hotkey "^!c", MeineFunkFürNotepad
 HotIfWinActive "ahk_class WordPadClass"
-Hotkey "^!c", "MeineFunkFürWordPad"
+Hotkey "^!c", MeineFunkFürWordPad
 HotIfWinActive
-Hotkey "^!c", "MeineFunkFürAlleAnderenFenster"</pre>
+Hotkey "^!c", MeineFunkFürAlleAnderenFenster</pre>
 <p>Bei mehreren gleichzeitig aktiven Varianten eines Hotkeys wird nur die zuerst erstellte Variante ausgelöst. Die Ausnahme hiervon ist die globale Variante (die Variante ohne If-Kriterium): Sie hat immer die niedrigste Priorität, daher wird sie nur ausgelöst, wenn keine andere Variante dazu in der Lage ist.</p>
 <p>Beim Erstellen von Hotkey-Duplikaten spielt die Reihenfolge der <a href="../Hotkeys.htm#Symbols">Modifikatorzeichen</a> (z. B. ^!+#) keine Rolle. Zum Beispiel wäre <code>"^!c"</code> das gleiche wie <code>"!^c"</code>. Die Schreibweise der Tasten muss jedoch konsistent sein. <em>Esc</em> beispielsweise ist in diesem Zusammenhang nicht das gleiche wie <em>Escape</em> (die Groß- und Kleinschreibung hingegen ist egal). Außerdem werden Hotkeys mit einem <a href="../Hotkeys.htm#wildcard">Platzhalter-Präfix (*)</a> und Hotkeys ohne Platzhalter getrennt behandelt; zum Beispiel hätten <code>"*F1"</code> und <code>"F1"</code> jeweils ihre eigenen Varianten.</p>
 <p>Weitere Informationen zu kontextabhängigen Hotkeys finden Sie unter den <a href="_HotIf.htm#general-remarks">allgemeinen Bemerkungen von #HotIf</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="../Hotkeys.htm#Symbols">Hotkey-Symbole</a>, <a href="HotIf.htm">HotIf</a>, <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a>, <a href="_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="Suspend.htm">Suspend</a>, <a href="IsFunc.htm">IsFunc</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread</a>, <a href="Critical.htm">Critical</a>, <a href="Return.htm">Return</a>, <a href="../objects/Menu.htm">Menu-Objekt</a>, <a href="SetTimer.htm">SetTimer</a></p>
+<p><a href="../Hotkeys.htm#Symbols">Hotkey-Symbole</a>, <a href="HotIf.htm">HotIf</a>, <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a>, <a href="_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="Suspend.htm">Suspend</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread</a>, <a href="Critical.htm">Critical</a>, <a href="Return.htm">Return</a>, <a href="../objects/Menu.htm">Menu-Objekt</a>, <a href="SetTimer.htm">SetTimer</a></p>
 
 <h2 id="examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Erstellt einen STRG+ALT+Z-Hotkey.</p>
-<pre>Hotkey "^!z", "MeineFunk"
+<pre>Hotkey "^!z", MeineFunk
 
 MeineFunk(ThisHotkey)
 {
@@ -166,7 +166,7 @@ MeineFunk(ThisHotkey)
 <div class="ex" id="ExIfWin">
 <p><a class="ex_number" href="#ExIfWin"></a> Erstellt <kbd>Alt</kbd>+<kbd>W</kbd> als Hotkey, der nur im Texteditor funktioniert.</p>
 <pre>HotIfWinActive "ahk_class Notepad"
-Hotkey "!w", "ZeilenumbruchUmschalten"  <em>; !w = Alt+W</em>
+Hotkey "!w", ZeilenumbruchUmschalten  <em>; !w = Alt+W</em>
 
 ZeilenumbruchUmschalten(ThisHotkey)
 {
@@ -178,12 +178,12 @@ ZeilenumbruchUmschalten(ThisHotkey)
 <div class="ex" id="ExampleIfFn">
 <p><a class="ex_number" href="#ExampleIfFn"></a> Erstellt eine GUI, mit der primitive Drei-Tasten-Kombinations-Hotkeys registriert werden können.</p>
 <pre>
-HkGui := Gui.New()
+HkGui := Gui()
 HkGui.Add("Text", "xm", "Präfixtaste:")
 HkGui.Add("Edit", "yp x100 w100 vPräfix", "Space")
 HkGui.Add("Text", "xm", "Suffix-Hotkey:")
 HkGui.Add("Edit", "yp x100 w100 vSuffix", "f &amp; j")
-HkGui.Add("Button", "Default", "Registrieren").OnEvent("Click", "RegistriereHotkey")
+HkGui.Add("Button", "Default", "Registrieren").OnEvent("Click", RegistriereHotkey)
 HkGui.OnEvent("Close", (*) =&gt; ExitApp())
 HkGui.OnEvent("Escape", (*) =&gt; ExitApp())
 HkGui.Show()

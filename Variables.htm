@@ -24,14 +24,15 @@
 </ul>
 <span id="Variables"></span><h2 id="Intro">Variablen</h2>
 <p>Allgemeine Erläuterungen und Details zur Funktionsweise finden Sie unter <a href="Concepts.htm#variables">Variablen</a>.</p>
-<p id="assigning"><strong>Werte in Variablen speichern</strong>: Um eine Zeichenkette oder Zahl in eine Variable zu speichern, verwenden Sie den <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a> gefolgt von einer Zahl, einer in Anführungszeichen gesetzte Zeichenkette oder einem <a href="Language.htm#expressions">Ausdruck</a> beliebigen Typs. Zum Beispiel:</p>
+<p id="assigning"><strong>Werte in Variablen speichern</strong>: Um eine Zeichenkette oder Zahl in eine Variable zu speichern, verwenden Sie den <a href="#AssignOp">Doppelpunkt-Gleich-Operator (:=)</a> gefolgt von einer Zahl, einer in Anführungszeichen gesetzte Zeichenkette oder einem <a href="Language.htm#expressions">Ausdruck</a> beliebigen Typs. Zum Beispiel:</p>
 <pre>MeineZahl := 123
 MeineZkette := "Das ist eine direkt geschriebene Zeichenkette."
 KopieVonVar := Var</pre>
-<p>Variablen, denen kein Wert zugewiesen wurde, enthalten standardmäßig eine leere Zeichenkette. Um also den Inhalt einer Variable zu löschen, weisen Sie ihr einfach eine leere Zeichenkette zu:</p>
+<p>Eine Variable kann nicht explizit gelöscht werden, aber ihr vorheriger Wert kann durch Zuweisen eines neuen Wertes, z. B. einer leeren Zeichenkette, freigegeben werden:</p>
 <pre>MeineVar := ""</pre>
-<p>Wenn eine Variable die <em>Ausgabevariable</em> einer Funktion ist, wird ihr indirekt ein Wert zugewiesen. Zum Beispiel:</p>
-<pre><a href="commands/MouseGetPos.htm">MouseGetPos</a> <strong>x</strong>, <strong>y</strong></pre>
+<p>Einer Variable kann auch indirekt ein Wert zugewiesen werden, indem man <a href="#ref">ihre Referenz nimmt</a> und eine <a href="#deref">Doppelderefenzierung</a> verwendet oder sie an eine Funktion übergibt. Zum Beispiel:</p>
+<pre><a href="commands/MouseGetPos.htm">MouseGetPos</a> &amp;x, &amp;y</pre>
+<p>Der Zugriff auf eine Variable ohne zugewiesenen Wert wird als Fehler angesehen. Mit <a href="commands/IsSet.htm">IsSet</a> kann dieser Zustand erkannt werden.</p>
 <p id="retrieving"><strong>Inhalte von Variablen abrufen</strong>: Mit einer <a href="#concat">Verkettung</a> oder der <a href="commands/Format.htm">Format</a>-Funktion kann der Inhalt einer Variable in eine Zeichenkette eingefügt werden. Zum Beispiel:</p>
 <pre><a href="commands/MsgBox.htm">MsgBox</a> "Der Wert von Var ist " . Var . "."
 MsgBox "Der Wert in der Variable namens Var ist " Var "."
@@ -76,22 +77,22 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
     <th>Operator</th>
     <th abbr="Beschr">Beschreibung</th>
   </tr>
-  <tr id="ref">
+  <tr id="deref">
     <td style="text-align:center; white-space:nowrap"><strong>%Ausdr%</strong></td>
     <td>
-      <p>Wertet den Teilausdruck <em>Ausdr</em> aus und benutzt seinen Wert als Namen oder Teilnamen einer Variable, Funktion, Eigenschaft oder Methode. Dadurch kann das Skript auf eine Variable, Funktion, Eigenschaft oder Methode verweisen, deren Name nicht direkt im Skript vorkommt, aber durch Auswerten von <em>Ausdr</em> ermittelt werden kann, was typischerweise eine andere Variable ist. Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
+      <p><strong>Dereferenzierung</strong> oder <strong>Namensubstitution</strong>.</p>
+      <p>Wenn <em>Ausdr</em> zu einer <a href="Concepts.htm#variable-references">VarRef</a> ausgewertet wird, greift <code>%Ausdr%</code> auf die entsprechende Variable zu. Zum Beispiel: <code>x := &amp;y</code> nimmt eine Referenz, die auf <em>y</em> verweist, und weist sie <em>x</em> zu, danach würde <code>%x% := 1</code> der Variable <em>y</em> etwas zuweisen und <code>%x%</code> deren Wert lesen.</p>
+      <p>Ansonsten wird der Wert des Teilausdrucks <em>Ausdr</em> als Name oder Teilname einer Variable oder Eigenschaft verwendet. Dadurch kann das Skript auf eine Variable oder Eigenschaft verweisen, deren Name durch die Auswertung von <em>Ausdr</em> ermittelt wird, was typischerweise eine andere Variable ist. Variablen können nicht dynamisch erstellt werden, aber eine Variable kann dynamisch zugewiesen werden, wenn sie irgendwo im Skript nicht-dynamisch deklariert oder referenziert wurde.</p>
+      <p class="note"><strong>Hinweis:</strong> Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der Name oder Teilname der Variable oder Eigenschaft sein, auf die zugegriffen werden soll.</p>
+      <p>Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
       <p>Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und teilweise vorhandene <a href="Concepts.htm#names">Namen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
-      <p><code>%Ausdr%()</code> führt einen <a href="Functions.htm#DynCall">dynamischen Funktionsaufruf</a> aus.</p>
-      <p><code>x.%Ausdr%</code> greift auf eine Eigenschaft des Objekts <em>x</em> zu und <code>x.%Expr%()</code> ruft eine Methode auf.</p>
-      <p>Ansonsten ruft <code>%Ausdr%</code> dynamisch eine Variable via Name ab. Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der komplette oder teilweise vorhandene Name einer Variable sein, die abgerufen werden soll.</p>
-      <p>Wenn die Variable noch nicht existieren sollte, wird eine leere Variable erstellt. Es wird ein <a href="objects/Error.htm">Error</a> ausgelöst, wenn der Name <a href="Concepts.htm#names">ungültig</a> ist.</p>
-      <p>Meistens wird das verwendet, um auf Elemente eines <a href="misc/Arrays.htm#pseudo">Pseudo-Arrays</a> zu verweisen.</p>
+      <p>Ein <a href="objects/Error.htm">Error</a> wird ausgelöst, wenn die Variable noch nicht existiert oder wenn sie nicht initialisiert ist und ihr Wert gelesen wird.</p>
       <p>Obwohl diese Vorgehensweise historisch gesehen als "Doppel-Dereferenzierung" bekannt ist, ist dieser Begriff ungenau, wenn <em>Ausdr</em> keine Variable enthält (erste Dereferenzierung), und wenn die resultierende Variable, die das Ziel einer Zuweisung ist, nicht dereferenziert wird (zweite Dereferenzierung).</p>
     </td>
   </tr>
   <tr id="objdot">
-    <td style="text-align:center"><strong>x.y</strong></td>
-    <td><strong>Zugriff auf Objektelemente</strong>. Ruft einen Wert ab, setzt einen Wert oder ruft eine Methode des Objekts <i>x</i> auf. Hierbei ist <i>y</i> ein direkt geschriebener Name. Siehe <a href="Objects.htm#Usage_Objects">Objektsyntax</a>.</td>
+    <td style="text-align:center"><strong>x.y<br>x.%z%</strong></td>
+    <td><strong>Zugriff auf Objektelemente</strong>. Ruft einen Wert ab, setzt einen Wert oder ruft eine Methode des Objekts <i>x</i> auf. Hierbei ist <i>y</i> ein direkt geschriebener Name und <em>z</em> ein Ausdruck, der zu einem Namen ausgewertet wird. Siehe <a href="Objects.htm#Usage_Objects">Objektsyntax</a>.</td>
   </tr>
   <tr id="IncDec">
     <td style="text-align:center"><strong>++<br>
@@ -112,12 +113,15 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
   <tr id="unary">
     <td style="text-align:center"><strong>-<br>
     !<br>
-    ~</strong></td>
+    ~<br>
+    &amp;</strong></td>
     <td>
       <p><strong>Unäres Minuszeichen (-)</strong>: Invertiert das Vorzeichen des Operanden.</p>
       <p><strong>Unäres Pluszeichen (+)</strong>: <code>+N</code> ist das gleiche wie <code>-(-N)</code>. Dieser Operator hat keinen Effekt, wenn er auf eine reine Zahl angewendet wird, aber er ist nützlich, um numerische Zeichenketten in reine Zahlen zu konvertieren.</p>
       <p><strong>Logisches NICHT (!)</strong>: Wenn dieser Operator bei einem Operanden angewendet wird, der leer oder 0 ist, ist das Ergebnis eine 1 (true). Ansonsten ist das Ergebnis eine 0 (false). Zum Beispiel: <code>!x or !(y and z)</code>. Hinweis: Das Wort NOT ist das gleiche wie <strong>!</strong>, allerdings hat <strong>!</strong> eine höhere Priorität. Aufeinanderfolgende unäre Operatoren wie <code><strong>!!</strong>Var</code> sind erlaubt, weil sie von rechts nach links ausgewertet werden.</p>
       <p><strong>Bitweises NICHT (~)</strong>: Dieser Operator invertiert jedes Bit seines Operanden. Bei Verwendung von vorzeichenfähigen 64-Bit-Integern ergibt ein positiver Eingabewert immer ein negatives Ergebnis und umgekehrt. Zum Beispiel wird <code>~0xf0f</code> zu -0xf10 (-3856) ausgewertet, was das binäre Äquivalent zu 0xfffffffffffff0f0 ist. Wenn ein vorzeichenloser 32-Bit-Wert beabsichtigt ist, kann das Ergebnis mit <code><i>Ergebnis</i> &amp; 0xffffffff</code> gekürzt werden. Handelt es sich bei dem Operanden um eine Floating-Point-Zahl, wird ein <a href="objects/Error.htm#TypeError">TypeError</a> ausgelöst.</p>
+      <p id="ref"><strong>Referenz (&amp;)</strong>: Erstellt eine VarRef, also einen Wert, der eine Referenz repräsentiert, die auf eine Variable verweist. Eine VarRef kann verwendet werden, um indirekt auf die Zielvariable zuzugreifen. <code>Ref := &amp;Ziel</code> beispielsweise, gefolgt von <code>%Ref% := 1</code>, würde <em>Ziel</em> den Wert 1 zuweisen. Die VarRef wird normalerweise an eine Funktion übergeben, kann aber auch in ein Array oder eine Eigenschaft gespeichert werden. Siehe auch: <a href="#deref">Dereferenz</a>, <a href="Functions.htm#ByRef">ByRef</a>.</p>
+      <p>Das Abrufen einer Referenz, die auf eine interne Variable wie z. B. <a href="misc/A_Clipboard.htm">A_Clipboard</a> verweist, wird derzeit nicht unterstützt, außer wenn sie direkt an einen <em>AusgabeVar</em>-Parameter einer internen Funktion übergeben wird.</p>
     </td>
   </tr>
   <tr id="MulDiv">
@@ -196,7 +200,7 @@ Var := "Die Farbe ist " GefundeneFarbe    <em>; Auto-Verkettung</em>
   <tr>
     <td align="center"><strong>IS</strong><br><strong>IN</strong><br><strong>CONTAINS</strong></td>
     <td id="is">
-      <p><code><i>Wert</i> <strong>is</strong> <i>Klasse</i></code> ist True (1), wenn <em>Wert</em> eine Instanz von <em>Klasse</em> ist, ansonsten False (0). <em>Klasse</em> muss ein <a href="objects/Object.htm">Object</a>-Objekt mit einer eigenen <a href="objects/Class.htm#Prototype">Prototype</a>-Eigenschaft sein, aber in der Regel wird die Eigenschaft implizit via Klassendefinition definiert. Diese Operation ist grundsätzlich äquivalent zu <code><i>Wert</i>.HasBase(<i>Klasse</i>.Prototype)</code>, außer dass der Wert die Art und Weise seiner Behandlung nicht überschreiben kann und das Ergebnis für COM-Objekte immer False ist.</p>
+      <p><code><i>Wert</i> <strong>is</strong> <i>Klasse</i></code> ist True (1), wenn <em>Wert</em> eine Instanz von <em>Klasse</em> ist, ansonsten False (0). <em>Klasse</em> muss ein <a href="objects/Object.htm">Object</a>-Objekt mit einer eigenen <a href="objects/Class.htm#Prototype">Prototype</a>-Eigenschaft sein, aber in der Regel wird die Eigenschaft implizit via Klassendefinition definiert. Diese Operation ist grundsätzlich äquivalent zu <code>HasBase(<i>Wert</i>, <i>Klasse</i>.Prototype)</code>.</p>
       <p><code id="in"><strong>in</strong></code> und <code id="contains"><strong>contains</strong></code> sind für die zukünftige Verwendung reserviert.</p>
     </td>
   </tr>
@@ -249,7 +253,7 @@ MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurü
     </td>
     <td><p><strong>Zuweisung</strong>. Führt eine Operation auf den Inhalt einer Variable aus und speichert das Ergebnis wieder in die gleiche Variable. Der einfachste Zuweisungsoperator ist der <a href="commands/SetExpression.htm">Doppelpunkt-Gleich-Operator (:=)</a>, der das Ergebnis eines Ausdrucks in eine Variable speichert. Eine Beschreibung dessen, was die anderen Operatoren tun, finden Sie in den entsprechenden Einträgen dieser Tabelle. <code>Var //= 2</code> beispielsweise führt eine <a href="#IntegerDivide">Integer-Division</a> durch, um <em>Var</em> durch 2 zu teilen, und speichert dann das Ergebnis wieder in <em>Var</em>. Ein weiteres Beispiel ist <code>Var <strong>.=</strong> "abc"</code>, was die Kurzschreibweise für <code>Var := Var <strong>.</strong> "abc"</code> wäre.</p>
       <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Eine Zeile wie <code>Var1 := Var2 := 0</code> würde also erst eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
-    <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Eine auf diese Weise verwendete Zuweisung kann auch via Referenz (<a href="Functions.htm#ByRef">ByRef</a>) übergeben werden, oder ihre Adresse zurückgeben; zum Beispiel: <code>StrPtr(x:="abc")</code>.</p>
+    <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Es ist auch zulässig, eine Zuweisung mit dem <a href="#ref">Referenzoperator</a> zu kombinieren, wie in <code>&amp;(Var := "Anfangswert")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: <code>not x := y</code> würde als <code>not (x := y)</code> ausgewertet werden. <code>++Var := X</code> würde als <code>++(Var := X)</code> ausgewertet werden; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> würde als <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code> ausgewertet werden.</p>
     <p>Eine Zuweisung funktioniert auch mit einer Eigenschaft eines Objekts, wie z. B. <code>meinArray.Length += n</code> oder <code>meinArray[i] .= t</code>. Wenn man einer Eigenschaft einen Wert zuweist, ist das Ergebnis des Teilausdrucks der Wert, der zugewiesen wird, nicht eine Variablenreferenz.</p>
     </td>
@@ -263,11 +267,11 @@ MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurü
       <pre>Sum(a, b) {
     return a + b
 }
-sumfn := Func("Sum")</pre>
+sumfn := Sum</pre>
       <p>In beiden Fällen wird die Funktion zum Zeitpunkt des Skriptstarts <strong>bedingungslos</strong> definiert, allerdings wird die Funktionsreferenz nur in <em>sumfn</em> gespeichert, wenn die Zuweisung ausgewertet wird.</p>
       <p>Wenn der Funktionsname weggelassen wird und die Parameterliste nur aus einem einzigen Parameternamen besteht, können die runden Klammern weggelassen werden. Das folgende Beispiel definiert eine anonyme Funktion mit einem Parameter <code>a</code> und speichert ihre Referenz in die Variable <code>double</code>:</p>
       <pre>double := a =&gt; a * 2</pre>
-      <p>Das Auflösen von Variablenreferenzen in <em>Ausdr</em> erfolgt wie bei der entsprechenden Vollfunktionsdefinition. Zum Beispiel könnte <em>Ausdr</em> auf die lokalen Variablen einer äußeren Funktion verweisen (wie in jeder <a href="Functions.htm#nested">verschachtelten Funktion</a>), woraufhin ein neues <a href="Functions.htm#closures">Closure</a> erzeugt wird, das jedes Mal seinen Wert zurückgibt, wenn der Fat-Arrow-Ausdruck ausgewertet wird. Die Funktion ist <a href="Functions.htm#AssumeLocal">Assume-Local</a>, wenn sie innerhalb einer anderen Funktion ist, ansonsten ist sie <a href="Functions.htm#AssumeGlobal">Assume-Global</a>.</p>
+      <p>Das Auflösen von Variablenreferenzen in <em>Ausdr</em> erfolgt wie bei der entsprechenden Vollfunktionsdefinition. Zum Beispiel könnte <em>Ausdr</em> auf die lokalen Variablen einer äußeren Funktion verweisen (wie in jeder <a href="Functions.htm#nested">verschachtelten Funktion</a>), woraufhin ein neues <a href="Functions.htm#closures">Closure</a> erzeugt wird, das jedes Mal seinen Wert zurückgibt, wenn der Fat-Arrow-Ausdruck ausgewertet wird. Die Funktion ist immer eine <a href="Functions.htm#AssumeLocal">Assume-Local</a>-Funktion, da Deklarationen nicht verwendet werden können.</p>
       <p>Gibt man der Funktion einen Namen, kann sie rekursiv oder von anderen verschachtelten Funktionen aufgerufen werden, ohne dass in der Funktion selbst eine Referenz zum <a href="Functions.htm#closures">Closure</a> gespeichert werden muss (und dadurch ein problematischer <a href="Objects.htm#Circular_References">Zirkelbezug</a> entsteht). So ein Name kann auch beim Debuggen helfen, vor allem in Bezug auf <a href="objects/Func.htm#Name">Func.Name</a> oder wenn der Name im Aufrufstapel des Debuggers angezeigt wird.</p>
       <p>Die Fat-Arrow-Syntax kann auch zum Definieren von kurzen <a href="Objects.htm#Custom_Classes_property_short">Eigenschaften</a> und <a href="Objects.htm#Custom_Classes_method">Methoden</a> genutzt werden.</p>
     </td>
@@ -292,14 +296,15 @@ sumfn := Func("Sum")</pre>
     <td><p>Ein beliebiger in Klammern gesetzter Teilausdruck. <code>(3 + 2) * 2</code> beispielsweise würde zuerst <code>3 + 2</code> auswerten.</p></td>
   </tr>
   <tr>
-    <td style="text-align:center; white-space:nowrap"><p><strong>Mod<br>
-        Round<br>
-    Abs</strong></p></td>
-    <td><strong>Funktionsaufruf</strong>. Direkt nach dem Funktionsnamen muss eine runde Startklammer erfolgen; das heißt, dass keine Leer- oder Tabulatorzeichen zwischen dem Namen und der Klammer erlaubt sind. Einzelheiten finden Sie unter <a href="Functions.htm">Funktionen</a>.</td>
+    <td style="text-align:center; white-space:nowrap"><p>Mod<strong>()</strong><br>
+        Round<strong>()</strong><br>
+    Abs<strong>()</strong></p></td>
+    <td rowspan="2"><p><strong>Funktionsaufruf</strong>. Zwischen dem Funktionsnamen oder Ausdruck und der runden Startklammer, die die Parameterliste beginnt, dürfen keine Leerzeichen stehen. Einzelheiten finden Sie unter <a href="Language.htm#function-calls">Funktionsaufrufe</a>.</p>
+    <p><em>(Ausdruck)</em> muss nicht unbedingt von Klammern umschlossen sein, aber auf diese Weise können ggf. Mehrdeutigkeiten vermieden werden. <code>(x.y)()</code> beispielsweise bezieht eine Funktion aus einer Eigenschaft und ruft sie dann ohne Parameter auf, während <code>x.y()</code> implizit <code>x</code> als ersten Parameter übergeben würde.</p>
+    </td>
   </tr>
   <tr>
-    <td style="text-align:center; white-space:nowrap"><p><strong>%</strong><em>func</em><strong>%()</strong></p></td>
-    <td>Siehe <a href="Functions.htm#DynCall">Dynamisches Aufrufen einer Funktion</a>.</td>
+    <td style="text-align:center; white-space:nowrap"><p><em>(Ausdruck)</em><strong>()</strong></p></td>
   </tr>
   <tr>
     <td style="text-align:center">Fn(<strong><em>Params</em>*</strong>)</td>
@@ -316,7 +321,7 @@ sumfn := Func("Sum")</pre>
   <tr id="curly-braces">
     <td style="text-align:center"><strong>{a: b, c: d}</strong></td>
     <td>
-      <p><strong>Direkte Objekt-Schreibweise</strong>. Erstellt ein <a href="objects/Object.htm">Object</a>-Objekt. Jedes Paar besteht aus einem direkt geschriebenen Eigenschaftsnamen <code>a</code> und einem Eigenschaftswertausdruck <code>b</code>. <code>x := {a: b}</code> beispielsweise ist äquivalent zu <code>x := Object("a", b)</code> oder <code>x := Object(), x.a := b</code>. <a href="objects/Object.htm#Base">Base</a> kann innerhalb der direkten Objektschreibweise gesetzt werden, aber alle anderen Eigenschaften werden als <em>eigene Werteigenschaften</em> gesetzt, mit der Gefahr oder Möglichkeit, dass die vom Base-Objekt geerbten Eigenschaften überschrieben werden.</p>
+      <p><strong>Direkte Objekt-Schreibweise</strong>. Erstellt ein <a href="objects/Object.htm">Object</a>-Objekt. Jedes Paar besteht aus einem direkt geschriebenen Eigenschaftsnamen <code>a</code> und einem Eigenschaftswertausdruck <code>b</code>. <code>x := {a: b}</code> beispielsweise ist äquivalent zu <code>x := Object(), x.a := b</code>. <a href="objects/Object.htm#Base">Base</a> kann innerhalb der direkten Objektschreibweise gesetzt werden, aber alle anderen Eigenschaften werden als <em>eigene Werteigenschaften</em> gesetzt, mit der Gefahr oder Möglichkeit, dass die vom Base-Objekt geerbten Eigenschaften überschrieben werden.</p>
       <p>Um einen dynamischen Eigenschaftsnamen zu verwenden, umschließen Sie den Teilausdruck mit Prozentzeichen. Zum Beispiel: <code>{%NameVar%: WertVar}</code>.</p>
     </td>
   </tr>
@@ -383,7 +388,7 @@ sumfn := Func("Sum")</pre>
   <tr id="ScriptName">
     <td>A_ScriptName</td>
     <td>
-      <p>Kann genutzt werden, um den Standardtitel für MsgBox, InputBox, FileSelect, DirSelect und Gui.New abzurufen oder zu setzen. Wenn dieser Variable nicht vom Skript gesetzt wurde, wird standardmäßig der Dateiname des aktuellen Skripts verwendet, aber ohne Pfad, z. B. MeinSkript.ahk.</p>
+      <p>Kann genutzt werden, um den Standardtitel für MsgBox, InputBox, FileSelect, DirSelect und Gui abzurufen oder zu setzen. Wenn dieser Variable nicht vom Skript gesetzt wurde, wird standardmäßig der Dateiname des aktuellen Skripts verwendet, aber ohne Pfad, z. B. MeinSkript.ahk.</p>
       <p>Wenn der Skripttext nicht aus der Datei, sondern <a href="Scripts.htm#stdin">aus der Standardeingabe (stdin) gelesen wird</a>, ist der Standardwert "*".</p>
     </td>
   </tr>
@@ -409,7 +414,7 @@ sumfn := Func("Sum")</pre>
   </tr>
   <tr id="ThisFunc">
     <td>A_ThisFunc</td>
-    <td>Der Name der <a href="Functions.htm">benutzerdefinierten Funktion</a>, die gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeineFunktion. Siehe auch: <a href="commands/IsFunc.htm">IsFunc</a></td>
+    <td>Der Name der <a href="Functions.htm">benutzerdefinierten Funktion</a>, die gerade ausgeführt wird (ansonsten leer); zum Beispiel: MeineFunktion. Siehe auch: <a href="objects/Func.htm#Name">Name-Eigenschaft (Func)</a></td>
   </tr>
   <tr id="AhkVersion">
     <td>A_AhkVersion</td>

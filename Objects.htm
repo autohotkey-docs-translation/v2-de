@@ -40,7 +40,7 @@ ul.list_of_p li { margin: 1em 0; }
 <h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#Usage">Grundlegende Verwendung</a> - <a href="#Usage_Simple_Arrays">Arrays</a>, <a href="#Usage_Associative_Arrays">Maps (assoziative Arrays)</a>, <a href="#Usage_Objects">Objekte</a>, <a href="#Usage_Freeing_Objects">Freigeben von Objekten</a></li>
-  <li><a href="#Extended_Usage">Erweiterte Verwendung</a> - <a href="#Function_References">Funktionsreferenzen</a>, <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a></li>
+  <li><a href="#Extended_Usage">Erweiterte Verwendung</a> - <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a></li>
   <li><a href="#Custom_Objects">Benutzerdefinierte Objekte</a> - <a href="#creating-a-base-object">Erstellen eines Base-Objekts</a>, <a href="#Custom_Classes">Klassen</a>, <a href="#Custom_NewDelete">Konstruktion und Destruktion</a>, <a href="#Meta_Functions">Metafunktionen</a></li>
   <li><a href="#primitive">Primitive Werte</a></li>
   <li><a href="#Implementation">Implementierung</a> - <a href="#Reference_Counting">Referenzzählung</a>, <a href="#ObjPtr">Objekt-Pointer</a></li>
@@ -131,16 +131,6 @@ x := "", y := ""             <em>; Wenn die Zeile darüber fehlen würde, könnt
 <p>Für mehr Details, siehe <a href="#Reference_Counting">Referenzzählung</a>.</p>
 
 <h2 id="Extended_Usage">Erweiterte Verwendung</h2>
-<h3 id="Function_References">Funktionsreferenzen</h3>
-<p>Wenn die Variable <i>funk</i> den Namen einer Funktion enthält, kann die Funktion mit dem Ausdruck <code><a href="Functions.htm#DynCall">%funk%()</a></code> aufgerufen werden. Allerdings ist dies ineffizient, weil jedes Mal, wenn die Funktion aufgerufen wird, der Funktionsname aufgelöst werden muss. Um die Leistung zu verbessern, kann eine Referenz zu der Funktion in eine Variable gespeichert und später wiederverwendet werden:</p>
-<pre>RefMeinerFunk := Func("MeineFunk")</pre>
-<p>Mit der folgenden Syntax kann eine Funktion via Referenz aufgerufen werden:</p>
-<pre>
-RückWert := <a href="Functions.htm#DynCall">%RefMeinerFunk%</a>(<i>Parameter</i>)
-RückWert := RefMeinerFunk.<a href="objects/Func.htm#Call">Call</a>(<i>Parameter</i>)
-</pre>
-<p>Weitere Eigenschaften von Funktionsreferenzen finden Sie unter <a href="objects/Func.htm">Func-Objekt</a>.</p>
-<p>In den meisten Fällen kann anstelle einer Funktionsreferenz ein beliebiges <a href="objects/Functor.htm">aufrufbares Objekt</a> verwendet werden.</p>
 
 <h3 id="Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</h3>
 <p>Obwohl "mehrdimensionale" Arrays nicht unterstützt werden, kann ein Skript mehrere Arrays oder Maps kombinieren. Zum Beispiel:</p>
@@ -165,7 +155,7 @@ class Array2D extends Array {
     }
 }
 
-Gitter := Array2D.new(4, 3)
+Gitter := Array2D(4, 3)
 Gitter[4, 1] := "#"
 Gitter[3, 2] := "#"
 Gitter[2, 2] := "#"
@@ -199,7 +189,7 @@ obj := {}
 <em>; Speichert einen Wert.</em>
 obj.foo := "bar"
 <em>; Definiert eine Methode.</em>
-thing.DefineMethod "test", Func("thing_test")
+obj.test := obj_test
 <em>; Ruft die Methode auf.</em>
 obj.test()
 
@@ -207,7 +197,7 @@ obj_test(this) {
     MsgBox this.foo
 }</pre>
 <p>Sobald <code>obj.test()</code> aufgerufen wird, wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Standardmäßig wird der Name der Funktion aus folgenden Komponenten gebildet (aber nicht zwingend notwendig): der "Typ" des Objekts und der Name der Methode.</p>
-<p>Siehe auch: <a href="objects/Object.htm#DefineMethod">DefineMethod</a>, <a href="objects/Object.htm#DefineProp">DefineProp</a></p>
+<p>Siehe auch: <a href="objects/Object.htm#DefineProp">DefineProp</a></p>
 
 <h3 id="delegation">Delegation</h3>
 <p>Objekte sind <em>prototypenbasiert</em>. Das heißt, dass alle Eigenschaften oder Methoden, die nicht im Objekt selbst definiert sind, stattdessen im <a href="objects/Object.htm#Base">Base</a> des Objekts definiert werden können. Man bezeichnet dies als <em>Vererbung durch Delegation</em> oder <em>Differenzielle Vererbung</em>, da ein Objekt nur die Teile implementieren kann, die sich vom Objekt unterscheiden, während es den Rest an dessen Base delegiert.</p>
@@ -233,7 +223,7 @@ anderesObj.test()</pre>
 
 <h3 id="Custom_Classes">Klassen</h3>
 <blockquote>Unter einer Klasse (auch Objekttyp genannt) versteht man in der objektorientierten Programmierung ein abstraktes Modell bzw. einen Bauplan für eine Reihe von ähnlichen Objekten. <a href="https://de.wikipedia.org/wiki/Klasse_(Objektorientierung)" class="source">Wikipedia</a></blockquote>
-<p>Allgemein ausgedrückt ist eine <em>Klasse</em> eine Gruppe oder Kategorie von Dingen, die Eigenschaften oder Attribute gemeinsam nutzen. In AutoHotkey definiert <code>class</code> Eigenschaften und Methoden, die von Instanzen der Klasse gemeinsam genutzt werden sollen. Eine <em>Instanz</em> ist nur ein Objekt, das Eigenschaften und Methoden von der Klasse erbt und typischerweise auch als Teil dieser Klasse verstanden werden kann (z. B. mit dem Ausdruck <code><i>Instanz</i> is <i>KlasseName</i></code>). Instanzen werden typischerweise durch den Aufruf von <a href="objects/Class.htm#New"><em>KlasseName</em>.new()</a> erzeugt.</p>
+<p>Allgemein ausgedrückt ist eine <em>Klasse</em> eine Gruppe oder Kategorie von Dingen, die Eigenschaften oder Attribute gemeinsam nutzen. In AutoHotkey definiert <code>class</code> Eigenschaften und Methoden, die von Instanzen der Klasse gemeinsam genutzt werden sollen. Eine <em>Instanz</em> ist nur ein Objekt, das Eigenschaften und Methoden von der Klasse erbt und typischerweise auch als Teil dieser Klasse verstanden werden kann (z. B. mit dem Ausdruck <code><i>Instanz</i> is <i>KlasseName</i></code>). Instanzen werden typischerweise durch den Aufruf von <a href="objects/Class.htm#Call"><em>KlasseName</em>()</a> erzeugt.</p>
 <p>Da ein von <a href="objects/Object.htm">Object</a> abgeleitetes Objekt <a href="#ad-hoc">dynamisch</a> und <a href="#delegation">prototypenbasiert</a> ist, besteht jede Klasse aus zwei Teilen:</p>
 <ul>
   <li>Die Klasse hat ein <a href="objects/Class.htm#Prototype">Prototyp</a>-Objekt, auf dem alle Instanzen der Klasse basieren. Alle Methoden und Eigenschaften, die sich auf eine bestimmte Instanz beziehen, sind im Prototypobjekt enthalten. Dazu gehören alle Eigenschaften und Methoden, denen das Schlüsselwort <code>static</code> fehlt.</li>
@@ -280,16 +270,16 @@ anderesObj.test()</pre>
     KürzereEigenschaft[] =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
 }
 </pre>
-<p>Dies konstruiert, nachdem das Skript geladen wurde, ein <a href="objects/Class.htm">Class</a>-Objekt und speichert es in eine <a href="Functions.htm#SuperGlobal">superglobale</a> Konstante (schreibgeschützte Variable) namens <i>KlasseName</i>. Um diese Klasse innerhalb einer <a href="Functions.htm#ForceLocal">Force-Local</a>-Funktion zu verweisen, ist eine Deklaration wie <code>global KlasseName</code> notwendig. Wenn <code>extends BaseKlasseName</code> vorhanden ist, muss der <i>BaseKlasseName</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>KlasseName</i>.Prototype.__Class</code> gespeichert.</p>
-<p>Aufgrund der Mehrdeutigkeit zwischen Klassennamen und Variablen kann der Klassenname nicht genutzt werden, um im selben Kontext sowohl die Klasse zu verweisen als auch eine separate Variable zu erstellen (um z. B. eine Instanz der Klasse zu enthalten). Zum Beispiel wird <code>box := Box.new()</code> nicht funktionieren, weil sowohl <code>box</code> als auch <code>Box</code> in dasselbe aufgelöst werden. Der Versuch, eine Top-Level-Klasse (nicht verschachtelte Klasse) auf diese Weise neu zuzuweisen, führt zu einem Ladezeitfehler.</p>
+<p>Dies konstruiert, nachdem das Skript geladen wurde, ein <a href="objects/Class.htm">Class</a>-Objekt und speichert es in eine <a href="Functions.htm#Global">globale</a> Konstante (schreibgeschützte Variable) namens <i>KlasseName</i>. Wenn <code>extends BaseKlasseName</code> vorhanden ist, muss der <i>BaseKlasseName</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>KlasseName</i>.Prototype.__Class</code> gespeichert.</p>
+<p>Aufgrund der Mehrdeutigkeit zwischen Klassennamen und Variablen kann der Klassenname nicht genutzt werden, um im selben Kontext sowohl die Klasse zu verweisen als auch eine separate Variable zu erstellen (um z. B. eine Instanz der Klasse zu enthalten). Zum Beispiel wird <code>box := Box()</code> nicht funktionieren, weil sowohl <code>box</code> als auch <code>Box</code> in dasselbe aufgelöst werden. Der Versuch, eine Top-Level-Klasse (nicht verschachtelte Klasse) auf diese Weise neu zuzuweisen, führt zu einem Ladezeitfehler.</p>
 <p>In dieser Dokumentation bezieht sich das Wort "Klasse" in der Regel auf ein Klassenobjekt, das mit dem Schlüsselwort <code>class</code> erstellt wurde.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und Unterklassendefinitionen enthalten.</p>
 
 <h4 id="Custom_Classes_var">Instanzvariablen</h4>
 <p>Eine <em>Instanzvariable</em> ist eine Variable, von der jede Instanz der Klasse eine eigene Kopie hat. Sie werden wie normale Zuweisungen deklariert, ohne dass das Präfix <code>this.</code> angegeben werden muss (dies gilt nur in der Klassendefinition):</p>
 <pre>InstanzVar := Ausdruck</pre>
-<p>Solche Deklarationen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit <a href="objects/Class.htm#New"><em>KlasseName</em>.new()</a> erstellt wird, nachdem alle Base-Klassendeklarationen ausgewertet wurden, aber bevor <a href="#Custom_NewDelete">__New</a> aufgerufen wird. Dies wird erreicht, indem automatisch eine Methode mit dem Namen <em>__Init</em> erstellt wird, die einen Aufruf von <code>super.__Init()</code> enthält, und jede Deklaration in diese eingefügt wird. Daher darf eine einzelne Klassendefinition weder eine __Init-Methode noch eine Instanzvariablendeklaration enthalten.</p>
-<p><em>Ausdruck</em> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen, aber alle anderen Variablenreferenzen werden als global angesehen.</p>
+<p>Solche Deklarationen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit <a href="objects/Class.htm#Call"><em>KlasseName</em>()</a> erstellt wird, nachdem alle Base-Klassendeklarationen ausgewertet wurden, aber bevor <a href="#Custom_NewDelete">__New</a> aufgerufen wird. Dies wird erreicht, indem automatisch eine Methode mit dem Namen <em>__Init</em> erstellt wird, die einen Aufruf von <code>super.__Init()</code> enthält, und jede Deklaration in diese eingefügt wird. Daher darf eine einzelne Klassendefinition weder eine __Init-Methode noch eine Instanzvariablendeklaration enthalten.</p>
+<p><em>Ausdruck</em> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen. Globale Variablen können gelesen, aber nicht zugewiesen werden. Eine zusätzliche Zuweisung (oder die Verwendung des <a href="Variables.htm#ref">Referenzoperators</a>) innerhalb des Ausdrucks erzeugt in der Regel eine Variable, die lokal für die __Init-Methode ist. <code>x := y := 1</code> beispielsweise würde <code>this.x</code> und eine lokale Variable <code>y</code> setzen (die wieder freigegeben wird, sobald alle Initialisierungen ausgewertet wurden).</p>
 <p>Um Zugriff auf eine Instanzvariable zu erhalten (sogar innerhalb einer Methode), müssen Sie immer das Zielobjekt angeben; zum Beispiel <code><b>this</b>.InstanzVar</code>.</p>
 <p>Deklarationen wie <code>x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code>this.x.y</code> initialisieren.</p>
 
@@ -297,12 +287,12 @@ anderesObj.test()</pre>
 <p>Statische bzw. Klassenvariablen gehören nur der Klasse selbst, allerdings können ihre Werte von Unterklassen geerbt werden. Solche Variablen müssen mit dem Schlüsselwort "static" deklariert werden:</p>
 <pre>static KlasseVar := Ausdruck</pre>
 <p>Diese Deklarationen werden nur einmal ausgewertet, während die Klasse initialisiert wird. In dieser AutoHotkey-Version werden Klassen der Reihenfolge nach, wie sie im Skript erscheinen, initialisiert, bevor die <a href="Scripts.htm#auto">Startphase des Skripts</a> erfolgt. Zu diesem Zweck wird automatisch eine statische Methode namens <em>__Init</em> definiert.</p>
-<p>Jede Deklaration speichert einen Wert in das Klassenobjekt. Alle Variablenreferenzen in <i>Ausdruck</i> werden als global angesehen.</p>
+<p>Jede Deklaration speichert einen Wert in das Klassenobjekt. <em>Ausdruck</em> wird ähnlich interpretiert wie bei Instanzvariablen, außer dass <code>this</code> auf die Klasse selbst verweist.</p>
 <p>Um einer Klassenvariable etwas zuzuweisen, müssen Sie immer das Klassenobjekt angeben; zum Beispiel <code><b>KlasseName</b>.KlasseVar := Wert</code>. Wenn eine Unterklasse keine Eigenschaft mit diesem Namen besitzt, kann <code><i>Unterklasse</i>.KlasseVar</code> auch genutzt werden, um den Wert abzurufen; wenn der Wert eine Referenz zu einem Objekt ist, werden Unterklassen sich dieses Objekt standardmäßig teilen. Allerdings würde <code><i>Unterklasse</i>.KlasseVar := y</code> den Wert nicht in <em>KlasseName</em>, sondern in <em>Unterklasse</em> speichern.</p>
 <p>Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse deklariert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code><i>KlasseName</i>.x.y</code> initialisieren.</p>
 
 <h4 id="Custom_Classes_class">Verschachtelte Klassen</h4>
-<p>Verschachtelten Klassendefinitionen ermöglichen es, ein Klassenobjekt mit einer statischen Variable/Klassenvariable der äußeren Klasse statt mit einer separaten globalen Variablen zu assoziieren. Im obigen Beispiel konstruiert <code>class VerschachtelteKlasse</code> ein <a href="objects/Class.htm">Class</a>-Objekt und speichert es in <code>KlasseName.VerschachtelteKlasse</code>. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall kann mit <code><i>WelcheKlasse</i>.VerschachtelteKlasse.new()</code> eine geeignete Klasse instanziiert werden).</p>
+<p>Verschachtelten Klassendefinitionen ermöglichen es, ein Klassenobjekt mit einer statischen Variable/Klassenvariable der äußeren Klasse statt mit einer separaten globalen Variablen zu assoziieren. Im obigen Beispiel konstruiert <code>class VerschachtelteKlasse</code> ein <a href="objects/Class.htm">Class</a>-Objekt und speichert es in <code>KlasseName.VerschachtelteKlasse</code>. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall kann mit <code>(<i>WelcheKlasse</i>.VerschachtelteKlasse)()</code> eine geeignete Klasse instanziiert werden).</p>
 <pre>
 class VerschachtelteKlasse
 {
@@ -310,6 +300,7 @@ class VerschachtelteKlasse
 }
 </pre>
 <p>Die Verschachtelung einer Klasse bedeutet nicht, dass eine bestimmte Beziehung zur äußeren Klasse besteht. Die verschachtelte Klasse wird weder automatisch instanziiert, noch haben Instanzen der verschachtelten Klasse eine Verbindung zu einer Instanz der äußeren Klasse, es sei denn, das Skript stellt diese Verbindung explizit her.</p>
+<p>Aufgrund der Funktionsweise der Methoden bei <a href="objects/Object.htm">Object</a>-Klassen übergibt <code><i>WelcheKlasse</i>.VerschachtelteKlasse()</code> jedoch implizit <em>WelcheKlasse</em> als ersten Parameter, äquivalent zu <code><i>WelcheKlasse</i>.VerschachtelteKlasse.Call(<i>WelcheKlasse</i>)</code>. Sofern <code>static Call()</code> nicht überschrieben wird, wird dieser Parameter automatisch an <a href="#Custom_NewDelete">__New</a> übergeben.</p>
 
 <h4 id="Custom_Classes_method">Methoden</h4>
 <p>Methodendefinitionen sehen genauso aus wie Funktionsdefinitionen. Jede Methode hat einen versteckten Parameter namens <code>this</code>, der eine Referenz zum Objekt enthält, über dem die Klasse aufgerufen wurde. Es gibt zwei Arten von Methoden:</p>
@@ -326,16 +317,16 @@ Methode()
 
 <p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann genutzt werden, um eine einzeilige Methode für die Rückgabe eines Ausdrucks zu definieren:</p>
 <pre>Methode() =&gt; <i>Ausdruck</i></pre>
-<p>Siehe auch: <a href="objects/Object.htm#DefineMethod">DefineMethod</a></p>
 
 <h4 id="Custom_Classes_super">Super</h4>
 <p>Innerhalb einer Methode oder eines Eigenschaft-Getters/Setters kann das Schlüsselwort <code>super</code> anstelle von <code>this</code> verwendet werden, um auf Superklassen-Versionen von Methoden oder Eigenschaften, die in einer abgeleiteten Klasse überschrieben werden, zugreifen zu können. <code>super.Methode()</code> in der Klasse oben würde beispielsweise bewirken, dass typischerweise eine Version von <em>Methode</em> aufgerufen wird, die innerhalb von <em>BaseKlasseName</em> definiert wurde. Hinweis:</p>
 <ul>
   <li><code>super.Methode()</code> ruft immer das Base der Klasse oder des Prototypobjekts auf, das mit der ursprünglichen Definition der aktuellen Methode verknüpft ist, sogar wenn <code>this</code> von einer <em>Unterklasse</em> aus dieser Klasse oder von einer ganz anderen Klasse abgeleitet wurde.</li>
   <li><code>super.Methode()</code> übergibt implizit <code>this</code> als ersten (versteckten) Parameter.</li>
-  <li>Da nicht bekannt ist, wo (oder ob) <em>KlasseName</em> innerhalb der Kette von Base-Objekten existiert, wird <em>KlasseName</em> selbst als Ausgangspunkt verwendet. Daher ist <code>super.Methode()</code> meistens äquivalent zu <code><i>KlasseName</i>.Prototype.base.GetMethod("Methode").Call(this)</code> (aber ohne <em>Prototype</em>, wenn <em>Methode</em> statisch ist). Allerdings wird <code><i>KlasseName</i>.Prototype</code> beim Laden des Skripts aufgelöst.</li>
+  <li>Da nicht bekannt ist, wo (oder ob) <em>KlasseName</em> innerhalb der Kette von Base-Objekten existiert, wird <em>KlasseName</em> selbst als Ausgangspunkt verwendet. Daher ist <code>super.Methode()</code> meistens äquivalent zu <code>(<i>KlasseName</i>.Prototype.base.Methode)(this)</code> (aber ohne <em>Prototype</em>, wenn <em>Methode</em> statisch ist). Allerdings wird <code><i>KlasseName</i>.Prototype</code> beim Laden des Skripts aufgelöst.</li>
 </ul>
-<p>Nach dem Schlüsselwort <code>super</code> muss ein Punkt <code>.</code> oder eckige Klammern <code>[]</code> stehen.</p>
+<p>Nach dem Schlüsselwort <code>super</code> muss eines der folgenden Symbole erfolgen: <code>.[(</code></p>
+<p><code>super()</code> ist äquivalent zu <code>super.call()</code>.</p>
 
 <h4 id="Custom_Classes_property">Eigenschaften</h4>
 <p>Eine Eigenschaftsdefinition erzeugt eine <a href="objects/Object.htm#DefineProp">dynamische Eigenschaft</a>, die eine Methode aufruft, anstatt einfach einen Wert zu speichern oder zurückzugeben.</p>
@@ -401,8 +392,8 @@ MsgBox obj["base"]                  <em>; 10</em>
 <p class="note"><strong>Hinweis:</strong> Wenn ein expliziter Eigenschaftsname mit leeren eckigen Klammern kombiniert wird, wie in <code>obj.prop[]</code>, wird dies als zwei separate Operationen behandelt: zuerst wird <code>obj.prop</code> abgerufen, danach indirekt die Standardeigenschaft des Ergebnisses aufgerufen. Dies ist Bestandteil der Sprachsyntax und somit objektunabhängig.</p>
 
 <h3 id="Custom_NewDelete">Konstruktion und Destruktion</h3>
-<p>Jedes Mal, wenn ein Objekt mit der Standardimplementierung von <a href="objects/Class.htm#New"><em>KlasseName</em>.new()</a> erstellt wird, wird die <code>__New</code>-Methode des neuen Objekts aufgerufen, um eine benutzerdefinierte Initialisierung zu ermöglichen. Alle Parameter, die an <code>new</code> übergeben werden, werden an <code>__New</code> weitergeleitet, so dass sie den ursprünglichen Inhalt des Objekts oder die Art und Weise, wie es konstruiert ist, beeinflussen können. Zerstört man ein Objekt, wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
-<pre>m1 := GMem.new(0, 10)
+<p>Jedes Mal, wenn ein Objekt mit der Standardimplementierung von <a href="objects/Class.htm#Call"><em>KlasseName</em>()</a> erstellt wird, wird die <code>__New</code>-Methode des neuen Objekts aufgerufen, um eine benutzerdefinierte Initialisierung zu ermöglichen. Alle Parameter, die an <code><i>KlasseName</i>()</code> übergeben werden, werden an <code>__New</code> weitergeleitet, so dass sie den ursprünglichen Inhalt des Objekts oder die Art und Weise, wie es konstruiert ist, beeinflussen können. Zerstört man ein Objekt, wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
+<pre>m1 := GMem(0, 10)
 m2 := {base: GMem.Prototype}, m2.__New(0, 30)
 
 <em>; Hinweis: Für allgemeine Speicherreservierungen sollten Sie stattdessen <a href="commands/BufferAlloc.htm">BufferAlloc</a>() verwenden.</em>
@@ -451,11 +442,11 @@ class <i>KlasseName</i> {
   <li><i>Get</i>: Löse einen <a href="objects/Error.htm#PropertyError">PropertyError</a> aus.</li>
   <li><i>Set</i>: Definiere eine neue Eigenschaft mit dem angegebenen Wert, z. B. durch Aufruf von <a href="objects/Object.htm#DefineProp">DefineProp</a>. </li>
 </ul>
-<p>Es kann ein beliebiges <a href="objects/Functor.htm">aufrufbare Objekt</a> als Metafunktion verwendet werden, indem es an <a href="objects/Object.htm#DefineMethod">DefineMethod</a> übergeben wird.</p>
+<p>Es kann ein beliebiges <a href="objects/Functor.htm">aufrufbares Objekt</a> als Metafunktion verwendet werden, wenn man es der entsprechenden Eigenschaft zuweist.</p>
 <p>Metafunktionen werden in den folgenden Fällen nicht aufgerufen:</p>
 <ul>
   <li><code>x[y]</code>: Die Verwendung von eckigen Klammern ohne Eigenschaftsnamen ruft nur die <a href="#__Item">__Item</a>-Eigenschaft auf.</li>
-  <li><code>%x%()</code>: Der Aufruf des Objekts selbst ruft nur die <code>Call</code>-Methode auf. Dazu gehören interne Aufrufe von internen Funktionen wie <a href="commands/SetTimer.htm">SetTimer</a> und <a href="commands/Hotkey.htm">Hotkey</a>.</li>
+  <li><code>x()</code>: Der Aufruf des Objekts selbst ruft nur die <code>Call</code>-Methode auf. Dazu gehören interne Aufrufe von internen Funktionen wie <a href="commands/SetTimer.htm">SetTimer</a> und <a href="commands/Hotkey.htm">Hotkey</a>.</li>
   <li>Interne Aufrufe von anderen Metafunktionen oder Doppel-Unterstrich-Methoden lösen <code>__Call</code> nicht aus.</li>
 </ul>
 
@@ -479,10 +470,10 @@ class <i>KlasseName</i> {
 <p>Beachten Sie, dass <code>x is Any</code> normalerweise für jeden Wert innerhalb der Typenhierarchie von AutoHotkey True, aber für COM-Objekte False ist.</p>
 
 <h3 id="primitive-extension">Hinzufügen von Eigenschaften und Methoden</h3>
-<p>Eigenschaften und Methoden können für alle Werte eines bestimmten Typs hinzugefügt werden, indem das Prototypobjekt dieses Typs geändert wird. Da aber ein primitiver Wert kein Object-Objekt ist und keine eigenen Eigenschaften oder Methoden haben kann, können die primitiven Prototypobjekte nicht von <code>Object.Prototype</code> ableiten. Mit anderen Worten sind Methoden wie <a href="objects/Object.htm#DefineProp">DefineProp</a> und <a href="objects/Object.htm#DefineMethod">DefineMethod</a> standardmäßig nicht zugänglich. Diese können indirekt aufgerufen werden. Zum Beispiel:</p>
+<p>Eigenschaften und Methoden können für alle Werte eines bestimmten Typs hinzugefügt werden, indem das Prototypobjekt dieses Typs geändert wird. Da aber ein primitiver Wert kein Object-Objekt ist und keine eigenen Eigenschaften oder Methoden haben kann, können die primitiven Prototypobjekte nicht von <code>Object.Prototype</code> ableiten. Mit anderen Worten sind Methoden wie <a href="objects/Object.htm#DefineProp">DefineProp</a> und <a href="objects/Object.htm#HasOwnProp">HasOwnProp</a> standardmäßig nicht zugänglich. Diese können indirekt aufgerufen werden. Zum Beispiel:</p>
 <pre>
-DefProp := {}.GetMethod("DefineProp")
-%DefProp%( "".base, "Length", { get: Func("StrLen") } )
+DefProp := {}.DefineProp
+DefProp( "".base, "Length", { get: StrLen } )
 MsgBox A_AhkPath.length " == " StrLen(A_AhkPath)
 </pre>
 <p>Obwohl primitive Werte Werteigenschaften von ihrem Prototyp erben können, wird eine Ausnahme ausgelöst, wenn das Skript versucht, eine Werteigenschaft auf einen primitiven Wert zu setzen. Zum Beispiel:</p>
@@ -495,7 +486,7 @@ MsgBox "".test  <em>; 1</em>
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
 <p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um automatisch Ressourcen freizugeben, falls ein Objekt nicht länger in einem Skript benötigt bzw. verwiesen wird. Skript-Autoren sollten diesen Mechanismus nicht explizit aufrufen, es sei denn, sie müssen sich direkt mit unverwalteten <a href="#ObjPtr">Objekt-Pointern</a> befassen.</p>
 <p>Temporär zurückgegebene Referenzen von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Im folgenden Beispiel wird das neue <a href="#GMem">GMem</a>-Objekt erst nach Durchführung von MsgBox freigegeben:</p>
-<pre>MsgBox <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", GMem.new(0, 20).ptr, "ptr")  <em>; 20</em></pre>
+<pre>MsgBox <a href="commands/DllCall.htm">DllCall</a>("GlobalSize", "ptr", GMem(0, 20).ptr, "ptr")  <em>; 20</em></pre>
 <p class="note"><strong>Hinweis:</strong> In diesem Beispiel kann <code>.ptr</code> auch weggelassen werden, da der <a href="commands/DllCall.htm#ptr">Ptr</a>-Argumenttyp Objekte mit einer <code>Ptr</code>-Eigenschaft zulässt. Allerdings funktioniert das oben gezeigte Muster auch mit anderen Eigenschaftsnamen.</p>
 <p>Um eine Aktion nach Freigabe der letzten Referenz zu einem Objekt durchzuführen, implementieren Sie die <a href="#Custom_NewDelete">__Delete</a>-Metafunktion.</p>
 <p><b>Bekannte Einschränkungen:</b></p>

@@ -89,7 +89,7 @@
 <p>Fehler werden automatisch oder überhaupt nicht erkannt, je nachdem, welche Bedingungen zutreffen:</p>
 <ul>
   <li>Wenn der Name einer Variable innerhalb eines Ausdrucks diese Zeichen enthält, wird das Skript in der Regel ohne Fehlermeldung weiterlaufen, aber falsch interpretiert werden, weil die Zeichen als Operatoren angesehen werden.</li>
-  <li>Wenn diese Zeichen in einer <a href="Variables.htm#ref">Doppelderefenzierung</a> verwendet werden (z. B. <code>Array%n%</code>, wo <em>n</em> eins der oben genannten Zeichen enthält), wird eine Fehlermeldung beim Auswerten der Doppeldereferenzierung angezeigt, während das Skript läuft.</li>
+  <li>Wenn diese Zeichen in einer <a href="Variables.htm#deref">Doppelderefenzierung</a> verwendet werden (z. B. <code>Array%n%</code>, wo <em>n</em> eins der oben genannten Zeichen enthält), wird eine Fehlermeldung beim Auswerten der Doppeldereferenzierung angezeigt, während das Skript läuft.</li>
   <li>Wenn diese Zeichen in einem anderen Kontext verwendet werden (zum Beispiel auf der linken Seite einer Zuweisung, im Namen der Eingabe-/Ausgabevariable eines Befehls oder zwischen %Prozentzeichen%), wird eine Fehlermeldung angezeigt und das Starten des Skripts verhindert.</li>
 </ul>
 
@@ -207,7 +207,7 @@ VarSetCapacity(native_var,  t_size(capacity_in_chars))  <em>; siehe <a href="#Nu
 <p>Wenn ein Skript eine Funktion via DllCall aufruft, die eine Zeichenkette als Parameter akzeptiert, muss eine der folgenden Methoden durchgeführt werden:</p>
 <ol>
   <li>Je nach aktuellem Build sollte man die Unicode- (W) oder ANSI-Version (A) der Funktion aufrufen, falls beide zur Verfügung stehen. Im folgenden Beispiel ist "DeleteFile" intern als "DeleteFileA" oder "DeleteFileW" bekannt. Da "DeleteFile" selbst nicht wirklich existiert, wird DllCall automatisch "A" oder "W" je nach aktuellem Build anfügen:
-  <pre>DllCall("DeleteFile", "Ptr", &amp;Dateiname)
+  <pre>DllCall("DeleteFile", "Ptr", StrPtr(Dateiname))
 DllCall("DeleteFile", "Str", Dateiname)</pre>
   <p>In diesem Beispiel wird <code>&amp;Dateiname</code> die Adresse der Zeichenkette exakt in dieser Form übergeben, so dass die Funktion eine Zeichenkette im gleichen Format wie der "Str"-Typ erwarten muss. Beachten Sie, dass in AutoHotkey Basic "UInt" statt "Ptr" verwendet werden muss, aber es kann sein, dass der resultierende Code nicht 64-Bit-kompatibel ist.</p>
   <p class="note"><b>Hinweis</b>: Wenn die Funktion mit exakt diesem Namen nicht auffindbar ist, fügt AutoHotkey_L das Suffix "A" oder "W" an, egal welche DLL-Datei angegeben ist. AutoHotkey Basic hingegen wird den Suffix "A" nur bei Funktionen anfügen, die in User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll vorkommen.</p></li>

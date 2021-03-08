@@ -88,7 +88,7 @@ Loop r // 4  <em>; Parst das Array mit Identifikatoren als DWORDs (32 Bit):</em>
     e := DllCall("Psapi.dll\GetModuleBaseName", "Ptr", h, "Ptr", 0, "Ptr", n, "UInt", s//2)
     if !e    <em>; Fallback-Methode für 64-Bit-Prozesse, wenn sie im 32-Bit-Modus sind:</em>
         e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Ptr", n, "UInt", s//2)
-    SplitPath StrGet(n), n
+    SplitPath StrGet(n), &amp;n
     DllCall("CloseHandle", "Ptr", h)  <em>; Schließt diesen Prozess-Handle, um Speicher freizugeben</em>
     if (n &amp;&amp; e)  <em>; Wenn Image nicht null ist, füge es zur Liste hinzu:</em>
         l .= n "`n", c++
@@ -100,7 +100,7 @@ MsgBox StrReplace(l, "`n", d), c " Prozesse", 0</pre>
 
 <div class="ex" id="ExListCOM">
 <p><a class="ex_number" href="#ExListCOM"></a> Ermittelt eine Liste von allen laufenden Prozessen via COM.</p>
-<pre>MeineGui := Gui.New(, "Prozessliste")
+<pre>MeineGui := Gui(, "Prozessliste")
 LV := MeineGui.Add("ListView", "x2 y0 w400 h500", ["Prozessname","Befehlszeile"])
 for Prozess in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process")
     LV.Add("", Prozess.Name, Prozess.CommandLine)

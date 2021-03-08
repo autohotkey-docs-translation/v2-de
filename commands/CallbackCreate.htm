@@ -87,7 +87,7 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 
 <p id="Indirect"><strong>Parameter via Adresse abrufen:</strong> Wenn die <code>&amp;</code>-Option genutzt wird, erhält die Funktion die <i>Adresse</i> des ersten Callback-Parameters. Zum Beispiel:</p>
 <pre>
-callback := CallbackCreate("DieFunk", "F&amp;", 3)  <em>; Größe der Parameterliste muss bei 32-Bit angegeben werden.</em>
+callback := CallbackCreate(DieFunk, "F&amp;", 3)  <em>; Größe der Parameterliste muss bei 32-Bit angegeben werden.</em>
 DllCall(callback, "float", 10.5, "int64", 42)
 DieFunk(params) {
     MsgBox <a href="NumGet.htm">NumGet</a>(params, 0, "float") ", " NumGet(params, A_PtrSize, "int64")
@@ -113,7 +113,7 @@ DieFunk(params) {
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExWinList">
 <p><a class="ex_number" href="#ExWinList"></a> Zeigt eine Zusammenfassung aller nicht-untergeordneten Fenster an.</p>
-<pre>EnumAdresse := CallbackCreate("EnumWindowsProc", "Fast")  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird.</em>
+<pre>EnumAdresse := CallbackCreate(EnumWindowsProc, "Fast")  <em>; Fast-Modus ist okay, weil er nur von diesem Thread aufgerufen wird.</em>
 
 DetectHiddenWindows True  <em>; Aufgrund des Fast-Modus wird diese Einstellung auch für Callback wirksam.</em>
 
@@ -137,13 +137,13 @@ EnumWindowsProc(hwnd, lParam)
 <pre>TextHintergrundFarbe := 0xFFBBBB  <em>; Eine benutzerdefinierte Farbe im BGR-Format.</em>
 TextHintergrundPinsel := DllCall("CreateSolidBrush", "UInt", TextHintergrundFarbe)
 
-MeineGui := Gui.New()
+MeineGui := Gui()
 Text := MeineGui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.")
 
 <em>; 64-Bit-Skripte müssen SetWindowLongPtr statt SetWindowLong aufrufen:</em>
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
-WindowProcNeu := CallbackCreate("WindowProc")  <em>; Vermeide den Fast-Modus beim Setzen der Unterklasse.</em>
+WindowProcNeu := CallbackCreate(WindowProc)  <em>; Vermeide den Fast-Modus beim Setzen der Unterklasse.</em>
 WindowProcAlt := DllCall(SetWindowLong, "Ptr", MeineGui.Hwnd, "Int", -4  <em>; -4 ist GWL_WNDPROC</em>
     , "Ptr", WindowProcNeu, "Ptr") <em>; Rückgabewert muss auf "Ptr" oder "UPtr" statt auf "Int" gesetzt werden.</em>
 
@@ -152,7 +152,6 @@ MeineGui.Show
 WindowProc(hwnd, uMsg, wParam, lParam)
 {
     Critical
-    global Text, TextHintergrundFarbe, TextHintergrundPinsel, WindowProcAlt
     if (uMsg = 0x0138 &amp;&amp; lParam = Text.Hwnd)  <em>; 0x0138 ist WM_CTLCOLORSTATIC.</em>
     {
         DllCall("SetBkColor", "Ptr", wParam, "UInt", TextHintergrundFarbe)

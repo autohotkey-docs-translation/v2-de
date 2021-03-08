@@ -72,6 +72,11 @@ vref := ComObject(0x400C, vbuf.ptr)  <em>; 0x400C ist eine Kombination von VT_BY
 vref[] := "Eingabewert"
 sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ExByRef">Beispiel unten</a> initialisiert werden.</em>
 MsgBox vref[]</pre>
+<p>Wenn die Methode wie oben gezeigt eine Kombination aus VT_BYREF und VT_VARIANT akzeptiert, kann stattdessen eine <a href="../Concepts.htm#variable-references">VarRef</a> verwendet werden. Zum Beispiel:</p>
+<pre>eine_var := "Eingabewert"
+sc.Run("Beispiel", &amp;eine_var)
+MsgBox eine_var</pre>
+<p>Einige Methoden erfordern jedoch einen spezifischeren Variantentyp, wie z. B. <code>VT_BYREF | VT_I4</code>. In solchen Fällen muss die erste oben gezeigte Vorgehensweise verwendet werden, wobei 0x400C mit dem entsprechenden Variantentyp ersetzt wird.</p>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>Wenn diese Funktion zum Wrappen eines <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointers genutzt wird, ist das Wrapper-Objekt zum Freigeben des Pointers verantwortlich, falls erforderlich. Lässt man <em>VarTyp</em> weg, wird das IDispatch-Interface des Objekts <a href="ComObjQuery.htm">angefordert</a>; bei Erfolg wird <em>DispPtr</em> sofort freigegeben. Wenn das Skript also beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiter zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
@@ -98,10 +103,15 @@ sc := <a href="ComObjCreate.htm">ComObjCreate</a>("ScriptControl"), sc.Language 
 
 
 <em>; Beispiel: VARIANT via Referenz an eine COM-Methode übergeben.</em>
-var := ComVar.new()
+var := ComVar()
 var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox var[]
+
+<em>; Oben und unten sind in diesem Fall äquivalent:</em>
+var := "Eingabewert"
+sc.Run("Beispiel", &amp;var)
+MsgBox var
 
 
 <em>; ComVar: Ein Objekt, mit dem ein Wert via Referenz übergeben werden kann.

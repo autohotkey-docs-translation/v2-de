@@ -25,6 +25,7 @@
   <li><a href="#intro">Einführung</a></li>
   <li><a href="#auto">Startphase des Skripts (der automatisch ausführende Thread)</a>: Unmittelbar nach dem Start des Skripts Aktionen durchführen und Standardeinstellungen ändern.</li>
   <li><a href="#continuation">Eine lange Zeile in mehreren kurzen Zeilen aufteilen</a>: Zur Erhöhung der Übersichtlichkeit und Wartbarkeit des Skripts.</li>
+  <li><a href="#lib">Skriptbibliotheksordner</a></li>
   <li><a href="#ahk2exe">Ein Skript in eine EXE-Datei umwandeln (Ahk2Exe)</a>: Ein .ahk-Skript in eine .exe-Datei umwandeln, die auf jedem PC ausgeführt werden kann.</li>
   <li><a href="#cmd">Befehlszeilenparameter an einem Skript übergeben</a>: Die Variable A_Args enthält die eingehenden Parameter.</li>
   <li><a href="#cp">Zeichensatz einer Skript-Datei</a>: ASCII-fremde Zeichen sicher in Skripten verwenden.</li>
@@ -129,6 +130,15 @@ Standardmäßig befindet sich das CR-Zeichen (Enter) zwischen der vorherigen und
 <p>Aufgrund der Tatsache, dass eine runde Endklammer das Ende eines Fortsetzungsbereichs kennzeichnet, muss eine direkt geschriebene runde Endklammer mit einem Escapezeichen (Akzent/umgekehrtes Häkchen) versehen werden: <code>`)</code>. Dies kann jedoch nicht mit der <a href="#accent">Akzent-Option (`)</a> kombiniert werden.</p>
 <p>Unmittelbar nach einem Fortsetzungsbereich kann eine Zeile angegeben werden, die die runde Startklammer eines weiteren Fortsetzungsbereichs enthält. Auf diese Weise können unterschiedliche Optionen beim Konstruieren einer einzelnen Zeile angewendet werden.</p>
 <p>Die stückweise Konstruktion eines Fortsetzungsbereichs via <a href="commands/_Include.htm">#Include</a> wird nicht unterstützt.</p>
+
+<h2 id="lib">Skriptbibliotheksordner</h2>
+<p>Die Bibliotheksordner sind vordefinierte Standorte für gemeinsam genutzte Skripte, die von anderen Skripten mit Hilfe von <a href="commands/_Include.htm">#Include</a> genutzt werden können. Ein Bibliotheksskript enthält typischerweise eine Funktion oder Klasse, die für die Verwendung und Wiederverwendung konzipiert ist. Das Platzieren von Bibliotheksskripten an einen dieser Standorte erleichtert das Schreiben von Skripten, die mit anderen gemeinsam genutzt werden können und über mehrere Konfigurationen hinweg funktionieren. Die Standorte für Bibliotheken sind:</p>
+<pre><a href="Variables.htm#ScriptDir">A_ScriptDir</a> "\Lib\"  <em>; Lokale Bibliothek.</em>
+<a href="Variables.htm#MyDocuments">A_MyDocuments</a> "\AutoHotkey\Lib\"  <em>; Benutzerbibliothek.</em>
+"Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\"  <em>; Standardbibliothek.</em></pre>
+<p>Die Bibliotheksordner werden in der oben gezeigten Reihenfolge durchsucht.</p>
+<p>Wenn ein Skript beispielsweise die Zeile <code>#Include &lt;MeineBibl&gt;</code> enthält, sucht das Programm nach einer Datei namens "MeineBibl.ahk" in der Benutzerbibliothek. Wenn sie dort nicht ist, wird die Standardbibliothek durchsucht. Wenn sie dort auch nicht gefunden wurde und enthält der Funktionsname einen Unterstrich (z. B. <code>MeinPräfix_MeineFunk</code>), durchsucht das Programm beide Bibliotheken nach einer Datei namens <code>MeinPräfix.ahk</code> und lädt sie, falls sie existiert. Wenn <code>MeinPräfix.ahk</code> geladen wurde, sind sowohl die Funktion <code>MeinPräfix_MeineFunk</code> als auch andere verwandte Funktionen, deren Namen mit <code>MeinPräfix_</code> beginnen, zugänglich.</p>
+<p>Obwohl eine Bibliotheksdatei gemäß Konvention grundsätzlich nur eine einzelne Funktion oder Klasse mit demselben Namen wie die Datei enthält, kann sie auch private Funktionen enthalten, die nur von ihr aufgerufen werden. Allerdings sollten solche Funktionen eindeutige Namen haben, weil sie im globalen Namensraum sind; das heißt, dass sie von überall im Skript aufgerufen werden können.</p>
 
 <h2 id="ahk2exe">Ein Skript in eine EXE-Datei umwandeln (Ahk2Exe)</h2>
 <p>Es ist ein Skript-Compiler im Lieferumfang des Programms enthalten (von fincs bereitgestellt und von TAC109 um Features erweitert).</p>
@@ -242,7 +252,7 @@ Standardmäßig befindet sich das CR-Zeichen (Enter) zwischen der vorherigen und
   <tr id="ErrorStdOut">
     <td>/ErrorStdOut<br><br>/ErrorStdOut=<em>Codierung</em></td>
     <td>
-      <p>Sendet alle Syntaxfehler, die den Start eines Skripts verhindern, zur Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details. Diese Option kann mit /iLib kombiniert werden, um die Gültigkeit des Skripts zu überprüfen, ohne es auszuführen.</p>
+      <p>Sendet alle Syntaxfehler, die den Start eines Skripts verhindern, zur Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details.</p>
       <p>Es kann optional eine <a href="commands/FileEncoding.htm">Codierung</a> angegeben werden. <code>/ErrorStdOut=UTF-8</code> beispielsweise kodiert Meldungen als UTF-8, bevor sie in die Standardfehlerausgabe geschrieben werden.</p>
     </td>
     <td>Ja</td>
@@ -260,12 +270,19 @@ Standardmäßig befindet sich das CR-Zeichen (Enter) zwischen der vorherigen und
     </td>
     <td>Nein</td>
   </tr>
+  <tr id="validate">
+    <td>/Validate</td>
+    <td>
+      <p>AutoHotkey lädt das Skript und beendet es dann, bevor es ausgeführt wird.</p>
+      <p>Standardmäßig werden Ladezeitfehler und Warnungen wie üblich angezeigt. Mit der <a href="#ErrorStdOut">/ErrorStdOut</a>-Option können jegliche Fehlermeldungen unterdrückt oder abgefangen werden.</p>
+      <p>Der Prozess-Exitcode ist 0, wenn das Skript erfolgreich geladen wurde, oder ungleich 0, wenn ein Fehler auftrat.</p>
+    </td>
+  </tr>
   <tr>
     <td>/iLib <em>"AusgabeDatei"</em></td>
     <td>
-      <p>AutoHotkey lädt das Skript, ohne es auszuführen. Für jedes Skript, das mithilfe des <a href="Functions.htm#lib">Bibliotheksmechanismus</a> automatisch eingebunden wurde, werden zwei Zeilen in die <em>AusgabeDatei</em> geschrieben. Diese Zeilen werden im folgenden Format geschrieben - dabei ist <em>BiblVerz</em> der vollständige Pfad des Bibliotheksordners und <em>BiblDatei</em> der Dateiname der Bibliothek:</p>
-<pre>#Include BiblVerz\
-#IncludeAgain BiblVerz\BiblDatei.ahk</pre>
+      <p><strong>Veraltet:</strong> Verwenden Sie stattdessen <a href="#validate">/validate</a>.</p>
+      <p>AutoHotkey lädt das Skript, ohne es auszuführen. In früheren Versionen von AutoHotkey wurden Dateinamen von automatisch eingebundenen Dateien in die mit <em>AusgabeDatei</em> angegebene Datei geschrieben, formatiert als #Include-Direktiven.</p>
       <p>Wenn die Ausgabedatei bereits existiert, wird sie überschrieben. <em>AusgabeDatei</em> kann <code>*</code> sein, um die Ausgabe in die Standardausgabe (stdout) zu schreiben.</p>
       <p>Enthält das Skript Syntaxfehler, wird die Ausgabedatei eventuell leer sein. Der Exitcode des Prozesses kann verwendet werden, um diesen Zustand zu erkennen; bei einem Syntaxfehler ist der Exitcode eine 2. Mit der /ErrorStdOut-Option kann die Fehlermeldung unterdrückt oder abgefangen werden.</p>
     </td>
@@ -281,7 +298,7 @@ Standardmäßig befindet sich das CR-Zeichen (Enter) zwischen der vorherigen und
 <p>Der Dateiname <code><i>AutoHotkey</i>.ahk</code> ist abhängig vom Namen der ausführbaren Datei, mit der das Skript gestartet wurde. Wenn Sie beispielsweise AutoHotkey.exe in MeinSkript.exe umbenennen, versucht das Programm <code>MeinSkript.ahk</code> zu finden. Starten Sie AutoHotkeyU32.exe ohne Parameter, sucht das Programm nach AutoHotkeyU32.ahk.</p>
 <p id="stdin">Geben Sie als Dateiname ein Sternchen (*) an, um den Skript-Text aus der Standardeingabe (stdin) zu lesen. Dies hat folgende Auswirkungen:</p>
 <ul>
-  <li>Das <a href="Variables.htm#InitialWorkingDir">anfängliche Arbeitsverzeichnis</a> wird als <a href="Variables.htm#ScriptDir">A_ScriptDir</a> genutzt und dient dazu, die <a href="Functions.htm#lib">lokale Funktionsbibliothek</a> zu lokalisieren.</li>
+  <li>Das <a href="Variables.htm#InitialWorkingDir">anfängliche Arbeitsverzeichnis</a> wird als <a href="Variables.htm#ScriptDir">A_ScriptDir</a> genutzt und dient dazu, den <a href="Scripts.htm#lib">lokalen Lib-Ordner</a> zu lokalisieren.</li>
   <li><a href="Variables.htm#ScriptName">A_ScriptName</a> und <a href="Variables.htm#ScriptFullPath">A_ScriptFullPath</a> enthalten beide "*".</li>
   <li><a href="commands/_SingleInstance.htm">#SingleInstance</a> ist standardmäßig ausgeschaltet.</li>
 </ul>

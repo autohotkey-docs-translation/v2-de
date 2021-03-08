@@ -37,19 +37,18 @@ x := y    <em>; y hat keinen Wert zugewiesen bekommen.</em></pre>
     <p id="VarUnset"><strong>VarUnset</strong>: Warnt vor dem Ausführen des Skripts, wenn die jeweils erste Referenz zu einer Variable nie auf eine der folgenden Arten verwendet wird:</p>
     <ul>
       <li>Als Ziel einer direkten, nicht-dynamischen Zuweisung, wie z. B. <code>MeineVar := ""</code>.</li>
-      <li>Übergabe an einen Ausgabe- oder ByRef-Parameter in einem nicht-dynamischen Funktionsaufruf.</li>
-      <li>Übergabe an IsSet in einem nicht-dynamischen Funktionsaufruf. Zum Beispiel wird ein Skript, das <code>IsSet(MeineBibl_Global)</code> enthält, nicht vor weiteren Referenzen zur gleichen Variable warnen, aber möglicherweise vor anderen Variablen mit dem Namen <code>MeineBibl_Global</code>.</li>
-      <li>Übergabe an ein Parameter eines dynamischen Funktionsaufrufs oder Methodenaufrufs (unabhängig davon, ob es sich um ByRef handelt oder nicht, da dies nicht beim Laden des Skripts ermittelt werden kann).</li>
+      <li>Mit dem <a href="../Variables.htm#ref">Referenzoperator</a> verwendet (z. B. <code>&amp;MeineVar</code>).</li>
     </ul>
-    <p class="warning"><strong>Bekannte Einschränkung:</strong> Obwohl kurzschlussfähige Operatoren wie <code>&amp;&amp;</code>, <code>||</code> und ternäre Operatoren eine Variablenreferenz für eine Zuweisung oder einen ByRef-Parameter erzeugen können, wird derzeit nur die rechte Verzweigung als zugewiesen identifiziert. <code>MouseGetPos(b ? x1 : x2)</code> beispielsweise kann lediglich <code>x2</code> als zugewiesen markieren.</p>
-    <p id="LocalSameAsGlobal"><strong>LocalSameAsGlobal</strong>: Zeigt vor dem Ausführen des Skripts eine Warnung an, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn vergessen wurde, eine globale Variable innerhalb einer Funktion vor dem Zugriffsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden. Diese Warnung wird niemals für Variablen angezeigt, die sich innerhalb einer <a href="../Functions.htm#ForceLocal">Force-Local</a>-Funktion befinden.</p>
+    <p id="LocalSameAsGlobal"><strong>LocalSameAsGlobal</strong>: Zeigt vor dem Ausführen des Skripts eine Warnung an, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn vergessen wurde, eine globale Variable innerhalb einer Funktion vor dem Zuweisungsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden.</p>
     <p>Diese Warnung ist standardmäßig deaktiviert.</p>
     <pre>#Warn
 g := 1
 ShowG() {       <em>; Die Warnung wird sogar angezeigt, wenn die Funktion nicht aufgerufen wird.</em>
-    <em>;global g   ; &lt;-- Dies ist erforderlich, um auf die globale Variable zuzugreifen.</em>
-    MsgBox g  <em>; Ohne Deklaration ist "g" eine leere lokale Variable.</em>
-}</pre>
+    <em>;global g   ; &lt;-- Dies ist erforderlich, wenn der globalen Variable etwas zugewiesen werden soll.</em>
+    g := 2
+}
+ShowG
+MsgBox g        <em>; Ohne die Deklaration wird das obige einem lokalen "g" zugewiesen.</em></pre>
     <p id="Unreachable"><strong>Unreachable</strong>: Warnt vor dem Ausführen des Skripts, wenn unmittelbar nach einem <code>Return</code>, <code>Break</code>, <code>Continue</code>, <code>Throw</code> oder <code>Goto</code> eine Zeile auf gleicher Verschachtelungsebene erfolgt, es sei denn, diese Zeile ist das Ziel eines Labels. Zeilen dieser Art werden niemals ausgeführt.</p>
     <p>Wenn der Code nicht erreichbar sein soll - z. B. wenn ein <code>return</code> verwendet wurde, um einen Codeblock vorübergehend zu deaktivieren, oder wenn ein Hotkey oder Hotstring durch Auskommentieren vorübergehend deaktiviert wurde - sollten Sie in Erwägung ziehen, den nicht erreichbaren Code ebenfalls auszukommentieren. Sie können die Warnung auch unterdrücken, indem Sie ein <a href="../misc/Labels.htm">Label</a> über der ersten nicht erreichbaren Zeile definieren.</p>
     <p><strong>All</strong>: Wendet den angegebenen <em>WarnungModus</em> auf alle unterstützten Warnungstypen an.</p>

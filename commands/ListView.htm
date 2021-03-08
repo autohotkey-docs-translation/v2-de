@@ -33,13 +33,13 @@
 <pre class="Syntax" id="GuiAdd">LV := GuiObj.<span class="func">Add</span>("ListView", Optionen, ["SpalteTitel1","SpalteTitel2","..."])</pre>
 <p>Hier sehen Sie ein funktionierendes Skript, das alle Dateien im Ordner "Eigene Dateien" des Benutzers in einer ListView auflistet:</p>
 <pre><em>; Das Fenster erstellen:</em>
-MeineGui := Gui.New()
+MeineGui := Gui()
 
 <em>; Zweispaltige ListView erstellen:</em>
 LV := MeineGui.Add("ListView", "r20 w700", ["Name","Größe (KB)"])
 
 <em>; Skript benachrichtigen, wenn der Benutzer eine Zeile doppelt anklickt:</em>
-LV.OnEvent("DoubleClick", "LV_DoubleClick")
+LV.OnEvent("DoubleClick", LV_DoubleClick)
 
 <em>; Name und Größe jeder Datei in einem Ordner in die ListView einfügen:</em>
 Loop Files, A_MyDocuments "\*.*"
@@ -389,7 +389,7 @@ IstAbgehakt := (ElementZustand &gt;&gt; 12) - 1  <em>; Setzt IstAbgehakt auf 1 (
 
 <h2 id="IL">ImageLists</h2>
 <p>Eine ImageList (übersetzt Bildliste) ist eine Gruppe von gleich großen Symbolen, die im Speicher abgelegt sind. Zu Beginn ist jede ImageList leer. Das Skript ruft IL_Add wiederholt auf, um die Liste mit Symbolen zu füllen, dabei wird jedem Symbol eine fortlaufende Nummer zugewiesen, beginnend bei 1. Mithilfe dieser Nummer kann das Skript ein bestimmtes Symbol in einer Zeile oder Spaltenüberschrift darstellen. Hier sehen Sie ein funktionierendes Skript, das zeigt, wie Symbole in den Zeilen einer ListView eingefügt werden können:</p>
-<pre>MeineGui := Gui.New()  <em>; Ein MeineGui-Fenster erstellen.</em>
+<pre>MeineGui := Gui()  <em>; Ein MeineGui-Fenster erstellen.</em>
 LV := MeineGui.Add("ListView", "h200 w180", ["Symbol &amp; Nummer","Beschreibung"])  <em>; Eine ListView erstellen.</em>
 ImageListID := <a href="#IL_Create">IL_Create</a>(10)  <em>; Eine ImageList erstellen, die 10 kleine Symbole fassen kann.</em>
 LV.<a href="#SetImageList">SetImageList</a>(ImageListID)  <em>; Die obige ImageList der aktuellen ListView zuweisen.</em>
@@ -461,7 +461,7 @@ MeineGui.Show</pre>
 <p><a href="../objects/Gui.htm#Submit">Gui.Submit</a> funktioniert nicht mit einem ListView-Steuerelement.</p>
 <p>Nachdem eine Spalte sortiert wurde - z. B. durch Anklicken der Spaltenüberschrift oder Aufrufen von <code>LV.<a href="#ModifyCol">ModifyCol</a>(1, "Sort")</code> - werden alle danach hinzugefügten Zeilen am unteren Ende der Liste erscheinen, anstatt die aktuelle Sortierreihenfolge zu berücksichtigen. Es sei denn, man verwendet die Styles <a href="#Sort">Sort</a> und <a href="#SortDesc">SortDesc</a>, dann werden neu hinzugefügte Zeilen an die korrekten Positionen verschoben.</p>
 <p id="Enter">Um einen <kbd>Enter</kbd>-Tastendruck in einer fokussierten ListView zu erfassen, verwenden Sie eine <a href="GuiControls.htm#DefaultButton">Standardschaltfläche</a> (die bei Bedarf versteckt werden kann). Zum Beispiel:</p>
-<pre>MeineGui.Add("Button", "Hidden Default", "OK").OnEvent("Click", "LV_Enter")
+<pre>MeineGui.Add("Button", "Hidden Default", "OK").OnEvent("Click", LV_Enter)
 ...
 LV_Enter(*) {
     global
@@ -478,7 +478,7 @@ LV_Enter(*) {
 <p>Um eine ListView zum Beispiel größer/kleiner zu machen, zu verstecken, oder um die Schrift einer ListView zu ändern, siehe <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>.</p>
 <p>Um Texte aus externen ListViews (das sind solche, die nicht zum Skript gehören) zu extrahieren, verwenden Sie <a href="ListViewGetContent.htm">ListViewGetContent</a>.</p>
 <h2 id="Related">Siehe auch</h2>
-<p><a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm">Andere Steuerelemente</a>, <a href="../objects/Gui.htm#New">Gui.New</a>, <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu-Ereignis</a>, <a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../misc/Styles.htm#ListView">ListView-Styles</a></p>
+<p><a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm">Andere Steuerelemente</a>, <a href="../objects/Gui.htm#Call">Gui()</a>, <a href="../objects/GuiOnEvent.htm#ContextMenu">ContextMenu-Ereignis</a>, <a href="../objects/Gui.htm">Gui-Objekt</a>, <a href="../objects/GuiControl.htm">GuiControl-Objekt</a>, <a href="../misc/Styles.htm#ListView">ListView-Styles</a></p>
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExAllRows">
@@ -497,7 +497,7 @@ LV.Modify(0, "-Check")  <em>; Die Häkchen von allen <a href="#Checked">Checkbox
 <div class="ex" id="ExAdvanced">
 <p><a class="ex_number" href="#ExAdvanced"></a> Das folgende Beispiel ist ein funktionierendes Skript, das umfangreicher als das Beispiel ganz oben ist. Es zeigt die Dateien eines vom Benutzer ausgewählten Ordners an und weist jeder Datei je nach Typ das entsprechende Symbol zu. Der Benutzer kann eine Datei doppelt anklicken, um sie zu öffnen, oder einen Rechtsklick auf eine oder mehrere Dateien machen, um ein Kontextmenü anzuzeigen.</p>
 <pre><em>; Ein GUI-Fenster erstellen:</em>
-MeineGui := Gui.New("+Resize")  <em>; Dem Benutzer erlauben, das Fenster zu maximieren oder dessen Größe anzupassen.</em>
+MeineGui := Gui("+Resize")  <em>; Dem Benutzer erlauben, das Fenster zu maximieren oder dessen Größe anzupassen.</em>
 
 <em>; Einige Schaltflächen erstellen:</em>
 B1 := MeineGui.Add("Button", "Default", "Ordner laden")
@@ -517,14 +517,14 @@ ImageListID2 := IL_Create(10, 10, true)  <em>; Eine Liste von großen Symbolen, 
 LV.SetImageList(ImageListID2)
 
 <em>; Steuerelement-Ereignisse hinzufügen:</em>
-LV.OnEvent("<a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>", "StarteDatei")
-LV.OnEvent("<a href="../objects/GuiOnEvent.htm#Ctrl-ContextMenu">ContextMenu</a>", "ZeigeKontextmenü")
-B1.OnEvent("Click", Func("LadeOrdner").bind(ImageListID1, ImageListID2))
+LV.OnEvent("<a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>", StarteDatei)
+LV.OnEvent("<a href="../objects/GuiOnEvent.htm#Ctrl-ContextMenu">ContextMenu</a>", ZeigeKontextmenü)
+B1.OnEvent("Click", LadeOrdner.bind(ImageListID1, ImageListID2))
 B2.OnEvent("Click", (*) =&gt; <a href="#Delete">LV.Delete</a>())
-B3.OnEvent("Click", "WechsleAnsicht")
+B3.OnEvent("Click", WechsleAnsicht)
 
 <em>; Fenster-Ereignisse hinzufügen:</em>
-MeineGui.OnEvent("Size", "Gui_Size")
+MeineGui.OnEvent("Size", Gui_Size)
 
 <em>; Das Fenster anzeigen:</em>
 MeineGui.Show()
@@ -532,7 +532,7 @@ MeineGui.Show()
 LadeOrdner(ImageListID1, ImageListID2, this, *)
 {
     static SymbolMap := Map()
-    LV := this.Gui["LV"]
+    local LV := this.Gui["LV"]  <em>; In diesem Fall nicht unbedingt erforderlich, da die globale LV verfügbar ist.</em>
     this.Gui.Opt("+OwnDialogs")  <em>; Benutzer zwingen, das folgende Dialogfenster zu schließen, bevor er das Hauptfenster nutzen kann.</em>
     Ordner := DirSelect(, 3, "Wählen Sie einen Ordner aus, das eingelesen werden soll:")
     if not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
@@ -556,7 +556,7 @@ LadeOrdner(ImageListID1, ImageListID2, this, *)
         <em>; Eindeutige Endungs-ID erstellen, um Zeichen zu vermeiden, die in Variablennamen
         ; illegal sind, wie z. B. Bindestriche. Zudem ist diese Methode leistungsfähiger,
         ; weil das Finden eines Elements in einem Array keine Such-Schleife erfordert.</em>
-        SplitPath(DateiName,,, DateiEndung)  <em>; Endung der Datei ermitteln.</em>
+        SplitPath(DateiName,,, &amp;DateiEndung)  <em>; Endung der Datei ermitteln.</em>
         if DateiEndung ~= "^(EXE|ICO|ANI|CUR)$"
         {
             EndungID := DateiEndung  <em>; Spezial-ID als Platzhalter.</em>
@@ -610,7 +610,7 @@ LadeOrdner(ImageListID1, ImageListID2, this, *)
 WechsleAnsicht(this, *)
 {
     static IconView := false
-    LV := this.Gui["LV"]
+    local LV := this.Gui["LV"]
     if not IconView
         LV.Opt("+Icon")        <em>; Zur Symbolansicht wechseln.</em>
     else
@@ -620,7 +620,7 @@ WechsleAnsicht(this, *)
 
 StarteDatei(LV, ZeileNummer)
 {
-    DateiName := <a href="#GetText">LV.GetText</a>(ZeileNummer, 1) <em>; Text des ersten Feldes abrufen.</em>
+    DateiName := LV.GetText(ZeileNummer, 1) <em>; Text des ersten Feldes abrufen.</em>
     DateiVerz := LV.GetText(ZeileNummer, 2)  <em>; Text des zweiten Feldes abrufen.</em>
     try Run(DateiVerz "\" DateiName)
     if A_LastError
@@ -630,14 +630,14 @@ StarteDatei(LV, ZeileNummer)
 ZeigeKontextmenü(LV, Element, IstRechtsklick, X, Y)  <em>; Bei einem Rechtsklick oder MENÜ-Tastendruck.</em>
 {
     <em>; Ein Popup-Menü erstellen, das als Kontextmenü verwendet wird:</em>
-    static Kontextmenü := <a href="../objects/Menu.htm#New">Menu.New</a>()
-    <a href="../objects/Menu.htm#Add">Kontextmenü.Add</a>("Öffnen", "ÖffnenOderEigenschaften")
-    Kontextmenü.Add("Eigenschaften", "ÖffnenOderEigenschaften")
-    Kontextmenü.Add("Aus der ListView entfernen", "ZeilenLöschen")
-    <a href="../objects/Menu.htm#Default">Kontextmenü.Default</a> := "Öffnen"  <em>; "Öffnen" in fetter Schrift darstellen, um zu kennzeichnen, dass ein Doppelklick dasselbe bewirkt.
+    Kontextmenü := Menu()
+    Kontextmenü.Add("Öffnen", ÖffnenOderEigenschaften)
+    Kontextmenü.Add("Eigenschaften", ÖffnenOderEigenschaften)
+    Kontextmenü.Add("Aus der ListView entfernen", ZeilenLöschen)
+    Kontextmenü.Default := "Öffnen"  <em>; "Öffnen" in fetter Schrift darstellen, um zu kennzeichnen, dass ein Doppelklick dasselbe bewirkt.
     ; Das Menü auf den Koordinaten X und Y anzeigen. Diese Koordinaten
     ; sind auch dann korrekt, wenn der Benutzer die MENÜ-Taste drückt:</em>
-    <a href="../objects/Menu.htm#Show">Kontextmenü.Show</a>(X, Y)
+    Kontextmenü.Show(X, Y)
 
     ÖffnenOderEigenschaften(PunktName, *)  <em>; Der Benutzer hat "Öffnen" oder "Eigenschaften" im Kontextmenü ausgewählt.</em>
     {

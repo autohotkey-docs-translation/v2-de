@@ -25,7 +25,7 @@
   <li><a href="#Features">Sonstige Features</a></li>
   <li><a href="#Wheel">Mausrad-Hotkeys</a></li>
   <li><a href="#Remarks">Tipps und Hinweise</a></li>
-  <li><a href="#AltTabDetail">Alt-Tab-Hotkeys</a></li>
+  <li><a href="#alttab">Alt-Tab-Hotkeys</a></li>
   <li><a href="#Function">Benannte Funktions-Hotkeys</a></li>
 </ul>
 
@@ -191,10 +191,10 @@ AppsKey &amp; -::MsgBox "Hotkey aktiviert."
 <h2 id="Features">Sonstige Features</h2>
 <p><strong>NUM-, FESTSTELL- und ROLLEN-Taste</strong>: Diese Tasten können gezwungen werden, "AlwaysOn" (immer an) oder "AlwaysOff" (immer aus) zu sein. Zum Beispiel: <code><a href="commands/SetNumScrollCapsLockState.htm">SetNumLockState</a> "AlwaysOn"</code>.</p>
 <p><strong>Explorer-Hotkeys überschreiben</strong>: Die vordefinierten Windows-Hotkeys wie <kbd>Win</kbd>+<kbd>E</kbd> (#e) und <kbd>Win</kbd>+<kbd>R</kbd> (#r) können jeweils mit einer beliebigen benutzerdefinierten Aktion überschrieben werden. Siehe "<a href="misc/Override.htm">Überschreiben oder Deaktivieren von Hotkeys</a>" für Details.</p>
-<p id="alttab"><strong>Alt-Tab ersetzen</strong>: Hotkeys können eine alternative Methode für Alt-Tab bereitstellen. Zum Beispiel bewirken die folgenden zwei Hotkeys, dass die Alt-Tab-Prozedur mit der rechten Hand durchgeführt werden kann:</p>
+<p><strong>Alt-Tab ersetzen</strong>: Hotkeys können eine alternative Methode für Alt-Tab bereitstellen. Zum Beispiel bewirken die folgenden zwei Hotkeys, dass die Alt-Tab-Prozedur mit der rechten Hand durchgeführt werden kann:</p>
 <pre>RControl &amp; RShift::AltTab  <em>; Halten Sie rechte STRG gedrückt und drücken Sie mehrmals rechte UMSCHALT, um durchzuschalten.</em>
 RControl &amp; Enter::ShiftAltTab  <em>; Halten Sie weiter rechte STRG gedrückt und drücken Sie ENTER, um in die andere Richtung durchzuschalten.</em></pre>
-<p>Siehe <a href="#AltTabDetail">Alt-Tab</a> für weitere Details.</p>
+<p>Siehe <a href="#alttab">Alt-Tab</a> für weitere Details.</p>
 
 <h2 id="Wheel">Mausrad-Hotkeys</h2>
 <p>Mit den Tastennamen WheelDown und WheelUp können Hotkeys erstellt werden, die durch Drehen des Mausrads ausgelöst werden können. Hier einige Beispiele für Mausrad-Hotkeys:</p>
@@ -255,12 +255,13 @@ RButton &amp; WheelUp::MsgBox "Sie haben das Mausrad nach oben gedreht, während
 <p>Häufig werden Hotkeys dazu verwendet, eine wiederholende Aktion, z. B. eine Reihe von Tastendrücken oder Mausklicks, zu starten und zu stoppen. Ein Beispiel dazu findet man in den <a href="FAQ.htm#repeat">Häufig gestellten Fragen (FAQ)</a>.</p>
 <p>Jedes Skript kann quasi aus <a href="misc/Threads.htm">mehreren Threads</a> bestehen, dadurch ist es möglich, dass ein neuer Hotkey gestartet werden kann, während eine andere Hotkey-Subroutine noch läuft. Neue Hotkeys können jederzeit ausgelöst werden, egal ob ein anderer Hotkey beispielsweise ein <a href="commands/MsgBox.htm">Mitteilungsfenster</a> anzeigt.</p>
 
-<h2 id="AltTabDetail">Alt-Tab-Hotkeys</h2>
-<p>Jeder Alt-Tab-Hotkey muss aus zwei Tasten bestehen, die mithilfe eines Und-Zeichens (&amp;) kombiniert wurden. Das folgende Beispiel zeigt, wie man mit der rechten <kbd>Alt</kbd>-Taste und den Tasten <kbd>J</kbd> oder <kbd>K</kbd> im Alt-Tab-Menü navigieren kann:</p>
+<h2 id="alttab"><span id="AltTabDetail"></span>Alt-Tab-Hotkeys</h2>
+<p>Alt-Tab-Hotkeys vereinfachen die Neubelegung der Alt-Tab-Hotkeys des Systems, die zum Aufrufen eines Menüs für den Wechsel von Aufgaben (Aktivieren von Fenstern) verwendet werden.</p>
+<p>Jeder Alt-Tab-Hotkey muss entweder eine einzelne Taste sein, oder eine Kombination aus zwei Tasten, was typischerweise über das Und-Zeichen (&amp;) erreicht wird. Das folgende Beispiel zeigt, wie man mit der rechten <kbd>Alt</kbd>-Taste und den Tasten <kbd>J</kbd> oder <kbd>K</kbd> im Alt-Tab-Menü navigieren kann:</p>
 <pre>RAlt &amp; j::AltTab
 RAlt &amp; k::ShiftAltTab</pre>
 <p><em>AltTab</em> und <em>ShiftAltTab</em> gehören zu speziellen Befehlen, die nur erkannt werden, wenn sie in Verbindung mit einem einzeiligen Hotkey benutzt werden. Hier die komplette Liste:</p>
-<p><strong>AltTab</strong>: Navigiert im Alt-Tab-Menü nach rechts, sofern das Menü sichtbar ist. Ansonsten wird das Menü geöffnet (nur wenn der Hotkey aus zwei mit "&amp;" kombinierten Tasten besteht, sonst passiert nichts).</p>
+<p><strong>AltTab</strong>: Navigiert im Alt-Tab-Menü nach rechts, sofern das Menü sichtbar ist. Ansonsten wird das Menü geöffnet (nur wenn der Hotkey eine Kombination aus zwei Tasten ist, sonst passiert nichts).</p>
 <p><strong>ShiftAltTab</strong>: Das gleiche wie oben, aber in die andere Richtung.</p>
 <p><strong>AltTabMenu</strong>: Zeigt oder versteckt das Alt-Tab-Menü.</p>
 <p><strong>AltTabAndMenu</strong>: Navigiert im Alt-Tab-Menü nach rechts, sofern das Menü sichtbar ist. Ansonsten wird das Menü geöffnet.</p>
@@ -269,22 +270,26 @@ RAlt &amp; k::ShiftAltTab</pre>
 <pre>MButton::AltTabMenu
 WheelDown::AltTab
 WheelUp::ShiftAltTab</pre>
-<p>Mit einem Hotkey wie der Folgende kann ein via Hotkey aufgerufenes Alt-Tab-Menü geschlossen werden, ohne dass das ausgewählte Fenster aktiviert werden muss. Möglicherweise sind Anpassungen notwendig, je nachdem: 1) womit das Alt-Tab-Menü ursprünglich geöffnet wurde; und 2) ob das Skript den <a href="commands/_InstallKeybdHook.htm">Tastatur-Hook</a> installiert hat.</p>
+<p>Um das Alt-Tab-Menü zu schließen, ohne das ausgewählte Fenster zu aktivieren, drücken oder senden Sie <kbd>Esc</kbd>. Das folgende Beispiel zeigt, wie man durch Halten der linken <kbd>Strg</kbd>-Taste und Drücken von <kbd>Feststell</kbd> das Menü öffnen und durchschalten kann, und wie man durch Loslassen der linken <kbd>Strg</kbd>-Taste das ausgewählte Fenster aktivieren und durch Drücken von <kbd>MButton</kbd> das Menü schließen kann. Definieren Sie die <a href="#AltTabWindow">AltTabWindow</a>-Fenstergruppe wie unten gezeigt, bevor Sie dieses Beispiel ausführen.</p>
 <pre>LCtrl &amp; CapsLock::AltTab
-<strong>!</strong>MButton::  <em>; Mittlere Maustaste. Das <strong>!</strong>-Präfix bewirkt, dass der Hotkey nur ausgelöst werden kann, wenn die ALT-Taste unten ist (das in der Regel der Fall ist, wenn das Alt-Tab-Menü sichtbar ist).</em>
-{
-    if WinExist("ahk_class #32771")  <em>; Setzt voraus, dass das Alt-Tab-Menü auf dem Bildschirm vorhanden ist.</em>
-        Send "<strong>!</strong>{Escape}{Alt up}"
-}</pre>
+#HotIf WinExist("ahk_group AltTabWindow")  <em>; Setzt voraus, dass das Alt-Tab-Menü auf dem Bildschirm vorhanden ist.</em>
+*MButton::Send "{Blind}{Escape}"  <em>; Das *-Präfix ermöglicht dessen Auslösung, egal ob die Alt-Taste gedrückt gehalten wird oder nicht.</em>
+#HotIf</pre>
+<p>Wenn das Skript <code>{Alt Down}</code> sendet (z. B. um das Alt-Tab-Menü aufzurufen), muss eventuell auch <code>{Alt Up}</code> gesendet werden, wie im Beispiel weiter unten gezeigt.</p>
+
+<h3 id="AltTabRemarks">Allgemeine Bemerkungen</h3>
 <p>Zurzeit müssen alle speziellen Alt-Tab-Aktionen direkt einem Hotkey wie oben zugewiesen werden (das heißt, dass sie nicht wie Funktionen behandelt werden können). Sie werden <span class="red">nicht von <a href="commands/_HotIf.htm">#HotIf</a> beeinflusst</span>.</p>
-<p>Benutzerdefinierte Alt-Tab-Aktionen können auch via Hotkeys erstellt werden. Das folgende Beispiel zeigt, wie man mit <kbd>F1</kbd> das Menü öffnen und durchschalten kann und wie man mit <kbd>F2</kbd> das ausgewählte Fenster aktivieren kann (oder wie man mit <kbd>Esc</kbd> das Menü schließen kann):</p>
+<p id="AltTabWindow">Benutzerdefinierte Alt-Tab-Aktionen können auch via Hotkeys erstellt werden. Da sich die Identität des Alt-Tab-Menüs zwischen den Betriebssystemversionen unterscheidet, empfiehlt es sich, eine Fenstergruppe wie unten gezeigt zu verwenden. Bei den Beispielen oben und unten, die <code>ahk_group AltTabWindow</code> verwenden, wird erwartet, dass diese Fenstergruppe im <a href="Scripts.htm#auto">automatisch ausführenden Thread</a> definiert wird. Alternativ kann <code>ahk_group AltTabWindow</code> je nach System mit dem geeigneten <code>ahk_class</code>-Kriterium ersetzt werden.</p>
+<pre>GroupAdd "AltTabWindow", "ahk_class MultitaskingViewFrame"  <em>; Windows 10</em>
+GroupAdd "AltTabWindow", "ahk_class TaskSwitcherWnd"  <em>; Windows Vista, 7, 8.1</em>
+GroupAdd "AltTabWindow", "ahk_class #32771"  <em>; Älter, oder mit aktiviertem klassischen Alt-Tab</em></pre>
+<p>Das folgende Beispiel zeigt, wie man mit <kbd>F1</kbd> das Menü öffnen und durchschalten kann und wie man mit <kbd>F2</kbd> das ausgewählte Fenster aktivieren und mit <kbd>Esc</kbd> das Menü schließen kann:</p>
 <pre>*F1::Send "{Alt down}{tab}" <em>; Sternchen ist in diesem Fall notwendig.</em>
 !F2::Send "{Alt up}"  <em>; Lässt die ALT-Taste los, um das ausgewählte Fenster zu aktivieren.</em>
-~*Escape::
-{
-    if WinExist("ahk_class #32771")
-        Send "{Escape}{Alt up}"  <em>; Schließt das Menü, ohne das ausgewählte Fenster zu aktivieren.</em>
-}</pre>
+#HotIf WinExist("ahk_group AltTabWindow")
+~*Esc::Send "{Alt up}"  <em>; Wenn das Menü abgebrochen wird, die Alt-Taste automatisch loslassen.
+;*Esc::Send "{Esc}{Alt up}"  ; Ohne Tilde (~) müsste Escape gesendet werden.</em>
+#HotIf</pre>
 
 <h2 id="Function">Benannte Funktions-Hotkeys</h2>
 <p>Wenn die Funktion eines Hotkeys aufgerufen werden soll, ohne den Hotkey selbst auszulösen, können Sie einem oder mehreren Hotkeys eine benannte <a href="Functions.htm">Funktion</a> zuweisen, indem Sie sie einfach unterhalb des Doppelpunktpaares definieren. Zum Beispiel:</p>
@@ -296,7 +301,7 @@ WheelUp::ShiftAltTab</pre>
     editor_ordner_öffnen(ThisHotkey)
     {
         pfad := WinGetTitle("A")
-        if RegExMatch(pfad, "\*?\K(.*)\\[^\\]+(?= [-*] )", pfad)
+        if RegExMatch(pfad, "\*?\K(.*)\\[^\\]+(?= [-*] )", &amp;pfad)
             if (FileExist(pfad[0]) &amp;&amp; ThisHotkey = "^+e")
                 Run Format('explorer.exe /select,"{1}"', pfad[0])
             else

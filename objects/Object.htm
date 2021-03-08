@@ -15,40 +15,41 @@
 <h1>Object</h1>
 <pre class="NoIndent">class Object extends Any</pre>
 
-<p><strong>Object</strong> ist die Basisklasse, von der andere AutoHotkey-Objektklassen abgeleitet sind. Jede Instanz von Object besteht aus folgendem:</p>
-<ul>
-  <li>Eigene Eigenschaften: eine Reihe von Eigenschaften, die zu diesem spezifischen Objekt gehören.</li>
-  <li>Eigene Methoden: eine Reihe von Methoden, die zu diesem spezifischen Objekt gehören.</li>
-  <li>Ein Base-Objekt, von dem Eigenschaften und Methoden geerbt werden.</li>
-</ul>
-<p>Es gibt Werteigenschaften und dynamische Eigenschaften. Werteigenschaften enthalten lediglich einen Wert. Dynamische Eigenschaften enthalten keinen Wert, sondern rufen stattdessen eine <em>Getter</em>- oder <em>Setter</em>-Funktion auf, wenn sie zugegriffen werden. Der <em>Getter</em> oder <em>Setter</em> kann via abgeleitetes Objekt überschrieben werden (am einfachsten definiert man diese innerhalb einer Klasse).</p>
+<p><strong>Object</strong> ist die Basisklasse, von der andere AutoHotkey-Objektklassen abgeleitet sind. Jede Instanz von Object besteht aus einem Satz von "eigenen Eigenschaften" und einem Base-Objekt, von dem weitere Eigenschaften geerbt wurden. Objects haben auch Methoden, aber das sind nur Eigenschaften, die aufgerufen werden können.</p>
+<p>Es gibt Werteigenschaften und dynamische Eigenschaften. Werteigenschaften enthalten lediglich einen Wert. Dynamische Eigenschaften enthalten keinen Wert, sondern rufen je nach Zugriffsart (Get, Set oder Call) eine <em>Akzessorfunktion</em> auf.</p>
 <p>"Obj" wird hier stellvertretend für eine beliebige Instanz der Object-Klasse verwendet.</p>
 <p>Alle Instanzen von Object basieren auf <code>Object.Prototype</code>, das wiederum auf <code>Any.Prototype</code> basiert. Zusätzlich zu den Methoden und Eigenschaften, die von <a href="Any.htm">Any</a> geerbt werden, haben Object-Objekte die folgenden vordefinierten Methoden und Eigenschaften:</p>
 <p><strong>Methoden:</strong></p>
 <ul>
 	<li><a href="#Clone">Clone</a></li>
-  <li><a href="#DefineMethod">DefineMethod</a></li>
   <li><a href="#DefineProp">DefineProp</a></li>
-  <li><a href="#DeleteMethod">DeleteMethod</a></li>
   <li><a href="#DeleteProp">DeleteProp</a></li>
   <li><a href="#GetOwnPropDesc">GetOwnPropDesc</a></li>
-  <li><a href="#HasOwnMethod">HasOwnMethod</a></li>
   <li><a href="#HasOwnProp">HasOwnProp</a></li>
-  <li><a href="#OwnMethods">OwnMethods</a></li>
   <li><a href="#OwnProps">OwnProps</a></li>
 </ul>
 <p><strong>Eigenschaften:</strong></p>
 <ul>
 	<li><a href="#Base">Base</a></li>
 </ul>
+<p><strong>Statische Methoden:</strong></p>
+<ul>
+  <li><a href="#Call">Call</a></li>
+</ul>
 <p><strong>Funktionen:</strong></p>
 <ul>
-  <li><a href="#Object">Object</a>: Erstellt ein Object-Objekt aus einer Liste von "Name, Wert"-Paaren.</li>
 	<li><a href="#SetBase">ObjSetBase</a>: Setzt das <a href="../Objects.htm#delegation">Base-Objekt</a> des Objekts.</li>
   <li><a href="#GetCapacity">ObjGetCapacity</a>, <a href="#SetCapacity">ObjSetCapacity</a>: Ermittelt oder setzt die Kapazität von Eigenschaften eines Objekts.</li>
   <li><a href="#OwnPropCount">ObjOwnPropCount</a>: Ruft die Anzahl von eigenen Eigenschaften ab, die in einem Objekt enthalten sind.</li>
-  <li>ObjHasOwnProp, ObjOwnMethods, ObjOwnProps: Äquivalent zur entsprechenden vordefinierten Methode, kann aber nicht überschrieben werden.</li>
+  <li>ObjHasOwnProp, ObjOwnProps: Äquivalent zur entsprechenden vordefinierten Methode, kann aber nicht überschrieben werden.</li>
 </ul>
+
+<h2 id="StaticMethods">Statische Methoden</h2>
+
+<div class="methodShort" id="Call"><h2>Call</h2>
+<p>Erstellt ein neues Object.</p>
+<pre class="Syntax">Obj := <span class="func">Object</span>()</pre>
+</div>
 
 <h2 id="Methods">Methoden</h2>
 
@@ -58,28 +59,6 @@
 <p>Jede Eigenschaft oder Methode, die dem Objekt gehört, wird in den Klon kopiert. Objekt<em>referenzen</em> werden kopiert (wie bei einer normalen Zuweisung), nicht die Objekte selbst;mit anderen Worten, wenn eine Eigenschaft eine Referenz zu einem Objekt enthält, enthält der Klon eine Referenz zum gleichen Objekt.</p>
 <p>Dynamische Eigenschaften werden kopiert, nicht aufgerufen.</p>
 <p>Der Klon hat das gleiche Base-Objekt wie das Originalobjekt.</p>
-</div>
-
-<div class="methodShort" id="DefineMethod"><h2>DefineMethod</h2>
-<p>Definiert eine neue Methode.</p>
-<pre class="Syntax">Obj.<span class="func">DefineMethod</span>(Name, MethodenFunk)</pre>
-<dl>
-  <dt>Name</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der Name der Methode.</p>
-  </dd>
-  <dt>MethodenFunk</dt>
-  <dd>
-    <p>Typ: <a href="Functor.htm">Funktionsobjekt</a></p>
-    <p>Die Implementierung der Methode. Die Funktion muss mindestens einen Parameter akzeptieren, der eine Referenz zum Zielobjekt des Methodenaufrufs erhält. Dieser Parameter wird automatisch mit dem Namen <code>this</code> definiert, wenn die Methode via Klassendefinition erzeugt wird.</p>
-  </dd>
-  <dt>Rückgabewert</dt>
-  <dd>
-    <p>Das Zielobjekt (<em>Obj</em>).</p>
-  </dd>
-</dl>
-<p>Die neue Methode gehört <em>Obj</em>, kann aber von allen Objekten geerbt werden, die <em>Obj</em> als Base verwenden. Wenn <em>Obj</em> eine Klasse ist, gilt die neue Methode nur für die Klasse selbst und die Unterklassen (das heißt, sie ist statisch). Um eine Methode für alle Instanzen einer Klasse zu definieren, können Sie <em>Obj</em> zum <code>Prototyp</code> der Klasse machen.</p>
 </div>
 
 <div class="methodShort" id="DefineProp"><h2>DefineProp</h2>
@@ -97,6 +76,7 @@
     <p>Ein Objekt mit eine der folgenden eigenen Eigenschaften, oder sowohl <em>Get</em> als auch <em>Set</em>:</p>
     <p><code>Get</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, wenn der Wert der Eigenschaft abgerufen wird.</p>
     <p><code>Set</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, wenn der Eigenschaft ein Wert zugewiesen wird. Der zweite Parameter ist der Wert, der zugewiesen wird.</p>
+    <p><code>Call</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen werden soll, wenn die Eigenschaft aufgerufen wird. </p>
     <p><code>Value</code>: Ein beliebiger Wert, der der Eigenschaft zugewiesen werden soll.</p>
   </dd>
   <dt>Rückgabewert</dt>
@@ -104,22 +84,15 @@
     <p>Das Zielobjekt (<em>Obj</em>).</p>
   </dd>
 </dl>
-<p>Diese Methode kann verwendet werden, um eine Werteigenschaft in eine dynamische Eigenschaft umzuwandeln oder umgekehrt, aber es ist nicht möglich, sowohl einen Wert als auch einen Getter/Setter anzugeben.</p>
-<p>Wenn nur <em>Get</em> oder <em>Set</em> definiert ist, kann dessen Gegenstück von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist, ist die Eigenschaft schreibgeschützt (der Versuch, die Eigenschaft zu setzen, löst eine Ausnahme aus).</p>
-<p>Wie bei allen Methoden ist <code>this</code> der erste Parameter von <em>Get</em> oder <em>Set</em> (das Zielobjekt). Bei <em>Set</em> ist <code>value</code> der zweite Parameter (der Wert, der zugewiesen wird). Diese Parameter werden automatisch von Methoden- und Eigenschaftsdefinitionen innerhalb einer Klasse definiert, müssen aber bei Verwendung normaler Funktionen explizit definiert werden.</p>
+<p>Diese Methode kann verwendet werden, um eine Werteigenschaft in eine dynamische Eigenschaft umzuwandeln oder umgekehrt, aber es ist nicht möglich, sowohl einen Wert als auch Akzessorfunktionen anzugeben.</p>
+<p>Wenn eine der Akzessorfunktionen weggelassen wird, wird das Verhalten von einem Base-Objekt geerbt.</p>
+<ul>
+  <li>Eine geerbte Werteigenschaft ist äquivalent zu einem Satz von Akzessorfunktionen, die den Wert zurückgeben oder aufrufen, oder einen neuen Wert in <code>this</code> speichern. Beachten Sie, dass ein neuer Wert jede dynamische Eigenschaft in <code>this</code> selbst und alle geerbten Akzessorfunktionen überschreiben würde.</li>
+  <li>Wenn kein <em>Set</em> oder Wert definiert ist oder geerbt wurde, wird der Versuch, die Eigenschaft zu setzen, eine Ausnahme auslösen.</li>
+  <li>Wenn kein <em>Call</em> definiert ist oder geerbt wurde, kann <em>Get</em> aufgerufen werden, um ein Funktionsobjekt abzurufen, das dann aufgerufen wird.</li>
+</ul>
+<p>Bei Methoden ist <code>this</code> (das Zielobjekt) der erste Parameter von <em>Get</em>, <em>Set</em> oder <em>Call</em>. Bei <em>Set</em> ist <code>value</code> der zweite Parameter (der Wert, der zugewiesen wird). Diese Parameter werden automatisch von Methoden- und Eigenschaftsdefinitionen innerhalb einer Klasse definiert, müssen aber bei Verwendung normaler Funktionen explizit definiert werden. Alle weiteren Parameter, die vom Aufrufer übergeben werden, werden an die Parameterliste angefügt.</p>
 <p>Die Eigenschaften <code>MaxParams</code> und <code>IsVariadic</code> der Funktionsobjekte werden ausgewertet, um festzustellen, ob die Eigenschaft Parameter akzeptieren darf. Wenn <code>MaxParams</code> von <em>get</em> 1 ist oder von <em>set</em> 2 ist und <code>IsVariadic</code> False oder undefiniert ist, kann die Eigenschaft keine Parameter akzeptieren; sie werden stattdessen an die <a href="../Objects.htm#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet.</p>
-</div>
-
-<div class="methodShort" id="DeleteMethod"><h2>DeleteMethod</h2>
-<p>Entfernt eine eigene Methode aus dem Objekt.</p>
-<pre class="Syntax">Obj.<span class="func">DeleteMethod</span>(Name)</pre>
-<dl>
-  <dt>Name</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Namen einer Methode. Wenn das Objekt keine Methode mit diesem Namen besitzt, wird ein <a href="Error.htm#MethodError">MethodError</a> ausgelöst.</p>
-  </dd>
-</dl>
 </div>
 
 <div class="methodShort" id="DeleteProp"><h2>DeleteProp</h2>
@@ -148,9 +121,7 @@
   <dt>Rückgabewert</dt>
   <dd>
     <p>Typ: Object</p>
-    <p>Bei einer dynamischen Eigenschaft ist der Rückgabewert ein neues Objekt mit einer oder beiden der folgenden eigenen Eigenschaften:</p>
-    <p><code>Get</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Wert der Eigenschaft abgerufen wird, sofern dies in <em>Obj</em> definiert ist.</p>
-    <p><code>Set</code>: Das <a href="Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Eigenschaft ein Wert zugewiesen wird, sofern dies in <em>Obj</em> definiert ist.</p>
+    <p>Bei einer dynamischen Eigenschaft ist der Rückgabewert ein neues Objekt mit einer eigenen Eigenschaft für jede Akzessorfunktion: <code>Get</code>, <code>Set</code>, <code>Call</code>. Jede Eigenschaft ist nur vorhanden, wenn die entsprechende Akzessorfunktion in <em>Obj</em> selbst definiert ist.</p>
     <p>Bei einer Werteigenschaft ist der Rückgabewert ein neues Objekt mit einer Eigenschaft namens <code>Value</code>. In solchen Fällen gilt: <code>Obj.GetOwnPropDesc(Name).Value == Obj.%Name%</code>.</p>
   </dd>
 </dl>
@@ -159,34 +130,10 @@
 <p>Es wird ein <a href="Error.htm#PropertyError">PropertyError</a> ausgelöst, wenn <em>Obj</em> eine Eigenschaft mit diesem Namen nicht besitzt. Das Skript kann ermitteln, ob eine Eigenschaft dynamisch ist, indem es <code>not Deskriptor.HasProp("Value")</code> überprüft, wobei <em>Deskriptor</em> der Rückgabewert von GetOwnPropDesc ist.</p>
 </div>
 
-<div class="methodShort" id="HasOwnMethod"><h2>HasOwnMethod</h2>
-<pre class="Syntax">Obj.<span class="func">HasOwnMethod</span>(Name)</pre>
-<p>Gibt True zurück, wenn das Objekt eine Methode mit diesem Namen besitzt, ansonsten False.</p>
-</div>
-
 <div class="methodShort" id="HasOwnProp"><h2>HasOwnProp</h2>
 <pre class="Syntax">Obj.<span class="func">HasOwnProp</span>(Name)</pre>
 <p>Gibt True zurück, wenn das Objekt eine Eigenschaft mit diesem Namen besitzt, ansonsten False.</p>
 <p>Die Standardimplementierung dieser Methode ist auch als Funktion definiert: <code>ObjHasOwnProp(Obj, Name)</code>.</p>
-</div>
-
-<div class="methodShort" id="OwnMethods"><h2>OwnMethods</h2>
-<p>Enumeriert die eigenen Methoden des Objekts.</p>
-<pre class="Syntax">For Name <span class="optional">, MethodenFunk</span> in Obj.<span class="func">OwnMethods</span>()</pre>
-<p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück. Der Enumerator wird typischerweise direkt an eine <a href="../commands/For.htm">For-Schleife</a> übergeben, die den Enumerator einmal für jede Wiederholung der Schleife aufruft. Jeder Aufruf des Enumerators gibt den nächsten Methodennamen und/oder Implementierungsfunktion zurück. Die Variablen der For-Schleife entsprechen den folgenden Parametern des Enumerators:</p>
-<dl>
-  <dt>Name</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der Name der Methode.</p>
-  </dd>
-  <dt>MethodenFunk</dt>
-  <dd>
-    <p>Typ: <a href="Functor.htm">Funktionsobjekt</a></p>
-    <p>Die Implementierung der Methode. Dies ist entweder ein <a href="Func.htm">Func</a>-Objekt, das via Klassendefinition erstellt wurde, oder ein Objekt, das zuvor an <a href="#DefineMethod">DefineMethod</a> übergeben wurde.</p>
-  </dd>
-</dl>
-<p>Die Standardimplementierung dieser Methode ist auch als Funktion definiert: <code>ObjOwnMethods(Obj)</code>.</p>
 </div>
 
 <div class="methodShort" id="OwnProps"><h2>OwnProps</h2>
@@ -212,7 +159,7 @@
   <li>Wenn zwei Variablen angegeben wurden, versucht der Enumerator, den Getter der Eigenschaft aufzurufen, um den Wert abzurufen.
     <ul>
       <li>Wenn der Getter Parameter benötigt, wird die Eigenschaft übersprungen.</li>
-      <li>Wenn <em>Obj</em> nur einen Setter und keinen Getter für diese Eigenschaft enthält, wird sie übersprungen.</li>
+      <li>Wenn <em>Obj</em> selbst keinen Getter für diese Eigenschaft definiert, wird sie übersprungen.</li>
       <li>Wenn <em>Obj</em> ein Klassenprototypobjekt ist, sollte (und in einigen Fällen kann) der Getter nicht aufgerufen werden; daher wird die Eigenschaft übersprungen.</li>
       <li>Wenn der Getter eine Ausnahme auslöst, wird sie propagiert (nicht unterdrückt). Der Aufrufer kann die Enumeration bei der nächsten Eigenschaft nur fortsetzen, wenn er eine Referenz zum Enumerator gespeichert hat (also nicht, wenn er den Enumerator direkt an eine For-Schleife übergeben hat, da in diesem Fall der Enumerator freigegeben wird, wenn die For-Schleife abbricht).</li>
     </ul>
@@ -236,13 +183,6 @@
 </div>
 
 <h2 id="Functions">Funktionen</h2>
-
-<div class="methodShort" id="Object"><h2>Object</h2>
-<p>Erstellt ein Object-Objekt aus einer Liste von "Name, Wert"-Paaren.</p>
-<pre class="Syntax">Obj := <span class="func">Object</span>(<span class="optional">Name, Wert, Name2, Wert2, ...</span>)</pre>
-<p>Dies ist das gleiche wie, als würde man ein Objekt mit <code>Obj := Object.New()</code> erstellen und jede Eigenschaft mit <code>Obj.%Name% := Wert</code> setzen.</p>
-<p>Wenn eine Funktion mit diesem Namen im Skript definiert ist, bewirken alle direkt geschriebenen Objekte (wie z. B. <code>{}</code>) innerhalb desselben Gültigkeitsbereichs den Aufruf dieser Funktion, nicht den Aufruf der Standard-Object-Funktion. Eigenschaftsnamen innerhalb eines direkt geschriebenen Objekts werden nicht in Anführungszeichen gesetzt, z. B. ist <code>{a: b}</code> äquivalent zu <code>Object("a", b)</code>.</p>
-</div>
 
 <div class="methodShort" id="SetBase"><h2>ObjSetBase</h2>
 <p>Setzt das <a href="../Objects.htm#delegation">Base-Objekt</a> des Objekts.</p>

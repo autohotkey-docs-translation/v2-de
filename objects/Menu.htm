@@ -16,17 +16,13 @@
 <h1>Menu/MenuBar-Objekt</h1>
 <p>Dient zum Ändern und Anzeigen von Menüs oder Menüleisten.</p>
 <pre class="NoIndent">class Menu extends Object</pre>
-<p>Menu-Objekte werden zum Definieren, Ändern und Anzeigen von Popupmenüs genutzt. <a href="Menu.htm#New">Menu.New</a>, <a href="../commands/MenuFromHandle.htm">MenuFromHandle</a> und <a href="../Variables.htm#TrayMenu">A_TrayMenu</a> geben ein Objekt dieses Typs zurück.</p>
+<p>Menu-Objekte werden zum Definieren, Ändern und Anzeigen von Popupmenüs genutzt. <a href="Menu.htm#Call">Menu()</a>, <a href="../commands/MenuFromHandle.htm">MenuFromHandle</a> und <a href="../Variables.htm#TrayMenu">A_TrayMenu</a> geben ein Objekt dieses Typs zurück.</p>
 <pre class="NoIndent">class MenuBar extends Menu</pre>
-<p>MenuBar-Objekte werden in Verbindung mit <a href="Gui.htm#MenuBar">Gui.MenuBar</a> zum Definieren und Ändern von Menüleisten genutzt. Sie werden mit <a href="Menu.htm#New">MenuBar.New</a> erstellt. <a href="../commands/MenuFromHandle.htm">MenuFromHandle</a> gibt ein Objekt dieses Typs zurück, wenn ein Handle einer Menüleiste übergeben wurde.</p>
+<p>MenuBar-Objekte werden in Verbindung mit <a href="Gui.htm#MenuBar">Gui.MenuBar</a> zum Definieren und Ändern von Menüleisten genutzt. Sie werden mit <a href="Menu.htm#Call">MenuBar()</a> erstellt. <a href="../commands/MenuFromHandle.htm">MenuFromHandle</a> gibt ein Objekt dieses Typs zurück, wenn ein Handle einer Menüleiste übergeben wurde.</p>
 
 <p>"MeinMenü" wird hier stellvertretend für ein beliebiges Menu-Objekt verwendet, da "Menu" die Klasse selbst ist.</p>
 <p>Zusätzlich zu den Methoden und Eigenschaften, die von <a href="Object.htm">Object</a> geerbt werden, haben Menu-Objekte die folgenden vordefinierten Methoden und Eigenschaften:</p>
 
-<p><strong>Statische Methoden:</strong></p>
-<ul>
-  <li><a href="#New">New</a>: Erstellt ein neues Menu- oder MenuBar-Objekt.</li>
-</ul>
 <p><strong>Eigenschaften:</strong></p>
 <ul>
   <li><a href="#ClickCount">ClickCount</a>: Ermittelt oder setzt die Anzahl der Klicks, die erforderlich sind, um den Standard-Menüpunkt des Tray-Menüs auszulösen.</li>
@@ -50,6 +46,10 @@
   <li><a href="#Uncheck">Uncheck</a>: Entfernt das Häkchen (falls vorhanden) von einem Menüpunkt.</li>
   <li><a href="#AddStandard">AddStandard</a>: Fügt die voreingestellten <a href="../Program.htm#tray-icon">Menüpunkte des Tray-Menüs</a> hinzu.</li>
 </ul>
+<p><strong>Statische Methoden:</strong></p>
+<ul>
+  <li><a href="#Call">Call</a>: Erstellt ein neues Menu- oder MenuBar-Objekt.</li>
+</ul>
 <p><strong>Allgemeines:</strong></p>
 <ul>
   <li><a href="#MenuItemName">MenüpunktName</a></li>
@@ -59,12 +59,12 @@
   <li><a href="#Examples">Beispiele</a></li>
 </ul>
 
-<div class="methodShort" id="New">
-<h2>New</h2>
+<div class="methodShort" id="Call">
+<h2>Call</h2>
 <p>Erstellt ein neues Menu- oder MenuBar-Objekt.</p>
 <pre class="Syntax">
-Menü := <span class="func">Menu.New</span>()
-Menüleiste := <span class="func">MenuBar.New</span>()
+Menü := <span class="func">Menu</span>()
+Menüleiste := <span class="func">MenuBar</span>()
 </pre>
 </div>
 
@@ -382,7 +382,7 @@ Menüleiste := <span class="func">MenuBar.New</span>()
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Fügt einen neuen Menüpunkt am unteren Ende des Tray-Symbol-Menüs hinzu.</p>
 <pre>A_TrayMenu.Add()  <em>; Erstellt eine Trennlinie.</em>
-A_TrayMenu.Add("Menüpunkt1", "MenuHandler")  <em>; Erstellt einen neuen Menüpunkt.</em>
+A_TrayMenu.Add("Menüpunkt1", MenuHandler)  <em>; Erstellt einen neuen Menüpunkt.</em>
 return
 
 MenuHandler(PunktName, PunktPos, Menu) {
@@ -393,13 +393,13 @@ MenuHandler(PunktName, PunktPos, Menu) {
 <div class="ex" id="ExPopup">
 <p><a class="ex_number" href="#ExPopup"></a> Erstellt ein aufklappbares Menü, das angezeigt wird, wenn der Benutzer einen Hotkey drückt.</p>
 <pre><em>; Erstellt ein aufklappbares Menü durch Hinzufügen von Menüpunkten.</em>
-global Menü := Menu.New()
+Menü := Menu()
 Menü.Add "Menüpunkt 1", "MenuHandler"
 Menü.Add "Menüpunkt 2", "MenuHandler"
 Menü.Add  <em>; Fügt eine Trennlinie ein.</em>
 
 <em>; Erstellt ein weiteres Menü, das als Untermenü für das obige Menü dienen soll.</em>
-Untermenü1 := Menu.New()
+Untermenü1 := Menu()
 Untermenü1.Add "Menüpunkt A", "MenuHandler"
 Untermenü1.Add "Menüpunkt B", "MenuHandler"
 
@@ -419,7 +419,7 @@ MenuHandler(Punkt, *) {
 <div class="ex" id="ExTray">
 <p><a class="ex_number" href="#ExTray"></a> Demonstriert einige der verschiedenen Elemente des Menu-Objekts.</p>
 <pre>#SingleInstance
-global tray := A_TrayMenu <em>; Für den praktischen Grund.</em>
+tray := A_TrayMenu <em>; Für den praktischen Grund.</em>
 tray.delete <em>; Löscht die voreingestellten Menüpunkte.</em>
 tray.add <em>; Trennlinie</em>
 tray.add "TestToggleCheck", "TestToggleCheck"
@@ -430,7 +430,6 @@ tray.add "TestDelete", "TestDelete"
 tray.add "TestDeleteAll", "TestDeleteAll"
 tray.add "TestRename", "TestRename"
 tray.add "Test", "Test"
-return
 
 <em>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</em>
 
@@ -494,16 +493,16 @@ Test(Punkt, *)
 
 <div class="ex" id="ExIcon">
 <p><a class="ex_number" href="#ExIcon"></a> Demonstriert, wie man Symbole zu Menüpunkten hinzufügt.</p>
-<pre>Dateimenü := Menu.New()
-Dateimenü.Add("Skript-Symbol", "MenuHandler")
-Dateimenü.Add("Suspend-Symbol", "MenuHandler")
-Dateimenü.Add("Pause-Symbol", "MenuHandler")
+<pre>Dateimenü := Menu()
+Dateimenü.Add("Skript-Symbol", MenuHandler)
+Dateimenü.Add("Suspend-Symbol", MenuHandler)
+Dateimenü.Add("Pause-Symbol", MenuHandler)
 Dateimenü.SetIcon("Skript-Symbol", A_AhkPath, 2) <em>; 2. Symbolgruppe aus der Datei</em>
 Dateimenü.SetIcon("Suspend-Symbol", A_AhkPath, -206) <em>; Symbol mit Ressourcen-ID 206</em>
 Dateimenü.SetIcon("Pause-Symbol", A_AhkPath, -207) <em>; Symbol mit Ressourcen-ID 207</em>
-Menüleiste := MenuBar.New()
+Menüleiste := MenuBar()
 Menüleiste.Add("&amp;Datei", Dateimenü)
-MeineGui := Gui.New()
+MeineGui := Gui()
 MeineGui.MenuBar := Menüleiste
 MeineGui.Add("Button",, "Beendet dieses Beispiel").OnEvent("Click", (*) =&gt; WinClose())
 MeineGui.Show
@@ -516,7 +515,7 @@ MenuHandler(*) {
 <div class="ex" id="ExDllCall">
 <p><a class="ex_number" href="#ExDllCall"></a> Meldet die Anzahl der Menüpunkte in einem Menü und die ID des letzten Menüpunkts.</p>
 <pre>
-Menü := Menu.New()
+Menü := Menu()
 Menü.Add "Menüpunkt 1", "nix"
 Menü.Add "Menüpunkt 2", "nix"
 Menü.Add "Menüpunkt B", "nix"
