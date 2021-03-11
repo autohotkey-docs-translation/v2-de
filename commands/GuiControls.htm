@@ -577,13 +577,11 @@ MeineGui.Show()
 ButtonLaden()
 
 ButtonLaden(*) {
-    global
     WB.Navigate(URL.Value)
 }
 
 class WB_events {
     NavigateComplete2(wb, NewURL) {
-        global    
         URL.Value := NewURL  <em>; URL-Eingabefeld aktualisieren.</em>
     }
 }</pre>
@@ -597,37 +595,37 @@ MeineGui.Add("Custom", "ClassScintilla")  <em>; <a href="https://scintilla.org/"
 <p><strong>Ereignisse</strong>: Da die Bedeutung eines Benachrichtigungscodes abhängig vom Steuerelement ist, das diesen gesendet hat, unterstützen Custom-Steuerelemente kein <a href="../objects/GuiOnEvent.htm">OnEvent</a>. Wenn das Steuerelement allerdings Benachrichtigungen in Form von WM_NOTIFY- oder WM_COMMAND-Meldungen sendet, kann das Skript <a href="../objects/GuiOnNotify.htm">OnNotify</a> oder <a href="../objects/GuiOnCommand.htm">OnCommand</a> nutzen, um diese abzufangen und zu verarbeiten.</p>
 <p>Das folgende Beispiel zeigt, wie ein <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb761374">IP-Adressen-Steuerelement</a> hinzugefügt und verwendet werden kann:</p>
 <pre>MeineGui := Gui()
-IP := MeineGui.Add("Custom", "ClassSysIPAddress32 r1 w150 vIP")
+IP := MeineGui.Add("Custom", "ClassSysIPAddress32 r1 w150")
 IP.OnCommand(0x300, IP_EditChange)  <em>; 0x300 = EN_CHANGE</em>
-IP.OnNotify(-860, IP_FieldChange)  <em>; -860 = IPN_FIELDCHANGED</em> 
-MeineGui.Add("Text", "wp vIPText")
-MeineGui.Add("Text", "wp y+m vIPField")
+IP.OnNotify(-860, IP_FieldChange)  <em>; -860 = IPN_FIELDCHANGED</em>
+IPText := MeineGui.Add("Text", "wp")
+IPField := MeineGui.Add("Text", "wp y+m")
 MeineGui.Add("Button", "Default", "OK").OnEvent("Click", OK_Click)
 MeineGui.Show()
 
 IPCtrlSetAddress(IP, SysGetIPAddresses()[1])
 
-OK_Click(this, *)
+OK_Click(*)
 {
-    this.Gui.Hide()
-    MsgBox("Sie haben " IPCtrlGetAddress(this.Gui["IP"]) " ausgewählt.")
+    MeineGui.Hide()
+    MsgBox("Sie haben " IPCtrlGetAddress(IP)) " ausgewählt.")
     ExitApp()
 }
 
-IP_EditChange(this)
+IP_EditChange(*)
 {
-    this.Gui["IPText"].Text := "Neuer Text: " this.Gui["IP"].Text
+    IPText.Text := "Neuer Text: " IP.Text
 }
 
-IP_FieldChange(this, NMIPAddress)
+IP_FieldChange(thisCtrl, NMIPAddress)
 {
     <em>; Extrahiert Infos aus der NMIPAddress-Struktur.</em>
     iField := NumGet(NMIPAddress, 3*A_PtrSize + 0, "int")
     iValue := NumGet(NMIPAddress, 3*A_PtrSize + 4, "int")
     if (iValue &gt;= 0)
-        this.Gui["IPField"].Text := "Feld #" iField " geändert: " iValue
+        IPField.Text := "Feld #" iField " geändert: " iValue
     else
-        this.Gui["IPField"].Text := "Feld #" iField " leer gelassen"
+        IPField.Text := "Feld #" iField " leer gelassen"
 }
 
 IPCtrlSetAddress(GuiCtrl, IPAddress)
@@ -649,9 +647,10 @@ IPCtrlGetAddress(GuiCtrl)
 
     AddrWord := BufferAlloc(4)
     SendMessage(IPM_GETADDRESS, 0, AddrWord, GuiCtrl)
+    IPPart := []
     Loop 4
-        IPPart%A_Index% := NumGet(AddrWord, 4 - A_Index, "UChar")
-    return IPPart1 "." IPPart2 "." IPPart3 "." IPPart4
+        IPPart.Push(NumGet(AddrWord, 4 - A_Index, "UChar"))
+    return IPPart[1] "." IPPart[2] "." IPPart[3] "." IPPart[4]
 }</pre>
 
 <h2 id="Related_Pages">Siehe auch</h2>

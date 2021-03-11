@@ -505,7 +505,7 @@ B2 := MeineGui.Add("Button", "x+20", "Liste leeren")
 B3 := MeineGui.Add("Button", "x+20", "Ansicht wechseln")
 
 <em>; ListView und ihre Spalten via <a href="#GuiAdd">MeineGui.Add</a> erstellen:</em>
-LV := MeineGui.Add("ListView", "xm r20 w700 vLV", ["Name","Ordner","Größe (KB)","Typ"])
+LV := MeineGui.Add("ListView", "xm r20 w700", ["Name","Ordner","Größe (KB)","Typ"])
 <a href="#ModifyCol">LV.ModifyCol</a>(3, "Integer")  <em>; Aus Sortierungsgründen die Spalte "Größe" als Integer kennzeichnen.</em>
 
 <em>; Eine ImageList erstellen, damit die ListView einige Symbole anzeigen kann:</em>
@@ -519,7 +519,7 @@ LV.SetImageList(ImageListID2)
 <em>; Steuerelement-Ereignisse hinzufügen:</em>
 LV.OnEvent("<a href="../objects/GuiOnEvent.htm#DoubleClick">DoubleClick</a>", StarteDatei)
 LV.OnEvent("<a href="../objects/GuiOnEvent.htm#Ctrl-ContextMenu">ContextMenu</a>", ZeigeKontextmenü)
-B1.OnEvent("Click", LadeOrdner.bind(ImageListID1, ImageListID2))
+B1.OnEvent("Click", LadeOrdner)
 B2.OnEvent("Click", (*) =&gt; <a href="#Delete">LV.Delete</a>())
 B3.OnEvent("Click", WechsleAnsicht)
 
@@ -529,11 +529,10 @@ MeineGui.OnEvent("Size", Gui_Size)
 <em>; Das Fenster anzeigen:</em>
 MeineGui.Show()
 
-LadeOrdner(ImageListID1, ImageListID2, this, *)
+LadeOrdner(*)
 {
     static SymbolMap := Map()
-    local LV := this.Gui["LV"]  <em>; In diesem Fall nicht unbedingt erforderlich, da die globale LV verfügbar ist.</em>
-    this.Gui.Opt("+OwnDialogs")  <em>; Benutzer zwingen, das folgende Dialogfenster zu schließen, bevor er das Hauptfenster nutzen kann.</em>
+    MeineGui.Opt("+OwnDialogs")  <em>; Benutzer zwingen, das folgende Dialogfenster zu schließen, bevor er das Hauptfenster nutzen kann.</em>
     Ordner := DirSelect(, 3, "Wählen Sie einen Ordner aus, das eingelesen werden soll:")
     if not Ordner  <em>; Der Benutzer hat das Dialogfenster abgebrochen.</em>
         return
@@ -607,10 +606,9 @@ LadeOrdner(ImageListID1, ImageListID2, this, *)
     LV.ModifyCol(3, 65)  <em>; Die Spalte "Größe" etwas breiter machen, um die Kopfzeile sichtbar zu machen.</em>
 }
 
-WechsleAnsicht(this, *)
+WechsleAnsicht(*)
 {
     static IconView := false
-    local LV := this.Gui["LV"]
     if not IconView
         LV.Opt("+Icon")        <em>; Zur Symbolansicht wechseln.</em>
     else
@@ -667,12 +665,12 @@ ZeigeKontextmenü(LV, Element, IstRechtsklick, X, Y)  <em>; Bei einem Rechtsklic
     }
 }
 
-Gui_Size(this, MinMax, Breite, Höhe)  <em>; ListView kleiner/größer machen, wenn Benutzer die Fenstergröße ändert.</em>
+Gui_Size(thisGui, MinMax, Breite, Höhe)  <em>; ListView kleiner/größer machen, wenn Benutzer die Fenstergröße ändert.</em>
 {
     if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
         return
     <em>; Ansonsten wurde das Fenster kleiner/größer gemacht oder maximiert. ListView-Größe anpassen.</em>
-    this["LV"].Move(,, Breite - 20, Höhe - 40)
+    LV.Move(,, Breite - 20, Höhe - 40)
 }</pre>
 
 </div>

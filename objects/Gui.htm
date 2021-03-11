@@ -336,7 +336,7 @@ WinSetTransColor("EEAA99", MeineGui)</pre>
   <p><strong>Border</strong>: Stattet das Fenster mit einem dünnen Rahmen aus. Diese Option benutzt man eher selten.</p>
   <p><strong>Caption</strong> (standardmäßig vorhanden): Stattet das Fenster mit einer Titelleiste und einem dicken Rahmen aus. Beachten Sie, dass die Titelleiste eines Fensters erst entfernt werden sollte, nachdem man bestimmte Farben des Fensters via <a href="../commands/WinSetTransColor.htm">WinSetTransColor</a> transparent gemacht hat.</p>
   <p><strong>Disabled</strong>: Deaktiviert das Fenster, um den Benutzer daran zu hindern, mit den darin enthaltenen Steuerelementen zu interagieren. Diese Option wird oft bei Fenstern benutzt, die untergeordnete Fenster haben (siehe <a href="#Owner">Owner</a>).</p>
-  <p id="DPIScale"><strong>DPIScale</strong>: Verwenden Sie <code>MeineGui.Opt("-DPIScale")</code>, um die üblicherweise aktive DPI-Skalierung zu deaktivieren. Wenn die DPI-Skalierung auf einem System mit benutzerdefinierter DPI-Einstellung aktiviert ist, passen Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a> automatisch ihre Koordinaten und Größen an, um Steuerelemente in etwa gleich groß aussehen zu lassen (aber in höherer Auflösung). Bei einem DPI-Wert von beispielsweise 144 (150%) würde <code>E := MeineGui.Add("Edit", "w100")</code> das Gui-Steuerelement 150 Pixel breit machen, aber <code>E.GetPos(,,W)</code> würde <em>W</em> weiterhin auf 100 setzen. <a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> enthält die aktuelle DPI des Systems.</p>
+  <p id="DPIScale"><strong>DPIScale</strong>: Verwenden Sie <code>MeineGui.Opt("-DPIScale")</code>, um die üblicherweise aktive DPI-Skalierung zu deaktivieren. Wenn die DPI-Skalierung auf einem System mit benutzerdefinierter DPI-Einstellung aktiviert ist, passen Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a> automatisch ihre Koordinaten und Größen an, um Steuerelemente in etwa gleich groß aussehen zu lassen (aber in höherer Auflösung). Bei einem DPI-Wert von beispielsweise 144 (150%) würde <code>E := MeineGui.Add("Edit", "w100")</code> das Gui-Steuerelement 150 Pixel breit machen, aber <code>E.GetPos(,,&amp;W)</code> würde <em>W</em> weiterhin auf 100 setzen. <a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> enthält die aktuelle DPI des Systems.</p>
   <p>Die DPI-Skalierung betrifft nur Gui-Objekte und <a href="GuiControl.htm">GuiControl-Objekte</a>; das heißt, dass Koordinaten aus anderen Quellen wie ControlGetPos oder WinGetPos nicht funktionieren werden. Es gibt eine Reihe von Möglichkeiten, damit umzugehen:</p>
   <ul>
     <li>Vermeiden Sie hartcodierte Koordinaten, wenn möglich. Zum Beispiel können Sie zum Positionieren von Steuerelementen die Optionen <a href="#xp">xp</a>, <a href="#xs">xs</a>, <a href="#xm">xm</a> und <a href="#PosPlusMargin">x+m</a> nutzen und die Höhe in <a href="#R">Textzeilen</a> statt Pixel angeben.</li>
@@ -434,7 +434,7 @@ MeineGui.Show "w300 h200"</pre>
 MeineGui.Move(VarX+10, VarY+5, VarW*2, VarH*1.5)
 
 <em>; Linke und rechte Seite um 10 Pixel erweitern.</em>
-MeineGui.GetPos(x,, w)
+MeineGui.GetPos(&amp;x,, &amp;w)
 MeineGui.Move(x-10,, w+20)</pre>
 </div>
 
@@ -442,7 +442,7 @@ MeineGui.Move(x-10,, w+20)</pre>
 <h2>GetPos</h2>
 <p>Ermittelt die Position und Größe des GUI-Fensters.</p>
 <pre class="Syntax">MeineGui.<span class="func">GetPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
-<p>Jeder Parameter muss eine Variable sein, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Fensters. X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Fensters, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand des Fensters (in Pixel).</p>
+<p>Jeder Parameter muss eine <a href="../Concepts.htm#variable-references">Referenz</a> sein, die auf eine Variable verweist, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Fensters. X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Fensters, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand des Fensters (in Pixel).</p>
 <p>Im Gegensatz zu <a href="../commands/WinGetPos.htm">WinGetPos</a> wendet diese Methode die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
 </div>
 
@@ -450,7 +450,7 @@ MeineGui.Move(x-10,, w+20)</pre>
 <h2>GetClientPos</h2>
 <p>Ermittelt die Position und Größe des Clientbereichs eines GUI-Fensters.</p>
 <pre class="Syntax">MeineGui.<span class="func">GetClientPos</span>(<span class="optional">X, Y, Breite, Höhe</span>)</pre>
-<p>Jeder Parameter muss eine Variable sein, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Clientbereich des Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen). X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Clientbereichs, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand (in Pixel).</p>
+<p>Jeder Parameter muss eine <a href="../Concepts.htm#variable-references">Referenz</a> sein, die auf eine Variable verweist, in der die jeweilige Koordinate gespeichert werden soll. Die Koordinaten sind die obere linke Ecke des Clientbereich des Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen). X und Y müssen in Bildschirmkoordinaten angegeben werden. Breite ist der horizontale Abstand zwischen dem linken und rechten Rand des Clientbereichs, und Höhe der vertikale Abstand zwischen dem oberen und unteren Rand (in Pixel).</p>
 <p>Im Gegensatz zu <a href="../commands/WinGetClientPos.htm">WinGetClientPos</a> wendet diese Methode die <a href="#DPIScale">DPI-Skalierung</a> auf <em>Breite</em> und <em>Höhe</em> an (es sei denn, es wurde die Option <code>-DPIScale</code> verwendet).</p>
 </div>
 
@@ -561,13 +561,13 @@ MeineGui.Add("Text",, "Vorname:")
 MeineGui.Add("Text",, "Nachname:")
 MeineGui.Add("Edit", "vVorname ym")  <em>; Die ym-Option beginnt eine neue Spalte für Steuerelemente.</em>
 MeineGui.Add("Edit", "vNachname")
-MeineGui.Add("Button", "default", "OK").OnEvent("Click", (*) =&gt; VerarbeiteBenutzereingabe(MeineGui))
+MeineGui.Add("Button", "default", "OK").OnEvent("Click", VerarbeiteBenutzereingabe)
 MeineGui.OnEvent("Close", VerarbeiteBenutzereingabe)
 MeineGui.Show()
 
-VerarbeiteBenutzereingabe(thisGui, *)
+VerarbeiteBenutzereingabe(*)
 {
-    Gespeichert := thisGui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
+    Gespeichert := MeineGui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
     MsgBox("Sie haben '" Gespeichert.Vorname " " Gespeichert.Nachname "' eingegeben.")
 }</pre>
 </div>
@@ -584,14 +584,14 @@ Tab.UseTab(3)
 MeineGui.Add("Edit", "vMeinEdit r5")  <em>; r5 bedeutet 5 Zeilen hoch.</em>
 Tab.UseTab()  <em>; nachfolgende Steuerelemente werden nicht als Teil des Tab-Steuerelements angesehen.</em>
 Btn := MeineGui.Add("Button", "default xm", "OK")  <em>; xm positioniert die Schaltfläche in die untere linke Ecke.</em>
-Btn.OnEvent("Click", (*) =&gt; VerarbeiteBenutzereingabe(MeineGui))
+Btn.OnEvent("Click", VerarbeiteBenutzereingabe)
 MeineGui.OnEvent("Close", VerarbeiteBenutzereingabe)
 MeineGui.OnEvent("Escape", VerarbeiteBenutzereingabe)
 MeineGui.Show()
 
-VerarbeiteBenutzereingabe(thisGui, *)
+VerarbeiteBenutzereingabe(*)
 {
-    Gespeichert := thisGui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
+    Gespeichert := MeineGui.Submit()  <em>; Speichert die Inhalte von benannten Steuerelementen in ein Objekt.</em>
     MsgBox("Ihre Eingaben sind:`n" Gespeichert.MeineCheckBox "`n" Gespeichert.MeinRadio "`n" Gespeichert.MeinEdit)
 }</pre>
 </div>
@@ -600,20 +600,19 @@ VerarbeiteBenutzereingabe(thisGui, *)
 <p><a class="ex_number" href="#ExListBox"></a> Erstellt eine ListBox mit Dateien aus einem Verzeichnis.</p>
 <pre>MeineGui := Gui()
 MeineGui.Add("Text",, "Wählen Sie eine Datei aus der unteren Liste aus.")
-LB := MeineGui.Add("ListBox", "w640 r10 vDatei")
+LB := MeineGui.Add("ListBox", "w640 r10")
 LB.OnEvent("DoubleClick", StarteDatei)
 Loop Files, "C:\*.*"  <em>; Ordner und Platzhaltermuster je nach Bedarf anpassen.</em>
     LB.Add([A_LoopFilePath])
 MeineGui.Add("Button", "Default", "OK").OnEvent("Click", StarteDatei)
 MeineGui.Show()
 
-StarteDatei(thisCtrl, *)
+StarteDatei(*)
 {
-    Gespeichert := thisCtrl.Gui.Submit()
-    if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n" Gespeichert.Datei,, 4) = "No"
+    if MsgBox("Wollen Sie die folgende Datei wirklich öffnen?`n`n" LB.Text,, 4) = "No"
         return
     <em>; Ansonsten versuchen zu starten:</em>
-    try Run(Gespeichert.Datei)
+    try Run(LB.Text)
     if A_LastError
         MsgBox("Die angegebene Datei konnte nicht gestartet werden. Scheinbar fehlt ein passendes Programm dafür.")
 }</pre>
@@ -662,14 +661,14 @@ MeineGui.SetFont("s32")  <em>; Setzt eine große Schriftgröße (32 Punkte).</em
 KoordText := MeineGui.Add("Text", "cLime", "XXXXX YYYYY")  <em>; XX &amp; YY dienen zum automatischen Anpassen der Fenstergröße.
 ; Macht alle Pixel dieser Farbe unsichtbar und den Text selbst transparent (150):</em>
 WinSetTransColor(MeineGui.BackColor " 150", MeineGui)
-SetTimer(() =&gt; AktualisiereOSD(KoordText), 200)
-AktualisiereOSD(KoordText)  <em>; Führt die Aktualisierung sofort durch, anstatt auf den Timer zu warten.</em>
+SetTimer(AktualisiereOSD, 200)
+AktualisiereOSD()  <em>; Führt die Aktualisierung sofort durch, anstatt auf den Timer zu warten.</em>
 MeineGui.Show("x0 y400 NoActivate")  <em>; NoActivate verhindert, dass ein anderes Fenster seinen Aktivzustand verliert.</em>
 
-AktualisiereOSD(GuiCtrl)
+AktualisiereOSD(*)
 {
     MouseGetPos &amp;MausX, &amp;MausY
-    GuiCtrl.Value := "X" MausX ", Y" MausY
+    KoordText.Value := "X" MausX ", Y" MausY
 }</pre>
 </div>
 
@@ -680,23 +679,21 @@ MeineGui.BackColor := "White"
 MeineGui.Add("Picture", "x0 y0 h350 w450", A_WinDir "\Web\Wallpaper\Windows\img0.jpg")
 MeinBtn := MeineGui.Add("Button", "Default xp+20 yp+250", "Animation starten")
 MeinBtn.OnEvent("Click", AnimiereLeiste)
-MeineGui.Add("Progress", "w416 vMeinProgress")
-MeineGui.Add("Text", "wp vMeinText")  <em>; wp bedeutet "vorherige Breite verwenden".</em>
+MeinProgress := MeineGui.Add("Progress", "w416")
+MeinText := MeineGui.Add("Text", "wp")  <em>; wp bedeutet "vorherige Breite verwenden".</em>
 MeineGui.Show()
 
-AnimiereLeiste(thisCtrl, *)
+AnimiereLeiste(*)
 {
-    ProgressCtrl := thisCtrl.Gui["MeinProgress"]
-    TextCtrl := thisCtrl.Gui["MeinText"]
     Loop Files, A_WinDir "\*.*"
     {
         if (A_Index &gt; 100)
             break
-        ProgressCtrl.Value := A_Index
-        TextCtrl.Value := A_LoopFileName
+        MeinProgress.Value := A_Index
+        MeinText.Value := A_LoopFileName
         Sleep 50
     }
-    TextCtrl.Value := "Animation beendet."
+    MeinText.Value := "Animation beendet."
 }</pre>
 </div>
 
@@ -705,19 +702,17 @@ AnimiereLeiste(thisCtrl, *)
 <pre>MeineGui := Gui("+Resize")
 MeinBtn := MeineGui.Add("Button", "default", "Neues Bild &amp;laden")
 MeinBtn.OnEvent("Click", LadeNeuesBild)
-MeineGui.Add("Radio", "ym+5 x+10 checked vMeinRadio", "&amp;Originalgröße")
+MeinRadio := MeineGui.Add("Radio", "ym+5 x+10 checked", "&amp;Originalgröße")
 MeineGui.Add("Radio", "ym+5 x+10", "&amp;Kompletter Bildschirm")
-MeineGui.Add("Pic", "xm vMeinPic")
+MeinPic := MeineGui.Add("Pic", "xm")
 MeineGui.Show()
 
-LadeNeuesBild(thisCtrl, *)
+LadeNeuesBild(*)
 {
-    RadioCtrl := thisCtrl.Gui["MeinRadio"]
-    PicCtrl := thisCtrl.Gui["MeinPic"]
     Datei := FileSelect(,, "Bild auswählen:", "Bilder (*.gif; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)")
     if Datei = ""
         return
-    if RadioCtrl.Value = 1  <em>; Bild mit aktueller Größe anzeigen.</em>
+    if (MeinRadio.Value)  <em>; Bild mit aktueller Größe anzeigen.</em>
     {
         Breite := 0
         Höhe := 0
@@ -727,9 +722,9 @@ LadeNeuesBild(thisCtrl, *)
         Breite := A_ScreenWidth - 28  <em>; Minus 28, um Platz für Rahmen und Innenabstand zu schaffen.</em>
         Höhe := -1  <em>; "Seitenverhältnis beibehalten" erscheint sinnvoll.</em>
     }
-    PicCtrl.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
-    thisCtrl.Gui.Title := Datei
-    thisCtrl.Gui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
+    MeinPic.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
+    MeineGui.Title := Datei
+    MeineGui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
 }</pre>
 </div>
 
@@ -805,7 +800,6 @@ MenüDateiBeenden(*)  <em>; Benutzer hat "Exit" im Dateimenü ausgewählt.</em>
 
 MenüHilfeÜber(*)
 {
-    global Über
     Über := Gui("+owner" MeineGui.Hwnd)  <em>; Macht das Über-Fenster zum Unterfenster vom Hauptfenster.</em>
     MeineGui.Opt("+Disabled")  <em>; Deaktiviert die Interaktion mit dem Hauptfenster.</em>
     Über.Add("Text",, "Beliebiger Text.")
@@ -813,6 +807,12 @@ MenüHilfeÜber(*)
     Über.OnEvent("Close", Über_Close)
     Über.OnEvent("Escape", Über_Close)
     Über.Show()
+
+    Über_Close(*)
+    {
+        MeineGui.Opt("-Disabled")  <em>; Reaktiviert die Interaktion mit dem Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
+        Über.Destroy()  <em>; Entfernt das Über-Fenster.</em>
+    }
 }
 
 leseInhalt(DateiName)
@@ -846,12 +846,6 @@ speichereInhalt(DateiName)
     <em>; Bei Erfolg den Dateinamen in der Titelleiste anzeigen (falls es mit DateiSpeichernUnter aufgerufen wurde):</em>
     MeineGui.Title := DateiName
     return DateiName
-}
-
-Über_Close(*)
-{
-    MeineGui.Opt("-Disabled")  <em>; Reaktiviert die Interaktion mit dem Hauptfenster (muss vor dem nächsten Schritt erfolgen).</em>
-    Über.Destroy()  <em>; Entfernt das Über-Fenster.</em>
 }
 
 Gui_DropFiles(thisGui, Ctrl, DateiArray, *)  <em>; Ziehen &amp; Ablegen unterstützen.</em>

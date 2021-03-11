@@ -331,20 +331,20 @@ ImageListID := <a href="ListView.htm#IL_Create">IL_Create</a>(5)
 Loop 5 
     <a href="ListView.htm#IL_Add">IL_Add</a>(ImageListID, "shell32.dll", A_Index)
 <em>; Eine <a href="#GuiAdd">TreeView</a> und ListView nebeneinander setzen, ähnlich zum Windows Explorer:</em>
-TV := <a href="#GuiAdd">MeineGui.Add</a>("TreeView", "r20 w" TreeViewBreite " <a href="#ImageList">ImageList</a>" ImageListID " vTV")
-LV := MeineGui.Add("ListView", "r20 w" ListViewBreite " x+10 vLV", ["Name","Änderungsdatum"])
+TV := <a href="#GuiAdd">MeineGui.Add</a>("TreeView", "r20 w" TreeViewBreite " <a href="#ImageList">ImageList</a>" ImageListID)
+LV := MeineGui.Add("ListView", "r20 w" ListViewBreite " x+10", ["Name","Änderungsdatum"])
 
 <em>; <a href="GuiControls.htm#StatusBar">Statusleiste</a> erstellen, um Anzahl der Dateien und Gesamtgröße anzuzeigen:</em>
-SB := MeineGui.Add("StatusBar", "vSB")
+SB := MeineGui.Add("StatusBar")
 <a href="GuiControls.htm#SB_SetParts">SB.SetParts</a>(60, 85)  <em>; Leiste in drei Segmente aufteilen (das dritte Segment füllt die restliche Breite aus).</em>
 
 <em>; Ordner und ihre Unterordner zur TreeView hinzufügen. Status anzeigen, falls das Laden länger dauert:</em>
-M := Gui("ToolWindow -SysMenu", "Lade Baumstruktur..."), M.Show()
-VerzListe := SetzeUnterordnerInBaum(TV, TreeRoot, Map())
+M := Gui("ToolWindow -SysMenu Disabled AlwaysOnTop", "Lade Baumstruktur..."), M.Show("w200 h0")
+VerzListe := SetzeUnterordnerInBaum(TreeRoot, Map())
 M.Hide()
 
 <em>; TV_ItemSelect aufrufen, wenn ein neues Element ausgewählt wird:</em>
-TV.OnEvent("ItemSelect", TV_ItemSelect.bind(VerzListe))
+TV.OnEvent("ItemSelect", TV_ItemSelect)
 
 <em>; Gui_Size aufrufen, wenn die Fenstergröße geändert wird:</em>
 MeineGui.OnEvent("Size", Gui_Size)
@@ -357,7 +357,7 @@ LV.ModifyCol(2, Spalte2Breite)
 <em>; Das Fenster anzeigen. Das System wird das Skript jedes Mal benachrichtigen, wenn der Benutzer eine gültige Aktion durchführt:</em>
 MeineGui.Show
 
-SetzeUnterordnerInBaum(TV, Ordner, VerzListe, ElternElementID := 0)
+SetzeUnterordnerInBaum(Ordner, VerzListe, ElternElementID := 0)
 {
     <em>; Diese Funktion fügt alle Unterordner eines Ordners zur TreeView hinzu
     ; und speichert deren Pfade zusammen mit einer ID in ein Objekt für den späteren Gebrauch.
@@ -366,17 +366,14 @@ SetzeUnterordnerInBaum(TV, Ordner, VerzListe, ElternElementID := 0)
     {
         ElementID := <a href="#Add">TV.Add</a>(A_LoopFileName, ElternElementID, "Icon4")
         VerzListe[ElementID] := A_LoopFilePath
-        VerzListe := SetzeUnterordnerInBaum(TV, A_LoopFilePath, VerzListe, ElementID)
+        VerzListe := SetzeUnterordnerInBaum(A_LoopFilePath, VerzListe, ElementID)
     }
     return VerzListe
 }
 
-TV_ItemSelect(VerzListe, TV, Element)  <em>; Diese Funktion wird aufgerufen, wenn ein neues Element ausgewählt wird.</em>
+TV_ItemSelect(thisCtrl, Element)  <em>; Diese Funktion wird aufgerufen, wenn ein neues Element ausgewählt wird.</em>
 {
-    local
-    
     <em>; Dateien in die ListView einfügen:</em>
-    LV := TV.Gui["LV"]
     LV.Delete  <em>; Alle Zeilen löschen.</em>
     LV.Opt("-Redraw")  <em>; Leistung verbessern durch Abschalten von Redraw beim Laden.</em>
     GesamtGröße := 0  <em>; Für die untere Schleife initialisieren.</em>
@@ -388,7 +385,6 @@ TV_ItemSelect(VerzListe, TV, Element)  <em>; Diese Funktion wird aufgerufen, wen
     LV.Opt("+Redraw")
 
     <em>; Die drei Segmente der Statusleiste mit Infos über den aktuell ausgewählten Ordner aktualisieren:</em>
-    SB := TV.Gui["SB"]
     <a href="GuiControls.htm#SB_SetText">SB.SetText</a>(LV.GetCount() " Dateien", 1)
     SB.SetText(Round(GesamtGröße / 1024, 1) " KB", 2)
     SB.SetText(VerzListe[Element], 3)
@@ -399,9 +395,9 @@ Gui_Size(thisGui, MinMax, Breite, Höhe)  <em>; ListView und TreeView kleiner/gr
     if MinMax = -1  <em>; Das Fenster wurde minimiert. Keine Aktion notwendig.</em>
         return
     <em>; Ansonsten wurde das Fenster kleiner/größer gemacht oder maximiert. Größe der Steuerelemente anpassen.</em>
-    thisGui["TV"].GetPos(,, TV_W)
-    thisGui["TV"].Move(,,, Höhe - 30)  <em>; -30 für StatusBar und Abstände.</em>
-    thisGui["LV"].Move(,, Breite - TV_W - 30, Höhe - 30)
+    TV.GetPos(,, &amp;TV_W)
+    TV.Move(,,, Höhe - 30)  <em>; -30 für StatusBar und Abstände.</em>
+    LV.Move(,, Breite - TV_W - 30, Höhe - 30)
 }</pre>
 
 </div>
