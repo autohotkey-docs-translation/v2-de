@@ -67,30 +67,30 @@ MsgBox "Die PID des neu gestarteten Texteditors ist " NeuePID</pre>
 <p><a class="ex_number" href="#ExHotkey"></a> Drücken Sie einen Hotkey, um die Priorität des Prozesses des aktiven Fensters zu ändern.</p>
 <pre>#z:: <em>; WIN+Z-Hotkey</em>
 {
+    aktive_pid := WinGetPID("A")
+    aktiver_titel := WinGetTitle("A")
     MeineGui := Gui(, "Priorität setzen")
     MeineGui.Add("Text",, "
     (
         Drücke ESCAPE zum Abbrechen, oder klicke doppelt auf einen
         neuen Prioritätslevel für das folgende Fenster:
     )")
-    MeineGui.Add("Text", "wp", WinGetTitle("A"))
-    LB := MeineGui.Add("ListBox", "r5 vLB Choose1", ["Normal","High","Low","BelowNormal","AboveNormal"])
-    SetzePriorität := SetzePriorität.bind(WinGetPID("A"))
+    MeineGui.Add("Text", "wp", aktiver_titel)
+    LB := MeineGui.Add("ListBox", "r5 Choose1", ["Normal","High","Low","BelowNormal","AboveNormal"])
     LB.OnEvent("DoubleClick", SetzePriorität)
     MeineGui.Add("Button", "default", "OK").OnEvent("Click", SetzePriorität)
     MeineGui.OnEvent("Escape", (*) =&gt; MeineGui.Destroy())
     MeineGui.OnEvent("Close", (*) =&gt; MeineGui.Destroy())
     MeineGui.Show()
-}
 
-SetzePriorität(PID, this, *)
-{
-    LB := this.Gui["LB"]
-    if ProcessSetPriority(LB.Text, PID)
-        MsgBox "Erfolg: Die Priorität wurde auf '" LB.Text "' gesetzt."
-    else
-        MsgBox "Fehler: Die Priorität konnte nicht auf '" LB.Text "' gesetzt werden."
-    WinClose()
+    SetzePriorität(*)
+    {
+        MeineGui.Destroy()
+        if ProcessSetPriority(LB.Text, aktive_pid)
+            MsgBox "Erfolg: Die Priorität wurde auf " LB.Text " gesetzt."
+        else
+            MsgBox "Fehler: Die Priorität konnte nicht auf " LB.Text " gesetzt werden."
+    }
 }</pre>
 </div>
 

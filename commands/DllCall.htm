@@ -28,6 +28,7 @@
       <p>Wenn keine Funktion unter dem angegebenen Namen gefunden werden kann, wird automatisch ein W (Unicode) angefügt. Zum Beispiel ist <code>"MessageBox"</code> das gleiche wie <code>"MessageBoxW"</code>.</p>
       <p>Wenn die DLL <em>wiederholt</em> aufgerufen wird, ist es ratsam, diese <a href="#load">im Voraus zu laden</a>, um eine deutliche Erhöhung der Leistung zu erzielen.</p>
       <p>Dieser Parameter kann auch ein reiner Integer sein, der als Adresse der aufzurufenden Funktion interpretiert wird. Quellen solcher Adressen sind unter anderem <a href="#COM">COM</a> und <a href="CallbackCreate.htm">CallbackCreate</a>.</p>
+      <p>Wenn dieser Parameter ein Objekt ist, wird der Wert der <code>Ptr</code>-Eigenschaft des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird ein <a href="../objects/Error.htm#PropertyError">PropertyError</a> ausgelöst.</p>
   </dd>
 
   <dt>Typ1, Arg1</dt>
@@ -235,10 +236,10 @@ MsgBox Format("{:010}", 432)
 
 <div class="ex" id="ExQPC">
 <p><a class="ex_number" href="#ExQPC"></a> Demonstriert, wie man mit QueryPerformanceCounter() eine höhere Präzision als die 10 ms von <a href="../Variables.htm#TickCount">A_TickCount</a> erreichen kann.</p>
-<pre>DllCall("QueryPerformanceFrequency", "Int64*", freq := 0)
-DllCall("QueryPerformanceCounter", "Int64*", CounterDavor := 0)
+<pre>DllCall("QueryPerformanceFrequency", "Int64*", &amp;freq := 0)
+DllCall("QueryPerformanceCounter", "Int64*", &amp;CounterDavor := 0)
 Sleep 1000
-DllCall("QueryPerformanceCounter", "Int64*", CounterDanach := 0)
+DllCall("QueryPerformanceCounter", "Int64*", &amp;CounterDanach := 0)
 MsgBox "Die Differenz zwischen den Zeiten beträgt " . (CounterDanach - CounterDavor) / freq * 1000 " ms"</pre>
 </div>
 
@@ -299,7 +300,7 @@ if !hFile
 }
 TestZkette := "Das ist eine Zeichenkette.`r`n"  <em>; Wenn eine Datei auf diese Weise geschrieben wird, sollte `r`n anstelle von `n verwendet werden, um eine neue Zeile zu beginnen.</em>
 ZketteGröße := StrLen(TestZkette) * 2
-DllCall("WriteFile", "Ptr", hFile, "Str", TestZkette, "UInt", ZketteGröße, "UIntP", RealGeschriebeneBytes := 0, "Ptr", 0)
+DllCall("WriteFile", "Ptr", hFile, "Str", TestZkette, "UInt", ZketteGröße, "UIntP", &amp;RealGeschriebeneBytes := 0, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 
 <em>; Liest den Inhalt der Datei, nachdem sie geschrieben wurde, zurück in den Speicher.</em>
@@ -315,7 +316,7 @@ if !hFile
 }
 <em>; Reserviert einen Bereich im Speicher für die zu lesende Zeichenkette:</em>
 Puf := BufferAlloc(ZketteGröße)
-DllCall("ReadFile", "Ptr", hFile, "Ptr", Puf, "UInt", Puf.Size, "UIntP", RealGeleseneBytes := 0, "Ptr", 0)
+DllCall("ReadFile", "Ptr", hFile, "Ptr", Puf, "UInt", Puf.Size, "UIntP", &amp;RealGeleseneBytes := 0, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " StrGet(Puf)</pre>
 </div>

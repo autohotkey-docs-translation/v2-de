@@ -501,15 +501,16 @@ MeineGui.Move(x-10,, w+20)</pre>
 <div class="methodShort" id="__Enum">
 <h2>__Enum</h2>
 <p>Enumeriert die Steuerelemente der GUI.</p>
-<pre class="Syntax">For Hwnd <span class="optional">, Ctrl</span> in Gui</pre>
+<pre class="Syntax">For Strlmnt in MeineGui
+For Hwnd, Strlmnt in MeineGui</pre>
 <p>Gibt einen neuen <a href="Enumerator.htm">Enumerator</a> zurück. Diese Methode wird für gewöhnlich nicht direkt aufgerufen. Stattdessen wird das Gui-Objekt direkt an eine <a href="../commands/For.htm">For-Schleife</a> übergeben, die __Enum einmal aufruft und dann den Enumerator einmal für jede Wiederholung der Schleife aufruft. Jeder Aufruf des Enumerators gibt das nächste Steuerelement zurück. Die Variablen der For-Schleife entsprechen den folgenden Parametern des Enumerators:</p>
 <dl>
   <dt>Hwnd</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die HWND-Nummer des Steuerelements.</p>
+    <p>Die HWND-Nummer des Steuerelements. Dies gibt es nur im Zwei-Parameter-Modus.</p>
   </dd>
-  <dt>Ctrl</dt>
+  <dt>Strlmnt</dt>
   <dd>
     <p>Das <a href="GuiControl.htm">GuiControl</a>-Objekt.</p>
   </dd>
@@ -628,7 +629,6 @@ MeinEdit.ToolTip := "Das Tooltip für das Steuerelement mit dem Namen MeinEdit."
 MeineDDL := MeineGui.Add("DropDownList",, ["Rot","Grün","Blau"])
 MeineDDL.ToolTip := "Wählen Sie eine Farbe aus."
 MeineGui.Add("Checkbox",, "Dieses Steuerelement hat kein Tooltip.")
-MeineGui.OnEvent("Close", (*) =&gt; ExitApp())
 MeineGui.Show()
 OnMessage(0x0200, On_WM_MOUSEMOVE)
 
@@ -709,8 +709,8 @@ MeineGui.Show()
 
 LadeNeuesBild(*)
 {
-    Datei := FileSelect(,, "Bild auswählen:", "Bilder (*.gif; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)")
-    if Datei = ""
+    Bild := FileSelect(,, "Bild auswählen:", "Bilder (*.gif; *.jpg; *.bmp; *.png; *.tif; *.ico; *.cur; *.ani; *.exe; *.dll)")
+    if Bild = ""
         return
     if (MeinRadio.Value)  <em>; Bild mit aktueller Größe anzeigen.</em>
     {
@@ -722,8 +722,8 @@ LadeNeuesBild(*)
         Breite := A_ScreenWidth - 28  <em>; Minus 28, um Platz für Rahmen und Innenabstand zu schaffen.</em>
         Höhe := -1  <em>; "Seitenverhältnis beibehalten" erscheint sinnvoll.</em>
     }
-    MeinPic.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Datei)  <em>; Bild laden.</em>
-    MeineGui.Title := Datei
+    MeinPic.Value := Format("*w{1} *h{2} {3}", Breite, Höhe, Bild)  <em>; Bild laden.</em>
+    MeineGui.Title := Bild
     MeineGui.Show("xCenter y0 AutoSize")  <em>; Fenstergröße an Bildgröße anpassen.</em>
 }</pre>
 </div>

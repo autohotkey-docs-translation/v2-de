@@ -61,7 +61,7 @@
 <h2 id="Options">Optionen</h2>
 <p>Unter <a href="../misc/RegEx-QuickRef.htm#Options">Optionen</a> finden Sie Modifikatoren wie z. B. <span class="regex"><span class="red">i)</span>abc</span>, was die Groß-/Kleinschreibung-Sensitivität im Suchmuster "abc" ausschaltet.</p>
 
-<h2 id="MatchObject">Match-Objekt</h2>
+<h2 id="MatchObject">Match-Objekt (RegExMatchInfo)</h2>
 <p>Wenn eine Übereinstimmung gefunden wurde, wird ein Objekt mit Informationen über die Übereinstimmung in <em>AusgabeVar</em> gespeichert. Dieses Objekt hat die folgenden Methoden und Eigenschaften:</p>
 <p><strong>Match.Pos(N)</strong>: Gibt die Position der gesamten Übereinstimmung oder eines erfassten Teilsuchmusters zurück.</p>
 <p><strong>Match.Len(N)</strong>: Gibt die Länge der gesamten Übereinstimmung oder eines erfassten Teilsuchmusters zurück.</p>
@@ -142,13 +142,13 @@ MsgBox Endung[0]  <em>; Meldet "txt".</em></pre>
 var2 := 123
 MsgBox Deref("%var1%def%var2%")  <em>; Meldet abcdef123.</em>
 
-Deref(String)
+Deref(Str)
 {
-    global
-    local fpo, m, spo := 1, out := ""
-    while (fpo:=RegexMatch(String, "(%(.*?)%)|``(.)", &amp;m, spo))
+    spo := 1
+    out := ""
+    while (fpo:=RegexMatch(Str, "(%(.*?)%)|``(.)", &amp;m, spo))
     {
-        out .= SubStr(String, spo, fpo-spo)
+        out .= SubStr(Str, spo, fpo-spo)
         spo := fpo + StrLen(m[0])
         if (m[1])
             out .= %m[2]%
@@ -164,7 +164,7 @@ Deref(String)
             default: out .= m[3]
         }
     }
-    return out SubStr(String, spo)
+    return out SubStr(Str, spo)
 }</pre>
 </div>
 

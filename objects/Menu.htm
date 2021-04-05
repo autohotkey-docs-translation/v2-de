@@ -78,7 +78,7 @@ Menüleiste := <span class="func">MenuBar</span>()
     <p>Der Text, der auf dem Menüpunkt angezeigt werden soll, oder die Position&amp; eines vorhandenen Menüpunkts, der modifiziert werden soll. Siehe <a href="#MenuItemName">MenüpunktName</a>.</p></dd>
   <dt>Callback-oder-Untermenü</dt><dd><p>Der Name einer Funktion oder eine Referenz zu einem <a href="Functor.htm">Funktionsobjekt</a>, das als neuer <a href="../misc/Threads.htm">Thread</a> aufgerufen werden soll, wenn der Menüpunkt ausgewählt wird; oder eine Referenz zu einem <strong>Menu</strong>-Objekt, das als Untermenü verwendet werden soll.</p>
   <p id="CallbackParams">Optional kann die Funktion wie folgt Parameter definieren:</p>
-<pre class="Syntax"><i>FunktionName</i>(PunktName, PunktPos, Menu)</pre>
+<pre class="Syntax"><i>FunktionName</i>(PunktName, PunktPos, Menü)</pre>
     <p>Dieser Parameter ist erforderlich, wenn ein neuer Menüpunkt erstellt wird, aber optional, wenn die <em>Optionen</em> eines vorhandenen Menüpunkts aktualisiert werden.</p></dd>
   <dt>Optionen</dt><dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
@@ -202,7 +202,6 @@ Menüleiste := <span class="func">MenuBar</span>()
     <p>Der Text, der auf dem Menüpunkt angezeigt werden soll. Im Gegensatz zu <a href="#Add">Add</a> kann dieser Parameter keine Position sein.</p></dd>
 </dl>
 <p>Die übrigen Parameter verhalten sich wie bei der <a href="#Add">Add</a>-Methode, außer dass <em>Insert</em> einen neuen Menüpunkt erstellt, selbst wenn <em>NeuerMenüpunktName</em> mit dem Namen eines vorhandenen Menüpunkts übereinstimmen sollte.</p>
-<p>Da <a href="#AddStandard">voreingestellte</a> Menüpunkte nicht gezählt werden (<code>"1&amp;"</code> bezieht sich immer auf den ersten <em>benutzerdefinierten</em> Menüpunkt), kann ein Menüpunkt nicht unmittelbar vor den voreingestellten Menüpunkten eingefügt werden.</p>
 </div>
 
 <div class="methodShort" id="Rename">
@@ -383,9 +382,9 @@ Menüleiste := <span class="func">MenuBar</span>()
 <p><a class="ex_number" href="#ExBasic"></a> Fügt einen neuen Menüpunkt am unteren Ende des Tray-Symbol-Menüs hinzu.</p>
 <pre>A_TrayMenu.Add()  <em>; Erstellt eine Trennlinie.</em>
 A_TrayMenu.Add("Menüpunkt1", MenuHandler)  <em>; Erstellt einen neuen Menüpunkt.</em>
-return
+Persistent
 
-MenuHandler(PunktName, PunktPos, Menu) {
+MenuHandler(PunktName, PunktPos, Menü) {
     MsgBox "Sie haben " PunktName " (Position " PunktPos ") ausgewählt."
 }</pre>
 </div>
@@ -394,20 +393,20 @@ MenuHandler(PunktName, PunktPos, Menu) {
 <p><a class="ex_number" href="#ExPopup"></a> Erstellt ein aufklappbares Menü, das angezeigt wird, wenn der Benutzer einen Hotkey drückt.</p>
 <pre><em>; Erstellt ein aufklappbares Menü durch Hinzufügen von Menüpunkten.</em>
 Menü := Menu()
-Menü.Add "Menüpunkt 1", "MenuHandler"
-Menü.Add "Menüpunkt 2", "MenuHandler"
+Menü.Add "Menüpunkt 1", MenuHandler
+Menü.Add "Menüpunkt 2", MenuHandler
 Menü.Add  <em>; Fügt eine Trennlinie ein.</em>
 
 <em>; Erstellt ein weiteres Menü, das als Untermenü für das obige Menü dienen soll.</em>
 Untermenü1 := Menu()
-Untermenü1.Add "Menüpunkt A", "MenuHandler"
-Untermenü1.Add "Menüpunkt B", "MenuHandler"
+Untermenü1.Add "Menüpunkt A", MenuHandler
+Untermenü1.Add "Menüpunkt B", MenuHandler
 
 <em>; Erstellt ein Untermenü im ersten Menü (mit einem nach rechts gerichteten Pfeil). Sobald der Benutzer dieses Untermenü auswählt, wird das zweite Menü angezeigt.</em>
 Menü.Add "Mein Untermenü", Untermenü1
 
 Menü.Add  <em>; Fügt eine Trennlinie unterhalb des Untermenüs ein.</em>
-Menü.Add "Menüpunkt 3", "MenuHandler"  <em>; Fügt einen weiteren Menüpunkt unterhalb des Untermenüs ein.</em>
+Menü.Add "Menüpunkt 3", MenuHandler  <em>; Fügt einen weiteren Menüpunkt unterhalb des Untermenüs ein.</em>
 
 MenuHandler(Punkt, *) {
     MsgBox "Sie haben " Punkt " ausgewählt."
@@ -419,6 +418,7 @@ MenuHandler(Punkt, *) {
 <div class="ex" id="ExTray">
 <p><a class="ex_number" href="#ExTray"></a> Demonstriert einige der verschiedenen Elemente des Menu-Objekts.</p>
 <pre>#SingleInstance
+Persistent
 tray := A_TrayMenu <em>; Für den praktischen Grund.</em>
 tray.delete <em>; Löscht die voreingestellten Menüpunkte.</em>
 tray.add <em>; Trennlinie</em>
@@ -516,9 +516,9 @@ MenuHandler(*) {
 <p><a class="ex_number" href="#ExDllCall"></a> Meldet die Anzahl der Menüpunkte in einem Menü und die ID des letzten Menüpunkts.</p>
 <pre>
 Menü := Menu()
-Menü.Add "Menüpunkt 1", "nix"
-Menü.Add "Menüpunkt 2", "nix"
-Menü.Add "Menüpunkt B", "nix"
+Menü.Add "Menüpunkt 1", KeineAktion
+Menü.Add "Menüpunkt 2", KeineAktion
+Menü.Add "Menüpunkt B", KeineAktion
 
 <em>; Ermittelt die Anzahl von Menüpunkten in einem Menü.</em>
 menüpunkt_anzahl := DllCall("GetMenuItemCount", "ptr", Menü.Handle)
@@ -528,7 +528,7 @@ letzte_id := DllCall("GetMenuItemID", "ptr", Menü.Handle, "int", menüpunkt_anz
 
 MsgBox "Menü hat " menüpunkt_anzahl " Menüpunkte, und sein letzter Menüpunkt hat die ID " letzte_id
 
-nix(*) {
+KeineAktion(*) {
     <em>; Nichts tun.</em>
 }
 </pre>

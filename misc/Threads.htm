@@ -42,11 +42,17 @@
   <li>Eines der Menüs des Skripts wird gerade angezeigt (wie z. B. das Tray-Menü oder eine Menüleiste).</li>
   <li>Eine Verzögerung wird gerade durchgeführt, die von <a href="../commands/Send.htm">Send</a> (meistens durch <a href="../commands/SetKeyDelay.htm">SetKeyDelay</a>), <a href="../commands/WinActivate.htm">WinActivate</a> oder einer <a href="A_Clipboard.htm">Clipboard</a>-Operation eingeleitet wurde.</li>
   <li>Ein <a href="../commands/OnExit.htm">OnExit</a>-Thread wird ausgeführt.</li>
-  <li>Ein Warndialogfenster wird gerade angezeigt, weil das <a href="../commands/_MaxHotkeysPerInterval.htm">#MaxHotkeysPerInterval</a>-Limit erreicht wurde oder weil ein Problem bei der Aktivierung des Tastatur- oder Maus-Hooks aufgetreten ist (sehr selten).</li>
+  <li>Ein Warndialogfenster wird gerade angezeigt, weil das <a href="A_MaxHotkeysPerInterval.htm">A_MaxHotkeysPerInterval</a>-Limit erreicht wurde oder weil ein Problem bei der Aktivierung des Tastatur- oder Maus-Hooks aufgetreten ist (sehr selten).</li>
 </ul>
 <h3 id="Behave">Verhalten von unterbrechungsfreien Threads</h3>
 <p>Im Gegensatz zu hochpriorisierten Threads werden Ereignisse, die während der unterbrechungsfreien Phase des Threads auftreten, nicht verworfen. Drückt der Benutzer beispielsweise einen <a href="../Hotkeys.htm">Hotkey</a>, während der aktuelle Thread unterbrechungsfrei ist, wird dieser Hotkey solange gepuffert, bis der aktuelle Thread endet oder unterbrechbar wird, erst dann wird der Hotkey als neuer Thread gestartet.</p>
-<p>Jeder Thread kann im Notfall unterbrochen werden. Notfälle sind: 1) ein <a href="../commands/OnExit.htm">OnExit</a>-Callback; 2) eine <a href="../commands/OnMessage.htm">OnMessage</a>-Funktion, die eine Meldungsnummer kleiner als 0x0312 überwacht (oder ein <a href="../commands/CallbackCreate.htm">Callback</a>, das von so einer Meldung ausgelöst wird); und 3) ein <a href="../commands/CallbackCreate.htm">Callback</a>, das indirekt vom Thread selbst ausgelöst wird (z. B. via <a href="../commands/PostMessage.htm">SendMessage</a> oder <a href="../commands/DllCall.htm">DllCall</a>). Um diese Unterbrechungen zu vermeiden, können solche Funktionen vorübergehend deaktiviert werden.</p>
+<p>Jeder Thread kann im Notfall unterbrochen werden. Notfälle sind:</p>
+<ul>
+  <li>Ein <a href="../commands/OnExit.htm">OnExit</a>-Callback.</li>
+  <li>Eine <a href="../commands/OnMessage.htm">OnMessage</a>-Funktion, die eine nicht <a href="../commands/OnMessage.htm#buffering">gepufferte</a> Meldung überwacht.</li>
+  <li>Ein <a href="../commands/CallbackCreate.htm">Callback</a>, der indirekt durch den Thread selbst ausgelöst wird (z. B. über <a href="../commands/PostMessage.htm">SendMessage</a> oder <a href="../commands/DllCall.htm">DllCall</a>).</li>
+</ul>
+<p>Um diese Unterbrechungen zu vermeiden, können solche Funktionen vorübergehend deaktiviert werden.</p>
 <p>Ein <a href="../commands/Critical.htm">kritischer</a> Thread wird unterbrechbar, wenn ein <a href="../commands/MsgBox.htm">Mitteilungsfenster</a> oder ein anderes Dialogfenster angezeigt wird. Im Gegensatz zu <a href="../commands/Thread.htm">Thread Interrupt</a> wird der Thread allerdings wieder kritisch (und demzufolge unterbrechungsfrei), wenn der Benutzer das Dialogfenster schließt.</p>
 
 </body>

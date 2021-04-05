@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Persistent - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die Persistent-Funktion verhindert, dass das Skript automatisch nach Abschluss des letzten Threads beendet wird, und ermöglicht dadurch, dass es im Leerlauf weiterläuft." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Persistent</h1>
+
+<p>Verhindert, dass das Skript automatisch nach Abschluss des letzten Threads beendet wird, und ermöglicht dadurch, dass es im Leerlauf weiterläuft.</p>
+<pre class="Syntax"><span class="func">Persistent</span> <span class="optional">Persistieren</span></pre>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+  <dt>Persistieren</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#boolean">Boolescher Wert</a></p>
+    <p>Wenn dieser Parameter weggelassen wird oder True ist, wird das Skript weiter ausgeführt, nachdem alle Threads beendet wurden, auch dann, wenn keine der anderen Bedingungen für das Weiterlaufen des Skripts erfüllt sind.</p>
+    <p>Wenn dieser Parameter False ist, wird das Standardverhalten wiederhergestellt.</p>
+  </dd>
+</dl>
+
+<h2 id="Return_Value">Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#boolean">Integer (boolescher Wert)</a></p>
+<p>Diese Funktion gibt den vorherigen Wert der globalen Einstellung zurück; entweder 0 (False, der Standardwert) oder 1 (True).</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Wenn das Skript <em>persistent</em> ist, läuft es nach Abschluss der <a href="../Scripts.htm#auto">Startphase</a> und nach Beendigung aller anderen <a href="../misc/Threads.htm">Threads</a> im Leerlauf weiter. Normalerweise ist es nicht nötig, diese Funktion aufzurufen, da das Skript in den meisten Fällen, in denen der Benutzer es weiterlaufen lassen möchte, <a href="../Scripts.htm#persistent">automatisch persistent</a> ist, z. B. um auf <a href="../Hotkeys.htm">Hotkeys</a> zu reagieren, <a href="SetTimer.htm">Timer</a> auszuführen oder eine <a href="../objects/Gui.htm">GUI</a> anzuzeigen.</p>
+<p>Hier einige Fälle, wo diese Funktion erforderlich sein könnte (sofern das Skript weiterlaufen soll, wenn keine Threads oder Hotkeys, Timer usw. laufen):</p>
+<ul>
+  <li>Skripte, die mit <a href="OnMessage.htm">OnMessage</a> oder <a href="CallbackCreate.htm">CallbackCreate</a> und <a href="DllCall.htm">DllCall</a> auf Ereignisse reagieren - Funktionen dieser Art können das Skript nicht persistent machen.</li>
+  <li>Skripte, die durch Auswahl eines benutzerdefinierten Tray-Menüpunkts ausgeführt werden.</li>
+  <li>Skripte, die COM-Objekte <a href="ComObjCreate.htm">erstellen</a> oder <a href="ComObjActive.htm">abrufen</a>, und <a href="ComObjConnect.htm">ComObjConnect</a> nutzen, um auf Ereignisse eines Objekts zu reagieren.</li>
+</ul>
+<p>Wenn Sie diese Funktion in ein vorhandenes Skript einfügen, müssen einige oder alle Vorkommen von <a href="Exit.htm">Exit</a> ggf. mit <a href="ExitApp.htm">ExitApp</a> ersetzt werden. <a href="Exit.htm">Exit</a> kann ein persistentes Skript nicht beenden; es würde in diesem Fall nur den <a href="../misc/Threads.htm">aktuellen Thread</a> beenden.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Exit.htm">Exit</a>, <a href="ExitApp.htm">ExitApp</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Verhindert, dass sich das Skript automatisch beendet.</p>
+<pre><em>; Egal was dieses Skript gerade macht, es bleibt immer aktiv.
+; Auf diese Weise könnte man immer noch auf das Tray-Symbol zugreifen,
+; um das Skript zu editieren, Window Spy zu starten oder die Hilfe-Datei zu öffnen.</em>
+Persistent</pre>
+</div>
+
+</body>
+</html>
