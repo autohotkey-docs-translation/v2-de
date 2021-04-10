@@ -14,14 +14,14 @@
 
 <h1>ComObjConnect</h1>
 <p>Verbindet die Ereignisquellen eines COM-Objekts mit Funktionen, die ein bestimmtes Präfix haben.</p>
-<pre class="Syntax"><span class="func">ComObjConnect</span> ComObject <span class="optional">, Präfix</span></pre>
+<pre class="Syntax"><span class="func">ComObjConnect</span> ComObj <span class="optional">, Präfix</span></pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>ComObject</dt>
+  <dt>ComObj</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Typ: <a href="ComObject.htm">ComObject</a></p>
     <p>Ein Objekt, das Ereignisse auslöst.</p>
     <p>Wenn das Objekt das IConnectionPointContainer-Interface nicht unterstützt oder wenn die Typinformationen zur Klasse des Objekts nicht abgerufen werden kann, wird eine Fehlermeldung angezeigt. Mit <a href="Try.htm">Try</a>/<a href="Catch.htm">Catch</a> kann dies unterdrückt oder kontrolliert werden.</p>
     <p>Das IProvideClassInfo-Interface wird genutzt, um die Typinformationen zur Klasse des Objekts abzurufen, sofern es vom Objekt unterstützt wird. Ansonsten versucht ComObjConnect, die Typinformationen via IDispatch-Interface des Objekts abzurufen, was unzuverlässig sein kann.</p>
@@ -39,30 +39,30 @@
 
 <h2 id="Usage">Verwendung</h2>
 <p>Um ComObjConnect effektiv zu nutzen, müssen Sie zunächst Funktionen in das Skript schreiben, die die entsprechenden Ereignisse behandeln können. Solche Funktionen, auch "Eventhandler" genannt, haben die folgende Struktur:</p>
-<pre class="Syntax Short NoIndent"><i>Präfix</i><b>Ereignisname</b>([<i>Params...</i>, ComObject])
+<pre class="Syntax Short NoIndent"><i>Präfix</i><b>Ereignisname</b>([<i>Params...</i>, ComObj])
 {
     <i class="dull">... ereignisbehandelnder Code ...</i>
     return <i>RückgabeWert</i>
 }</pre>
 <p>Für <i>Präfix</i> kann ein beliebiges Präfix angegeben werden, während der <b>Ereignisname</b> der Name des Ereignisses ist, das von der Funktion behandelt werden soll.</p>
-<p><i>Params</i> entspricht den Parametern, die das Ereignis hat. Wenn das Ereignis keine Parameter hat, sollte <i>Params</i> ganz weggelassen werden. <i>ComObject</i> ist ein zusätzlicher Parameter, der eine Referenz zum ursprünglichen Wrapper-Objekt, das an ComObjConnect übergeben wurde, enthält; dieser Parameter wird in der Dokumentation des COM-Ereignisses nie erwähnt. "ComObject" sollte mit einem Namen ersetzt werden, der eher dem Kontext Ihres Skripts entspricht.</p>
-<p>Beachten Sie, dass Eventhandler Rückgabewerte haben können. Mit <a href="ComObject.htm">ComObject(Typ, Wert)</a> kann ein COM-spezifischer Wertetyp zurückgegeben werden. <code>return ComObject(0,0)</code> beispielsweise gibt eine Variante des Typs VT_EMPTY zurück, was das gleiche ist wie, als würde eine JavaScript-Funktion <code>undefined</code> (oder überhaupt nichts) zurückgeben.</p>
+<p><i>Params</i> entspricht den Parametern, die das Ereignis hat. Wenn das Ereignis keine Parameter hat, sollte <i>Params</i> ganz weggelassen werden. <i>ComObj</i> ist ein zusätzlicher Parameter, der eine Referenz zum ursprünglichen Wrapper-Objekt, das an ComObjConnect übergeben wurde, enthält; dieser Parameter wird in der Dokumentation des COM-Ereignisses nie erwähnt. "ComObj" sollte mit einem Namen ersetzt werden, der eher dem Kontext Ihres Skripts entspricht.</p>
+<p>Beachten Sie, dass Eventhandler Rückgabewerte haben können. Mit <a href="ComValue.htm">ComValue(Typ, Wert)</a> kann ein COM-spezifischer Wertetyp zurückgegeben werden. <code>return ComValue(0,0)</code> beispielsweise gibt eine Variante des Typs VT_EMPTY zurück, was das gleiche ist wie, als würde eine JavaScript-Funktion <code>undefined</code> (oder überhaupt nichts) zurückgeben.</p>
 <p>Mit <code>ComObjConnect(MeinObjekt, "<i>Präfix</i>")</code> kann die Ereignisbehandlung aktiviert werden.</p>
 <p>Mit <code>ComObjConnect(MeinObjekt)</code> kann die Verbindung zum Objekt getrennt werden (um die Ereignisbehandlung zu stoppen).</p>
 <p>Ist die Anzahl der Parameter unbekannt, kann eine <a href="../Functions.htm#Variadic">variadische Funktion</a> verwendet werden.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Das Skript muss eine Referenz zu <em>ComObject</em> behalten, da ComObject sonst automatisch freigegeben und von dessen COM-Objekt getrennt werden würde, wodurch die Erkennung weiterer Ereignisse verhindert wird. Es gibt keine Standardmethode, um zu erkennen, wann die Verbindung überflüssig ist, daher muss das Skript die Verbindung manuell trennen, indem es ComObjConnect aufruft.</p>
+<p>Das Skript muss eine Referenz zu <em>ComObj</em> behalten, da ComObject sonst automatisch freigegeben und von dessen COM-Objekt getrennt werden würde, wodurch die Erkennung weiterer Ereignisse verhindert wird. Es gibt keine Standardmethode, um zu erkennen, wann die Verbindung überflüssig ist, daher muss das Skript die Verbindung manuell trennen, indem es ComObjConnect aufruft.</p>
 <p>Die <a href="Persistent.htm">Persistent</a>-Funktion ist eventuell vonnöten, um das Skript am Laufen zu halten, während es auf Ereignisse wartet.</p>
 <p>Bei Misserfolg wird eine Ausnahme ausgelöst.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="https://msdn.microsoft.com/de-de/library/ccxe1xe6.aspx">WScript.ConnectObject (MSDN)</a></p>
+<p><a href="ComObject.htm">ComObject</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="https://msdn.microsoft.com/de-de/library/ccxe1xe6.aspx">WScript.ConnectObject (MSDN)</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExIE">
 <p><a class="ex_number" href="#ExIE"></a> Startet eine Instanz des Internet Explorers und verbindet Ereignisse mit entsprechenden Skript-Funktionen, die das Präfix "IE_" haben. Einzelheiten über das hier verwendete COM-Objekt und DocumentComplete-Ereignis finden Sie unter <a href="https://msdn.microsoft.com/de-de/library/aa752084.aspx">InternetExplorer object (Microsoft Docs)</a>.</p>
-<pre>ie := ComObjCreate("InternetExplorer.Application")
+<pre>ie := ComObject("InternetExplorer.Application")
 
 <em>; Verbindet Ereignisse mit entsprechenden Skript-Funktionen, die das Präfix "IE_" haben.</em>
 ComObjConnect(ie, "IE_")

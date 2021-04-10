@@ -14,56 +14,57 @@
 <body>
 
 <h1>Type</h1>
-<p>Ermittelt den genauen Typ eines Wertes.</p>
-<pre class="Syntax">Typ := <span class="func">Type</span>(Wert)</pre>
+<p>Ermittelt den Klassennamen eines Wertes.</p>
+<pre class="Syntax">KlasseName := <span class="func">Type</span>(Wert)</pre>
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt den Typ von <em>Wert</em> zurück. Einfache Werte geben eine der folgenden Zeichenketten zurück:</p>
+<p>Diese Funktion gibt den Klassennamen von <em>Wert</em> zurück. Einfache Werte geben eine der folgenden Zeichenketten zurück:</p>
 <ul>
   <li>String</li>
   <li>Integer</li>
   <li>Float</li>
 </ul>
-<p>Wenn <em>Wert</em> ein Objekt ist, wird der Rückgabewert der Klassenname des Objekts sein.</p>
-<p>Beim <a href="../objects/Object.htm">Object</a>-Typ ist der Klassenname dynamisch und wird mithilfe eines Algorithmus, wie unten gezeigt, ermittelt:</p>
+<p>Der Algorithmus zur Bestimmung des Klassennamens eines Wertes kann ungefähr wie folgt dargestellt werden:</p>
 <pre>
-Object_Type(Value) {
-    if HasProp(Value, "__Class")  <em>; Stellt sicher, dass Klassen nicht als Instanz von einer base-Klasse gemeldet werden.</em>
-        return "Class"
-    while Value := Value.base
-        if HasProp(Value, "__Class")
+TypeOf(Value)
+{
+    if (comClass := ComObjType(Value, "Class")) != ""
+        return comClass
+    try <em>; `Value is Object` wird nicht geprüft, da es bei Prototypen False sein kann.</em>
+        if ObjHasOwnProp(Value, "__Class")
+            return "Prototype"
+    while Value := ObjGetBase(Value)
+        if ObjHasOwnProp(Value, "__Class")
             return Value.__Class
     return "Object"
 }
 </pre>
-<p>Im Gegensatz zu dieser Funktion bewirkt die Type-Funktion jedoch nicht, dass die Metafunktionen des Objekts aufgerufen werden.</p>
-<p>Bei COM-Wrapper-Objekten hängt der Rückgabewert vom gewrappten <a href="ComObjType.htm">Variantentyp</a> ab. Er wird wie folgt ermittelt:</p>
+<p>Handelt es sich um COM-Wrapper-Objekte, kann der Klassenname auch anhand des <a href="ComObjType.htm#vt">Variantentyps</a> wie folgt ermittelt werden:</p>
 <pre>
 ComObject_Type(obj)
 {
     if ComObjType(obj) &amp; 0x2000 <em>; VT_ARRAY</em>
-        return "<a href="ComObjArray.htm">ComObjArray</a>"
+        return "ComObjArray" <em>; ComObjArray.Prototype.__Class</em>
     if ComObjType(obj) &amp; 0x4000 <em>; VT_BYREF</em>
-        return "<a href="ComObject.htm#ByRef">ComObjRef</a>"
+        return "ComValueRef" <em>; ComValueRef.Prototype.__Class</em>
     if (ComObjType(obj) = 9 || ComObjType(obj) = 13) <em>; VT_DISPATCH || VT_UNKNOWN</em>
         &amp;&amp; ComObjValue(obj) != 0
     {
-        if (classname := <a href="ComObjType.htm">ComObjType</a>(obj, "Class")) != ""
-            return classname
+        if (comClass := ComObjType(obj, "Class")) != ""
+            return comClass
         if ComObjType(obj) = 9 <em>; VT_DISPATCH</em>
-            return "ComObject"
+            return "ComObject" <em>; ComObject.Prototype.__Class</em>
     }
-    return "ComObj"
+    return "ComValue" <em>; ComValue.Prototype.__Class</em>
 }
 </pre>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Dieser Funktion sollte man nicht benutzen, um zu überprüfen, ob ein Wert numerisch ist, da auch numerische <em>Zeichenketten</em> in mathematischen Ausdrücken oder in Verbindung mit internen Funktionen gültig sein können. In einigen Fällen kann der genaue Typ eines Wertes aber wichtig sein.</p>
+<p>Dieser Funktion sollte man nicht benutzen, um zu überprüfen, ob ein Wert numerisch ist, da auch numerische <em>Zeichenketten</em> in mathematischen Ausdrücken oder in Verbindung mit internen Funktionen gültig sein können. In einigen Fällen kann der genaue Typ eines Wertes aber wichtig sein. Verwenden Sie in solchen Fällen nicht Type, sondern lieber <code>Wert is Number</code> oder ähnliches.</p>
 <p>Um zu überprüfen, ob ein Wert als Zahl benutzt werden kann, nutzen Sie die <a href="Is.htm#number">IsNumber</a>-, <a href="Is.htm#integer">IsInteger</a>- oder <a href="Is.htm#float">IsFloat</a>-Funktion.</p>
-<p>Mit der <a href="IsObject.htm">IsObject</a>-Funktion kann man überprüfen, ob ein Wert ein Objekt beliebigen Typs ist.</p>
-<p>Mit dem <a href="../Variables.htm#is"><code>is</code></a>-Operator kann man überprüfen, ob der Wert ein abgeleitetes Objekt von einer benutzerdefinierten Klasse ist.</p>
-<p>Bei internen Typen kann die Klasse des Objekts nicht direkt referenziert werden.</p>
+<p>Mit der <a href="IsObject.htm">IsObject</a>-Funktion kann man überprüfen, ob ein Wert ein Objekt beliebigen Typs (also alles, was kein primitiver Wert ist) ist.</p>
+<p>Um zu prüfen, ob ein Wert eine Instanz einer bestimmten Klasse ist, verwenden Sie den <a href="../Variables.htm#is"><code>is</code></a>-Operator. Dieser kann auch in Verbindung mit primitiven Werten oder zur Identifizierung von <a href="ComValue.htm">COM-Wrapper-Objekten</a> verwendet werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../Concepts.htm#values">Werte</a>, <a href="../Language.htm#expressions">Ausdrücke (Expressions)</a>, <a href="Is.htm">Is-Funktionen</a>, <a href="Integer.htm">Integer</a>, <a href="Float.htm">Float</a>, <a href="String.htm">String</a></p>

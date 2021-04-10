@@ -13,7 +13,7 @@
 <body>
 
 <h1>Else</h1>
-<p>Bestimmt eine oder mehrere <a href="../Concepts.htm#statement">Anweisungen</a>, die ausgeführt werden sollen, wenn eine <a href="If.htm">If-Anweisung</a> False ergibt.</p>
+<p>Bestimmt eine oder mehrere <a href="../Concepts.htm#statement">Anweisungen</a>, die ausgeführt werden sollen, wenn der Körper der zugehörigen Anweisung nicht ausgeführt wurde.</p>
 <pre class="Syntax"><span class="func">Else</span> <i>Anweisung</i></pre>
 <pre class="Syntax"><span class="func">Else</span>
 {
@@ -21,7 +21,13 @@
 }</pre>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Jedes <em>Else</em> muss zu einer darüberliegenden <a href="If.htm">If-Anweisung</a> gehören (mit ihr verbunden sein). Ein <em>Else</em> bezieht sich immer auf die nächst darüberliegende noch nicht beanspruchte If-Anweisung, sofern dieses Verhalten nicht mit einem <a href="Block.htm">Block</a> geändert wurde.</p>
+<p>Jedes <em>Else</em> muss zu einer darüberliegenden <a href="If.htm">If</a>-, <a href="Catch.htm">Catch</a>-, <a href="For.htm">For</a>-, <a href="Loop.htm">Loop</a>- oder <a href="While.htm">While</a>-Anweisung gehören (mit ihr verbunden sein). Ein <em>Else</em> bezieht sich immer auf die nächst darüberliegende, gültige, noch nicht beanspruchte Anweisung, sofern dieses Verhalten nicht mit einem <a href="Block.htm">Block</a> geändert wurde. Die Bedingung zum Ausführen einer <em>Else</em>-Anweisung hängt von der zugehörigen Anweisung ab:</p>
+<ul>
+  <li><a href="If.htm">If-Ausdruck</a>: Der Ausdruck wurde als False gewertet.</li>
+  <li><a href="For.htm">For</a>, <a href="Loop.htm">Loop</a> (beliebiger Art), <a href="While.htm">While</a>: Die Schleife hatte null Iterationen.</li>
+  <li><a href="LoopRead.htm">Loop Read</a>: Wie oben, aber das Vorhandensein von <em>Else</em> verhindert auch, dass ein Fehler ausgelöst wird, wenn die Datei oder der Pfad nicht gefunden wurde. Entsprechend wird <em>Else</em> ausgeführt, wenn die Datei leer ist oder nicht existiert.</li>
+  <li><a href="Try.htm">Try</a>...<a href="Catch.htm">Catch</a>: Innerhalb des Try-Blocks wurde keine Ausnahme ausgelöst.</li>
+</ul>
 <p>Unmittelbar nach einem <em>Else</em> kann eine beliebige andere <a href="../Concepts.htm#statement">Einzelanweisung</a> erfolgen. Diese Methode wird häufig bei "else if"-Konstruktionen verwendet (siehe Beispiele unten).</p>
 <p>Wenn ein <em>Else</em> mehr als eine Zeile besitzt, müssen diese Zeilen mit geschweiften Klammern umschlossen werden (um einen <a href="Block.htm">Block</a> zu erstellen). Besitzt ein <em>Else</em> allerdings nur eine Zeile, können die geschweiften Klammern weggelassen werden. Zum Beispiel:</p>
 <pre>if (Anzahl &gt; 0)  <em>; Geschweifte Klammern können unten weggelassen werden, weil es nur eine Zeile ist.</em>
@@ -84,7 +90,18 @@ else if x = 3
     Sleep 1
 }
 else Standardfunktion()  <em>; Einzelanweisungen können unmittelbar nach einem Else erfolgen.</em></pre>
-
 </div>
+
+<div class="ex" id="ExLoop">
+<p><a class="ex_number" href="#ExLoop"></a> Führt etwas Code aus, wenn eine Schleife null Iterationen hatte.</p>
+<pre>
+<em>; Fenster/Tabs des Datei/Internet-Explorers anzeigen.</em>
+for window in ComObject("Shell.Application").Windows
+    MsgBox "Fenster #" A_Index ": " window.LocationName
+else
+    MsgBox "Keine Shell-Fenster gefunden."
+</pre>
+</div>
+
 </body>
 </html>

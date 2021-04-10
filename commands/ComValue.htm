@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>ComValue - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die ComValue-Klasse wrappt ein Wert, SafeArray oder COM-Objekt, um es für das Skript oder für eine COM-Methode nutzbar zu machen." />
+<meta name="ahk:equiv-v1" content="commands/ComObjActive.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+<script src="../static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>ComValue</h1>
+
+<p>Wrappt ein Wert, SafeArray oder COM-Objekt, um es für das Skript oder für eine COM-Methode nutzbar zu machen.</p>
+<pre class="Syntax">ComObj := <span class="func">ComValue</span>(VarTyp, Wert <span class="optional">, Flags</span>)</pre>
+<p><code>ComValue</code> selbst ist eine von <code>Any</code> abgeleitete <a href="../objects/Class.htm">Klasse</a>, wird aber nur zum Erstellen oder Identifizieren von COM-Wrapper-Objekten verwendet.</p>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>VarTyp</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Ein Integer, der den Typ des Wertes kennzeichnet. Eine Auflistung aller Typennummern finden Sie unter <a href="ComObjType.htm#vt">ComObjType</a>.</p>
+  </dd>
+
+  <dt>Wert</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Ein Wert, der gewrappt werden soll. Zurzeit werden nur Integer und Pointer-Werte unterstützt.</p>
+  </dd>
+
+  <dt>Flags</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Flags haben Einfluss auf das Verhalten des Wrapper-Objekts; siehe <a href="ComObjFlags.htm">ComObjFlags</a>, um mehr darüber zu erfahren.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Returns">Rückgabewert</h2>
+<p>Typ: ComValue, ComValueRef, <a href="ComObjArray.htm">ComObjArray</a> oder <a href="ComObject.htm">ComObject</a></p>
+<p>Gibt ein Wrapper-Objekt zurück, das einen <a href="ComObjType.htm#vt">Variantentyp</a> und Wert, oder einen Pointer enthält.</p>
+<p>Dieses Objekt kann für zwei Dinge genutzt werden:</p>
+<ol>
+  <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComValue(0xB, -1)</code> ein Objekt, das den booleschen COM-Wert <em>True</em> repräsentiert.</li>
+  <li>Ein Skript kann deutlich besser mit einem COM-Objekt oder SafeArray interagieren (via <a href="../Objects.htm#Usage_Objects">Objektsyntax</a>), wenn es gewrappt wurde. Die meisten Skripte müssen dies nicht manuell tun, weil <a href="ComObject.htm">ComObject</a>, <a href="ComObjArray.htm">ComObjArray</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjGet.htm">ComObjGet</a> und andere COM-Methoden, die ein Objekt zurückgeben, automatisch ein Wrapper-Objekt erstellen.</li>
+</ol>
+
+<h2 id="Ptr">Ptr</h2>
+<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts VT_UNKNOWN (13) ist oder den VT_BYREF- (0x4000) oder VT_ARRAY-Flag (0x2000) enthält, kann die <code>Ptr</code>-Eigenschaft genutzt werden, um die Adresse des Objekts, der typisierten Variable oder des SafeArrays abzurufen. Dadurch kann das ComObject selbst an jeden <a href="DllCall.htm">DllCall</a>- oder <a href="ComCall.htm">ComCall</a>-Parameter übergeben werden, der vom Typ <code>"Ptr"</code> ist, oder explizit verwendet werden. <code>ComObj.Ptr</code> beispielsweise ist in solchen Fällen äquivalent zu <code>ComObjValue(ComObj)</code>.</p>
+<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts VT_UNKNOWN (13) oder VT_DISPATCH (9) ist und der gewrappte Pointer Null (0) ist, kann die <code>Ptr</code>-Eigenschaft genutzt werden, um den aktuellen Null-Wert abzurufen oder um dem Wrapper-Objekt einen Pointer zuzuweisen. Nach der Zuweisung (falls ungleich Null) wird der Pointer automatisch freigegeben, wenn das Wrapper-Objekt freigegeben wird. Dies kann zusammen mit <a href="DllCall.htm">DllCall</a>- oder <a href="ComCall.htm">ComCall</a>-Ausgabeparametern vom Typ <code>"Ptr*"</code> oder <code>"PtrP"</code> verwendet werden, um sicherzustellen, dass der Pointer automatisch freigegeben wird, z. B. wenn ein Fehler auftritt. Ein Beispiel dazu finden Sie unter <a href="ComObjQuery.htm#ExIE">ComObjQuery</a>.</p>
+<p>Wenn einem Wrapper-Objekt mit <em>VarTyp</em> VT_DISPATCH (9) und einem Null-Pointer (0) ein Pointer-Wert ungleich Null zugewiesen wird, ändert sich dessen Typ von <code>ComValue</code> zu <code>ComObject</code>. Die Eigenschaften und Methoden des gewrappten Objekts werden verfügbar gemacht, während die <code>Ptr</code>-Eigenschaft nicht mehr zur Verfügung steht.</p>
+
+<h2 id="ByRef">ByRef</h2>
+<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, können leere eckige Klammern <code>[]</code> zum Lesen oder Schreiben des referenzierten Wertes genutzt werden.</p>
+<p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder eines Pufferspeichers mit genügend Kapazität sein, um einen Wert bestimmten Typs enthalten zu können. Das folgende Beispiel erstellt eine Variable, die von einer VBScript-Funktion beschrieben werden kann:</p>
+<pre>vbuf := BufferAlloc(24, 0)
+vref := ComValue(0x400C, vbuf.ptr)  <em>; 0x400C ist eine Kombination von VT_BYREF und VT_VARIANT.</em>
+
+vref[] := "Eingabewert"
+sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ExByRef">Beispiel unten</a> initialisiert werden.</em>
+MsgBox vref[]</pre>
+<p>Wenn die Methode wie oben gezeigt eine Kombination aus VT_BYREF und VT_VARIANT akzeptiert, kann stattdessen eine <a href="../Concepts.htm#variable-references">VarRef</a> verwendet werden. Zum Beispiel:</p>
+<pre>eine_var := "Eingabewert"
+sc.Run("Beispiel", &amp;eine_var)
+MsgBox eine_var</pre>
+<p>Einige Methoden erfordern jedoch einen spezifischeren Variantentyp, wie z. B. <code>VT_BYREF | VT_I4</code>. In solchen Fällen muss die erste oben gezeigte Vorgehensweise verwendet werden, wobei 0x400C mit dem entsprechenden Variantentyp ersetzt wird.</p>
+
+<h2 id="Remarks">Allgemeine Bemerkungen</h2>
+<p>Wenn diese Funktion zum Wrappen eines <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointers genutzt wird, ist das Wrapper-Objekt zum Freigeben des Pointers verantwortlich, falls erforderlich. Wenn das Skript also beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiter zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
+<p>Der <em>VarTyp</em> eines Wrapper-Objekts kann via <a href="ComObjType.htm">ComObjType</a> abgerufen werden.</p>
+<p>Der <em>Wert</em> eines Wrapper-Objekts kann via <a href="ComObjValue.htm">ComObjValue</a> abgerufen werden.</p>
+<p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wird, wird ein neues Wrapper-Objekt erstellt. Bei Vergleichen und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> werden beide Wrapper-Objekte nicht als identisch angesehen, sogar dann, wenn sie denselben Variantentyp und Wert enthalten.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="ComObjFromPtr.htm">ComValue</a>, <a href="ComObject.htm">ComObject</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjConnect.htm">ComObjConnect</a>, <a href="ComObjFlags.htm">ComObjFlags</a>, <a href="ObjAddRef.htm">ObjAddRef/ObjRelease</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="https://msdn.microsoft.com/de-de/library/ms221467.aspx">GetActiveObject (MSDN)</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExByRef">
+<p><a class="ex_number" href="#ExByRef"></a> Übergibt VARIANT-ByRef an eine COM-Funktion.</p>
+<pre>
+<em>; Einleitung - ScriptControl benötigt eine 32-Bit-Version von AutoHotkey.</em>
+code := "
+(
+Sub Beispiel(Var)
+    MsgBox Var
+    Var = "Ausgabewert!"
+End Sub
+)"
+sc := ComObject("ScriptControl"), sc.Language := "VBScript", sc.AddCode(code)
+
+
+<em>; Beispiel: VARIANT via Referenz an eine COM-Methode übergeben.</em>
+var := ComVar()
+var[] := "Eingabewert"
+sc.Run("Beispiel", var.ref)
+MsgBox var[]
+
+<em>; Oben und unten sind in diesem Fall äquivalent:</em>
+var := "Eingabewert"
+sc.Run("Beispiel", &amp;var)
+MsgBox var
+
+
+<em>; ComVar: Ein Objekt, mit dem ein Wert via Referenz übergeben werden kann.
+;   this[] ruft den Wert ab.
+;   this[] := Val setzt den Wert.
+;   this.ref ruft ein ByRef-Objekt zur Übergabe an eine COM-Methode ab.</em>
+class ComVar {
+    __new(Type := 0xC) {
+        <em>; Reserviert Speicher für die typisierte Variable.
+        ; Der größte unterstützte Typ ist VT_VARIANT auf x64 (24 Byte).</em>
+        this.var := BufferAlloc(24, 0)
+        <em>; Erstelle ein Objekt, mit dem die Variable via Referenz übergeben werden kann.</em>
+        this.ref := ComValue(0x4000|Type, this.var.ptr + (Type=0xC ? 0 : 8))
+    }
+    __item {
+        get =&gt; this.ref[]
+        set =&gt; this.ref[] := value
+    }
+}
+</pre>
+</div>
+
+</body>
+</html>

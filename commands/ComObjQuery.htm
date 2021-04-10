@@ -14,14 +14,14 @@
 
 <h1>ComObjQuery</h1>
 <p>Fordert ein Interface oder Service eines COM-Objekts an.</p>
-<pre class="Syntax">InterfacePointer := <span class="func">ComObjQuery</span>(ComObject, <span class="optional">SID,</span> IID)</pre>
+<pre class="Syntax">InterfacePointer := <span class="func">ComObjQuery</span>(ComObj, <span class="optional">SID,</span> IID)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>ComObject</dt>
+  <dt>ComObj</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Typ: <a href="ComValue.htm">ComValue</a>, <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>Ein COM-Wrapper-Objekt, Interface-Pointer, oder ein Objekt mit einer <code>Ptr</code>-Eigenschaft, die einen Interface-Pointer zurückgibt.</p>
   </dd>
 
@@ -40,21 +40,21 @@
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>Typ: <a href="ComObject.htm#Returns">ComObject</a></p>
-<p>Diese Funktion gibt ein COM-Wrapper-Objekt des Typs VT_UNKNOWN (13) zurück.</p>
+<p>Typ: <a href="ComValue.htm#Returns">ComValue</a></p>
+<p>Diese Funktion gibt ein COM-Wrapper-Objekt des <a href="ComObjType.htm#vt">Variantentyps</a> VT_UNKNOWN (13) zurück.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Im Zwei-Parameter-Modus ist diese Funktion äquivalent zu <a href="https://msdn.microsoft.com/de-de/library/ms682521.aspx">IUnknown::QueryInterface</a>. Sind sowohl SID als auch IID angegeben, wird intern das <a href="https://msdn.microsoft.com/de-de/library/cc678965.aspx">IServiceProvider</a>-Interface angefordert und danach <a href="https://msdn.microsoft.com/de-de/library/cc678966.aspx">IServiceProvider::QueryService</a> aufgerufen. In beiden Fällen ist der Rückgabewert entweder 0 oder ein Pointer, der auf das angeforderte Interface verweist. Grundsätzlich muss dieser Pointer <a href="ObjAddRef.htm">freigegeben</a> werden, wenn er vom Skript nicht länger benötigt wird.</p>
 <p><a href="ComCall.htm">ComCall</a> kann verwendet werden, um native Interface-Methoden aufzurufen.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="ComCall.htm">ComCall</a>, <a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a></p>
+<p><a href="ComCall.htm">ComCall</a>, <a href="ComObject.htm">ComObject</a>, <a href="ComObjGet.htm">ComObjGet</a>, <a href="ComObjActive.htm">ComObjActive</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExClassName">
 <p><a class="ex_number" href="#ExClassName"></a> Ermittelt den Klassennamen eines Objekts.</p>
 <pre>
-obj := ComObjCreate("Scripting.Dictionary")
+obj := ComObject("Scripting.Dictionary")
 
 MsgBox "Interface-Name: " ComObjType(obj, "name")
 
@@ -73,7 +73,7 @@ catch
 ComCall(3, pci, "ptr*", &amp;ti := 0)
 
 <em>; ti wrappen, um automatische Säuberung zu ermöglichen.</em>
-ti := ComObject(13, ti)
+ti := ComValue(13, ti)
 
 <em>; GetDocumentation aufrufen, um den vollständigen Typennamen des Objekts zu erhalten.</em>
 ComCall(12, ti, "int", -1, "ptr*", &amp;pname := 0, "ptr", 0, "ptr", 0, "ptr", 0)
@@ -108,7 +108,7 @@ GetWebBrowser()
     static VT_UNKNOWN := 13
     DllCall("oleacc\ObjectFromLresult", "Ptr", lResult
         , "Ptr", IID_IHTMLDocument2, "Ptr", 0
-        , "Ptr*", pdoc := ComObject(VT_UNKNOWN, 0))
+        , "Ptr*", pdoc := ComValue(VT_UNKNOWN, 0))
     
     <em>; WebBrowserApp-Service anfordern. In diesem bestimmten Fall sind
     ; SID und IID identisch, was nicht immer so ist.</em>
@@ -121,14 +121,14 @@ GetWebBrowser()
     ; pweb wird dessen ptr automatisch freigeben, also AddRef nutzen, um dem entgegenzuwirken.</em>
     ObjAddRef(pweb.ptr)
     static VT_DISPATCH := 9
-    return ComObject(VT_DISPATCH, pweb.ptr)
+    return ComValue(VT_DISPATCH, pweb.ptr)
 }
 
 GUID(sGUID) <em>; Wandelt eine Zeichenkette in eine binäre GUID um und gibt sie via Buffer-Objekt zurück.</em>
 {
     GUID := BufferAlloc(16, 0)
     if DllCall("ole32\CLSIDFromString", "WStr", sGUID, "Ptr", GUID) &lt; 0
-        throw Exception("Ungültiger Parameter #1", -1, sGUID)
+        throw ValueError("Ungültiger Parameter #1", -1, sGUID)
     return GUID
 }
 </pre>

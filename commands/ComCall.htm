@@ -17,7 +17,7 @@
 
 <p>Ruft eine native COM-Interface-Methode über ihre Indexnummer auf.</p>
 
-<pre class="Syntax">Ergebnis := <span class="func">ComCall</span>(Index, ComObject <span class="optional">, Typ1, Arg1, Typ2, Arg2, RückgabeTyp</span>)</pre>
+<pre class="Syntax">Ergebnis := <span class="func">ComCall</span>(Index, ComObj <span class="optional">, Typ1, Arg1, Typ2, Arg2, RückgabeTyp</span>)</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -31,10 +31,10 @@
       <p>Die Übergabe einer ungültigen Indexnummer kann zu undefiniertem Verhalten führen, inklusive (aber nicht beschränkt auf) Programmabsturz.</p>
   </dd>
   
-  <dt>ComObject</dt>
+  <dt>ComObj</dt>
   <dd>
-      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
-      <p>Das gewünschte COM-Objekt; also ein COM-Interface-Pointer. Der Pointer-Wert kann direkt übergeben oder innerhalb eines Objekts mit der <code>Ptr</code>-Eigenschaft gekapselt werden, wie z. B. ein <a href="ComObject.htm">ComObj</a> mit dem Variantentyp VT_UNKNOWN.</p>
+      <p>Typ: <a href="../Concepts.htm#numbers">Integer</a>, <a href="ComValue.htm">ComValue</a> oder <a href="../objects/Object.htm">Objekt</a></p>
+      <p>Das gewünschte COM-Objekt; also ein COM-Interface-Pointer. Der Pointer-Wert kann direkt übergeben oder innerhalb eines Objekts mit der <code>Ptr</code>-Eigenschaft gekapselt werden, wie z. B. ein <a href="ComValue.htm">ComValue</a> mit dem Variantentyp VT_UNKNOWN.</p>
       <p>Der Interface-Pointer dient zum Lokalisieren der Adresse der virtuellen Funktion, die die Interface-Methode implementiert, und wird auch als Parameter übergeben. Diesen Parameter findet man grundsätzlich nicht in Sprachen, die von sich aus Interfaces unterstützen, allerdings wird er in der C-Style-"Vtbl"-Definition angezeigt.</p>
       <p>Die Übergabe eines ungültigen Pointers kann zu undefiniertem Verhalten führen, inklusive (aber nicht beschränkt auf) Programmabsturz.</p>
   </dd>
@@ -73,7 +73,7 @@
 </ul>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="ComObjCreate.htm">ComObjCreate</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="ComObject.htm">ComObject</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="CallbackCreate.htm">CallbackCreate</a></p>
+<p><a href="ComObject.htm">ComObject</a>, <a href="ComObjQuery.htm">ComObjQuery</a>, <a href="ComValue.htm">ComValue</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="CallbackCreate.htm">CallbackCreate</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 
@@ -96,7 +96,7 @@ IID_ITaskbarList  := "{56FDF342-FD6D-11d0-958A-006097C9A090}"
 CLSID_TaskbarList := "{56FDF344-FD6D-11d0-958A-006097C9A090}"
 
 <em>; Erstellt das TaskbarList-Objekt.</em>
-tbl := <a href="ComObjCreate.htm">ComObjCreate</a>(CLSID_TaskbarList, IID_ITaskbarList)
+tbl := ComObject(CLSID_TaskbarList, IID_ITaskbarList)
 
 activeHwnd := WinExist("A")
 
@@ -155,7 +155,7 @@ class TaskbarList {
     
     <em>; Wird bei einer neuen Instanz von TaskbarList() aufgerufen.</em>
     __new() {
-        this.comobj := ComObjCreate(TaskbarList.CLSID, TaskbarList.IID)
+        this.comobj := ComObject(TaskbarList.CLSID, TaskbarList.IID)
         this.ptr := this.comobj.ptr
         <em>; Initialisierung über ITaskbarList anfordern.</em>
         this.HrInit()

@@ -34,7 +34,7 @@ ul.list_of_p li { margin: 1em 0; }
 <p>Eine Auflistung der verfügbaren Objekttypen finden Sie unter <a href="objects/index.htm">Interne Klassen</a>. Es gibt zwei grundlegende Typen:</p>
 <ul>
   <li><strong>AutoHotkey-Objekte</strong> sind Instanzen der <a href="objects/Object.htm">Object</a>-Klasse. Diese unterstützen Ad-hoc-Eigenschaften, und verfügen über Methoden, um herauszufinden, welche Eigenschaften existieren. <a href="objects/Array.htm">Array</a>, <a href="objects/Map.htm">Map</a> und alle benutzerdefinierten und internen Klassen werden von Object abgeleitet.</li>
-  <li><strong>COM-Objekte</strong>, wie solche, die via <a href="commands/ComObjCreate.htm">ComObjCreate</a> erstellt werden. Diese sind in externen Bibliotheken implementiert und unterscheiden sich daher von AutoHotkey-Objekten in Bezug auf das Verhalten. ComObject repräsentiert typischerweise ein COM- oder "Automation"-Objekt mit einer implementierten <a href="https://docs.microsoft.com/de-de/windows/desktop/api/oaidl/nn-oaidl-idispatch">IDispatch-Schnittstelle</a>. Es wird auch genutzt, um <a href="commands/ComObject.htm">Werte von spezifischen Typen zu wrappen</a>, damit diese an COM-Objekten und Funktionen übergeben werden können.</li>
+  <li><strong>COM-Objekte</strong>, wie solche, die via <a href="commands/ComObject.htm">ComObject</a> erstellt werden. Diese sind in externen Bibliotheken implementiert und unterscheiden sich daher von AutoHotkey-Objekten in Bezug auf das Verhalten. ComObject repräsentiert typischerweise ein COM- oder "Automation"-Objekt mit einer implementierten <a href="https://docs.microsoft.com/de-de/windows/desktop/api/oaidl/nn-oaidl-idispatch">IDispatch-Schnittstelle</a>. Es wird auch genutzt, um <a href="commands/ComValue.htm">Werte von spezifischen Typen zu wrappen</a>, damit diese an COM-Objekten und Funktionen übergeben werden können.</li>
 </ul>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
@@ -253,7 +253,7 @@ anderesObj.test()</pre>
         ...
     }
 
-    Eigenschaft[]  <em>; Die eckigen Klammern sind optional</em>
+    Eigenschaft[<i>Parameter</i>]  <em>; Eckige Klammern nur verwenden, wenn Parameter vorhanden sind.</em>
     {
         <span class="dec">get</span> {
             return <i>Eigenschaftswert</i>
@@ -263,13 +263,13 @@ anderesObj.test()</pre>
         }
     }
     
-    KurzeEigenschaft[]
+    KurzeEigenschaft
     {
         <span class="dec">get</span> =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
         <span class="dec">set</span> =&gt; <i>Ausdruck zum Speichern oder Verarbeiten von</i> <span class="biv">value</span>
     }
     
-    KürzereEigenschaft[] =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
+    KürzereEigenschaft =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
 }
 </pre>
 <p>Dies konstruiert, nachdem das Skript geladen wurde, ein <a href="objects/Class.htm">Class</a>-Objekt und speichert es in eine <a href="Functions.htm#Global">globale</a> Konstante (schreibgeschützte Variable) namens <i>KlasseName</i>. Wenn <code>extends BaseKlasseName</code> vorhanden ist, muss der <i>BaseKlasseName</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>KlasseName</i>.Prototype.__Class</code> gespeichert.</p>
@@ -334,7 +334,7 @@ Methode()
 
 <h4 id="Custom_Classes_property">Eigenschaften</h4>
 <p>Eine Eigenschaftsdefinition erzeugt eine <a href="objects/Object.htm#DefineProp">dynamische Eigenschaft</a>, die eine Methode aufruft, anstatt einfach einen Wert zu speichern oder zurückzugeben.</p>
-<pre>Eigenschaft[]  <em>; Die eckigen Klammern sind optional</em>
+<pre>Eigenschaft[<i>Parameter</i>]
 {
     <span class="dec">get</span> {
         return <i>Eigenschaftswert</i>
@@ -345,8 +345,8 @@ Methode()
 }
 </pre>
 <p><em>Eigenschaft</em> ist der Name der Eigenschaft, mit dem sie aufgerufen werden kann. <code>obj.Eigenschaft</code> würde beispielsweise <em>get</em> aufrufen, und <code>obj.Eigenschaft := Wert</code> würde <em>set</em> aufrufen. Innerhalb von <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das aufgerufen wird. Innerhalb von <em>set</em> enthält <code>value</code> den Wert, der zugewiesen wird.</p>
-<p>Die Definition und Übergabe von Parametern erfolgt auf der rechten Seite des Eigenschaftsnamens, in eckigen Klammern (diese sollten aber beim Zugriff auf eine Eigenschaft ohne Parameter weggelassen werden). Abgesehen von den eckigen Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
-<p>Wenn eine Eigenschaft mit Parametern aufgerufen wird, aber keine definiert sind, werden Parameter automatisch an die <a href="#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet. <code>this.Eigenschaft[x]</code> beispielsweise hätte die gleiche Wirkung wie <code>(this.Eigenschaft)[x]</code> oder <code>y := this.Eigenschaft, y[x]</code>. Leere Klammern (<code>[]</code>) führen dazu, dass die __Item-Eigenschaft immer aufgerufen wird, aber ein variadischer Aufruf wie <code>this.Eigenschaft[Args*]</code> hat diesen Effekt nur, wenn die Anzahl der Parameter ungleich Null ist.</p>
+<p>Die Definition und Übergabe von Parametern erfolgt auf der rechten Seite des Eigenschaftsnamens, in eckigen Klammern - allerdings sollten diese weggelassen werden, wenn keine Parameter vorhanden sind (siehe unten). Abgesehen von den eckigen Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
+<p>Wenn eine Eigenschaft mit Parametern aufgerufen wird, aber keine definiert sind, werden Parameter automatisch an die <a href="#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet. <code>this.Eigenschaft[x]</code> beispielsweise hätte die gleiche Wirkung wie <code>(this.Eigenschaft)[x]</code> oder <code>y := this.Eigenschaft, y[x]</code>. Leere Klammern (<code>this.Eigenschaft[]</code>) führen dazu, dass die __Item-Eigenschaft des Wertes von <em>Eigenschaft</em> immer aufgerufen wird, aber ein variadischer Aufruf wie <code>this.Eigenschaft[Args*]</code> hat diesen Effekt nur, wenn die Anzahl der Parameter ungleich Null ist.</p>
 <p>Um statische Eigenschaften zu definieren, muss vor dem Eigenschaftsnamen das separate Schlüsselwort <code>static</code> verwendet werden. In diesem Fall verweist <code>this</code> auf die Klasse selbst oder eine Unterklasse.</p>
 <p>Der Rückgabewert von <em>set</em> wird ignoriert. <code>Wert := obj.Eigenschaft := 42</code> beispielsweise wird immer <code>Wert := 42</code> zuweisen, egal was die Eigenschaft macht, es sei denn, sie löst eine Ausnahme aus oder beendet den Thread.</p>
 <p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_super">super.Eigenschaft</a></code> benutzen, um auf die via eigene Base-Klasse definierte Eigenschaft zugreifen zu können. Wenn <em>Get</em> oder <em>Set</em> nicht definiert ist, kann es von einem Base-Objekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einem Base geerbt wurde. Wenn <em>Set</em> in diesem und allen Base-Objekten undefiniert ist (oder von einer geerbten Werteigenschaft verschleiert wird), führt der Versuch, die Eigenschaft zu setzen, zum Auslösen einer Ausnahme.</p>
@@ -355,13 +355,14 @@ Methode()
 
 <h4 id="Custom_Classes_property_short">Fat-Arrow-Eigenschaften</h4>
 <p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann genutzt werden, um einen <a href="#Custom_Classes_property">Eigenschaft</a>-Getter oder -Setter für die Rückgabe eines Ausdrucks zu definieren:</p>
-<pre>KurzeEigenschaft[]
+<pre>KurzeEigenschaft[<i>Parameter</i>]
 {
     <span class="dec">get</span> =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
     <span class="dec">set</span> =&gt; <i>Ausdruck zum Speichern oder Verarbeiten von</i> <span class="biv">value</span>
 }</pre>
 <p>Wenn man nur einen Getter definiert, können die geschweiften Klammern und <code>get</code> weggelassen werden:</p>
-<pre>KürzereEigenschaft[] =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i></pre>
+<pre>KürzereEigenschaft[[<i>Parameter</i>] =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i></pre>
+<p>In beiden Fällen müssen die eckigen Klammern weggelassen werden, sofern keine Parameter definiert sind.</p>
 
 <h3 id="__Enum">__Enum-Methode</h3>
 <pre class="Syntax">__Enum(AnzahlVars)</pre>
@@ -406,7 +407,7 @@ class GMem<span id="GMem"></span>
     {
         this.ptr := DllCall("GlobalAlloc", "UInt", aFlags, "Ptr", aGröße, "Ptr")
         if !this.ptr
-            throw Exception("Nicht genug Speicher")
+            throw MemoryError()
         MsgBox "New GMem mit einer Größe von " aGröße " Bytes auf der Adresse " this.ptr "."
     }
 

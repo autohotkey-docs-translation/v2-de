@@ -35,11 +35,10 @@
 
 <p class="warning"><strong>Hinweis:</strong> Das Standardfehlerfenster erfordert, dass <em>Message</em>, <em>Extra</em>, <em>File</em> und <em>Line</em> <a href="Object.htm">eigene Werteigenschaften</a> sind.</p>
 
-<h2 id="new">Error() / Exception()</h2>
+<h2 id="new">Error()</h2>
 <p>Erstellt ein Error-Objekt.</p>
-<pre class="Syntax">NewError := <span class="func"><i>Error</i>.New</span>(Message <span class="optional">, What, Extra</span>)
-NewError := <span class="func">Exception</span>(Message <span class="optional">, What, Extra</span>)</pre>
-<p><em><strong>Error</strong></em> kann mit einer der unter <a href="#error-types">Error-Typen</a> aufgeführten Unterklassen ersetzt werden.</p>
+<pre class="Syntax">NewError := <span class="func"><i>Error</i>.New</span>(Message <span class="optional">, What, Extra</span>)</pre>
+<p><em><strong>Error</strong></em> kann mit einer der unter <a href="#error-types">Error-Typen</a> aufgeführten Unterklassen ersetzt werden, allerdings akzeptieren einige Unterklassen andere Parameter.</p>
 <p>Die Parameter entsprechen direkt den oben beschriebenen Eigenschaften, können aber bei Error-Unterklassen, die die Methode __New überschreiben, abweichen.</p>
 <p><em>Message</em> und <em>Extra</em> werden in Zeichenketten umgewandelt. Diese werden in einem Fehlerdialogfenster angezeigt, wenn die Ausnahme ausgelöst aber nicht abgefangen wurde.</p>
 <p><em>What</em> kennzeichnet die Quelle des Fehlers. Es kann eine beliebige Zeichenkette sein, sollte aber ein negativer Integer oder der Name einer laufenden Funktion sein. Die Angabe von -1 kennzeichnet die aktuelle Funktion, -2 kennzeichnet die Funktion, die sie aufgerufen hat, usw. Wenn das Skript <a href="../Scripts.htm#ahk2exe">kompiliert</a> ist oder der Wert keinen gültigen Stack-Frame identifiziert, wird der Wert lediglich in eine Zeichenkette umgewandelt und an <code>NewError.What</code> zugewiesen. Ansonsten wird der identifizierte Stack-Frame wie folgt verwendet, um die anderen Eigenschaften zu bestimmen:</p>
@@ -61,12 +60,12 @@ NewError := <span class="func">Exception</span>(Message <span class="optional">,
 
 try
     MeineFunktion(1, -1)  <em>; err.Line kennzeichnet diese Zeile.</em>
-catch err
+catch ValueError as err
     MsgBox Format("{1}: {2}.`n`nFile:`t{3}`nLine:`t{4}`nWhat:`t{5}`nStack:`n{6}"
         , type(err), err.Message, err.File, err.Line, err.What, err.Stack)</pre>
 <pre>try
     IrgendeineFunktion()
-catch e
+catch as e
     MsgBox(Type(e) "in " e.What ", das auf Zeile " e.Line " aufgerufen wurde.")
 
 IrgendeineFunktion() {
@@ -85,7 +84,7 @@ IrgendeineFunktion() {
     <li id="MethodError"><strong>MethodError</strong></li>
   </ul></li>
   <li id="MemoryError"><strong>MemoryError</strong>: Eine Speicherreservierung ist fehlgeschlagen.</li>
-  <li id="OSError"><strong>OSError</strong>: Ein codeinterner Funktionsaufruf an eine Win32-Funktion ist fehlgeschlagen. <strong>Message</strong> enthält einen Fehlercode und eine Beschreibung, die beide vom Betriebssystem generiert wurden.</li>
+  <li id="OSError"><strong>OSError</strong>: Ein codeinterner Funktionsaufruf an eine Win32-Funktion ist fehlgeschlagen. <strong>Message</strong> enthält einen Fehlercode und eine Beschreibung, die beide vom Betriebssystem generiert wurden. Ein OSError hat eine zusätzliche <strong>Number</strong>-Eigenschaft, die den Fehlercode enthält. Der Aufruf von <code>OSError(Code)</code> mit einem numerischen <em>Code</em> setzt <em>Number</em> und <em>Message</em> basierend auf dem angegebenen OS-definierten Fehlercode. Wenn <em>Code</em> weggelassen wird, wird standardmäßig <code>A_LastError</code> verwendet.</li>
   <li id="TargetError"><strong>TargetError</strong>: Eine Funktion ist fehlgeschlagen, weil ihr Ziel nicht gefunden werden konnte. <strong>Message</strong> gibt an, um welche Art von Ziel es sich handelt, z. B. um ein Fenster, ein Steuerelement, ein Menü oder eine Statusleiste.</li>
   <li id="TimeoutError"><strong>TimeoutError</strong>: <a href="../commands/SendMessage.htm">SendMessage</a> hat das Zeitlimit überschritten.</li>
   <li id="TypeError"><strong>TypeError</strong>: Ein unerwarteter Typ wurde für einen Eingabewert einer Funktion, einer Eigenschaftszuweisung oder einer anderen Operation verwendet. <strong>Message</strong> gibt in der Regel an, welcher Typ erwartet wird und welcher Typ tatsächlich vorliegt, und <strong>Extra</strong> enthält eine Zeichenkette, die den betroffenen Wert widerspiegelt.</li>
