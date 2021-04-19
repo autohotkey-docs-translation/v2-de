@@ -63,21 +63,20 @@
 
 <h2 id="MatchObject">Match-Objekt (RegExMatchInfo)</h2>
 <p>Wenn eine Übereinstimmung gefunden wurde, wird ein Objekt mit Informationen über die Übereinstimmung in <em>AusgabeVar</em> gespeichert. Dieses Objekt hat die folgenden Methoden und Eigenschaften:</p>
-<p><strong>Match.Pos(N)</strong>: Gibt die Position der gesamten Übereinstimmung oder eines erfassten Teilsuchmusters zurück.</p>
-<p><strong>Match.Len(N)</strong>: Gibt die Länge der gesamten Übereinstimmung oder eines erfassten Teilsuchmusters zurück.</p>
-<p><strong>Match.Value(N)</strong>: Gibt die gesamte Übereinstimmung oder ein erfasstes Teilsuchmuster zurück.</p>
-<p><strong>Match.Name(N)</strong>: Gibt den Namen eines Teilsuchmusters zurück, sofern es einen hat.</p>
-<p><strong>Match.Count()</strong>: Gibt die Anzahl aller Teilsuchmuster zurück.</p>
-<p><strong>Match.Mark()</strong>: Gibt den <em>NAMEN</em> des zuletzt gefundenen <span class="regex">(*MARK:NAMEN)</span> zurück, sofern zutreffend.</p>
-<p><strong>Match[N]</strong>: Wenn <em>N</em> eine 0 oder Nummer/Name eines gültigen Teilsuchmusters ist, dann ist dies das gleiche wie <code>Match.Value(N)</code>.</p>
-<p><strong>Match.N</strong>: Das gleiche wie oben, außer dass <em>N</em> ein Name oder eine Zahl ist, ohne Anführungszeichen.</p>
+<p><strong>Match.Pos</strong>, <strong>Match.Pos[N]</strong> oder <strong>Match.Pos(N)</strong>: Gibt die Position der gesamten Übereinstimmung oder eines erfassten Teilsuchmusters zurück.</p>
+<p><strong>Match.Len</strong>, <strong>Match.Len[N]</strong> oder <strong>Match.Len(N)</strong>: Gibt die Länge der gesamten Übereinstimmung oder eines erfassten Teilsuchmusters zurück.</p>
+<p><strong>Match.Name[N]</strong> oder <strong>Match.Name(N)</strong>: Gibt den Namen eines Teilsuchmusters zurück, sofern es einen hat.</p>
+<p><strong>Match.Count</strong>: Gibt die Gesamtzahl der Teilsuchmuster (erfasste Gruppen) zurück, was auch der Maximalwert für <em>N</em> ist.</p>
+<p><strong>Match.Mark</strong>: Gibt den <em>NAMEN</em> des zuletzt gefundenen <span class="regex">(*MARK:NAMEN)</span> zurück, sofern zutreffend.</p>
+<p><strong>Match[]</strong> oder <strong>Match[N]</strong>: Gibt die gesamte Übereinstimmung oder ein erfasstes Teilsuchmuster zurück.</p>
 <p>Bei allen oben genannten Methoden und Eigenschaften kann <em>N</em> einer der folgenden Werte sein:</p>
 <ul>
   <li>0 für die gesamte Übereinstimmung.</li>
   <li>Die Nummer eines normalen oder benannten Teilsuchmusters.</li>
   <li>Der Name eines Teilsuchmusters.</li>
 </ul>
-<p>Das Objekt kann enumeriert werden; das heißt, dass die <a href="For.htm">For-Schleife</a> unterstützt wird. Alternativ können Sie <code><a href="Loop.htm">Loop</a> Match.Count()</code> nutzen.</p>
+<p><strong>Match.N</strong>: Kurzform für <strong>Match["N"]</strong>, wobei <em>N</em> ein beliebiger anführungszeichenloser Name oder eine beliebige Zahl ist, der/die nicht in Konflikt mit einer definierten (oben aufgelisteten) Eigenschaft steht. Zum Beispiel <code>Match.1</code> oder <code>Match.Jahr</code>.</p>
+<p>Das Objekt kann enumeriert werden; das heißt, dass die <a href="For.htm">For-Schleife</a> unterstützt wird. Alternativ können Sie <code><a href="Loop.htm">Loop</a> Match.Count</code> nutzen.</p>
 
 <h2 id="Performance">Leistung</h2>
 <p>Um eine einfache Teilzeichenkette innerhalb einer größeren Zeichenkette zu suchen, verwenden Sie <a href="InStr.htm">InStr</a>, weil es schneller als RegExMatch ist.</p>
@@ -126,14 +125,14 @@
 <div class="ex" id="ExObject">
 <p><a class="ex_number" href="#ExObject"></a> Demonstriert die Verwendung des Match-Objekts.</p>
 <pre>FundPos := RegExMatch("Musterstraße 1", "(.*) (?&lt;nr&gt;\d+)", &amp;TeilMust)
-MsgBox TeilMust.Count() ": " TeilMust.Value(1) " " TeilMust.Name(2) "=" TeilMust["nr"]  <em>; Zeigt "2: Musterstraße nr=1"</em></pre>
+MsgBox TeilMust.Count ": " TeilMust[1] " " TeilMust.Name[2] "=" TeilMust.nr  <em>; Zeigt "2: Musterstraße nr=1"</em></pre>
 </div>
 
 <div class="ex" id="ExExtension">
 <p><a class="ex_number" href="#ExExtension"></a> Ermittelt die Endung einer Datei. Beachten Sie, dass <a href="SplitPath.htm">SplitPath</a> auch dafür verwendet werden kann, aber mit höherer Zuverlässigkeit.</p>
 <pre>Pfad := "C:\Foo\Bar\Baz.txt"
 RegExMatch(Pfad, "\w+$", &amp;Endung)
-MsgBox Endung[0]  <em>; Meldet "txt".</em></pre>
+MsgBox Endung[]  <em>; Meldet "txt".</em></pre>
 </div>
 
 <div class="ex" id="ExDeref">

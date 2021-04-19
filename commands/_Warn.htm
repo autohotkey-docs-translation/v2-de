@@ -26,18 +26,11 @@
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
 
     <p>Die Art der Warnung, die aktiviert oder deaktiviert werden soll. Lässt man diesen Parameter weg, wird standardmäßig <i>All</i> verwendet.</p>
-    <p class="warning"><strong>Hinweis:</strong> Die UseUnset-Warnungen sind standardmäßig aktiviert. Diese zu deaktivieren wird nicht empfohlen, da es Pläne gibt, die Option zu entfernen und die Warnung durch einen Fehler zu ersetzen.</p>
-    <p id="UseUnset"><strong>UseUnsetLocal</strong> oder <strong>UseUnsetGlobal</strong>: Warnt, wenn eine Variable gelesen wird, die vorher weder einen Wert zugewiesen bekommen hat noch via <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a> initialisiert wurde. Wenn die Variable absichtlich leer sein soll, weisen Sie ihr eine leere Zeichenkette zu, um diese Warnung zu unterdrücken.</p>
-    <p><a href="IsSet.htm">IsSet</a> kann genutzt werden, um zu prüfen, ob eine Variable gesetzt wurde, ohne eine Warnung auszulösen, unabhängig davon, ob die Warnung aktiviert ist.</p>
-    <p>Im MsgBox-Modus wird nur eine Warnung für jede globale Variable angezeigt, oder für jede lokale Variable pro Funktionsaufruf. Dies wird erreicht, indem die Variable beim Anzeigen der Warnung initialisiert wird, so dass auch nachfolgende Aufrufe von <a href="IsSet.htm">IsSet</a> betroffen sind.</p>
-    <p>Dieser Warnungstyp behandelt lokale und globale Variablen getrennt voneinander, da es eher unüblich ist, globale Variablen wegen ihrer persistenten und skriptweiten Art vorab zu initialisieren. Auf diese Weise wird die Möglichkeit bereitgestellt, diesen Warnungstyp für lokalen Variablen zu aktivieren und für globale Variablen zu deaktivieren.</p>
-    <pre>#Warn
-<em>;y := ""  ; Dies würde die Warnung unterdrücken.</em>
-x := y    <em>; y hat keinen Wert zugewiesen bekommen.</em></pre>
     <p id="VarUnset"><strong>VarUnset</strong>: Warnt vor dem Ausführen des Skripts, wenn die jeweils erste Referenz zu einer Variable nie auf eine der folgenden Arten verwendet wird:</p>
     <ul>
       <li>Als Ziel einer direkten, nicht-dynamischen Zuweisung, wie z. B. <code>MeineVar := ""</code>.</li>
       <li>Mit dem <a href="../Variables.htm#ref">Referenzoperator</a> verwendet (z. B. <code>&amp;MeineVar</code>).</li>
+      <li>Direkt an <a href="IsSet.htm">IsSet</a> übergeben (z. B. <code>IsSet(MeineVar)</code>).</li>
     </ul>
     <p id="LocalSameAsGlobal"><strong>LocalSameAsGlobal</strong>: Zeigt vor dem Ausführen des Skripts eine Warnung an, wenn <em>undeklarierte</em> lokale Variablen den gleichen Namen haben wie globale Variablen. Diese Warnung soll Fehler vermeiden, die auftreten können, wenn vergessen wurde, eine globale Variable innerhalb einer Funktion vor dem Zuweisungsversuch zu deklarieren. Wenn die globale Variable tatsächlich lokal sein soll, kann die Warnung mit einer Deklaration wie <code>local x</code> oder <code>static y</code> unterdrückt werden.</p>
     <p>Diese Warnung ist standardmäßig deaktiviert.</p>
@@ -68,10 +61,10 @@ MsgBox g        <em>; Ohne die Deklaration wird das obige einem lokalen "g" zuge
 </dl>
 <h2 id="Remarks">Bemerkungen</h2>
 	<p>Standardmäßig sind alle Warnungen aktiviert und verwenden den MsgBox-Modus, mit Ausnahme der LocalSameAsGlobal-Warnung, die deaktiviert ist.</p>
-	<p>Warnungen können weder aktiviert noch deaktiviert werden, während das Skript läuft; die Einstellungen werden beim Laden des Skripts festgelegt. Folglich ist die Position der Direktive innerhalb des Skripts ohne Bedeutung (und kann wie alle anderen Direktiven nicht bedingt ausgeführt werden).</p>
-	<p>Die Anordnung der #Warn-Direktiven ist allerdings entscheidend: die letzte Direktive, die eine bestimmte Warnung setzt, bestimmt den Modus dieser Warnung. Die zwei unteren Anweisungen beispielsweise haben den kombinierten Effekt, dass alle Warnungen außer UseUnsetGlobal aktiviert werden:</p>
+<p>Die Überprüfungen, die VarUnset-, LocalSameAsGlobal- und Unreachable-Warnungen erzeugen, werden durchgeführt, nachdem alle Direktiven geparst wurden, aber bevor das Skript ausgeführt wird. Folglich ist die Position der Direktive innerhalb des Skripts ohne Bedeutung (und kann wie alle anderen Direktiven nicht bedingt ausgeführt werden).</p>
+<p>Die Anordnung der #Warn-Direktiven ist allerdings entscheidend: die letzte Direktive, die eine bestimmte Warnung setzt, bestimmt den Modus dieser Warnung. Die zwei unteren Anweisungen beispielsweise haben den kombinierten Effekt, dass alle Warnungen außer LocalSameAsGlobal aktiviert werden:</p>
 <pre>#Warn All
-#Warn UseUnsetGlobal, Off
+#Warn LocalSameAsGlobal, Off
 </pre>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../Functions.htm#Local">Lokale und globale Variablen</a></p>
@@ -86,9 +79,9 @@ MsgBox g        <em>; Ohne die Deklaration wird das obige einem lokalen "g" zuge
 <pre>#Warn</pre>
 </div>
 
-<div class="ex" id="ExUseUnsetLocalOutputDebug">
-<p><a class="ex_number" href="#ExUseUnsetLocalOutputDebug"></a> Warnt, wenn eine lokale Variable verwendet wird, bevor sie gesetzt wurde, und sendet alle Warnungen zum OutputDebug.</p>
-<pre>#Warn UseUnsetLocal, OutputDebug</pre>
+<div class="ex" id="ExLSAGOutputDebug">
+<p><a class="ex_number" href="#ExLSAGOutputDebug"></a> Sendet eine Warnung an OutputDebug für jede undeklarierte lokale Variable, die den gleichen Namen wie eine globale Variable hat.</p>
+<pre>#Warn LocalSameAsGlobal, OutputDebug</pre>
 </div>
 
 </body>

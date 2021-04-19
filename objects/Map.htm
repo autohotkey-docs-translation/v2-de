@@ -34,6 +34,7 @@ for Farbe in Array("Blau", "Grün")
   <li><a href="#Clear">Clear</a></li>
   <li><a href="#Clone">Clone</a></li>
   <li><a href="#Delete">Delete</a></li>
+  <li><a href="#Get">Get</a></li>
 	<li><a href="#Has">Has</a></li>
   <li><a href="#Set">Set</a></li>
   <li><a href="#__Enum">__Enum</a></li>
@@ -44,6 +45,7 @@ for Farbe in Array("Blau", "Grün")
   <li><a href="#Count">Count</a></li>
 	<li><a href="#Capacity">Capacity</a></li>
   <li><a href="#CaseSense">CaseSense</a></li>
+  <li><a href="#Default">Default</a></li>
   <li><a href="#__Item">__Item</a></li>
 </ul>
 <p><strong>Statische Methoden:</strong></p>
@@ -86,6 +88,19 @@ for Farbe in Array("Blau", "Grün")
   <dt>Rückgabewert</dt>
   <dd><p>Der entfernte Wert.</p></dd>
 </dl>
+</div>
+
+<div class="methodShort" id="Get"><h2>Get</h2>
+<p>Gibt den Wert eines zugehörigen Keys oder einen Standardwert zurück.</p>
+<pre class="Syntax">Wert := MapObj.<span class="func">Get</span>(Key <span class="optional">, Standardwert</span>)</pre>
+<p>Diese Methode bewirkt Folgendes:</p>
+<ul>
+  <li>Gib den Wert des zugehörigen <em>Keys</em> zurück, falls gefunden.</li>
+  <li>Gib den Wert des <em>Standardwert</em>-Parameters zurück, falls angegeben.</li>
+  <li>Gib den Wert von <code>MapObj.Default</code> zurück, falls definiert.</li>
+  <li>Löse einen <a href="Error.htm#KeyError">KeyError</a> aus.</li>
+</ul>
+<p>Wenn <em>Standardwert</em> weggelassen wird, ist dies äquivalent zu <code>MapObj[Key]</code>, außer dass <a href="#__Item">__Item</a> nicht aufgerufen wird.</p>
 </div>
 
 <div class="methodShort" id="Has"><h2>Has</h2>
@@ -155,6 +170,12 @@ for Farbe in Array("Blau", "Grün")
 <p>Wenn das Map-Objekt nicht leer ist und dieser Eigenschaft etwas zugewiesen wird, wird eine Ausnahme ausgelöst.</p>
 </div>
 
+<div class="methodShort" id="Default"><h2>Default</h2>
+<p>Definiert den Standardwert, der zurückgegeben werden soll, wenn ein Key nicht gefunden wird.</p>
+<pre class="Syntax">MapObj.<span class="func">Default</span> := Wert</pre>
+<p>Diese Eigenschaft ist standardmäßig nicht vorhanden, kann aber via Skript definiert werden. Wenn das Skript einen Key abfragt, der nicht gefunden wird, prüft das Map-Objekt, ob diese Eigenschaft vorhanden ist, bevor sie einen <a href="Error.htm#KeyError">KeyError</a> auslöst. Die Eigenschaft kann mit den üblichen Mitteln implementiert werden, einschließlich einer <a href="Object.htm#DefineProp">dynamischen Eigenschaft</a> oder einer <a href="../Objects.htm#Meta_Functions">Metafunktion</a>, aber um festzustellen, welcher Key abgefragt wurde, müsste stattdessen <a href="#__Item">__Item</a> oder <a href="#Get">Get</a> überschrieben werden.</p>
+</div>
+
 <div class="methodShort" id="__Item"><h2>__Item</h2>
 <p>Ermittelt oder setzt den Wert eines Key-Value-Paares.</p>
 <pre class="Syntax">Wert := MapObj[Key]</pre>
@@ -163,7 +184,7 @@ for Farbe in Array("Blau", "Grün")
   <dt>Key</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a>, <a href="../Objects.htm">Objekt</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Beim Abrufen eines Wertes muss <em>Key</em> ein einzigartiger Wert sein, der zuvor einem anderen Wert zugeordnet wurde. Es wird ein <a href="Error.htm#KeyError">KeyError</a> ausgelöst, wenn <em>Key</em> keinen zugeordneten Wert innerhalb des Map-Objekts hat.</p>
+    <p>Beim Abrufen eines Wertes muss <em>Key</em> ein einzigartiger Wert sein, der zuvor einem anderen Wert zugeordnet wurde. Es wird ein <a href="Error.htm#KeyError">KeyError</a> ausgelöst, wenn <em>Key</em> keinen zugeordneten Wert innerhalb des Map-Objekts hat, es sei denn, es ist eine <a href="#Default">Standardwert</a>-Eigenschaft definiert, dann wird deren Wert zurückgegeben.</p>
     <p>Beim Zuweisen eines Wertes kann <em>Key</em> ein beliebiger Wert sein, der mit <em>Wert</em> assoziiert werden kann; mit anderen Worten, der <em>Key</em>, der genutzt wird, um später auf <em>Wert</em> zugreifen zu können. <a href="../Concepts.htm#numbers">Float</a>-Keys werden automatisch in eine Zeichenkette umgewandelt.</p>
   </dd>
 </dl>
