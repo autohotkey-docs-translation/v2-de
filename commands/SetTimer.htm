@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>SetTimer - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die SetTimer-Funktion ruft automatisch eine Funktion in periodischen Zeitabständen auf." />
+<meta name="description" content="Die SetTimer-Funktion lässt eine bestimmte Funktion automatisch in periodischen Zeitabständen aufrufen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -14,18 +14,18 @@
 
 <h1>SetTimer</h1>
 
-<p>Ruft automatisch eine Funktion in periodischen Zeitabständen auf.</p>
+<p>Lässt eine bestimmte Funktion automatisch in periodischen Zeitabständen aufrufen.</p>
 
-<pre class="Syntax"><span class="func">SetTimer</span> <span class="optional">Callback, Periode, Priorität</span></pre>
+<pre class="Syntax"><span class="func">SetTimer</span> <span class="optional">Funktion, Periode, Priorität</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt id="Callback">Callback</dt>
+  <dt id="Function">Funktion</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
-    <p>Eine Funktion, die aufgerufen werden soll. Dieser Parameter kann ein Funktionsname oder <a href="../objects/Functor.htm">Funktionsobjekt</a> sein. Direkt geschriebene Funktionsnamen müssen in Anführungszeichen gesetzt werden.</p>
+    <p>Typ: <a href="../objects/Functor.htm">Funktionsobjekt</a></p>
+    <p>Ein Funktionsobjekt, das aufgerufen werden soll.</p>
     <p>Eine <a href="../Concepts.htm#references-to-objects">Referenz</a> zum Funktionsobjekt wird in der Timer-Liste des Skripts aufbewahrt, die erst freigegeben wird, wenn der Timer gelöscht wird. Dies geschieht automatisch für <a href="#once">einmalig laufende</a> Timer oder kann durch Aufruf von SetTimer mit einer <em>Periode</em> von 0 erzwungen werden.</p>
-    <p id="OmitCallback">Lässt man <em>Callback</em> weg, wird sich SetTimer auf den Timer beziehen, der den aktuellen Thread gestartet hat, sofern vorhanden. Zum Beispiel könnte <code>SetTimer , 0</code> innerhalb einer Timer-Funktion verwendet werden, um den Timer zum Löschen zu markieren. <code>SetTimer , 1000</code> wiederum würde die <em>Periode</em> des aktuellen Timers aktualisieren.</p>
+    <p id="OmitCallback">Lässt man <em>Funktion</em> weg, wird sich SetTimer auf den Timer beziehen, der den aktuellen Thread gestartet hat, sofern vorhanden. Zum Beispiel könnte <code>SetTimer , 0</code> innerhalb einer Timer-Funktion verwendet werden, um den Timer zum Löschen zu markieren. <code>SetTimer , 1000</code> wiederum würde die <em>Periode</em> des aktuellen Timers aktualisieren.</p>
     <p class="warning"><strong>Hinweis:</strong> Die Übergabe einer leeren Variable oder eines Ausdrucks, der zu einem leeren Wert führt, wird als Fehler eingestuft. Dieser Parameter darf weder leer sein noch weggelassen werden.</p>
   </dd>
 
@@ -35,7 +35,7 @@
     <p>Der absolute Wert von diesem Parameter ist die <a href="#Precision">ungefähre</a> Zeit in Millisekunden, die ablaufen muss, bevor der Timer ausgeführt wird. Der Timer wird dabei automatisch <a href="#reset">zurückgesetzt</a>. Man kann den Timer so einstellen, dass er sich automatisch wiederholt oder nur einmal läuft:</p>
     <ul>
       <li>Wenn <em>Periode</em> größer als 0 ist, wird der Timer sich solange wiederholen, bis er explizit im Skript deaktiviert wird.</li>
-      <li id="once">Wenn <em>Periode</em> kleiner als 0 ist, wird der Timer nur einmal laufen. Zum Beispiel würde -100 die <em>Callback</em>-Funktion nach 100 ms einmal aufrufen und sie dann löschen, als hätte man <code>SetTimer <i>Callback</i>, 0</code> angegeben.</li>
+      <li id="once">Wenn <em>Periode</em> kleiner als 0 ist, wird der Timer nur einmal laufen. Die Angabe von -100 würde z. B. <em>Funktion</em> nach 100 ms einmal aufrufen und dann den Timer löschen, als hätte man <code>SetTimer <i>Funktion</i>, 0</code> angegeben.</li>
       <li>Wenn <em>Periode</em> 0 ist, wird der Timer zum Löschen markiert. Wenn ein von diesem Timer gestarteter Thread noch läuft, wird der Timer nach Beendigung des Threads gelöscht (es sei denn, er wurde reaktiviert); ansonsten wird er sofort gelöscht. In jedem Fall wird die vorherige <em>Periode</em> und <em>Priorität</em> des Timers verworfen.</li>
     </ul>
     <p>Der absolute Wert von <em>Periode</em> darf nicht größer als 4294967295 ms (49,7 Tage) sein.</p>
@@ -179,7 +179,7 @@ class SecondCounter {
 <ul>
   <li>Wir können auch <code>this.timer := this.Tick.<a href="../objects/Func.htm#Bind">Bind</a>(this)</code> verwenden. Wenn <code>this.timer</code> aufgerufen wird, wird es tatsächlich <code><i>tick_function</i>.<a href="../objects/Func.htm#Call">Call</a>(this)</code> aufrufen, wobei <i>tick_function</i> das Funktionsobjekt ist, das diese Methode implementiert. <a href="ObjBindMethod.htm">ObjBindMethod</a> hingegen erzeugt ein Objekt, das <code>this.Tick()</code> aufruft.</li>
   <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt verwenden, anstelle von <code>this.timer</code>. Allerdings kann ObjBindMethod auch nützlich sein, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen wie Hotkeys, Menüpunkte, GUI-Steuerelemente aufgerufen werden sollen.</li>
-  <li>Beim Modifizieren des Timers, oder Löschen des Timers innerhalb einer Funktion/Methode, die von dem Timer aufgerufen wurde, kann man den <a href="#OmitCallback"><em>Callback</em>-Parameter einfach weglassen</a>. Dadurch entfällt in einigen Fällen die Notwendigkeit, das ursprüngliche Objekt, welches an SetTimer übergeben wurde, zu behalten.</li>
+  <li>Beim Modifizieren des Timers, oder Löschen des Timers innerhalb einer Funktion/Methode, die von dem Timer aufgerufen wurde, kann man den <a href="#OmitCallback"><em>Funktion</em>-Parameter einfach weglassen</a>. Dadurch entfällt in einigen Fällen die Notwendigkeit, das ursprüngliche Objekt, welches an SetTimer übergeben wurde, zu behalten.</li>
 </ul>
 </div>
 

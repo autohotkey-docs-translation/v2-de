@@ -62,7 +62,7 @@
 <td>Str</td>
 <td>
   <p>Eine Zeichenkette wie z. B. <code>"Blau"</code> oder <code>MeineVar</code>, oder eine <a href="../Concepts.htm#variable-references">VarRef</a> wie z. B. <code>&amp;MeineVar</code>. Wenn die aufgerufene Funktion die Zeichenkette ändert und das Argument eine reine Variable oder eine VarRef ist, wird deren Inhalt aktualisiert. Der folgende Aufruf wandelt z. B. den Inhalt von <em>MeineVar</em> in Großbuchstaben um: <code>DllCall("CharUpper", "Str", <i>MeineVar</i>)</code>.</p>
-  <p>Wenn die Funktion so ausgelegt ist, dass sie eine Zeichenkette länger als der Eingabewert des Parameters speichert (oder wenn der Parameter nur für die Ausgabe vorgesehen ist), wird folgende Vorgehensweise empfohlen: Nutzen Sie <a href="BufferAlloc.htm">BufferAlloc</a>, um einen Pufferspeicher zu reservieren, den <a href="#ptr">Ptr</a>-Typ, um ihn zu übergeben, und <a href="StrGet.htm">StrGet</a>, um die Zeichenkette nach Abschluss der Funktion abzurufen. </p>
+  <p>Wenn die Funktion so ausgelegt ist, dass sie eine Zeichenkette länger als der Eingabewert des Parameters speichert (oder wenn der Parameter nur für die Ausgabe vorgesehen ist), wird folgende Vorgehensweise empfohlen: Erstellen Sie ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt, nutzen Sie den <a href="#ptr">Ptr</a>-Typ, um ihn zu übergeben, und nutzen Sie <a href="StrGet.htm">StrGet</a>, um die Zeichenkette nach Abschluss der Funktion abzurufen, wie im <a href="#ExWsprintf">wsprintf-Beispiel</a> gezeigt.</p>
   <p>Ansonsten sollten Sie vor dem Aufruf der Funktion sicherstellen, dass die Variable groß genug ist. Um das zu erreichen, können Sie <code><a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>(MeineVar, 123)</code> aufrufen. Ersetzen Sie 123 mit der Anzahl der 16-Bit-Einheiten (umgangssprachlich auch Zeichen genannt), die <em>MeineVar</em> maximal enthalten soll. Wenn die Variable beim Return nicht null-terminiert ist, wird eine Fehlermeldung angezeigt und das Programm beendet, da es wahrscheinlich ist, dass der Speicher via Pufferüberlauf korrumpiert wurde. Dies deutet typischerweise darauf hin, dass die Kapazität der Variable unzureichend war.</p>
   <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der zu einer Zahl ausgewertet wird (z. B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ein <a href="../objects/Error.htm#TypeError">TypeError</a> ausgelöst.</p>
   <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine <a href="../Concepts.htm#variable-references">VarRef</a> übergeben wurde. Dies kann in Verbindung mit Funktionen genutzt werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher reserviert und erwartet, dass der Aufrufer ihn freigibt (z. B. durch Aufruf von <a href="https://docs.microsoft.com/de-de/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code>Ptr*</code>-Argumenttyp verwendet werden.</p>
@@ -76,7 +76,7 @@
   <td><span id="astr"></span>AStr</td>
   <td>
     <p>AStr bewirkt, dass der Eingabewert automatisch in ANSI umgewandelt wird. Da der für diese Konvertierung verwendete temporäre Speicher nur groß genug für die konvertierte Eingabezeichenkette ist, werden alle Werte, die die Funktion in diese Zeichenkette schreibt, verworfen. Das folgende Beispiel zeigt, wie eine ANSI-Zeichenkette als Ausgabeparameter abgerufen werden kann:</p>
-<pre>buf := BufferAlloc(<i>Länge</i>)  <em>; Temporären Pufferspeicher reservieren.</em>
+<pre>buf := Buffer(<i>Länge</i>)  <em>; Temporären Pufferspeicher reservieren.</em>
 DllCall("<i>Function</i>", "ptr", buf)  <em>; Pufferspeicher an Function übergeben.</em>
 str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufen.</em>
 </pre>
@@ -113,7 +113,7 @@ str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufe
 <tr id="ptr">
   <td>Ptr</td>
   <td><p>Ein <a href="../Variables.htm#PtrSize">pointergroßer</a> Integer, der je nach AutoHotkey-Version (32- oder 64-Bit) einem Int oder Int64 entspricht. <i>Ptr</i> sollte für Pointer verwendet werden, die auf Arrays oder Strukturen verweisen (wie RECT* oder LPPOINT), und für fast alle Handles (wie HWND, HBRUSH oder HBITMAP). Wenn der Parameter ein Pointer ist, der auf einen einzelnen numerischen Wert wie LPDWORD oder int* verweist, sollte grundsätzlich das *- oder P-Suffix anstelle von "Ptr" verwendet werden.</p>
-  <p>Übergibt man ein Objekt an einen Ptr-Parameter, wird der Wert der <code>Ptr</code>-Eigenschaft des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird ein <a href="../objects/Error.htm#PropertyError">PropertyError</a> ausgelöst. In der Regel ist das Objekt ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt, das via <a href="BufferAlloc.htm">BufferAlloc</a> erstellt wurde.</p>
+  <p>Übergibt man ein Objekt an einen Ptr-Parameter, wird der Wert der <code>Ptr</code>-Eigenschaft des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird ein <a href="../objects/Error.htm#PropertyError">PropertyError</a> ausgelöst. In der Regel ist das Objekt ein <a href="../objects/Buffer.htm">Buffer</a>-Objekt.</p>
   <p>Übergibt man ein Objekt an einen Ptr*-Parameter, wird der Wert der <code>Ptr</code>-Eigenschaft des Objekts vor dem Aufruf abgerufen und die Adresse einer temporären Variable, die diesen Wert enthält, an die Funktion übergeben. Nach Abschluss der Funktion wird der neue Wert wieder der <code>Ptr</code>-Eigenschaft des Objekts zugewiesen.</p>
   <p><i>Ptr</i> kann auch mit dem *- oder P-Suffix kombiniert werden; allerdings sollte dies nur bei Funktionen verwendet werden, die einen Pointer über LPVOID* oder ähnlichem zurückgeben.</p>
   <p><i>UPtr</i> ist ebenfalls gültig, aber nur in 32-Bit-Versionen vorzeichenlos, da AutoHotkey keine vorzeichenlose 64-Bit-Integer unterstützt.</p>
@@ -177,8 +177,8 @@ Loop 500
 
 <h2 id="struct">Strukturen und Arrays</h2>
 <p>Eine Struktur ist eine Sammlung von <em>Elementen</em> (Feldern), die nebeneinander im Speicher abgelegt sind. Die meisten Elemente sind für gewöhnlich Integer.</p>
-<p>Um Funktionen, die die Adresse einer Struktur (oder eines Speicherblock-Arrays) akzeptieren, aufzurufen, reservieren Sie Speicher auf irgendeine Weise und übergeben Sie die Speicheradresse an die Funktion. Empfohlen ist die Vorgehensweise via <a href="BufferAlloc.htm">BufferAlloc</a>-Funktion und <a href="../objects/Buffer.htm">Buffer</a>-Objekt. Es sind folgende Schritte dafür notwendig:</p>
-<p>1) Rufen Sie <code>MeineStrukt := BufferAlloc(123, 0)</code> auf, um Pufferspeicher für die Strukturdaten zu reservieren. Geben Sie für <code>123</code> die Größe der Struktur oder höher an (in Bytes). Die 0 im letzten Parameter ist optional und bewirkt, dass alle Strukturelemente mit einer binären Null initialisiert werden, um ein häufiges Aufrufen von NumPut wie im nächsten Schritt beschrieben zu verhindern.</p>
+<p>Um Funktionen, die die Adresse einer Struktur (oder eines Speicherblock-Arrays) akzeptieren, aufzurufen, reservieren Sie Speicher auf irgendeine Weise und übergeben Sie die Speicheradresse an die Funktion. Hierfür wird das <a href="../objects/Buffer.htm">Buffer</a>-Objekt empfohlen. Es sind folgende Schritte dafür notwendig:</p>
+<p>1) Rufen Sie <code>MeineStrukt := Buffer(123, 0)</code> auf, um Pufferspeicher für die Strukturdaten zu reservieren. Geben Sie für <code>123</code> die Größe der Struktur oder höher an (in Bytes). Die 0 im letzten Parameter ist optional und bewirkt, dass alle Strukturelemente mit einer binären Null initialisiert werden, um ein häufiges Aufrufen von NumPut wie im nächsten Schritt beschrieben zu verhindern.</p>
 <p>2) Wenn die Zielfunktion bereits beim Aufrufen bestimmte Werte in der Struktur benötigt, können Sie <code><a href="NumPut.htm">NumPut</a>("UInt", 123, MeineStrukt, 4)</code> verwenden, um ein Element auf einen bestimmten Wert zu setzen. Geben Sie für <code>123</code> den Integer an, der in das Strukturelement eingefügt werden soll (oder nutzen Sie <code>StrPtr(Var)</code>, um die Adresse einer Zeichenkette zu speichern). Geben Sie für <code>4</code> den Offset des Strukturelements an (siehe Schritt #4, was ein "Offset" ist). Geben Sie für <code>"UInt"</code> den entsprechenden Typ an (zum Beispiel <code>"Ptr"</code>, wenn das Strukturelement ein Pointer oder Handle ist).</p>
 <p>3) Rufen Sie die Zielfunktion auf und übergeben Sie <em>MeineStrukt</em> als Ptr-Argument. Zum Beispiel: <code>DllCall("MeineDLL\MeineFunk", "Ptr", MeineStrukt)</code>. Die Funktion wird einige Strukturelemente auswerten und/oder ändern. DllCall verwendet automatisch die Adresse des Puffers, die normalerweise mit <code>MeineStrukt.Ptr</code> abgerufen werden kann.</p>
 <p>4) Verwenden Sie <code>MeinInteger := <a href="NumGet.htm">NumGet</a>(MeineStrukt, 4, "UInt")</code>, um den Integer eines Strukturelements abzurufen. Geben Sie für <code>4</code> den Offset des Elements innerhalb der Struktur an. Das erste Element liegt immer auf Offset 0. Das zweite Element liegt auf Offset 0 plus der Größe des ersten Elements (in der Regel 4). Jedes Element, das danach erfolgt, liegt auf dem Offset des vorherigen Elements plus der Größe des vorherigen Elements. Die meisten Elemente -- wie z. B. DWORD, Int und <a href="#Int">andere Typen von 32-Bit-Integern</a> -- haben eine Größe von 4 Bytes. Geben Sie für <code>"UInt"</code> den entsprechenden Typ an oder lassen Sie den Parameter weg, wenn das Element ein Pointer oder Handle ist.</p>
@@ -202,7 +202,7 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 <p>AutoHotkey kann jedoch die CLR über <a href="https://docs.microsoft.com/de-de/dotnet/standard/native-interop/com-callable-wrapper">COM Callable Wrapper</a> nutzen. Falls die Bibliothek nicht auch als allgemeine COM-Komponente registriert ist, muss die CLR selbst zunächst manuell über DllCall initialisiert werden. Weitere Informationen finden Sie unter <a href="https://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (das derzeit DllCall verwendet und nicht mit AutoHotkey v2 kompatibel ist).</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="BufferAlloc.htm">BufferAlloc</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="ComCall.htm">ComCall</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="Run.htm">Run</a>, <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="_DllLoad.htm">#DllLoad</a>, <a href="https://docs.microsoft.com/de-de/windows/win32/apiindex/windows-api-list">Windows API Index</a></p>
+<p><a href="../Compat.htm#DllCall">Skript-Kompatibilität</a>, <a href="../objects/Buffer.htm">Buffer-Objekt</a>, <a href="ComCall.htm">ComCall</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="Run.htm">Run</a>, <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="_DllLoad.htm">#DllLoad</a>, <a href="https://docs.microsoft.com/de-de/windows/win32/apiindex/windows-api-list">Windows API Index</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExMessageBox">
@@ -225,7 +225,7 @@ if not DllCall("IsWindowVisible", "Ptr", WinExist("Unbenannt - Editor"))  <em>; 
 
 <div class="ex" id="ExWsprintf">
 <p><a class="ex_number" href="#ExWsprintf"></a> Ruft die API-Funktion wsprintf() auf, um die Zahl 432 auf der linken Seite mit Nullen aufzufüllen, bis sie eine Breite von 10 Zeichen hat (0000000432).</p>
-<pre>AufgefüllteZahl := BufferAlloc(20)  <em>; Stellt sicher, dass der Pufferspeicher groß genug für die neue Zeichenkette ist.</em>
+<pre>AufgefüllteZahl := Buffer(20)  <em>; Stellt sicher, dass der Pufferspeicher groß genug für die neue Zeichenkette ist.</em>
 DllCall("wsprintf", "Ptr", AufgefüllteZahl, "Str", "%010d", "Int", 432, "Cdecl")  <em>; Benötigt die Cdecl-Aufrufkonvention.</em>
 MsgBox StrGet(AufgefüllteZahl)
 
@@ -315,7 +315,7 @@ if !hFile
     return
 }
 <em>; Reserviert einen Bereich im Speicher für die zu lesende Zeichenkette:</em>
-Puf := BufferAlloc(ZketteGröße)
+Puf := Buffer(ZketteGröße)
 DllCall("ReadFile", "Ptr", hFile, "Ptr", Puf, "UInt", Puf.Size, "UIntP", &amp;RealGeleseneBytes := 0, "Ptr", 0)
 DllCall("CloseHandle", "Ptr", hFile)  <em>; Schließt die Datei.</em>
 MsgBox "Die folgende Zeichenkette wurde aus der Datei gelesen: " StrGet(Puf)</pre>
@@ -341,8 +341,8 @@ SystemCursor(cmd)  <em>; cmd = "Show|Hide|Toggle|Reload"</em>
                 , "Int", 0, "Int", 0, "UInt", 0)
             h_blank   := DllCall("CreateCursor", "Ptr", 0, "Int", 0, "Int", 0
                 , "Int", 32, "Int", 32
-                , "Ptr", BufferAlloc(32*4, 0xFF)
-                , "Ptr", BufferAlloc(32*4, 0))
+                , "Ptr", Buffer(32*4, 0xFF)
+                , "Ptr", Buffer(32*4, 0))
             c[id] := {default: h_default, blank: h_blank}
         }
     }
@@ -367,7 +367,7 @@ SystemCursor(cmd)  <em>; cmd = "Show|Hide|Toggle|Reload"</em>
 <p><a class="ex_number" href="#ExStruct"></a> Struktur-Beispiel. Übergibt die Adresse einer RECT-Struktur an die GetWindowRect-Funktion, die die Strukturelemente auf die Positionen der linken, oberen, rechten und unteren Seite des Fensters setzt (relativ zum Bildschirm).</p>
 <pre>Run "Notepad"
 WinWait "Unbenannt - Editor"  <em>; Setzt auch das "<a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a>" für das untere WinExist.</em>
-Rect := BufferAlloc(16)  <em>; RECT ist eine Struktur, die aus vier 32-Bit-Integern besteht (also 4*4=16).</em>
+Rect := Buffer(16)  <em>; RECT ist eine Struktur, die aus vier 32-Bit-Integern besteht (also 4*4=16).</em>
 DllCall("GetWindowRect", "Ptr", WinExist(), "Ptr", Rect)  <em>; WinExist gibt eine HWND-Nummer zurück.</em>
 L := NumGet(Rect, 0, "Int"), O := NumGet(Rect, 4, "Int")
 R := NumGet(Rect, 8, "Int"), U := NumGet(Rect, 12, "Int")
@@ -376,7 +376,7 @@ MsgBox Format("Links {1} Oben {2} Rechts {3} Unten {4}", L, O, R, U)</pre>
 
 <div class="ex" id="ExStructRect">
 <p><a class="ex_number" href="#ExStructRect"></a> Struktur-Beispiel. Übergibt an FillRect() die Adresse einer RECT-Struktur, die einen Bereich des Bildschirms kennzeichnet, der kurzzeitig rot gefärbt werden soll.</p>
-<pre>Rect := BufferAlloc(16)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern.</em>
+<pre>Rect := Buffer(16)  <em>; Setzt die Kapazität zum Speichern von vier 4-Byte-Integern.</em>
 <a href="NumPut.htm">NumPut</a>( "Int", 0                  <em>; links</em>
       , "Int", 0                  <em>; oben</em>
       , "Int", A_ScreenWidth//2   <em>; rechts</em>
@@ -403,7 +403,7 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
     UTC_Delta := Round(-UTC_Delta/60)  <em>; Rundet auf die nächste Minute, um Genauigkeit zu gewährleisten.</em>
     YYYYMMDDHHMISS := DateAdd(YYYYMMDDHHMISS, UTC_Delta, "Minutes")  <em>; Wendet den Offset für die Konvertierung zu UTC an.</em>
 
-    Systemuhr := BufferAlloc(16)  <em>; Diese Struktur besteht aus 8 UShort-Werten (also 8*2=16).</em>
+    Systemuhr := Buffer(16)  <em>; Diese Struktur besteht aus 8 UShort-Werten (also 8*2=16).</em>
 
     <a href="NumPut.htm">NumPut</a>( "UShort", SubStr(YYYYMMDDHHMISS, 1, 4)  <em>; YYYY (Jahr)</em>
           , "UShort", SubStr(YYYYMMDDHHMISS, 5, 2)  <em>; MM (Monat des Jahres, 1-12)</em>

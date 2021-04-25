@@ -61,7 +61,6 @@ tocData = [
   ["Externe Bibliotheken","",
   [
     ["Buffer-Objekt","objects/Buffer.htm"],
-    ["BufferAlloc","commands/BufferAlloc.htm"],
     ["CallbackCreate","commands/CallbackCreate.htm"],
     ["DllCall","commands/DllCall.htm"],
     ["NumGet","commands/NumGet.htm"],

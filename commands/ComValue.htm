@@ -59,7 +59,7 @@
 <h2 id="ByRef">ByRef</h2>
 <p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, können leere eckige Klammern <code>[]</code> zum Lesen oder Schreiben des referenzierten Wertes genutzt werden.</p>
 <p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder eines Pufferspeichers mit genügend Kapazität sein, um einen Wert bestimmten Typs enthalten zu können. Das folgende Beispiel erstellt eine Variable, die von einer VBScript-Funktion beschrieben werden kann:</p>
-<pre>vbuf := BufferAlloc(24, 0)
+<pre>vbuf := Buffer(24, 0)
 vref := ComValue(0x400C, vbuf.ptr)  <em>; 0x400C ist eine Kombination von VT_BYREF und VT_VARIANT.</em>
 
 vref[] := "Eingabewert"
@@ -115,7 +115,7 @@ class ComVar {
     __new(Type := 0xC) {
         <em>; Reserviert Speicher für die typisierte Variable.
         ; Der größte unterstützte Typ ist VT_VARIANT auf x64 (24 Byte).</em>
-        this.var := BufferAlloc(24, 0)
+        this.var := Buffer(24, 0)
         <em>; Erstelle ein Objekt, mit dem die Variable via Referenz übergeben werden kann.</em>
         this.ref := ComValue(0x4000|Type, this.var.ptr + (Type=0xC ? 0 : 8))
     }
