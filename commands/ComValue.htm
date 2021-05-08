@@ -30,8 +30,7 @@
 
   <dt>Wert</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Ein Wert, der gewrappt werden soll. Zurzeit werden nur Integer und Pointer-Werte unterstützt.</p>
+    <p>Ein Wert, der gewrappt werden soll. Handelt es sich hierbei um einen reinen Integer und ist <em>VarTyp</em> weder VT_R4, VT_R8, VT_DATE noch VT_CY, wird dessen Wert direkt verwendet; insbesondere können VT_BSTR, VT_DISPATCH und VT_UNKNOWN mit einem Pointer-Wert initialisiert werden. In jedem anderen Fall wird der Wert in den Typ des Ziels konvertiert. Es wird eine Ausnahme ausgelöst, wenn die Konvertierung nicht durchgeführt werden kann.</p>
   </dd>
 
   <dt>Flags</dt>
@@ -47,7 +46,7 @@
 <p>Gibt ein Wrapper-Objekt zurück, das einen <a href="ComObjType.htm#vt">Variantentyp</a> und Wert, oder einen Pointer enthält.</p>
 <p>Dieses Objekt kann für zwei Dinge genutzt werden:</p>
 <ol>
-  <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComValue(0xB, -1)</code> ein Objekt, das den booleschen COM-Wert <em>True</em> repräsentiert.</li>
+  <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComValue(0xB, true)</code> ein Objekt, das den booleschen COM-Wert <em>True</em> repräsentiert.</li>
   <li>Ein Skript kann deutlich besser mit einem COM-Objekt oder SafeArray interagieren (via <a href="../Objects.htm#Usage_Objects">Objektsyntax</a>), wenn es gewrappt wurde. Die meisten Skripte müssen dies nicht manuell tun, weil <a href="ComObject.htm">ComObject</a>, <a href="ComObjArray.htm">ComObjArray</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjGet.htm">ComObjGet</a> und andere COM-Methoden, die ein Objekt zurückgeben, automatisch ein Wrapper-Objekt erstellen.</li>
 </ol>
 
@@ -65,6 +64,7 @@ vref := ComValue(0x400C, vbuf.ptr)  <em>; 0x400C ist eine Kombination von VT_BYR
 vref[] := "Eingabewert"
 sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ExByRef">Beispiel unten</a> initialisiert werden.</em>
 MsgBox vref[]</pre>
+<p>Beachten Sie, dass zwar jeder vorherige Wert freigegeben wird, wenn ein neuer Wert mittels <code>vref[]</code> oder der COM-Methode zugewiesen wird, aber der finale Wert nicht automatisch freigegeben wird. Für die Freigabe des Wertes muss man wissen, um welchen Typ es sich handelt. Da es sich in diesem Fall um VT_VARIANT handelt, kann es durch Aufrufen von <a href="https://docs.microsoft.com/de-de/windows/win32/api/oleauto/nf-oleauto-variantclear">VariantClear</a> mit <a href="DllCall.htm">DllCall</a> oder durch Verwendung einer einfacheren Methode freigegeben werden: weisen Sie einen Integer zu, z. B. <code>vref[] := 0</code>.</p>
 <p>Wenn die Methode wie oben gezeigt eine Kombination aus VT_BYREF und VT_VARIANT akzeptiert, kann stattdessen eine <a href="../Concepts.htm#variable-references">VarRef</a> verwendet werden. Zum Beispiel:</p>
 <pre>eine_var := "Eingabewert"
 sc.Run("Beispiel", &amp;eine_var)
@@ -101,7 +101,17 @@ var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox var[]
 
-<em>; Oben und unten sind in diesem Fall äquivalent:</em>
+<em>; Das Gleiche noch einmal, aber direkter:</em>
+variant_buf := Buffer(24, 0)  <em>; Einen Puffer anlegen, der groß genug für ein VARIANT ist.</em>
+var := ComValue(0x400C, variant_buf.ptr)  <em>; Referenz auf ein VARIANT machen.</em>
+var[] := "Eingabewert"
+sc.Run("Beispiel", var)  <em>; VT_BYREF ComValue selbst übergeben, kein [] oder .ref.</em>
+MsgBox var[]
+<em>; Wenn ein VARIANT eine Zeichenkette oder ein Objekt enthält, muss es explizit freigegeben
+; werden, indem VariantClear aufgerufen oder ein rein numerischer Wert zugewiesen wird:</em>
+var[] := 0
+
+<em>; Der einfachste Weg, wenn die Methode VT_BYREF|VT_VARIANT akzeptiert:</em>
 var := "Eingabewert"
 sc.Run("Beispiel", &amp;var)
 MsgBox var
@@ -112,16 +122,22 @@ MsgBox var
 ;   this[] := Val setzt den Wert.
 ;   this.ref ruft ein ByRef-Objekt zur Übergabe an eine COM-Methode ab.</em>
 class ComVar {
-    __new(Type := 0xC) {
-        <em>; Reserviert Speicher für die typisierte Variable.
-        ; Der größte unterstützte Typ ist VT_VARIANT auf x64 (24 Byte).</em>
+    __new(vType := 0xC) {
+        <em>; Speicher für ein VARIANT reservieren, damit unser Wert reinpasst. VARIANT wird auch dann
+        ; verwendet, wenn vType != VT_VARIANT, damit VariantClear von __delete verwendet werden kann.</em>
         this.var := Buffer(24, 0)
-        <em>; Erstelle ein Objekt, mit dem die Variable via Referenz übergeben werden kann.</em>
-        this.ref := ComValue(0x4000|Type, this.var.ptr + (Type=0xC ? 0 : 8))
+        <em>; Ein Objekt erstellen, mit dem die Variable via ByRef übergeben werden kann.</em>
+        this.ref := ComValue(0x4000|vType, this.var.ptr + (vType=0xC ? 0 : 8))
+        <em>; Variantentyp für VariantClear speichern (wenn nicht VT_VARIANT).</em>
+        if Type != 0xC
+            NumPut "ushort", vType, this.var
     }
     __item {
         get =&gt; this.ref[]
         set =&gt; this.ref[] := value
+    }
+    __delete() {
+        DllCall("oleaut32\VariantClear", "ptr", this.var)
     }
 }
 </pre>
