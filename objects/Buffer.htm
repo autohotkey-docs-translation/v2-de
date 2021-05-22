@@ -43,6 +43,28 @@
 <p>Einige interne Funktionen akzeptieren ein Buffer-Objekt anstelle einer Adresse - im Abschnitt <a href="#Related">Siehe auch</a> finden Sie die entsprechenden Links. Obwohl diese Funktionen auch ein beliebiges Objekt mit einer <a href="#Ptr">Ptr</a>- und <a href="#Size">Size</a>-Eigenschaft akzeptieren, sind diese für das native Buffer-Objekt optimiert.</p>
 <p>In den meisten Fällen ist die Übergabe eines Buffer-Objekts um einiges sicherer als die Übergabe einer Adresse, da die Funktion die <a href="#Size">Pufferspeichergröße</a> lesen kann, um zu verhindern, dass sie eventuell auf einen Speicherort außerhalb des Pufferspeichers zugreift. Die einzige Ausnahme ist <a href="../commands/DllCall.htm">DllCall</a>, wenn es Funktionen außerhalb des Programms aufruft; in solchen Fällen ist es eventuell notwendig, die <a href="#Size">Pufferspeichergröße</a> explizit an die Funktion zu übergeben.</p>
 
+<h2 id="StaticMethods">Statische Methoden</h2>
+<div class="methodShort" id="Call"><h2>Call</h2>
+<p>Erstellt ein Buffer-Objekt.</p>
+<pre class="Syntax">BufferObj := <span class="func">Buffer</span>(<span class="optional">ByteAnzahl, FüllByte</span>)</pre>
+<dl>
+  <dt>ByteAnzahl</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Anzahl der zu reservierenden Bytes. Äquivalent zu <a href="../objects/Buffer.htm#Size">Buffer.Size</a>.</p>
+    <p>Lässt man diesen Parameter weg, wird das Buffer-Objekt mit einem <a href="#Ptr">Ptr</a> von Null und einer <a href="#Size">Size</a> von Null erstellt.</p>
+  </dd>
+  <dt>FüllByte</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Geben Sie eine Zahl im Bereich von 0 bis 255 an, um jedes Byte im Pufferspeicher mit dieser Zahl füllen.</p>
+    <p>Dieser Parameter sollte in der Regel weggelassen werden, wenn der Pufferspeicher ohne vorheriges Lesen beschrieben wird, da dies ein Zeitaufwand im Verhältnis zur Anzahl der Bytes ist. Lässt man diesen Parameter weg, wird der Pufferspeicher nicht initialisiert; der Wert jedes Bytes ist willkürlich.</p>
+  </dd>
+</dl>
+<p>Es wird ein <a href="../objects/Error.htm#MemoryError">MemoryError</a> ausgelöst, wenn der Speicher nicht reserviert werden konnte, z. B. weil <em>ByteAnzahl</em> unerwartet groß ist oder das System über zu wenig virtuellen Speicher verfügt.</p>
+<p>Parameter werden durch <a href="#__New">__New</a> definiert.</p>
+</div>
+
 <h2 id="Properties">Eigenschaften</h2>
 <div class="methodShort" id="Ptr"><h2>Ptr</h2>
 <p>Ruft die aktuelle Adresse des Pufferspeichers ab.</p>
@@ -66,28 +88,6 @@
 <p>Reserviert den Pufferspeicher und füllt ihn optional mit Zahlen.</p>
 <pre class="Syntax">BufferObj.<span class="func">__New</span>(<span class="optional">ByteAnzahl, FüllByte</span>)</pre>
 <p>Diese Methode existiert zur Unterstützung von <a href="#Call">Call</a> und ist nicht für den direkten Aufruf vorgesehen. Siehe <a href="../Objects.htm#Custom_NewDelete">Konstruktion und Destruktion</a>.</p>
-</div>
-
-<h2 id="StaticMethods">Statische Methoden</h2>
-<div class="methodShort" id="Call"><h2>Call</h2>
-<p>Erstellt ein Buffer-Objekt.</p>
-<pre class="Syntax">BufferObj := <span class="func">Buffer</span>(<span class="optional">ByteAnzahl, FüllByte</span>)</pre>
-<dl>
-  <dt>ByteAnzahl</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Anzahl der zu reservierenden Bytes. Äquivalent zu <a href="../objects/Buffer.htm#Size">Buffer.Size</a>.</p>
-    <p>Lässt man diesen Parameter weg, wird das Buffer-Objekt mit einem <a href="#Ptr">Ptr</a> von Null und einer <a href="#Size">Size</a> von Null erstellt.</p>
-  </dd>
-  <dt>FüllByte</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Geben Sie eine Zahl im Bereich von 0 bis 255 an, um jedes Byte im Pufferspeicher mit dieser Zahl füllen.</p>
-    <p>Dieser Parameter sollte in der Regel weggelassen werden, wenn der Pufferspeicher ohne vorheriges Lesen beschrieben wird, da dies ein Zeitaufwand im Verhältnis zur Anzahl der Bytes ist. Lässt man diesen Parameter weg, wird der Pufferspeicher nicht initialisiert; der Wert jedes Bytes ist willkürlich.</p>
-  </dd>
-</dl>
-<p>Es wird ein <a href="../objects/Error.htm#MemoryError">MemoryError</a> ausgelöst, wenn der Speicher nicht reserviert werden konnte, z. B. weil <em>ByteAnzahl</em> unerwartet groß ist oder das System über zu wenig virtuellen Speicher verfügt.</p>
-<p>Parameter werden durch <a href="#__New">__New</a> definiert.</p>
 </div>
 
 <h2 id="Related">Siehe auch</h2>

@@ -75,6 +75,7 @@ indexData = [
   ["__Enum-Methode (Array)","objects/Array.htm#__Enum"],
   ["__Enum-Methode (Map)","objects/Map.htm#__Enum"],
   ["__Init-Methode","Objects.htm#Custom_Classes_var"],
+  ["__Item-Eigenschaft","Objects.htm#__Item"],
   ["__Item-Eigenschaft (Array)","objects/Array.htm#__Item"],
   ["__Item-Eigenschaft (Map)","objects/Map.htm#__Item"],
   ["__New-Metafunktion","Objects.htm#Custom_NewDelete"],
@@ -1087,7 +1088,7 @@ indexData = [
   ["WriteLine-Methode (File)","objects/File.htm#WriteLine"],
   ["WriteNumType-Methode (File)","objects/File.htm#WriteNum"],
   ["WS_* (GUI-Styles)","misc/Styles.htm"],
-  ["XButton","commands/Click.htm"],
+  ["XButton","KeyList.htm#mouse-advanced"],
   ["YYYYMMDDHH24MISS","commands/FileSetTime.htm#YYYYMMDD"],
   ["ZeroDivisionError","objects/Error.htm#ZeroDivisionError",6],
   ["{Blind}","commands/Send.htm#blind"]

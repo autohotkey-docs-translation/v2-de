@@ -158,6 +158,14 @@ MsgBox "Diese Zeile ist nicht auskommentiert."
 MsgBox "Hierfür nicht. Das Ergebnis war " Ergebnis "."</pre>
 <p>Die runden Klammern können auch beim Aufrufen einer <a href="Concepts.htm#methods">Methode</a> weggelassen werden, wenn das Zielobjekt entweder eine Variable oder eine direkt benannte Eigenschaft ist, wie z. B. <code>meineVar.meineMethode</code> oder <code>meineVar.meineEigenschaft.meineMethode</code>.</p>
 <p>Bei Funktionsaufrufausdrücken muss das Ziel einer Funktionsaufrufanweisung keine vordefinierte Funktion sein; es kann stattdessen eine Variable sein, die ein <a href="objects/Functor.htm">Funktionsobjekt</a> enthält.</p>
+<p>Eine Funktionsaufrufanweisung kann sich <a href="Scripts.htm#continuation">über mehrere Zeilen erstrecken</a>.</p>
+<p>Funktionsaufrufanweisungen haben die folgenden Einschränkungen:</p>
+<ul>
+  <li>Wenn es einen Rückgabewert gibt, wird dieser immer verworfen.</li>
+  <li>Sie können wie <a href="#control-flow">Kontrollanweisungen</a> nicht innerhalb eines Ausdrucks verwendet werden.</li>
+  <li>Wenn optionale Parameter weggelassen werden, müssen auch alle Kommas am <em>Ende</em> der Parameterliste weggelassen werden, um eine <a href="Scripts.htm#continuation-line">Zeilenfortsetzung</a> zu verhindern.</li>
+  <li>Funktionsaufrufanweisungen können nicht <a href="Functions.htm#VariadicCall">variadisch</a> sein, aber sie können eine feste Anzahl von Parametern an eine variadische Funktion übergeben.</li>
+</ul>
 
 <h4 id="optional-parameters">Optionale Parameter</h4>
 <p>Optionale Parameter können einfach leer gelassen werden, allerdings ist das trennende Komma weiterhin notwendig, es sei denn, alle nachfolgenden Parameter werden ebenfalls weggelassen. Zum Beispiel kann die <a href="commands/Run.htm">Run</a>-Funktion ein bis vier Parameter akzeptieren. Alle folgenden Zeilen sind gültig:</p>
@@ -188,7 +196,7 @@ Run("notepad.exe", , , &amp;notepadPID)
 <p>Objektelementzugriff via eckige Klammern, wie z. B. <code>MeinObj[Index]</code>, das Nebenwirkungen wie ein Funktionsaufruf haben kann.</p>
 <p>Ternäre Ausdrücke wie <code>x ? AufrufenWennTrue() : AufrufenWennFalse()</code>. Es ist jedoch sicherer, die unten beschriebene Regel anzuwenden; also den Ausdruck (oder nur die Bedingung) immer mit Klammern zu umschließen.</p>
 <p class="warning"><strong>Bekannte Einschränkung:</strong> Aufgrund von Mehrdeutigkeiten bei <a href="#function-call-statements">Funktionsaufrufanweisungen</a> sollten Bedingungen, die mit einem Variablennamen und Leerzeichen beginnen (aber auch andere Operatoren enthalten), in runden Klammern gesetzt werden. <code>(x + 1) ? y : z</code> und <code>x+1 ? y : z </code> beispielsweise sind Ausdruckszuweisungen, während <code>x + 1 ? y : z</code> eine Funktionsaufrufanweisung ist.</p>
-<p class="warning"><strong>Hinweis:</strong> Die Bedingung darf nicht mit <code>!</code> oder einem anderen Ausdrucksoperator beginnen, da sie sonst als <a href="Scripts.htm#continuation-line">Fortsetzungszeile</a> interpretiert werden würde.</p>
+<p class="warning"><strong>Hinweis:</strong> Die Bedingung darf nicht mit <code>!</code> oder einem anderen Ausdrucksoperator beginnen, da sie sonst als <a href="Scripts.htm#continuation-prefix">Fortsetzungszeile</a> interpretiert werden würde.</p>
 <p>Ausdrücke, die mit <code>(</code> beginnen. In der Regel muss jedoch auf der gleichen Zeile ein entsprechendes <code>)</code> stehen, sonst wird die Zeile als Anfang eines <a href="Scripts.htm#continuation">Fortsetzungsbereichs</a> interpretiert.</p>
 <p>Ausdrücke, die mit einer Doppeldereferenzierung beginnen, wie z. B. <code>%VarName% := 1</code>. Dies ist in erster Linie auf die Komplexität der Implementierung zurückzuführen.</p>
 <p>Ausdrücke, die mit den oben genannten Elementen beginnen (aber nicht mit den unten genannten), sind aus praktischen Gründen ebenfalls erlaubt. Zum Beispiel ist <code>MeineFunk()+1</code> momentan erlaubt, obwohl <code>+1</code> keine Wirkung hat und das Ergebnis verworfen wird. Solche Ausdrücke können in Zukunft durch eine erweiterte Fehlerprüfung ungültig werden.</p>

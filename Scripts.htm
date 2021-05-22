@@ -47,25 +47,37 @@
 <p>Lange Zeilen können in mehreren kurzen Zeilen aufgeteilt werden, um die Übersichtlichkeit und Wartbarkeit des Skripts zu erhöhen. Die Ausführungsgeschwindigkeit des Skripts wird dabei nicht reduziert, weil solche Zeilen bereits beim Starten des Skripts im Speicher zusammengeführt werden.</p>
 <p>Es gibt drei Methoden, die in der Regel kombiniert eingesetzt werden können:</p>
 <ul>
-  <li><a href="#continuation-line">Fortsetzungspräfix</a>: Beginnen Sie eine Zeile mit einem Ausdrucksoperator, um sie mit der vorherigen Zeile zu verbinden.</li>
+  <li><a href="#continuation-line">Fortsetzungsoperator</a>: Beginnen oder enden Sie eine Zeile mit einem Ausdrucksoperator, um sie mit der vorherigen bzw. nächsten Zeile zu verbinden.</li>
   <li><a href="#continuation-expr">Fortsetzung durch Umschließen</a>: Ein Teilausdruck, der mit (), [] oder {} umschlossen ist, kann in den meisten Fällen automatisch mehrere Zeilen umfassen.</li>
   <li><a href="#continuation-section">Fortsetzungsbereich</a>: Markieren Sie eine Gruppe von Zeilen, die zusammengeführt werden sollen, inklusive Optionen, wie z. B. welcher Text (oder Code) zwischen den Zeilen eingefügt werden soll.</li>
 </ul>
-<p id="continuation-line"><strong>Fortsetzungspräfix</strong>: Eine Zeile, die mit einem Komma oder mit einem beliebigen <a href="Variables.htm#Operators">Ausdrucksoperator</a> (außer ++ und --) beginnt, wird automatisch mit der darüberliegenden Zeile zusammengeführt. Im folgenden Beispiel wird die zweite Zeile an die erste Zeile angefügt, weil sie mit einem Komma beginnt:</p>
+<p id="continuation-line"><strong>Fortsetzungsoperator</strong>: Eine Zeile, die mit einem Komma oder mit einem beliebigen <a href="Variables.htm#Operators">Ausdrucksoperator</a> (außer ++ und --) beginnt, wird automatisch mit der darüberliegenden Zeile zusammengeführt. Analog dazu wird eine Zeile, die mit einem Ausdrucksoperator endet, automatisch mit der darunterliegenden Zeile zusammengeführt. Im folgenden Beispiel wird die zweite Zeile an die erste Zeile angefügt, weil sie mit einem Komma beginnt:</p>
 <pre>FileAppend "Das ist der Text, der angefügt wird.`n"   <em>; Kommentar hier möglich.</em>
     <strong>,</strong> A_ProgramFiles "\BeliebigeAnwendung\Log-Datei.txt"  <em>; Kommentar.</em></pre>
 <p>Die Zeilen im nächsten Beispiel werden zu einer einzelnen Zeile zusammengeführt, weil die letzten beiden Zeilen mit "and" oder "or" beginnen:</p>
-<pre>if (Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau"   <em>; Kommentar.</em>
-    <strong>or</strong> Farbe = "Schwarz" or Farbe = "Grau" or Farbe = "Weiß")   <em>; Kommentar.</em>
+<pre>if Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau"   <em>; Kommentar.</em>
+    <strong>or</strong> Farbe = "Schwarz" or Farbe = "Grau" or Farbe = "Weiß"   <em>; Kommentar.</em>
     <strong>and</strong> ProduktIstInFarbeVerfügbar(Produkt, Farbe)   <em>; Kommentar.</em></pre>
 <p>Der <a href="Variables.htm#ternary">ternäre Operator</a> ist auch ein guter Kandidat:</p>
 <pre>ProduktIstVerfügbar := (Farbe = "Rot")
     <strong>?</strong> false  <em>; Rote Produkte sind nicht verfügbar, daher ist der folgende Funktionsaufruf irrelevant.</em>
     <strong>:</strong> ProduktIstInFarbeVerfügbar(Produkt, Farbe)</pre>
-<p>Obwohl die Einrückungen in den oberen Beispielen optional sind, machen sie eventuell deutlich, welche Zeilen zusammengehören. Außerdem müssen keine Leerzeichen bei Zeilen eingefügt werden, die mit den Wörtern "AND" und "OR" beginnen; das Programm macht das automatisch. In den Beispielen oben können leere Zeilen oder <a href="Language.htm#comments">Kommentare</a> zwischen oder am Ende jeder Zeile eingefügt werden.</p>
+<p>Die folgenden Beispiele sind äquivalent zu den oben genannten:</p>
+<pre>FileAppend "Das ist der Text, der angefügt wird.`n"<strong>,</strong>   <em>; Kommentar hier möglich.</em>
+    A_ProgramFiles "\BeliebigeAnwendung\Log-Datei.txt"  <em>; Kommentar.</em>
+
+if Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau" <strong>or</strong>   <em>; Kommentar.</em>
+    Farbe = "Schwarz" or Farbe = "Grau" or Farbe = "Weiß") <strong>and</strong>   <em>; Kommentar.</em>
+    ProduktIstInFarbeVerfügbar(Produkt, Farbe)   <em>; Kommentar.</em>
+
+ProduktIstVerfügbar := (Farbe = "Rot") <strong>?</strong>
+    false <strong>:</strong> <em>; Rote Produkte sind nicht verfügbar, daher ist der folgende Funktionsaufruf irrelevant.</em>
+    ProduktIstInFarbeVerfügbar(Produkt, Farbe)</pre>
+<p>Obwohl die Einrückungen in den oberen Beispielen optional sind, machen sie eventuell deutlich, welche Zeilen zusammengehören. In den Beispielen oben können leere Zeilen oder <a href="Language.htm#comments">Kommentare</a> zwischen oder am Ende jeder Zeile eingefügt werden.</p>
+<p>Ein Fortsetzungsoperator kann nicht mit einem automatisch-ersetzenden Hotstring oder einer Direktive außer <a href="commands/_HotIf.htm">#HotIf</a> verwendet werden.</p>
 <p id="continuation-expr"><strong>Fortsetzung durch Umschließen</strong>: Enthält eine Zeile einen Ausdruck oder eine Funktions-/Eigenschaftsdefinition mit einer nicht geschlossenen Klammer <code>(</code>/<code>[</code>/<code>{</code>, wird sie mit nachfolgenden Zeilen verbunden, bis sich die Anzahl der Start- und Endklammern ausgleicht. Das heißt, dass ein Teilausdruck, der mit runden, eckigen oder geschweiften Klammern umschlossen ist, in den meisten Fällen automatisch mehrere Zeilen umfassen kann. Zum Beispiel:</p>
 <pre>
-meinArray := [  <em>; Die Startklammer muss auf dieser Zeile sein.</em>
+meinArray := [
   "Element 1",
   "Element 2",
 ]
@@ -78,6 +90,12 @@ MsgBox(
 <p>Fortsetzungsausdrücke können beide Arten von <a href="Language.htm#comments">Kommentaren</a> enthalten.</p>
 <p>Fortsetzungsausdrücke können normale <a href="#continuation-section">Fortsetzungsbereiche</a> enthalten. Wenn also, wie bei jeder Zeile mit einem Ausdruck, eine Zeile mit einer runden Startklammer (<code>(</code>) beginnt, die nicht mit einem Escapezeichen versehen ist, wird sie als Anfang eines Fortsetzungsbereichs betrachtet, sofern auf derselben Zeile keine runde Endklammer (<code>)</code>) erfolgt.</p>
 <p>Mit dieser Methode allein ist es nicht möglich, in Anführungszeichen gesetzte Zeichenketten auf mehrere Zeilen zu strecken. Allerdings siehe oben.</p>
+<p>Fortsetzung durch Umschließen kann mit einem Fortsetzungsoperator kombiniert werden. Zum Beispiel:</p>
+<pre>meinArray :=  <em>; Der Zuweisungsoperator bewirkt eine Fortsetzung.</em>
+[  <em>; Klammern umschließen die folgenden zwei Zeilen.</em>
+  "Element 1",
+  "Element 2",
+]</pre>
 <p>Eine geschweifte Klammer (<code>{</code>) am Ende einer Zeile bewirkt keine Fortsetzung, wenn das Programm feststellt, dass sie als Anfang eines Blocks (<a href="commands/Block.htm#otb">OTB-Style</a>) und nicht als Anfang einer <a href="Language.htm#object-literal">direkten Objekt-Schreibweise</a> interpretiert werden soll. Im Einzelnen (in absteigender Prioritätsreihenfolge):</p>
 <ul>
   <li>Eine geschweifte Klammer wird niemals als Anfang eines Blocks interpretiert, wenn sie eine nicht geschlossene Klammer <code>(</code>/<code>[</code>/<code>{</code> davor hat, da dies zu einem ungültigen Ausdruck führen würde. Zum Beispiel wäre die geschweifte Klammer in <code>If ({</code> der Beginn einer direkten Objekt-Schreibweise.</li>
@@ -214,6 +232,10 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
 </ul>
 <p>Den Quellcode sowie neuere Versionen des Compilers finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe">GitHub</a>.</p>
 
+<h3 id="ahk2exe-base">Ausführbare Basisdatei</h3>
+<p>Jede EXE-Datei eines kompilierten Skripts basiert auf einer ausführbaren Datei, die den Interpreter implementiert. Die im Compiler-Verzeichnis enthaltenen Basisdateien haben die Dateiendung ".bin"; diese Dateien sind Versionen des Interpreters, die nicht die Möglichkeit bieten, externe Skriptdateien zu laden. Stattdessen wird das Programm nach einer Win32-Ressource (RCDATA) namens "&gt;AUTOHOTKEY SCRIPT&lt;" suchen und diese laden, oder fehlschlagen, wenn sie nicht gefunden wird.</p>
+<p>Die ausführbaren Standard-AutoHotkey-Dateien können auch als Basis für ein kompiliertes Skript verwendet werden, indem eine Win32-Ressource (RCDATA) mit der ID 1 eingebettet wird. Dadurch kann die EXE-Datei eines kompilierten Skripts zusammen mit der Befehlszeilenoption <a href="#SlashScript">/script</a> verwenden werden, um anstelle des eingebetteten Hauptskripts andere Skripte auszuführen. Weitere Informationen finden Sie unter <a href="Program.htm#embedded-scripts">Eingebettete Skripte</a>.</p>
+
 <h3 id="CompilerDirectives">Skript-Compiler-Direktiven</h3>
 <p>Skript-Compiler-Direktiven ermöglichen es dem Benutzer, genaue Angaben darüber zu machen, wie ein Skript kompiliert werden soll. Einige der Features sind:</p>
 <ul>
@@ -239,12 +261,12 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
 <table class="info">
   <tr><th>Option</th><th>Bedeutung</th><th class="wrap" abbr="Kompiliert?">Kompiliert?</th></tr>
   <tr id="SlashF">
-    <td>/f oder /force</td>
+    <td>/force</td>
     <td>Skript bedingungslos starten und Warndialogfenster überspringen. Diese Option hat den gleichen Effekt wie <a href="commands/_SingleInstance.htm">#SingleInstance Off</a>.</td>
     <td>Ja</td>
   </tr>
   <tr id="SlashR">
-    <td>/r oder /restart</td>
+    <td>/restart</td>
     <td>Gibt an, dass das Skript neu gestartet werden soll (das auch intern von der <a href="commands/Reload.htm">Reload</a>-Funktion verwendet wird).</td>
     <td>Ja</td>
   </tr>
@@ -254,7 +276,7 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
       <p>Sendet alle Syntaxfehler, die den Start eines Skripts verhindern, zur Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Siehe <a href="commands/_ErrorStdOut.htm">#ErrorStdOut</a> für weitere Details.</p>
       <p>Es kann optional eine <a href="commands/FileEncoding.htm">Codierung</a> angegeben werden. <code>/ErrorStdOut=UTF-8</code> beispielsweise kodiert Meldungen als UTF-8, bevor sie in die Standardfehlerausgabe geschrieben werden.</p>
     </td>
-    <td>Ja</td>
+    <td>Nein</td>
   </tr>
   <tr id="SlashDebug">
     <td>/Debug</td>
@@ -286,6 +308,24 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
       <p>Enthält das Skript Syntaxfehler, wird die Ausgabedatei eventuell leer sein. Der Exitcode des Prozesses kann verwendet werden, um diesen Zustand zu erkennen; bei einem Syntaxfehler ist der Exitcode eine 2. Mit der /ErrorStdOut-Option kann die Fehlermeldung unterdrückt oder abgefangen werden.</p>
     </td>
     <td>Nein</td>
+  </tr>
+  <tr id="SlashInclude">
+    <td>/include <em>"IncDatei"</em></td>
+    <td>
+      <p><a href="commands/_Include.htm">Inkludiert</a> eine Datei vor dem Hauptskript. Mit dieser Methode kann nur eine einzelne Datei inkludiert werden. Wenn das Skript <a href="commands/Reload.htm">neu geladen</a> wird, wird diese Befehlszeilenoption automatisch an die neue Instanz übergeben.</p>
+    </td>
+    <td>Nein</td>
+  </tr>
+  <tr id="SlashScript">
+    <td>/script</td>
+    <td>
+      <p>Wenn diese Befehlszeilenoption mit einem kompilierten Skript basierend auf einer EXE-Datei verwendet wird, veranlasst sie das Programm, das eingebettete Hauptskript zu ignorieren. Dadurch kann die EXE-Datei eines kompilierten Skripts anstelle des Hauptskripts externe Skriptdateien oder eingebettete Skripte ausführen. Andere Befehlszeilenoptionen, die normalerweise von kompilierten Skripten nicht unterstützt werden, können ebenfalls verwendet werden, müssen aber rechts von dieser Befehlszeilenoption angegeben werden. Zum Beispiel:</p>
+      <pre class="no-highlight">KompiliertesSkript.exe /script /ErrorStdOut MeinSkript.ahk "Skript-Arg 1"</pre>
+      <p>Wenn die aktuelle ausführbare Datei kein eingebettetes Skript hat, ist diese Befehlszeilenoption erlaubt, aber wirkungslos.</p>
+      <p>Diese Befehlszeilenoption wird von kompilierten Skripten, die auf einer BIN-Datei basieren, nicht unterstützt.</p>
+      <p>Siehe auch: <a href="#ahk2exe-details">Kompilierungsdetails</a></p>
+    </td>
+    <td>N/A</td>
   </tr>
 </table>
 
