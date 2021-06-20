@@ -44,23 +44,35 @@
   <dt>StartPos</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Lässt man <em>StartPos</em> weg, wird standardmäßig 1 verwendet (der Anfang von <em>Heuhaufen</em>). Ansonsten kann eine 2 angegeben werden, um beim zweiten Zeichen zu beginnen, eine 3, um beim dritten Zeichen zu beginnen, und so weiter.</p>
-    <p>Wenn <em>StartPos</em> negativ ist, erfolgt die Suche in umgekehrter Reihenfolge (von rechts nach links), auf der rechten Seite beginnend. Zum Beispiel würde -1 beim letzten Zeichen beginnen. Wenn <em>StartPos</em> eine 0 ist oder die Länge von <em>Heuhaufen</em> überschreitet, wird eine 0 zurückgegeben.</p>
-    <p>Egal welchen Wert man als <em>StartPos</em> verwendet - der Rückgabewert ist immer relativ zum ersten <em>Heuhaufen</em>-Zeichen. Zum Beispiel ist die Position von "abc" in "123abc789" immer 4.</p>
+    <p>Lassen Sie <em>StartPos</em> weg, um die gesamte Zeichenkette zu durchsuchen. Ansonsten können Sie die Position angeben, ab der die Suche begonnen werden soll, wobei 1 für das erste Zeichen steht, 2 für das zweite Zeichen, und so weiter. Negative Werte zählen vom <em>Heuhaufen</em>-Ende; -1 ist das letzte Zeichen, -2 ist das vorletzte Zeichen, und so weiter.</p>
+    <p>Lässt man <em>Vorkommen</em> weg, bewirkt eine negative <em>StartPos</em>, dass die Suche von rechts nach links durchgeführt wird. <em>StartPos</em> hat jedoch keinen Einfluss auf die Suchrichtung, wenn <em>Vorkommen</em> angegeben ist.</p>
+    <p>Bei einer Rechts-nach-Links-Suche wird mit <em>StartPos</em> die Position des <em>letzten</em> Zeichens des ersten möglichen Vorkommens von <em>Nadel</em> angegeben. Zum Beispiel wird <code>InStr("abc", "bc",, 2, +1)</code> eine Übereinstimmung finden, <code>InStr("abc", "bc",, 2, -1)</code> jedoch nicht.</p>
+    <p>Wenn der absolute Wert von <em>StartPos</em> größer als die Länge von <em>Heuhaufen</em> ist, wird eine 0 zurückgegeben.</p>
   </dd>
 
   <dt>Vorkommen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Lässt man <em>Vorkommen</em> weg, wird standardmäßig die erste Übereinstimmung von <em>Nadel</em> in <em>Heuhaufen</em> verwendet. Fügen Sie eine 2 in <em>Vorkommen</em> ein, um die Position der zweiten Übereinstimmung zurückzugeben, eine 3 für die dritte Übereinstimmung und so weiter.</p>
+    <p>Lässt man <em>Vorkommen</em> weg, wird standardmäßig die erste Übereinstimmung von <em>Nadel</em> in <em>Heuhaufen</em> verwendet. Die Suche wird von rechts nach links durchgeführt, wenn <em>StartPos</em> negativ ist, ansonsten wird sie von links nach rechts durchgeführt.</p>
+    <p>Wenn <em>Vorkommen</em> positiv ist, wird die Suche immer von links nach rechts durchgeführt. Fügen Sie eine 2 in <em>Vorkommen</em> ein, um die Position der zweiten Übereinstimmung zurückzugeben, eine 3 für die dritte Übereinstimmung und so weiter.</p>
+    <p>Wenn <em>Vorkommen</em> negativ ist, wird die Suche immer von rechts nach links durchgeführt. -2 beispielsweise sucht nach dem zweiten Vorkommen von rechts.</p>
   </dd>
 
   </dl>
-  
+
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>Diese Funktion gibt die Position der Zeichenkette <em>Nadel</em> zurück, die in der Zeichenkette <em>Heuhaufen</em> vorkommt. Position 1 ist das erste Zeichen; das liegt daran, dass 0 das Synonym für "falsch" ist, was sich gut als "nicht gefunden" eignet.</p>
+<p>Egal welche Werte man für <em>StartPos</em> oder <em>Vorkommen</em> verwendet - der Rückgabewert ist immer relativ zum ersten <em>Heuhaufen</em>-Zeichen. Zum Beispiel ist die Position von "abc" in "123abc789" immer 4.</p>
 <p>Traditionsgemäß kann das Vorkommen einer leeren Zeichenkette (<code>""</code>) an jeder Position gefunden werden. Allerdings übergibt man normalerweise keine leere <em>Nadel</em>, daher wird sie als Fehler behandelt (es wird eine Ausnahme ausgelöst).</p>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Es wird in folgenden Fällen ein <a href="../objects/Error.htm#ValueError">ValueError</a> ausgelöst:</p>
+<ul>
+  <li><em>Nadel</em> ist eine leere Zeichenkette (mit einer Länge von Null).</li>
+  <li><em>GroßKleinSensitiv</em> ist ungültig.</li>
+  <li><em>Vorkommen</em> oder <em>StartPos</em> ist 0 oder nicht-numerisch.</li>
+</ul>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p><a href="RegExMatch.htm">RegExMatch</a> ist flexibler als InStr, wenn es darum geht, ein bestimmtes Suchmuster (regulärer Ausdruck) innerhalb einer Zeichenkette zu suchen. Zum Suchen einer einfachen Zeichenkette ist InStr besser geeignet.</p>
