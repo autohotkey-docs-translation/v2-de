@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Änderungen von v1.0 bis v1.1 | AutoHotkey v2</title>
+<meta name="description" content="Änderungen zwischen v1.0 und v1.1." />
+<meta name="ahk:equiv-v1" content="Compat.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex, nofollow">
+<link href="static/theme.css" rel="stylesheet" type="text/css" />
+<script src="static/content.js" type="text/javascript"></script>
+<script src="static/ga.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>Änderungen von v1.0 bis v1.1</h1>
+
+<p>Dieses Dokument beschreibt Änderungen zwischen AutoHotkey v1.0 und v1.1, die dazu führen können, dass sich Skripte anders verhalten, und deshalb beim Lesen oder Aktualisieren von altem Code beachtet werden sollten. Siehe auch: <a href="v2-changes.htm">Änderungen von v1.1 bis v2.0</a>.</p>
+<p>AutoHotkey v1.1 kennt man auch unter den Namen "AutoHotkey_L". AutoHotkey v1.0 hat seit längerer Zeit die Bezeichnung "AutoHotkey Basic". Ältere Versionen von AutoHotkey_L haben noch eine Versionsnummer im Format 1.0.*, daher wird sich dieses Dokument stattdessen auf die Namen der beiden Entwicklungszweige von AutoHotkey beziehen, um Missverständnisse vorzubeugen.</p>
+
+<h2 id="toc">Inhaltsverzeichnis</h2>
+<p>Hohe Auswirkung:</p>
+<ul>
+  <li><a href="#Syntax_Errors">Bestimmte Syntaxfehler werden nicht länger toleriert</a></li>
+  <li><a href="#FileRead">FileRead kann fehlerhafte Binärdaten zurückgeben</a></li>
+  <li><a href="#Names">Die Namen von Variablen und Funktionen dürfen nicht [, ] oder ? enthalten</a></li>
+  <li><a href="#DPIScale">DPI-Skalierung ist für GUIs standardmäßig aktiviert</a></li>
+</ul>
+<p>Mittlere Auswirkung:</p>
+<ul>
+  <li><a href="#Transform">Der <em>Unicode</em>-Unterbefehl von Transform ist in Unicode-Versionen nicht verfügbar</a></li>
+  <li><a href="#Default_Script">AutoHotkey.ahk wird anstelle von AutoHotkey.ini gestartet</a></li>
+  <li><a href="#SetFormat">SetFormat, Integer, <strong>H</strong> ist Groß-/Kleinschreibung-sensitiv</a></li>
+  <li><a href="#LastError">A_LastError wird von noch mehr Befehlen geändert</a></li>
+  <li><a href="#MsgBox">MsgBox-Befehle behandeln Kommas konsistenter</a></li>
+  <li><a href="#GuiOwner">GUI's Owner-Option überschreibt zusätzliche Styles</a></li>
+  <li><a href="#Tilde">Tilde (~) hat Einfluss darauf, wie benutzerdefinierte Modifikatortasten funktionieren</a></li>
+  <li><a href="#ComboUpDown"><code>x &amp; y::</code> bewirkt, dass sowohl <code>x::</code> als auch <code>x up::</code> ausgelöst werden, sobald x losgelassen wird</a></li>
+</ul>
+<p>Niedrige Auswirkung:</p>
+<ul>
+  <li><a href="#IfIs">If <em>Var</em> is <em>Typ</em> ignoriert standardmäßig die Sprach- und Regionseinstellungen des Systems</a></li>
+  <li><a href="#Window_Groups">GroupActivate setzt ErrorLevel; <em>Label</em> von GroupAdd funktioniert anders</a></li>
+  <li><a href="#Run">Run und RunWait interpretieren das <em>Ziel</em> unterschiedlich</a></li>
+  <li><a href="#ControlZ">STRG+Z wird nicht als End-of-File (Dateiende) interpretiert</a></li>
+  <li><a href="#IsCompiled">A_IsCompiled ist immer schreibgeschützt</a></li>
+  <li><a href="#DllCall">DllCall versucht das Suffix A oder W in mehreren Fällen</a></li>
+</ul>
+
+<span id="Validation"></span><h2 id="Syntax_Errors">Syntaxfehler</h2>
+<p>Bestimmte Syntaxfehler, die bei AutoHotkey Basic toleriert wurden, sind bei AutoHotkey_L nicht mehr zugelassen. Viele dieser Fehler können einfach korrigiert werden, sobald sie entdeckt werden. Einige Fehler werden beim Laden des Skripts erkannt und müssen korrigiert werden, bevor das Skript überhaupt ausgeführt werden kann. Andere Fehler werden nur ausgelöst, wenn bestimmte Bedingungen erfüllt sind, während das Skript ausgeführt wird.</p>
+<p>Die Fehlererkennung in v2.0 ist generell robuster, und da es zahlreiche Änderungen in der Verwendung gab, die über die reine Fehlererkennung und -behandlung hinausgehen, werden die Unterschiede in der Fehlererkennung zwischen v1.0 und v1.1 hier nicht aufgeführt. Diese Informationen finden Sie in der v1.1-Dokumentation.</p>
+
+<h2 id="FileRead">FileRead</h2>
+<p><a href="commands/FileRead.htm#Binary">FileRead</a> wandelt den Zeichensatz des Textes in bestimmten Fällen um, dadurch kann es passieren, dass dieser Befehl beschädigte Binärdaten zurückgibt. Um das in v2.0 zu umgehen, können Sie die <code>RAW</code>-Option hinzufügen oder stattdessen <a href="commands/FileOpen.htm">FileOpen</a> verwenden.</p>
+
+<h2 id="Names">Namen von Variablen und Funktionen</h2>
+<p>Die Zeichen <code>[</code>, <code>]</code> und <code>?</code> sind für die Verwendung in <a href="Language.htm#expressions">Ausdrücken</a> reserviert und daher nicht länger in Variablennamen gültig. Folglich benötigt <code>?</code> (das in <a href="Variables.htm#ternary">ternären Operationen</a> benutzt wird) nicht länger ein Leerzeichen auf jeder Seite. Code für v1.0, der diese Zeichen in einem Variablennamen verwendet, würde in v1.1 anders interpretiert und daher möglicherweise nicht als Fehler erkannt werden.</p>
+<p>Siehe auch: <a href="Language.htm#operators-for-objects">Operatoren für Objekte</a>, <a href="v2-changes.htm#names">Namen (Änderungen von v1.1 bis v2.0)</a></p>
+
+<h2 id="DPIScale">DPI-Skalierung</h2>
+<p><a href="objects/Gui.htm#DPIScale">DPI-Skalierung</a> ist für Skript-GUIs standardmäßig aktiviert, um sicherzustellen, dass sie auf Basis der <a href="Variables.htm#ScreenDPI">DPI-Einstellungen des Systems</a> skaliert werden. Wenn sie aktiviert ist und wenn die DPI-Einstellung des Systems ungleich 96 (100%) ist, sind Positionen und Größen, die von Gui-Methoden/Eigenschaften akzeptiert oder zurückgegeben werden, nicht mit anderen Funktionen kompatibel. Mit <code>MeineGui.Opt("-DPIScale")</code> kann die DPI-Skalierung deaktiviert werden.</p>
+
+<h2 id="Transform">Transform</h2>
+<p>Einige Unterbefehle von <i>Transform</i> wurden geändert oder entfernt:</p>
+<ul>
+  <li><code>Transform, Unicode</code> kann nur in den ANSI-Versionen von AutoHotkey verwendet werden. Mit einer normalen Zuweisung kann Unicode-Text in die Zwischenablage gespeichert werden. Siehe auch: <a href="commands/StrPut.htm">StrPut</a>/<a href="commands/StrGet.htm">StrGet</a>.</li>
+  <li><code>Transform, HTML</code> unterstützt zusätzliche Features in den Unicode-Versionen von AutoHotkey_L.</li>
+</ul>
+<p><code>Transform</code> selbst wurde in v2.0 entfernt.</p>
+
+<h2 id="Default_Script">Standard-Skript</h2>
+<p>Sobald man AutoHotkey_L ohne Angabe eines Skripts startet, wird standardmäßig eine AHK-Datei statt einer INI-Datei geladen. Der Name dieser Datei beruht auf dem Dateinamen der aktuell ausführbaren Datei. Weitere Informationen finden Sie unter <a href="Scripts.htm#defaultfile">Skript-Dateiname</a>.</p>
+
+<h2 id="SetFormat">SetFormat, Integer[Fast], H</h2>
+<p>Wenn man ein großgeschriebenes H benutzt, werden die hexadezimale Zeichen A-F auch in Großbuchstaben sein. AutoHotkey Basic erzeugt hingegen immer Kleinbuchstaben.</p>
+<p>SetFormat selbst wurde in v2.0 entfernt. <code>Format("0x{:x}", n)</code> erzeugt die Kleinbuchstaben a-f, während <code>Format("0x{:X}", n)</code> die Großbuchstaben A-F erzeugt.</p>
+
+<h2 id="LastError">A_LastError</h2>
+<p>Die folgenden Befehle setzen nun <a href="Variables.htm#LastError">A_LastError</a>, um das Debuggen zu unterstützen: FileAppend, FileRead, FileReadLine, FileDelete, FileCopy, FileMove, FileGetAttrib/Time/Size/Version, FileSetAttrib/Time, FileCreateDir, RegRead, RegWrite, RegDelete. Sobald man einen dieser Befehle benutzt, wird der vorherige Wert von A_LastError überschrieben.</p>
+<p>In v2.0 wird A_LastError auch von IniRead, IniWrite und IniDelete gesetzt.</p>
+
+<h2 id="MsgBox">MsgBox</h2>
+<p>MsgBox in v1.0 und v1.1 hatte eine "smarte Kommabehandlung", damit Kommas in einem anführungszeichenlosen Text nicht mit einem Escapezeichen versehen werden mussten. Diese Behandlung unterschied sich geringfügig zwischen den beiden Versionen und muss möglicherweise in sehr seltenen Fällen beim Lesen von v1.0-Code berücksichtigt werden. Weitere Informationen finden Sie in der v1.1-Dokumentation. AutoHotkey v2.0 verwendet ausschließlich die Ausdruckssyntax und benötigt daher keine spezielle Behandlung von Kommas.</p>
+
+<h2 id="GuiOwner">GUI's Owner-Option</h2>
+<p>Sobald man die <a href="objects/Gui.htm#Owner">+Owner</a>-Option auf eine GUI anwendet, wird außerdem der WS_CHILD-Style entfernt und der WS_POPUP-Style gesetzt. Diese Änderung kann bewirken, dass Skripte, die mit <code>+Owner</code> das übergeordnete Fenster einer GUI <em>nach</em> Festlegen der Styles setzen, nicht mehr ordnungsgemäß funktionieren werden.</p>
+
+<h2 id="Tilde">Tilde-Präfix und benutzerdefinierte Kombinationen</h2>
+<p>In v1.1.14+ hat das <a href="Hotkeys.htm#Tilde">Tilde-Präfix</a> Einfluss darauf, wie eine Taste funktioniert, wenn sie als Modifikatortaste in einer benutzerdefinierten Tastenkombination verwendet wird.</p>
+
+<h2 id="ComboUpDown">Benutzerdefinierte Kombinationen und Down/Up-Hotkeys</h2>
+<p>Wenn ein KeyDown- und KeyUp-Hotkey für eine benutzerdefinierte Modifikatortaste definiert wurde, werden beide beim Loslassen der Taste ausgelöst (sofern das Tilde-Präfix nicht vorhanden ist). Zum Beispiel würde <code>x &amp; y::</code> bewirken, dass <code>x::</code> und <code>x up::</code> erst ausgelöst werden, wenn x losgelassen wird. Vorher wurde <code>x::</code> dabei nie ausgelöst.</p>
+
+<h2 id="IfIs">If <em>Var</em> is <em>Typ</em></h2>
+<p><code>if <i>Var</i> is <i>Typ</i></code> identifizierte in v1.0 standardmäßig bestimmte ASCII-fremde (ggf. sprachspezifische) Zeichen als alphabetisch/groß/klein, während dies in v1.1 nur dann der Fall war, wenn <code>StringCaseSense, Locale</code> verwendet wurde. Entsprechend identifizieren die <a href="commands/Is.htm">Is<em>Typ</em></a>-Funktionen in v2.0 ASCII-fremde Zeichen nur dann als alphabetisch, wenn der zweite Parameter <code>"Locale"</code> ist.</p>
+
+<h2 id="Window_Groups">Fenstergruppen</h2>
+<p><a href="commands/GroupActivate.htm">GroupActivate</a> setzt ErrorLevel nur in v1.1, nicht in v1.0 oder v2.0.</p>
+<p>Der <em>Label</em>-Parameter von <a href="commands/GroupAdd.htm">GroupAdd</a> verhält sich in v1.0 anders als in v1.1, wurde aber in v2.0 entfernt.</p>
+
+<h2 id="Run">Run / RunWait</h2>
+<p>AutoHotkey_L enthält Verbesserungen bezüglich der Verfahrensweise, wie <a href="commands/Run.htm">Run</a> und <a href="commands/Run.htm">RunWait</a> ihren <em>Ziel</em>-Parameter interpretieren. Diese Verbesserungen bieten neue Möglichkeiten, die zuvor nicht möglich waren, aber können bereits existierende Skripte beeinträchtigen, die auf Basis von AutoHotkey Basic erstellt wurden. Das neue Verhalten äußert sich wie folgt:</p>
+<ul>
+  <li>Wenn das <i>Ziel</i> mit einem Anführungszeichen beginnt, wird alles bis zum nächsten Anführungszeichen als Aktion angesehen, die in der Regel eine ausführbare Datei ist.</li>
+  <li>Ansonsten wird die erste Teilzeichenkette bis zu einem Leerzeichen als Aktion angesehen, sofern die Teilzeichenkette eine vorhandene Datei ist oder mit .exe, .bat, .com, .cmd oder .hta endet. Dadurch können Dateitypen wie beispielsweise .ahk, .vbs oder .lnk beliebige Parameter akzeptieren, während "bekannte" ausführbare Dateien wie wordpad.exe weiterhin ohne absoluten Pfad gestartet werden können (wie es vorher der Fall war).</li>
+</ul>
+
+<h2 id="ControlZ">STRG+Z</h2>
+<p><a href="commands/LoopRead.htm">Loop Read</a> und <a href="objects/File.htm#ReadLine">File.ReadLine</a> interpretieren das Zeichen <kbd>Strg</kbd>+<kbd>Z</kbd> (0x1A) nicht länger als Dateiendemarke (end-of-file marker). Jedes <kbd>Strg</kbd>+<kbd>Z</kbd>-Zeichen wird so wie es ist geladen, selbst wenn es ganz am Ende einer Datei vorkommt. <a href="commands/FileRead.htm">FileRead</a> ignoriert bereits dieses Zeichen und ist daher von diesem Problem nicht betroffen.</p>
+
+<h2 id="IsCompiled">A_IsCompiled</h2>
+<p>Wenn das Skript nicht kompiliert wurde, ist <a href="Variables.htm#IsCompiled">A_IsCompiled</a> definiert, auch wenn das Skript nicht kompiliert wurde; dessen Wert ist <code>""</code> in v1.1 und <code>0</code> in v2.0. Vorher blieb es undefiniert, wodurch Zuweisungen wie <code>A_IsCompiled := 1</code> möglich waren, sofern das Skript noch nicht kompiliert wurde. Jedenfalls wird sie nun als schreibgeschützte interne Variable behandelt.</p>
+
+<h2 id="DllCall">DllCall</h2>
+<p>Wenn der an <a href="commands/DllCall.htm">DllCall</a> übergebene Funktionsname nicht aufgelöst werden kann, hängt AutoHotkey_L automatisch ein "A" (ANSI) oder "W" (Unicode) an den Funktionsnamen an, egal welche DLL angegeben wurde. AutoHotkey Basic hingegen wird den Suffix "A" nur bei Funktionen anfügen, die in User32.dll, Kernel32.dll, ComCtl32.dll oder Gdi32.dll vorkommen.</p>
+
+</body>
+</html>

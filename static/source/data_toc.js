@@ -28,8 +28,9 @@ tocData = [
   ["Häufig gestellte Fragen","FAQ.htm"],
   ["Tutorial (Schnellstart)","Tutorial.htm"],
   ["Aktuelle Änderungen","ChangeLog.htm"],
+  ["Änderungen von v1.1 bis v2.0","v2-changes.htm"],
+  ["Änderungen von v1.0 bis v1.1","v1-changes.htm"],
   ["Skript-Beispiele","scripts/index.htm"],
-  ["Skript-Kompatibilität","Compat.htm"],
   ["Funktionsliste","commands/index.htm"],
   ["Laufwerk", "commands/Drive.htm",
   [
@@ -60,6 +61,7 @@ tocData = [
   ]],
   ["Externe Bibliotheken","",
   [
+    ["Binärkompatibilität","Compat.htm"],
     ["Buffer-Objekt","objects/Buffer.htm"],
     ["CallbackCreate","commands/CallbackCreate.htm"],
     ["DllCall","commands/DllCall.htm"],
