@@ -160,13 +160,20 @@
   <li>Wenn zwei Variablen angegeben wurden, versucht der Enumerator, den Getter der Eigenschaft aufzurufen, um den Wert abzurufen.
     <ul>
       <li>Wenn der Getter Parameter benötigt, wird die Eigenschaft übersprungen.</li>
-      <li>Wenn <em>Obj</em> selbst keinen Getter für diese Eigenschaft definiert, wird sie übersprungen.</li>
+      <li>Wenn <em>Obj</em> selbst keinen Getter für diese Eigenschaft definiert, wird sie übersprungen.
+        <p class="warning"><strong>Hinweis:</strong> Eigenschaften, die mit einer Methodendefinition definiert wurden, haben in der Regel keinen Getter und werden daher übersprungen.</p>
+      </li>
       <li>Wenn <em>Obj</em> ein Klassenprototypobjekt ist, sollte (und in einigen Fällen kann) der Getter nicht aufgerufen werden; daher wird die Eigenschaft übersprungen.</li>
       <li>Wenn der Getter eine Ausnahme auslöst, wird sie propagiert (nicht unterdrückt). Der Aufrufer kann die Enumeration bei der nächsten Eigenschaft nur fortsetzen, wenn er eine Referenz zum Enumerator gespeichert hat (also nicht, wenn er den Enumerator direkt an eine For-Schleife übergeben hat, da in diesem Fall der Enumerator freigegeben wird, wenn die For-Schleife abbricht).</li>
     </ul>
   </li>
 </ul>
-<p>Um eigene Eigenschaften zu enumerieren, ohne Eigenschafts-Getter aufzurufen, übergeben Sie nur eine einzige Variable an die For-Schleife oder den Enumerator. <a href="#GetOwnPropDesc">GetOwnPropDesc</a> kann genutzt werden, um Werteigenschaften von dynamischen Eigenschaften zu unterscheiden und gleichzeitig den Wert oder den Getter/Setter abzurufen.</p>
+<p>Um eigene Eigenschaften zu enumerieren, ohne Eigenschafts-Getter aufzurufen, oder um alle Eigenschaften unabhängig vom Typ zu enumerieren, übergeben Sie nur eine einzige Variable an die For-Schleife oder den Enumerator. <a href="#GetOwnPropDesc">GetOwnPropDesc</a> kann genutzt werden, um Werteigenschaften von dynamischen Eigenschaften zu unterscheiden und gleichzeitig den Wert oder Getter/Setter/Methode abzurufen.</p>
+<p>Methoden werden üblicherweise von der Enumeration im Zwei-Parameter-Modus ausgeschlossen, weil die Auswertung der Eigenschaft normalerweise davon abhängt, ob das Objekt einen entsprechenden Getter oder Wert hat, entweder im selben Objekt oder in einem Base-Objekt. Um Inkonsistenzen bei zwei angegebenen Variablen zu vermeiden, überspringt OwnProps eigene Eigenschaften, die nur eine <em>Call</em>-Akzessorfunktion haben. Zum Beispiel:</p>
+<ul>
+  <li>Wenn OwnProps bei einem nicht definierten Getter die Methode selbst zurückgibt, würde die Definition eines Getters verhindern, dass die Methode zurückgegeben wird. Skripte, die sich auf den Zwei-Variablen-Modus zum Abrufen von Methoden verlassen, würden dann einige Methoden übersehen.</li>
+  <li>Wenn OwnProps bei einem via Base-Objekt definierten Getter die Methode selbst zurückgibt, wäre dies inkonsistent mit der normalen Auswertung der Eigenschaft.</li>
+</ul>
 <p>Die Standardimplementierung dieser Methode ist auch als Funktion definiert: <code>ObjOwnProps(Obj)</code>.</p>
 </div>
 

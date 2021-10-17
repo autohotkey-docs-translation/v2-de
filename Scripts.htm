@@ -163,13 +163,13 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
 <p>Ahk2Exe kann auf folgenden Arten verwendet werden:</p>
 <ul>
   <li>
-    <p><strong>GUI-Schnittstelle</strong>: Starten Sie die Verknüpfung "Convert .ahk to .exe" im Startmenü.</p>
+    <p><strong>GUI-Schnittstelle</strong>: Starten Sie die Verknüpfung "Convert .ahk to .exe" im Startmenü. (Nach dem Aufrufen der GUI kann eine Pause eintreten, bevor das Fenster angezeigt wird; weitere Details finden Sie unter <a href="#information">Hintergrundinformationen</a>.)</p>
   </li>
   <li>
-    <p><strong>Rechtsklick</strong>: Klicken Sie mit der rechten Maustaste auf eine .ahk-Datei und wählen Sie "Compile Script" aus (nur verfügbar, wenn die Option "Script Compiler" in der Installation von AutoHotkey ausgewählt wurde). Nach einer kurzen Zeit wird im Verzeichnis des Skripts eine gleichnamige EXE-Datei erstellt. Hinweis: Das Erstellen der EXE-Datei erfolgt mit den Einstellungen (Symbol, .bin-Datei, <a href="#mpress">Komprimierung</a>), die Sie zuletzt für Methode #1 benutzt hatten.</p>
+    <p><strong>Rechtsklick</strong>: Klicken Sie mit der rechten Maustaste auf eine .ahk-Datei und wählen Sie "Compile Script" aus (nur verfügbar, wenn die Option "Script Compiler" in der Installation von AutoHotkey ausgewählt wurde). Nach einer kurzen Zeit wird im Verzeichnis des Skripts eine gleichnamige EXE-Datei erstellt. Hinweis: Das Erstellen der EXE-Datei erfolgt mit denselben Einstellungen (Symbol, .bin-Datei, <a href="#mpress">Komprimierung</a>), die zuletzt in Methode #1 oben gespeichert wurden, oder wie von einer im Skript vorkommenden relevanten <a href="misc/Ahk2ExeDirectives.htm">Compiler-Direktive</a> vorgegeben.</p>
   </li>
   <li id="ahk2exeCmd">
-    <p><strong>Befehlszeile</strong>: Der Compiler kann von der Befehlszeile aus mit den unten gezeigten Parametern gestartet werden. Jeder Befehlszeilenparameter, außer <code class="no-highlight">/gui</code>, führt dazu, dass das Skript sofort kompiliert wird.</p>
+    <p><strong>Befehlszeile</strong>: Der Compiler kann von der Befehlszeile aus mit den unten gezeigten Parametern gestartet werden. Jeder Befehlszeilenparameter, außer <code class="no-highlight">/gui</code>, führt dazu, dass das Skript sofort kompiliert wird. Alle Parameter sind optional, außer dass ein <code class="no-highlight">/gui</code>- oder <code class="no-highlight">/in</code>-Parameter vorhanden sein muss.</p>
     <style>
       #param_pairs td:not(:last-child) {
         white-space: nowrap;
@@ -186,15 +186,19 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
       </tr>
       <tr id="SlashOut">
         <td>/out <i>EXE_Name</i></td>
-        <td>Der Pfad\Name der EXE-Datei, die erstellt werden soll. Standardmäßig wird das Verzeichnis und der Basisname der Eingabedatei verwendet, plus ".exe" als Dateiendung.</td>
+        <td>Der Pfad\Name der EXE-Datei, die erstellt werden soll. Standardmäßig wird das Verzeichnis und der Basisname der Eingabedatei, plus ".exe" als Dateiendung, oder eine im Skript vorkommende relevante <a href="misc/Ahk2ExeDirectives.htm">Compiler-Direktive</a> verwendet.</td>
       </tr>
       <tr id="slashIcon">
         <td>/icon <i>Symbolname</i></td>
-        <td>Die zu verwendende Symboldatei. Standardmäßig wird das zuletzt in der GUI-Oberfläche verwendete Symbol verwendet.</td>
+        <td>Die zu verwendende Symboldatei. Standardmäßig wird das zuletzt in der GUI-Oberfläche gespeicherte Symbol oder eine im Skript vorkommende <a href="misc/Ahk2ExeDirectives.htm#SetMainIcon">SetMainIcon</a>-Compiler-Direktive verwendet.</td>
       </tr>
-      <tr id="SlashBin">
-        <td>/bin <i>Dateiname</i></td>
-        <td>Die zu verwendende BIN-Datei. Standardmäßig wird der zuletzt in der GUI-Oberfläche verwendete BIN-Dateiname verwendet.</td>
+      <tr id="SlashBase">
+        <td>/base <i>Dateiname</i></td>
+        <td>Die zu verwendende Basisdatei (eine BIN- oder EXE-Datei). Standardmäßig wird der zuletzt in der GUI-Oberfläche gespeicherte Basisdateiname oder eine im Skript vorkommende <a href="misc/Ahk2ExeDirectives.htm#Bin">Base</a>-Compiler-Direktive verwendet.</td>
+      </tr>
+      <tr id="SlashResourceID">
+        <td>/resourceid <i>Name</i></td>
+        <td>Weist dem Hauptskript eine untypische Ressourcen-ID zu, die für das Hauptskript bei Kompilierungen verwendet wird, die eine <a href="#SlashBase">EXE-Basisdatei</a> verwenden (siehe <a href="program.htm#embedded-scripts">Eingebettete Skripte</a>). Numerische Ressourcen-IDs sollten aus einem Rautenzeichen (#), gefolgt von einer Dezimalzahl, bestehen. Standardmäßig wird #1 oder eine im Skript vorkommende <a href="misc/Ahk2ExeDirectives.htm#ResourceID">ResourceID</a>-Compiler-Direktive verwendet.</td>
       </tr>
       <tr id="SlashCp">
         <td>/cp <i>Zeichensatz</i></td>
@@ -202,19 +206,27 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
       </tr>
       <tr id="SlashCompress">
         <td>/compress <i>n</i></td>
-        <td>Soll die EXE-Datei <a href="#mpress">komprimiert</a> werden? 0 = nein, 1 = MPRESS verwenden (falls vorhanden), 2 = UPX verwenden (falls vorhanden). Standardmäßig wird die zuletzt in der GUI-Oberfläche verwendete Einstellung verwendet.</td>
-      </tr>
-      <tr id="SlashAhk">
-        <td>/ahk <i>Dateiname</i></td>
-        <td>Der Pfad\Name der AutoHotkey.exe-Datei, die zum Kompilieren des Skripts verwendet werden soll. Standardmäßig wird AutoHotkey.exe im Verzeichnis verwendet, das unmittelbar eine Navigationsebene höher ist als das Verzeichnis, das den Compiler enthält. Wenn sie dort nicht zu finden ist, wird die installierte Autohotkey.exe verwendet, sofern vorhanden. Ansonsten wird AutoHotkeyU32.exe im Verzeichnis verwendet, das unmittelbar eine Navigationsebene höher ist als das Verzeichnis, das den Compiler enthält.</td>
+        <td>Soll die EXE-Datei <a href="#mpress">komprimiert</a> werden? 0 = nein, 1 = MPRESS verwenden (falls vorhanden), 2 = UPX verwenden (falls vorhanden). Standardmäßig wird die zuletzt in der GUI-Oberfläche gespeicherte Einstellung verwendet.</td>
       </tr>
       <tr id="SlashGui">
         <td>/gui</td>
-        <td>Zeigt die GUI, anstatt sofort zu kompilieren. Die anderen Parameter können verwendet werden, um die zuletzt in der GUI verwendeten Einstellungen zu überschreiben. <code>/in</code> ist in diesem Fall optional.</td>
+        <td>Zeigt die GUI, anstatt sofort zu kompilieren. Die anderen Parameter können verwendet werden, um die zuletzt in der GUI gespeicherten Einstellungen zu überschreiben. <code>/in</code> ist in diesem Fall optional.</td>
+      </tr>
+      <tr id="SlashGuiSilent">
+        <td>/silent [verbose]</td>
+        <td>Deaktiviert alle Mitteilungsfenster und gibt Fehler stattdessen in der Standardfehlerausgabe (stderr) aus; oder in der Standardausgabe (stdout), wenn stderr fehlschlägt. Sonstige Meldungen werden ebenfalls in stdout ausgegeben. Geben Sie optional das Wort <code>verbose</code> an, um zusätzlich noch Statusmeldungen in stdout auszugeben.</td>
+      </tr>
+      <tr id="SlashAhk">
+        <td class="warning"><strong>Veraltet:</strong><br>/ahk <i>Dateiname</i></td>
+        <td class="warning">Der Pfad\Name der AutoHotkey.exe-Datei, die als Hilfsprogramm zum Kompilieren des Skripts verwendet werden soll.</td>
       </tr>
       <tr id="SlashMpress">
         <td class="warning"><strong>Veraltet:</strong><br>/mpress <i>0oder1</i></td>
         <td class="warning">Soll die EXE-Datei mit MPRESS <a href="#mpress">komprimiert</a> werden? 0 = nein, 1 = ja. Standardmäßig wird die zuletzt in der GUI-Oberfläche verwendete Einstellung verwendet.</td>
+      </tr>
+      <tr id="SlashBin">
+        <td class="warning"><strong>Veraltet:</strong><br>/bin <i>Dateiname</i></td>
+        <td class="warning">Die zu verwendende BIN-Datei. Standardmäßig wird der zuletzt in der GUI-Oberfläche gespeicherte BIN-Dateiname verwendet.</td>
       </tr>
     </table>
     <p>Zum Beispiel:</p>
@@ -251,6 +263,29 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
 <p><strong>MPRESS</strong>'s offizielle Webseite (Downloads und Information): <a href="http://www.matcode.com/mpress.htm">http://www.matcode.com/mpress.htm</a><br>MPRESS Mirror: <a href="https://www.autohotkey.com/mpress/">https://www.autohotkey.com/mpress/</a></p>
 <p><strong>UPX</strong>'s offizielle Webseite (Downloads und Information): <a href="https://upx.github.io/">https://upx.github.io/</a></p>
 <p><strong>Hinweis:</strong> Eine auf diese Weise komprimierte EXE-Datei unterbindet eine einfache Einsicht in den Quellcode des Skripts mithilfe eines Texteditors wie z. B. Notepad oder PE-Resource-Editor. Allerdings kann es nicht verhindern, dass der Quellcode mit Tools extrahiert werden kann, die speziell dafür entwickelt worden sind.</p>
+
+<h3 id="information">Hintergrundinformationen</h3>
+ <p>Die folgende Ordnerstruktur wird unterstützt, wobei sich die aktuell ausgeführte Version von <code>Ahk2Exe.exe</code> im ersten, unten gezeigten \Compiler-Verzeichnis befindet:</p>
+<pre class="no-highlight">\AutoHotkey 
+   AutoHotkeyA32.exe 
+   AutoHotkeyU32.exe
+   AutoHotkeyU64.exe
+   \Compiler
+      Ahk2Exe.exe  <em>; die Master-Version von Ahk2Exe</em>
+      ANSI 32-bit.bin
+      Unicode 32-bit.bin
+      Unicode 64-bit.bin
+   \AutoHotkey v2.0-a135
+      AutoHotkey32.exe
+      AutoHotkey64.exe
+      \Compiler
+   \v2.0-beta.1
+      AutoHotkey32.exe
+      AutoHotkey64.exe</pre>
+<p>Der Algorithmus zum Suchen der Basisdatei läuft für eine kurze Zeit, wenn Ahk2Exe gestartet wird, und funktioniert wie folgt:</p>
+<p>Qualifizierende AutoHotkey-EXE-Dateien und alle BIN-Dateien werden im Verzeichnis des Compilers und im übergeordneten Verzeichnis des Compilers gesucht, sowie in allen Nebenverzeichnissen des Compilers mit Verzeichnisnamen, die mit <code>AutoHotkey</code> oder <code>V</code>, aber nicht mit <code>AutoHotkey_H</code> beginnen. Die ausgewählten Verzeichnisse werden rekursiv durchsucht. Alle gefundenen AutoHotkey.exe-Dateien werden ausgeschlossen, so dass nur Dateien wie AutoHotkeyA32.exe, AutoHotkey64.exe usw. sowie alle BIN-Dateien übrig bleiben. Alle enthaltenen EXE-Dateien müssen einen Namen haben, der mit <code>AutoHotkey</code> beginnt, eine Dateibeschreibung, die das Wort <code>AutoHotkey</code> enthält, und eine Version von <code class="no-highlight">1.1.34+</code> oder <code class="no-highlight">2.0-a135+</code> haben.</p>
+<p>Für eine erfolgreiche Kompilierung wird auch eine Version des AutoHotkey-Interpreters benötigt (als Hilfsprogramm), und eine davon wird nach einem ähnlichen Algorithmus ausgewählt. In den meisten Fällen stimmt die Version des verwendeten Interpreters mit der Version der Basisdatei überein, die der Benutzer für die Kompilierung ausgewählt hat.</p>
+
 
 <h2 id="cmd">Befehlszeilenparameter an ein Skript übergeben</h2>
 <p>Skripte unterstützen Befehlszeilenparameter. Das Format ist:</p>
