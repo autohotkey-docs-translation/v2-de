@@ -28,7 +28,7 @@
       <p>Name einer Datei, eines Ordners oder eines Platzhaltermusters wie "C:\Temp\*.tmp". Wenn kein absoluter Pfad angegeben ist, wird <em>DateiMuster</em> im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>
       <p>Sowohl Sternchen als auch Fragezeichen werden als Platzhalter unterstützt. Eine Übereinstimmung erfolgt, wenn das Suchmuster entweder im langen/normalen oder <a href="#LoopFileShortName">8.3-kurzen Dateinamen</a> erscheint.</p>
       <p>Wenn dieser Parameter eine einzelne Datei oder ein Ordner ist (also ohne Platzhalter), und enthält <em>Modus</em> ein R, werden mehrere Übereinstimmungen gefunden, wenn der angegebene Dateiname in mehreren Ordnern vorkommt.</p>
-      <p>Suchmuster, die länger als 259 Zeichen sind, werden aufgrund von <a href="../misc/LongPaths.htm">Systemlimitierungen (MAX_PATH)</a> möglicherweise keine Dateien finden. Diese Limitierung kann mithilfe des <a href="../misc/LongPaths.htm#prefix">Langer-Pfad-Präfixes</a> <code>\\?\</code> umgangen werden, wobei einige Besonderheiten zu beachten sind.</code></p>
+      <p>Suchmuster länger als 259 Zeichen können aufgrund von <a href="../misc/LongPaths.htm">Systemlimitierungen (MAX_PATH)</a> dazu führen, dass keine Dateien gefunden werden. Diese Limitierung kann mithilfe des <a href="../misc/LongPaths.htm#prefix">Langer-Pfad-Präfixes</a> <code>\\?\</code> umgangen werden, allerdings muss dabei einiges beachtet werden.</code></p>
   </dd>
 
   <dt>Modus</dt>
@@ -44,8 +44,8 @@
 
 </dl>
 
-<h2 id="Special_Variables">Verfügbare Sondervariablen innerhalb einer Dateimuster-Schleife</h2>
-<p>Die folgenden Variablen existieren innerhalb einer Dateimuster-Schleife. Wenn eine innere Dateimuster-Schleife von einer äußeren Dateimuster-Schleife umschlossen ist, wird die Datei von der innersten Schleife Vorrang haben:</p>
+<h2 id="Special_Variables">Sondervariablen innerhalb einer Datei-Schleife</h2>
+<p>Die folgenden Variablen können innerhalb einer Datei-Schleife verwendet werden. Wenn eine innere Datei-Schleife von einer äußeren Datei-Schleife umschlossen ist, hat die Datei der innersten Schleife Vorrang:</p>
 <table class="info">
   <tr>
     <th abbr="Var">Variable</th>
@@ -114,12 +114,12 @@
 </table>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Eine Dateimuster-Schleife ist nützlich, wenn Sie mehrere Dateien und/oder Ordner einzeln abarbeiten wollen.</p>
+<p>Eine Datei-Schleife ist nützlich, um mehrere Dateien und/oder Ordner einzeln abzuarbeiten.</p>
 <p>Alle übereinstimmenden Dateien werden abgerufen, einschließlich versteckter Dateien. Aber Betriebssystem-Features wie der DIR-Befehl ignorieren versteckte Dateien. Um versteckte, systemspezifische und/oder schreibgeschützte Dateien innerhalb einer Schleife zu überspringen, können Sie zum Beispiel Folgendes innerhalb der Schleife verwenden:</p>
 <pre>if A_LoopFileAttrib ~= "[HRS]"  <em>; Überspringt jede Datei, die H (versteckt), R (schreibgeschützt) oder S (systemspezifisch) ist. Siehe <a href="../Variables.htm#regex">Tilde-Operator</a>.</em>
     continue  <em>; Überspringt diese Datei und geht zur nächsten über.</em></pre>
 <p>Um bei einer rekursiven Suche relative statt absolute Pfade von Dateien abzurufen, ist es erforderlich, <a href="SetWorkingDir.htm">SetWorkingDir</a> zu verwenden, um den Basisordner für die nachfolgende Schleife zu bestimmen, und dann die Schleife ohne Pfad anzugeben (z. B. <code>Loop Files, "*.*", "R"</code>). Dies hat zur Folge, dass <a href="#LoopFilePath">A_LoopFilePath</a> einen Dateipfad enthalten wird, der relativ zum Basisordner ist.</p>
-<p>Eine Dateimuster-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb ihres eigenen Bereichs erstellt oder umbenennt. Wenn sie Dateien beispielsweise via <a href="FileMove.htm">FileMove</a> oder auf eine andere Art umbenennen würde, könnten solche Dateien zweimal gefunden werden: einmal mit ihrem alten Namen und nochmals mit ihrem neuen Namen. Um das zu umgehen, erstellen Sie zuerst eine Liste von Dateien, bevor Sie sie umbenennen. Zum Beispiel:</p>
+<p>Eine Datei-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb ihres eigenen Bereichs erstellt oder umbenennt. Wenn sie Dateien beispielsweise via <a href="FileMove.htm">FileMove</a> oder auf eine andere Art umbenennen würde, könnten solche Dateien zweimal gefunden werden: einmal mit ihrem alten Namen und nochmals mit ihrem neuen Namen. Um das zu umgehen, erstellen Sie zuerst eine Liste von Dateien, bevor Sie sie umbenennen. Zum Beispiel:</p>
 <pre>DateiListe := ""
 Loop Files, "*.jpg"
     DateiListe .= A_LoopFileName "`n"
@@ -128,10 +128,10 @@ Loop Parse, DateiListe, "`n"
 <p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Die Reihenfolge bei anderen Dateisystemen ist unbestimmt. Im Beispiel-Abschnitt unten wird gezeigt, wie die <a href="Sort.htm">Sort</a>-Funktion genutzt werden kann, um eine konsistente Reihenfolge zu gewährleisten.</p>
 <p>Dateimuster länger als 259 Zeichen werden nur unterstützt, wenn mindestens eine der folgenden Bedingungen erfüllt ist:</p>
 <ul>
-  <li>Auf dem System ist die <a href="../misc/LongPaths.htm">Unterstützung für lange Pfade</a> aktiviert (erfordert Windows 10 Version 1607 oder höher).</li>
-  <li>Es wird das <a href="../misc/LongPaths.htm#prefix">Langer-Pfad-Präfix</a> <code>\\?\</code> verwendet (es gelten einige Einschränkungen).</li>
+  <li>Auf dem System ist die <a href="../misc/LongPaths.htm">Langer-Pfad-Unterstützung</a> aktiviert (erfordert Windows 10 Version 1607 oder höher).</li>
+  <li>Der <a href="../misc/LongPaths.htm#prefix">Langer-Pfad-Präfix</a> <code>\\?\</code> wird verwendet.</li>
 </ul>
-<p>In allen anderen Fällen werden Dateimuster, die länger als 259 Zeichen sind, keine Dateien oder Ordner finden. Diese Limitierung gilt sowohl für <em>DateiMuster</em> als auch für alle temporären Suchmuster, die beim rekursiven Durchwandern eines Unterordners verwendet wurden.</p>
+<p>In allen anderen Fällen werden Dateimuster länger als 259 Zeichen keine Dateien oder Ordner finden. Diese Limitierung gilt sowohl für <em>DateiMuster</em> als auch für alle temporären Muster, die beim rekursiven Durchwandern eines Unterordners verwendet werden.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
 <p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung erfolgen, die ausgeführt wird, wenn keine passenden Dateien oder Verzeichnisse gefunden wurden (oder anders gesagt, wenn die Schleife null Iterationen hatte).</p>
 
