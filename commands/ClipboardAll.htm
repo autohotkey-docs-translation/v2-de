@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ClipboardAll - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die ClipboardAll-Funktion erstellt ein Objekt, das alles von der Zwischenablage enthält (z. B. Bilder und Formatierung)." />
+<meta name="description" content="Die ClipboardAll-Klasse ermöglicht das Speichern und Wiederherstellen aller Daten in der Zwischenablage (wie z. B. Bilder und Formatierungen)." />
 <meta name="ahk:equiv-v1" content="misc/Clipboard.htm#ClipboardAll" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,6 +18,7 @@
 
 <p>Erstellt ein Objekt, das alles von der Zwischenablage enthält (z. B. Bilder und Formatierung).</p>
 <pre class="Syntax">ClipGesichert := <span class="func">ClipboardAll</span>(<span class="optional">Daten, Größe</span>)</pre>
+<p><em></em><code>ClipboardAll</code> selbst ist eine von <code>Buffer</code> abgeleitete <a href="../objects/Class.htm">Klasse</a>.</p>
 
 <h2 id="Parameters">Parameter</h2>
 <p>Wenn beide Parameter weggelassen werden, wird der aktuelle Inhalt der Zwischenablage abgerufen. Ansonsten können die beiden Parameter verwendet werden, um ein Objekt zu erstellen, das die angegebenen Binärdaten der Zwischenablage enthält.</p>
@@ -36,15 +37,15 @@
 
 <h2 id="clipboardall-object">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
-<p>Diese Funktion gibt eine <a href="../Concepts.htm#references-to-objects">Referenz</a> zu einem ClipboardAll-Objekt zurück, das zwei Eigenschaften hat (geerbt von <a href="../objects/Buffer.htm">Buffer</a>):</p>
+<p>Diese Funktion gibt ein ClipboardAll-Objekt zurück, das zwei Eigenschaften hat (geerbt von <a href="../objects/Buffer.htm">Buffer</a>):</p>
 <ul>
   <li><a href="../objects/Buffer.htm#Ptr">Ptr</a>: Die Adresse der Daten, die im Objekt enthalten sind. Diese Adresse ist solange gültig, bis das Objekt freigegeben wird.</li>
   <li><a href="../objects/Buffer.htm#Size">Size</a>: Die Größe der rohen Binärdaten, in Bytes.</li>
 </ul>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die interne Variable <a href="../misc/A_Clipboard.htm">A_Clipboard</a> spiegelt den aktuellen Inhalt der Windows-Zwischenablage als reinen Text wider.</p>
-<p>Die <em>ClipboardAll</em>-Funktion wird häufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vorübergehend für eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wiederhergestellt werden, wie in <a href="#ExVar">Beispiel #1</a> und <a href="#ExFile">Beispiel #2</a> gezeigt.</p>
+<p>Die interne Variable <a href="../misc/A_Clipboard.htm">A_Clipboard</a> spiegelt den aktuellen Inhalt der Windows-Zwischenablage in Textform wider, kann aber einem ClipboardAll-Objekt zugewiesen werden, um ihren Inhalt in die Zwischenablage zurückzuschreiben.</p>
+<p><em>ClipboardAll</em> wird häufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vorübergehend für eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wiederhergestellt werden, wie in <a href="#ExVar">Beispiel #1</a> und <a href="#ExFile">Beispiel #2</a> gezeigt.</p>
 <p>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert.</p>
 <p>Mit <a href="ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
 <p>Die im Objekt enthaltenen Binärdaten bestehen aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die nächsten 4 Bytes die Datenblockgröße und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enthält (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschließend enden die Daten mit einem Formattyp (4 Byte groß), wobei jedoch eine 0 enthalten ist.</p>
