@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Loop Reg - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die Loop-Reg-Anweisung ruft die Inhalte eines bestimmten Registry-Subkeys einzeln ab." />
+<meta name="description" content="Die Loop-Reg-Anweisung ruft die Inhalte eines bestimmten Registry-Unterschlüssels einzeln ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -15,27 +15,27 @@
 
 <h1>Loop Reg</h1>
 
-<p>Ruft die Inhalte eines bestimmten Registry-Subkeys einzeln ab.</p>
+<p>Ruft die Inhalte eines bestimmten Registry-Unterschlüssels einzeln ab.</p>
 
-<pre class="Syntax"><span class="func">Loop Reg</span> KeyName <span class="optional">, Modus</span></pre>
+<pre class="Syntax"><span class="func">Loop Reg</span> SchlüsselName <span class="optional">, Modus</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>KeyName</dt>
+  <dt>SchlüsselName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der vollständige Name des Registry-Keys.</p>
+    <p>Der vollständige Name des Registry-Schlüssels.</p>
     <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um Zugriff auf eine <a href="#remote">Remote-Registry</a> zu erhalten, setzen Sie wie folgt den Computernamen und einen umgekehrten Schrägstrich davor: \\workstation01\HKEY_LOCAL_MACHINE</p>
   </dd>
   
   <dt>Modus</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Wenn dieser Parameter weggelassen wird oder leer ist, werden nur Werte einbezogen und Subkeys nicht rekursiv durchwandert. Ansonsten können Sie einen oder mehrere der folgenden Buchstaben angeben:</p>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, werden nur Werte einbezogen und Unterschlüssel nicht rekursiv durchwandert. Ansonsten können Sie einen oder mehrere der folgenden Buchstaben angeben:</p>
     <ul>
-      <li>K = Keys einbeziehen.</li>
+      <li>K = Schlüssel einbeziehen.</li>
       <li>V = Werte einbeziehen. Werte werden auch einbezogen, wenn K und V weggelassen werden.</li>
-      <li>R = Subkeys werden rekursiv durchwandert. Lässt man R weg, werden Keys und Werte innerhalb der Subkeys von <em>KeyName</em> nicht mit einbezogen.</li>
+      <li>R = Unterschlüssel werden rekursiv durchwandert. Lässt man R weg, werden Schlüssel und Werte innerhalb der Unterschlüssel von <em>SchlüsselName</em> nicht mit einbezogen.</li>
     </ul>
   </dd>
 
@@ -43,8 +43,8 @@
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Eine Registry-Schleife ist nützlich, wenn Sie mehrere Werte und Subkeys einzeln abarbeiten wollen. Die Werte und Subkeys werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> und <a href="RegDeleteKey.htm">RegDeleteKey</a> innerhalb der Schleife verwendet werden kann, ohne sie unterbrechen zu müssen.</p>
-<p id="vars">Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, wird der Eintrag von der innersten Schleife Vorrang haben:</p>
+<p>Eine Registry-Schleife ist nützlich, um mehrere Werte und Unterschlüssel einzeln abzuarbeiten. Die Werte und Unterschlüssel werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> und <a href="RegDeleteKey.htm">RegDeleteKey</a> innerhalb der Schleife verwendet werden können, ohne die Schleife zu unterbrechen.</p>
+<p id="vars">Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, hat das Element der innersten Schleife Vorrang:</p>
 <table class="info">
   <tr>
     <th abbr="Var">Variable</th>
@@ -52,22 +52,22 @@
   </tr>
   <tr>
     <td>A_LoopRegName</td>
-    <td>Name des aktuell abgerufenen Eintrags, der entweder ein Wertname oder der Name eines Subkeys sein kann. Wertenamen, die im Registry-Editor als "(Standard)" dargestellt werden, werden abgerufen, sofern ihnen ein Wert zugewiesen wurde - A_LoopRegName selbst wird aber leer sein.</td>
+    <td>Name des aktuell abgerufenen Elements, was entweder der Name eines Wertes oder der Name eines Unterschlüssels sein kann. Wertenamen, die im Registry-Editor als "(Standard)" dargestellt werden, werden abgerufen, sofern ihnen ein Wert zugewiesen wurde - A_LoopRegName selbst wird aber leer sein.</td>
   </tr>
   <tr>
     <td>A_LoopRegType</td>
-    <td>Typ des aktuell abgerufenen Eintrags, der eines der folgenden Wörter sein kann: KEY (der aktuell abgerufene Eintrag ist also ein Subkey, nicht ein Wert), REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD, REG_QWORD, REG_BINARY, REG_LINK, REG_RESOURCE_LIST, REG_FULL_RESOURCE_DESCRIPTOR, REG_RESOURCE_REQUIREMENTS_LIST, REG_DWORD_BIG_ENDIAN (wahrscheinlich selten in den meisten Betriebssystemen). Diese wird Variable leer sein, wenn der aktuell abgerufene Eintrag unbekannten Typs ist.</td>
+    <td>Typ des aktuell abgerufenen Elements, was eines der folgenden Wörter sein kann: KEY (bedeutet, das aktuell abgerufene Element ist ein Unterschlüssel, kein Wert), REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD, REG_QWORD, REG_BINARY, REG_LINK, REG_RESOURCE_LIST, REG_FULL_RESOURCE_DESCRIPTOR, REG_RESOURCE_REQUIREMENTS_LIST, REG_DWORD_BIG_ENDIAN (kommt eher selten vor). Diese Variable ist leer, wenn das aktuell abgerufene Element von unbekanntem Typ ist.</td>
   </tr>
   <tr>
     <td>A_LoopRegKey</td>
-    <td>Der vollständige Name des Keys, der das aktuelle Schleifenelement enthält. Beim Zugriff auf eine Remote-Registry wird dieser Wert <strong>nicht</strong> den Namen des Computers enthalten.</td>
+    <td>Der vollständige Name des Schlüssels, der das aktuelle Schleifenelement enthält. Beim Zugriff auf eine Remote-Registry wird dieser Wert <strong>nicht</strong> den Namen des Computers enthalten.</td>
   </tr>
   <tr>
     <td>A_LoopRegTimeModified</td>
-    <td>Der Zeitpunkt, wann der aktuelle Subkey oder einer seiner Werte zuletzt modifiziert wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable wird leer sein, wenn der aktuell abgerufene Eintrag kein Subkey ist (also wenn <em>A_LoopRegType</em> nicht das Wort KEY ist).</td>
+    <td>Der Zeitpunkt, wann der aktuelle Unterschlüssel oder einer seiner Werte zuletzt modifiziert wurde. <a href="FileSetTime.htm">YYYYMMDDHH24MISS</a>-Format. Diese Variable ist leer, wenn das aktuell abgerufene Element kein Unterschlüssel ist (also wenn <em>A_LoopRegType</em> nicht das Wort KEY ist).</td>
   </tr>
 </table>
-<p>Innerhalb einer Registry-Schleife können bei folgenden Funktionen die Parameter weggelassen werden, um zu kennzeichnen, dass der aktuell ermittelte Eintrag abgearbeitet werden soll:</p>
+<p>Innerhalb einer Registry-Schleife können bei folgenden Funktionen die Parameter weggelassen werden, um zu kennzeichnen, dass das aktuell abgerufene Element abgearbeitet werden soll:</p>
 <table class="info">
   <tr>
     <th style="min-width: 11em;">Syntax</th>
@@ -75,22 +75,22 @@
   </tr>
   <tr>
     <td><code>Wert := <a href="RegRead.htm">RegRead</a>()</code></td>
-    <td>Liest den aktuellen Eintrag. Wenn der aktuelle Eintrag ein Key ist, wird eine Ausnahme ausgelöst.</td>
+    <td>Liest das aktuelle Element. Wenn das aktuelle Element ein Schlüssel ist, wird eine Ausnahme ausgelöst.</td>
   </tr>
   <tr>
     <td><code><a href="RegWrite.htm">RegWrite</a> Wert</code><br><code><a href="RegWrite.htm">RegWrite</a></code></td>
-    <td>Schreibt in den aktuellen Eintrag. Lässt man <em>Wert</em> weg, wird der Eintrag je nach Typ auf 0 gesetzt oder leer gemacht. Wenn der aktuelle Eintrag ein Key ist, wird eine Ausnahme ausgelöst und die Registry nicht verändert.</td>
+    <td>Schreibt in das aktuelle Element. Lässt man <em>Wert</em> weg, wird das Element je nach Typ auf 0 gesetzt oder leer gemacht. Wenn das aktuelle Element ein Schlüssel ist, wird eine Ausnahme ausgelöst und die Registry nicht verändert.</td>
   </tr>
   <tr>
     <td><code><a href="RegDelete.htm">RegDelete</a></code></td>
-    <td>Löscht den aktuellen Eintrag, wenn er ein Wert ist. Wenn der aktuelle Eintrag ein Key ist, wird sein Wert stattdessen gelöscht.</td>
+    <td>Löscht das aktuelle Element, wenn es ein Wert ist. Wenn das aktuelle Element ein Schlüssel ist, wird stattdessen sein Standardwert gelöscht.</td>
   </tr>
   <tr>
     <td><code><a href="RegDeleteKey.htm">RegDeleteKey</a></code></td>
-    <td>Löscht den aktuellen Eintrag, wenn er ein Key ist. Wenn der aktuelle Eintrag ein Wert ist, wird der Key, der diesen Wert <em>enthält</em>, gelöscht, inklusive aller Subkeys und Werte.</td>
+    <td>Löscht das aktuelle Element, wenn es ein Schlüssel ist. Wenn das aktuelle Element ein Wert ist, wird der Schlüssel, der diesen Wert <em>enthält</em>, gelöscht, inklusive aller Unterschlüssel und Werte.</td>
   </tr>
 </table>
-<p id="remote">Beim Zugriff auf eine Remote-Registry (über den <em>KeyName</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
+<p id="remote">Beim Zugriff auf eine Remote-Registry (über den <em>SchlüsselName</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
 <ul>
   <li>Auf dem Zielrechner muss der Dienst "Remote Registry" laufen.</li>
   <li>Der Zugriff auf eine Remote-Registry kann fehlschlagen, wenn der Zielcomputer nicht zur Domäne des Benutzers gehört oder der Benutzername nicht genügend Berechtigungen hat (siehe unten für mögliche Übergangslösungen).</li>
@@ -112,7 +112,7 @@
 
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Ein funktionierendes Testskript.</p>
-<pre>Loop Reg, "HKCU\Software\Microsoft\Windows", "R KV"  <em>; Ermittelt rekursiv Keys und Werte.</em>
+<pre>Loop Reg, "HKCU\Software\Microsoft\Windows", "R KV"  <em>; Ruft Schlüssel und Werte rekursiv ab.</em>
 {
     if A_LoopRegType = "key"
         Wert := ""
@@ -156,7 +156,7 @@ RegSuche(Ziel)
 
     RegEintragUntersuchen()
     {
-        if A_LoopRegType = "KEY"  <em>; Entfernen Sie diese zwei Zeilen, wenn Sie die Key-Namen auch überprüfen lassen wollen.</em>
+        if A_LoopRegType = "KEY"  <em>; Entfernen Sie diese zwei Zeilen, wenn Sie die Schlüsselnamen auch überprüfen lassen wollen.</em>
             return true
         try
             RegWert := RegRead()

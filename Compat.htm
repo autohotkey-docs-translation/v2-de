@@ -64,13 +64,13 @@ StrPut(source_string, ansi_buf)</pre>
 <p>Wenn ein Skript eine Funktion via DllCall aufruft, die eine Zeichenkette als Parameter akzeptiert, muss eine oder mehr der folgenden Methoden durchgeführt werden:</p>
 <ol>
   <li>Wenn sowohl eine Unicode- (W) als auch ANSI-Version (A) der Funktion verfügbar ist, lassen Sie das Suffix W oder A weg und verwenden Sie den "Str"-Typ für die Eingabeparameter oder den Rückgabewert. Zum Beispiel wird die DeleteFile-Funktion von kernel32.dll als <code>DeleteFileA</code> und <code>DeleteFileW</code> exportiert. Da <code>DeleteFile</code> selbst nicht wirklich existiert, wird DllCall automatisch <code>DeleteFileW</code> versuchen:
-  <pre>DllCall("DeleteFile", "Ptr", StrPtr(Dateiname))
-DllCall("DeleteFile", "Str", Dateiname)</pre>
+  <pre>DllCall("DeleteFile", "Ptr", StrPtr(DateiName))
+DllCall("DeleteFile", "Str", DateiName)</pre>
   <p>In beiden Fällen wird die Adresse der originalen, unveränderten Zeichenkette an die Funktion übergeben.</p>
   <p>In manchen Fällen kann dieser Ansatz nach hinten losgehen, da DllCall das Suffix W nur dann hinzufügt, wenn keine Funktion mit dem originalen Namen gefunden werden konnte. Zum Beispiel exportiert shell32.dll ExtractIconExW, ExtractIconExA und ExtractIconEx ohne Suffix, wobei die letzten beiden äquivalent sind. In diesem Fall bewirkt das Weglassen des Suffixes W, dass die ANSI-Version aufgerufen wird.</p></li>
   <li>Wenn die Funktion einen bestimmten Zeichenkettentyp als Eingabevariable akzeptiert, könnte das Skript jeweils den passenden Zeichenkettentyp verwenden:
-  <pre>DllCall("DeleteFileA", "AStr", Dateiname)
-DllCall("DeleteFileW", "WStr", Dateiname)</pre></li>
+  <pre>DllCall("DeleteFileA", "AStr", DateiName)
+DllCall("DeleteFileW", "WStr", DateiName)</pre></li>
   <li>Wenn die Funktion einen Zeichenkettenparameter hat, der für die Ausgabe verwendet wird, muss das Skript Pufferspeicher reservieren, wie <a href="#Buffer">oben</a> beschrieben, und ihn an die Funktion übergeben. Wenn der Parameter eine Eingabevariable akzeptiert, muss das Skript die eingehende Zeichenkette zudem in das passende Format umwandeln; verwenden Sie hierfür <a href="commands/StrPut.htm">StrPut</a>.</li>
 </ol>
 

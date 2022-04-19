@@ -73,27 +73,27 @@ Loop MeinArray.Length
     MsgBox MeinArray[A_Index]
 
 <em>; Enumeriert die Inhalte des Arrays:</em>
-For index, wert in MeinArray
-    MsgBox "Element " index " ist '" wert "'"
+For Index, Wert in MeinArray
+    MsgBox "Element " Index " ist '" Wert "'"
     
 <em>; Das Gleiche nochmal:</em>
-For wert in MeinArray
-    MsgBox "Element " A_Index " ist '" wert "'"
+For Wert in MeinArray
+    MsgBox "Element " A_Index " ist '" Wert "'"
 </pre>
 
 <h3 id="Usage_Associative_Arrays">Map-Objekte (Assoziative Arrays)</h3>
-<p>Ein <a href="objects/Map.htm">Map</a>-Objekt bzw. assoziatives Array ist ein Objekt, das mehrere eindeutige Keys (Schlüssel) und mehrere Values (Werte) enthält, die jeweils miteinander verbunden sind. Keys können Zeichenketten, Integer oder Objekte sein. Values beliebige Typen. Ein assoziatives Array kann wie folgt erstellt werden:</p>
-<pre>MeinMap := Map("KeyA", ValueA, "KeyB", ValueB, ..., "KeyZ", ValueZ)</pre>
-<p>Abrufen eines Elements, wo <code>Key</code> eine <a href="Concepts.htm#variables">Variable</a> oder ein <a href="Language.htm#expressions">Ausdruck</a> ist:</p>
-<pre>Wert := MeinMap[Key]</pre>
+<p>Ein <a href="objects/Map.htm">Map</a>-Objekt bzw. assoziatives Array ist ein Objekt, das eine Sammlung von eindeutigen Schlüsseln und eine Sammlung von Werten enthält, die jeweils miteinander verbunden sind. Schlüssel können Zeichenketten, Integer oder Objekte sein, während Werte von beliebigem Typ sein können. Ein assoziatives Array kann wie folgt erstellt werden:</p>
+<pre>MeinMap := Map("SchlüsselA", WertA, "SchlüsselB", WertB, ..., "SchlüsselZ", WertZ)</pre>
+<p>Abrufen eines Elements, wo <code>Schlüssel</code> eine <a href="Concepts.htm#variables">Variable</a> oder ein <a href="Language.htm#expressions">Ausdruck</a> ist:</p>
+<pre>Wert := MeinMap[Schlüssel]</pre>
 <p>Zuweisen eines Elements:</p>
-<pre>MeinMap[Key] := Wert</pre>
+<pre>MeinMap[Schlüssel] := Wert</pre>
 <p>Entfernen eines Elements mittels <a href="objects/Array.htm#Delete">Delete</a>-Methode:</p>
-<pre>EntfernterWert := MeinMap.Delete(Key)</pre>
+<pre>EntfernterWert := MeinMap.Delete(Schlüssel)</pre>
 <p>Enumerieren von Elementen:</p>
 <pre>MeinMap := Map("zehn", 10, "zwanzig", 20, "dreißig", 30)
-<a href="commands/For.htm">For</a> key, value in MeinMap
-    MsgBox key ' = ' value</pre>
+<a href="commands/For.htm">For</a> Schlüssel, Wert in MeinMap
+    MsgBox Schlüssel ' = ' Wert</pre>
 
 <h3 id="Usage_Objects">Objekte</h3>
 <p>Ein Objekt kann <em>Eigenschaften</em> und <em>Elemente</em> haben (z. B. Array-Elemente). Der Zugriff auf Elemente erfolgt über <code>[]</code>, wie in den vorherigen Abschnitten gezeigt. Der Zugriff auf Eigenschaften erfolgt durch Anfügen eines Punktes und einem Identifikator (einfach ein <a href="Concepts.htm#names">Name</a>). <em>Methoden</em> sind Eigenschaften, die aufgerufen werden können.</p>
@@ -120,7 +120,7 @@ obj := ""  <em>; Gibt die letzte Referenz frei, wodurch das Objekt freigegeben w
 <p>Außerdem wird eine Referenz, die in einer Eigenschaft oder einem Array-Element gespeichert ist, freigegeben, wenn diese Eigenschaft oder dieses Array-Element irgendeinen anderen Wert zugewiesen bekommt oder aus dem Objekt entfernt wird.</p>
 <pre>arr := [{}]  <em>; Erstellt ein Array, das ein Objekt enthält.</em>
 arr[1] := {}  <em>; Erstellt ein zweites Objekt, wodurch das erste Objekt indirekt freigegeben wird.</em>
-arr.RemoveAt(1)  <em>; Entfernt und gibt das zweite Objekt frei.</em></pre>
+arr.RemoveAt(1)  <em>; Entfernt das zweite Objekt und gibt es frei.</em></pre>
 <p id="Circular_References">Da alle Referenzen zu einem Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch eine Referenz zum Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, entfernen Sie den Zirkelbezug.</p>
 <pre>
 x := {}, y := {}             <em>; Erstellt zwei Objekte.</em>
@@ -370,7 +370,7 @@ Methode()
 <h3 id="__Enum">__Enum-Methode</h3>
 <pre class="Syntax">__Enum(AnzahlVars)</pre>
 <p>Die __Enum-Methode wird aufgerufen, wenn das Objekt an eine <a href="commands/For.htm">For-Schleife</a> übergeben wird. Diese Methode sollte einen <a href="objects/Enumerator.htm">Enumerator</a> zurückgeben, der Elemente im Objekt, wie z. B. Array-Elemente, zurückgeben wird. Wenn es undefiniert bleibt, kann das Objekt nicht direkt an eine For-Schleife übergeben werden, es sei denn, es hat eine <a href="objects/Enumerator.htm#Call">Enumerator-kompatible Call-Methode</a>.</p>
-<p><em>AnzahlVars</em> enthält die Anzahl der Variablen, die an die For-Schleife übergeben wurden. Wenn <em>AnzahlVars</em> 2 ist, wird erwartet, dass der Enumerator dem ersten Parameter den Key oder Index eines Elements und dem zweiten Parameter den Wert zuweist. Jeder Key oder Index sollte als Parameter der <a href="#__Item">__Item</a>-Eigenschaft akzeptiert werden. Dadurch können <a href="AHKL_DBGPClients.htm">DBGp-basierte Debugger</a> ein bestimmtes Element abrufen oder setzen, nachdem sie via Enumerator aufgelistet wurden.</p>
+<p><em>AnzahlVars</em> enthält die Anzahl der Variablen, die an die For-Schleife übergeben wurden. Wenn <em>AnzahlVars</em> 2 ist, wird erwartet, dass der Enumerator dem ersten Parameter den Schlüssel oder Index eines Elements und dem zweiten Parameter den Wert zuweist. Jeder Schlüssel oder Index sollte als Parameter der <a href="#__Item">__Item</a>-Eigenschaft akzeptiert werden. Dadurch können <a href="AHKL_DBGPClients.htm">DBGp-basierte Debugger</a> ein bestimmtes Element abrufen oder setzen, nachdem sie via Enumerator aufgelistet wurden.</p>
 
 <h3 id="__Item">__Item-Eigenschaft</h3>
 <p>Die __Item-Eigenschaft wird indirekt aufgerufen, wenn der Indexierungsoperator (Array-Syntax) in Verbindung mit dem Objekt verwendet wird. Im folgenden Beispiel wird die Eigenschaft als statisch deklariert, so dass der Indexierungsoperator bei der Env-Klasse selbst angewendet werden kann. Ein weiteres Beispiel finden Sie unter <a href="#Array2D">Array2D</a>.</p>

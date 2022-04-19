@@ -60,7 +60,7 @@ LV_DoubleClick(LV, ZeileNummer)
 <h2 id="Options">Optionen und Styles für den Optionen-Parameter</h2>
 <p><strong>Background</strong>: Geben Sie das Wort Background an, unmittelbar gefolgt von einem Farbnamen (siehe <a href="../misc/Colors.htm">Farbentabelle</a>) oder RGB-Wert (das 0x-Präfix ist optional). Beispiele: <code>BackgroundSilver</code>, <code>BackgroundFFDD99</code>. Wenn diese Option nicht vorhanden ist, verwendet ListView als Hintergrundfarbe standardmäßig die Standardhintergrundfarbe des Systems. Mit <code>BackgroundDefault</code> oder <code>-Background</code> kann die Standardhintergrundfarbe des Systems gesetzt werden (in der Regel weiß). Zum Beispiel kann die Standardfarbe einer ListView via <code>LV.Opt("+BackgroundDefault")</code> wiederhergestellt werden.</p>
 <p><strong>C</strong>: Textfarbe. Geben Sie den Buchstaben C an, unmittelbar gefolgt von einem Farbnamen (siehe <a href="../misc/Colors.htm">Farbentabelle</a>) oder RGB-Wert (das 0x-Präfix ist optional). Beispiele: <code>cRed</code>, <code>cFF2211</code>, <code>c0xFF2211</code>, <code>cDefault</code>.</p>
-<p id="Checked"><strong>Checked:</strong> Zeigt auf der linken Seite jeder Zeile eine CheckBox an. Fügt man eine Zeile via <a href="#Add">LV_Add</a> hinzu, kann das Wort <em>Check</em> in den Optionen angegeben werden, um die CheckBox zu Beginn im abgehakten Zustand anzuzeigen. Der Benutzer kann die CheckBox anklicken oder die Leertaste drücken, um ein Häkchen zu setzen oder zu entfernen.</p>
+<p id="Checked"><strong>Checked:</strong> Zeigt auf der linken Seite jeder Zeile eine CheckBox an. Fügt man eine Zeile via <a href="#Add">LV_Add</a> hinzu, kann das Wort <em>Check</em> in den Optionen angegeben werden, um die CheckBox vorerst im abgehakten Zustand anzuzeigen. Der Benutzer kann die CheckBox anklicken oder die Leertaste drücken, um ein Häkchen zu setzen oder zu entfernen.</p>
 <p id="Count"><strong>Count:</strong> Geben Sie das Wort Count an, unmittelbar gefolgt von der Anzahl der Zeilen, die die ListView letztendlich enthalten soll. Dies ist kein Limit: Nach Erreichen dieser Anzahl können weiterhin neue Zeilen hinzugefügt werden. Stattdessen dient diese Option eher als Hinweis, dass das Steuerelement den Speicher nur einmal reservieren soll und nicht jedes Mal, wenn eine neue Zeile hinzugefügt wird, was die Leistung beim Hinzufügen neuer Zeilen deutlich verbessert (und zu einem gewissen Grad auch beim Sortieren). Um die Leistung noch weiter zu verbessern, verwenden Sie <code>LV.Opt("-Redraw")</code>, bevor Sie eine große Anzahl von Zeilen hinzufügen. Verwenden Sie anschließend <code>LV.Opt("+Redraw")</code>, um die Neuzeichnung wieder zu aktivieren (wodurch auch das Steuerelement neu gezeichnet wird).</p>
 <p><strong>Grid:</strong> Zeigt horizontale und vertikale Linien an, um die Grenzen zwischen den Zeilen und Spalten zu verdeutlichen.</p>
 <p><strong>Hdr:</strong> Geben Sie <code>-Hdr</code> (minus Hdr) an, um die Kopfzeile mit den Spaltenüberschriften zu verstecken. Um sie später wieder sichtbar zu machen, verwenden Sie <code>LV.Opt("+Hdr")</code>.</p>
@@ -248,12 +248,12 @@ LV_DoubleClick(LV, ZeileNummer)
       <dt>SpalteNummer</dt>
       <dd>
         <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-        <p>Die Spaltennummer für die neu eingefügte Spalte. Alle Spalten, die auf oder rechts von <em>SpalteNummer</em> sind, werden nach rechts verschoben, um Platz für die neue Spalte zu schaffen. Die erste Spalte ist 1 (nicht 0). Eine ListView kann maximal 200 Spalten enthalten. Wenn <em>SpalteNummer</em> größer als die Anzahl der im Steuerelement befindlichen Spalten ist, wird die neue Spalte rechts neben der letzten Spalte hinzugefügt. Der Inhalt der neu eingefügten Spalte ist zunächst leer, es sei denn, es handelt sich um die erste Spalte, dann wird der Inhalt der alten ersten Spalte in die neue kopiert und anschließend leer gemacht.</p>
+        <p>Die Spaltennummer für die neu eingefügte Spalte. Alle Spalten, die auf oder rechts von <em>SpalteNummer</em> sind, werden nach rechts verschoben, um Platz für die neue Spalte zu schaffen. Die erste Spalte ist 1 (nicht 0). Eine ListView kann maximal 200 Spalten enthalten. Wenn <em>SpalteNummer</em> größer als die Anzahl der im Steuerelement befindlichen Spalten ist, wird die neue Spalte rechts neben der letzten Spalte hinzugefügt. Der Inhalt der neu eingefügten Spalte ist vorerst leer, es sei denn, es handelt sich um die erste Spalte, dann wird der Inhalt der alten ersten Spalte in die neue kopiert und anschließend leer gemacht.</p>
       </dd>
       <dt>Optionen</dt>
       <dd>
         <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Die Attribute der neuen Spalte (z. B. <a href="#Integer">Integer-Sortierung</a>) verwenden zu Beginn ihre Standardwerte, die via <em><a href="#ColOptions">Optionen</a></em> geändert werden können.</p>
+        <p>Die Attribute der neuen Spalte (z. B. <a href="#Integer">Integer-Sortierung</a>) verwenden vorerst ihre Standardwerte, die via <em><a href="#ColOptions">Optionen</a></em> geändert werden können.</p>
       </dd>
       <dt>SpalteTitel</dt>
       <dd>
@@ -422,14 +422,14 @@ MeineGui.Show</pre>
   </dl>
 <h3 id="IL_Add">IL_Add</h3>
   <p>Fügt ein Symbol zur angegebenen ImageList hinzu und gibt dessen Indexnummer zurück (1 ist das erste Symbol, 2 das zweite und so weiter).</p>
-  <pre class="Syntax">SymbolIndex := <span class="func">IL_Add</span>(ImageListID, Dateiname <span class="optional">, SymbolNummer, NichtSymbolSkalieren</span>)</pre>
+  <pre class="Syntax">SymbolIndex := <span class="func">IL_Add</span>(ImageListID, DateiName <span class="optional">, SymbolNummer, NichtSymbolSkalieren</span>)</pre>
   <dl>
     <dt>ImageListID</dt>
     <dd>
       <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
       <p>Die ID einer ImageList, die via <a href="#IL_Create">IL_Create</a> erstellt wurde.</p>
     </dd>
-    <dt>Dateiname</dt>
+    <dt>DateiName</dt>
     <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
       <p>Der Name eines Symbols (.ICO), Cursors (.CUR) oder animierten Cursors (.ANI) (zurzeit werden animierte Cursor in einer ListView nicht wirklich animiert), oder ein <a href="../misc/ImageHandles.htm">Bitmap- oder Symbol-Handle</a> wie <code>"HBITMAP:" handle</code>. Folgende Dateitypen sind auch für Symbole geeignet: EXE, DLL, CPL, SCR und andere Typen, die Symbolressourcen enthalten.</p>

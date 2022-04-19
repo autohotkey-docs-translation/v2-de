@@ -47,7 +47,7 @@
 <li>Sie waren redundant; im Grunde nur eine begrenzte Variante einer Funktion, ohne lokale Variablen oder einen Rückgabewert, und ohne einen eigenen, separaten Namensraum. Funktionen können überall dort verwendet werden, wo zuvor Label-Subroutinen verwendet wurden (sogar <a href="Functions.htm#nested">innerhalb anderer Funktionen</a>).</li>
 <li>Funktionen können sich nicht überlappen (können aber innerhalb einer anderen Funktion enthalten sein). Verwenden Sie stattdessen mehrere Funktionen und rufen Sie eine nach der anderen auf. Anstelle von A_ThisLabel können Sie Funktionsparameter verwenden.</li>
 <li>Im Gegensatz zu Subroutinen wird man, wenn man vergisst, das <em>Ende</em> einer Funktion zu definieren, normalerweise auf den Fehler hingewiesen, da jedes <code>{</code> ein entsprechendes <code>}</code> haben muss. Die Grenzen einer Funktion dürften auch leichter zu erkennen sein als die einer Label-Subroutine.</li>
-<li>Funktionen können in den automatischen Ausführungsbereich platziert werden, ohne diesen zu unterbrechen. Der automatische Ausführungsbereich kann sich nun problemlos über das gesamte Skript erstrecken, daher kann dieser stattdessen als <a href="Language.htm#global-code">globaler Code</a> bezeichnet werden, der innerhalb des <a href="Scripts.htm#auto">automatisch ausführenden Threads</a> ausgeführt wird.</li>
+<li>Funktionen können in den automatischen Ausführungsbereich platziert werden, ohne diesen zu unterbrechen. Der automatische Ausführungsbereich kann sich nun problemlos über das gesamte Skript erstrecken, daher kann dieser stattdessen als <a href="Language.htm#global-code">globaler Code</a> bezeichnet werden, der innerhalb des <a href="Scripts.htm#auto">Auto-Execute-Threads</a> ausgeführt wird.</li>
 <li>Funktionen könnten etwas weniger anfällig dafür sein, als "Goto" missbraucht zu werden (wo ein Benutzer die aktuelle Subroutine sich selbst ausführen lässt, um eine Schleife zu erzeugen, was zwangsläufig dazu führt, dass der Stack-Platz erschöpft und das Programm beendet wird).</li>
 <li>Es gibt weniger Mehrdeutigkeit, wenn Funktionen (wie <a href="commands/Hotkey.htm">Hotkey</a>) nicht mehr sowohl ein Label als auch eine Funktion akzeptieren, die beide den gleichen Namen haben können.</li>
 <li>Bei allen übrigen Verwendungsarten von Labels ist es nicht zulässig, vom Inneren einer Funktion aus auf ein globales Label zu verweisen. Daher kann die Suche nach Labels auf die lokale Label-Liste beschränkt werden. Es besteht daher keine Notwendigkeit, die Gültigkeit von Sprüngen aus dem Inneren einer Funktion zu überprüfen (die sowieso nie unterstützt wurden).</li>
@@ -151,7 +151,7 @@
 <p><code>this.Method()</code> ruft <code>Fn.Call(this)</code> (wobei <em>Fn</em> das Funktionsobjekt ist, das die Methode implementiert) anstelle von <code>Fn[this]()</code> auf (was in v1 zu einem Aufruf von <code>Fn.__Call(this)</code> führen würde, sofern <code>Fn[this]</code> keine Funktion enthält). Funktionsobjekte sollten eine <em>Call</em>-Methode anstelle von <em>__Call</em> implementieren, das nur für explizite Methodenaufrufe vorgesehen ist.</p>
 <p><code><i>Klassenname</i>()</code> (ehemals <code>new <i>Klassenname</i>()</code>) versagt nun beim Erstellen des Objekts, wenn die Methode <code>__New</code> definiert ist, aber nicht aufgerufen werden konnte (z. B. weil die Parameteranzahl falsch ist), oder wenn Parameter übergeben wurden, aber <code>__New</code> nicht definiert ist.</p>
 <p>Objekte, die innerhalb eines Ausdrucks erstellt oder von einer Funktion zurückgegeben werden, werden nun zurückgehalten, bis die Ausdrucksauswertung abgeschlossen ist, und dann freigegeben. Dies verbessert die Leistung geringfügig und ermöglicht es, temporäre Objekte für die Speicherverwaltung innerhalb eines Ausdrucks zu verwenden, ohne befürchten zu müssen, dass die Objekte vorzeitig freigegeben werden.</p>
-<p>Objekte können Zeichenkettenwerte (aber nicht Keys) mit binären Nullen enthalten. Beim Klonen eines Objekts werden Binärdaten in Zeichenketten beibehalten, bis zur gespeicherten Länge der Zeichenkette (nicht deren Kapazität). Früher wurden Daten über die Länge des Wertes hinaus geschrieben, wenn es um binäre Daten oder Strukturen ging; jetzt sollte stattdessen ein <a href="objects/Buffer.htm">Buffer</a>-Objekt verwendet werden.</p>
+<p>Objekte können Zeichenkettenwerte (aber nicht Schlüssel) mit binären Nullen enthalten. Beim Klonen eines Objekts werden Binärdaten in Zeichenketten beibehalten, bis zur gespeicherten Länge der Zeichenkette (nicht deren Kapazität). Früher wurden Daten über die Länge des Wertes hinaus geschrieben, wenn es um binäre Daten oder Strukturen ging; jetzt sollte stattdessen ein <a href="objects/Buffer.htm">Buffer</a>-Objekt verwendet werden.</p>
 <p>Zuweisungsausdrücke wie <code>x.y := z</code> liefern nun immer den Wert <code>z</code>, egal wie <code>x.y</code> implementiert wurde. Der Rückgabewert eines Eigenschaft-Setters wird nun ignoriert. Früher:</p>
 <ul>
 <li>Einige interne Objekte gaben <code>z</code> zurück, andere gaben <code>x.y</code> zurück (z. B. <code>c := GuiObj.BackColor := "red"</code>, das <code>c</code> auf <code>0xFF0000</code> gesetzt hat), und andere gaben einen falschen Wert zurück.</li>
@@ -168,7 +168,7 @@
 }
 </pre>
 <p>Dies kann für Callbacks verwendet werden, bei denen die zusätzlichen Parameter nicht benötigt werden.</p>
-<p>Variadische Funktionsaufrufe erlauben nun ein beliebiges enumerierbares Objekt in Situationen, wo sie früher ein Standardobjekt mit sequentiellen numerischen Keys benötigten. Wenn der Enumerator mehr als einen Wert pro Iteration zurückgibt, wird nur der erste Wert verwendet. <code>Array(mymap*)</code> beispielsweise erstellt ein Array, das die Keys von <em>mymap</em> enthält.</p>
+<p>Variadische Funktionsaufrufe erlauben nun ein beliebiges enumerierbares Objekt in Situationen, wo sie früher ein Standardobjekt mit sequentiellen numerischen Schlüsseln benötigten. Wenn der Enumerator mehr als einen Wert pro Iteration zurückgibt, wird nur der erste Wert verwendet. <code>Array(mymap*)</code> beispielsweise erstellt ein Array, das die Schlüssel von <em>mymap</em> enthält.</p>
 <p>Variadische Funktionsaufrufe hatten früher nur eine halbherzige Unterstützung für benannte Parameter. Dies wurde deaktiviert, um ein mögliches Hindernis für die ordnungsgemäße Implementierung von benannten Parametern zu beseitigen.</p>
 <p>Benutzerdefinierte Funktionen können das neue Schlüsselwort <code>unset</code> als Standardwert eines Parameters verwenden, um den Parameter "ungesetzt" zu machen, wenn kein Wert bereitgestellt wurde. Die Funktion kann dann IsSet() verwenden, um festzustellen, ob ein Wert bereitgestellt wurde. <code>unset</code> ist derzeit in keinem anderen Kontext erlaubt.</p>
 <p>Skripte werden nicht mehr automatisch aus den Funktionsbibliothekordnern (Lib) eingebunden, wenn ein Funktionsaufruf ohne Definition vorhanden ist, um die Komplexität zu verringern und Missgeschicke zu verhindern (jetzt, wo das <code>MeineFunk</code> in <code>MeineFunk()</code> eine beliebige Variable sein kann). <code>#Include &lt;BiblName&gt;</code> funktioniert wie zuvor. Es könnte in einer zukünftigen Version mit einer Modulunterstützung ersetzt werden.</p>
@@ -313,17 +313,17 @@ this.__set(name, args, value)
 <p>Ein Map-Objekt ist ein assoziatives Array ähnlich dem v1-Objekt, aber mit geringerer Mehrdeutigkeit.</p>
 <ul>
 <li><a href="objects/Map.htm#Clone">Clone</a> wird wie bisher verwendet.</li>
-<li><a href="objects/Map.htm#Delete">Delete</a> kann immer nur einen Key auf einmal löschen.</li>
+<li><a href="objects/Map.htm#Delete">Delete</a> kann immer nur einen Schlüssel auf einmal löschen.</li>
 <li>HasKey wurde in <a href="objects/Map.htm#Has">Has</a> umbenannt.</li>
 <li><a href="objects/Map.htm#Count">Count</a> ist jetzt eine Eigenschaft.</li>
 <li>Neue Eigenschaften: <a href="objects/Map.htm#Capacity">Capacity</a>, <a href="objects/Map.htm#CaseSense">CaseSense</a></li>
 <li>Neue Methoden: <a href="objects/Map.htm#Get">Get</a>, <a href="objects/Map.htm#Set">Set</a>, <a href="objects/Map.htm#Clear">Clear</a></li>
-<li>Zeichenketten-Keys sind standardmäßig Groß-/Kleinschreibung-sensitiv und werden nie in Integer umgewandelt.</li>
+<li>Zeichenketten-Schlüssel sind standardmäßig Groß-/Kleinschreibung-sensitiv und werden nie in Integer umgewandelt.</li>
 </ul>
-<p>Derzeit werden Float-Keys noch in Zeichenketten umgewandelt.</p>
+<p>Derzeit werden Float-Schlüssel noch in Zeichenketten umgewandelt.</p>
 <p>Eckige Klammern sind beim Zugriff auf Elemente erforderlich; sprich, <code>a.b</code> bezieht sich auf eine Eigenschaft und <code>a["b"]</code> auf ein Element. Im Gegensatz zu v1 kann eine Eigenschaft oder Methode nicht versehentlich durch die Zuweisung eines Array-Elements deaktiviert werden.</p>
-<p>Es wird eine Ausnahme ausgelöst, wenn man versucht, den Wert eines nicht existierenden Elements abzurufen, es sei denn, das Map-Objekt hat eine <a href="objects/Map.htm#Default">Default</a>-Eigenschaft definiert. <code>MapObj.Get(Key, Standard)</code> kann verwendet werden, um explizit einen Standardwert für jede Abfrage bereitzustellen.</p>
-<p>Nutzen Sie <code>Map(Key, Value, ...)</code>, um ein Map-Objekt mit einer Liste von Key-Value-Paaren zu erstellen.</p>
+<p>Es wird eine Ausnahme ausgelöst, wenn man versucht, den Wert eines nicht existierenden Elements abzurufen, es sei denn, das Map-Objekt hat eine <a href="objects/Map.htm#Default">Default</a>-Eigenschaft definiert. <code>MapObj.Get(Schlüssel, Standardwert)</code> kann verwendet werden, um explizit einen Standardwert für jede Abfrage bereitzustellen.</p>
+<p>Nutzen Sie <code>Map(Schlüssel, Wert, ...)</code>, um ein Map-Objekt mit einer Liste von Schlüssel-Wert-Paaren zu erstellen.</p>
 <h3 id="enumeration">Enumeration</h3>
 <p>Geändertes Enumerator-Modell:</p>
 <ul>
@@ -531,7 +531,7 @@ StringTrimRight -- nutzen Sie stattdessen <a href="commands/SubStr.htm">SubStr</
 <p><code>KeyHistory N</code> ändert die Größe des Tastenverlaufspuffers, anstatt den Tastenverlauf anzuzeigen. Dies ersetzt "#KeyHistory N".</p>
 <p><a href="commands/ImageSearch.htm">ImageSearch</a> gibt 1 (true) zurück, wenn das Bild im angegebenen Bereich gefunden wurde, oder 0 (false), wenn es nicht gefunden wurde, oder löst eine Ausnahme aus, wenn die Suche nicht durchgeführt werden konnte. ErrorLevel wird nicht gesetzt.</p>
 <p><a href="commands/IniDelete.htm">IniDelete</a>, <a href="commands/IniRead.htm">IniRead</a> und <a href="commands/IniWrite.htm">IniWrite</a> setzen <a href="Variables.htm#LastError">A_LastError</a> auf das Ergebnis der Systemfunktion GetLastError().</p>
-<p><a href="commands/IniRead.htm">IniRead</a> löst eine Ausnahme aus, wenn es einen Key, eine Sektion oder eine Datei anfordert, der bzw. die nicht gefunden werden kann, und der <em>Standardwert</em>-Parameter weggelassen wurde. Hat man für <em>Standardwert</em> einen Wert angegeben, sogar <code>""</code>, wird keine Ausnahme ausgelöst.</p>
+<p><a href="commands/IniRead.htm">IniRead</a> löst eine Ausnahme aus, wenn es einen Schlüssel, eine Sektion oder eine Datei anfordert, der bzw. die nicht gefunden werden kann, und der <em>Standardwert</em>-Parameter weggelassen wurde. Hat man für <em>Standardwert</em> einen Wert angegeben, sogar <code>""</code>, wird keine Ausnahme ausgelöst.</p>
 <p><a href="commands/InputHook.htm">InputHook</a> behandelt nun <kbd>Umschalt</kbd>+<kbd>Backspace</kbd> wie <kbd>Backspace</kbd>, anstatt es in <code>`b</code> zu übersetzen.</p>
 <p><a href="commands/InputBox.htm">InputBox</a> wurde syntaktisch überarbeitet, um die Benutzerfreundlichkeit zu verbessern (weniger Parameter). Informationen zur Verwendung finden Sie unter <a href="#inputbox">InputBox</a>.</p>
 <p><a href="commands/InStr.htm">InStr</a>-Parameter <em><em>GroßKleinSensitiv</em></em> wurde geändert und akzeptiert jetzt 0, 1 oder "Locale".</p>
@@ -580,20 +580,20 @@ StringTrimRight -- nutzen Sie stattdessen <a href="commands/SubStr.htm">SubStr</
 <li>Das spezielle Verhalten von variadischen Callback-Funktionen wurde entfernt und die <code>&amp;</code>-Option hinzugefügt (Adresse der Parameterliste übergeben).</li>
 <li><code>CallbackFree(Adresse)</code> hinzugefügt, um den Callback-Speicher freizugeben und das dazugehörige Funktionsobjekt freizugeben.</li>
 </ul>
-<p>Registry-Funktionen (<a href="commands/RegRead.htm">RegRead</a>, <a href="commands/RegWrite.htm">RegWrite</a>, <a href="commands/RegDelete.htm">RegDelete</a>): Die in v1.1.21 eingeführte Syntax ist nun die einzige Syntax. Rootkey und Subkey wurden zusammengefasst. Schreiben Sie <code>RootKey\Key</code> statt <code>RootKey, Key</code>. Um eine Verbindung zu einer Remote-Registry aufzubauen, muss <code>\\ComputerName\RootKey\Key</code> statt <code>\\ComputerName:RootKey, Key</code> benutzt werden.</p>
+<p>Registry-Funktionen (<a href="commands/RegRead.htm">RegRead</a>, <a href="commands/RegWrite.htm">RegWrite</a>, <a href="commands/RegDelete.htm">RegDelete</a>): Die in v1.1.21 eingeführte Syntax ist nun die einzige Syntax. RootSchlüssel und UnterSchlüssel wurden zusammengefasst. Schreiben Sie <code>RootSchlüssel\Schlüssel</code> statt <code>RootSchlüssel, Schlüssel</code>. Um eine Verbindung zu einer Remote-Registry aufzubauen, muss <code>\\ComputerName\RootSchlüssel\Schlüssel</code> statt <code>\\ComputerName:RootSchlüssel, Schlüssel</code> benutzt werden.</p>
 <p>Die Parameter von RegWrite wurden neu angeordnet, so dass <em>Wert</em> der erste Parameter ist, wie bei IniWrite (aber dies hat keinen Einfluss auf den Einzelparametermodus, wo <em>Wert</em> der einzige Parameter war).</p>
-<p>Wenn <em>KeyName</em> fehlt und das aktuelle Registry-Schleifenelement ein Subkey ist, wird RegDelete, RegRead und RegWrite nun Werte innerhalb dieses Subkeys abarbeiten; das heißt, dass <em>KeyName</em> in diesem Fall standardmäßig <code>A_LoopRegKey "\" A_LoopRegName</code> ist (beachten Sie, dass A_LoopRegKey und A_LoopRegSubKey zusammengefasst worden sind). Früher verhielten sie sich wie folgt:</p>
+<p>Wenn <em>SchlüsselName</em> fehlt und das aktuelle Element einer Registry-Schleife ein Unterschlüssel ist, wird RegDelete, RegRead und RegWrite nun Werte innerhalb dieses Unterschlüssels abarbeiten; das heißt, dass <em>SchlüsselName</em> in diesem Fall standardmäßig <code>A_LoopRegKey "\" A_LoopRegName</code> ist (beachten Sie, dass A_LoopRegKey und A_LoopRegSubKey zusammengefasst worden sind). Früher verhielten sie sich wie folgt:</p>
 <ul>
-<li>RegRead las einen Wert mit dem gleichen Namen wie der Subkey, wenn einer im übergeordneten Key vorhanden war.</li>
+<li>RegRead las einen Wert mit dem gleichen Namen wie der Unterschlüssel, wenn einer im übergeordneten Schlüssel vorhanden war.</li>
 <li>RegWrite gab einen Fehler zurück.</li>
-<li>RegDelete löschte den Subkey.</li>
+<li>RegDelete löschte den Unterschlüssel.</li>
 </ul>
-<p>Bei RegDelete, RegRead und RegWrite kann nun <em>Wertname</em> angegeben werden, wenn man <em>KeyName</em> weglässt:</p>
+<p>RegDelete, RegRead und RegWrite erlauben nun die Angabe von <em>WertName</em> ohne <em>SchlüsselName</em>:</p>
 <ul>
-<li>Wenn das aktuelle Registry-Schleifenelement ein Subkey ist, wird <em>Wertname</em> standardmäßig leer (der Standardwert des Subkeys) und <em>Werttyp</em> zwingend notwendig sein.</li>
-<li>Wenn das aktuelle Registry-Schleifenelement ein Wert ist, wird <em>Wertname</em> und <em>Werttyp</em> standardmäßig der Name und Typ des Wertes sein, die einzeln oder beide überschrieben werden können.</li>
+<li>Wenn das aktuelle Element einer Registry-Schleife ein Unterschlüssel ist, gilt für <em>WertName</em> standardmäßig leer (der Standardwert des Unterschlüssels), außerdem muss <em>WertTyp</em> angegeben werden.</li>
+<li>Wenn das aktuelle Element einer Registry-Schleife ein Wert ist, gilt für <em>WertName</em> und <em>WertTyp</em> standardmäßig der Name und Typ des Wertes, die einzeln oder beide überschrieben werden können.</li>
 </ul>
-<p>Ansonsten wird RegDelete mit leerem oder fehlendem <em>Wertname</em> den Standardwert des Keys (nicht den Key selbst) nun löschen, um konsistent mit RegWrite, RegRead und A_LoopRegName zu sein. Das Schlüsselwort "AHK_DEFAULT" hat keine besondere Bedeutung mehr. Mit <a href="commands/RegDeleteKey.htm">RegDeleteKey</a> (neu) kann ein Key gelöscht werden.</p>
+<p>Ansonsten wird RegDelete mit leerem oder fehlendem <em>WertName</em> den Standardwert des Schlüssels (nicht den Schlüssel selbst) nun löschen, um konsistent mit RegWrite, RegRead und A_LoopRegName zu sein. Das Schlüsselwort "AHK_DEFAULT" hat keine besondere Bedeutung mehr. Mit <a href="commands/RegDeleteKey.htm">RegDeleteKey</a> (neu) kann ein Schlüssel gelöscht werden.</p>
 <p><a href="commands/RegRead.htm">RegRead</a> hat wie IniRead jetzt einen <em>Standardwert</em>-Parameter.</p>
 <p>RegRead hatte einen undokumentierten 5-Parameter-Modus, wo man den Werttyp nach der Ausgabevariable angeben konnte. Dieser wurde entfernt.</p>
 <p><a href="commands/Reload.htm">Reload</a> unternimmt nichts mehr, wenn das Skript aus stdin gelesen wurde.</p>
@@ -673,14 +673,14 @@ StringTrimRight -- nutzen Sie stattdessen <a href="commands/SubStr.htm">SubStr</
 <p>Der Unterbefehl muss direkt geschrieben werden; er darf weder in Anführungszeichen stehen noch eine Variable oder ein Ausdruck sein. Alle anderen Parameter sind Ausdrücke. Alle Loop-Unterbefehle unterstützen nun OTB.</p>
 <p>Entfernt:</p>
 <pre class="no-highlight">Loop, DateiMuster [, OrdnerEinbeziehen?, Rekursiv?]
-Loop, RootKey [, Key, SubkeysEinbeziehen?, Rekursiv?]
+Loop, RootSchlüssel [, Schlüssel, UnterschlüsselEinbeziehen?, Rekursiv?]
 </pre>
 <p>Benutzen Sie stattdessen folgendes (seit v1.1.21 verfügbar):</p>
 <pre>Loop Files, DateiMuster [, Modus]
-Loop Reg, RootKey\Key [, Modus]
+Loop Reg, RootSchlüssel\Schlüssel [, Modus]
 </pre>
 <p>Das Komma nach dem zweiten Wort ist jetzt optional.</p>
-<p><a href="commands/LoopReg.htm#vars">A_LoopRegKey</a> enthält nun den Rootkey und Subkey, und A_LoopRegSubKey wurde entfernt.</p>
+<p><a href="commands/LoopReg.htm#vars">A_LoopRegKey</a> enthält nun den Root-Schlüssel und Unterschlüssel, außerdem wurde A_LoopRegSubKey entfernt.</p>
 <h4 id="inputbox">InputBox</h4>
 <pre>Obj := InputBox([Text, Titel, Optionen, Standardwert])
 </pre>
@@ -828,13 +828,13 @@ Name      := MonitorGetName(N)
 <p><code>MenuFromHandle(Handle)</code> gibt das Menu-Objekt eines dazugehörigen Win32-Menü-Handles zurück, wenn es von AutoHotkey erstellt wurde.</p>
 <p><code>Number(v)</code>: Siehe <a href="#types">Typen</a> weiter oben.</p>
 <p><code>Persistent(Persistieren := true)</code> ersetzt die entsprechende Direktive und erhöht die Flexibilität.</p>
-<p><code>RegDeleteKey("Rootkey\Subkey")</code> löscht einen Registry-Key. (RegDelete löscht jetzt nur noch Werte, außer wenn alle Parameter in einer Registry-Schleife weggelassen werden.)</p>
+<p><code>RegDeleteKey("RootSchlüssel\UnterSchlüssel")</code> löscht einen Registry-Schlüssel. (RegDelete löscht jetzt nur noch Werte, außer wenn alle Parameter in einer Registry-Schleife weggelassen werden.)</p>
 <p><a href="commands/Send.htm#SendText">SendText</a>, das das Äquivalent zu SendRaw ist, aber den {Text}- statt {Raw}-Modus verwendet.</p>
 <p><code>StrCompare(Zkette1, Zkette2 [, GroßKleinSensitiv := false])</code> gibt -1 (Zkette1 kleiner als Zkette2), 0 (gleich) oder 1 (größer als) zurück. <em>GroßKleinSensitiv</em> kann "Locale" sein.</p>
 <p><code>String(v)</code>: Siehe <a href="#types">Typen</a> weiter oben.</p>
 <p><code>StrPtr(Zkette)</code> gibt die Adresse einer Zeichenkette zurück. Im Gegensatz zum Adressoperator von v1 kann diese Funktion zusammen mit direkt geschriebenen Zeichenketten und temporären Zeichenketten verwendet werden.</p>
 <p><code>SysGetIPAddresses()</code> gibt ein Array mit IP-Adressen zurück, was das Äquivalent zu den entfernten A_IPAddress-Variablen ist. Jede Referenz auf <code>A_IPAddress%N%</code> rief alle Adressen ab, aber gab nur eine zurück, so dass das Abrufen mehrerer Adressen exponentiell länger als nötig dauerte. Das zurückgegebene Array kann keine oder mehr Elemente enthalten.</p>
-<p><code>TraySetIcon([Dateiname, Symbolnummer, Einfrieren])</code> ersetzt "Menu Tray, Icon".</p>
+<p><code>TraySetIcon([DateiName, SymbolNummer, Einfrieren])</code> ersetzt "Menu Tray, Icon".</p>
 <p><code>VarSetStrCapacity(&amp;Var [, NeueKapazität])</code> ersetzt das v1-VarSetCapacity, allerdings ist es nur für die Verwendung mit UTF-16-Zeichenketten vorgesehen (z. B. um eine mehrfache Verkettung zu optimieren); daher werden <em>NeueKapazität</em> und der Rückgabewert als Zeichen und nicht als Bytes behandelt.</p>
 <p><code>VerCompare(A, B)</code> vergleicht zwei Versionszeichenketten mit dem gleichen Algorithmus wie <a href="commands/_Requires.htm">#Requires</a>.</p>
 <p><code>WinGetClientPos([&amp;X, &amp;Y, &amp;W, &amp;H, FensterTitel, ...])</code> ermittelt die Position und Größe des Clientbereichs eines Fensters, in Bildschirmkoordinaten.</p>
@@ -870,7 +870,7 @@ Name      := MonitorGetName(N)
 <li>A_StringCaseSense</li>
 <li>A_ThisLabel</li>
 <li>A_ThisMenu, A_ThisMenuItem, A_ThisMenuItemPos (nutzen Sie stattdessen die <a href="objects/Menu.htm#Add">Parameter des Menüpunkt-Callbacks</a>)</li>
-<li>A_LoopRegSubKey (<a href="commands/LoopReg.htm#vars">A_LoopRegKey</a> enthält nun den Rootkey und Subkey)</li>
+<li>A_LoopRegSubKey (<a href="commands/LoopReg.htm#vars">A_LoopRegKey</a> enthält nun den Root-Schlüssel und Unterschlüssel)</li>
 <li>True und False (existieren noch, sind aber jetzt Schlüsselwörter, keine Variablen)</li>
 </ul>
 <p>Hinzugefügt:</p>
@@ -922,7 +922,7 @@ Name      := MonitorGetName(N)
 <p>Die Verwendung dieser Methoden und Eigenschaften ist nicht 1:1. Viele Teile wurden überarbeitet, um konsistenter und flexibler zu sein und um Fehler oder Einschränkungen zu beheben.</p>
 <p>Es gibt keine Standard-GUIs, da das zu bearbeitende Gui- oder GuiControl-Objekt immer angegeben ist. LV/TV/SB-Funktionen wurden durch Methoden (des GuiControl-Objekts) ersetzt, so dass es viel einfacher ist, mehrere ListViews/TreeViews zu verwenden.</p>
 <p>Es gibt keine internen Variablen, die Informationen über Ereignisse enthalten. Die Informationen werden als Parameter an eine Funktion/Methode übergeben, die das Ereignis behandelt, einschließlich dessen GUI oder Steuerelement.</p>
-<p>Steuerelement können weiterhin benannt und via Name angesteuert werden. Allerdings ist das nur ein Name (benutzbar mit <code>GuiObj["Name"]</code> und <code>GuiObj.Submit()</code>), nicht eine zugewiesene Variable, daher müssen keine globalen oder statischen Variablen deklariert oder erstellt werden. Der Wert wird niemals automatisch in eine Variable gespeichert, aber er ist via <code>GuiCtrl.Value</code> abrufbar. <code>GuiObj.Submit()</code> gibt ein neues assoziatives Array zurück, das die Namen der Steuerelemente als Keys benutzt.</p>
+<p>Steuerelement können weiterhin benannt und via Name angesteuert werden. Allerdings ist das nur ein Name (benutzbar mit <code>GuiObj["Name"]</code> und <code>GuiObj.Submit()</code>), nicht eine zugewiesene Variable, daher müssen keine globalen oder statischen Variablen deklariert oder erstellt werden. Der Wert wird niemals automatisch in eine Variable gespeichert, aber er ist via <code>GuiCtrl.Value</code> abrufbar. <code>GuiObj.Submit()</code> gibt ein neues assoziatives Array zurück, das die Namen der Steuerelemente als Schlüssel enthält.</p>
 <p>Die v<em>Name</em>-Option setzt nun nur noch den Namen des Steuerelements auf <em>Name</em>.</p>
 <p>Die +Hwnd<em>VarName</em>-Option wurde zugunsten von <code>GuiCtrl.Hwnd</code> entfernt.</p>
 <p>Es gibt keine "g-Labels" oder Labels/Funktionen mehr, die automatisch GUI-Ereignisse behandeln. Das Skript muss jedes gewünschte Ereignis registrieren, indem es die <a href="objects/GuiOnEvent.htm">OnEvent</a>-Methode des Gui oder GuiControl aufruft. Anstatt z. B. <code>if (A_GuiEvent = "I" &amp;&amp; InStr(ErrorLevel, "F", true))</code> in einem g-Label zu prüfen, würde das Skript einen Handler für das <code>ItemFocus</code>-Ereignis registrieren: <code>MeineLV.OnEvent("ItemFocus", MeineFunktion)</code>. <em>MeineFunktion</em> würde nur bei dem ItemFocus-Ereignis aufgerufen werden. Es ist nicht erforderlich, <code>AltSubmit</code> anzuwenden, um zusätzliche Ereignisse zu ermöglichen.</p>
@@ -1178,7 +1178,7 @@ catch Any
 <p>RegEx-Zeilenumbruchsübereinstimmung benutzt standardmäßig (*ANYCRLF) und (*BSR_ANYCRLF); `r und `n werden zusammen mit `r`n erkannt. Die `a-Option aktiviert bedingungslos (*BSR_UNICODE).</p>
 <p>RegEx-Callout-Funktionen können nun variadisch sein. Callouts, die über eine <code>pcre_callout</code>-Variable angegeben werden, können beliebige aufrufbare Objekte sein, oder <code>pcre_callout</code> selbst kann direkt als Funktion (vielleicht eine verschachtelte Funktion) definiert werden. Da die <a href="#scope">Funktions- und Variablennamensräume zusammengelegt wurden</a>, kann ein Callout-Muster wie <code>(?C:fn)</code> auch auf eine lokale oder globale Variable verweisen, die ein Funktionsobjekt enthält, nicht nur auf eine benutzerdefinierte Funktion.</p>
 <p>Skripte, die von der Standardeingabe (stdin) gelesen werden (z. B. mit <code>AutoHotkey.exe *</code>), fügen nicht mehr das ursprüngliche Arbeitsverzeichnis in <a href="Variables.htm#ScriptFullPath">A_ScriptFullPath</a> oder in den Titel des Hauptfensters ein, aber es wird als <a href="Variables.htm#ScriptDir">A_ScriptDir</a> und zum Finden des lokalen Lib-Ordners verwendet.</p>
-<p>Einstellungen, die vom automatischen Ausführungs-Thread geändert werden, werden jetzt sofort zu Standardeinstellungen (für Threads, die nach diesem Punkt gestartet werden), und nicht erst nach 100 ms und dann erneut, wenn der automatische Ausführungs-Thread sein Ende erreicht hat.</p>
+<p>Einstellungen, die via Auto-Execute-Thread geändert werden, werden jetzt sofort zu Standardeinstellungen (für Threads, die nach diesem Punkt gestartet werden), und nicht erst nach 100 ms und dann erneut, wenn der Auto-Execute-Thread sein Ende erreicht hat.</p>
 <p>Folgende Limitierungen wurden durch Zuhilfenahme dynamischer Speicherreservierungen aufgehoben:</p>
 <ul>
 <li>Maximale Länge einer Zeile oder eines Fortsetzungsbereichs von 16383 Zeichen.</li>
