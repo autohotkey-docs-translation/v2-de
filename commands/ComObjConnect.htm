@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ComObjConnect - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die ComObjConnect-Funktion verbindet die Ereignisquellen eines COM-Objekts mit Funktionen, die ein bestimmtes Präfix haben." />
+<meta name="description" content="Die ComObjConnect-Funktion verbindet die Ereignisquelle eines COM-Objekts mit dem Skript, um eine Behandlung von Ereignissen zu ermöglichen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="robots" content="noindex, nofollow">
@@ -14,7 +14,7 @@
 <body>
 
 <h1>ComObjConnect</h1>
-<p>Verbindet die Ereignisquellen eines COM-Objekts mit Funktionen, die ein bestimmtes Präfix haben.</p>
+<p>Verbindet die Ereignisquelle eines COM-Objekts mit dem Skript, um eine Behandlung von Ereignissen zu ermöglichen.</p>
 <pre class="Syntax"><span class="func">ComObjConnect</span> ComObj <span class="optional">, Präfix</span></pre>
 
 <h2 id="Parameters">Parameter</h2>
@@ -31,7 +31,8 @@
   <dt>Präfix</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Objects.htm">Objekt</a></p>
-      <p>Eine Zeichenkette, die dem Ereignisnamen vorangestellt wird, um zu bestimmen, welche Funktion aufgerufen werden soll, wenn ein Ereignis stattfindet.</p>
+      <p>Eine Zeichenkette, die dem Ereignisnamen vorangestellt wird, um zu bestimmen, welche globale Funktion aufgerufen werden soll, wenn ein Ereignis stattfindet.</p>
+      <p class="warning"><strong>Hinweis:</strong> Verschachtelte Funktionen werden in diesem Modus nicht unterstützt, da Namen erst nach Rückkehr der aktuellen Funktion aufgelöst werden können. Um verschachtelte Funktionen oder Closures zu nutzen, verbinden Sie diese mit einem Objekt und übergeben Sie das Objekt wie unten beschrieben.</p>
       <p>Lässt man diesen Parameter weg, wird die Verbindung zu diesem Objekt getrennt; das heißt, dass das Skript nicht länger Benachrichtigungen von seinen Ereignissen erhält.</p>
       <p>Dieser Parameter kann ein via Skript definiertes Objekt sein. Wenn ein Ereignis ausgelöst wird, wird die entsprechende Methode aufgerufen. Der erste Parameter, der üblicherweise der versteckte <code>this</code>-Parameter ist, verweist auf das via Skript definierte Objekt, nicht auf das COM-Objekt. Mit einer <a href="../Objects.htm#Meta_Functions">__Call-Metafunktion</a> können alle Ereignisse abgefangen werden, ohne dass für jedes Ereignis eine Methode definiert werden muss.</p>
     </dd>
@@ -72,7 +73,10 @@ ie.Visible := true  <em>; Funktioniert nicht korrekt unter IE7.</em>
 ie.Navigate("https://www.autohotkey.com/")
 Persistent
 
-IE_DocumentComplete(ieEventParam, url, ieFinalParam) {
+IE_DocumentComplete(ieEventParam, &amp;url, ieFinalParam) {
+    <em>; IE übergibt url als Referenz, die auf ein VARIANT verweist,
+    ; daher wird oben &amp;url genutzt, damit der Code unten normal</em>
+    <em>; darauf verweisen kann, anstatt %url% zu nutzen.</em>
     s := ""
     if (ie != ieEventParam)
         s .= "Erster Parameter ist ein neues Wrapper-Objekt.`n"

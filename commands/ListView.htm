@@ -621,8 +621,9 @@ StarteDatei(LV, ZeileNummer)
 {
     DateiName := LV.GetText(ZeileNummer, 1) <em>; Text des ersten Feldes abrufen.</em>
     DateiVerz := LV.GetText(ZeileNummer, 2)  <em>; Text des zweiten Feldes abrufen.</em>
-    try Run(DateiVerz "\" DateiName)
-    if A_LastError
+    try
+        Run(DateiVerz "\" DateiName)
+    catch
         MsgBox(DateiVerz "\" DateiName " konnte nicht geöffnet werden.")
 }
 
@@ -642,11 +643,14 @@ ZeigeKontextmenü(LV, Element, IstRechtsklick, X, Y)  <em>; Bei einem Rechtsklic
     {
         DateiName := LV.GetText(Element, 1) <em>; Text des ersten Feldes abrufen.</em>
         DateiVerz := LV.GetText(Element, 2)  <em>; Text des zweiten Feldes abrufen.</em>
-        if (PunktName = "Öffnen")  <em>; Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
-            try Run(DateiVerz "\" DateiName)
-        else
-            try Run("properties " DateiVerz "\" DateiName)
-        if A_LastError
+        try
+        {
+            if (PunktName = "Öffnen")  <em>; Benutzer hat "Öffnen" im Kontextmenü ausgewählt.</em>
+                Run(DateiVerz "\" DateiName)
+            else
+                Run("properties " DateiVerz "\" DateiName)
+        }
+        catch
             MsgBox("Angeforderte Aktion auf " DateiVerz "\" DateiName " konnte nicht durchgeführt werden.")
     }
 
