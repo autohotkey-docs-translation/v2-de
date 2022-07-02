@@ -33,7 +33,7 @@ KopieVonVar := Var</pre>
 <pre>MeineVar := ""</pre>
 <p>Einer Variable kann auch indirekt ein Wert zugewiesen werden, indem man <a href="#ref">ihre Referenz nimmt</a> und eine <a href="#deref">Doppelderefenzierung</a> verwendet oder sie an eine Funktion übergibt. Zum Beispiel:</p>
 <pre><a href="commands/MouseGetPos.htm">MouseGetPos</a> &amp;x, &amp;y</pre>
-<p>Der Zugriff auf eine Variable ohne zugewiesenen Wert wird als Fehler angesehen. Mit <a href="commands/IsSet.htm">IsSet</a> kann dieser Zustand erkannt werden.</p>
+<p>Den Wert einer Variable zu lesen, der kein Wert zugewiesen wurde, wird als Fehler angesehen. Mit <a href="commands/IsSet.htm">IsSet</a> kann dieser Zustand erkannt werden.</p>
 <p id="retrieving"><strong>Inhalte von Variablen abrufen</strong>: Mit einer <a href="#concat">Verkettung</a> oder der <a href="commands/Format.htm">Format</a>-Funktion kann der Inhalt einer Variable in eine Zeichenkette eingefügt werden. Zum Beispiel:</p>
 <pre><a href="commands/MsgBox.htm">MsgBox</a> "Der Wert von Var ist " . Var . "."
 MsgBox "Der Wert in der Variable namens Var ist " Var "."
@@ -87,13 +87,22 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
       <p class="note"><strong>Hinweis:</strong> Das <u>Ergebnis</u> des Teilausdrucks <em>Ausdr</em> muss der Name oder Teilname der Variable oder Eigenschaft sein, auf die zugegriffen werden soll.</p>
       <p>Prozentzeichen können wegen ihrer Mehrdeutigkeit nicht direkt in <em>Ausdr</em> benutzt werden, aber sie können innerhalb von runden Klammern ineinander verschachtelt werden. Ansonsten kann <em>Ausdr</em> ein beliebiger Ausdruck sein.</p>
       <p>Eventuell angrenzende <em>%Ausdr%</em>-Sequenzen und teilweise vorhandene <a href="Concepts.htm#names">Namen</a> (ohne Leerzeichen oder sonstigen Zeichen dazwischen) werden kombiniert, um einen einzelnen Namen zu bilden.</p>
-      <p>Ein <a href="objects/Error.htm">Error</a> wird ausgelöst, wenn die Variable noch nicht existiert oder wenn sie nicht initialisiert ist und ihr Wert gelesen wird.</p>
+      <p>Ein <a href="objects/Error.htm">Error</a> wird typischerweise ausgelöst, wenn die Variable noch nicht existiert oder wenn sie nicht initialisiert ist und ihr Wert gelesen wird. Um das zu vermeiden, kann mit dem <a href="#or-maybe">Oder-Vielleicht-Operator (??)</a> ein Standardwert angegeben werden. Zum Beispiel: <code>%'keineVar'% ?? 42</code>.</p>
       <p>Obwohl diese Vorgehensweise historisch gesehen als "Doppel-Dereferenzierung" bekannt ist, ist dieser Begriff ungenau, wenn <em>Ausdr</em> keine Variable enthält (erste Dereferenzierung), und wenn die resultierende Variable, die das Ziel einer Zuweisung ist, nicht dereferenziert wird (zweite Dereferenzierung).</p>
     </td>
   </tr>
   <tr id="objdot">
     <td class="center bold">x.y<br>x.%z%</td>
     <td><strong>Zugriff auf Objektelemente</strong>. Ruft einen Wert ab, setzt einen Wert oder ruft eine Methode des Objekts <i>x</i> auf. Hierbei ist <i>y</i> ein direkt geschriebener Name und <em>z</em> ein Ausdruck, der zu einem Namen ausgewertet wird. Siehe <a href="Objects.htm#Usage_Objects">Objektsyntax</a>.</td>
+  </tr>
+  <tr id="maybe">
+    <td class="center"><em>Var</em><strong>?</strong></td>
+    <td>
+      <p><strong>Vielleicht</strong>. Erlaubt einer Variable, ungesetzt zu sein. Dies ist nur gültig, wenn eine Variable an einen optionalen Parameter, ein Array-Element oder eine direkte Objekt-Schreibweise übergeben wird. Nach dem Fragezeichen muss eines der folgenden Symbole stehen (Leerzeichen werden ignoriert): <code>)]},:</code>. Die Variable kann bedingt mit dem <a href="#ternary">ternären Operator</a> oder auf der rechten Seite von <a href="#and">AND</a>/<a href="#or">OR</a> übergeben werden.</p>
+      <p>Die Variable ist typischerweise auch ein optionaler Parameter, kann aber eine beliebige Variable sein. Im Bezug auf Variablen, die keine Funktionsparameter sind, kann es immer noch vorkommen, dass beim Laden des Skripts eine <a href="commands/_Warn.htm#VarUnset">VarUnset-Warnung</a> angezeigt wird, wenn es noch andere Referenzen gibt, die auf die Variable verweisen, aber keine Zuweisungen.</p>
+      <p>Dieser Operator wird derzeit nur für Variablen unterstützt. Um einen Parameter in allgemeineren Fällen explizit oder bedingt wegzulassen, verwenden Sie das Schlüsselwort <code>unset</code>.</p>
+      <p>Siehe auch: <a href="Language.htm#unset">unset (Optionale Parameter)</a></p>
+    </td>
   </tr>
   <tr id="IncDec">
     <td class="center bold">++<br>
@@ -238,10 +247,20 @@ MsgBox(A || B || C || D || ++E) <em>; Der <strong>erste</strong> wahre Operand w
 MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurückgegeben (0)</em></pre>
         <p>Eine Zeile, die mit <code>OR</code> oder <code>||</code> (oder einem anderen Operator) beginnt, wird automatisch mit der darüberliegenden Zeile <a href="Scripts.htm#continuation">verbunden</a>.</p></td>
     </tr>
+  <tr id="or-maybe">
+    <td class="center bold">??</td>
+    <td>
+      <p><strong>Oder-Vielleicht</strong>, auch bekannt als der Koaleszenz-Operator. Wenn der linke Operand (der eine Variable sein muss) einen Wert hat, wird dieser als Ergebnis verwendet und der rechte Zweig übersprungen. Ansonsten wird der rechte Operand als Ergebnis verwendet. Mit anderen Worten: <code>A ?? B</code> verhält sich wie <code>A || B</code> (<a href="#or">logisches OR</a>), nur dass die Bedingung <code>IsSet(A)</code> ist.</p>
+      <p>Dieser Operator wird typischerweise verwendet, um einen Standardwert anzugeben, wenn bekannt ist, dass eine Variable oder ein optionaler Parameter eventuell noch keinen Wert hat. Zum Beispiel:</p>
+      <pre>MsgBox MeineVar ?? "Standardwert"</pre>
+      <p>Da von der Variable erwartet wird, dass sie manchmal <a href="Concepts.htm#uninitialized-variables">uninitialisiert</a> ist, wird in diesem Fall kein Fehler ausgelöst. Im Gegensatz zu <code>IsSet(A) ? A : B</code> kann es immer noch vorkommen, dass beim Laden des Skripts eine <a href="commands/_Warn.htm#VarUnset">VarUnset-Warnung</a> angezeigt wird, wenn es noch andere Referenzen gibt, die auf die Variable verweisen, aber keine Zuweisungen.</p>
+    </td>
+  </tr>
   <tr id="ternary">
     <td class="center bold">?:</td>
     <td>
       <p><strong>Ternärer Operator</strong>. Dieser Operator ist eine Kurzschreibweise zum Durchführen einer <a href="commands/If.htm">if-else-Anweisung</a>. Der Operator wertet die Bedingung auf der linken Seite aus, um festzustellen, welche der beiden Verzweigungen als Endergebnis dienen soll. <code>Var := x&gt;y ? 2 : 3</code> beispielsweise würde eine 2 in <em>Var</em> speichern, falls x größer als y ist; ansonsten würde es eine 3 speichern. Zur Verbesserung der Leistung wird nur die gewinnende Verzweigung ausgewertet (siehe <a href="Functions.htm#ShortCircuit">Kurzschlussauswertung</a>).</p>
+      <p>Siehe auch: <a href="#maybe">Vielleicht (<em>Var</em>?)</a>, <a href="#or-maybe">Oder-Vielleicht (??)</a></p>
       <p class="warning"><strong>Hinweis:</strong> Wenn die ternäre Bedingung am Anfang einer Zeile verwendet wird, sollte sie normalerweise mit runden Klammern umschlossen werden, um Mehrdeutigkeiten in Verbindung mit anderen Anweisungstypen zu verringern. Einzelheiten finden Sie unter <a href="Language.htm#expression-statements">Ausdrucksanweisungen</a>.</p>
     </td>
   </tr>

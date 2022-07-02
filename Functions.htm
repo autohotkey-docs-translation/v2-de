@@ -87,9 +87,9 @@ MeineFunk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin 
     MsgBox X ", " Y ", " Z
 }</pre>
 <p id="OptionalByRef"><a href="#ByRef">ByRef-Parameter</a> können auch optional sein; zum Beispiel: <code>MeineFunk(&amp;p1 := "")</code>. Jedes Mal, wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt; das heißt, dass die Funktion sich so verhalten wird, als wäre das Symbol "&amp;" nicht vorhanden.</p>
-<p id="unset"><strong>Unset:</strong> Um genau festzustellen, ob der Aufrufer einen Parameter weggelassen hat, geben Sie <code>unset</code> als Standardwert an und ermitteln Sie mit <a href="commands/IsSet.htm">IsSet</a>, ob der Parameter einen Wert erhalten hat, wie unten gezeigt:</p>
+<p id="unset"><strong>Ungesetzt:</strong> Um einen Parameter als optional zu kennzeichnen, ohne einen Standardwert anzugeben, verwenden Sie das Schlüsselwort <code>unset</code> oder das <code>?</code>-Suffix. In diesem Fall wird, wenn der Parameter weggelassen wird, die entsprechende Variable keinen Wert haben. Mit <a href="commands/IsSet.htm">IsSet</a> können Sie ermitteln, ob der Parameter einen Wert erhalten hat, wie unten gezeigt:</p>
 <pre>
-MeineFunk(p := unset) {
+MeineFunk(p?) {  <em>; Äquivalent zu MeineFunk(p := unset)</em>
     if IsSet(p)
         MsgBox "Aufrufer hat " p " übergeben"
     else
@@ -98,6 +98,15 @@ MeineFunk(p := unset) {
 
 MeineFunk(42)
 MeineFunk
+</pre>
+<p>Der Versuch, den Wert des Parameters zu lesen, obwohl er keinen hat, wird als Fehler angesehen, was auch auf jede <a href="Concepts.htm#uninitialized-variables">uninitialisierte Variable</a> zutrifft. Um einen optionalen Parameter an eine andere Funktion weiterzugeben, auch wenn der Parameter keinen Wert hat, verwenden Sie den <a href="Variables.htm#maybe">Vielleicht-Operator (<em>Var</em><strong>?</strong>)</a>. Zum Beispiel:</p>
+<pre>
+Begrüßen(Titel?) {
+    MsgBox("Hallo!", Titel?)
+}
+
+Begrüßen "Begrüßung"  <em>; Titel ist "Begrüßung"</em>
+Begrüßen             <em>; Titel ist A_ScriptName</em>
 </pre>
 
 <h2 id="return">Werte an den Aufrufer zurückgeben</h2>
@@ -223,6 +232,7 @@ MsgBox Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
     FileAppend GeloggteZeilen ": " ZuLoggenderText "`n", LogDateiName
 }</pre>
 <p id="InitStatic">Es ist möglich, eine statische Variable bei ihrer Deklaration zu initialisieren. Fügen Sie einfach auf der rechten Seite des Variablennamens den Operator <code>:=</code> und einen beliebigen <a href="Variables.htm#Expressions">Ausdruck</a> an. Zum Beispiel: <code>static X:=0, Y:="fox"</code>. Statische Deklarationen werden genauso ausgewertet wie <a href="#Local">lokale</a> Deklarationen, außer dass nach erfolgreicher Auswertung einer statischen Initialisierung (oder einer Gruppe von verbundenen Initialisierungen) diese effektiv aus dem Kontrollfluss entfernt und kein zweites Mal ausgeführt wird.</p>
+<p>Verschachtelte Funktionen können als <a href="#static-functions">statisch deklariert</a> werden, um zu verhindern, dass sie nicht-statische lokale Variablen der äußeren Funktion erfassen.</p>
 <p id="AssumeStatic"><strong>Assume-Static-Modus</strong>: Eine Funktion kann so definiert werden, dass sie all ihre undeklarierten lokalen Variablen (außer ihre Parameter) statisch behandelt. Dazu muss in der ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
 <pre>VomStatischenArrayAbrufen(ElementNummer)
 {
@@ -283,14 +293,13 @@ außen(x) {
 }
 außen("Titel")
 </pre>
-<p>Der Zugriff auf eine verschachtelte Funktion kann nicht via Name außerhalb der äußeren Funktion erfolgen, aber überall innerhalb dieser Funktion, einschließlich innerhalb von weiteren verschachtelten Funktionen.</p>
-<p>Standardmäßig kann eine verschachtelte Funktion auf beliebige <a href="#static">statische</a> Variablen der äußeren Funktion zugreifen, sogar dynamisch.</p>
+<p>Der Zugriff auf eine verschachtelte Funktion kann nicht via Name außerhalb der äußeren Funktion erfolgen, aber überall innerhalb dieser Funktion, einschließlich innerhalb von weiteren verschachtelten Funktionen (mit Ausnahmen).</p>
+<p>Standardmäßig kann eine verschachtelte Funktion auf beliebige <a href="#static">statische</a> Variablen der äußeren Funktion zugreifen, sogar dynamisch. Allerdings wird eine nicht-dynamische Zuweisung innerhalb einer verschachtelten Funktion typischerweise in eine lokale Variable aufgelöst, wenn die äußere Funktion weder eine Deklaration noch eine nicht-dynamische Zuweisung für diese Variable hat.</p>
 <p id="capture-var">Standardmäßig "erfasst" eine verschachtelte Funktion automatisch eine nicht-statische lokale Variable einer äußeren Funktion, wenn die folgenden Voraussetzungen erfüllt sind:</p>
 <ol>
   <li>Die äußere Funktion muss auf die Variable auf mindestens eine der folgenden Arten verweisen:
     <ol type="a">
-      <li>Indem man sie mit <code>local</code> deklariert.</li>
-      <li>Indem man sie in der Parameterliste deklariert.</li>
+      <li>Indem man sie mit <code>local</code> oder als Parameter oder verschachtelte Funktion deklariert.</li>
       <li>Als nicht-dynamisches Ziel einer Zuweisung oder des <a href="Variables.htm#ref">Referenzoperators (&amp;)</a>.</li>
     </ol>
   </li>
@@ -299,9 +308,23 @@ außen("Titel")
 <p>Eine verschachtelte Funktion, die erfasste Variablen hat, wird als <a href="#closures">Closure</a> bezeichnet.</p>
 <p>Der <a href="Language.htm#dynamic-variables">dynamische Zugriff</a> auf nicht-statische lokale Variablen der äußeren Funktion ist nicht möglich, es sei denn, sie wurden erfasst.</p>
 <p>Explizite Deklarationen haben immer Vorrang vor lokalen Variablen der umschließenden Funktion. <code>local x</code> beispielsweise deklariert eine Variable, die lokal für die aktuelle Funktion ist, unabhängig von einem <code>x</code> in der äußeren Funktion. <a href="#Global">Globale</a> Deklarationen in der äußeren Funktion gelten auch für verschachtelte Funktionen, es sei denn, sie wurden mit einer expliziten Deklaration überschrieben.</p>
-<p>Wenn eine Funktion als <a href="#AssumeGlobal">Assume-Global</a> deklariert ist, sind alle lokalen oder statischen Variablen, die <em>außerhalb</em> dieser Funktion erstellt wurden, für die Funktion selbst oder eine ihrer verschachtelten Funktionen nicht direkt zugänglich. Eine verschachtelte Assume-Static-Funktion hingegen kann immer noch auf die Variablen der äußeren Funktion zugreifen.</p>
+<p>Wenn eine Funktion als <a href="#AssumeGlobal">Assume-Global</a> deklariert ist, sind alle lokalen oder statischen Variablen, die <em>außerhalb</em> dieser Funktion erstellt wurden, für die Funktion selbst oder eine ihrer verschachtelten Funktionen nicht direkt zugänglich. Eine verschachtelte Assume-Static-Funktion hingegen kann immer noch auf die Variablen der äußeren Funktion zugreifen, es sei denn, die Funktion selbst ist als <a href="#static-functions">statisch deklariert</a>.</p>
 <p>Funktionen sind standardmäßig im <a href="#AssumeLocal">Assume-Local</a>-Modus, was auch für verschachtelte Funktionen gilt, sogar innerhalb einer <a href="#AssumeStatic">Assume-Static</a>-Funktion. Wenn die äußere Funktion jedoch im <a href="#AssumeGlobal">Assume-Global</a>-Modus ist, verhalten sich verschachtelte Funktionen so, als gelte standardmäßig Assume-Global, außer dass sie auf die lokalen und statischen Variablen der äußeren Funktion zugreifen können.</p>
 <p>Jede Funktionsdefinition erzeugt eine schreibgeschützte Variable, die die Funktion selbst enthält; also ein <a href="objects/Func.htm">Func</a>- oder <a href="#closures">Closure</a>-Objekt. Weiter unten finden Sie Beispiele, wie dies verwendet werden kann.</p>
+
+<h3 id="static-functions">Statische Funktionen</h3>
+<p>Jede verschachtelte Funktion, die keine Variablen erfasst, ist automatisch statisch; das heißt, dass jeder Aufruf der äußeren Funktion auf dasselbe <a href="objects/Func.htm">Func</a> verweist. Das Schlüsselwort "static" kann verwendet werden, um eine verschachtelte Funktion explizit als statisch zu deklarieren; in diesem Fall werden alle nicht-statischen lokalen Variablen der äußeren Funktion ignoriert. Zum Beispiel:</p>
+<pre>außen() {
+    x := "äußerer Wert"
+    static innen(y) {
+        x := "innerer Wert"  <em>; Erstellt eine lokale Variable</em>
+        MsgBox Type(innen)  <em>; Zeigt "Func" an</em>
+    }
+    innen()
+    MsgBox x  <em>; Zeigt "äußerer Wert" an</em>
+}
+außen()</pre>
+<p>Eine statische Funktion kann nicht auf andere verschachtelte Funktionen außerhalb ihres eigenen Körpers verweisen, es sei denn, sie sind explizit als statisch deklariert. Beachten Sie, dass, selbst wenn die Funktion im Assume-Static-Modus ist, eine nicht-statische verschachtelte Funktion ein Closure werden kann, wenn sie auf einen Funktionsparameter verweist.</p>
 
 <h3 id="closures">Closures</h3>
 <p>Ein <em>Closure</em> ist eine verschachtelte Funktion, die an eine Reihe von <em>freien Variablen</em> gebunden ist. Freie Variablen sind lokale Variablen der äußeren Funktion, auf die verschachtelte Funktionen zugreifen können. Closures ermöglichen es, dass eine oder mehrere verschachtelte Funktionen ihre Variablen mit der äußeren Funktion teilen, selbst wenn die äußere Funktion bereits ihr Ende erreicht hat.</p>

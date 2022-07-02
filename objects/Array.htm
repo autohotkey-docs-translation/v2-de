@@ -43,6 +43,7 @@ MsgBox Benutzer[1]</pre>
     <ul>
       <li><a href="#Clone">Clone</a>: Gibt eine flache Kopie eines Arrays zurück.</li>
       <li><a href="#Delete">Delete</a>: Entfernt den Wert eines Array-Elements und bewirkt, dass der Index keinen Wert mehr hat.</li>
+      <li><a href="#Get">Get</a>: Gibt den Wert auf einem bestimmten Index zurück, oder einen Standardwert.</li>
       <li><a href="#Has">Has</a>: Gibt True zurück, wenn der angegebene Index gültig ist und an dieser Stelle ein Wert steht.</li>
       <li><a href="#InsertAt">InsertAt</a>: Fügt einen oder mehrere Werte auf einer bestimmten Position ein.</li>
       <li><a href="#Pop">Pop</a>: Entfernt und gibt das letzte Array-Element zurück.</li>
@@ -56,6 +57,7 @@ MsgBox Benutzer[1]</pre>
     <ul>
       <li><a href="#Length">Length</a>: Ermittelt oder bestimmt die Länge eines Arrays.</li>
       <li><a href="#Capacity">Capacity</a>: Ermittelt oder bestimmt die aktuelle Kapazität eines Arrays.</li>
+      <li><a href="#Default">Default</a>: Definiert den Standardwert, der zurückgegeben werden soll, wenn ein Element ohne Wert angefordert wird.</li>
       <li><a href="#__Item">__Item</a>: Ermittelt oder bestimmt den Wert eines Array-Elements.</li>
     </ul>
   </li>
@@ -91,6 +93,20 @@ MsgBox Benutzer[1]</pre>
 <p>Gibt den entfernten Wert zurück (leer, wenn es keinen gibt).</p>
 <p>Delete hat keinen Einfluss auf die <a href="#Length">Länge</a> des Arrays.</p>
 <p>Es wird ein <a href="Error.htm#ValueError">ValueError</a> ausgelöst, wenn <em>Index</em> außerhalb des Bereichs liegt.</p>
+</div>
+
+<div class="methodShort" id="Get"><h3>Get</h3>
+<p>Gibt den Wert auf einem bestimmten Index zurück, oder einen Standardwert.</p>
+<pre class="Syntax">Wert := ArrayObj.<span class="func">Get</span>(Index <span class="optional">, Standardwert</span>)</pre>
+<p>Diese Methode bewirkt Folgendes:</p>
+<ul>
+  <li>Löse einen <a href="Error.htm#IndexError">IndexError</a> aus, wenn <em>Index</em> null ist oder außerhalb des Bereichs liegt.</li>
+  <li>Gib den Wert auf <em>Index</em> zurück, wenn es einen gibt (siehe <a href="#Has">Has</a>).</li>
+  <li>Gib den Wert des <em>Standardwert</em>-Parameters zurück, falls angegeben.</li>
+  <li>Gib den Wert von <code>ArrayObj.Default</code> zurück, falls definiert.</li>
+  <li>Löse einen <a href="Error.htm#UnsetError">UnsetItemError</a> aus.</li>
+</ul>
+<p>Wenn <em>Standardwert</em> weggelassen wird, ist dies äquivalent zu <code>ArrayObj[Index]</code>, außer dass <a href="#__Item">__Item</a> nicht aufgerufen wird.</p>
 </div>
 
 <div class="methodShort" id="Has"><h3>Has</h3>
@@ -223,6 +239,13 @@ MsgBox ["A",    , "C"].Length  <em>;  3</em>
     <p>Die maximale Anzahl von Elementen, die das Array beinhalten soll, bevor es automatisch erweitert werden muss. Wenn ein Wert kleiner als <a href="#Length">Length</a> gesetzt wird, werden Elemente entfernt.</p>
   </dd>
 </dl>
+</div>
+
+<div class="methodShort" id="Default"><h3>Default</h3>
+<p>Definiert den Standardwert, der zurückgegeben werden soll, wenn ein Element ohne Wert angefordert wird.</p>
+<pre class="Syntax">ArrayObj.<span class="func">Default</span> := Wert</pre>
+<p>Diese Eigenschaft ist standardmäßig nicht vorhanden, kann aber via Skript definiert werden. Wenn das Skript ein Element anfordert, das keinen Wert hat, prüft das Array, ob diese Eigenschaft vorhanden ist, bevor es einen <a href="Error.htm#UnsetError">UnsetItemError</a> auslöst. Die Eigenschaft kann mit den üblichen Mitteln implementiert werden, einschließlich einer <a href="Object.htm#DefineProp">dynamischen Eigenschaft</a> oder einer <a href="../Objects.htm#Meta_Functions">Metafunktion</a>, aber um festzustellen, welcher Schlüssel abgefragt wurde, müsste stattdessen <a href="#__Item">__Item</a> oder <a href="#Get">Get</a> überschrieben werden.</p>
+<p>Das Setzen eines Standardwerts verhindert nicht, dass ein Fehler ausgelöst wird, wenn der Index außerhalb des Bereichs liegt.</p>
 </div>
 
 <div class="methodShort" id="__Item"><h3>__Item</h3>
