@@ -193,29 +193,31 @@ Loop Parse, DateiListe, "`n"
 
 <div class="ex" id="ExFileCopy">
 <p><a class="ex_number" href="#ExFileCopy"></a> Kopiert nur Quelldateien, die neuer sind als ihr Gegenstück, in das Ziel.</p>
-<pre>KopiereWennNeuer:
-<em>; Der Aufrufer hat die Variablen KopieQuelleMuster und KopieZiel für uns gesetzt.</em>
-Loop Files, KopieQuelleMuster
+<pre><em>; Rufen Sie diese Funktion mit einem Quellmuster wie "A:\Skripte\*.ahk"
+; und einem <strong>existierenden</strong> Zielverzeichnis wie "B:\Skript-Backup" auf.</em>
+KopiereWennNeuer(QuelleMuster, Ziel)
 {
-    kopiere_es := false
-    if !FileExist(KopieZiel "\" A_LoopFileName)  <em>; Kopiert immer die Zieldatei, wenn sie noch nicht existiert.</em>
-        kopiere_es := true
-    else
+    Loop Files, QuelleMuster
     {
-        Zeitstempel := FileGetTime(KopieZiel "\" A_LoopFileName)
-        Zeitstempel := DateDiff(A_Now, A_LoopFileTimeModified, "Seconds")  <em>; Subtrahiert die Zeit der Quelldatei mit der Zeit der Zieldatei.</em>
-        if Zeitstempel &lt; 0  <em>; Quelldatei ist neuer als Zieldatei.</em>
+        kopiere_es := false
+        if !FileExist(Ziel "\" A_LoopFileName)  <em>; Kopiert immer die Zieldatei, wenn sie noch nicht existiert.</em>
             kopiere_es := true
+        else
+        {
+            Zeitstempel := FileGetTime(Ziel "\" A_LoopFileName)
+            Zeitstempel := DateDiff(Zeitstempel, A_LoopFileTimeModified, "Seconds")  <em>; Subtrahiert die Zeit der Quelldatei mit der Zeit der Zieldatei.</em>
+            if Zeitstempel &lt; 0  <em>; Quelldatei ist neuer als Zieldatei.</em>
+                kopiere_es := true
+        }
+        if kopiere_es
+        {
+            try
+                FileCopy A_LoopFilePath, Ziel "\" A_LoopFileName, 1   <em>; Kopiert und überschreibt sie bei Bedarf</em>
+            catch
+                MsgBox '"' A_LoopFilePath '" konnte nicht nach "' Ziel '\' A_LoopFileName '" kopiert werden.'
+        }
     }
-    if kopiere_es
-    {
-        try
-            FileCopy A_LoopFilePath, KopieZiel "\" A_LoopFileName, 1   <em>; Kopiert und überschreibt sie bei Bedarf</em>
-        catch
-            MsgBox '"' A_LoopFilePath '" konnte nicht nach "' KopieZiel '\' A_LoopFileName '" kopiert werden.'
-    }
-}
-Return</pre>
+}</pre>
 </div>
 
 <div class="ex" id="ExLongPath">

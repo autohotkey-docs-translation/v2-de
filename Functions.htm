@@ -75,7 +75,9 @@ Tauschen(&amp;Links, &amp;Rechts)
   <li>Variablen, die innerhalb eines Funktionsparameters aufgelöst werden müssen (z. B. <code>Var</code> oder <code>++Var</code> oder <code>Var *= 2</code>), können von links oder rechts befindlichen Parametern geändert werden, bevor sie an die Funktion übergeben werden. <code>MeineFunk(Var, Var++)</code> würde beispielsweise unerwartet 0 und 1 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, weil das erste <em>Var</em> erst dereferenziert wird, wenn der Funktionsaufruf ausgeführt wird. Dieses unlogische Verhalten wird eventuell in einer zukünftigen Version geändert.</li>
 </ul>
 <h2 id="optional">Optionale Parameter</h2>
-<p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden. Um das zu tun, müssen Sie <code>:=</code> anfügen, gefolgt vom Standardwert des Parameters, der Folgendes sein kann: <code>true</code>, <code>false</code>, <code>unset</code>, ein direkt geschriebener Integer, eine direkt geschriebene Floating-Point-Zahl oder eine direkt geschriebene, in Anführungszeichen gesetzte Zeichenkette wie "fox" oder "".</p>
+<p>Bei der Definition einer Funktion können ein oder mehrere Parameter als optional gekennzeichnet werden.</p>
+<p>Fügen Sie <code>:=</code> an, gefolgt von einer direkt geschriebenen Zahl, einer in Anführungszeichen gesetzten Zeichenkette wie "fox" oder "", oder einem Ausdruck, der jedes Mal ausgewertet werden soll, wenn der Parameter mit seinem Standardwert initialisiert werden muss. Zum Beispiel würde <code>X:=[]</code> jedes Mal ein neues Array erzeugen.</p>
+<p>Fügen Sie <code>?</code> oder <code>:= unset</code> an, um einen Parameter zu definieren, der <a href="#unset">standardmäßig nicht gesetzt</a> ist.</p>
 <p>Die folgende Funktion hat einen Z-Parameter, der als optional gekennzeichnet ist:</p>
 <pre>Addieren(X, Y, Z := 0) {
     return X + Y + Z
@@ -87,7 +89,9 @@ MeineFunk(X, Y:=2, Z:=0) {  <em>; Beachten Sie, dass Z in diesem Fall weiterhin 
     MsgBox X ", " Y ", " Z
 }</pre>
 <p id="OptionalByRef"><a href="#ByRef">ByRef-Parameter</a> können auch optional sein; zum Beispiel: <code>MeineFunk(&amp;p1 := "")</code>. Jedes Mal, wenn die Funktion ohne diesen Parameter aufgerufen wird, wird eine lokale Variable mit dem angegebenen Standardwert erstellt; das heißt, dass die Funktion sich so verhalten wird, als wäre das Symbol "&amp;" nicht vorhanden.</p>
-<p id="unset"><strong>Ungesetzt:</strong> Um einen Parameter als optional zu kennzeichnen, ohne einen Standardwert anzugeben, verwenden Sie das Schlüsselwort <code>unset</code> oder das <code>?</code>-Suffix. In diesem Fall wird, wenn der Parameter weggelassen wird, die entsprechende Variable keinen Wert haben. Mit <a href="commands/IsSet.htm">IsSet</a> können Sie ermitteln, ob der Parameter einen Wert erhalten hat, wie unten gezeigt:</p>
+
+<h3 id="unset">Ungesetzte Parameter</h3>
+<p>Um einen Parameter als optional zu kennzeichnen, ohne einen Standardwert anzugeben, verwenden Sie das Schlüsselwort <code>unset</code> oder das <code>?</code>-Suffix. In diesem Fall wird, wenn der Parameter weggelassen wird, die entsprechende Variable keinen Wert haben. Mit <a href="commands/IsSet.htm">IsSet</a> können Sie ermitteln, ob der Parameter einen Wert erhalten hat, wie unten gezeigt:</p>
 <pre>
 MeineFunk(p?) {  <em>; Äquivalent zu MeineFunk(p := unset)</em>
     if IsSet(p)
@@ -313,10 +317,10 @@ außen("Titel")
 <p>Jede Funktionsdefinition erzeugt eine schreibgeschützte Variable, die die Funktion selbst enthält; also ein <a href="objects/Func.htm">Func</a>- oder <a href="#closures">Closure</a>-Objekt. Weiter unten finden Sie Beispiele, wie dies verwendet werden kann.</p>
 
 <h3 id="static-functions">Statische Funktionen</h3>
-<p>Jede verschachtelte Funktion, die keine Variablen erfasst, ist automatisch statisch; das heißt, dass jeder Aufruf der äußeren Funktion auf dasselbe <a href="objects/Func.htm">Func</a> verweist. Das Schlüsselwort "static" kann verwendet werden, um eine verschachtelte Funktion explizit als statisch zu deklarieren; in diesem Fall werden alle nicht-statischen lokalen Variablen der äußeren Funktion ignoriert. Zum Beispiel:</p>
+<p>Jede verschachtelte Funktion, die keine Variablen erfasst, ist automatisch statisch; das heißt, dass jeder Aufruf der äußeren Funktion auf dasselbe <a href="objects/Func.htm">Func</a> verweist. Das Schlüsselwort <code>static</code> kann verwendet werden, um eine verschachtelte Funktion explizit als statisch zu deklarieren; in diesem Fall werden alle nicht-statischen lokalen Variablen der äußeren Funktion ignoriert. Zum Beispiel:</p>
 <pre>außen() {
     x := "äußerer Wert"
-    static innen(y) {
+    static innen() {
         x := "innerer Wert"  <em>; Erstellt eine lokale Variable</em>
         MsgBox Type(innen)  <em>; Zeigt "Func" an</em>
     }
@@ -324,7 +328,7 @@ außen("Titel")
     MsgBox x  <em>; Zeigt "äußerer Wert" an</em>
 }
 außen()</pre>
-<p>Eine statische Funktion kann nicht auf andere verschachtelte Funktionen außerhalb ihres eigenen Körpers verweisen, es sei denn, sie sind explizit als statisch deklariert. Beachten Sie, dass, selbst wenn die Funktion im Assume-Static-Modus ist, eine nicht-statische verschachtelte Funktion ein Closure werden kann, wenn sie auf einen Funktionsparameter verweist.</p>
+<p>Eine statische Funktion kann nicht auf andere verschachtelte Funktionen außerhalb ihres eigenen Körpers verweisen, es sei denn, sie sind explizit als statisch deklariert. Beachten Sie, dass, selbst wenn die Funktion im <a href="#AssumeStatic">Assume-Static</a>-Modus ist, eine nicht-statische verschachtelte Funktion ein Closure werden kann, wenn sie auf einen Funktionsparameter verweist.</p>
 
 <h3 id="closures">Closures</h3>
 <p>Ein <em>Closure</em> ist eine verschachtelte Funktion, die an eine Reihe von <em>freien Variablen</em> gebunden ist. Freie Variablen sind lokale Variablen der äußeren Funktion, auf die verschachtelte Funktionen zugreifen können. Closures ermöglichen es, dass eine oder mehrere verschachtelte Funktionen ihre Variablen mit der äußeren Funktion teilen, selbst wenn die äußere Funktion bereits ihr Ende erreicht hat.</p>
