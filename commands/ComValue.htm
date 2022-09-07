@@ -30,7 +30,9 @@
 
   <dt>Wert</dt>
   <dd>
-    <p>Ein Wert, der gewrappt werden soll. Handelt es sich hierbei um einen reinen Integer und ist <em>VarTyp</em> weder VT_R4, VT_R8, VT_DATE noch VT_CY, wird dessen Wert direkt verwendet; insbesondere können VT_BSTR, VT_DISPATCH und VT_UNKNOWN mit einem Pointer-Wert initialisiert werden. In jedem anderen Fall wird der Wert in den Typ des Ziels konvertiert. Es wird eine Ausnahme ausgelöst, wenn die Konvertierung nicht durchgeführt werden kann.</p>
+    <p>Ein Wert, der gewrappt werden soll.</p>
+    <p>Handelt es sich hierbei um einen reinen Integer und ist <em>VarTyp</em> weder VT_R4, VT_R8, VT_DATE noch VT_CY, wird dessen Wert direkt verwendet; insbesondere können VT_BSTR, VT_DISPATCH und VT_UNKNOWN mit einem Pointer-Wert initialisiert werden.</p>
+    <p>In allen anderen Fällen wird der Wert in eine temporäre VARIANT kopiert, unter Nutzung der gleichen Regeln wie bei normalen COM-Methodenaufrufen. Wenn der Typ der ursprünglichen Variante ungleich <em>VarTyp</em> ist, wird die Konvertierung durch Aufrufen von <a href="https://docs.microsoft.com/windows/win32/api/oleauto/nf-oleauto-variantchangetype">VariantChangeType</a> mit einem <em>wFlags</em>-Wert von 0 versucht. Es wird eine Ausnahme ausgelöst, wenn die Konvertierung scheitert.</p>
   </dd>
 
   <dt>Flags</dt>
@@ -44,10 +46,11 @@
 <h2 id="Returns">Rückgabewert</h2>
 <p>Typ: ComValue, ComValueRef, <a href="ComObjArray.htm">ComObjArray</a> oder <a href="ComObject.htm">ComObject</a></p>
 <p>Gibt ein Wrapper-Objekt zurück, das einen <a href="ComObjType.htm#vt">Variantentyp</a> und Wert, oder einen Pointer enthält.</p>
-<p>Dieses Objekt kann für zwei Dinge genutzt werden:</p>
+<p>Dieses Objekt ist vielseitig einsetzbar:</p>
 <ol>
   <li>Einige COM-Methoden erfordern möglicherweise bestimmte Wertetypen, die kein direktes Äquivalent innerhalb von AutoHotkey haben. Diese Funktion ermöglicht es, den Typ eines Wertes bei der Übergabe an eine COM-Methode anzugeben. Zum Beispiel erstellt <code>ComValue(0xB, true)</code> ein Objekt, das den booleschen COM-Wert <em>True</em> repräsentiert.</li>
   <li>Ein Skript kann deutlich besser mit einem COM-Objekt oder SafeArray interagieren (via <a href="../Objects.htm#Usage_Objects">Objektsyntax</a>), wenn es gewrappt wurde. Die meisten Skripte müssen dies nicht manuell tun, weil <a href="ComObject.htm">ComObject</a>, <a href="ComObjArray.htm">ComObjArray</a>, <a href="ComObjActive.htm">ComObjActive</a>, <a href="ComObjGet.htm">ComObjGet</a> und andere COM-Methoden, die ein Objekt zurückgeben, automatisch ein Wrapper-Objekt erstellen.</li>
+  <li>Das Skript profitiert von einer automatischen Referenzzählung, wenn ein COM-Interface-Pointer gewrappt wurde. Ein Interface-Pointer kann sofort nach der Rückgabe an das Skript (üblicherweise von <a href="ComCall.htm">ComCall</a> oder <a href="DllCall.htm">DllCall</a>) gewrappt werden, damit er später nicht explizit <a href="ObjAddRef.htm">freigegeben</a> werden muss.</li>
 </ol>
 
 <h2 id="Ptr">Ptr</h2>
@@ -72,7 +75,8 @@ MsgBox eine_var</pre>
 <p>Einige Methoden erfordern jedoch einen spezifischeren Variantentyp, wie z. B. <code>VT_BYREF | VT_I4</code>. In solchen Fällen muss die erste oben gezeigte Vorgehensweise verwendet werden, wobei 0x400C mit dem entsprechenden Variantentyp ersetzt wird.</p>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
-<p>Wenn diese Funktion zum Wrappen eines <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointers genutzt wird, ist das Wrapper-Objekt zum Freigeben des Pointers verantwortlich, falls erforderlich. Wenn das Skript also beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiter zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen.</p>
+<p>Wenn diese Funktion zum Wrappen eines <a href="https://msdn.microsoft.com/de-DE/de/library/dd318520.aspx">IDispatch</a>- oder IUnknown-Interface-Pointers (wenn als Integer übergeben) genutzt wird, ist das Wrapper-Objekt zum Freigeben des Pointers verantwortlich, falls erforderlich. Wenn das Skript also beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiter zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen. Das ist nicht notwendig, wenn <em>Wert</em> selbst ein ComValue oder ComObject ist.</p>
+<p>Eine Konvertierung von VT_UNKNOWN nach VT_DISPATCH führt dazu, dass <a href="https://docs.microsoft.com/windows/win32/api/unknwn/nf-unknwn-iunknown-queryinterface(refiid_void)">IUnknown::QueryInterface</a> aufgerufen wird und dadurch möglicherweise ein Interface-Pointer erzeugt wird, der vom Original abweicht. Diese Konvertierung löst außerdem eine Ausnahme aus, wenn das Objekt keinen IDispatch implementiert. Handelt es sich bei <em>Wert</em> hingegen um einen Integer und bei <em>VarTyp</em> um VT_DISPATCH, wird der Wert direkt verwendet; in diesem Fall muss der Wert ein IDispatch-kompatibler Interface-Pointer sein.</p>
 <p>Der <em>VarTyp</em> eines Wrapper-Objekts kann via <a href="ComObjType.htm">ComObjType</a> abgerufen werden.</p>
 <p>Der <em>Wert</em> eines Wrapper-Objekts kann via <a href="ComObjValue.htm">ComObjValue</a> abgerufen werden.</p>
 <p><b>Bekannte Einschränkung:</b> Jedes Mal, wenn ein COM-Objekt gewrappt wird, wird ein neues Wrapper-Objekt erstellt. Bei Vergleichen und Zuweisungen wie <code>obj1 == obj2</code> und <code>array[obj1] := Wert</code> werden beide Wrapper-Objekte nicht als identisch angesehen, sogar dann, wenn sie denselben Variantentyp und Wert enthalten.</p>

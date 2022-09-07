@@ -29,9 +29,9 @@
 
 <h2 id="syntax">Syntax</h2>
 
-<p>Die Syntax zum Definieren eines RegEx-Callouts ist <span class="regex">(?C<em>Nummer</em>:<em>Funktion</em>)</span> - hierbei ist <em>Nummer</em> und <em>Funktion</em> optional. Der Doppelpunkt (:) ist nur erlaubt, wenn <em>Funktion</em> angegeben ist, und optional, wenn <em>Nummer</em> weggelassen wird. Wenn <em>Funktion</em> angegeben ist, aber nicht der Name einer benutzerdefinierten Funktion ist, wird ein Kompilierungsfehler auftreten und die Suchmusterauswertung abgebrochen.</p>
+<p>Die Syntax zum Definieren eines RegEx-Callouts ist <span class="regex">(?C<em>Nummer</em>:<em>Funktion</em>)</span> - hierbei ist <em>Nummer</em> und <em>Funktion</em> optional. Der Doppelpunkt (:) ist nur erlaubt, wenn <em>Funktion</em> angegeben ist, und optional, wenn <em>Nummer</em> weggelassen wird. Wenn <em>Funktion</em> angegeben ist, aber nicht der Name eines <a href="../objects/Functor.htm">Funktionsobjekts</a> ist, wird ein Kompilierungsfehler auftreten und die Suchmusterauswertung abgebrochen.</p>
 
-<p>Lässt man <em>Funktion</em> weg, muss der Funktionsname in einer Variable namens <b>pcre_callout</b> angegeben werden. Wenn sowohl eine globale als auch lokale Variable mit diesem Namen existieren, hat die lokale Variable Vorrang. Wenn <em>pcre_callout</em> nicht den Namen einer benutzerdefinierten Funktion enthält, werden RegEx-Callouts, die <em>Funktion</em> weglassen, ignoriert.</p>
+<p>Lässt man <em>Funktion</em> weg, muss die Standard-RegEx-Callout-Funktion namens <b>pcre_callout</b> definiert werden. Wenn <em>pcre_callout</em> nicht definiert ist, werden RegEx-Callouts, die <em>Funktion</em> weglassen, ignoriert.</p>
 
 <h2 id="callout-functions">RegEx-Callout-Funktionen</h2>
 
@@ -48,6 +48,8 @@
   <li><b>NadelRegEx</b>: Enthält das <em>NadelRegEx</em>-Suchmuster, das an RegExMatch oder RegExReplace übergeben wurde.</li>
 </ul>
 <p>Diese Namen dienen nur als Beispiel. Es können beliebige Namen verwendet werden.</p>
+
+<p class="warning"><strong>Warnung:</strong> Das Ändern der Eingabeparameter von <a href="../commands/RegExReplace.htm">RegExReplace</a> oder <a href="../commands/RegExMatch.htm">RegExMatch</a> während eines Aufrufs wird nicht unterstützt und kann zu unvorhersehbarem Verhalten führen.</p>
 
 <p>Die Suchmusterauswertung kann je nach Rückgabewert der RegEx-Callout-Funktion fortgesetzt werden oder fehlschlagen:</p>
 <ul>
@@ -91,13 +93,11 @@ if (version &gt;= 2)
 <h2 id="auto">Auto-Callout</h2>
 
 <p>Fügen Sie <strong>C</strong> in den Optionen des Suchmusters ein, um den Auto-Callout-Modus zu aktivieren. In diesem Modus werden RegEx-Callouts in Form von <span class="regex">(?C255)</span> vor jedem Element im Suchmuster eingefügt. Das folgende Beispiel kann genutzt werden, um reguläre Ausdrücke zu debuggen:</p>
-<pre><em>; Standard-RegEx-Callout-Funktion setzen.</em>
-pcre_callout := "DebugRegEx"
-
-<em>; RegExMatch mit der Auto-Callout-Option C aufrufen.</em>
+<pre><em>; RegExMatch mit der Auto-Callout-Option C aufrufen.</em>
 RegExMatch("xxxabc123xyz", "C)abc.*xyz")
 
-DebugRegEx(Match, CalloutNumber, FoundPos, Haystack, NeedleRegEx)
+<em>; Standard-RegEx-Callout-Funktion definieren.</em>
+pcre_callout(Match, CalloutNumber, FoundPos, Haystack, NeedleRegEx)
 {
     <em>; Beschreibungen dieser Felder finden Sie unter pcre.txt.</em>
     start_match       := NumGet(A_EventInfo, 12 + A_PtrSize*2, "Int")
