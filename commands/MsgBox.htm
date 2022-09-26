@@ -235,7 +235,7 @@ Ergebnis := <span class="func">MsgBox</span>(<span class="optional">Text, Titel,
 
 <h2 id="Result">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Wenn MsgBox mit der Ausdruckssyntax aufgerufen wird, gibt sie eine der folgenden Zeichenketten zurück, die anzeigen, welche Schaltfläche der Benutzer gedrückt hat:</p>
+<p>Diese Funktion gibt eine der folgenden Zeichenketten zurück, die anzeigen, welche Schaltfläche der Benutzer gedrückt hat:</p>
 <ul>
   <li>OK</li>
   <li>Cancel</li>
@@ -248,6 +248,10 @@ Ergebnis := <span class="func">MsgBox</span>(<span class="optional">Text, Titel,
   <li>Continue</li>
   <li>Timeout (also wenn das Mitteilungsfenster das Zeitlimit überschritten hat)</li>
 </ul>
+<p>Wenn das Dialogfenster nicht angezeigt werden konnte, wird eine leere Zeichenkette zurückgegeben. Dies tritt normalerweise nur auf, wenn das <a href="#max">MsgBox-Limit</a> erreicht wurde, kann aber auch in anderen ungewöhnlichen Fällen auftreten.</p>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Bei Misserfolg wird ein <a href="../objects/Error.htm">Error</a> ausgelöst, z. B. wenn die Optionen ungültig sind, das <a href="#max">MsgBox-Limit</a> erreicht wurde oder das Mitteilungsfenster aus anderen Gründen nicht angezeigt werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Ein typisches Mitteilungsfenster sieht wie folgt aus:</p>
@@ -272,6 +276,8 @@ if MsgBox("Wiederholen oder Abbrechen?",, "R/C") = "Retry"
   <li>Das Skript überwacht die WM_HELP-Meldung (0x0053). Zum Beispiel: <code><a href="OnMessage.htm">OnMessage</a>(0x0053, "WM_HELP")</code>. Diese Anweisung bewirkt, dass, sobald der Benutzer die Hilfe-Schaltfläche drückt, die WM_HELP-Funktion aufgerufen wird. Diese Funktion könnte zum Beispiel ein anderes GUI-Fenster oder Mitteilungsfenster anzeigen, um den Benutzer Instruktionen mitzuteilen.</li>
 </ol>
 <p><strong>Die Schließen-Schaltfläche (in der Titelleiste des Mitteilungsfensters)</strong>: Aufgrund der Tatsache, dass das Mitteilungsfenster intern vom Betriebssystem kontrolliert wird, sind die Verfügbarkeit und das Verhalten der <strong>X</strong>-Schaltfläche abhängig davon, welche Schaltflächen vorhanden sind. Wenn nur die OK-Schaltfläche vorhanden ist, wäre das Drücken von <strong>X</strong> das gleiche wie, als hätte man OK gedrückt. Ansonsten ist die X-Schaltfläche deaktiviert, es sei denn, die Abbrechen-Schaltfläche ist vorhanden, dann wäre das Drücken von <strong>X</strong> das gleiche wie, als hätte man Abbrechen gedrückt.</p>
+<p id="max"><strong>Maximal 7 aktive Aufrufe</strong>: Der <a href="../misc/Threads.htm">Thread</a>, der ein Mitteilungsfenster anzeigt, kann normalerweise unterbrochen werden, damit der neue Thread sein eigenes Mitteilungsfenster anzeigen kann, bevor der vorherige Aufruf zurückkehrt. Maximal 7 aktive MsgBox-Aufrufe sind erlaubt. Alle Aufrufe nach dem siebten Aufruf lösen ein <a href="../objects/Error.htm">Error</a> aus. Beachten Sie, dass ein MsgBox-Aufruf in einem unterbrochenen Thread erst zurückkehren kann, wenn der Thread fortgesetzt wird.</p>
+
 <h2 id="Related">Siehe auch</h2>
 <p><a href="InputBox.htm">InputBox</a>, <a href="FileSelect.htm">FileSelect</a>, <a href="DirSelect.htm">DirSelect</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="../objects/Gui.htm">Gui-Objekt</a></p>
 <h2 id="Examples">Beispiele</h2>

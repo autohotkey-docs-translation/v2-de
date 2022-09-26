@@ -151,22 +151,22 @@ ZeigeInputBox(Standardwert)
     if IB.Result = "Cancel"  <em>; Der Benutzer hat Abbrechen gedrückt.</em>
         return
 
-    if RegExMatch(IB.Value, "(?P&lt;Label&gt;:.*?:(?P&lt;Abkuerzung&gt;.*?))::(?P&lt;Ersatztext&gt;.*)", &amp;Hotstring)
+    if RegExMatch(IB.Value, "(?P&lt;Label&gt;:.*?:(?P&lt;Abkuerzung&gt;.*?))::(?P&lt;Ersatztext&gt;.*)", &amp;Eingabe)
     {
-        if !Hotstring.Abkuerzung
+        if !Eingabe.Abkuerzung
             Mitteilung := "Sie haben keine Abkürzung angegeben"
-        else if !Hotstring.Ersatztext
+        else if !Eingabe.Ersatztext
             Mitteilung := "Sie haben keinen Ersatztext angegeben"
         else
         {
-            Hotstring Hotstring.Label, Hotstring.Ersatztext  <em>; Aktiviert jetzt den Hotstring.</em>
+            Hotstring Eingabe.Label, Eingabe.Ersatztext  <em>; Aktiviert jetzt den Hotstring.</em>
             FileAppend "`n" IB.Value, A_ScriptFullPath  <em>; Speichert den Hotstring für den späteren Gebrauch.</em>
         }
     }
     else
         Mitteilung := "Der Hotstring scheint falsch strukturiert zu sein"
 
-    if Mitteilung
+    if IsSet(Mitteilung)
     {
         Ergebnis := MsgBox(Mitteilung ". Möchten Sie es noch einmal versuchen?",, 4)
         if Ergebnis = "Yes"
