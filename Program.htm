@@ -254,11 +254,10 @@ Execute = true|false|1|0
 <p>Im Gegensatz zu einer v1-Installation wird beim Installieren keine Standardversion ausgewählt. Dies wird stattdessen vom Launcher dynamisch gehandhabt und kann benutzerspezifisch konfiguriert werden.</p>
 
 <h3 id="installcmd">Verwendung der Befehlszeile</h3>
-<p class="warning"><strong>Hinweis:</strong> Die Befehlszeilennutzung des v2-Installers ist noch nicht endgültig festgelegt und kann sich bis zur finalen Veröffentlichung von v2.0 noch ändern. Einige Optionen des v1-Installers wurden noch nicht wieder implementiert.</p>
-<p>Während der Installation werden möglicherweise einige Bestätigungsfenster angezeigt, wenn Konflikte festgestellt werden (z. B. laufende Skripte oder unbekannte Dateien, die überschrieben werden sollen). Der Silent-Modus ist nicht implementiert.</p>
-<p>Um das Programm in das <em>ZIEL</em>-Verzeichnis zu installieren, führen Sie Folgendes im Quellverzeichnis aus:</p>
+<p>Um das Programm direkt in das <em>ZIEL</em>-Verzeichnis zu installieren, verwenden Sie die Befehlszeilenoption <code>/installto</code> oder <code>/to</code> (beide bewirken das gleiche), wie unten gezeigt, innerhalb des Quellverzeichnisses. Nutzen Sie entweder eine heruntergeladene setup.exe oder Dateien, die aus einer heruntergeladenen ZIP-Datei oder einer anderen Quelle entpackt wurden.</p>
+<pre>AutoHotkey_setup.exe /installto "%ZIEL%"</pre>
 <pre>AutoHotkey32.exe UX\install.ahk /to "%ZIEL%"</pre>
-<p>Um eine zusätzliche Version aus <em>QUELLE</em> zu installieren, führen Sie Folgendes im aktuellen Installationsverzeichnis aus (passen Sie den Pfad von AutoHotkey32.exe nach Bedarf an):</p>
+<p>Um eine zusätzliche Version aus <em>QUELLE</em> zu installieren (was ein Verzeichnis sein sollte, das AutoHotkey*.exe-Dateien enthält), führen Sie Folgendes im aktuellen Installationsverzeichnis aus (passen Sie den Pfad von AutoHotkey32.exe nach Bedarf an):</p>
 <pre>AutoHotkey32.exe UX\install.ahk /install "%QUELLE%"</pre>
 <p>Die vollständige Befehlszeichenkette für oben wird als <em>InstallCommand</em> unter <code>HKLM\Software\AutoHotkey</code> oder <code>HKCU\Software\AutoHotkey</code> registriert, wobei <code class="no-highlight">%1</code> als Platzhalter für das Quellverzeichnis dient. Die Nutzung dieses Registry-Wertes ist eventuell zukunftssicherer.</p>
 <p>Die aktuelle Installation kann wie folgt erneut registriert werden:</p>
@@ -268,6 +267,11 @@ Execute = true|false|1|0
 <p>Alternativ können Sie auch den <em>QuietUninstallString</em>-Wert aus einem der folgenden Registry-Schlüssel auslesen und ausführen:</p>
 <pre>HKLM\Microsoft\Windows\CurrentVersion\Uninstall\AutoHotkey
 HKCU\Microsoft\Windows\CurrentVersion\Uninstall\AutoHotkey</pre>
+<p>Verwenden Sie die Befehlszeilenoption <code>/silent</code>, um Warn- oder Bestätigungsfenster zu unterdrücken und zu verhindern, dass <a href="#dash">Dash</a> nach Abschluss der Installation angezeigt wird. Die folgenden Aktionen werden dann automatisch und ohne Warnung durchgeführt:</p>
+<ul>
+  <li>Skripte terminieren, damit AutoHotkey*.exe überschrieben werden kann.</li>
+  <li>Dateien überschreiben, die zuvor nicht vom Installer registriert wurden, oder die seit der Registrierung geändert wurden.</li>
+</ul>
 
 <h3 id="Installer_IsHostApp">Taskleistenschaltflächen</h3>
 <p>Der v2-Installer bietet nicht die Option, die Schaltflächen der Taskleiste voneinander zu trennen. Bisher wurde dies dadurch erreicht, dass jede ausführbare AutoHotkey-Datei als <a href="https://msdn.microsoft.com/de-de/library/ee872121#APPLICATIONS">Host-Applikation (IsHostApp)</a> registriert wurde, aber dieser Ansatz weist Einschränkungen auf und lässt sich weniger gut verwalten, wenn mehrere Versionen installiert werden können. Stattdessen sollte jedes Skript den <a href="https://docs.microsoft.com/de-de/windows/win32/shell/appids">AppUserModelID</a>-Wert seines Prozesses oder seiner Fenster festlegen, um die Gruppierung zu steuern.</p>

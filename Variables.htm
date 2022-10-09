@@ -97,8 +97,8 @@ MsgBox(1.00)  <em>; Zeigt 1.0</em></pre>
   <tr id="maybe">
     <td class="center"><em>Var</em><strong>?</strong></td>
     <td>
-      <p><strong>Vielleicht</strong>. Erlaubt einer Variable, ungesetzt zu sein. Dies ist nur gültig, wenn eine Variable an einen optionalen Parameter, ein Array-Element oder eine direkte Objekt-Schreibweise übergeben wird. Nach dem Fragezeichen muss eines der folgenden Symbole stehen (Leerzeichen werden ignoriert): <code class="no-highlight">)]},:</code>. Die Variable kann bedingt mit dem <a href="#ternary">ternären Operator</a> oder auf der rechten Seite von <a href="#and">AND</a>/<a href="#or">OR</a> übergeben werden.</p>
-      <p>Die Variable ist typischerweise auch ein optionaler Parameter, kann aber eine beliebige Variable sein. Im Bezug auf Variablen, die keine Funktionsparameter sind, kann es immer noch vorkommen, dass beim Laden des Skripts eine <a href="commands/_Warn.htm#VarUnset">VarUnset-Warnung</a> angezeigt wird, wenn es noch andere Referenzen gibt, die auf die Variable verweisen, aber keine Zuweisungen.</p>
+      <p><strong>Vielleicht</strong>. Erlaubt einer Variable, ungesetzt zu sein. Dies ist nur gültig, wenn eine Variable an einen optionalen Parameter, ein Array-Element oder eine direkte Objekt-Schreibweise übergeben wird; oder auf der rechten Seite einer direkten Zuweisung. Nach dem Fragezeichen muss eines der folgenden Symbole stehen (Leerzeichen werden ignoriert): <code class="no-highlight">)]},:</code>. Die Variable kann bedingt mit dem <a href="#ternary">ternären Operator</a> oder auf der rechten Seite von <a href="#and">AND</a>/<a href="#or">OR</a> übergeben werden.</p>
+      <p>Die Variable ist typischerweise ein optionaler Parameter, kann aber eine beliebige Variable sein. Im Bezug auf Variablen, die keine Funktionsparameter sind, kann es immer noch vorkommen, dass beim Laden des Skripts eine <a href="commands/_Warn.htm#VarUnset">VarUnset-Warnung</a> angezeigt wird, wenn es noch andere Referenzen gibt, die auf die Variable verweisen, aber keine Zuweisungen.</p>
       <p>Dieser Operator wird derzeit nur für Variablen unterstützt. Um einen Parameter in allgemeineren Fällen explizit oder bedingt wegzulassen, verwenden Sie das Schlüsselwort <code>unset</code>.</p>
       <p>Siehe auch: <a href="Language.htm#unset">unset (Optionale Parameter)</a></p>
     </td>
@@ -282,6 +282,7 @@ MsgBox(A || B || C) <em>; Der <strong>letzte</strong> falsche Operand wird zurü
       <p>Im Gegensatz zu den meisten anderen Operatoren werden Zuweisungen von rechts nach links ausgewertet. Eine Zeile wie <code>Var1 := Var2 := 0</code> würde also erst eine 0 in <em>Var2</em> speichern und dann <em>Var2</em> in <em>Var1</em> speichern.</p>
     <p>Verwendet man eine Zuweisung im Eingabewert eines anderen Operators, wird die Variable selbst als Eingabewert genommen. Der Ausdruck <code>(Var += 2) &gt; 50</code> wäre beispielsweise wahr, wenn der gerade eben erhöhte Wert in <em>Var</em> größer als 50 ist. Es ist auch zulässig, eine Zuweisung mit dem <a href="#ref">Referenzoperator</a> zu kombinieren, wie in <code>&amp;(Var := "Anfangswert")</code>.</p>
     <p>Die Priorität der Zuweisungsoperatoren erhöht sich automatisch, wenn dadurch ein Syntaxfehler verhindert oder ein besseres Verhalten bereitgestellt werden kann. Zum Beispiel: <code>not x := y</code> würde als <code>not (x := y)</code> ausgewertet werden. <code>++Var := X</code> würde als <code>++(Var := X)</code> ausgewertet werden; und <code>Z &gt; 0 ? X := 2 : Y := 2</code> würde als <code>Z &gt; 0 ? (X := 2) : (Y := 2)</code> ausgewertet werden.</p>
+    <p>Um die Zielvariable <em>ungesetzt</em> zu machen, kombinieren Sie eine direkte Zuweisung (<code>:=</code>) mit dem Schlüsselwort <code>unset</code> oder dem Operator <a href="#maybe">Vielleicht (<em>var</em>?)</a>. Zum Beispiel: <code>Var := unset</code>, <code>Var1 := (Var2?)</code>.</p>
     <p>Eine Zuweisung funktioniert auch mit einer Eigenschaft eines Objekts, wie z. B. <code>meinArray.Length += n</code> oder <code>meinArray[i] .= t</code>. Wenn man einer Eigenschaft einen Wert zuweist, ist das Ergebnis des Teilausdrucks der Wert, der zugewiesen wird, nicht eine Variablenreferenz.</p>
     </td>
   </tr>
@@ -320,7 +321,10 @@ sumfn := Sum</pre>
   </tr>
   <tr>
     <td class="center"><strong>(</strong><em>Ausdruck</em><strong>)</strong></td>
-    <td><p>Ein beliebiger in Klammern gesetzter Teilausdruck. <code>(3 + 2) * 2</code> beispielsweise würde zuerst <code>3 + 2</code> auswerten.</p></td>
+    <td>
+      <p>Ein beliebiger in Klammern gesetzter Teilausdruck. <code>(3 + 2) * 2</code> beispielsweise würde zuerst <code>3 + 2</code> auswerten.</p>
+      <p>Bei einem Mehrfachanweisungsausdruck wird das Ergebnis der <u>letzten</u> Anweisung zurückgegeben. <code>(a := 1, b := 2, c := 3)</code> beispielsweise gibt 3 zurück.</p>
+    </td>
   </tr>
   <tr>
     <td class="center"><p>Mod<strong>()</strong><br>
