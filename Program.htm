@@ -186,10 +186,57 @@ else if SubStr(A_LineFile, 1, 1) = "*" &amp;&amp; A_LineFile != "*#1"
 </ul>
 <p class="note"><strong>Hinweis:</strong> Wenn Sie die erforderliche Version mit <a href="commands/_Requires.htm">#Requires</a> am Anfang der Hauptdatei deklarieren, entfällt jedwede Zweideutigkeit.</p>
 
-<h3 id="launcher-config">Launch Settings</h3>
+<h3 id="launcher-config">Launch Settings (Starteinstellungen)</h3>
 <p>Der Launcher kann in der Launch-Settings-GUI aktiviert, deaktiviert oder konfiguriert werden. Die GUI selbst ist über <a href="#dash">Dash</a> zugänglich.</p>
 <p><em>Run all scripts with a specific interpreter</em> (alle Skripte mit einem bestimmten Interpreter starten) deaktiviert den Launcher und erlaubt dem Benutzer, eine EXE-Datei auszuwählen, mit der alle Skripte gestartet werden sollen, was dem traditionellen Weg entspricht. Wenn eine v1-EXE-Datei ausgewählt wird, sollte beachtet werden, dass das Starten aller Hilfsskripte erschwert wird, außer über die Verknüpfung "AutoHotkey" im Startmenü.</p>
 <p><em>Auto-detect version when launching script</em> (Version beim Starten des Skripts automatisch erkennen) aktiviert den Launcher. Zusätzliche Einstellungen regeln, wie der Launcher den zu verwendenden Interpreter auswählt.</p>
+
+<h3 id="launcher-criteria">Kriterien</h3>
+<p>Wenn mehrere Interpreter mit der gleichen Versionsnummer gefunden werden, kann der Launcher diese nach einer vorgegebenen oder benutzerdefinierten Reihe von Kriterien in eine Rangliste einordnen. Die Kriterien können als kommagetrennte Liste von Teilzeichenketten angegeben werden, wobei jeder Teilzeichenkette ein "!" vorangestellt werden kann, um eine Übereinstimmung zu negieren. Auf Basis der übereinstimmenden Teilzeichenketten wird eine Punktzahl berechnet, wobei die am weitesten links stehende Teilzeichenkette die höchste Priorität hat.</p>
+<p>Teilzeichenketten werden mit der Beschreibung der Datei abgeglichen, mit Ausnahme von "UIA", das übereinstimmt, wenn der Dateiname "_UIA" enthält.</p>
+<p><code>_H, 64, !ANSI</code> beispielsweise würde AutoHotkey_H bevorzugen, wenn es verfügbar ist, 64-Bit, wenn es mit dem System kompatibel ist, und schließlich Unicode vor ANSI.</p>
+<p>Obwohl die Launch-Settings-GUI Auswahllisten mit Optionen wie "Unicode 32-bit" anbietet, können Sie auch eine Liste von Teilzeichenketten eintragen.</p>
+<p>Zusätzliche (höherrangige) Kriterien können über die Befehlszeile mit der Launcher-Option <a href="#SlashRunWith">/RunWith</a> angegeben werden.</p>
+
+<h3 id="launcher-run">*Launch ausführen</h3>
+<p>Der Installer registriert ein verstecktes Shell-Verb namens "launch", das den Launcher mit der Befehlszeilenoption <a href="#SlashLaunch">/Launch</a> ausführt. Dieses Verb kann wie folgt verwendet werden:</p>
+<pre>pid := RunWait('*Launch "' PfadDesSkripts '"')</pre>
+<p>Im Vergleich zur Standardaktion für .ahk-Dateien:</p>
+<ul>
+  <li>/Launch bewirkt, dass die Prozess-ID (PID) des neu gestarteten Skripts als Exitcode des Launchers zurückgegeben wird, anstatt wie sonst üblich den Exitcode des gestarteten Skripts. Der <em>AusgabeVarPID</em>-Parameter von Run gibt die PID des Launchers zurück.</li>
+  <li>/Launch bewirkt, dass der Launcher sofort nach dem Start des Skripts beendet wird. Wenn /Launch nicht verwendet wird, muss der Launcher grundsätzlich davon ausgehen, dass sein übergeordneter Prozess so etwas wie <code>RunWait(PfadDesSkripts)</code> macht, was nicht wie erwartet funktionieren würde, wenn der Launcher vor dem gestarteten Skript beendet wird.</li>
+</ul>
+
+<h3 id="launcher-cmd">Befehlszeilennutzung</h3>
+<p>Der Launcher kann explizit über die Befehlszeile ausgeführt werden, falls z. B. eingestellt wurde, dass .ahk-Dateien den Launcher standardmäßig nicht verwenden sollen, oder um das Verhalten des Launchers genauer zu steuern. Wenn der Launcher kompiliert wurde, ist seine Nutzung im Grunde dieselbe wie die von AutoHotkey.exe, abgesehen von den zusätzlichen Launcher-Befehlszeilenoptionen. Ansonsten ist das Format für die Befehlszeilennutzung wie folgt:</p>
+<pre>AutoHotkeyUX.exe launcher.ahk [<i>Optionen</i>] [<i>Skript-Dateiname</i>] [<i>Skript-Parameter</i>]</pre>
+<p>Normalerweise werden vollständige Pfade und Anführungszeichen für den Pfad zu AutoHotkeyUX.exe und launcher.ahk verwendet, die sich im UX-Unterverzeichnis der AutoHotkey-Installation befinden. Es kann eine entsprechende Version von AutoHotkey32.exe oder AutoHotkey64.exe anstelle von AutoHotkeyUX.exe (die nur eine Kopie ist) verwendet werden.</p>
+<p><em>Optionen</em> können eine Mischung aus den <a href="Scripts.htm#cmd">Standardoptionen</a> und den folgenden Launcher-Optionen sein:</p>
+<table class="info">
+  <tr><th>Option</th><th>Bedeutung</th></tr>
+  <tr id="SlashLaunch">
+    <td>/Launch</td>
+    <td>Bewirkt, dass der Launcher sofort nach dem Start des Skripts beendet wird, anstatt im Hintergrund auf dessen Beendigung zu warten. Der Exitcode des Launchers ist die Prozess-ID (PID) des neuen Skriptprozesses.</td>
+  </tr>
+  <tr id="SlashRunWith">
+    <td>/RunWith <em>Kriterien</em></td>
+    <td>Spezifiziert zusätzliche <a href="#launcher-criteria">Kriterien</a> zur Bestimmung der EXE-Datei, die zum Starten des Skripts verwendet werden soll. Zum Beispiel <code>/RunWith UIA</code>.</td>
+  </tr>
+  <tr id="SlashWhich">
+    <td>/Which</td>
+    <td>
+      <p>Veranlasst den Launcher zu identifizieren, welchen Interpreter er verwenden würde, und gibt diesen zurück, anstatt das Skript auszuführen.</p>
+      <p>Der Exitcode des Launchers ist die Hauptversionsnummer (1 oder 2), wenn er über #Requires oder die Syntax (wenn die Syntaxerkennung aktiviert ist) identifiziert wurde, ansonsten 0.</p>
+      <p>Stdout erhält die folgenden UTF-8-Zeichenketten, die jeweils mit <code>`n</code> enden:</p>
+      <ul>
+        <li>Die Versionsnummer. Wenn #Requires erkannt wurde, ist dies die Nummer, die angegeben wurde, ohne "v". Ansonsten ist es ein Integer, der dem Exitcode entspricht, es sei denn, die Version wurde nicht erkannt, dann ist es 0, um anzugeben, dass der Benutzer gefragt worden wäre, oder 1 oder 2, um anzugeben, welche Version der Benutzer bevorzugt, wie in den Starteinstellungen konfiguriert.</li>
+        <li>Der Pfad der Interpreter-EXE-Datei, die verwendet werden würde, wenn eine gefunden wurde. Dies ist leer, wenn der Benutzer gefragt worden wäre oder keine kompatiblen Interpreter gefunden wurden.</li>
+        <li>Jede zusätzliche Befehlszeilenoption, die der Launcher einfügen würde, wie z. B. <code>/CP65001</code>.</li>
+      </ul>
+      <p>Zukünftig könnten weitere Zeilen zurückgegeben werden.</p>
+    </td>
+  </tr>
+</table>
 
 <h2 id="dash">Dash</h2>
 <p>Dash bietet Zugang zu Hilfsskripten und Dokumentation. Es kann nach der Installation über die "AutoHotkey"-Verknüpfung im Startmenü oder durch direktes Starten von UX\ui-dash.ahk im Installationsverzeichnis geöffnet werden. Momentan ist es nicht viel mehr als ein Menü mit den folgenden Menüpunkten, aber es könnte jederzeit erweitert werden, um Einstellmöglichkeiten für aktive Skripte oder andere praktische Funktionen bereitzustellen.</p>
