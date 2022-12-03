@@ -32,7 +32,7 @@ translateData = {
   "v1":"v2",
   "Change the version":"Version wechseln",
   "Edit this document on GitHub":"Dieses Dokument auf GitHub bearbeiten",
-  "https://github.com/Lexikos/AutoHotkey_L-Docs/edit/master/docs/":"https://github.com/ahkde/docs-v2/edit/master/",
+  "https://github.com/Lexikos/AutoHotkey_L-Docs/edit/v1/docs/":"https://github.com/ahkde/docs-v2/edit/master/",
   "Go back":"Eine Seite zurück",
   "Go forward":"Eine Seite vor",
   "Change the font size":"Schriftgröße ändern",

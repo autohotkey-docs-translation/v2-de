@@ -466,7 +466,7 @@ indexData = [
   ["DllCall","commands/DllCall.htm",2],
   ["double-deref","Variables.htm#deref"],["Doppelderefenzierung","Variables.htm#deref"],
   ["Download","commands/Download.htm",2],
-  ["DPI-Skalierung","objects/Gui.htm#DPIScale"],
+  ["DPI-Skalierung","misc/DPIScaling.htm"],
   ["Drag & Drop (GUI-Fenster)","objects/GuiOnEvent.htm#DropFiles"],
   ["drag the mouse","commands/MouseClickDrag.htm"],["Ziehen der Maus","commands/MouseClickDrag.htm"],
   ["Drive-Funktionen","commands/Drive.htm"],

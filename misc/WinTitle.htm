@@ -72,8 +72,9 @@
 <pre>WinActivate "ahk_class i)^ConsoleWindowClass$"</pre>
 
 <h3 id="ahk_id">ahk_id (Eindeutige ID / HWND)</h3>
+<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (Abkürzung für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel ändert.</p>
 <p>Verwenden Sie <code>ahk_id <var>HWND</var></code>, <code><var>HWND</var></code> (einen <a href="../Concepts.htm#numbers">Integer</a> ohne das ahk_id-Schlüsselwort) oder ein <a href="../Objects.htm">Object</a> mit einer HWND-Eigenschaft in <var>FensterTitel</var>, um ein Fenster oder ein Steuerelement anhand seiner eindeutigen ID zu identifizieren.</p>
-<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (Abkürzung für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel ändert.</p><p><a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> beeinflusst, ob das ahk_id-Kriterium versteckte nicht-untergeordnete Fenster erkennt (versteckte Steuerelemente hingegen werden immer erkannt). Versteckte Fenster werden immer erkannt, wenn ein gültiger <a href="../Concepts.htm#numbers">Integer</a> oder ein gültiges <a href="../Objects.htm">Object</a> übergeben wird.</p>
+<p><a href="../commands/DetectHiddenWindows.htm">DetectHiddenWindows</a> beeinflusst, ob das ahk_id-Kriterium versteckte nicht-untergeordnete Fenster erkennt (versteckte Steuerelemente hingegen werden immer erkannt). Es hat auch Einfluss darauf, ob versteckte Fenster, die durch eine HWND-Nummer (als Objekteigenschaft oder Integer) identifiziert werden, erkannt werden, aber nur, wenn es zusammen mit <a href="../commands/WinWait.htm">WinWait</a> oder <a href="../commands/WinWaitClose.htm">WinWaitClose</a> verwendet wird.</p>
 <p>Das ahk_id-Kriterium kann zudem mit weiteren Kriterien kombiniert werden, die das angegebene Fenster erfüllen muss. <code>WinExist("ahk_id " eineHWND " ahk_class " eineKlasse)</code> beispielsweise gibt <var>eineHWND</var> zurück, wenn das Fenster "erkannt" wird (gemäß DetectHiddenWindows) und dessen Fensterklasse mit der in <var>eineKlasse</var> enthaltene Zeichenkette übereinstimmt.</p>
 <p>Die ID eines Fensters wird üblicherweise per <a href="../commands/WinExist.htm">WinExist</a> oder <a href="../commands/WinGetID.htm">WinGetID</a> ermittelt. Die ID eines Steuerelements wird für gewöhnlich per <a href="../commands/ControlGetHwnd.htm">ControlGetHwnd</a>, <a href="../commands/MouseGetPos.htm">MouseGetPos</a> oder <a href="../commands/DllCall.htm">DllCall</a> ermittelt. <a href="../objects/Gui.htm">Gui</a> und <a href="../objects/GuiControl.htm">GuiControl</a>-Objekte haben eine <code>Hwnd</code>-Eigenschaft und können daher direkt in einem <var>FensterTitel</var>-Parameter verwendet werden.</p>
 <p>Die folgenden Beispiele agieren mit einem Fenster anhand einer eindeutigen ID, die in <var>VarMitID</var> gespeichert ist:</p>
@@ -139,23 +140,23 @@ if WinExist("ahk_class Notepad ahk_id " id)
 WinWait "Unbenannt - Editor"
 WinActivate <em>; Verwendet das von WinWait gefundene Fenster.</em></pre>
 
-<p>Das folgende Beispiel aktiviert und maximiert das Texteditor-Fenster, das mit der WinExist-Funktion darüber gefunden wurde:</p>
+<p>Das folgende Beispiel aktiviert und maximiert das von WinExist gefundene Texteditor-Fenster:</p>
 <pre>if WinExist("Unbenannt - Editor")
 {
     WinActivate <em>; Verwendet das von WinExist gefundene Fenster.</em>
     WinMaximize <em>; Das gleiche wie oben.</em>
     Send "Dies ist ein Text.{Enter}"
-    return
 }</pre>
 
-<p>Das folgende Beispiel kehrt via Return zurück, wenn der Taschenrechner nicht existiert, ansonsten wird der Taschenrechner aktiviert und an eine neue Position verschoben:</p>
+<p>Das folgende Beispiel aktiviert den von WinExist gefundenen Taschenrechner und verschiebt ihn auf eine neue Position:</p>
 <pre>if not WinExist("Rechner")
-    return
+{
+    <em>; ...</em>
+}
 else
 {
     WinActivate <em>; Verwendet das von WinExist gefundene Fenster.</em>
     WinMove 40, 40 <em>; Das gleiche wie oben.</em>
-    return
 }</pre>
 
 </body>
