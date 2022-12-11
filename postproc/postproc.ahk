@@ -30,7 +30,7 @@ Loop, target\docs\*.htm,, 1
 
     if (A_LoopFileFullPath = "target\docs\AutoHotkey.htm")
     {
-        content := RegExReplace(content, "<p>Eine deutsche &Uuml;bersetzung von <a href=""https://lexikos.github.io/v2/docs/"">https://lexikos.github.io/v2/docs/</a> (siehe <a href=""https://autohotkey.com/boards/viewtopic.php?f=9&amp;t=43"">hier</a> f&uuml;r mehr Details).</p>")
+        content := RegExReplace(content, "<p><a.*?</a></p>", "<p>Eine deutsche &Uuml;bersetzung von <a href=""https://lexikos.github.io/v2/docs/"">https://lexikos.github.io/v2/docs/</a> (siehe <a href=""https://autohotkey.com/boards/viewtopic.php?f=9&amp;t=43"">hier</a> f&uuml;r mehr Details).</p>")
     }
 
     ; add google analytics
