@@ -1,6 +1,7 @@
 ﻿#NoEnv
 SetBatchLines, -1
 SetWorkingDir, % A_ScriptDir "\.."
+FileEncoding, UTF-8-RAW
 
 SplitPath, A_WorkingDir, parentName
 FileGetTime, LastSaveTime, % parentName "-omegat.tmx"
@@ -17,7 +18,6 @@ Loop, target\docs\*.htm,, 1
     
     ; read content
     
-    FileEncoding, UTF-8-RAW
     FileRead, content_orig, % A_LoopFileLongPath
     content := content_orig
     
@@ -70,6 +70,13 @@ if (TotalProcessedFiles = 1)
 ErrorCount := CopyFilesAndFolders(A_ScriptDir "\target\*.*", "target", true)
 if (ErrorCount != 0)
     MsgBox % ErrorCount " files/folders could not be copied."
+
+; clean up v2/index.html
+
+FileRead, content, % "target\index.html"
+content := RegExReplace(content, "<script src=""/cdn-cgi/apps/head/.*?.js""></script>")
+content := RegExReplace(content, "<script defer src=.*?></script>")
+FileOpen("target\index.html", "w").Write(content).Close()
 
 ; create search index
 
