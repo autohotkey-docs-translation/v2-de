@@ -73,10 +73,10 @@ if (ErrorCount != 0)
 
 ; clean up v2/index.html
 
-FileRead, content, % "target\index.html"
-content := RegExReplace(content, "<script src=""/cdn-cgi/apps/head/.*?.js""></script>")
-content := RegExReplace(content, "<script defer src=.*?></script>")
-FileOpen("target\index.html", "w").Write(content).Close()
+; FileRead, content, % "target\index.html"
+; content := RegExReplace(content, "<script src=""/cdn-cgi/apps/head/.*?.js""></script>")
+; content := RegExReplace(content, "<script defer src=.*?></script>")
+; FileOpen("target\index.html", "w").Write(content).Close()
 
 ; create search index
 
