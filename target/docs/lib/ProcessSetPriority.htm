@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>ProcessSetPriority - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die ProcessSetPriority-Funktion ändert die Prioritätsstufe des ersten gefundenen Prozesses." />
+<meta name="ahk:equiv-v1" content="lib/Process.htm#Priority" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>ProcessSetPriority</h1>
+
+<p>Ändert die Prioritätsstufe des ersten gefundenen Prozesses.</p>
+
+<pre class="Syntax"><span class="func">ProcessSetPriority</span> Stufe <span class="optional">, PIDOderName</span></pre>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+    <dt>Stufe</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Geben Sie eines der folgenden Wörter oder Buchstaben an:</p>
+        <ul>
+            <li>Low (oder L)</li>
+            <li>BelowNormal (oder B)</li>
+            <li>Normal (oder N)</li>
+            <li>AboveNormal (oder A)</li>
+            <li>High (oder H)</li>
+            <li>Realtime (oder R)</li>
+        </ul>
+        <p>Beachten Sie, dass Prozesse, der nicht darauf abgestimmt ist, in Echtzeit (Realtime) zu laufen, die Systemstabilität reduzieren könnten, wenn sie auf diese Stufe gesetzt werden.</p>
+    </dd>
+    <dt>PIDOderName</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird der Prozess des Skripts selbst verwendet. Ansonsten können Sie entweder eine Nummer (die PID) oder einen Prozessnamen angeben:</p>
+        <p><strong>PID:</strong> Die Prozess-ID in Form einer Nummer zur eindeutigen Identifizierung eines Prozesses (diese Nummer ist nur gültig, solange es diesen Prozess gibt). Mit der <a href="Run.htm">Run</a>-Funktion kann die PID eines neu gestarteten Prozesses ermittelt werden. Im Vergleich dazu kann mit <a href="WinGetPID.htm">WinGetPID</a> die PID eines Fensters ermittelt werden. Mit <a href="ProcessExist.htm">ProcessExist</a> kann auch eine PID abgerufen werden.</p>
+        <p><strong>Name:</strong> Der Name eines Prozesses, den üblicherweise auch seine ausführbare Datei hat (ohne Pfad), z. B. notepad.exe oder winword.exe. Da ein Name mit mehreren laufenden Prozessen übereinstimmen kann, wird nur der erste Prozess einbezogen. Der Name ist nicht Groß-/Kleinschreibung-sensitiv.</p>
+    </dd>
+</dl>
+
+<h2 id="Return_Value">Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt die <a href="../misc/WinTitle.htm#ahk_pid">Prozess-ID (PID)</a> des angegebenen Prozesses zurück. Wenn ein passender Prozess nicht gefunden wird oder nicht manipuliert werden kann, wird 0 zurückgegeben.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Die aktuelle Prioritätsstufe eines Prozesses kann im Windows-Task-Manager eingesehen werden.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Run.htm">Run</a>, <a href="Process.htm">Process-Funktionen</a>, <a href="Win.htm">Win-Funktionen</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Startet den Texteditor, setzt seine Priorität auf "Hoch" und zeigt seine aktuelle PID.</p>
+<pre>Run "notepad.exe", , , &amp;NeuePID
+ProcessSetPriority "High", NeuePID
+MsgBox "Die PID des neu gestarteten Texteditors ist " NeuePID</pre>
+</div>
+
+<div class="ex" id="ExHotkey">
+<p><a class="ex_number" href="#ExHotkey"></a> Drücken Sie einen Hotkey, um die Priorität des Prozesses des aktiven Fensters zu ändern.</p>
+<pre>#z:: <em>; WIN+Z-Hotkey</em>
+{
+    aktive_pid := WinGetPID("A")
+    aktiver_titel := WinGetTitle("A")
+    MeineGui := Gui(, "Priorität setzen")
+    MeineGui.Add("Text",, "
+    (
+        Drücke ESCAPE zum Abbrechen, oder klicke doppelt auf einen
+        neuen Prioritätslevel für das folgende Fenster:
+    )")
+    MeineGui.Add("Text", "wp", aktiver_titel)
+    LB := MeineGui.Add("ListBox", "r5 Choose1", ["Normal","High","Low","BelowNormal","AboveNormal"])
+    LB.OnEvent("DoubleClick", SetzePriorität)
+    MeineGui.Add("Button", "default", "OK").OnEvent("Click", SetzePriorität)
+    MeineGui.OnEvent("Escape", (*) =&gt; MeineGui.Destroy())
+    MeineGui.OnEvent("Close", (*) =&gt; MeineGui.Destroy())
+    MeineGui.Show()
+
+    SetzePriorität(*)
+    {
+        MeineGui.Destroy()
+        if ProcessSetPriority(LB.Text, aktive_pid)
+            MsgBox "Erfolg: Die Priorität wurde auf " LB.Text " gesetzt."
+        else
+            MsgBox "Fehler: Die Priorität konnte nicht auf " LB.Text " gesetzt werden."
+    }
+}</pre>
+</div>
+
+</body>
+</html>

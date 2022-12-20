@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>WinGetClientPos - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die WinGetClientPos-Funktion ermittelt die Position und Größe des Clientbereichs eines bestimmten Fensters." />
+<meta name="ahk:equiv-v1" content="lib/WinGetPos.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>WinGetClientPos</h1>
+
+<p>Ermittelt die Position und Größe des Clientbereichs eines bestimmten Fensters.</p>
+
+<pre class="Syntax"><span class="func">WinGetClientPos</span> <span class="optional">&amp;X, &amp;Y, &amp;Breite, &amp;Höhe, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>&amp;X, &amp;Y</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#variable-references">VarRef</a></p>
+    <p>Referenzen, die auf Ausgabevariablen verweisen, in denen die X- und Y-Koordinate der oberen linken Ecke des Clientbereichs gespeichert werden sollen. Lässt man diese Parameter weg, werden die entsprechenden Werte nicht gespeichert.</p>
+  </dd>
+
+  <dt>&amp;Breite, &amp;Höhe</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#variable-references">VarRef</a></p>
+    <p>Referenzen, die auf Ausgabevariablen verweisen, in denen die Breite und Höhe des Clientbereichs gespeichert werden sollen. Lässt man diese Parameter weg, werden die entsprechenden Werte nicht gespeichert.</p>
+  </dd>
+
+  <dt>FensterTitel</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
+    <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
+  </dd>
+
+  <dt>FensterText</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
+  </dd>
+
+  <dt>IgnoriereTitel</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
+  </dd>
+
+  <dt>IgnoriereText</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Der Clientbereich ist der Teil des Fensters, der Steuerelemente enthalten kann. Dieser Bereich umfasst alles, außer Fensterleiste, Menüleiste (sofern es sich um die Standardversion handelt) und Rahmen. Die Position und Größe des Clientbereichs haben den Vorteil, dass sie weniger abhängig von der Version oder vom Design des Betriebssystems sind, als es bei <a href="WinGetPos.htm">WinGetPos</a> der Fall ist.</p>
+<p>Die Rückgabewerte eines minimierten Fensters variieren eventuell je nach Betriebssystem und Konfiguration, aber in der Regel haben die X- und Y-Koordinate einen Wert von -32000 und Breite und Höhe einen Wert von 0.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="WinGetPos.htm">WinGetPos</a>, <a href="WinMove.htm">WinMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="ControlGetText.htm">ControlGetText</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Ermittelt und meldet die Position und Größe des Clientbereichs des Taschenrechners.</p>
+<pre>WinGetClientPos &amp;X, &amp;Y, &amp;W, &amp;H, "Rechner"
+MsgBox "Der Clientbereich des Rechners befindet sich auf " X "," Y " und hat eine Größe von " W "x" H</pre>
+</div>
+
+<div class="ex" id="ExA">
+<p><a class="ex_number" href="#ExA"></a> Ermittelt und meldet die Position des Clientbereichs des aktiven Fensters.</p>
+<pre>WinGetClientPos &amp;X, &amp;Y,,, "A"
+MsgBox "Der Clientbereich des aktiven Fensters befindet sich auf " X "," Y</pre>
+</div>
+
+<div class="ex" id="ExLastFound">
+<p><a class="ex_number" href="#ExLastFound"></a> Wenn der Texteditor vorhanden ist, ermittle und melde die Position seines Clientbereichs.</p>
+<pre>if WinExist("Unbenannt - Editor")
+{
+    WinGetClientPos &amp;Xpos, &amp;Ypos <em>; Verwendet das von WinExist gefundene Fenster.</em>
+    MsgBox "Der Clientbereich des Editors befindet sich auf " Xpos "," Ypos
+}</pre>
+</div>
+
+</body>
+</html>

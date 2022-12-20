@@ -7,7 +7,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="static/theme.css" rel="stylesheet" type="text/css" />
 <script src="static/content.js" type="text/javascript"></script>
-<script src="static/ga4.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -31,7 +30,7 @@
 <p>Innerhalb einer Zeichenkette (Textwert) ist der numerische Zeichencode und die Größe (in Byte) jedes einzelnen Zeichens von der <a href="Concepts.htm#string-encoding">Codierung</a> der Zeichenkette abhängig. Solche Details sind in der Regel nur für Skripte interessant, die folgende Aktionen durchführen:</p>
 <ul>
   <li>Zeichenketten via <a href="#DllCall">DllCall</a> an externe Funktionen übergeben.</li>
-  <li>Zeichenketten via <a href="commands/PostMessage.htm">PostMessage</a> oder <a href="commands/SendMessage.htm">SendMessage</a> übergeben.</li>
+  <li>Zeichenketten via <a href="lib/PostMessage.htm">PostMessage</a> oder <a href="lib/SendMessage.htm">SendMessage</a> übergeben.</li>
   <li>Zeichenketten direkt via <a href="#NumPutGet">NumPut/NumGet</a> manipulieren.</li>
   <li>Pufferspeicher via <a href="#Buffer">Buffer</a> reservieren, um darin eine bestimmte Anzahl von Zeichen zu speichern.</li>
 </ul>
@@ -41,10 +40,10 @@
 <p class="Indent"><em>Semantischer Hinweis</em>: Technisch gesehen sind einige Unicode-Zeichen durch <i>zwei</i> 16-Bit-Code-Einheiten vertreten, auch allgemein bekannt als "Ersatzzeichenpaar" (surrogate pair). Ebenso enthalten einige <a href="https://msdn.microsoft.com/de-de/library/dd317752.aspx">ANSI-Zeichensätze</a> (allgemein bekannt als <a href="https://msdn.microsoft.com/de-de/library/dd317794.aspx">Doppel-Byte-Zeichensätze</a>) einige Doppel-Byte-Zeichen. Allerdings werden solche aus praktischen Gründen fast immer als zwei einzelne Einheiten (bzw. Zeichen) behandelt.</p>
 
 <h3 id="Buffer">Puffer</h3>
-<p>Achten Sie bei der Reservierung eines Pufferspeichers via <a href="objects/Buffer.htm">Buffer</a> darauf, dass Sie die korrekte Anzahl von <em>Bytes</em> für die jeweils benötigte Codierung angeben. Zum Beispiel:</p>
+<p>Achten Sie bei der Reservierung eines Pufferspeichers via <a href="lib/Buffer.htm">Buffer</a> darauf, dass Sie die korrekte Anzahl von <em>Bytes</em> für die jeweils benötigte Codierung angeben. Zum Beispiel:</p>
 <pre>ansi_buf  := Buffer(Kapazität_in_Zeichen)
 utf16_buf := Buffer(Kapazität_in_Zeichen * 2)</pre>
-<p>Wenn eine ANSI- oder UTF-8-Zeichenkette mit <a href="commands/StrPut.htm">StrPut</a> in den Pufferspeicher geschrieben wird, sollten Sie keinesfalls <a href="commands/StrLen.htm">StrLen</a> zur Bestimmung der Puffergröße verwenden, da die ANSI- oder UTF-8-Länge von der nativen Länge (UTF-16) abweichen kann. Verwenden Sie stattdessen <a href="commands/StrPut.htm#ExEncoding">StrPut</a>, um die erforderliche Puffergröße zu berechnen. Zum Beispiel:</p>
+<p>Wenn eine ANSI- oder UTF-8-Zeichenkette mit <a href="lib/StrPut.htm">StrPut</a> in den Pufferspeicher geschrieben wird, sollten Sie keinesfalls <a href="lib/StrLen.htm">StrLen</a> zur Bestimmung der Puffergröße verwenden, da die ANSI- oder UTF-8-Länge von der nativen Länge (UTF-16) abweichen kann. Verwenden Sie stattdessen <a href="lib/StrPut.htm#ExEncoding">StrPut</a>, um die erforderliche Puffergröße zu berechnen. Zum Beispiel:</p>
 <pre>required_bytes := StrPut(source_string, "cp0")
 ansi_buf := Buffer(required_bytes)
 StrPut(source_string, ansi_buf)</pre>
@@ -69,7 +68,7 @@ DllCall("DeleteFile", "Str", DateiName)</pre>
   <li>Wenn die Funktion einen bestimmten Zeichenkettentyp als Eingabevariable akzeptiert, könnte das Skript jeweils den passenden Zeichenkettentyp verwenden:
   <pre>DllCall("DeleteFileA", "AStr", DateiName)
 DllCall("DeleteFileW", "WStr", DateiName)</pre></li>
-  <li>Wenn die Funktion einen Zeichenkettenparameter hat, der für die Ausgabe verwendet wird, muss das Skript Pufferspeicher reservieren, wie <a href="#Buffer">oben</a> beschrieben, und ihn an die Funktion übergeben. Wenn der Parameter eine Eingabevariable akzeptiert, muss das Skript die eingehende Zeichenkette zudem in das passende Format umwandeln; verwenden Sie hierfür <a href="commands/StrPut.htm">StrPut</a>.</li>
+  <li>Wenn die Funktion einen Zeichenkettenparameter hat, der für die Ausgabe verwendet wird, muss das Skript Pufferspeicher reservieren, wie <a href="#Buffer">oben</a> beschrieben, und ihn an die Funktion übergeben. Wenn der Parameter eine Eingabevariable akzeptiert, muss das Skript die eingehende Zeichenkette zudem in das passende Format umwandeln; verwenden Sie hierfür <a href="lib/StrPut.htm">StrPut</a>.</li>
 </ol>
 
 <h3 id="NumPutGet">NumPut / NumGet</h3>
@@ -85,9 +84,9 @@ NumPut(type_of_char, <i>n</i>th_char, buffer_or_address, (<i>n</i>-1)*size_of_ch
 <ul>
   <li>Offset-Berechnung bei Strukturfeldern, die ein oder mehr Pointer enthalten.</li>
   <li>Größenberechnung bei Strukturen, die ein oder mehr Pointer enthalten.</li>
-  <li>Typennamen, die mit <a href="commands/DllCall.htm">DllCall</a>, <a href="commands/NumPut.htm">NumPut</a> oder <a href="commands/NumGet.htm">NumGet</a> verwendet werden.</li>
+  <li>Typennamen, die mit <a href="lib/DllCall.htm">DllCall</a>, <a href="lib/NumPut.htm">NumPut</a> oder <a href="lib/NumGet.htm">NumGet</a> verwendet werden.</li>
 </ul>
-<p>Mit <a href="Variables.htm#PtrSize">A_PtrSize</a> kann man Größe und Offset berechnen. Je nachdem wo es angebracht ist, kann man den <a href="commands/DllCall.htm">Ptr</a>-Typ bei DllCall, NumPut und NumGet verwenden.</p>
+<p>Mit <a href="Variables.htm#PtrSize">A_PtrSize</a> kann man Größe und Offset berechnen. Je nachdem wo es angebracht ist, kann man den <a href="lib/DllCall.htm">Ptr</a>-Typ bei DllCall, NumPut und NumGet verwenden.</p>
 <p>Beachten Sie, dass der Offset eines Felds üblicherweise die Gesamtgröße aller vorherigen Felder ist. Beachten Sie auch, dass Handles (einschließlich Typen wie HWND und HBITMAP) prinzipiell Pointer-Typen sind.</p>
 <pre><em>/*
   typedef struct _PROCESS_INFORMATION {

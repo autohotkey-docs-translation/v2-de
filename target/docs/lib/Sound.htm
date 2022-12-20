@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>Sound-Funktionen | AutoHotkey v2</title>
+<meta name="description" content="Nutzungsdetails zu den SoundGet- und SoundSet-Funktionen." />
+<meta name="ahk:equiv-v1" content="lib/SoundSet.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>Sound-Funktionen</h1>
+
+<p>Betrifft:</p>
+<ul>
+  <li><a href="SoundGetVolume.htm">SoundGetVolume</a> / <a href="SoundSetVolume.htm">SoundSetVolume</a></li>
+  <li><a href="SoundGetMute.htm">SoundGetMute</a> / <a href="SoundSetMute.htm">SoundSetMute</a></li>
+  <li><a href="SoundGetName.htm">SoundGetName</a></li>
+  <li><a href="SoundGetInterface.htm">SoundGetInterface</a></li>
+</ul>
+<p>Andere Sound-Funktionen:</p>
+<ul>
+  <li><a href="SoundBeep.htm">SoundBeep</a></li>
+  <li><a href="SoundPlay.htm">SoundPlay</a></li>
+</ul>
+
+<h2 id="devices">Endpunktgeräte</h2>
+<p>Die "Geräte", auf die die SoundGet- und SoundSet-Funktionen verweisen, sind <em>Audio-Endpunktgeräte</em>. Ein einzelner Gerätetreiber oder ein physisches Gerät hat oft mehrere Endpunkte, z. B. für verschiedene Arten von Aus- und Eingängen. Zum Beispiel:</p>
+<table class="info">
+  <tr><th>Name</th><th abbr="Beschr">Beschreibung</th></tr>
+  <tr><td>Lautsprecher (Beispiel HD Audio)</td><td>Die analogen Hauptausgänge dieses Geräts (verwendet mehrere Buchsen bei Surround-Sound).</td></tr>
+  <tr><td>Digital Output (Beispiel HD Audio)</td><td>Ein optischer oder koaxialer Digitalausgang.</td></tr>
+  <tr><td>Mikrofon (Beispiel HD Audio)</td><td>Erfasst Audioeingaben über eine Mikrofonbuchse.</td></tr>
+  <tr><td>Stereo Mix (Beispiel HD Audio)</td><td>Erfasst alles, was am Lautsprecher-Endpunkt erzeugt wird.</td></tr>
+</table>
+<p>Gerätenamen bestehen typischerweise aus einem Endpunktnamen wie "Lautsprecher", gefolgt vom Namen des Audiotreibers in Klammern. Skripte können den vollständigen Namen oder nur den beginnenden Teil des Namens verwenden, wie z. B. "Mikro" oder "Mikrofon". Ein Audiotreiber hat einen festen Namen, wohingegen die Endpunktnamen jederzeit von einem Administrator via Sound-Systemsteuerung geändert werden können.</p>
+<p id="mmsys">Eine Auflistung aller Audiogeräte finden Sie in der Sound-Systemsteuerung, die durch Ausführen von <code>mmsys.cpl</code> via Eingabeaufforderung, Ausführen-Dialogfenster (<kbd>Win</kbd>+<kbd>R</kbd>) oder <a href="Run.htm">Run</a>-Funktion geöffnet werden kann. Standardmäßig listet die Systemsteuerung nur Geräte auf, die aktiviert und angeschlossen sind (falls vorhanden), was aber über das Rechtsklickmenü geändert werden kann. AutoHotkey erkennt nicht-angeschlossene Geräte, aber keine deaktivierten Geräte.</p>
+
+<h2 id="components">Komponenten</h2>
+<p>Komponenten eines Audiogeräts sind zum Beispiel solche, die im Pegel-Tab des Eigenschaftsfensters aufgelistet sind.</p>
+<img src="../static/sound_levels.png" alt="Pegel" />
+<p>Ganz oben befinden sich die Master-Regler, gefolgt von den ersten vier Komponenten: Microphone, FrontMic, Line In, und Side. All diese Komponenten haben ihre eigenen Lautstärke- und Stummschaltungsregler, mit Ausnahme der vierten Komponente, die nur einen Lautstärkeregler aufweist.</p>
+<p>Das Eigenschaftsfenster eines Audiogeräts kann via <a href="#mmsys">Sound-Systemsteuerung</a> geöffnet werden.</p>
+<p>Audiotreiber sind in der Lage, andere Regler wie Bass und Höhen sichtbar zu machen. Allerdings haben gewöhnliche Audiotreiber üblicherweise nur Lautstärke- und Stummschaltungsregler oder überhaupt keine Komponenten. Lautstärke- und Stummschaltungsregler werden direkt über <a href="SoundGetVolume.htm">SoundGetVolume</a>, <a href="SoundSetVolume.htm">SoundSetVolume</a>, <a href="SoundGetMute.htm">SoundGetMute</a> und <a href="SoundSetMute.htm">SoundSetMute</a> unterstützt. Alle anderen Regler werden nur indirekt unterstützt, nämlich über <a href="SoundGetInterface.htm">SoundGetInterface</a> und <a href="ComCall.htm">ComCall</a>.</p>
+
+<h3 id="Advanced_Details">Fortgeschrittene Details</h3>
+<p>Komponenten werden über die <a href="https://docs.microsoft.com/de-de/windows/win32/coreaudio/devicetopology-api">DeviceTopology API</a> ausfindig gemacht, die ein Diagramm von <em>Konnektoren</em> und <em>Untereinheiten</em> aufzeigt. Jede der oben gezeigten Komponenten hat einen Konnektor - genau dieser Konnektor definiert den Namen der Komponente. Jeder Regler (z. B. Lautstärke oder Stummschaltung) wird von einer Untereinheit repräsentiert, die zwischen dem Konnektor und dem Endpunkt liegt. Daten "fließen" vom oder zum Konnektor und werden geändert, während sie durch jede Untereinheit fließen, z. B. um die Lautstärke zu ändern oder alle Klänge zu unterdrücken (stumm zu schalten).</p>
+<p>Die SoundGet- und SoundSet-Funktionen identifizieren Komponenten, indem sie das <em>Gerätetopologie</em>-Diagramm schrittweise durchgehen und Konnektoren mit dem angegebenen Namen zählen (oder alle Konnektoren, wenn kein Name angegeben ist). Sobald der passende Konnektor gefunden wurde, wird ein Regler-Interface (z. B. IAudioVolumeLevel oder IAudioMute) abgerufen, indem jede Untereinheit auf diesem spezifischen Zweig des Diagramms abgefragt wird, beginnend beim nächstmöglichen Konnektor.</p>
+<p>Untereinheiten, die für mehrere Konnektoren gelten, werden ausgeschlossen - wie z. B. Untereinheiten, die für die Master-Lautstärke/Stummschaltung-Regler zuständig sind. Ein Konnektor wird gezählt, wenn (und nur wenn) er mindestens eine eigene Untereinheit hat, auch wenn die Untereinheit nicht vom gewünschten Typ ist.</p>
+<p>In der Praxis führt dies dazu, dass die Verfügbarkeit und Reihenfolge der Komponenten identisch zur Auflistung im <a href="#components">Pegel-Tab</a> sind. Dieser Vorgang basiert jedoch auf Beobachtungen, Versuch und Irrtum, so dass die Richtigkeit nicht zu 100 % gewährleistet werden kann.</p>
+
+<h2 id="Common_Parameters">Allgemeine Parameter</h2>
+<dl>
+
+  <dt id="component">Komponente</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Dies kann eines der folgenden Dinge sein:</p>
+    <ul>
+      <li>Die Indexnummer einer <a href="#components">Komponente</a>, wobei 1 die erste Komponente ist.</li>
+      <li>Der vollständige Anzeigename einer Komponente (nicht-Groß-/Kleinschreibung-sensitiv).</li>
+      <li>Wie oben, aber gefolgt von einem Doppelpunkt und einem Integer, wobei 1 das erste Vorkommen einer Komponente mit diesem Namen ist. <code>"Line In:2"</code> beispielsweise verwendet die zweite Komponente namens "Line In". Dies ist nur notwendig, wenn <em>Komponente</em> ansonsten mehrdeutig wäre, z. B. wenn mehrere Komponenten mit dem gleichen Namen existieren oder der Anzeigename leer ist, ein Integer ist oder einen Doppelpunkt enthält.</li>
+      <li>Wenn dieser Parameter weggelassen wird oder leer ist, agiert die Funktion mit den Master-Lautstärke/Stummschaltung-Reglern oder einem Interface, das via <a href="https://docs.microsoft.com/de-de/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdevice-activate">IMMDevice::Activate</a> zurückgegeben werden kann.</li>
+    </ul>
+    <p>Wenn nur eine Indexnummer angegeben ist, werden die Anzeigenamen ignoriert. Zum Beispiel verwenden <code>1</code>, <code>"1"</code> und <code>":1"</code> die erste Komponente unabhängig vom Namen, während <code>""</code> auf die Master-Regler zugreift.</p>
+    <p>Wenn das Audiogerät die angegebene <em>Komponente</em> nicht besitzt, wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst.</p>
+  </dd>
+
+  <dt id="device">Gerät</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Dies kann eines der folgenden Dinge sein:</p>
+    <ul>
+      <li>Eine Nummer (Integer) zwischen 1 und Gesamtanzahl an unterstützten Geräten.</li>
+      <li>Der Anzeigename eines Geräts; entweder der vollständige Name oder nur der beginnende Teil des Namens (nicht-Groß-/Kleinschreibung-sensitiv). Zum Beispiel <code>"Lautsprecher"</code> oder <code>"Lautsprecher (Beispiel HD Audio)"</code>.</li>
+      <li>Wie oben, aber gefolgt von einem Doppelpunkt und einem Integer, wobei 1 das erste Gerät mit übereinstimmendem Namen ist. <code>"Lautsprecher:2"</code> beispielsweise identifiziert das zweite Gerät, dessen Name mit "Lautsprecher" beginnt. Dies ist nur notwendig, wenn <em>Gerät</em> ansonsten mehrdeutig wäre, z. B. wenn mehrere Geräte mit dem gleichen Namen existieren oder der Anzeigename einen Doppelpunkt enthält.</li>
+      <li>Wenn dieser Parameter weggelassen wird oder leer ist, wird standardmäßig das als Standard festgelegte Wiedergabegerät des Systems verwendet (was nicht unbedingt Gerät 1 ist).</li>
+    </ul>
+    <p>Das <a href="#ExSoundcard">Soundkartenanalyse-Skript</a> könnte dabei helfen, welcher Name und/oder welche Nummer verwendet werden soll.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExSoundcard">
+<p><a class="ex_number" href="#ExSoundcard"></a> Soundkartenanalyse. Das folgende Skript kann verwendet werden, um die Namen der verfügbaren Audiogeräte und Komponenten zu ermitteln und herauszufinden, ob das Gerät oder die Komponente Lautstärke- und/oder Stummschaltungsregler unterstützt. Es zeigt die Ergebnisse in einer einfachen ListView an. Die aktuellen Lautstärke- und Stummschaltungseinstellungen werden nur angezeigt, wenn sie abgerufen werden können, aber werden nicht in Echtzeit aktualisiert.</p>
+<pre filename="soundcard.ahk">
+scGui := Gui(, "Audiokomponenten")
+scLV := scGui.Add('ListView', "w600 h400"
+    , ["Komponente", "#", "Gerät", "Lautstärke", "Stumm"])
+
+devMap := Map()
+
+loop
+{
+    <em>; Bei jedem Schleifendurchlauf versuchen, das entsprechende Gerät abzurufen.</em>
+    try
+        devName := SoundGetName(, dev := A_Index)
+    catch  <em>; Keine weiteren Geräte.</em>
+        break
+    
+    <em>; Namen mit ":index" bei Bedarf qualifizieren.</em>
+    devName := Qualify(devName, devMap, dev)
+    
+    <em>; Master-Lautstärke/Stummschaltung-Einstellung abrufen, wenn möglich.</em>
+    vol := mute := ""
+    try vol := Round(SoundGetVolume( , dev), 2)
+    try mute := SoundGetMute( , dev)
+    
+    <em>; Die Master-Einstellungen nur anzeigen, wenn mindestens eine abgerufen wurde.</em>
+    if vol != "" || mute != ""
+        scLV.Add("", "", dev, devName, vol, mute)
+    
+    <em>; Für jede Komponente zunächst ihren Namen abrufen.</em>
+    cmpMap := Map()
+    
+    loop
+    {
+        try
+            cmpName := SoundGetName(cmp := A_Index, dev)
+        catch
+            break
+        <em>; Lautstärke/Stummschaltung-Einstellung dieser Komponente abrufen, wenn
+        ; möglich.</em>
+        vol := mute := ""
+        try vol := Round(SoundGetVolume(cmp, dev), 2)
+        try mute := SoundGetMute(cmp, dev)
+        <em>; Komponente auch anzeigen, wenn sie keine Lautstärke oder Stummschaltung
+        ; unterstützt, da sie vielleicht andere Regler via SoundGetInterface()
+        ; unterstützt.</em>
+        scLV.Add("", Qualify(cmpName, cmpMap, A_Index), dev, devName, vol, mute)
+    }
+}
+
+loop 5
+    scLV.ModifyCol(A_Index, 'AutoHdr Logical')
+scGui.Show()
+
+<em>; Vollständige Namen mit ":index" bei Bedarf qualifizieren.</em>
+Qualify(name, names, overallIndex)
+{
+    if name = ''
+        return overallIndex
+    key := StrLower(name)
+    index := names.Has(key) ? ++names[key] : (names[key] := 1)
+    return (index &gt; 1 || InStr(name, ':') || IsInteger(name)) ? name ':' index : name
+}</pre>
+</div>
+
+</body>
+</html>

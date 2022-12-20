@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>For Loop - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die For-Schleifenanweisung führt für jedes Schlüssel-Wert-Paar eines Objekts eine Reihe von Codezeilen wiederholt aus." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>For-Schleife</h1>
+
+<p>Führt für jedes Schlüssel-Wert-Paar eines Objekts eine Reihe von Funktionen wiederholt aus.</p>
+
+<pre class="Syntax"><span class="func">For</span> Wert1 <span class="optional">, Wert2</span> in Ausdruck</pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>Wert1</dt>
+  <dt>Wert2</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#variables">Variable</a></p>
+    <p>Die Variablen, in denen die Rückgabewerte vom Enumerator zu Beginn jeder Iteration (Wiederholung) gespeichert werden sollen. Die Beschaffenheit dieser Werte wird vom Enumerator definiert, der via <em>Ausdruck</em> ermittelt wird. Diese Variablen können nicht <a href="../Language.htm#dynamic-variables">dynamisch</a> sein.</p>
+    <p>Wenn die Schleife unterbrochen wird oder das Ende erreicht, werden die vorherigen Werte von diesen Variablen wiederhergestellt. Wenn eine Schleifenvariable ein <a href="../Functions.htm#ByRef">ByRef-Parameter</a> ist, bleibt die Zielvariable von der Schleife unbeeinflusst. <a href="../Functions.htm#closures">Closures</a>, die die Variable referenzieren (falls lokal), sind ebenfalls unbeeinflusst und sehen nur den Wert, den sie außerhalb der Schleife hatte.</p>
+    <p class="warning"><strong>Hinweis:</strong> Selbst wenn sie innerhalb des Schleifenkörpers definiert ist, kann eine verschachtelte Funktion, die auf eine Schleifenvariable verweist, den Wert der aktuellen Iteration nicht sehen oder ändern. Übergeben Sie stattdessen die Variable explizit oder <a href="Func.htm#Bind">binden</a> Sie ihren Wert an einen Parameter.</p>
+    <p>Es werden bis zu 19 Variablen unterstützt, sofern vom Enumerator unterstützt.</p>
+    <p>Variablen können weggelassen werden. <code>for , Wert in meinMap</code> beispielsweise ruft den Enumerator von <em>meinMap</em> nur mit seinem zweiten Parameter auf und lässt den ersten Parameter weg. Wenn der Enumerator benutzerdefiniert ist und der Parameter ein Pflichtparameter ist, wird wie üblich eine Ausnahme ausgelöst. Die an <a href="../Objects.htm#__Enum">__Enum</a> übergebene Parameteranzahl ist 0, wenn keine Variablen oder Kommas vorhanden sind; ansonsten ist sie 1 plus die Anzahl der vorhandenen Kommas.</p>
+  </dd>
+
+  <dt>Ausdruck</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Ein <a href="../Variables.htm#Expressions">Ausdruck</a>, dessen Ergebnis ein enumerierbares Objekt ist, oder eine Variable, die ein enumerierbares Objekt enthält.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Die Parameterliste kann optional mit runden Klammern umschlossen werden. Zum Beispiel: <code>for (Wert in MeinArray)</code></p>
+<p>Das Enumerieren läuft wie folgt ab:</p>
+<ul>
+  <li>Vor Beginn der Schleife wird <i>Ausdruck</i> ausgewertet, um das Zielobjekt zu bestimmen.</li>
+  <li>Die <code>__Enum</code>-Methode des Objekts wird aufgerufen, um ein <a href="Enumerator.htm"><i>Enumerator</i></a>-Objekt abzurufen. Wenn es keine derartige Methode gibt, wird das Objekt selbst als Enumerator-Objekt vermutet.</li>
+  <li>Zu Beginn jeder Iteration wird der Enumerator <a href="Enumerator.htm#Call">aufgerufen</a>, um den nächsten Wert oder das nächste Wertepaar abzurufen. Wenn der Enumerator False (0 oder eine leere Zeichenkette) zurückgibt, wird die Schleife terminiert.</li>
+</ul>
+<p>Das folgende Beispiel zeigt, wie eine For-Schleife ungefähr abläuft:</p>
+<pre>_enum := <i>Ausdruck</i>
+try _enum := _enum.__Enum(2)
+while _enum(&amp;Wert1, &amp;Wert2)
+{
+    ...
+}
+</pre>
+<p>Im Code oben wird eine Ausnahme ausgelöst, wenn <em>Ausdruck</em> oder __Enum einen Wert zurückgibt, der nicht aufgerufen werden kann.</p>
+<p>Beim Enumerieren von Eigenschaften, Methoden oder Arrayelementen sollte man grundsätzlich darauf verzichten, Elemente dieser Art einzufügen oder zu entfernen. Würde man dies tun, kann es vorkommen, dass einige Elemente übersprungen oder mehrfach enumeriert werden. Eine Möglichkeit, dies zu umgehen, wäre es, eine Liste mit Elementen zu erstellen, die entfernt werden sollen, und danach eine zweite Schleife zu verwenden, um die Elemente nach dem ersten Schleifendurchlauf zu entfernen.</p>
+<p>Nach einer For-Schleife erfolgt üblicherweise ein <a href="Block.htm">Block</a> (eine Sammlung von Anweisungen), der den <em>Schleifenkörper</em> definiert. Eine Schleife mit nur einer einzigen Anweisung benötigt keinen Block (ein "if" und das dazugehörige "else" werden hierbei als Einzelanweisung angesehen). Optional kann der "One True Brace Style" (OTB) angewendet werden, um die geschweifte Startklammer auf dieselbe Zeile statt darunter zu setzen. Zum Beispiel: <code>for x, y in z {</code>.</p>
+<p>Diese und jede andere Schleife in AutoHotkey kann auf Hilfsmittel wie <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> zurückgreifen.</p>
+<p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung erfolgen, die ausgeführt wird, wenn die Schleife null Iterationen hatte.</p>
+
+<h2 id="COM_Objects">COM-Objekte</h2>
+<p>Da <i>Wert1</i> und <i>Wert2</i> direkt an den Enumerator übergeben werden, hängen die zugewiesenen Werte davon ab, welche Art von Objekt enumeriert wird. Handelt es sich um ein COM-Objekt, enthält <i>Wert1</i> den Rückgabewert von <a href="https://msdn.microsoft.com/de-de/library/ms221369.aspx">IEnumVARIANT::Next()</a> und <i>Wert2</i> eine Zahl, die seinen <a href="https://msdn.microsoft.com/de-de/library/cc237865.aspx">Variantentyp</a> repräsentiert. Wenn es zum Beispiel mit einem <a href="https://msdn.microsoft.com/de-de/library/x4k5wbx4.aspx">Scripting.Dictionary</a>-Objekt genutzt wird, enthält jedes <i>Wert1</i> einen Schlüssel aus dem Dictionary und <i>Wert2</i> eine 8 für Zeichenketten und eine 3 für Integer. Auf der <a href="ComObjType.htm">ComObjType</a>-Seite finden Sie eine Auflistung aller Typennummern.</p>
+<p>Beim Enumerieren eines <a href="ComObjArray.htm">SafeArrays</a> enthält <i>Wert1</i> das aktuelle Element und <i>Wert2</i> seinen Variantentyp.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="Enumerator.htm">Enumerator-Objekt</a>, <a href="Object.htm#OwnProps">OwnProps</a>, <a href="While.htm">While-Schleife</a>, <a href="Loop.htm">Loop</a>, <a href="Until.htm">Until</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Listet die eigenen Eigenschaften eines Objekts auf.</p>
+<pre>Farben := {rot: 0xFF0000, blau: 0x0000FF, grün: 0x00FF00}
+<em>; "Farben" könnte direkt mit dem obigen Ausdruck ersetzt werden:</em>
+s := ""
+for k, v in Farben.OwnProps()
+    s .= k "=" v "`n"
+MsgBox s
+</pre>
+</div>
+
+<div class="ex" id="ExCOM">
+<p><a class="ex_number" href="#ExCOM"></a> Listet alle offenen Explorer- und Internet-Explorer-Fenster auf, unter Verwendung des <a href="https://docs.microsoft.com/de-de/windows/win32/shell/shell">Shell</a>-Objekts.</p>
+<pre>windows := ""
+for window in ComObject("Shell.Application").Windows
+    windows .= window.LocationName " :: " window.LocationURL "`n"
+MsgBox windows</pre>
+</div>
+
+<div class="ex" id="ExFibF">
+<p><a class="ex_number" href="#ExFibF"></a> Definiert einen Enumerator als <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a>. Gibt unendlich lang die Zahlen der Fibonacci-Folge zurück, bis die Schleife unterbrochen wird.</p>
+<pre>for n in FibF()
+    if MsgBox("#" A_Index " = " n "`nWeiter?",, "y/n") = "No"
+        break
+
+FibF() {
+    a := 0, b := 1
+    return (&amp;n) =&gt; (
+        n := c := b, b += a, a := c,
+        true
+    )
+}</pre>
+</div>
+
+<div class="ex" id="ExFibC">
+<p><a class="ex_number" href="#ExFibC"></a> Definiert einen Enumerator als <a href="../Objects.htm#Custom_Classes">Klasse</a>. Äquivalent zum <a href="#ExFibF">vorherigen Beispiel</a>.</p>
+<pre>for n in FibC()
+    if MsgBox("#" A_Index " = " n "`nWeiter?",, "y/n") = "No"
+        break
+
+class FibC {
+    a := 0, b := 1
+    Call(&amp;n) {
+        n := c := this.b, this.b += this.a, this.a := c
+        return true
+    }
+}</pre>
+</div>
+</body>
+</html>

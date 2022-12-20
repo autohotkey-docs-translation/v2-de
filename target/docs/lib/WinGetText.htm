@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>WinGetText - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die WinGetText-Funktion ermittelt den Text eines bestimmten Fensters." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>WinGetText</h1>
+
+<p>Ermittelt den Text eines bestimmten Fensters.</p>
+
+<pre class="Syntax">Text := <span class="func">WinGetText</span>(<span class="optional">FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span>)</pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>FensterTitel</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
+    <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
+  </dd>
+
+  <dt>FensterText</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
+  </dd>
+
+  <dt>IgnoriereTitel</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
+  </dd>
+
+  <dt>IgnoriereText</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Return_Value">Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+<p>Diese Funktion gibt den Text des angegebenen Fensters zurück.</p>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte.</p>
+<p>Es wird ein <a href="Error.htm">Error</a> ausgelöst, wenn der Text des Fensters aufgrund eines Problems nicht ermittelt werden konnte.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Der ermittelte Text ist generell das gleiche, was das interne Tool Window Spy für dieses Fenster anzeigt. Wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> ausgeschaltet wurde, werden versteckte Texte im Rückgabewert weggelassen.</p>
+<p>Jedes Textelement endet mit einem CR- und LF-Zeilenumbruchszeichen, die im Skript als `r`n dargestellt werden können. Um Zeilen oder Teilzeichenketten einzeln zu extrahieren, verwenden Sie Funktionen wie <a href="InStr.htm">InStr</a> und <a href="SubStr.htm">SubStr</a>. Eine <a href="LoopParse.htm">parsende Schleife</a> kann auch genutzt werden, um Zeilen oder Worte einzeln durchzugehen.</p>
+<p>Wenn der abgerufene Text abgeschnitten (unvollständig) zu sein scheint, kann der Text stattdessen durch Senden der WM_GETTEXT-Meldung via <a href="SendMessage.htm">SendMessage</a> abgerufen werden. AutoHotkey macht den Rückgabewert für den Text zu klein, weil die Anwendung, deren Text abgerufen werden soll, nur sporadisch oder gar nicht auf die WM_GETTEXTLENGTH-Meldung reagiert.</p>
+<p>Diese Funktion verbraucht sehr viel Arbeitsspeicher, falls das Zielfenster eine große Menge an Text beinhaltet (z. B. ein Editor, in dem ein großes Dokument offen ist). Um das zu verhindern, verwenden Sie stattdessen <a href="ControlGetText.htm">ControlGetText</a>, um nur bestimmte Bereiche des Fenstertextes abzurufen. In allen Fällen kann der Speicher einer Variable später wieder freigegeben werden, indem man ihr einen leeren Wert zuweist, z. B. <code>Text := ""</code>.</p>
+<p>Um eine Liste aller Steuerelemente in einem Fenster abzurufen, folgen Sie diesem Beispiel: <code>Steuerelemente := <a href="WinGetControls.htm">WinGetControls</a>(<i>FensterTitel</i>)</code></p>
+<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="ControlGetText.htm">ControlGetText</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="WinGetPos.htm">WinGetPos</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Öffnet den Taschenrechner, wartet, bis er existiert, und ermittelt und meldet seinen Text.</p>
+<pre>Run "calc.exe"
+WinWait "Rechner"
+MsgBox "Der Text ist:`n" WinGetText() <em>; Verwendet das von WinWait gefundene Fenster.</em></pre>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>ClipboardAll - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die ClipboardAll-Klasse ermöglicht das Speichern und Wiederherstellen aller Daten in der Zwischenablage (wie z. B. Bilder und Formatierungen)." />
+<meta name="ahk:equiv-v1" content="misc/Clipboard.htm#ClipboardAll" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>ClipboardAll</h1>
+
+<p>Erstellt ein Objekt, das alles von der Zwischenablage enthält (z. B. Bilder und Formatierung).</p>
+<pre class="Syntax">ClipGesichert := <span class="func">ClipboardAll</span>(<span class="optional">Daten, Größe</span>)</pre>
+<p><em></em><code>ClipboardAll</code> selbst ist eine von <code>Buffer</code> abstammende <a href="Class.htm">Klasse</a>.</p>
+
+<h2 id="Parameters">Parameter</h2>
+<p>Wenn beide Parameter weggelassen werden, wird der aktuelle Inhalt der Zwischenablage abgerufen. Ansonsten können die beiden Parameter verwendet werden, um ein Objekt zu erstellen, das die angegebenen Binärdaten der Zwischenablage enthält.</p>
+<dl>
+  <dt>Daten</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Ein <a href="Buffer.htm">Buffer</a>-ähnliches Objekt oder ein reiner Integer, der die Adresse von Binärdaten ist. Die Daten müssen in einem bestimmten Format sein, das in der Regel ein vorheriger Aufruf von ClipboardAll hervorbringt. Schauen Sie sich das <a href="#ExFile">Beispiel #2</a> unten an.</p>
+  </dd>
+  <dt>Size</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Die Anzahl der Bytes, die die Daten enthalten. Dieser Parameter ist optional, wenn <em>Daten</em> ein Objekt ist.</p>
+  </dd>
+</dl>
+
+<h2 id="clipboardall-object">Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
+<p>Diese Funktion gibt ein ClipboardAll-Objekt zurück, das zwei Eigenschaften hat (geerbt von <a href="Buffer.htm">Buffer</a>):</p>
+<ul>
+  <li><a href="Buffer.htm#Ptr">Ptr</a>: Die Adresse der Daten, die im Objekt enthalten sind. Diese Adresse ist solange gültig, bis das Objekt freigegeben wird.</li>
+  <li><a href="Buffer.htm#Size">Size</a>: Die Größe der rohen Binärdaten, in Bytes.</li>
+</ul>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Die interne Variable <a href="A_Clipboard.htm">A_Clipboard</a> spiegelt den aktuellen Inhalt der Windows-Zwischenablage in Textform wider, kann aber einem ClipboardAll-Objekt zugewiesen werden, um ihren Inhalt in die Zwischenablage zurückzuschreiben.</p>
+<p><em>ClipboardAll</em> wird häufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vorübergehend für eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wiederhergestellt werden, wie in <a href="#ExVar">Beispiel #1</a> und <a href="#ExFile">Beispiel #2</a> gezeigt.</p>
+<p>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert.</p>
+<p>Mit <a href="ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
+<p>Die im Objekt enthaltenen Binärdaten bestehen aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die nächsten 4 Bytes die Datenblockgröße und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enthält (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschließend enden die Daten mit einem Formattyp (4 Byte groß), wobei jedoch eine 0 enthalten ist.</p>
+<p>Bekannte Einschränkung: Verwendet man <em>ClipboardAll</em>, während Zellen von MS Excel enthalten sind, kann es passieren, dass in Excel ein Dialogfenster mit "Keine Drucker" angezeigt wird.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="A_Clipboard.htm">A_Clipboard</a>, <a href="ClipWait.htm">ClipWait</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="_ClipboardTimeout.htm">#ClipboardTimeout</a>, <a href="Buffer.htm">Buffer</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+
+<div class="ex" id="ExVar">
+<p><a class="ex_number" href="#ExVar"></a> Speichert den Inhalt der Zwischenablage in eine Variable und stellt ihn wieder her.</p>
+<pre>ClipSicherung := ClipboardAll()   <em>; Speichert die gesamte Zwischenablage in eine beliebige Variable.
+; ... hier kann man kurzzeitig die Zwischenablage nutzen, um z. B. schnell eine große Textmenge einzufügen ...</em>
+A_Clipboard := ClipSicherung   <em>; Originale Zwischenablage wiederherstellen. Beachten Sie, dass <i>A_Clipboard</i> verwendet wurde (nicht <i>ClipboardAll</i>).</em>
+ClipSicherung := ""  <em>; Speicher freigeben, falls die Zwischenablage sehr groß war.</em></pre>
+</div>
+
+<div class="ex" id="ExFile">
+<p><a class="ex_number" href="#ExFile"></a> Speichert den Inhalt der Zwischenablage in eine Datei und stellt ihn wieder her.</p>
+<pre><em>; Option 1: Lösche die Datei, falls vorhanden, und benutze dann FileAppend.</em>
+<a href="FileDelete.htm">FileDelete</a> "Firmenlogo.clip"
+<a href="FileAppend.htm">FileAppend</a> ClipboardAll(), "Firmenlogo.clip" <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em>
+
+<em>; Option 2: Benutze FileOpen im Überschreibmodus und File.RawWrite.</em>
+ClipDaten := ClipboardAll()
+<a href="FileOpen.htm">FileOpen</a>("Firmenlogo.clip", "w").<a href="File.htm#RawWrite">RawWrite</a>(ClipDaten)</pre>
+<p>Das folgende Beispiel zeigt, wie die Datei später wieder in die Zwischenablage (oder in eine Variable) geladen werden kann:</p>
+<pre>ClipDaten := FileRead("Firmenlogo.clip", "RAW")  <em>; In diesem Fall gibt FileRead ein Buffer-Objekt zurück.</em>
+A_Clipboard := ClipboardAll(ClipDaten)  <em>; Wandelt das Buffer-Objekt in ein ClipboardAll-Objekt um und weist es zu.</em></pre>
+</div>
+
+</body>
+</html>

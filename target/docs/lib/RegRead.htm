@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>RegRead - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die RegRead-Funktion liest einen Wert aus der Registry." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>RegRead</h1>
+
+<p>Liest einen Wert aus der Registry.</p>
+
+<pre class="Syntax">Wert := <span class="func">RegRead</span>(<span class="optional">SchlüsselName, WertName, Standardwert</span>)
+</pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>SchlüsselName</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Der vollständige Name des Registry-Schlüssels.</p>
+    <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um Zugriff auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zu erhalten, setzen Sie wie folgt den Computernamen und einen Schrägstrich davor: \\workstation01\HKEY_LOCAL_MACHINE</p>
+    <p><em>SchlüsselName</em> kann nur weggelassen werden, wenn eine <a href="LoopReg.htm">Registry-Schleife</a> läuft - in diesem Fall wird standardmäßig der Schlüssel des aktuellen Schleifenelements verwendet. Wenn das Element ein Unterschlüssel ist, wird standardmäßig der vollständige Name dieses Unterschlüssels benutzt. Wenn das Element ein Wert ist, gilt für <em>WertName</em> standardmäßig der Name dieses Wertes, was aber überschrieben werden kann.</p>
+  </dd>
+
+  <dt>WertName</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Der Name des Wertes, der abgerufen werden soll. Wenn dieser Parameter weggelassen wird oder leer ist, wird der Standardwert des Schlüssels abgerufen (außer wie oben erwähnt). Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt. Wenn es keinen Standardwert gibt (also wenn das RegEdit-Tool "Wert nicht festgelegt" anzeigt), wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst.</p>
+  </dd>
+  
+  <dt>Standardwert</dt>
+  <dd>
+    <p>Typ: Any</p>
+    <p>Ein Wert, der zurückgegeben werden soll, wenn der angegebene Schlüssel oder Wert nicht existiert. Lässt man diesen Parameter weg, wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, anstatt einen Standardwert zurückzugeben.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Return_Value">Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt einen Wert des angegebenen Registry-Schlüssels zurück.</p>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Bei Misserfolg wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst. Zu den Misserfolgen gehört z. B. ein nicht-existierender Schlüssel oder Wert bei weggelassenem <em>Standardwert</em> oder ein Berechtigungsfehler.</p>
+<p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Zurzeit werden nur die folgenden Werttypen unterstützt: REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD und REG_BINARY.</p>
+<p>REG_DWORD-Werte werden immer als positive Dezimalzahlen dargestellt. Wenn die Zahl dazu gedacht war, negativ zu sein, können Sie sie mit <code>AusgabeVar := AusgabeVar &lt;&lt; 32 &gt;&gt; 32</code> oder ähnlichem in einen vorzeichenfähigen 32-Bit-Integer umwandeln.</p>
+<p>Beim Lesen eines REG_BINARY-Schlüssels ist das Ergebnis eine Zeichenkette mit hexadezimalen Zeichen. Zum Beispiel würde ein REG_BINARY-Wert von 01,a9,ff,77 als Zeichenkette 01A9FF77 gelesen werden.</p>
+<p>Beim Lesen eines REG_MULTI_SZ-Schlüssels endet jede Komponente mit einem Zeilenumbruchszeichen (`n). Sind keine Komponenten vorhanden, wird eine leere Zeichenkette zurückgegeben. Auf <a href="FileSelect.htm">FileSelect</a>-Seite finden Sie ein Beispiel, wie einzelne Komponenten aus dem Rückgabewert extrahiert werden können.</p>
+<p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Schlüssel und -Werte abgerufen und bearbeitet werden.</p>
+<p>In den Bemerkungen zur <a href="LoopReg.htm#remote">Registry-Schleife</a> finden Sie Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
+<p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript oder umgekehrt gelesen und geschrieben werden.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="RegCreateKey.htm">RegCreateKey</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniRead.htm">IniRead</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Liest einen Wert aus der Registry und speichert ihn in <var>Testwert</var>.</p>
+<pre>Testwert := RegRead("HKEY_LOCAL_MACHINE\Software\BeliebigeAnwendung", "Testwert")</pre>
+</div>
+
+<div class="ex" id="ExProgramFiles">
+<p><a class="ex_number" href="#ExProgramFiles"></a> Ermittelt und meldet den Pfad des "Program Files"-Ordners. Eine alternative Methode finden Sie unter <a href="EnvGet.htm#ExProgramFiles">EnvGet-Beispiel #2</a>.</p>
+<pre><em>; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners
+; zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
+<a href="SetRegView.htm">SetRegView</a> 64
+
+ProgramFilesDir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "ProgramFilesDir")
+MsgBox "Programme sind in: " ProgramFilesDir</pre>
+</div>
+
+
+<div class="ex" id="ExType">
+<p><a class="ex_number" href="#ExType"></a> Ermittelt den TYP eines Registry-Wertes (z. B. REG_SZ oder REG_DWORD).</p>
+<pre>MsgBox RegSchlüsselTyp("HKCU", "Environment", "TEMP")
+return
+
+RegSchlüsselTyp(RootSchlüssel, UnterSchlüssel, WertName)  <em>; Diese Funktion gibt den Typ eines bestimmten Wertes zurück.</em>
+{
+    Loop Reg, RootSchlüssel "\" UnterSchlüssel
+        if (A_LoopRegName = WertName)
+            return A_LoopRegType
+    return "Fehler"
+}</pre>
+</div>
+
+</body>
+</html>

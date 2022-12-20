@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>GetKeySC - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die GetKeySC-Funktion ermittelt den Scancode einer Taste." />
+<meta name="ahk:equiv-v1" content="lib/GetKey.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>GetKeySC</h1>
+
+<p>Ermittelt den Scancode einer Taste.</p>
+
+<pre class="Syntax">SC := <span class="func">GetKeySC</span>(TasteName)</pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>TasteName</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Ein beliebiges Zeichen oder einer der Tastennamen aus der <a href="../KeyList.htm">Tastenliste</a>. Beispiele: B, 5, LWin, RControl, Alt, Enter, Escape.</p>
+    <p>Alternativ kann dieser Parameter ein expliziter virtueller Tastencode wie vkFF, ein expliziter Scancode wie sc01D oder eine Kombination aus VK und SC (in dieser Reihenfolge) wie vk1Bsc001 sein. Beachten Sie, dass diese Codes hexadezimal sein müssen.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Return_Value">Rückgabewert</h2>
+<p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt den Scancode der angegebenen Taste zurück, oder 0, wenn die Taste ungültig ist oder keinen Scancode hat.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Bevor der Scancode mit einer internen Funktion wie <a href="Hotkey.htm">Hotkey</a> oder <a href="GetKeyState.htm">GetKeyState</a> verwendet werden kann, muss er zunächst in das hexadezimale Format umgewandelt werden, z. B. mittels <code>Format("sc{:X}", sc_code)</code>. Extern aufgerufene Funktionen via <a href="DllCall.htm">DllCall</a> verwenden dagegen meist direkt den numerischen Wert.</p>
+<p>Wenn <em>TasteName</em> einem virtuellen Tastencode oder einem einzelnen Zeichen entspricht, versucht die Funktion, den Wert einem Scancode zuzuordnen, indem sie bestimmte Systemfunktionen aufruft, die sich auf das aktuelle Tastaturlayout des Skripts beziehen. Dies kann vom Tastaturlayout des aktiven Fensters abweichen.</p>
+<p>Wenn <em>TasteName</em> ein ASCII-Buchstabe im Bereich von A bis Z ist und keine Zuordnung innerhalb des Tastaturlayouts hat, wird die entsprechende virtuelle Taste im Bereich von vk41 bis vk5A als Fallback verwendet. Diese virtuelle Taste wird dann wie oben beschrieben einem Scancode zugeordnet.</p>
+<p>Einige Tastaturlayouts haben keine 1:1-Zuordnung von virtuellen Tastencodes zu Scancodes. Wenn mehrere Interpretationen möglich sind, werden die Systemfunktionen voraussichtlich eine auswählen, die auf der im Tastaturlayout festgelegten Reihenfolge basiert, was nicht immer die gängigste oder logischste Wahl ist.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="GetKeyVK.htm">GetKeyVK</a>, <a href="GetKeyName.htm">GetKeyName</a>, <a href="GetKeyState.htm">GetKeyState</a>, <a href="../KeyList.htm">Tastenliste</a>, <a href="Format.htm">Format</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Ermittelt und meldet den hexadezimalen Scancode der linken <kbd>Strg</kbd>-Taste.</p>
+<pre>sc_code := GetKeySC("LControl")
+MsgBox Format("sc{:X}", sc_code) <em>; Meldet sc1D</em></pre>
+</div>
+
+</body>
+</html>

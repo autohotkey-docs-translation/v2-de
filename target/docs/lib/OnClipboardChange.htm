@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>OnClipboardChange - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die OnClipboardChange-Funktion lässt eine bestimmte Funktion automatisch aufrufen, wenn sich der Inhalt der Zwischenablage ändert." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>OnClipboardChange</h1>
+
+<p>Lässt eine bestimmte Funktion automatisch aufrufen, wenn sich der Inhalt der Zwischenablage ändert.</p>
+
+<pre class="Syntax"><span class="func">OnClipboardChange</span> Funktion <span class="optional">, HinzufügenEntfernen</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>Funktion</dt>
+  <dd>
+    <p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
+    <p>Ein Funktionsobjekt, das aufgerufen werden soll. Die Parameter und der Rückgabewert der Funktion sind <a href="#Function">unten</a> beschrieben.</p>
+  </dd>
+  
+  <dt>HinzufügenEntfernen</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Lässt man diesen Parameter weg, wird standardmäßig 1 (die Funktion nach anderen zuvor registrierten Funktionen aufrufen) verwendet. Ansonsten können Sie eine der folgenden Zahlen angeben:</p>
+    <ul>
+      <li>1 = Die Funktion nach anderen zuvor registrierten Funktionen aufrufen.</li>
+      <li>-1 = Die Funktion vor anderen zuvor registrierten Funktionen aufrufen.</li>
+      <li>0 = Die Funktion nicht aufrufen.</li>
+    </ul>
+  </dd>
+
+</dl>
+
+<h2 id="Function">Funktion</h2>
+<p>Die Funktion sollte einen Parameter akzeptieren:</p>
+<pre class="Syntax"><i>FunktionName</i>(Typ)</pre>
+<dl>
+  <dt>Typ</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Eine der folgenden Zahlen:</p>
+    <ul>
+      <li>0 = Die Zwischenablage ist jetzt leer.</li>
+      <li>1 = Die Zwischenablage enthält etwas, das als Text ausgegeben werden kann (dazu gehören <a href="A_Clipboard.htm#CopiedFiles">Dateien, die aus einem Explorer-Fenster kopiert wurden</a>).</li>
+      <li>2 = Die Zwischenablage enthält etwas völlig textfreies, wie z. B. ein Bild.</li>
+    </ul>
+  </dd>
+</dl>
+
+<h3 id="Return_Value">Rückgabewert</h3>
+<p>Ist dies die letzte bzw. einzige OnClipboardChange-Funktion, wird der Rückgabewert ignoriert. Ansonsten kann die Funktion einen Integer ungleich null zurückgeben, um zu verhindern, dass nachfolgende Funktionen aufgerufen werden.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Wenn die Zwischenablage geändert wird, während eine OnClipboardChange-Funktion läuft, geht das Benachrichtigungsereignis verloren. Falls das unerwünscht ist, verwenden Sie <a href="Critical.htm">Critical</a>. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> gepuffert/hinausgezögert (z. B. das Drücken eines Hotkeys), während der OnClipboardChange-Thread läuft.</p>
+<p>Sobald das Skript selbst die Zwischenablage ändert, wird seine OnClipboardChange-Funktion normalerweise nicht sofort ausgeführt. Das heißt, dass Funktionen unterhalb der Funktion, die die Zwischenablage geändert hat, wahrscheinlich vorher ausgeführt werden. Um die sofortige Ausführung der Funktion zu erzwingen, führen Sie nach dem Ändern der Zwischenablage eine kurze Verzögerung wie z. B. <code><a href="Sleep.htm">Sleep 20</a></code> durch.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="A_Clipboard.htm">A_Clipboard</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Zeigt bei jeder Änderung der Zwischenablage kurz einen Tooltip an.</p>
+<pre>OnClipboardChange ZwischenablageGeändert
+
+ZwischenablageGeändert(Typ) {
+    ToolTip "Datentyp der Zwischenablage: " Typ
+    Sleep 1000
+    ToolTip  <em>; Schaltet den Tooltip aus.</em>
+}</pre>
+</div>
+
+</body>
+</html>

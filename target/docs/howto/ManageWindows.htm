@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta name="description" content="Erfahren Sie, wie man Fenster aktiviert oder manipuliert." />
+<meta name="ahk:equiv-v1" content="lib/Win.htm" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Wie man Fenster manipuliert | AutoHotkey v2</title>
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>Wie man Fenster manipuliert</h1>
+<p>Eines der einfachsten und nützlichsten Dinge, die AutoHotkey kann, ist das Erstellen von Tastaturkurzbefehlen (Hotkeys), mit denen sich Fenster manipulieren lassen. Ein Skript kann fast jedes Fenster aktivieren, schließen, minimieren, maximieren, wiederherstellen, verstecken, sichtbar machen oder verschieben. Hierzu wird die entsprechende <a href="../lib/Win.htm">Win-Funktion</a> aufgerufen, wobei das Fenster über den Titel oder ein anderes Kriterium angegeben wird:</p>
+<pre>Run "notepad.exe"
+WinWait "Unbenannt - Editor"
+WinActivate "Unbenannt - Editor"
+WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2, "Unbenannt - Editor"</pre>
+<p>Dieses Beispiel öffnet ein neues Notepad-Fenster und verschiebt es dann so, dass es einen Teil des primären Bildschirms ausfüllt (¼ seiner Breite und ½ seiner Höhe). Wie Sie es ausprobieren können, erfahren Sie unter <a href="RunExamples.htm">Wie man Beispielcodes ausführt</a>.</p>
+
+<p>Wir werden nicht näher auf viele der Funktionen zur Manipulation von Fenstern eingehen, da es nicht viel zu sagen gibt. Um zum Beispiel ein Fenster zu minimieren, anstatt es zu aktivieren, ersetzen Sie <code>WinActivate</code> mit <code>WinMinimize</code>. Eine Liste der Funktionen, mit denen Fenster manipuliert oder Informationen abgerufen werden können, finden Sie unter <a href="../lib/Win.htm">Win-Funktionen</a>.</p>
+<p>Der größte Teil dieses Tutorials befasst sich damit, wie man das gewünschte Fenster <em>identifiziert</em>, denn das bereitet oft die meisten Schwierigkeiten. Zum Beispiel weist das obige Beispiel eine Reihe von Problemen auf:</p>
+<ul>
+  <li>Der Titel wird unnötigerweise wiederholt.</li>
+  <li>Der Titel ist nur für Systeme korrekt, bei denen die Benutzersprache auf Deutsch eingestellt ist.</li>
+  <li>Es könnte ein existierendes unbenanntes Notepad-Fenster anstelle des neuen Fensters verschieben.</li>
+  <li>Wenn aus irgendeinem Grund kein passendes Fenster erscheint, wartet das Skript auf unbestimmte Zeit.</li>
+</ul>
+<p>Wir werden diese Probleme nacheinander angehen, nachdem wir ein paar Grundlagen besprochen haben.</p>
+<p class="note"><strong>Tipp:</strong> AutoHotkey beinhaltet ein Skript namens <em>Window Spy</em>, mit dem Sie den Titel, die Klasse und den Prozessnamen eines Fensters ermitteln können. Die Klasse und der Prozessname werden häufig verwendet, wenn ein Fenster nicht allein durch den Titel identifiziert werden kann. Sie finden Window Spy im <a href="../Program.htm#tray-icon">Tray-Menü</a> des Skripts oder im <a href="../Program.htm#dash">AutoHotkey Dash</a>.</p>
+
+<h2 id="ttm">Titelübereinstimmung</h2>
+<p>Beim Angeben eines Fensters über den Titel gibt es einige Dinge zu beachten:</p>
+<ul>
+  <li>Fenstertitel sind immer Groß-/Kleinschreibung-sensitiv, es sei denn, man benutzt den RegEx-Übereinstimmungsmodus in Kombination mit dem <a href="../misc/RegEx-QuickRef.htm#opt_i">i)-Modifikator</a>.</li>
+  <li>Standardmäßig erwarten die Funktionen eine Teilzeichenkette des Fenstertitels. Zum Beispiel könnte "Notepad" sowohl "Untitled - Notepad" als auch "C:\A\B.ahk - Notepad++" finden. Mit <a href="../lib/SetTitleMatchMode.htm">SetTitleMatchMode</a> können Funktionen dazu gebracht werden, stattdessen ein Präfix, eine exakte Übereinstimmung oder ein RegEx-Muster zu erwarten.</li>
+  <li>Standardmäßig werden versteckte Fenster ignoriert (außer bei <a href="../lib/WinShow.htm">WinShow</a>). Mit <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a> kann das geändert werden.</li>
+</ul>
+<p>Weitere Einzelheiten finden Sie unter <a href="../misc/WinTitle.htm">Übereinstimmungsverhalten</a>.</p>
+
+<h2 id="A">Aktives Fenster</h2>
+<p>Um auf das aktive Fenster zu verweisen, verwenden Sie den Buchstaben "A" anstelle des Fenstertitels. Das folgende Beispiel minimiert das aktive Fenster:</p>
+<pre>WinMinimize "A"</pre>
+
+<h2 id="lfw">Zuletzt Gefundenes Fenster</h2>
+<p>Wenn <a href="../lib/WinWait.htm">WinWait</a>, <a href="../lib/WinExist.htm">WinExist</a>, <a href="../lib/WinActive.htm">WinActive</a>, <a href="../lib/WinWaitActive.htm">WinWaitActive</a> oder <a href="../lib/WinWaitActive.htm">WinWaitNotActive</a> ein passendes Fenster findet, machen sie es zum <a href="../misc/WinTitle.htm#LastFoundWindow"><em>zuletzt gefundenen Fenster</em></a>. Bei den meisten Fensterfunktionen kann der Fenstertitel (und die zugehörigen Parameter) weggelassen werden, um standardmäßig das zuletzt gefundene Fenster zu verwenden. Zum Beispiel:</p>
+<pre>Run "notepad.exe"
+WinWait "Unbenannt - Editor"
+WinActivate
+WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2</pre>
+<p>Dadurch entfällt die Wiederholung des Fenstertitels, was ein wenig Zeit spart, das Skript leichter aktualisierbar macht, wenn der Fenstertitel geändert werden muss, und den Code unter Umständen übersichtlicher macht. Es macht das Skript zuverlässiger, indem es sicherstellt, dass es jedes Mal dasselbe Fenster ansteuert, selbst bei mehreren passenden Fenstern oder wenn sich der Fenstertitel ändert, nachdem das Fenster "gefunden" wurde. Außerdem wird dadurch die Effizienz der Skriptausführung erhöht, wenn auch nur geringfügig.</p>
+
+<h2 id="class">Fensterklasse</h2>
+<p>Eine Fensterklasse ist eine Reihe von Attributen, die als Vorlage zum Erstellen eines Fensters verwendet wird. Oft steht der Name der Fensterklasse im Zusammenhang mit der Applikation oder dem Zweck des Fensters. Die Klasse eines Fensters ändert sich nie, während das Fenster vorhanden ist, daher können wir sie häufig zur Identifizierung eines Fensters verwenden, wenn die Identifizierung über den Titel unpraktisch oder unmöglich ist.</p>
+<p>Zum Beispiel können wir anstelle des Fenstertitels "Unbenannt - Editor" die Klasse des Fensters verwenden, die in diesem Fall immer "Notepad" ist, <em>unabhängig</em> von der Systemsprache:</p>
+<pre>Run "notepad.exe"
+WinWait "ahk_class Notepad"
+WinActivate
+WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2</pre>
+<p>Um eine Fensterklasse von einem Titel zu unterscheiden, wird wie oben gezeigt das Wort "ahk_class" verwendet. Um mehrere Kriterien zu kombinieren, listen Sie zuerst den Fenstertitel auf. Zum Beispiel: "Unbenannt ahk_class Notepad".</p>
+<p><strong>Siehe auch:</strong> <a href="../misc/WinTitle.htm#ahk_class">ahk_class</a></p>
+
+<h2 id="exe">Prozessname/-pfad</h2>
+<p>Um Fenster anhand des Prozesses, von dem sie erstellt wurden, zu identifizieren, verwenden Sie das Wort "ahk_exe", gefolgt von dem Namen oder Pfad des Prozesses. Zum Beispiel:</p>
+<pre>Run "notepad.exe"
+WinWait "ahk_exe notepad.exe"
+WinActivate
+WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2</pre>
+<p><strong>Siehe auch:</strong> <a href="../misc/WinTitle.htm#ahk_exe">ahk_exe</a></p>
+
+<h2 id="pid">Prozess-ID (PID)</h2>
+<p>Jeder Prozess hat eine ID-Nummer, die bis zur Beendigung des Prozesses einmalig bleibt. Wir können diese Nummer nutzen, um unser Notepad-Beispiel zuverlässiger zu machen, indem wir sicherstellen, dass es alle Notepad-Fenster außer dem vom neuen Prozess erstellten Fenster ignoriert:</p>
+<pre>Run "notepad.exe",,, &amp;notepad_pid
+WinWait "ahk_pid " notepad_pid
+WinActivate
+WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2</pre>
+<p>Wir brauchen drei Kommas am Stück; zwei davon dienen nur dazu, die nicht verwendeten Parameter <em>ArbeitVerz</em> und <em>Optionen</em> der Run-Funktion zu überspringen, da der gewünschte Parameter (<em>AusgabeVarPID</em>) der vierte Parameter ist.</p>
+<p>Das Und-Zeichen (&amp;) ist der <a href="../Variables.htm#ref">Referenzoperator</a>. Es wird verwendet, um die <code>notepad_pid</code>-Variable <em>per Referenz</em> an die Run-Funktion zu übergeben (oder anders gesagt, um die Variable selbst anstelle ihres Wertes zu übergeben), damit die Funktion der Variable einen neuen Wert zuweisen kann. Dann fungiert <code>notepad_pid</code> als Platzhalter für die tatsächliche Prozess-ID.</p>
+<p>Um die <a href="../Concepts.htm#strings">Zeichenkette</a> "ahk_pid " mit der in der notepad_pid-Variable enthaltenen Prozess-ID zu <a href="../Variables.htm#concat">verketten</a>, schreibt man sie einfach nebeneinander, getrennt durch Leerraumzeichen. Das Ergebnis ist eine Zeichenkette wie "ahk_pid 1040", allerdings ist die Zahl nicht vorhersehbar.</p>
+<p>Wenn der neue Prozess ggf. mehrere Fenster erzeugt, können ein Fenstertitel und andere Kriterien durch Leerzeichen voneinander getrennt werden. Der Fenstertitel muss immer ganz vorne stehen. Zum Beispiel: <code>"Unbenannt ahk_class Notepad ahk_pid " notepad_pid</code>.</p>
+<p><strong>Siehe auch:</strong> <a href="../misc/WinTitle.htm#ahk_pid">ahk_pid</a></p>
+
+<h2 id="hwnd">Fenster-ID (HWND)</h2>
+<p>Jedes Fenster hat eine ID-Nummer, die bis zur Zerstörung des Fensters einmalig bleibt. In der Programmierung wird diese Nummer als "Fenster-Handle" oder HWND bezeichnet. Auch wenn die Nutzung einer Fenster-ID im Vergleich zum <em>zuletzt gefundenen Fenster</em> nicht so einfach ist, kann die Fenster-ID in eine Variable abgelegt werden, damit das Skript mit einem selbst gewählten Namen auf das Fenster verweisen kann, sogar wenn sich der Titel ändert. Es kann immer nur ein <em>zuletzt gefundenes Fenster</em> geben; Fenster-IDs hingegen können Sie so viele verwenden, wie Sie sich Variablennamen ausdenken können (oder Sie können ein <a href="../lib/Array.htm">Array</a> verwenden).</p>
+<p>Eine Fenster-ID ist der <a href="../Concepts.htm#return-a-value">Rückgabewert</a> von <a href="../lib/WinWait.htm">WinWait</a>, <a href="../lib/WinExist.htm">WinExist</a> oder <a href="../lib/WinActive.htm">WinActive</a> oder kann aus anderen Quellen stammen. Das Notepad-Beispiel kann so umgeschrieben werden, dass es einen Vorteil daraus zieht:</p>
+<pre>Run "notepad.exe"
+notepad_id := WinWait("Unbenannt - Editor")
+WinActivate notepad_id
+WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2, notepad_id</pre>
+<p>Dies bewirkt, dass der Rückgabewert von WinWait der Variable "notepad_id" zugewiesen wird. Mit anderen Worten: Wenn WinWait das Fenster findet, gibt es die ID des Fensters als Ergebnis zurück, und das Skript speichert dieses Ergebnis dann in die Variable. "notepad_id" ist nur ein Name, den ich mir für dieses Beispiel ausgedacht habe; Sie können jeden Variablennamen verwenden, der Ihnen sinnvoll erscheint (mit <a href="../Concepts.htm#names">gewissen Einschränkungen</a>).</p>
+<p>Beachten Sie, dass ich den Fenstertitel in runden Klammern gesetzt habe, <em>unmittelbar</em> nach dem Funktionsnamen. Die runden Klammern können bei <a href="../Language.htm#function-call-statements">Funktionsaufrufanweisungen</a> (Aufrufe von Funktionen ganz am Anfang der Zeile) weggelassen werden, allerdings kann man in diesem Fall den Rückgabewert der Funktion nicht abrufen.</p>
+<p>Das Skript kann außerdem die <a href="../Concepts.htm#variables">Variable</a> <code>notepad_id</code> für spätere Zwecke wiederverwenden, z. B. um das Fenster zu schließen, zu reaktivieren oder woanders hin zu verschieben.</p>
+<p><strong>Siehe auch:</strong> <a href="../misc/WinTitle.htm#ahk_id">ahk_id</a></p>
+
+<h2 id="timeout">Zeitlimit</h2>
+<p>Standardmäßig wartet WinWait so lange, bis ein passendes Fenster erscheint. Ob das der Fall ist, können Sie feststellen, indem Sie das <a href="../Program.htm#main-window">Hauptfenster</a> des Skripts über das <a href="../Program.htm#tray-icon">Tray-Symbol</a> öffnen (sofern Sie es nicht <a href="../lib/_NoTrayIcon.htm">deaktiviert</a> haben). Das Fenster wird standardmäßig in der <a href="../lib/ListLines.htm#Remarks">ListLines</a>-Ansicht geöffnet. Sollte WinWait noch warten, wird das ganz unten in der Zeilenliste angezeigt, gefolgt von den Sekunden seit Beginn der Wartezeit. Um die Sekunden zu aktualisieren, wählen Sie "Refresh" im View-Menü aus.</p>
+<p>Versuchen Sie, das folgende Beispiel auszuführen und das Hauptfenster wie oben beschrieben zu öffnen:</p>
+<pre>WinWait "Unbenannt - Editr"  <em>; (absichtlicher Schreibfehler)</em></pre>
+<p>Wenn das Skript beim Warten auf ein Fenster "hängen bleibt", müssen Sie das Skript in der Regel beenden oder neu laden, um es wieder in Gang zu setzen. Um zu verhindern, dass das überhaupt passiert (oder wieder passiert), können Sie den <em>Zeitlimit</em>-Parameter von WinWait verwenden. Das folgende Beispiel wartet maximal 5 Sekunden, bis das Fenster erscheint:</p>
+<pre>Run "notepad.exe",,, &amp;notepad_pid
+if WinWait("ahk_pid " notepad_pid,, 5)
+{
+    WinActivate
+    WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2
+}</pre>
+<p>Der <a href="../lib/Block.htm">Block</a> unterhalb der if-Anweisung wird nur ausgeführt, wenn WinWait ein passendes Fenster findet. Wenn es das Zeitlimit überschritten hat, wird der Block übersprungen und die Ausführung nach der geschweiften Endklammer fortgesetzt (sofern danach noch Codezeilen vorhanden sind).</p>
+<p>Beachten Sie, dass die runden Klammern hinter "WinWait" erforderlich sind, wenn wir das Ergebnis der Funktion in einem <a href="../Language.htm#expressions">Ausdruck</a> verwenden wollen (z. B. als Bedingung für eine <a href="../lib/If.htm">if-Anweisung</a>). Sie können sich den eigentlichen <a href="../Language.htm#function-calls">Funktionsaufruf</a> als Ersatz für das Ergebnis der Funktion vorstellen. Wenn WinWait zum Beispiel eine Übereinstimmung findet, bevor es das Zeitlimit überschreitet, ist das Ergebnis ungleich Null. <code>if 1</code> würde den Block unterhalb der if-Anweisung ausführen, während <code>if 0</code> ihn überspringen würde.</p>
+<p>Eine andere Möglichkeit besteht darin, vorzeitig via Return zurückzukehren (oder anders gesagt, abzubrechen), wenn die Wartezeit abgelaufen ist. Zum Beispiel:</p>
+<pre>Run "notepad.exe",,, &amp;notepad_pid
+if !WinWait("ahk_pid " notepad_pid,, 5)
+    return
+WinActivate
+WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2</pre>
+<p>Das Ergebnis wird durch Nutzung des Operators <a href="../Variables.htm#unary">Logisches NICHT</a> (<code>!</code> oder <code>not</code>) invertiert. Wenn WinWait das Zeitlimit überschreitet, ist dessen Ergebnis 0. Das Ergebnis von <code>!0</code> ist 1. Wenn WinWait das Zeitlimit überschreitet, führt die if-Anweisung <code>return</code> aus.</p>
+<p>Das Ergebnis von WinWait ist eigentlich die ID des Fensters (wie oben beschrieben) oder Null, wenn das Zeitlimit überschritten wurde. Wenn Sie das Fenster auch über die ID ansprechen wollen, können Sie das Ergebnis einer Variable zuweisen, anstatt es direkt in der if-Anweisung zu verwenden:</p>
+<pre>Run "notepad.exe",,, &amp;notepad_pid
+notepad_id := WinWait("ahk_pid " notepad_pid,, 5)
+if notepad_id
+{
+    WinActivate notepad_id
+    WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2, notepad_id
+}</pre>
+<p>Um eine Wiederholung des Variablennamens zu vermeiden, können Sie das Ergebnis einer Variable zuweisen und gleichzeitig prüfen, ob es ungleich Null (<a href="../Concepts.htm#boolean"><em>true</em></a>) ist:</p>
+<pre>Run "notepad.exe",,, &amp;notepad_pid
+if notepad_id := WinWait("ahk_pid " notepad_pid,, 2)
+{
+    WinActivate notepad_id
+    WinMove 0, 0, A_ScreenWidth/4, A_ScreenHeight/2, notepad_id
+}</pre>
+<p>Achten Sie in diesem Fall darauf, dass Sie <code>:=</code> (Zuweisung) nicht mit <code>=</code> oder <code>==</code> (Vergleich) verwechseln. Zum Beispiel weist <code>if meinevar := 0</code> einen neuen Wert zu und liefert jedes Mal das gleiche Ergebnis (false), während <code>if meinevar = 0</code> einen zuvor zugewiesenen Wert mit 0 vergleicht.</p>
+
+<h2 id="math">Ausdrücke (Mathematik usw.)</h2>
+<p>Wenn Sie ein Fenster verschieben wollen, empfiehlt es sich, das Fenster relativ zu seiner vorherigen Position oder Größe zu verschieben, die Sie mit der <a href="../lib/WinGetPos.htm">WinGetPos</a>-Funktion abfragen können. Die folgenden Hotkeys können z. B. verwendet werden, um das aktive Fenster um 10 Pixel in jede Richtung zu verschieben, indem Sie die rechte <kbd>Strg</kbd>-Taste gedrückt halten und die Pfeiltasten drücken:</p>
+<pre>&gt;^Left::    VerschiebeAktivesFensterUm(-10,   0)
+&gt;^Right::   VerschiebeAktivesFensterUm(+10,   0)
+&gt;^Up::      VerschiebeAktivesFensterUm(  0, -10)
+&gt;^Down::    VerschiebeAktivesFensterUm(  0, +10)
+
+VerschiebeAktivesFensterUm(x, y) {
+    WinExist "A"  <em>; Macht das aktive Fenster zum zuletzt gefundenen Fenster  </em>
+    WinGetPos &amp;aktuell_x, &amp;aktuell_y
+    WinMove aktuell_x + x, aktuell_y + y
+}</pre>
+<p>Das Beispiel <a href="../Functions.htm#intro">definiert eine Funktion</a>, um eine mehrfache Wiederholung von Code zu vermeiden. <code>x</code> und <code>y</code> werden zu Platzhaltern für die beiden in jedem Hotkey angegebenen Zahlen. WinGetPos speichert die aktuelle Position in <code>aktuell_x</code> und <code>aktuell_y</code>, die wir dann mit <code>x</code> und <code>y</code> addieren.</p>
+<p>Einfache Ausdrücke wie diese dürften Ihnen ziemlich vertraut vorkommen. Weitere Einzelheiten finden Sie unter <a href="../Variables.htm#Expressions">Ausdrücke</a>; beachten Sie jedoch, dass dort vieles steht, was Sie vermutlich nicht sofort lernen müssen.</p>
+
+</body></html>

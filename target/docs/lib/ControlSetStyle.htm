@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>ControlSetStyle / ControlSetExStyle - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die Funktionen ControlSetStyle und ControlSetExStyle ändern den Style bzw. erweiterten Style eines bestimmten Steuerelements." />
+<meta name="ahk:equiv-v1" content="lib/Control.htm#Style" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>ControlSetStyle / ControlSetExStyle</h1>
+
+<p>Ändert den Style bzw. erweiterten Style eines bestimmten Steuerelements.</p>
+
+<pre class="Syntax"><span class="func">ControlSetStyle</span> Wert, Steuerelement <span class="optional">, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span>
+<span class="func">ControlSetExStyle</span> Wert, Steuerelement <span class="optional">, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span></pre>
+
+<h2 id="Parameters">Parameter</h2>
+<dl>
+    <dt>Wert</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Verwenden Sie einen positiven Integer, um den Style des Fensters komplett zu überschreiben; also um den Style auf den angegebenen <em>Wert</em> zu setzen.</p>
+        <p>Um Styles auf einfache Weise hinzuzufügen, zu entfernen oder umzuschalten, übergeben Sie eine numerische Zeichenkette, die entweder mit einem Pluszeichen (+), Minuszeichen (-) oder Zirkumflex (^) beginnt. Der neue Style-Wert wird wie folgt berechnet (<em>AktuellerStyle</em> kann mit <a href="ControlGetStyle.htm">ControlGetStyle/ControlGetExStyle</a> oder <a href="WinGetStyle.htm">WinGetStyle/WinGetExStyle</a> abgerufen werden):</p>
+        <table class="info">
+            <tr>
+                <th>Operation</th>
+                <th>Präfix</th>
+                <th abbr="Beispiel">Beispiel-Zeichenkette</th>
+                <th>Formel</th>
+            </tr>
+            <tr>
+                <td>Add</td>
+                <td>+</td>
+                <td>+0x80</td>
+                <td><code>NeuerStyle := AktuellerStyle | Wert</code></td>
+            </tr>
+            <tr>
+                <td>Remove</td>
+                <td>-</td>
+                <td>-0x80</td>
+                <td><code>NeuerStyle := AktuellerStyle &amp; ~Wert</code></td>
+            </tr>
+            <tr>
+                <td>Umschalten</td>
+                <td>^</td>
+                <td>^0x80</td>
+                <td><code>NeuerStyle := AktuellerStyle ^ Wert</code></td>
+            </tr>
+        </table>
+        <p>Wenn <em>Wert</em> ein negativer Integer ist, wird er wie die entsprechende numerische Zeichenkette behandelt.</p>
+        <p>Um + oder ^ als direkt geschriebenen Text in einem Ausdruck zu verwenden, müssen Sie das Präfix oder den Wert in Anführungszeichen setzen. Zum Beispiel: <code>WinSetStyle("+0x80")</code> oder <code>WinSetStyle("^" UmzuschaltenderStyle)</code>. Ansonsten würde beispielsweise der <a href="../Variables.htm#Expressions">Ausdruck</a> <code><a href="../Variables.htm#unary">+123</a></code> 123 erzeugen (also ohne Präfix) und <code>^123</code> einen Syntaxfehler auslösen.</p>
+    </dd>
+    <dt>Steuerelement</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
+        <p>ClassNN-Bezeichnung, Text oder HWND-Nummer des Steuerelements, oder ein Objekt mit einer <code>Hwnd</code>-Eigenschaft. Einzelheiten finden Sie unter <a href="Control.htm#Parameter">Der Steuerelement-Parameter</a>.</p>
+    </dd>
+    <dt>FensterTitel</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
+        <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
+    </dd>
+    <dt>FensterText</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
+    </dd>
+    <dt>IgnoriereTitel</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
+    </dd>
+    <dt>IgnoriereText</dt>
+    <dd>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+        <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+    </dd>
+</dl>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster oder Steuerelement nicht gefunden werden konnte.</p>
+<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn der Style nicht geändert werden konnte. Nur zum Teil durchgeführte Änderungen werden als Erfolg gewertet.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Die <a href="../misc/Styles.htm">Style-Tabelle</a> beinhaltet eine Auflistung einiger Styles.</p>
+<p>Die Änderungen einiger Styles werden erst wirksam, wenn das komplette Fenster via <a href="WinRedraw.htm">WinRedraw</a> neu gezeichnet wurde.</p>
+<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="ControlGetStyle.htm">ControlGetStyle / ControlGetExStyle</a>, <a href="WinSetStyle.htm">WinSetStyle / WinSetExStyle</a>, <a href="../misc/Styles.htm">Styles-Tabelle</a>, <a href="Control.htm">Control-Funktionen</a></p>
+
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Schaltet den WS_BORDER-Style des Edit-Steuerelements im Texteditor auf den entgegengesetzten Zustand.</p>
+<pre>ControlSetStyle("^0x800000", "Edit1", "ahk_class Notepad")</pre>
+</div>
+
+</body>
+</html>

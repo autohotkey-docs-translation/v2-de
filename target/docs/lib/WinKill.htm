@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<title>WinKill - Syntax &amp; Verwendung | AutoHotkey v2</title>
+<meta name="description" content="Die WinKill-Funktion erzwingt das Schließen eines bestimmten Fensters." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<script src="../static/content.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>WinKill</h1>
+
+<p>Erzwingt das Schließen eines bestimmten Fensters.</p>
+
+<pre class="Syntax"><span class="func">WinKill</span> <span class="optional">FensterTitel, FensterText, Wartezeit, IgnoriereTitel, IgnoriereText</span></pre>
+<h2 id="Parameters">Parameter</h2>
+<dl>
+
+  <dt>FensterTitel</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
+    <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
+  </dd>
+
+  <dt>FensterText</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
+  </dd>
+
+  <dt>Wartezeit</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#numbers">Float</a></p>
+    <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird die Funktion überhaupt nicht warten. Wenn eine 0 angegeben ist, wird standardmäßig eine Wartezeit von 500 ms verwendet. Jeder andere Wert wird als Sekunden interpretiert (auch mit Dezimalpunkt oder als <a href="../Variables.htm#Expressions">Ausdruck</a>) und definiert, wie lange auf das Schließen des Fensters gewartet werden soll. Schließt sich das Fenster innerhalb dieser Zeit nicht, wird das Skript fortgesetzt.</p>
+  </dd>
+
+  <dt>IgnoriereTitel</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
+  </dd>
+
+  <dt>IgnoriereText</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+  </dd>
+
+</dl>
+
+<h2 id="Error_Handling">Fehlerbehandlung</h2>
+<p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte, es sei denn, der <a href="#group">Gruppenmodus</a> wird verwendet.</p>
+<p>Es wird keine Ausnahme ausgelöst, wenn ein Fenster gefunden wird, aber nicht geschlossen werden kann. Verwenden Sie daher <a href="WinExist.htm">WinExist</a> oder <a href="WinWaitClose.htm">WinWaitClose</a>, um ein eindeutiges Schließen eines Fensters festzustellen.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Zuerst versucht diese Funktion, das Fenster auf normale Weise zu schließen. Bei Misserfolg wird WinKill versuchen, den Prozess des Fensters gewaltsam zu terminieren.</p>
+<p>Wenn ein übereinstimmendes Fenster aktiv ist, wird bei mehreren übereinstimmenden Fenstern vorrangig dieses Fenster geschlossen. Im Falle mehrerer übereinstimmender Fenster wird generell das oberste (aktuell verwendete) Fenster geschlossen.</p>
+<p id="group">Diese Funktion agiert nur mit einem einzelnen Fenster, es sei denn, <em>FensterTitel</em> ist <a href="GroupAdd.htm">ahk_group GruppeName</a>, dann sind alle Fenster in der Gruppe betroffen.</p>
+<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="WinClose.htm">WinClose</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="ProcessClose.htm">ProcessClose</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundenes Fenster</a>, <a href="WinExist.htm">WinExist</a>, <a href="WinActive.htm">WinActive</a>, <a href="WinWaitActive.htm">WinWaitActive</a>, <a href="WinWait.htm">WinWait</a>, <a href="GroupActivate.htm">GroupActivate</a></p>
+<h2 id="Examples">Beispiele</h2>
+<div class="ex" id="ExBasic">
+<p><a class="ex_number" href="#ExBasic"></a> Wenn der Texteditor vorhanden ist, erzwinge sein Schließen, ansonsten erzwinge das Schließen des Taschenrechners.</p>
+<pre>if WinExist("Unbenannt - Editor")
+    WinKill <em>; Verwendet das von WinExist gefundene Fenster.</em>
+else
+    WinKill "Rechner"</pre>
+</div>
+
+</body>
+</html>
