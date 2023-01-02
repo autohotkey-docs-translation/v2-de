@@ -1,0 +1,62 @@
+name: Create release on new tag
+
+# Controls when the action will run. Triggers the workflow on new tags
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  compile-chm-and-create-release:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: master
+
+    - name: Download and unzip AutoHotkey v1.1
+      run: |
+        $source = "https://www.autohotkey.com/download/ahk.zip"
+        $dest = "ahk.zip"
+        Invoke-WebRequest -Uri $source -OutFile $dest
+        Expand-Archive -Path $dest
+
+    - name: Run compile_chm.ahk
+      run: |
+        Start-Process -FilePath "ahk/AutoHotkeyU32.exe" -ArgumentList "/ErrorStdOut `"target\compile_chm.ahk`"" -NoNewWindow -Wait
+
+    - name: Compress CHM file
+      run: |
+        Compress-Archive -Path target\*.chm -DestinationPath .\AutoHotkeyHelp_DE -Force
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: ""
+        draft: false
+        prerelease: false
+      
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./AutoHotkeyHelp_DE.zip
+        asset_name: AutoHotkeyHelp_DE.zip
+        asset_content_type: application/zip
