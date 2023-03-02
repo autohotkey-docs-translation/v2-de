@@ -14,6 +14,7 @@ tocData = [
     ["Funktionen","Functions.htm"],
     ["Label","misc/Labels.htm"],
     ["Threads","misc/Threads.htm"],
+    ["Editoren","misc/Editors.htm"],
     ["Debugging-Clients","AHKL_DBGPClients.htm"],
     ["Compiler-Direktiven","misc/Ahk2ExeDirectives.htm"],
     ["Objekte","Objects.htm"]

@@ -159,6 +159,7 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
 <h2 id="ahk2exe">Ein Skript in eine EXE-Datei umwandeln (Ahk2Exe)</h2>
 <p>Es ist ein Skript-Compiler im Lieferumfang des Programms enthalten (von fincs bereitgestellt und von TAC109 um Features erweitert).</p>
 <p>Ein kompiliertes Skript ist eine eigenständige ausführbare Datei; das heißt, dass das Skript ohne AutoHotkey.exe gestartet werden kann. Der Kompilierungsvorgang bestückt die ausführbare Datei mit folgenden Dingen: der AutoHotkey-Interpreter, das Skript, via <a href="lib/_Include.htm">#Include</a> definierte Dateien und via <a href="lib/FileInstall.htm">FileInstall</a> definierte Dateien. Zusätzliche Dateien können mittels <a href="misc/Ahk2ExeDirectives.htm">Compiler-Direktiven</a> eingebunden werden.</p>
+<p>Für v1.1- und v2-Skripte wird derselbe Compiler verwendet. Der Compiler unterscheidet Skriptversionen durch Überprüfung der Hauptversion der bereitgestellten Basisdatei.</p>
 <h3 id="ahk2exe-toc">Compiler-Themen</h3>
 <ul>
   <li><a href="#ahk2exe-run">Compiler ausführen</a></li>
@@ -202,7 +203,7 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
       </tr>
       <tr id="SlashBase">
         <td>/base <i>Dateiname</i></td>
-        <td>Die zu verwendende Basisdatei (eine BIN- oder EXE-Datei). Standardmäßig wird der zuletzt in der GUI-Oberfläche gespeicherte Basisdateiname oder eine im Skript vorkommende <a href="misc/Ahk2ExeDirectives.htm#Bin">Base</a>-Compiler-Direktive verwendet.</td>
+        <td>Die zu verwendende Basisdatei (eine BIN- oder EXE-Datei). Die Hauptversion der verwendeten Basisdatei muss mit der Version des zu kompilierenden Skripts übereinstimmen. Standardmäßig wird der zuletzt in der GUI-Oberfläche gespeicherte Basisdateiname oder eine im Skript vorkommende <a href="misc/Ahk2ExeDirectives.htm#Bin">Base</a>-Compiler-Direktive verwendet.</td>
       </tr>
       <tr id="SlashResourceID">
         <td>/resourceid <i>Name</i></td>
@@ -210,7 +211,7 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
       </tr>
       <tr id="SlashCp">
         <td>/cp <i>Zeichensatz</i></td>
-        <td>Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Eine Liste möglicher Werte finden Sie unter <a href="https://docs.microsoft.com/de-de/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>. Beachten Sie, dass Unicode-Skripte mit einer Byte-Order-Markierung (BOM) beginnen sollten, was die Verwendung dieses Parameters überflüssig macht.</td>
+        <td>Überschreibt den Standard-Zeichensatz, mit dem die Skript-Dateien gelesen werden. Eine Liste möglicher Werte finden Sie unter <a href="https://learn.microsoft.com/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>. Beachten Sie, dass Unicode-Skripte mit einer Byte-Order-Markierung (BOM) beginnen sollten, was die Verwendung dieses Parameters überflüssig macht.</td>
       </tr>
       <tr id="SlashCompress">
         <td>/compress <i>n</i></td>
@@ -406,7 +407,7 @@ Zeile 2 vom Text. Standardmäßig befindet sich ein Zeilenumbruchszeichen (`n) z
 <p>Damit ASCII-fremde Zeichen korrekt aus der Datei gelesen werden können, muss die Codierung, die beim Speichern der Datei verwendet wurde (meistens via Texteditor), mit der Codierung übereinstimmen, die AutoHotkey beim Lesen der Datei verwendet. Wenn sie nicht übereinstimmen, werden Zeichen falsch dekodiert. AutoHotkey entscheidet anhand folgender Regeln, welche Codierung verwendet werden soll:</p>
 <ul>
   <li>Beginnt die Datei mit einer UTF-8- oder UTF-16-Byte-Order-Markierung (BOM), wird der entsprechende Zeichensatz verwendet und die <a href="#CPn">/CP<i>n</i></a>-Option ignoriert.</li>
-  <li>Wenn die <a href="#CPn">/CP<i>n</i></a>-Option via Befehlszeile übergeben wurde, wird der Zeichensatz <i>n</i> verwendet. Eine Liste möglicher Werte finden Sie unter <a href="https://docs.microsoft.com/de-de/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>.</li>
+  <li>Wenn die <a href="#CPn">/CP<i>n</i></a>-Option via Befehlszeile übergeben wurde, wird der Zeichensatz <i>n</i> verwendet. Eine Liste möglicher Werte finden Sie unter <a href="https://learn.microsoft.com/windows/win32/intl/code-page-identifiers">Code Page Identifiers</a>.</li>
   <li>In allen anderen Fällen wird UTF-8 verwendet (dieses Standardverhalten unterscheidet sich von AutoHotkey v1).</li>
 </ul>
 <p>Beachten Sie, dass die oben genannten Punkte nur für Skript-Dateien gelten, die AutoHotkey geladen hat, nicht für die Dateibearbeitung im Skript selbst. <a href="lib/FileEncoding.htm">FileEncoding</a> steuert die Standardcodierung von Dateien, die das Skript liest oder schreibt, während <a href="lib/IniRead.htm">IniRead</a> und <a href="lib/IniWrite.htm">IniWrite</a> immer auf Basis von UTF-16 oder ANSI arbeiten.</p>
@@ -439,7 +440,7 @@ Pause</pre>
 <h3 id="idebug">Interaktives Debuggen</h3>
 <p>Interaktives Debuggen ist mit einem unterstützten <a href="AHKL_DBGPClients.htm">DBGp-Client</a> möglich. Üblicherweise sind folgende Aktionen möglich:</p>
 <ul>
-  <li>Haltepunkte auf Zeilen setzen oder entfernen - die Ausführung pausieren, wenn ein <a href="https://de.wikipedia.org/wiki/Haltepunkt_(Programmierung)">Haltepunkt</a> erreicht ist.</li>
+  <li>Haltepunkte auf Zeilen setzen oder entfernen - die Ausführung pausieren, wenn ein <a href="https://en.wikipedia.org/wiki/Breakpoint">Haltepunkt</a> erreicht ist.</li>
   <li>Den Code zeilenweise durchgehen - Funktionen betreten, überspringen oder verlassen.</li>
   <li>Alle oder eine bestimmte Variable überwachen.</li>
   <li>Den Stapel von laufenden Threads und Funktionen anzeigen.</li>

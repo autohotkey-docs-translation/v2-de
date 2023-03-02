@@ -84,7 +84,7 @@
 <p><strong>Send:</strong> Standardmäßig ist Send synonym mit SendInput; allerdings kann es via <a href="SendMode.htm">SendMode</a> synonym mit SendEvent oder SendPlay gemacht werden.</p>
 <p><strong>SendText:</strong> Ähnlich wie Send, außer dass alle Zeichen in <em>Tasten</em> als direkt geschriebener Text interpretiert und gesendet werden. Weitere Informationen finden Sie unter <a href="#Text">Text-Modus</a>.</p>
 <p><strong id="SendInput">SendInput</strong> und <strong id="SendPlay">SendPlay</strong>: SendInput und SendPlay verwenden die gleiche Syntax wie Send, allerdings sind sie in der Regel schneller und zuverlässiger. Des Weiteren bewirken diese Modi, dass alle physischen Aktivitäten, die der Benutzer via Tastatur oder Maus durchführt, gepuffert (hinausgezögert) werden, bis die Send-Aktion abgeschlossen ist. Dadurch wird verhindert, dass die Tastendrücke des Benutzers mit denen, die gesendet werden, vermischt werden. Sie können <a href="SendMode.htm">SendMode</a> verwenden, um Send synonym mit SendInput oder SendPlay zu machen. Weitere Informationen zu jedem Modus finden Sie unter <a href="#SendInputDetail">SendInput</a> und <a href="#SendPlayDetail">SendPlay</a> weiter unten.</p>
-<p id="SendEvent"><strong>SendEvent</strong>: SendEvent verwenden zum Senden von Tastendrücken die keybd_event-Funktion von Windows (siehe MSDN für Details). Die Geschwindigkeit, mit welcher die Tastendrücke gesendet werden, wird durch <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst. Sie können <a href="SendMode.htm">SendMode</a> verwenden, um Send synonym mit SendEvent oder SendPlay zu machen.</p>
+<p id="SendEvent"><strong>SendEvent</strong>: SendEvent verwenden zum Senden von Tastendrücken die keybd_event-Funktion von Windows (siehe Microsoft Docs für Details). Die Geschwindigkeit, mit welcher die Tastendrücke gesendet werden, wird durch <a href="SetKeyDelay.htm">SetKeyDelay</a> beeinflusst. Sie können <a href="SendMode.htm">SendMode</a> verwenden, um Send synonym mit SendEvent oder SendPlay zu machen.</p>
 
 <h2 id="Special_modes">Spezielle Modi</h2>
 <p>Die folgenden Modi beeinflussen die Interpretation der Zeichen in <em>Tasten</em> oder das Verhalten von Funktionen, die Tasten senden, wie z. B. Send, SendInput, SendPlay, SendEvent und <a href="ControlSend.htm">ControlSend</a>. Diese Modi müssen in Form von <code>{x}</code> in <em>Tasten</em> angegeben werden, wobei x entweder Raw, Text oder Blind ist. Zum Beispiel <code>{Raw}</code>.</p>
@@ -299,7 +299,7 @@
   <tr id="Unicode">
     <td>{U+nnnn}</td>
     <td><p id="sendu">Sendet ein Unicode-Zeichen, wobei <em>nnnn</em> der hexadezimale Wert des Zeichens ohne 0x-Präfix ist. Diese Methode ist üblicherweise nicht notwendig, weil Send und ControlSend von sich aus Unicode-Text unterstützt.</p>
-    <p><a href="https://msdn.microsoft.com/de-de/library/ms646310">SendInput()</a> oder <a href="https://msdn.microsoft.com/de-de/library/ms646276">WM_CHAR</a> wird zum Senden des Zeichens verwendet, außerdem wird der aktuelle Send-Modus ignoriert. Zeichen, die auf diese Weise gesendet werden, lösen in der Regel keine Tastaturkurzbefehle oder Hotkeys aus.</p></td>
+    <p><a href="https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-sendinput">SendInput()</a> oder <a href="https://learn.microsoft.com/windows/win32/inputdev/wm-char">WM_CHAR</a> wird zum Senden des Zeichens verwendet, außerdem wird der aktuelle Send-Modus ignoriert. Zeichen, die auf diese Weise gesendet werden, lösen in der Regel keine Tastaturkurzbefehle oder Hotkeys aus.</p></td>
   </tr>
   <tr id="vk" class="sep_below">
     <td><p>{vkXX}<br>
@@ -516,9 +516,9 @@ Send "{Tab up}"  <em>; Lässt die Taste los.</em></pre>
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p id="characters"><strong>Zeichen vs. Tasten</strong>: Standardmäßig werden Zeichen gesendet, indem sie zunächst in Tastendrücke übersetzt werden. Wenn diese Übersetzung nicht möglich ist (also wenn das aktuelle Tastaturlayout keine Taste oder Tastenkombination enthält, die dieses Zeichen erzeugen würde), wird das Zeichen mittels einer der folgenden Fallback-Methoden gesendet:</p>
 <ul id="fallback">
-  <li>SendEvent und SendInput nutzen <a href="http://msdn.microsoft.com/de-de/library/ms646310">SendInput()</a> mit dem <a href="https://msdn.microsoft.com/de-de/library/ms646271#keyeventf_unicode">KEYEVENTF_UNICODE-Flag</a>.</li>
+  <li>SendEvent und SendInput nutzen <a href="https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-sendinput">SendInput()</a> mit dem <a href="https://learn.microsoft.com/windows/win32/api/winuser/ns-winuser-keybdinput#keyeventf_unicode">KEYEVENTF_UNICODE-Flag</a>.</li>
   <li>SendPlay nutzt die <a href="#asc">Alt+nnnnn</a>-Methode, die nur Unicode erzeugt, wenn es von der Zielanwendung unterstützt wird.</li>
-  <li>Controlsend sendet eine <a href="https://msdn.microsoft.com/de-de/library/ms646276">WM_CHAR</a>-Meldung.</li>
+  <li>Controlsend sendet eine <a href="https://learn.microsoft.com/windows/win32/inputdev/wm-char">WM_CHAR</a>-Meldung.</li>
 </ul>
 <p class="warning"><strong>Hinweis:</strong> Zeichen, die mit einer der oben genannten Methoden gesendet werden, lösen in der Regel keine Tastaturkurzbefehle oder Hotkeys aus.</p>
 <p id="AZ">Jedes Zeichen im Bereich von <strong>a-z</strong> oder <strong>A-Z</strong> (reine ASCII-Buchstaben), das im aktuellen Tastaturlayout nicht vorhanden ist, kann entweder als Zeichen oder als entsprechender virtueller Tastencode (vk41-vk5A) gesendet werden:</p>

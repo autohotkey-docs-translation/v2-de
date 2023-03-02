@@ -25,7 +25,7 @@
       <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
       <p>Die nullbasierte Indexnummer der Methode innerhalb der virtuellen Funktionstabelle.</p>
       <p><em>Index</em> entspricht der Position der Methode innerhalb der ursprünglichen Interface-Definition. Die Microsoft-Dokumentation listet Methoden grundsätzlich in alphabetischer Reihenfolge auf und ist demzufolge nicht zum Ermitteln der Indexnummer geeignet. Um die richtige Indexnummer zu ermitteln, müssen Sie die ursprüngliche Interface-Definition lokalisieren. Dies könnte z. B. in einer Header-Datei oder einer Typenbibliothek sein.</p>
-      <p>Es ist wichtig, Methoden zu berücksichtigen, die von übergeordneten Interfaces geerbt wurden. Da alle COM-Interfaces letztlich von <a href="https://docs.microsoft.com/de-de/windows/win32/api/unknwn/nn-unknwn-iunknown">IUnknown</a> abgeleitet sind, sind die ersten drei Methoden immer QueryInterface (0), AddRef (1) und Release (2). <em>IShellItem2</em> beispielsweise ist eine Erweiterung von <em>IShellItem</em>, die bei Index 3 beginnt und 5 Methoden enthält, demzufolge ist die erste Methode von <em>IShellItem2</em> bei Index 8.</p>
+      <p>Es ist wichtig, Methoden zu berücksichtigen, die von übergeordneten Interfaces geerbt wurden. Da alle COM-Interfaces letztlich von <a href="https://learn.microsoft.com/windows/win32/api/unknwn/nn-unknwn-iunknown">IUnknown</a> abgeleitet sind, sind die ersten drei Methoden immer QueryInterface (0), AddRef (1) und Release (2). <em>IShellItem2</em> beispielsweise ist eine Erweiterung von <em>IShellItem</em>, die bei Index 3 beginnt und 5 Methoden enthält, demzufolge ist die erste Methode von <em>IShellItem2</em> bei Index 8.</p>
       <p class="note"><strong>Tipp:</strong> COM-Interfaces, die von Microsoft bereitgestellt werden, finden Sie im Internet oder Windows SDK unter "<em>IInterfaceName</em><b>Vtbl</b>" - zum Beispiel "IUnknownVtbl". Die Microsoft-eigenen Interface-Definitionen werden von dieser Plain-C-Definition der virtuellen Funktionstabelle des Interfaces begleitet, die alle Methoden explizit in der richtigen Reihenfolge auflistet.</p>
       <p>Die Übergabe einer ungültigen Indexnummer kann zu undefiniertem Verhalten führen, inklusive (aber nicht beschränkt auf) Programmterminierung.</p>
   </dd>
@@ -57,7 +57,7 @@
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Wenn <em>RückgabeTyp</em> <a href="DllCall.htm#HRESULT">HRESULT</a> ist (oder weggelassen wird) und die Methode einen Fehlerwert (wie durch das <a href="https://docs.microsoft.com/de-de/windows/win32/api/winerror/nf-winerror-failed">FAILED-Makro</a> definiert) zurückgegeben hat, wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst.</p>
+<p>Wenn <em>RückgabeTyp</em> <a href="DllCall.htm#HRESULT">HRESULT</a> ist (oder weggelassen wird) und die Methode einen Fehlerwert (wie durch das <a href="https://learn.microsoft.com/windows/win32/api/winerror/nf-winerror-failed">FAILED-Makro</a> definiert) zurückgegeben hat, wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst.</p>
 <p>Ansonsten gibt ComCall den eigentlichen Rückgabewert der Methode zurück. Wenn die Methode vom Typ ist, der keinen Wert zurückgibt (mit einem Rückgabetyp, der in C als <code>void</code> definiert ist), ist das Ergebnis undefiniert und sollte ignoriert werden.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
@@ -79,7 +79,7 @@
 <div class="ex" id="ExTaskbar">
 <p><a class="ex_number" href="#ExTaskbar"></a> Entfernt für 3 Sekunden das aktive Fenster aus der Taskleiste. Vergleichen Sie dies mit dem <a href="DllCall.htm#ExTaskbar">äquivalenten DllCall-Beispiel</a>.</p>
 <pre><em>/*
-  Methoden in der <a href="https://msdn.microsoft.com/de-de/library/bb774652.aspx">ITaskbarList</a>-VTable:
+  Methoden in der <a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nn-shobjidl_core-itaskbarlist">ITaskbarList</a>-VTable:
     IUnknown:
       0 QueryInterface  -- nutze stattdessen <a href="ComObjQuery.htm">ComObjQuery</a>
       1 AddRef          -- nutze stattdessen <a href="ObjAddRef.htm">ObjAddRef</a>
@@ -99,10 +99,10 @@ tbl := ComObject(CLSID_TaskbarList, IID_ITaskbarList)
 
 activeHwnd := WinExist("A")
 
-ComCall(3, tbl)                     <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774650.aspx">HrInit</a>()</em>
-ComCall(5, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774648.aspx">DeleteTab</a>(activeHwnd)</em>
+ComCall(3, tbl)                     <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-hrinit">HrInit</a>()</em>
+ComCall(5, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-deletetab">DeleteTab</a>(activeHwnd)</em>
 Sleep 3000
-ComCall(4, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774646.aspx">AddTab</a>(activeHwnd)</em>
+ComCall(4, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-addtab">AddTab</a>(activeHwnd)</em>
 
 <em>; Wenn mit dem Objekt fertig, ersetze einfach alle Referenzen mit
 ; einem anderen Wert (oder wenn es sich um eine lokale Variable handelt, einfach return):</em>

@@ -34,9 +34,9 @@
 {
     Run "notepad"
 }</pre>
-<p id="HotBraces">Im Beispiel oben dienen die geschweiften Klammern dazu, einen <a href="Functions.htm">Funktionskörper</a> für den Hotkey zu definieren. Die geschweifte Startklammer kann in der gleichen Zeile wie das Doppelpunktpaar stehen, um den <a href="lib/Block.htm#otb">OTB-Style (One True Brace)</a> zu unterstützen. Wenn ein Hotkey allerdings nur eine einzige Zeile ausführen muss, kann diese Zeile rechts neben dem Doppelpunkt-Paar geschrieben werden. Mit anderen Worten sind die geschweiften Klammern implizit:</p>
+<p>Im Beispiel oben dienen die geschweiften Klammern dazu, einen <a href="Functions.htm">Funktionskörper</a> für den Hotkey zu definieren. Die geschweifte Startklammer kann in der gleichen Zeile wie das Doppelpunktpaar stehen, um den <a href="lib/Block.htm#otb">OTB-Style (One True Brace)</a> zu unterstützen. Wenn ein Hotkey allerdings nur eine einzige Zeile ausführen muss, kann diese Zeile rechts neben dem Doppelpunkt-Paar geschrieben werden. Mit anderen Worten sind die geschweiften Klammern implizit:</p>
 <pre>#n::Run "notepad"</pre>
-<p id="ThisHotkey">Beim Auslösen eines Hotkeys wird der Name des Hotkeys (ohne Doppelpunkte am Ende) als erster Parameter namens ThisHotkey übergeben. Zum Beispiel:</p>
+<p id="ThisHotkey">Beim Auslösen eines Hotkeys wird der Name des Hotkeys (ohne Doppelpunkte am Ende) als erster Parameter namens <code>ThisHotkey</code> übergeben. Zum Beispiel:</p>
 <pre>#n::MsgBox ThisHotkey  <em>; Meldet #n</em></pre>
 <p>Bis auf wenige Ausnahmen ähnelt dies der internen Variable <a href="Variables.htm#ThisHotkey">A_ThisHotkey</a>. Der Parametername kann mithilfe einer <a href="#Function">benannten Funktion</a> geändert werden.</p>
 <p>Um zu erreichen, dass ein Hotkey von mehr als einem Modifikator ausgelöst werden kann, müssen diese nebeneinander aufgelistet werden (die Reihenfolge spielt keine Rolle). Das folgende Beispiel benutzt <code>^!s</code>, um <kbd>Strg</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> zu kennzeichnen:</p>
@@ -88,7 +88,7 @@
   </tr>
   <tr id="AltGr">
     <td class="center bold">&lt;^&gt;!</td>
-    <td><p><kbd>AltGr</kbd> (<a href="https://de.wikipedia.org/wiki/Alt_Gr">alternative Grafik bzw. alternativer Schriftsatz</a>). Wenn Ihre Tastaturbelegung <kbd>AltGr</kbd> anstelle einer rechten <kbd>Alt</kbd>-Taste aufweist, kann diese Symbolreihe in der Regel für <kbd>AltGr</kbd> benutzt werden. Zum Beispiel:</p>
+    <td><p><kbd>AltGr</kbd> (<a href="https://en.wikipedia.org/wiki/AltGr_key">alternative Grafik bzw. alternativer Schriftsatz</a>). Wenn Ihre Tastaturbelegung <kbd>AltGr</kbd> anstelle einer rechten <kbd>Alt</kbd>-Taste aufweist, kann diese Symbolreihe in der Regel für <kbd>AltGr</kbd> benutzt werden. Zum Beispiel:</p>
       <pre>&lt;^&gt;!m::MsgBox "Sie haben ALTGR+M gedrückt."
 &lt;^&lt;!m::MsgBox "Sie haben STRGLinks+ALTLinks+M gedrückt."</pre>
       <p>Wenn die <kbd>AltGr</kbd>-Taste stattdessen selbst zu einem Hotkey gemacht werden soll, muss der folgende Hotkey benutzt werden (ohne dass Hotkeys wie oben vorhanden sind):</p>
@@ -305,17 +305,18 @@ GroupAdd "AltTabFenster", "ahk_class #32771"  <em>; Älter, oder mit aktiviertem
 ; Unterstützt SciTE und Notepad++.</em>
 ^+o::
 ^+e::
-    editor_ordner_öffnen(ThisHotkey)
+    editor_ordner_öffnen(hk)
     {
         pfad := WinGetTitle("A")
         if RegExMatch(pfad, "\*?\K(.*)\\[^\\]+(?= [-*] )", &amp;pfad)
-            if (FileExist(pfad[0]) &amp;&amp; ThisHotkey = "^+e")
+            if (FileExist(pfad[0]) &amp;&amp; hk = "^+e")
                 Run Format('explorer.exe /select,"{1}"', pfad[0])
             else
                 Run Format('explorer.exe "{1}"', pfad[1])
     }</pre>
-<p id="function-details">Hotstrings können auch auf diese Weise definiert werden. Mehrere Hotkeys oder Hotstrings können übereinandergestapelt werden, um die gleiche Funktion aufzurufen.</p>
-<p>Es dürfen nur Leerraumzeichen oder Kommentare zwischen dem Hotkey/Hotstring und der Funktion vorkommen.</p>
+<p>Wenn die Funktion <em>editor_ordner_öffnen</em> explizit vom Skript aufgerufen wird, muss dem ersten Parameter (hk) ein Wert übergeben werden.</p>
+<p><a href="Hotstrings.htm">Hotstrings</a> können auch auf diese Weise definiert werden. Mehrere Hotkeys oder Hotstrings können übereinandergestapelt werden, um die gleiche Funktion aufzurufen.</p>
+<p>Es dürfen nur Leerraumzeichen oder Kommentare zwischen dem Hotkey und dem Funktionsnamen vorkommen.</p>
 <p>Außerdem fördert das Benennen einer Funktion selbstdokumentierende Hotkeys; im Code oben beschreibt der Funktionsname zum Beispiel den Hotkey.</p>
 <p>Mit der <a href="lib/Hotkey.htm">Hotkey</a>-Funktion kann einem Hotkey auch eine Funktion oder ein Funktionsobjekt zugewiesen werden.</p>
 

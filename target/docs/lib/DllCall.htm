@@ -64,7 +64,7 @@
   <p>Wenn die Funktion so ausgelegt ist, dass sie eine Zeichenkette länger als der Eingabewert des Parameters speichert (oder wenn der Parameter nur für die Ausgabe vorgesehen ist), wird folgende Vorgehensweise empfohlen: Erstellen Sie ein <a href="Buffer.htm">Buffer</a>-Objekt, nutzen Sie den <a href="#ptr">Ptr</a>-Typ, um ihn zu übergeben, und nutzen Sie <a href="StrGet.htm">StrGet</a>, um die Zeichenkette nach Abschluss der Funktion abzurufen, wie im <a href="#ExWsprintf">wsprintf-Beispiel</a> gezeigt.</p>
   <p>Ansonsten sollten Sie vor dem Aufruf der Funktion sicherstellen, dass die Variable groß genug ist. Um das zu erreichen, können Sie <code><a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>(MeineVar, 123)</code> aufrufen. Ersetzen Sie 123 mit der Anzahl der 16-Bit-Einheiten (umgangssprachlich auch Zeichen genannt), die <em>MeineVar</em> maximal enthalten soll. Wenn die Variable beim Return nicht null-terminiert ist, wird eine Fehlermeldung angezeigt und das Programm beendet, da es wahrscheinlich ist, dass der Speicher via Pufferüberlauf korrumpiert wurde. Dies deutet typischerweise darauf hin, dass die Kapazität der Variable unzureichend war.</p>
   <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der zu einer Zahl ausgewertet wird (z. B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ein <a href="Error.htm#TypeError">TypeError</a> ausgelöst.</p>
-  <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine <a href="../Concepts.htm#variable-references">VarRef</a> übergeben wurde. Dies kann in Verbindung mit Funktionen genutzt werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher reserviert und erwartet, dass der Aufrufer ihn freigibt (z. B. durch Aufruf von <a href="https://docs.microsoft.com/de-de/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code>Ptr*</code>-Argumenttyp verwendet werden.</p>
+  <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine <a href="../Concepts.htm#variable-references">VarRef</a> übergeben wurde. Dies kann in Verbindung mit Funktionen genutzt werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher reserviert und erwartet, dass der Aufrufer ihn freigibt (z. B. durch Aufruf von <a href="https://learn.microsoft.com/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code>Ptr*</code>-Argumenttyp verwendet werden.</p>
   <p class="note"><strong>Hinweis</strong>: Wenn Sie eine Zeichenkette an eine Funktion übergeben, müssen Sie darauf achten, welchen <a href="../Compat.htm#DllCall"><i>Typ</i> von Zeichenkette</a> die Funktion erwartet.</p></td>
 </tr>
 <tr>
@@ -137,7 +137,7 @@ str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufe
 <tr id="HRESULT">
   <td>HRESULT</td>
   <td>
-    <p>Ein 32-Bit-Integer. Dieser Typ wird grundsätzlich im Zusammenhang mit COM-Funktionen verwendet und ist nur als Rückgabetyp ohne Präfix oder Suffix gültig. Fehlerwerte (wie durch das <a href="https://docs.microsoft.com/de-de/windows/win32/api/winerror/nf-winerror-failed">FAILED-Makro</a> definiert) werden nie zurückgegeben; stattdessen wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst. Daher ist der Rückgabewert ein Erfolgscode im Bereich von 0 bis 2147483647.</p>
+    <p>Ein 32-Bit-Integer. Dieser Typ wird grundsätzlich im Zusammenhang mit COM-Funktionen verwendet und ist nur als Rückgabetyp ohne Präfix oder Suffix gültig. Fehlerwerte (wie durch das <a href="https://learn.microsoft.com/windows/win32/api/winerror/nf-winerror-failed">FAILED-Makro</a> definiert) werden nie zurückgegeben; stattdessen wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst. Daher ist der Rückgabewert ein Erfolgscode im Bereich von 0 bis 2147483647.</p>
     <p>HRESULT ist der Standard-Rückgabetyp von <a href="ComCall.htm">ComCall</a>.</p>
   </td>
 </tr>
@@ -146,7 +146,7 @@ str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufe
 <h2 id="error">Fehlerbehandlung</h2>
 <p>DllCall löst einen <a href="Error.htm">Error</a> aus, wenn eine der folgenden Bedingungen zutrifft:</p>
 <ul>
-  <li><a href="Error.htm#OSError">OSError</a>: Der <a href="#HRESULT">HRESULT</a>-Rückgabetyp wurde verwendet und die Funktion hat einen Fehlerwert (wie durch das <a href="https://docs.microsoft.com/de-de/windows/win32/api/winerror/nf-winerror-failed">FAILED-Makro</a> definiert) zurückgegeben. <code>Exception.Extra</code> enthält den hexadezimalen Fehlercode.</li>
+  <li><a href="Error.htm#OSError">OSError</a>: Der <a href="#HRESULT">HRESULT</a>-Rückgabetyp wurde verwendet und die Funktion hat einen Fehlerwert (wie durch das <a href="https://learn.microsoft.com/windows/win32/api/winerror/nf-winerror-failed">FAILED-Makro</a> definiert) zurückgegeben. <code>Exception.Extra</code> enthält den hexadezimalen Fehlercode.</li>
   <li><a href="Error.htm#TypeError">TypeError</a>: Der <em>[DllDatei\]Funktion</em>-Parameter ist eine Floating-Point-Zahl. Es wird eine Zeichenkette oder ein positiver Integer benötigt.</li>
   <li><a href="Error.htm#ValueError">ValueError</a>: Der <a href="#types">Rückgabetyp</a> oder einer der angegebenen <a href="#types">Argumenttypen</a> ist ungültig.</li>
   <li><a href="Error.htm#TypeError">TypeError</a>: Es wurde ein Wert unerwarteten Typs an ein Argument übergeben. Dies geschieht zum Beispiel, wenn ein <a href="../Variables.htm#Expressions">Ausdruck</a>, der zu einer Zahl ausgewertet wird, an ein Zeichenkettenargument (<a href="#str">Str</a>) übergeben wird, wenn eine nicht-numerische Zeichenkette an ein numerisches Argument übergeben wird oder wenn ein Objekt an ein Argument übergeben wird, das <em>nicht</em> vom Typ <a href="#ptr">Ptr</a> ist.</li>
@@ -194,14 +194,14 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 
 <h2 id="COM">Component Object Model (COM)</h2>
 <p>COM-Objekte, die für VBScript und ähnliche Sprachen zugänglich sind, können in der Regel via <a href="ComObject.htm">ComObject</a>, <a href="ComObjGet.htm">ComObjGet</a> oder <a href="ComObjActive.htm">ComObjActive</a> in Kombination mit der internen <a href="../Objects.htm#Usage_Objects">Objektsyntax</a> angesteuert werden.</p>
-<p>COM-Objekte, die kein <a href="https://msdn.microsoft.com/de-de/library/ms221608.aspx">IDispatch</a> unterstützen, können in Verbindung mit DllCall genutzt werden, indem die Adresse einer Funktion aus der virtuellen Funktionstabelle des Objekt-Interfaces ermittelt wird. Weitere Informationen finden Sie <a href="#ExTaskbar">im Beispiel</a> weiter unten. Allerdings ist es in der Regel besser, <a href="ComCall.htm">ComCall</a> zu verwenden, was diesen Prozess vereinfacht.</p>
+<p>COM-Objekte, die kein <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nn-oaidl-idispatch">IDispatch</a> unterstützen, können in Verbindung mit DllCall genutzt werden, indem die Adresse einer Funktion aus der virtuellen Funktionstabelle des Objekt-Interfaces ermittelt wird. Weitere Informationen finden Sie <a href="#ExTaskbar">im Beispiel</a> weiter unten. Allerdings ist es in der Regel besser, <a href="ComCall.htm">ComCall</a> zu verwenden, was diesen Prozess vereinfacht.</p>
 
 <h2 id="dotnet">.NET Framework</h2>
 <p>.NET Framework-Bibliotheken werden von einer "virtuellen Maschine" ausgeführt, die als Common Language Runtime oder kurz CLR bekannt ist. Hierbei sind die .NET-DLL-Dateien anders formatiert als normale DLL-Dateien und enthalten in der Regel keine Funktionen, die DllCall aufrufen kann.</p>
-<p>AutoHotkey kann jedoch die CLR über <a href="https://docs.microsoft.com/de-de/dotnet/standard/native-interop/com-callable-wrapper">COM Callable Wrapper</a> nutzen. Falls die Bibliothek nicht auch als allgemeine COM-Komponente registriert ist, muss die CLR selbst zunächst manuell über DllCall initialisiert werden. Weitere Informationen finden Sie unter <a href="https://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (das derzeit DllCall verwendet und nicht mit AutoHotkey v2 kompatibel ist).</p>
+<p>AutoHotkey kann jedoch die CLR über <a href="https://learn.microsoft.com/dotnet/standard/native-interop/com-callable-wrapper">COM Callable Wrapper</a> nutzen. Falls die Bibliothek nicht auch als allgemeine COM-Komponente registriert ist, muss die CLR selbst zunächst manuell über DllCall initialisiert werden. Weitere Informationen finden Sie unter <a href="https://www.autohotkey.com/forum/topic26191.html">.NET Framework Interop</a> (das derzeit DllCall verwendet und nicht mit AutoHotkey v2 kompatibel ist).</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="../Compat.htm#DllCall">Binärkompatibilität</a>, <a href="Buffer.htm">Buffer-Objekt</a>, <a href="ComCall.htm">ComCall</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="Run.htm">Run</a>, <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="_DllLoad.htm">#DllLoad</a>, <a href="https://docs.microsoft.com/de-de/windows/win32/apiindex/windows-api-list">Windows API Index</a></p>
+<p><a href="../Compat.htm#DllCall">Binärkompatibilität</a>, <a href="Buffer.htm">Buffer-Objekt</a>, <a href="ComCall.htm">ComCall</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="Run.htm">Run</a>, <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>, <a href="../Functions.htm">Funktionen</a>, <a href="SysGet.htm">SysGet</a>, <a href="_DllLoad.htm">#DllLoad</a>, <a href="https://learn.microsoft.com/windows/win32/apiindex/windows-api-list">Windows API Index</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExMessageBox">
@@ -426,7 +426,7 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 <div class="ex" id="ExTaskbar">
 <p><a class="ex_number" href="#ExTaskbar"></a> Entfernt für 3 Sekunden das aktive Fenster aus der Taskleiste. Vergleichen Sie dies mit dem <a href="ComCall.htm#ExTaskbar">äquivalenten ComCall-Beispiel</a>.</p>
 <pre><em>/*
-  Methoden in der <a href="https://msdn.microsoft.com/de-de/library/bb774652.aspx">ITaskbarList</a>-VTable:
+  Methoden in der <a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nn-shobjidl_core-itaskbarlist">ITaskbarList</a>-VTable:
     IUnknown:
       0 QueryInterface  -- nutze stattdessen <a href="ComObjQuery.htm">ComObjQuery</a>
       1 AddRef          -- nutze stattdessen <a href="ObjAddRef.htm">ObjAddRef</a>
@@ -446,10 +446,10 @@ tbl := ComObject(CLSID_TaskbarList, IID_ITaskbarList)
 
 activeHwnd := WinExist("A")
 
-DllCall(vtable(tbl.ptr,3), "ptr", tbl)                     <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774650.aspx">HrInit</a>()</em>
-DllCall(vtable(tbl.ptr,5), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774648.aspx">DeleteTab</a>(activeHwnd)</em>
+DllCall(vtable(tbl.ptr,3), "ptr", tbl)                     <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-hrinit">HrInit</a>()</em>
+DllCall(vtable(tbl.ptr,5), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-deletetab">DeleteTab</a>(activeHwnd)</em>
 Sleep 3000
-DllCall(vtable(tbl.ptr,4), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://msdn.microsoft.com/de-de/library/bb774646.aspx">AddTab</a>(activeHwnd)</em>
+DllCall(vtable(tbl.ptr,4), "ptr", tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-addtab">AddTab</a>(activeHwnd)</em>
 
 <em>; Nicht-gewrappte Objekte müssen manuell freigegeben werden.</em>
 ObjRelease(tbl.ptr)
