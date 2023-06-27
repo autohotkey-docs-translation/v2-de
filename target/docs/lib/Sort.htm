@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Sort - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die Sort-Funktion ordnet den Inhalt einer Variable in alphabetischer, numerischer oder zufälliger Reihenfolge (entfernt optional Duplikate)." />
+<meta name="description" content="Die Sort-Funktion sortiert den Inhalt einer Variable in alphabetischer, numerischer oder zufälliger Reihenfolge (entfernt optional Duplikate)." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,9 +13,9 @@
 
 <h1>Sort</h1>
 
-<p>Ordnet den Inhalt einer Variable in alphabetischer, numerischer oder zufälliger Reihenfolge (entfernt optional Duplikate).</p>
+<p>Sortiert den Inhalt einer Variable in alphabetischer, numerischer oder zufälliger Reihenfolge (entfernt optional Duplikate).</p>
 
-<pre class="Syntax">SortierteZkette := <span class="func">Sort</span>(Zkette <span class="optional">, Optionen, Funktion</span>)</pre>
+<pre class="Syntax">SortierteZkette := <span class="func">Sort</span>(Zkette <span class="optional">, Optionen, Rückruf</span>)</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -28,13 +28,25 @@
   <dt>Optionen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Siehe untere Liste.</p>
+    <p>Wenn ungesetzt oder weggelassen, wird <em>Zkette</em> in aufsteigender alphabetischer Reihenfolge sortiert (Groß-/Kleinschreibung-sensitiv), wobei ein LF-Zeichen (`n) als Trennzeichen verwendet wird. Andernfalls geben Sie eine Zeichenkette an, die aus einer oder mehreren der unten aufgeführten <a href="#Options">Optionen</a> besteht (in beliebiger Reihenfolge, optional durch Leerzeichen getrennt):</p>
   </dd>
   
-  <dt>Funktion</dt>
+  <dt id="callback">Rückruf</dt>
   <dd>
     <p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Ein optionales Funktionsobjekt für die <a href="#callback">benutzerdefinierte Sortierung</a>.</p>
+    <p>Wenn ungesetzt oder weggelassen, erfolgt keine benutzerdefinierte Sortierung. Andernfalls geben Sie die aufzurufende Funktion an, die zwei beliebige Elemente in der Liste vergleicht.</p>
+    <p>Die Rückruffunktion akzeptiert drei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(Erstes, Zweites, Offset) { ...</pre>
+    <p>Obwohl die Namen, die Sie den Parametern geben, nicht wichtig sind, werden ihnen die folgenden Werte der Reihe nach zugewiesen:</p>
+    <ol>
+      <li>Das erste Element.</li>
+      <li>Das zweite Element.</li>
+      <li>Der Offset (in Zeichen) des zweiten Elements relativ zum ersten Element in der ursprünglichen/unsortierten Liste (siehe Beispiele).</li>
+    </ol>
+    <p>Sie können einen oder mehrere Parameter am Ende der Parameterliste der Rückruffunktion weglassen, wenn Sie die entsprechenden Informationen nicht benötigen, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>.</p>
+    <p>Wenn die Rückruffunktion den ersten Parameter für größer als den zweiten hält, muss sie einen positiven Integer zurückgeben. Wenn die Rückruffunktion beide Parameter als gleich betrachtet, muss sie 0, "" oder nichts zurückgeben. Andernfalls muss sie einen negativen Integer zurückgeben. Wenn der Rückgabewert einen Dezimalpunkt enthält, wird dieser Teil ignoriert (d.h. 0.8 ist dasselbe wie 0).</p>
+    <p>Die Rückruffunktion verwendet die gleichen globalen (oder threadspezifischen) Einstellungen wie die Sort-Funktion, die sie aufgerufen hat.</p>
+    <p class="note"><strong>Hinweis:</strong> Alle Optionen außer D, Z und U werden ignoriert, wenn <em>Rückruf</em> angegeben ist (allerdings haben N, C und CL immer noch Einfluss darauf, wie <a href="#unique">Duplikate</a> erkannt werden).</p>
   </dd>
 
 </dl>
@@ -44,36 +56,27 @@
 <p>Diese Funktion gibt die sortierte Version der angegebenen Zeichenkette zurück.</p>
 
 <h2 id="Options">Optionen</h2>
-<p><u>Eine Zeichenkette mit null oder mehreren der folgenden Buchstaben (in beliebiger Reihenfolge, optional mit Leerzeichen getrennt):</u></p>
-<p><strong>C</strong>, <strong>C1</strong> oder <strong>COn</strong>: Die Sortierung erfolgt Groß-/Kleinschreibung-sensitiv (wird ignoriert, wenn die <strong>N</strong>-Option vorhanden ist).</p>
-<p><strong>C0</strong> oder <strong>COff</strong>: Die Sortierung erfolgt nicht Groß-/Kleinschreibung-sensitiv. Die Großbuchstaben A bis Z und die entsprechenden Kleinbuchstaben werden beim Sortieren gleichwertig behandelt. Das ist der Standardmodus, wenn keine der anderen Optionen für die Groß-/Kleinschreibung verwendet wird.</p>
-<p><strong>CL</strong> oder <strong>CLocale</strong>: Die Sortierung erfolgt nicht-Groß-/Kleinschreibung-sensitiv gemäß den aktuellen Sprach- und Regionseinstellungen des Benutzers. In den meisten englischen und westeuropäischen Regionen beispielsweise werden die Großbuchstaben A bis Z, einschließlich ANSI-Zeichen wie Ä und Ü, und die entsprechenden Kleinbuchstaben gleichwertig behandelt. Diese Methode verwendet zudem eine "Wortsortierung", die Bindestriche und Apostrophe so behandelt, dass Wörter wie "coop" und "co-op" zusammenbleiben. Je nach Inhalt der zu sortierenden Elemente ist die Leistung 1- bis 8-mal schlechter als die Standardmethode der Nichtsensitivität.</p>
-<p><strong>CLogical</strong>: Wie <em>CLocale</em>, aber die Ziffern in den Zeichenketten werden nicht als Text, sondern als numerischer Inhalt behandelt. Zum Beispiel wird "A2" so behandelt, als wäre es kleiner als "A10". Wenn sich jedoch zwei Zahlen nur durch das Vorhandensein einer Null am Anfang unterscheiden, wird die Zeichenkette mit einer Null am Anfang möglicherweise so behandelt, als wäre sie <em>kleiner</em> als die andere Zeichenkette. Das genaue Verhalten kann je nach Version des Betriebssystems variieren.</p>
-<p><strong>Dx</strong>: Ersetzen Sie <strong>x</strong> mit einem Trennzeichen, das bestimmen soll, wo jedes Element beginnt und endet. Das Trennzeichen ist immer Groß-/Kleinschreibung-sensitiv. Wenn diese Option nicht vorhanden ist, ist <strong>x</strong> standardmäßig ein LF-Zeichen (`n). In den meisten Fällen funktioniert das auch, wenn Zeilen mit CR+LF (`r`n) enden, aber das CR-Zeichen (`r) wird bei Vergleichen mit einbezogen und dadurch die Sortierreihenfolge beeinflussen. Zum Beispiel wird <code>B`r`nA</code> wie erwartet sortiert, aber <code>A`r`nA`t`r`nB</code> platziert <code>A`t`r</code> vor <code>A`r</code>.</p>
-<p><strong>N</strong>: Numerische Sortierung: Jedes Element wird als Zahl statt als Zeichenkette angesehen (wenn diese Option nicht vorhanden ist, wird zum Beispiel die Zeichenkette 233 aufgrund alphabetischer Reihenfolge kleiner als Zeichenkette 40 angesehen). Sowohl dezimale als auch hexadezimale Zeichenketten (z. B. 0xF1) gelten als numerisch. Zeichenketten, die nicht mit einer Zahl beginnen, werden beim Sortieren als 0 angesehen. Zahlen werden als 64-Bit-Floating-Point-Werte behandelt, um den eventuell vorhandenen Nachkommabereich jeder Zahl einzubeziehen.</p>
-<p><strong>Pn</strong>: Sortiert Elemente, basierend auf der Zeichenposition <strong>n</strong> (<strong>n</strong> muss ein Integer sein). Wenn diese Option nicht vorhanden ist, wird <strong>n</strong> standardmäßig 1 sein (die Position des ersten Zeichens). Die Sortierung vergleicht jede Zeichenkette mit anderen Zeichenketten, beginnend beim <strong>n</strong>-ten Zeichen. Wenn <strong>n</strong> größer als die Länge der Zeichenkette ist, wird sie beim Sortieren als leer angesehen. In Verbindung mit der <strong>N</strong>-Option (numerische Sortierung) wird die Zeichenposition der Zeichenkette verwendet, das nicht unbedingt das gleiche ist wie die Ziffernposition der Zahl.</p>
-<p><strong>R</strong>: Sortiert in umgekehrter Reihenfolge (alphabetisch oder numerisch, abhängig von den anderen Optionen).</p>
-<p><strong>Random</strong>: Sortiert in zufälliger Reihenfolge. Diese Option bewirkt, dass alle anderen Optionen außer <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> ignoriert werden (allerdings haben <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch Einfluss darauf, wie Duplikate erkannt werden). Beispiele:</p>
+<p><strong>C</strong>, <strong>C1</strong> oder <strong>COn</strong>: Groß-/Kleinschreibung-sensitive Sortierung (wird ignoriert, wenn die N-Option vorhanden ist).</p>
+<p><strong>C0</strong> oder <strong>COff</strong>: Nicht-Groß-/Kleinschreibung-sensitive Sortierung. Die Großbuchstaben A bis Z und die entsprechenden Kleinbuchstaben werden beim Sortieren gleichwertig behandelt. Das ist der Standardmodus, wenn keine der anderen Optionen für die Groß-/Kleinschreibung verwendet wird.</p>
+<p><strong>CL</strong> oder <strong>CLocale</strong>: Nicht-Groß-/Kleinschreibung-sensitive Sortierung gemäß den aktuellen Sprach- und Regionseinstellungen des Benutzers. Zum Beispiel behandeln die meisten englischen und westeuropäischen Sprach- und Regionseinstellungen die Großbuchstaben A bis Z, einschließlich ANSI-Buchstaben wie Ä und Ü, und ihre entsprechenden Kleinbuchstaben als identisch. Diese Methode verwendet auch eine "Wortsortierung", die Bindestriche und Apostrophe so behandelt, dass Wörter wie "coop" und "co-op" zusammenbleiben. Je nach Inhalt der zu sortierenden Elemente ist die Performanz 1- bis 8-mal schlechter als die Standardmethode der Nichtsensitivität.</p>
+<p><strong>CLogical:</strong> Wie <em>CLocale</em>, aber die Ziffern in den Zeichenketten werden nicht als Text, sondern als numerischer Inhalt behandelt. Zum Beispiel wird "A2" so behandelt, als wäre es kleiner als "A10". Wenn sich jedoch zwei Zahlen nur durch das Vorhandensein einer Null am Anfang unterscheiden, wird die Zeichenkette mit einer Null am Anfang möglicherweise so behandelt, als wäre sie <em>kleiner</em> als die andere Zeichenkette. Das genaue Verhalten kann je nach Version des Betriebssystems variieren.</p>
+<p><strong>D</strong><em>x</em>: Geben Sie für <em>x</em> ein Trennzeichen an, das den Anfang und das Ende pro Element bestimmt. Das Trennzeichen ist immer Groß-/Kleinschreibung-sensitiv. Wenn diese Option nicht verwendet wird, ist <em>x</em> standardmäßig ein LF-Zeichen (`n). In den meisten Fällen funktioniert das auch, wenn Zeilen mit einem CR-LF-Paar (`r`n) enden, allerdings wird das CR-Zeichen (`r) in die Vergleiche einbezogen, was Einfluss auf die Sortierreihenfolge hat. Zum Beispiel wird <code>"B`r`nA"</code> wie erwartet sortiert, aber <code>"A`r`nA`t`r`nB"</code> platziert <code>A`t`r</code> vor <code>A`r</code>.</p>
+<p><strong>N:</strong> Numerische Sortierung. Jedes Element wird als Zahl statt als Zeichenkette vermutet (wenn z.B. diese Option nicht verwendet wird, hat dies zur Folge, dass die Zeichenkette 233 wegen der alphabetischen Anordnung kleiner ist als Zeichenkette 40). Sowohl dezimale als auch hexadezimale Zeichenketten (z.B. 0xF1) werden als numerisch betrachtet. Zeichenketten, die nicht mit einer Zahl beginnen, werden beim Sortieren als 0 betrachtet. Zahlen werden als 64-Bit-Floating-Point-Werte behandelt, d.h. der Nachkommabereich jeder Zahl (falls vorhanden) wird berücksichtigt.</p>
+<p><strong>P</strong><em>n</em>: Sortiert Elemente gemäß der Zeichenposition <em>n</em> (verwenden Sie keine Hexadezimalzahlen für <em>n</em>). Wenn diese Option nicht verwendet wird, ist <em>n</em> standardmäßig 1 (die Position des ersten Zeichens). Die Sortierung vergleicht jede Zeichenkette mit den anderen, beginnend beim ihrem <em>n</em>-ten Zeichen. Wenn <em>n</em> größer als die Länge der Zeichenkette ist, wird die Zeichenkette beim Sortieren als leer betrachtet. Wenn diese Option mit der N-Option (numerische Sortierung) verwendet wird, wird die Zeichenposition der Zeichenkette verwendet, die nicht notwendigerweise mit der Ziffernposition der Zahl übereinstimmt.</p>
+<p><strong>R:</strong> Sortiert in umgekehrter Reihenfolge (alphabetisch oder numerisch, abhängig von den anderen Optionen).</p>
+<p><strong>Random:</strong> Sortiert in zufälliger Reihenfolge. Diese Option bewirkt, dass alle anderen Optionen außer D, Z und U ignoriert werden (allerdings haben N, C und CL weiterhin Einfluss darauf, wie Duplikate erkannt werden). Beispiele:</p>
 <pre>MeineVar := Sort(MeineVar, "Random")
 MeineVar := Sort(MeineVar, "Random Z D|")</pre>
-<p id="unique"><strong>U</strong>: Entfernt doppelte Elemente von der Liste, sodass jedes Element einzigartig ist. Ist die <strong>C</strong>-Option aktiv, müssen auch die Groß- und Kleinschreibungen der Elemente gleich sein, damit diese als identisch angesehen werden. Ist die <strong>N</strong>-Option aktiv, wird ein Element wie z. B. 2 als Duplikat von 2.0 angesehen. Wenn entweder die <strong>Pn</strong>- oder <strong>\</strong>-Option aktiv ist, muss das ganze Element ein Duplikat sein, nicht nur die Teilzeichenkette, die für die Sortierung verwendet wird. Wenn die <strong>Random</strong>-Option oder <a href="#callback">benutzerdefinierte Sortierung</a> aktiv ist, werden Duplikate nur entfernt, wenn sie nach dem Sortieren direkt aneinander angrenzen. Zum Beispiel könnte das Ergebnis beim zufälligen Sortieren von "A|B|A" entweder ein oder zwei As enthalten.</p>
-<p><strong>Z</strong>: Um diese Option zu verstehen, wird eine Variable in Erwägung gezogen, die die Zeichenkette ROT`nGRÜN`nBLAU`n enthält. Wenn die <strong>Z</strong>-Option nicht vorhanden ist, wird das letzte LF-Zeichen (`n) als Teil des letzten Elements angesehen (somit sind es nur 3 Elemente). Ist <strong>Z</strong> vorhanden, dient das letzte LF-Zeichen (falls vorhanden) dazu, ein leeres Element am Ende der Liste abzugrenzen (somit sind es 4 Elemente).</p>
-<p><strong>\</strong>: Sortiert Elemente, basierend auf der Teilzeichenkette, die jeweils nach dem letzten umgekehrten Schrägstrich erfolgt. Wenn das Element keinen umgekehrten Schrägstrich hat, wird das ganze Element als Teilzeichenkette angesehen. Diese Option ist nützlich, um Dateinamen ohne Rücksicht auf ihre Pfade zu sortieren. Im folgenden Beispiel steht AAA.txt über BBB.txt, weil ihre Verzeichnisse beim Sortieren ignoriert wurden:</p>
+<p id="unique"><strong>U:</strong> Entfernt doppelte Elemente aus der Liste, um jedes Element einzigartig zu machen. Wenn die C-Option aktiv ist, muss die Groß-/Kleinschreibung der Elemente übereinstimmen, damit sie als identisch betrachtet werden. Wenn die N-Option aktiv ist, wird ein Element wie z.B. 2 als Duplikat von 2.0 betrachtet. Wenn die P- oder \-Option aktiv ist, muss das gesamte Element ein Duplikat sein, nicht nur die Teilzeichenkette, die für die Sortierung verwendet wird. Wenn die Random-Option oder <a href="#callback">benutzerdefinierte Sortierung</a> aktiv ist, werden Duplikate nur entfernt, wenn sie nach der Sortierung direkt aneinander angrenzen. Wenn z.B. <code>"A|B|A"</code> zufällig sortiert wird, kann das Ergebnis entweder ein oder zwei A enthalten.</p>
+<p><strong>Z:</strong> Um diese Option zu verstehen, nehmen wir als Beispiel eine Variable, die <code>"ROT`nGRÜN`nBLAU`n"</code> enthält. Wenn die Z-Option nicht verwendet wird, wird das letzte LF-Zeichen (`n) als Teil des letzten Elements betrachtet, folglich sind es nur 3 Elemente. Wenn aber Z verwendet wird, wird das letzte `n (falls vorhanden) als Trennzeichen betrachtet, folglich sind es 4 Elemente und das letzte Element ist leer.</p>
+<p><strong>\:</strong> Sortiert Elemente gemäß der Teilzeichenkette hinter dem letzten umgekehrten Schrägstrich. Wenn das Element keinen umgekehrten Schrägstrich hat, wird das gesamte Element als Teilzeichenkette betrachtet. Diese Option ist nützlich, um Dateinamen unabhängig von ihrem Pfad zu sortieren, wie im folgenden Beispiel, wo die Zeile AAA.txt oberhalb der Zeile BBB.txt eingeordnet wurde, da ihre Verzeichnisse bei der Sortierung ignoriert wurden:</p>
 <pre>C:\BBB\AAA.txt
 C:\AAA\BBB.txt</pre>
-<p class="note"><strong>Hinweis</strong>: Die Optionen <strong>N</strong> und <strong>P</strong> werden ignoriert, wenn die \-Option vorhanden ist.</p>
-
-<h2 id="callback">Benutzerdefinierte Sortierung</h2>
-<p>Geben Sie zum benutzerdefinierten Sortieren im <em>Funktion</em>-Parameter eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../misc/Functor.htm">Funktionsobjekt</a> an, um jeweils zwei Elemente in der Liste zu vergleichen. Die Funktion muss zwei oder drei Parameter akzeptieren:</p>
-<pre class="Syntax">MeineFunktion(Erster, Zweiter <span class="optional">, Offset</span>)</pre>
-<p>Geht die Funktion davon aus, dass der erste Parameter größer als der zweite ist, sollte sie einen positiven Integer zurückgeben. Geht die Funktion davon aus, dass die zwei Parameter gleich groß sind, sollte sie eine 0, "" oder nichts zurückgeben. Ansonsten sollte sie einen negativen Integer zurückgeben. Falls ein Dezimalpunkt im Rückgabewert vorhanden ist, wird dieser Teil ignoriert (z. B. ist 0.8 das gleiche wie 0).</p>
-<p>Ist der dritte Parameter vorhanden, erhält er den Offset (in Zeichen) vom ersten zum zweiten Element aus der originalen/unsortierten Liste (siehe Beispiele).</p>
-<p>Die Funktion verwendet die gleichen globalen (oder threadspezifischen) Einstellungen wie die Sort-Funktion, mit der diese aufgerufen wurde.</p>
-<p class="note"><strong>Hinweis</strong>: Alle Optionen außer <strong>D</strong>, <strong>Z</strong> und <strong>U</strong> werden ignoriert, wenn <em>Funktion</em> vorhanden ist (allerdings haben <strong>N</strong>, <strong>C</strong> und <strong>CL</strong> immer noch Einfluss darauf, wie <a href="#unique">Duplikate</a> erkannt werden).</p>
+<p class="note"><strong>Hinweis:</strong> Die Optionen N und P werden ignoriert, wenn die \-Option vorhanden ist.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Mit dieser Funktion wird üblicherweise eine Variable sortiert, die eine Liste mit Zeilen enthält, bei der jede Zeile mit einem Zeilenumbruchszeichen (`n) endet. Eine Möglichkeit, mehrere Zeilen in eine Variable zu bekommen, ist das Laden einer ganzen Datei via <a href="FileRead.htm">FileRead</a>.</p>
-<p>Wenn eine große Variable sortiert wurde und ihr Inhalt später nicht mehr benötigt wird, kann ihr Speicher freigegeben werden, indem man sie leer macht (z. B. <code>MeineVar := ""</code>).</p>
+<p>Diese Funktion wird normalerweise verwendet, um eine Variable zu sortieren, die eine Liste von Zeilen enthält, wobei jede Zeile mit einem LF-Zeichen (`n) endet. Um eine Liste von Zeilen in eine Variable zu bekommen, kann z.B. <a href="FileRead.htm">FileRead</a> verwendet werden, das den gesamten Inhalt einer Datei lädt.</p>
+<p>Wenn eine große Variable sortiert wurde und ihr Inhalt später nicht mehr benötigt wird, kann sie leer gemacht werden, um ihr Speicher freizugeben, z.B. <code>MeineVar := ""</code>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="FileRead.htm">FileRead</a>, <a href="LoopRead.htm">dateilesende Schleife</a>, <a href="LoopParse.htm">parsende Schleife</a>, <a href="StrSplit.htm">StrSplit</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="A_Clipboard.htm">A_Clipboard</a></p>
@@ -91,11 +94,11 @@ MsgBox MeineVar   <em>; Das Ergebnis ist -4,1,3,5,7,9,13,999</em></pre>
 <pre>Inhalt := <a href="FileRead.htm">FileRead</a>("C:\Adressenliste.txt")
 FileDelete "C:\Adressenliste (alphabetisch).txt"
 FileAppend Sort(Inhalt), "C:\Adressenliste (alphabetisch).txt"
-Inhalt := ""  <em>; Gibt den Speicher frei.</em></pre>
+Inhalt := ""  <em>; Speicher freigeben.</em></pre>
 </div>
 
 <div class="ex" id="ExFilenames">
-<p><a class="ex_number" href="#ExFilenames"></a> Bringt einen Hotkey dazu, Dateien von einem Explorer-Fenster zu kopieren und die sortierten Dateinamen in die Zwischenablage einzufügen.</p>
+<p><a class="ex_number" href="#ExFilenames"></a> Erstellt einen Hotkey, der gedrückt werden kann, um Dateien in einem Explorer-Fenster zu kopieren, ihre Dateinamen zu sortieren und die sortierte Liste in die Zwischenablage einzufügen.</p>
 <pre>#c:: <em>; WIN+C</em>
 {
     A_Clipboard := "" <em>; Muss leer sein, damit die Erkennung funktioniert.</em>
@@ -107,7 +110,7 @@ Inhalt := ""  <em>; Gibt den Speicher frei.</em></pre>
 </div>
 
 <div class="ex" id="ExCustom">
-<p><a class="ex_number" href="#ExCustom"></a> Demonstriert die benutzerdefinierte Sortierung mit einer Callback-Funktion.</p>
+<p><a class="ex_number" href="#ExCustom"></a> Zeigt die benutzerdefinierte Sortierung mit einer Rückruffunktion.</p>
 <pre>MeineVar := "Dies`nist`neine`nBeispiel`nZeichenkette,`ndie`nsortiert`nwerden`nsoll"
 MsgBox Sort(MeineVar,, SortierenNachLänge)
 SortierenNachLänge(a1, a2, *)
@@ -127,7 +130,7 @@ MeineVar := "1,2,3,4"
 MsgBox Sort(MeineVar, "D,", UmgekehrteRichtung)  <em>; Kehrt die Liste um, so dass sie 4,3,2,1 enthält.</em>
 UmgekehrteRichtung(a1, a2, offset)
 {
-    return offset  <em>; Offset ist positiv, wenn in der originalen Liste a2 nach a1 kommt; ansonsten negativ.</em>
+    return offset  <em>; Offset ist positiv, wenn in der originalen Liste a2 nach a1 kommt, andernfalls negativ.</em>
 }
 
 MeineVar := "a bbb cc"

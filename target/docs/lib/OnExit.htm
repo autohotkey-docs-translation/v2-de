@@ -13,43 +13,55 @@
 
 <h1>OnExit</h1>
 
-<p>Registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn das Skript beendet wird.</p>
+<p>Registriert eine <a href="../Functions.htm">Funktion</a>, die jedes Mal automatisch aufgerufen wird, wenn das Skript beendet wird.</p>
 
-<pre class="Syntax"><span class="func">OnExit</span> Funktion <span class="optional">, HinzufügenEntfernen</span></pre>
+<pre class="Syntax"><span class="func">OnExit</span> Rückruf <span class="optional">, HinzufügenEntfernen</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Funktion</dt>
+  <dt>Rückruf</dt>
   <dd>
     <p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Ein Funktionsobjekt, das aufgerufen werden soll, wenn das Skript beendet wird. Die Parameter und der Rückgabewert der Funktion sind <a href="#Function">unten</a> beschrieben.</p>
+    <p>Eine Funktion, die aufgerufen werden soll.</p>
+    <p>Die Rückruffunktion akzeptiert zwei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(ExitGrund, ExitCode) { ...</pre>
+    <p>Obwohl die Namen, die Sie den Parametern geben, nicht wichtig sind, werden ihnen die folgenden Werte der Reihe nach zugewiesen:</p>
+    <ol>
+      <li>Der Exitgrund (eines der Wörter aus der <a href="#ExitReason">unteren Tabelle</a>).</li>
+      <li>Der Exitcode, der an <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> übergeben wurde.</li>
+    </ol>
+    <p>Sie können einen oder mehrere Parameter am Ende der Parameterliste der Rückruffunktion weglassen, wenn Sie die entsprechenden Informationen nicht benötigen, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>.</p>
+    <p>Die Rückruffunktion kann einen Integer ungleich 0 zurückgeben, um zu verhindern, dass das Skript beendet wird (mit einigen <a href="#close">seltenen Ausnahmen</a>) und dass weitere Rückruffunktionen aufgerufen werden. Andernfalls wird das Skript beendet, nachdem alle registrierten Rückruffunktionen aufgerufen wurden.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Lässt man diesen Parameter weg, wird standardmäßig 1 (die Funktion nach anderen zuvor registrierten Funktionen aufrufen) verwendet. Ansonsten können Sie eine der folgenden Zahlen angeben:</p>
+    <p>Lässt man diesen Parameter weg, wird standardmäßig 1 verwendet (die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
     <ul>
-      <li>1 = Die Funktion nach anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>-1 = Die Funktion vor anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>0 = Die Funktion nicht aufrufen.</li>
+      <li>1 = Die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>-1 = Die Rückruffunktion vor anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>0 = Die Rückruffunktion nicht aufrufen.</li>
     </ul>
   </dd>
 
 </dl>
 
-<h2 id="Function">Funktion</h2>
-<p>Die Funktion sollte zwei Parameter akzeptieren:</p>
-<pre class="Syntax"><i>FunktionName</i>(ExitGrund, ExitCode)</pre>
-<dl>
-  <dt>ExitGrund</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eines der folgenden Wörter:</p>
-    <table class="info" id="ExitReason">
-      <tr>
-    <th>Wort</th>
-    <th>Bedeutung</th>
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Es können beliebig viele Rückruffunktionen registriert werden. Eine Rückruffunktion sollte in der Regel kein ExitApp aufrufen, da sonst das Skript sofort terminiert werden würde.</p>
+<p>Die Rückruffunktionen werden aufgerufen, sobald das Skript auf irgendeine Weise beendet wird (außer es wird durch so etwas wie "Task beenden" gekillt). Sie wird auch jedes Mal aufgerufen, wenn <a href="_SingleInstance.htm">#SingleInstance</a> oder <a href="Reload.htm">Reload</a> eine ältere Instanz auffordert, sich zu terminieren.</p>
+<p>Mit <code>OnMessage(0x0011, On_WM_QUERYENDSESSION)</code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden (siehe <a href="OnMessage.htm#ExShutdown">OnMessage-Beispiel #2</a> für ein funktionsfähiges Beispiel).</p>
+<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> ignoriert <a href="_MaxThreads.htm">#MaxThreads</a> (er wird immer bei Bedarf gestartet). Außerdem kann dieser Thread, während er ausgeführt wird, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, z.B. erzeugt durch <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Skript terminiert), wenn der Benutzer "Exit" im Tray-Menü oder Hauptmenü auswählt oder wenn das Skript durch <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> aufgefordert wurde, sich zu terminieren. Aus diesem Grund sollte eine Rückruffunktion so konzipiert sein, dass sie schnell zum Ende kommt, es sei denn, der Benutzer ist sich dessen bewusst, was sie tut.</p>
+<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf ein Problem stößt, wie z.B. einen Laufzeitfehler, wird das Skript terminiert.</p>
+<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> durch <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> unter Angabe eines Exitcodes gestartet wurde, wird dieser Exitcode verwendet, es sei denn, eine Rückruffunktion gibt 1 (true) zurück, um die Beendigung zu verhindern, oder ruft ExitApp auf.
+</p>
+<p>Jedes Mal, wenn ein Exitversuch unternommen wird, verwendet jede Rückruffunktion vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können während der <a href="../Scripts.htm#auto">Startphase des Skripts</a> geändert werden.</p>
+
+<h2 id="ExitReason">Exitgründe</h2>
+<table class="info">
+  <tr>
+    <th>Grund</th>
+    <th abbr="Beschr">Beschreibung</th>
   </tr>
   <tr id="logoff">
     <td>Logoff</td>
@@ -57,27 +69,27 @@
   </tr>
   <tr>
     <td>Shutdown</td>
-    <td>Das System wird heruntergefahren oder neu gestartet (z. B. mit der <a href="Shutdown.htm">Shutdown</a>-Funktion).</td>
+    <td>Das System wird heruntergefahren oder neu gestartet (z.B. mit der <a href="Shutdown.htm">Shutdown</a>-Funktion).</td>
   </tr>
   <tr id="close">
     <td>Close</td>
     <td>
-      <p>Das Skript hat eine WM_CLOSE- oder WM_QUIT-Meldung empfangen, hatte einen kritischen Fehler, oder wurde auf andere Weise geschlossen. Obwohl all diese Ursachen ungewöhnlich sind, wird WM_CLOSE eventuell ausgelöst, wenn man <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Skripts anwendet. Um das Fenster zu schließen (zu verstecken), ohne das Skript zu terminieren, verwenden Sie <a href="WinHide.htm">WinHide</a>.</p>
-      <p>Wenn das Skript wegen eines kritischen Fehlers oder der Zerstörung des <a href="../Program.htm#main-window">Hauptfensters</a> beendet wird, wird es nach Abschluss des OnExit-Threads bedingungslos terminiert.</p>
-      <p>Wenn das Hauptfenster zerstört wird, ist es möglicherweise noch vorhanden, kann aber nicht angezeigt werden. Dieser Zustand kann durch Überwachung der WM_DESTROY-Meldung mittels <a href="OnMessage.htm">OnMessage</a> erkannt werden.</p>
+      <p>Das Skript hat eine WM_CLOSE- oder WM_QUIT-Meldung empfangen, ist auf einen kritischen Fehler gestoßen oder wurde anderweitig geschlossen. All diese Fälle sind ungewöhnlich. WM_CLOSE könnte z.B. durch die Anwendung von <a href="WinClose.htm">WinClose</a> auf das Hauptfenster des Skripts verursacht worden sein. Um das Fenster zu schließen (zu verstecken), ohne das Skript zu terminieren, verwenden Sie <a href="WinHide.htm">WinHide</a>.</p>
+      <p>Wenn das Skript durch einen kritischen Fehler oder die Zerstörung des <a href="../Program.htm#main-window">Hauptfensters</a> beendet wird, wird es nach Abschluss des OnExit-Threads bedingungslos terminiert.</p>
+      <p>Wenn das Hauptfenster zerstört wird, existiert es möglicherweise noch, kann aber nicht angezeigt werden. Dieser Zustand kann durch Überwachung der WM_DESTROY-Meldung mittels <a href="OnMessage.htm">OnMessage</a> erkannt werden.</p>
     </td>
   </tr>
   <tr>
     <td>Error</td>
-    <td>Ein Laufzeitfehler ist in einem nicht-<a href="../Scripts.htm#persistent">persistenten</a> Skript aufgetreten. Ein Laufzeitfehler ist beispielsweise ein <a href="Run.htm">Run/RunWait</a>, der das angegebene Programm oder Dokument nicht öffnen kann.</td>
+    <td>Ein Laufzeitfehler ist in einem nicht-<a href="../Scripts.htm#persistent">persistenten</a> Skript aufgetreten. Ein Laufzeitfehler tritt z.B. auf, wenn <a href="Run.htm">Run/RunWait</a> das angegebene Programm oder Dokument nicht öffnen kann.</td>
   </tr>
   <tr>
     <td>Menu</td>
-    <td>Der Benutzer hat Exit im Hauptfenster-Menü oder voreingestellten Tray-Menü ausgewählt.</td>
+    <td>Der Benutzer hat "Exit" im Menü des <a href="../Program.htm#main-window">Hauptfensters</a> oder im regulären Tray-Menü ausgewählt.</td>
   </tr>
   <tr>
     <td>Exit</td>
-    <td>Es wurden die <a href="Exit.htm">Exit</a>- oder <a href="ExitApp.htm">ExitApp</a>-Funktion verwendet (einschließlich <a href="Menu.htm">benutzerdefinierte Menüpunkte</a>).</td>
+    <td>Es wurde <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> verwendet (einschließlich <a href="Menu.htm">benutzerdefinierter Menüpunkte</a>).</td>
   </tr>
   <tr>
     <td>Reload</td>
@@ -85,36 +97,17 @@
   </tr>
   <tr>
     <td>Single</td>
-    <td>Das Skript wird aufgrund von <a href="_SingleInstance.htm">#SingleInstance</a> mit einer neuen Instanz von sich selbst ersetzt.</td>
+    <td>Das Skript wird gerade aufgrund von <a href="_SingleInstance.htm">#SingleInstance</a> mit einer neuen Instanz von sich selbst ersetzt.</td>
   </tr>
 </table>
-  </dd>
-  <dt>ExitCode</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Ein Integer zwischen -2147483648 und 2147483647, der beim Beenden des Skripts zurückgegeben werden soll. Dieser Code ist für jedes Programm zugänglich, das den Start des Skripts veranlasst hat, wie z. B. ein anderes Skript (per RunWait) oder eine Batch-Datei (.bat). Eine 0 wird traditionell verwendet, um Erfolg zu melden.</p>
-  </dd>
-</dl>
-
-<h3 id="Return_Value">Rückgabewert</h3>
-<p>Die Funktion kann einen Integer ungleich Null zurückgeben, um zu verhindern, dass das Skript beendet wird (mit einigen <a href="#close">seltenen Ausnahmen</a>) und nachfolgende Funktionen aufgerufen werden. Ansonsten wird das Skript beendet, nachdem alle registrierten Funktionen aufgerufen wurden.</p>
-
-<h2 id="Remarks">Bemerkungen</h2>
-<p>Es können beliebig viele OnExit-Funktionen registriert werden. Eine OnExit-Funktion sollte in der Regel nicht ExitApp aufrufen; wäre dies der Fall, würde das Skript sofort terminiert werden.</p>
-<p>OnExit-Funktionen werden aufgerufen, wenn das Skript in irgendeiner Form beendet wird (nur nicht, wenn das Beenden von so etwas wie "Task beenden" erzwungen wird). Sie wird auch aufgerufen, wann immer <a href="_SingleInstance.htm">#SingleInstance</a> und <a href="Reload.htm">Reload</a> eine vorherige Instanz zum Terminieren auffordert.</p>
-<p>Mit <code>OnMessage(0x0011, On_WM_QUERYENDSESSION)</code> kann das Herunterfahren oder Abmelden des Betriebssystems erkannt und optional abgebrochen werden (siehe <a href="OnMessage.htm#ExShutdown">OnMessage-Beispiel #2</a> für ein funktionsfähiges Beispiel).</p>
-<p>Der OnExit-<a href="../misc/Threads.htm">Thread</a> nimmt keine Rücksicht auf <a href="_MaxThreads.htm">#MaxThreads</a> (er wird bei Bedarf immer gestartet). Darüber hinaus kann dieser Thread, während er läuft, nicht von anderen <a href="../misc/Threads.htm">Threads</a> unterbrochen werden, einschließlich <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="SetTimer.htm">zeitgesteuerte Subroutinen</a>. Allerdings wird er unterbrochen (und das Skript terminiert), wenn der Benutzer den Menüpunkt Exit im Tray-Menü oder Hauptmenü auswählt, oder das Skript aufgrund von <a href="Reload.htm">Reload</a> oder <a href="_SingleInstance.htm">#SingleInstance</a> zum Terminieren aufgefordert wird. Aus diesem Grund sollte die OnExit-Funktion so gestaltet werden, dass sie schnell zum Ende kommen kann, sofern der Benutzer das nicht will.</p>
-<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> auf einen fehlerhaften Zustand wie z. B. Laufzeitfehler stößt, wird das Skript terminiert.</p>
-<p>Wenn der OnExit-<a href="../misc/Threads.htm">Thread</a> via <a href="Exit.htm">Exit</a> oder <a href="ExitApp.htm">ExitApp</a> inklusive Exitcode gestartet wurde, wird dieser Exitcode verwendet, es sei denn, eine OnExit-Funktion gibt True zurück (das ein Exit verhindern würde) oder ruft ExitApp selbst auf.</p>
-<p>Jede via Exitversuch gestartete Callback-Funktion verwendet vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können während der <a href="../Scripts.htm#auto">Startphase des Skripts</a> geändert werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="OnError.htm">OnError</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="Shutdown.htm">Shutdown</a>, <a href="Persistent.htm">Persistent</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Return.htm">Return</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Fragt den Benutzer vor dem Beenden des Skripts. Um dieses Beispiel zu testen, klicken Sie mit der rechten Maustaste auf das Tray-Symbol und dann auf Exit.</p>
-<pre class="NoIndent">Persistent  <em>; Verhindert, dass sich das Skript automatisch beendet.</em>
+<p><a class="ex_number" href="#ExBasic"></a> Fragt den Benutzer vor dem Beenden des Skripts. Um dieses Beispiel zu testen, rechtsklicken Sie auf das <a href="../Program.htm#tray-icon">Tray-Symbol</a> und wählen Sie Exit aus.</p>
+<pre class="NoIndent">Persistent  <em>; Verhindert, dass das Skript automatisch beendet wird.</em>
 OnExit ExitFunk
 
 ExitFunk(ExitGrund, ExitCode)
@@ -123,15 +116,15 @@ ExitFunk(ExitGrund, ExitCode)
     {
         Ergebnis := MsgBox("Wollen Sie das Skript wirklich beenden?",, 4)
         if Ergebnis = "No"
-            return 1  <em>; OnExit-Funktionen müssen ungleich null zurückgeben, um ein Exit zu verhindern.</em>
+            return 1  <em>; Rückruffunktionen müssen ungleich 0 zurückgeben, um Exit zu verhindern.</em>
     }
-    <em>; Rufen Sie ExitApp nicht auf -- dies würde verhindern, dass andere OnExit-Funktionen aufgerufen werden können.</em>
+    <em>; ExitApp nicht verwenden - dies würde den Aufruf anderer Rückruffunktionen verhindern.</em>
 }</pre>
 </div>
 
 <div class="ex" id="ExFnObj">
 <p><a class="ex_number" href="#ExFnObj"></a> Registriert eine Methode, die beim Beenden aufgerufen werden soll.</p>
-<pre><a href="Persistent.htm">Persistent</a>  <em>; Verhindert, dass sich das Skript automatisch beendet.</em>
+<pre><a href="Persistent.htm">Persistent</a>  <em>; Verhindert, dass das Skript automatisch beendet wird.</em>
 OnExit MeinObjekt.Beenden
 
 class MeinObjekt

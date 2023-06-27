@@ -23,38 +23,37 @@
 
   <dt>NeuerZustand</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Lässt man diesen Parameter weg, wird der <a href="../misc/Threads.htm">aktuelle Thread</a> pausiert. Ansonsten kann einer der folgenden Werte angegeben werden:</p>
+    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>Wenn ungesetzt oder weggelassen, wird der <a href="../misc/Threads.htm">aktuelle Thread</a> pausiert. Andernfalls geben Sie einen der folgenden Werte an:</p>
     <p><code>1</code> oder <code>True</code>: Markiert den Thread unterhalb des aktuellen Threads als pausiert, so dass sie bei Wiederaufnahme die zurzeit laufende Funktion (falls vorhanden) fertig ausführt und dann in einem pausierten Zustand verfällt. Gibt es keinen Thread unterhalb des aktuellen Threads, wird das Skript selbst pausiert, was <a href="SetTimer.htm">Timer</a> stoppen würde (dieser Effekt ist das gleiche wie, als hätte man den Menüpunkt "Pause Script" verwendet, während das Skript keine Threads hat).</p>
-    <p><code>0</code> oder <code>False</code>: Setzt den darunterliegenden Thread fort.</p>
-    <p><code>-1</code>: Schaltet den Pausezustand des darunterliegenden Threads um.</p>
+    <p><code>0</code> oder <code>False</code>: Entpausiert den darunter liegenden Thread.</p>
+    <p><code>-1</code>: Schaltet den Pausezustand des darunter liegenden Threads um.</p>
   </dd>
 
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p><a href="../Variables.htm#IsPaused">A_IsPaused</a> enthält den Pausezustand des darunterliegenden Threads.</p>
-<p>Standardmäßig kann das Skript auch via <a href="../Program.htm#tray-icon">Tray-Symbol</a> oder <a href="../Program.htm#main-window">Hauptfenster</a> pausiert werden.</p>
-<p>Im Gegensatz zu <a href="Suspend.htm">Suspend</a> - das <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> deaktiviert - wird Pause, wenn aktiviert, den Thread einfrieren (den <a href="../misc/Threads.htm">aktuellen Thread</a>, wenn <em>NeuerZustand</em> weggelassen wurde, ansonsten den darunterliegenden Thread). Als Nebeneffekt werden alle unterbrochenen Threads darunter inaktiv sein.</p>
-<p>Wenn ein Thread pausiert wird, werden keine <a href="SetTimer.htm">Timer</a> ausgeführt. Dagegen können explizit gestartete Threads wie <a href="../Hotkeys.htm">Hotkeys</a> und <a href="Menu.htm">Menüpunkte</a> weiterhin gestartet werden; aber wenn ihre <a href="../misc/Threads.htm">Threads</a> zum Ende kommen, wird der darunterliegende Thread weiterhin pausiert sein. Mit anderen Worten: Jeder Thread kann unabhängig von den anderen pausiert werden.</p>
-<p>Standardmäßig (also wenn die Standardsymbole verwendet werden) wechselt die Farbe des Tray-Symbols von Grün auf Rot, wenn der <a href="../misc/Threads.htm">aktuelle Thread</a> des Skripts in einem pausierten Zustand versetzt wird. Dieser Farbwechsel kann durch Einfrieren des Symbols verhindert werden - dazu muss im letzten Parameter von TraySetIcon eine 1 angegeben werden. Zum Beispiel:</p>
-<pre><a href="TraySetIcon.htm">TraySetIcon</a> ,, 1</pre>
-<p>Mit <a href="Thread.htm">Thread "NoTimers"</a> können <a href="SetTimer.htm">Timer</a> deaktiviert werden, ohne das Skript pausieren zu müssen.</p>
-<p>Ein Skript wird immer angehalten (aber offiziell nicht pausiert), wenn man ein <a href="Menu.htm">Menü</a> beliebiger Art anzeigt (Tray-Menü, Menüleiste, GUI-Kontextmenü und so weiter).</p>
+<p><a href="../Variables.htm#IsPaused">A_IsPaused</a> enthält den Pausezustand des darunter liegenden Threads.</p>
+<p>Standardmäßig kann das Skript auch über das <a href="../Program.htm#tray-icon">Tray-Symbol</a> oder das <a href="../Program.htm#main-window">Hauptfenster</a> pausiert werden.</p>
+<p>Im Gegensatz zu <a href="Suspend.htm">Suspend</a>, das <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> deaktiviert, wird beim Einschalten von Pause der Thread eingefroren (den <a href="../misc/Threads.htm">aktuellen Thread</a>, wenn <em>NeuerZustand</em> weggelassen wurde, andernfalls den darunter liegenden Thread). Als Nebeneffekt werden alle unterbrochenen Threads darunter inaktiv.</p>
+<p>Wann immer ein Thread pausiert wird, wird die Ausführung von <a href="SetTimer.htm">Timern</a> verhindert. Allerdings können explizit gestartete Threads wie <a href="../Hotkeys.htm">Hotkeys</a> und <a href="Menu.htm">Menüpunkte</a> weiterhin gestartet werden; aber wenn ihre <a href="../misc/Threads.htm">Threads</a> zum Ende kommen, wird der darunter liegende Thread weiterhin pausiert sein. Mit anderen Worten, jeder Thread kann unabhängig von den anderen pausiert werden.</p>
+<p>Das <a href="../Program.htm#tray-icon">Tray-Symbol</a> ändert sich in <img src="../static/ahk16_pause.png" alt="ein grünes Symbol mit einem Pausezeichen" style="vertical-align:-.2em;"> (oder in <img src="../static/ahk16_pause_suspend.png" alt="ein grünes Symbol mit transparentem Pausezeichen" style="vertical-align:-.2em;">, wenn das Skript zusätzlich <a href="Suspend.htm">suspendiert</a> ist), wenn der <a href="../misc/Threads.htm">aktuelle Thread</a> des Skripts in einem pausierten Zustand ist. Diese Symboländerung lässt sich vermeiden, indem das Symbol mittels <code><a href="TraySetIcon.htm">TraySetIcon</a>(,, true)</code> eingefroren wird.</p>
+<p>Mit <a href="Thread.htm#NoTimers">Thread NoTimers</a> können <a href="SetTimer.htm">Timer</a> ohne Pausieren des Skripts deaktiviert werden.</p>
+<p>Ein Skript wird immer angehalten (aber nicht offiziell pausiert), wenn ein <a href="Menu.htm">Menü</a> irgendeiner Art (Tray-Menü, Menüleiste, GUI-Kontextmenü usw.) angezeigt wird.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Suspend.htm">Suspend</a>, <a href="Menu.htm">Menu-Objekt</a>, <a href="ExitApp.htm">ExitApp</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="SetTimer.htm">SetTimer</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExHalt">
-<p><a class="ex_number" href="#ExHalt"></a> Verwenden Sie Pause, um das Skript anzuhalten, z. B. um Variablen zu inspizieren.</p>
+<p><a class="ex_number" href="#ExHalt"></a> Verwenden Sie Pause, um das Skript anzuhalten, z.B. um Variablen zu inspizieren.</p>
 <pre>ListVars
 Pause
-ExitApp <em>; Diese Zeile wird erst ausgeführt, wenn der Benutzer das Skript fortsetzt.</em></pre>
+ExitApp <em>; Diese Zeile wird erst ausgeführt, wenn der Benutzer das Skript entpausiert.</em></pre>
 </div>
 
 <div class="ex" id="ExHotkey">
-<p><a class="ex_number" href="#ExHotkey"></a> Drücken Sie einen Hotkey, um das Skript zu pausieren. Drücken Sie ihn erneut, um die Pause wieder aufzuheben.</p>
+<p><a class="ex_number" href="#ExHotkey"></a> Drücken Sie einen Hotkey, um das Skript zu pausieren. Drücken Sie ihn erneut, um es zu entpausieren.</p>
 <pre>Pause::Pause -1  <em>; Die PAUSE/UNTBR-Taste.</em>
 #p::Pause -1  <em>; WIN+P</em></pre>
 </div>

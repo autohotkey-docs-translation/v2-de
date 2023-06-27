@@ -32,7 +32,7 @@
       <li><a href="#DefineProp">DefineProp</a>: Definiert eine neue eigene Eigenschaft.</li>
       <li><a href="#DeleteProp">DeleteProp</a>: Entfernt eine eigene Eigenschaft aus einem Objekt.</li>
       <li><a href="#GetOwnPropDesc">GetOwnPropDesc</a>: Gibt einen Deskriptor für eine bestimmte eigene Eigenschaft zurück, der kompatibel mit DefineProp ist.</li>
-      <li><a href="#HasOwnProp">HasOwnProp</a>: Gibt True zurück, wenn ein Objekt eine Eigenschaft mit einem bestimmten Namen besitzt.</li>
+      <li><a href="#HasOwnProp">HasOwnProp</a>: Gibt 1 (true) zurück, wenn ein Objekt eine Eigenschaft mit einem bestimmten Namen besitzt.</li>
       <li><a href="#OwnProps">OwnProps</a>: Enumeriert die eigenen Eigenschaften eines Objekts.</li>
     </ul>
   </li>
@@ -63,7 +63,7 @@
 <div class="methodShort" id="Clone"><h3>Clone</h3>
 <p>Gibt eine flache Kopie eines Objekts zurück.</p>
 <pre class="Syntax">Klon := Obj.<span class="func">Clone</span>()</pre>
-<p>Jede Eigenschaft oder Methode, die dem Objekt gehört, wird in den Klon kopiert. Objekt<em>referenzen</em> werden kopiert (wie bei einer normalen Zuweisung), nicht die Objekte selbst; das heißt, dass der Klon, wenn eine Eigenschaft eine Referenz zu einem Objekt enthält, eine Referenz zum gleichen Objekt enthält.</p>
+<p>Jede Eigenschaft oder Methode, die dem Objekt gehört, wird in den Klon kopiert. Es werden die <em>Objektreferenzen</em> kopiert (wie bei einer normalen Zuweisung), nicht die Objekte selbst, d.h. wenn eine Eigenschaft eine Referenz zu einem Objekt enthält, wird der Klon eine Referenz zum gleichen Objekt enthalten.</p>
 <p>Dynamische Eigenschaften werden kopiert, nicht aufgerufen.</p>
 <p>Der Klon hat das gleiche Basisobjekt wie das Originalobjekt.</p>
 </div>
@@ -125,11 +125,11 @@
 </dl>
 <p>Bei einer dynamischen Eigenschaft ist der Rückgabewert ein neues Objekt mit einer eigenen Eigenschaft für jede Akzessorfunktion: <code>Get</code>, <code>Set</code>, <code>Call</code>. Jede Eigenschaft ist nur vorhanden, wenn die entsprechende Akzessorfunktion in <em>Obj</em> selbst definiert ist. Bei einer Werteigenschaft ist der Rückgabewert ein neues Objekt mit einer Eigenschaft namens <code>Value</code>. In solchen Fällen gilt: <code>Obj.GetOwnPropDesc(Name).Value == Obj.%Name%</code>.</p>
 <p>Das Ändern des zurückgegebenen Objekts hat keinen Einfluss auf <em>Obj</em>, es sei denn, <a href="#DefineProp">DefineProp</a> wird aufgerufen.</p>
-<p>Es wird ein <a href="Error.htm#PropertyError">PropertyError</a> ausgelöst, wenn <em>Obj</em> eine Eigenschaft mit diesem Namen nicht besitzt. Das Skript kann ermitteln, ob eine Eigenschaft dynamisch ist, indem es <code>not Deskriptor.HasProp("Value")</code> überprüft, wobei <em>Deskriptor</em> der Rückgabewert von GetOwnPropDesc ist.</p>
+<p>Es wird ein <a href="Error.htm#PropertyError">PropertyError</a> ausgelöst, wenn <em>Obj</em> eine Eigenschaft mit diesem Namen nicht besitzt. Das Skript kann ermitteln, ob eine Eigenschaft dynamisch ist, indem es <code>not Deskriptor.HasProp("Value")</code> prüft, wobei <em>Deskriptor</em> der Rückgabewert von GetOwnPropDesc ist.</p>
 </div>
 
 <div class="methodShort" id="HasOwnProp"><h3>HasOwnProp</h3>
-<p>Gibt True zurück, wenn ein Objekt eine Eigenschaft mit einem bestimmten Namen besitzt, ansonsten False.</p>
+<p>Gibt 1 (true) zurück, wenn ein Objekt eine Eigenschaft mit einem bestimmten Namen besitzt, andernfalls 0 (false).</p>
 <pre class="Syntax">Obj.<span class="func">HasOwnProp</span>(Name)</pre>
 <p>Die Standardimplementierung dieser Methode ist auch als Funktion definiert: <code>ObjHasOwnProp(Obj, Name)</code>.</p>
 </div>
@@ -181,7 +181,7 @@
 <pre class="Syntax">Basisobjekt := Obj.Base</pre>
 <pre class="Syntax">Obj.Base := Basisobjekt</pre>
 <p><em>Basisobjekt</em> muss eine Instanz der Object-Klasse sein.</p>
-<p>Wenn die Zuweisung der neuen Basis den nativen Typ des Objekts ändern sollte, wird eine Ausnahme ausgelöst. Der native Typ eines Objekts wird vom nächstgelegenen Prototypobjekt einer internen Klasse bestimmt, wie z. B. <code>Object.Prototype</code> oder <code>Array.Prototype</code>. Zum Beispiel muss eine Instanz eines Arrays immer von <code>Array.Prototype</code> abgeleitet werden, entweder direkt oder indirekt.</p>
+<p>Wenn die Zuweisung der neuen Basis den nativen Typ des Objekts ändern sollte, wird eine Ausnahme ausgelöst. Der native Typ eines Objekts wird vom nächstgelegenen Prototypobjekt einer internen Klasse bestimmt, wie z.B. <code>Object.Prototype</code> oder <code>Array.Prototype</code>. Zum Beispiel muss eine Instanz eines Arrays immer von <code>Array.Prototype</code> abgeleitet werden, entweder direkt oder indirekt.</p>
 <p>Eigenschaften und Methoden werden dynamisch vom Basisobjekt geerbt; ändert man also die Basis eines Objekts, ändert man gleichzeitig auch die Verfügbarkeit von geerbten Eigenschaften und Methoden.</p>
 <p>Diese Eigenschaft wurde von <a href="Any.htm">Any</a> geerbt; allerdings kann sie nur bei Instanzen der Object-Klasse gesetzt werden.</p>
 <p>Siehe auch: <a href="Any.htm#GetBase">ObjGetBase</a>, <a href="#SetBase">ObjSetBase</a></p>

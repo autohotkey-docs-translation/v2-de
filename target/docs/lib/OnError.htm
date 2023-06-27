@@ -12,71 +12,76 @@
 <body>
 
 <h1>OnError</h1>
-<p>Registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn ein unbehandelter Fehler auftritt.</p>
+<p>Registriert eine <a href="../Functions.htm">Funktion</a>, die jedes Mal automatisch aufgerufen wird, wenn ein unbehandelter Fehler auftritt.</p>
 
-<pre class="Syntax"><span class="func">OnError</span> Funktion <span class="optional">, HinzufügenEntfernen</span></pre>
+<pre class="Syntax"><span class="func">OnError</span> Rückruf <span class="optional">, HinzufügenEntfernen</span></pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Funktion</dt>
+  <dt>Rückruf</dt>
   <dd>
     <p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Ein Funktionsobjekt, das aufgerufen werden soll, wenn ein unbehandelter Fehler auftritt. Die Parameter und der Rückgabewert der Funktion sind <a href="#Function">unten</a> beschrieben.</p>
+    <p>Eine Funktion, die aufgerufen werden soll.</p>
+    <p>Die Rückruffunktion akzeptiert zwei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(ThrowWert, Modus) { ...</pre>
+    <p>Obwohl die Namen, die Sie den Parametern geben, nicht wichtig sind, werden ihnen die folgenden Werte der Reihe nach zugewiesen:</p>
+    <ol>
+      <li>Der via Throw ausgelöste Wert, was üblicherweise ein <a href="Error.htm">Error-Objekt</a> ist.</li>
+      <li>Der Fehlermodus: Return, Exit oder ExitApp. Einzelheiten finden Sie in der <a href="#Error_Modes">unteren Tabelle</a>.</li>
+    </ol>
+    <p>Sie können einen oder mehrere Parameter am Ende der Parameterliste der Rückruffunktion weglassen, wenn Sie die entsprechenden Informationen nicht benötigen, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>.</p>
+    <p>Die Rückruffunktion kann einen der folgenden Werte zurückgeben (andere Werte sind für zukünftige Zwecke reserviert und sollten vermieden werden):</p>
+    <ul>
+      <li><code>0</code>, <code>""</code> oder kein Return: Fehlerbehandlung normal fortsetzen lassen.</li>
+      <li><code>1</code>: Standard-Fehlerdialogfenster und alle verbleibenden Rückruffunktionen unterdrücken.</li>
+      <li><code>-1</code>: Wie oben, aber wenn <em>Modus</em> (der zweite Parameter) das Wort Return enthält, darf die Ausführung des aktuellen Threads fortgesetzt werden.</li>
+    </ul>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Lässt man diesen Parameter weg, wird standardmäßig 1 (die Funktion nach anderen zuvor registrierten Funktionen aufrufen) verwendet. Ansonsten können Sie eine der folgenden Zahlen angeben:</p>
+    <p>Wenn ungesetzt oder weggelassen, wird standardmäßig 1 verwendet (die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
     <ul>
-      <li>1 = Die Funktion nach anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>-1 = Die Funktion vor anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>0 = Die Funktion nicht aufrufen.</li>
+      <li>1 = Die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>-1 = Die Rückruffunktion vor anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>0 = Die Rückruffunktion nicht aufrufen.</li>
     </ul>
   </dd>
 
 </dl>
 
-<h2 id="Function">Funktion</h2>
-<p>Die Funktion sollte zwei Parameter akzeptieren:</p>
-<pre class="Syntax"><i>FunktionName</i>(Fehlersignal, Modus)</pre>
-<dl>
-  <dt>Fehlersignal</dt>
-  <dd>
-    <p>Typ: <a href="Any.htm">Any</a></p>
-    <p>Der via Throw ausgelöste Wert, was üblicherweise ein <a href="Error.htm">Error-Objekt</a> ist.</p>
-  </dd>
-  <dt>Modus</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine der folgenden Zeichenketten:</p>
-    <ul>
-      <li><code>"Return"</code>: <em>Fehlersignal</em> ist ein fortsetzbarer Laufzeitfehler. Der Thread wird fortgesetzt, wenn die Callback-Funktion -1 zurückgibt; ansonsten wird der Thread beendet.</li>
-      <li><code>"Exit"</code>: <em>Fehlersignal</em> ist ein nicht-fortsetzbarer Laufzeitfehler oder ein Wert, der vom Skript via <a href="Throw.htm">Throw</a> gemeldet wurde. Der Thread wird beendet.</li>
-      <li><code>"ExitApp"</code>: <em>Fehlersignal</em> ist ein kritischer Laufzeitfehler, wie z. B. wenn DllCall einen korrumpierten Speicher erkennt. Das Programm wird beendet.</li>
-    </ul>
-  </dd>
-</dl>
-
-<h3 id="Return_Value">Rückgabewert</h3>
-<p>Die Callback-Funktion kann einen der folgenden Werte zurückgeben (andere Werte sind für die zukünftige Verwendung reserviert und sollten vermieden werden):</p>
-<ul>
-  <li><code>0</code>, <code>""</code> oder kein <code>return</code>: Fehlerbehandlung normal fortsetzen lassen.</li>
-  <li><code>1</code>: Standard-Fehlerdialogfenster und alle verbleibenden Fehler-Callbacks unterdrücken.</li>
-  <li><code>-1</code>: Wie oben, aber wenn <em>Modus</em> die Zeichenkette <code>"Return"</code> ist, wird die Ausführung des aktuellen Threads fortgesetzt.</li>
-</ul>
+<h2 id="Error_Modes">Fehlermodi</h2>
+<table class="info">
+  <tr>
+    <th>Modus</th>
+    <th abbr="Beschr">Beschreibung</th>
+  </tr>
+  <tr>
+    <td>Return</td>
+    <td>Der Throw-Wert ist ein fortsetzbarer Laufzeitfehler. Der Thread wird fortgesetzt, wenn die Rückruffunktion -1 zurückgibt; andernfalls wird der Thread beendet.</td>
+  </tr>
+  <tr>
+    <td>Exit</td>
+    <td>Der Throw-Wert ist ein nicht-fortsetzbarer Laufzeitfehler oder ein vom Skript <a href="Throw.htm">geworfener</a> Wert. Der Thread wird beendet.</td>
+  </tr>
+  <tr>
+    <td>ExitApp</td>
+    <td>Der Throw-Wert ist ein kritischer Laufzeitfehler, z.B. eine von DllCall erkannte Datenbeschädigung. Das Programm wird beendet.</td>
+  </tr>
+</table>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p><em>Funktion</em> wird nur bei Fehlern oder Ausnahmen aufgerufen, die normalerweise zu einer Fehlermeldung führen würden. Ladezeitfehler gehören nicht dazu, da OnError erst nach dem Laden des Skripts aufgerufen werden kann.</p>
-<p><em>Funktion</em> wird während des aktuellen <a href="../misc/Threads.htm">Threads</a> aufgerufen, bevor er beendet wird (also bevor der Aufrufstapel abgearbeitet wurde).</p>
+<p><em>Rückruf</em> wird nur bei Fehlern oder Ausnahmen aufgerufen, die normalerweise zu einer Fehlermeldung führen würden. Ladezeitfehler gehören nicht dazu, da OnError erst nach dem Laden des Skripts aufgerufen werden kann.</p>
+<p><em>Rückruf</em> wird im aktuellen <a href="../misc/Threads.htm">Thread</a> vor seiner Beendigung aufgerufen (also bevor der Aufrufstapel abgearbeitet wurde).</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Throw.htm">Throw</a>, <a href="OnExit.htm">OnExit</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Protokolliert Fehler, die vom Skript verursacht werden, in eine Textdatei, anstatt sie dem Benutzer anzuzeigen.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Protokolliert vom Skript verursachte Fehler in einer Textdatei, anstatt sie dem Benutzer anzuzeigen.</p>
 <pre>
 OnError FehlerProtokollieren
 i := Integer("Fehler_verursachen")
@@ -85,8 +90,7 @@ FehlerProtokollieren(Exception, Modus) {
     FileAppend "Fehler bei Zeile " Exception.Line ": " Exception.Message "`n"
         , "Fehlerprotokoll.txt"
     return true
-}
-</pre>
+}</pre>
 </div>
 
 <div class="ex" id="ExAccumulator">
@@ -111,7 +115,7 @@ class ErrorAccumulator
     __delete() =&gt; this.Stop()           <em>; Zum Binden an Gültigkeitsbereich der Funktion.</em>
 }
 
-<em>; Nachfolgend die OnError-Callback-Funktion. 'errors' wird ein Wert via Bind() übergeben.</em>
+<em>; Nachfolgend die OnError-Rückruffunktion. 'errors' wird ein Wert via Bind() übergeben.</em>
 AccumulateError(errors, e, mode)
 {
     if mode != "Return" <em>; Nicht fortsetzbar.</em>
@@ -139,7 +143,7 @@ FensterNeuanordnen()
     WinMove Links, Oben, Breite, Höhe, A_ScriptFullPath
     WinMove Links+Breite, Oben, Breite, Höhe, "Hilfe für AutoHotkey v2"
 
-    <em>; Überprüfen, ob Fehler aufgetreten sind.</em>
+    <em>; Prüfen, ob Fehler aufgetreten sind.</em>
     if err.Count
         MsgBox err.Count " Fehler; letzter Fehler auf Zeile #" err.Last.Line
     else
@@ -147,7 +151,7 @@ FensterNeuanordnen()
 
     <em>; Stop wird automatisch aufgerufen, wenn die Variable den Gültigkeitsbereich
     ; verlässt, da nur wir eine Referenz zum Objekt haben. Dies führt dazu,
-    ; dass OnError aufgerufen wird, um die Callback-Funktion zu deregistrieren.
+    ; dass OnError aufgerufen wird, um die Rückruffunktion zu deregistrieren.
     ;err.Stop()</em>
 }
 

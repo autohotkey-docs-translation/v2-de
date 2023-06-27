@@ -21,7 +21,7 @@
 <p>Um andere Programme zu starten, ersetzen Sie einfach den Pfad im obigen Beispiel mit dem Pfad des Programms, das Sie starten möchten. Bei einigen Programmen sind die Pfade im System registriert. In diesem Fall brauchen Sie nur den Dateinamen des Programms anzugeben, entweder mit oder (manchmal) ohne die Endung ".exe". Zum Beispiel:</p>
 <pre>Run "notepad"</pre>
 
-<h2>Befehlszeilenparameter</h2>
+<h2 id="Command-line_Parameters">Befehlszeilenparameter</h2>
 <p>Wenn das Programm Befehlszeilenparameter akzeptiert, können diese als Teil des ersten Parameters der <a href="../lib/Run.htm">Run</a>-Funktion übergeben werden. Das folgende Beispiel sollte license.txt in Notepad öffnen:</p>
 <pre>
 Run "notepad C:\Program Files\AutoHotkey\license.txt"
@@ -47,7 +47,7 @@ Run "notepad C:\Program Files\AutoHotkey\license.txt"
 <pre>Run "wordpad.exe C:\Program Files\AutoHotkey\license.txt"</pre>
 <p>Jetzt wird WordPad gestartet, aber es zeigt einen Fehler an: "C:\Program" wurde nicht gefunden.</p>
 
-<h2>Anführungszeichen und Leerzeichen</h2>
+<h2 id="Quote_Marks_and_Spaces">Anführungszeichen und Leerzeichen</h2>
 <p>Bei der Übergabe von Befehlszeilenparametern an ein Programm ist es oft notwendig, jeden Parameter, der Leerzeichen enthält, in Anführungszeichen zu setzen. Bei Notepad war das nicht notwendig, aber Notepad ist eine Ausnahme von der allgemeinen Regel. Ein naiver Lösungsversuch könnte darin bestehen, einfach mehr Anführungszeichen hinzuzufügen:</p>
 <pre>Run "wordpad.exe "C:\Program Files\AutoHotkey\license.txt""</pre>
 <p>Das wird aber nicht funktionieren, weil Anführungszeichen standardmäßig verwendet werden, um den Anfang und das Ende von direkt geschriebenem Text zu kennzeichnen. Wie kann man also so ein Anführungszeichen in die Befehlszeile einfügen, anstatt die Befehlszeile damit zu beenden?</p>
@@ -60,7 +60,7 @@ Run "notepad C:\Program Files\AutoHotkey\license.txt"
 <p>Viele Programme behandeln ein Anführungszeichen als Teil des Parameters, wenn ihm ein umgekehrter Schrägstrich vorangestellt ist. Zum Beispiel könnte <code>Run 'meine.exe "A\" B'</code> einen Parameter mit dem Wert <code>A" B</code> anstelle von zwei Parametern erzeugen. Das ist dem Programm überlassen und kann in der Regel durch Verdoppeln des umgekehrten Schrägstrichs vermieden werden, wie in <code>Run 'meine.exe "A\\" B'</code>, das normalerweise zwei Parameter (<code>A\</code> und <code>B</code>) erzeugt.</p>
 <p>Die meisten Programme interpretieren Anführungszeichen als eine Art Schalter, der zwischen den Modi "Leerzeichen beendet den Parameter" und "Leerzeichen ist im Parameter enthalten" wechselt. Mit anderen Worten: <code>Run 'meine.exe "A B"'</code> ist grundsätzlich äquivalent zu <code>Run 'meine.exe A" "B'</code>. Um Probleme mit Schrägstrichen zu vermeiden, gibt es auch die Möglichkeit, die <em>Leerzeichen</em> anstelle des gesamten Parameters in Anführungszeichen zu setzen, oder das Anführungszeichen vor dem Schrägstrich zu beenden, wie in <code>Run 'meine.exe "A"\ B'</code>.</p>
 
-<h2>Variablen einbeziehen</h2>
+<h2 id="Including_Variables">Variablen einbeziehen</h2>
 <p>Oft muss eine Befehlszeile einige <a href="../Concepts.htm#variables">Variablen</a> enthalten. Zum Beispiel kann der Ort des Verzeichnisses "Programme" von System zu System variieren. Ein Skript kann diese Tatsache durch Nutzung der <a href="../Variables.htm#ProgramFiles">A_ProgramFiles</a>-Variable berücksichtigen. Wenn die Variable die gesamte Befehlszeile enthält, übergeben Sie die Variable einfach an die Run-Funktion, um sie auszuführen.</p>
 <pre>Run A_ComSpec  <em>; Startet eine Eingabeaufforderung (fast immer cmd.exe).</em>
 Run A_MyDocuments  <em>; Öffnet den Dokumente-Ordner des Benutzers.</em></pre>
@@ -68,9 +68,9 @@ Run A_MyDocuments  <em>; Öffnet den Dokumente-Ordner des Benutzers.</em></pre>
 <pre>Run 'notepad.exe "' A_MyDocuments '\AutoHotkey.ahk"'</pre>
 <p>Eine andere Methode ist die Verwendung von <a href="../lib/Format.htm">Format</a>, um eine Substitution durchzuführen. Zum Beispiel:</p>
 <pre>Run Format('notepad.exe "{1}\AutoHotkey.ahk"', A_MyDocuments)</pre>
-<p class="note"><strong>Hinweis:</strong> Format kann gleichzeitig zusätzliche Formatierungen vornehmen, z. B. das Auffüllen mit 0en oder Leerzeichen oder die Umwandlung von Dezimalzahlen in Hexadezimalzahlen.</p>
+<p class="note"><strong>Hinweis:</strong> Format kann gleichzeitig zusätzliche Formatierungen vornehmen, z.B. das Auffüllen mit 0en oder Leerzeichen oder die Umwandlung von Dezimalzahlen in Hexadezimalzahlen.</p>
 
-<h2>Die Parameter von Run</h2>
+<h2 id="Runs_Parameters">Die Parameter von Run</h2>
 <p>Abgesehen von der Befehlszeile, die ausgeführt werden soll, akzeptiert die Run-Funktion noch andere <a href="../Concepts.htm#parameters">Parameter</a>, die ihr Verhalten beeinflussen.</p>
 <p><em>ArbeitVerz</em> spezifiziert das Arbeitsverzeichnis für den neuen Prozess. Wenn Sie einen relativen Pfad für das Programm angeben, ist es relativ zu diesem Verzeichnis. Relative Pfade in Befehlszeilenparametern sind oft auch relativ zu diesem Verzeichnis, aber das ist abhängig vom jeweiligen Programm.</p>
 <pre>Run "cmd", "C:\"  <em>; Öffnet eine Eingabeaufforderung unter C:\</em></pre>
@@ -80,7 +80,7 @@ Run A_MyDocuments  <em>; Öffnet den Dokumente-Ordner des Benutzers.</em></pre>
 WinWaitActive "ahk_pid " pid
 SendText "Hallo, Welt!"</pre>
 
-<h2>Systemverben</h2>
+<h2 id="System_Verbs">Systemverben</h2>
 <p><a href="../lib/Run.htm#verbs">Systemverben</a> sind Aktionen, die das System oder Applikationen für bestimmte Dateitypen registrieren. Diese sind normalerweise im Rechtsklickmenü der Datei im Explorer verfügbar, aber ihre tatsächlichen Namen stimmen nicht immer mit dem im Menü angezeigten Text überein. AutoHotkey-Skripte haben zum Beispiel das Verb "edit", mit dem das Skript in einem Editor geöffnet wird, und das Verb "compile" (sofern Ahk2Exe installiert ist), mit dem das Skript <a href="../Scripts.htm#ahk2exe">kompiliert</a> wird.</p>
 <p>"Edit" ist eines der üblichen Verben, die Run standardmäßig erkennt, und kann daher durch Eingabe des Wortes, gefolgt von einem Leerzeichen und dem Dateinamen, verwendet werden:</p>
 <pre>Run 'edit ' A_ScriptFullPath  <em>; Grundsätzlich äquivalent zu <a href="../lib/Edit.htm">Edit</a></em></pre>
@@ -88,7 +88,7 @@ SendText "Hallo, Welt!"</pre>
 <pre>Run '*Compile-Gui ' A_ScriptFullPath</pre>
 <p>Wenn Ahk2Exe installiert ist, wird mit diesem Verb die Ahk2Exe-GUI geöffnet, in der das aktuelle Skript vorab ausgewählt ist.</p>
 
-<h2>Umgebung</h2>
+<h2 id="Environment">Umgebung</h2>
 <p>Jedes Mal, wenn ein neuer Prozess startet, erbt er in der Regel die <em>Umgebung</em> des Prozesses, der ihn gestartet hat (der <em>übergeordnete Prozess</em>). Das bedeutet im Grunde, dass alle <a href="../Concepts.htm#environment-variables">Umgebungsvariablen</a> des Skripts an Programme vererbt werden, die Sie mit <a href="../lib/Run.htm">Run</a> starten.</p>
 <p>In einigen Fällen können Umgebungsvariablen mit <a href="../lib/EnvSet.htm">EnvSet</a> gesetzt werden, bevor das Programm gestartet wird, um sein Verhalten zu beeinflussen oder ihm Informationen zu übergeben. Ein Skript kann auch <a href="../lib/EnvGet.htm">EnvGet</a> verwenden, um Umgebungsvariablen zu lesen, die es ggf. von seinem übergeordneten Prozess geerbt hat.</p>
 <p>In 64-Bit-Systemen hängt die Umgebung des Skripts stark davon ab, ob die EXE, die es ausführt, 32-Bit oder 64-Bit ist. 32-Bit-Prozesse haben nicht nur andere Umgebungsvariablen, sondern sind aus Kompatibilitätsgründen auch einer <a href="https://learn.microsoft.com/windows/win32/winprog64/file-system-redirector">Dateisystemumleitung</a> ausgesetzt.</p>

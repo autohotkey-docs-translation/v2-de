@@ -16,14 +16,14 @@
 
 <p>Gibt eine Liste von Einträgen/Zeilen aus einer ListView zurück.</p>
 
-<pre class="Syntax">Liste := <span class="func">ListViewGetContent</span>(<span class="optional">Optionen, Steuerelement, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span>)</pre>
+<pre class="Syntax">Liste := <span class="func">ListViewGetContent</span>(<span class="optional">Optionen, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
     <dt>Optionen</dt>
     <dd>
         <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Legt fest, was abgerufen werden soll. Wenn dieser Parameter weggelassen wird oder leer ist, wird der gesamte Text in der ListView abgerufen. Ansonsten können die folgenden Wörter angegeben werden (mehrere Wörter müssen mit Leer- oder Tabulatorzeichen voneinander getrennt werden):</p>
+        <p>Legt fest, was abgerufen werden soll. Wenn dieser Parameter weggelassen wird oder leer ist, wird der gesamte Text in der ListView abgerufen. Andernfalls geben Sie beliebig viele der folgenden Wörter an, jeweils getrennt durch ein Leer- oder Tabulatorzeichen:</p>
         <p><strong>Selected:</strong> Gibt nur die markierten (hervorgehobenen) Zeilen zurück. Wenn keine vorhanden ist, ist der Rückgabewert leer.</p>
         <p><strong>Focused:</strong> Gibt nur die fokussierte Zeile zurück. Wenn keine vorhanden ist, ist der Rückgabewert leer.</p>
         <p id="ColN"><strong>Col4:</strong> Gibt nur die vierte Spalte (Feld) zurück (ersetzen Sie die 4 mit einer beliebigen Zahl).</p>
@@ -37,42 +37,27 @@
         <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
         <p>ClassNN-Bezeichnung, Text oder HWND-Nummer des Steuerelements, oder ein Objekt mit einer <code>Hwnd</code>-Eigenschaft. Einzelheiten finden Sie unter <a href="Control.htm#Parameter">Der Steuerelement-Parameter</a>.</p>
     </dd>
-    <dt>FensterTitel</dt>
+    <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
     <dd>
         <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-        <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
-    </dd>
-    <dt>FensterText</dt>
-    <dd>
-        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
-    </dd>
-    <dt>IgnoriereTitel</dt>
-    <dd>
-        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
-    </dd>
-    <dt>IgnoriereText</dt>
-    <dd>
-        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+        <p>Wenn jeder dieser Parameter ungesetzt ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> ein <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" aufgedeckt werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
     </dd>
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt eine Liste mit Einträgen/Zeilen zurück. Innerhalb jeder Zeile enden alle Felder (Spalten), außer dem letzten, mit einem Tabulatorzeichen (`t). Um die Listeneinträge/Zeilen einzeln durchzugehen, können Sie eine <a href="LoopParse.htm">parsende Schleife</a> nutzen, wie in <a href="#ExListView">Beispiel #1</a> gezeigt.</p>
+<p>Diese Funktion gibt eine Liste mit Einträgen/Zeilen zurück. Innerhalb jeder Zeile endet jedes Feld (Spalte) außer dem letzten mit einem Tabulatorzeichen (`t). Um die Listeneinträge/Zeilen einzeln durchzugehen, können Sie eine <a href="LoopParse.htm">parsende Schleife</a> nutzen, wie in <a href="#ExListView">Beispiel #1</a> gezeigt.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster oder Steuerelement nicht gefunden werden konnte.</p>
-<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn eine Meldung nicht an das Steuerelement gesendet werden konnte, oder wenn der Prozess, der die ListView besitzt, nicht geöffnet werden konnte, z. B. weil die Benutzerrechte fehlen oder weil der Prozess gesperrt ist.</p>
+<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn eine Meldung nicht an das Steuerelement gesendet werden konnte, oder wenn der Prozess, der die ListView besitzt, nicht geöffnet werden konnte, z.B. weil die Benutzerrechte fehlen oder weil der Prozess gesperrt ist.</p>
 <p>Es wird ein <a href="Error.htm#ValueError">ValueError</a> ausgelöst, wenn die <a href="#ColN">Col<em>N</em>-Option</a> eine nicht-existierende Spalte spezifiziert.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Einige Anwendungen verhindern mit Absicht, dass ihr ListView-Text nicht abgerufen werden kann. In solchen Fällen wird normalerweise keine Ausnahme ausgelöst, allerdings werden alle Felder abgerufen, als wären sie leer.</p>
+<p>Einige Anwendungen verhindern absichtlich, dass ihr ListView-Text nicht abgerufen werden kann. In solchen Fällen wird normalerweise keine Ausnahme ausgelöst, allerdings werden alle Felder abgerufen, als wären sie leer.</p>
 <p>Das folgende Beispiel zeigt, wie man <a href="SendMessage.htm">SendMessage</a> nutzen kann, um die Spalten einer ListView kleiner/größer zu machen:</p>
 <pre>SendMessage(0x101E, 0, 80, "SysListView321", FensterTitel)  <em>; 0x101E ist die Meldung LVM_SETCOLUMNWIDTH.</em></pre>
-<p>Im oberen Beispiel kennzeichnet 0 die erste Spalte (1 die zweite, 2 die dritte und so weiter). 80 ist die neue Breite. Ersetzen Sie 80 mit -1, um die Spaltenbreite automatisch an den Inhalt anzupassen. Ersetzen Sie 80 mit -2, um das gleiche zu tun, aber unter Berücksichtigung der Überschriftsbreite.</p>
+<p>Im obigen Beispiel steht 0 für die erste Spalte (1 für die zweite, 2 für die dritte und so weiter). 80 ist die neue Breite. Ersetzen Sie 80 mit -1, um die Spaltenbreite automatisch an den Inhalt anzupassen. Ersetzen Sie 80 mit -2, um dasselbe zu tun, aber unter Berücksichtigung der Überschriftsbreite.</p>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2 id="Related">Siehe auch</h2>
@@ -82,7 +67,7 @@
 <div class="ex" id="ExListView">
 <p><a class="ex_number" href="#ExListView"></a> Extrahiert einzelne Zeilen und Felder aus einer ListView.</p>
 <pre>Liste := ListViewGetContent("Selected", "SysListView321", FensterTitel)
-Loop Parse, Liste, "`n"  <em>; Die Zeilen sind mit Zeilenumbruchszeichen (`n) getrennt.</em>
+Loop Parse, Liste, "`n"  <em>; Die Zeilen sind mit LF-Zeichen (`n) getrennt.</em>
 {
     ZeileNummer := A_Index
     Loop Parse, A_LoopField, A_Tab  <em>; Die Felder (Spalten) jeder Zeile sind mit Tabulatorzeichen (A_Tab) getrennt.</em>

@@ -15,7 +15,7 @@
 
 <p>Ruft den Text eines Steuerelements ab.</p>
 
-<pre class="Syntax">Text := <span class="func">ControlGetText</span>(Steuerelement <span class="optional">, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span>)</pre>
+<pre class="Syntax">Text := <span class="func">ControlGetText</span>(Steuerelement <span class="optional">, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -25,28 +25,10 @@
     <p>ClassNN-Bezeichnung, Text oder HWND-Nummer des Steuerelements, oder ein Objekt mit einer <code>Hwnd</code>-Eigenschaft. Einzelheiten finden Sie unter <a href="Control.htm#Parameter">Der Steuerelement-Parameter</a>.</p>
   </dd>
 
-  <dt>FensterTitel</dt>
+  <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
-  </dd>
-
-  <dt>FensterText</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
-  </dd>
-
-  <dt>IgnoriereTitel</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
-  </dd>
-
-  <dt>IgnoriereText</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+    <p>Wenn jeder dieser Parameter ungesetzt ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> ein <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" aufgedeckt werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
   </dd>
 
 </dl>
@@ -59,10 +41,10 @@
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster oder Steuerelement nicht gefunden werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p class="note"><strong>Hinweis</strong>: Mit <a href="ListViewGetContent.htm">ListViewGetContent</a> oder <a href="ControlGetItems.htm">ControlGetItems</a> kann stattdessen der Text einer ListView, ListBox oder ComboBox abgerufen werden.</p>
+<p class="note"><strong>Hinweis:</strong> Mit <a href="ListViewGetContent.htm">ListViewGetContent</a> oder <a href="ControlGetItems.htm">ControlGetItems</a> können stattdessen Texte aus einer ListView, ListBox oder ComboBox abgerufen werden.</p>
 <p>Wenn der abgerufene Text abgeschnitten (unvollständig) zu sein scheint, kann der Text stattdessen durch Senden der WM_GETTEXT-Meldung via <a href="SendMessage.htm">SendMessage</a> abgerufen werden. AutoHotkey macht den Rückgabewert für den Text zu klein, weil die Anwendung, deren Text abgerufen werden soll, nur sporadisch oder gar nicht auf die WM_GETTEXTLENGTH-Meldung reagiert.</p>
-<p>Diese Funktion kann sehr viel Arbeitsspeicher beanspruchen, wenn das Zielsteuerelement eine große Menge an Text beinhaltet (z. B. wenn ein großes Dokument im Texteditor geöffnet wurde). Der Speicher einer Variable kann aber, nachdem sie verwendet wurde, wieder freigegeben werden, indem man ihr einen leeren Wert zuweist, z. B. <code>Text := ""</code>.</p>
-<p>Die meisten Steuerelemente markieren das Ende einer Zeile mit einem CR-LF-Paar (`r`n) statt mit einem einzelnen LF-Zeichen (`n).</p>
+<p>Diese Funktion kann sehr viel Arbeitsspeicher beanspruchen, wenn das Zielsteuerelement eine große Menge an Text beinhaltet (z.B. wenn ein großes Dokument im Texteditor geöffnet wurde). Der Speicher einer Variable kann aber, nachdem sie verwendet wurde, wieder freigegeben werden, indem man ihr einen leeren Wert zuweist, z.B. <code>Text := ""</code>.</p>
+<p>Die meisten Steuerelemente markieren das Ende einer Zeile mit einem CR-LF-Paar (`r`n) anstelle eines einzelnen LF-Zeichens (`n).</p>
 <p><code>SetTitleMatchMode "Slow"</code> muss nicht gesetzt werden, weil ControlGetText den Text immer mithilfe der langsamen Methode abruft (mit dieser Methode können deutlich mehr Steuerelemente angesteuert werden).</p>
 <p>Mit <a href="WinGetControls.htm">WinGetControls</a> oder <a href="WinGetControlsHwnd.htm">WinGetControlsHwnd</a> kann eine Liste von Steuerelementen abgerufen werden, die in einem Fenster enthalten sind.</p>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
@@ -70,14 +52,14 @@
 <p><a href="ControlSetText.htm">ControlSetText</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="Control.htm">Control-Funktionen</a></p>
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Ruft den aktuellen Text im Eingabefeld des Texteditors ab und speichert ihn in <var>Text</var>. Dieses Beispiel kann unter Windows 11 oder höher fehlschlagen, da es die klassische Version vom Texteditor erfordert.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Ruft den aktuellen Text aus dem Notepad-Eingabefeld ab und speichert ihn in <var>Text</var>. Dieses Beispiel kann unter Windows 11 oder höher fehlschlagen, da es die klassische Version von Notepad erfordert.</p>
 <pre>Text := ControlGetText("Edit1", "Unbenannt -")</pre>
 </div>
 <div class="ex" id="ExMainWin">
 <p><a class="ex_number" href="#ExMainWin"></a> Ermittelt und meldet den aktuellen Text im Eingabefeld des <a href="../Program.htm#main-window">Hauptfensters</a>.</p>
 <pre>ListVars
 WinWaitActive "ahk_class AutoHotkey"
-MsgBox ControlGetText("Edit1") <em>; Nutze das oben gefundene Fenster.</em></pre>
+MsgBox ControlGetText("Edit1") <em>; Verwendet das oben gefundene Fenster.</em></pre>
 </div>
 
 </body>

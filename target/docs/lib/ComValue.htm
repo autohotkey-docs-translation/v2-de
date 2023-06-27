@@ -24,7 +24,7 @@
   <dt>VarTyp</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Ein Integer, der den Typ des Wertes kennzeichnet. Eine Auflistung aller Typennummern finden Sie unter <a href="ComObjType.htm#vt">ComObjType</a>.</p>
+    <p>Ein Integer, der den Typ des Wertes angibt. Eine Auflistung aller Typennummern finden Sie unter <a href="ComObjType.htm#vt">ComObjType</a>.</p>
   </dd>
 
   <dt>Wert</dt>
@@ -53,25 +53,25 @@
 </ol>
 
 <h2 id="Ptr">Ptr</h2>
-<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts VT_UNKNOWN (13) ist oder den VT_BYREF- (0x4000) oder VT_ARRAY-Flag (0x2000) enthält, kann die <code>Ptr</code>-Eigenschaft genutzt werden, um die Adresse des Objekts, der typisierten Variable oder des SafeArrays abzurufen. Dadurch kann das ComObject selbst an jeden <a href="DllCall.htm">DllCall</a>- oder <a href="ComCall.htm">ComCall</a>-Parameter übergeben werden, der vom Typ <code>"Ptr"</code> ist, oder explizit verwendet werden. <code>ComObj.Ptr</code> beispielsweise ist in solchen Fällen äquivalent zu <code>ComObjValue(ComObj)</code>.</p>
-<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts VT_UNKNOWN (13) oder VT_DISPATCH (9) ist und der gewrappte Pointer Null (0) ist, kann die <code>Ptr</code>-Eigenschaft genutzt werden, um den aktuellen Null-Wert abzurufen oder um dem Wrapper-Objekt einen Pointer zuzuweisen. Nach der Zuweisung (falls ungleich Null) wird der Pointer automatisch freigegeben, wenn das Wrapper-Objekt freigegeben wird. Dies kann zusammen mit <a href="DllCall.htm">DllCall</a>- oder <a href="ComCall.htm">ComCall</a>-Ausgabeparametern vom Typ <code>"Ptr*"</code> oder <code>"PtrP"</code> verwendet werden, um sicherzustellen, dass der Pointer automatisch freigegeben wird, z. B. wenn ein Fehler auftritt. Ein Beispiel dazu finden Sie unter <a href="ComObjQuery.htm#ExIE">ComObjQuery</a>.</p>
+<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts VT_UNKNOWN (13) ist oder den VT_BYREF- (0x4000) oder VT_ARRAY-Flag (0x2000) enthält, kann die <code>Ptr</code>-Eigenschaft genutzt werden, um die Adresse des Objekts, der typisierten Variable oder des SafeArrays abzurufen. Dadurch kann das ComObject selbst an jeden <a href="DllCall.htm">DllCall</a>- oder <a href="ComCall.htm">ComCall</a>-Parameter übergeben werden, der vom Typ <code>"Ptr"</code> ist, oder explizit verwendet werden. Zum Beispiel ist <code>ComObj.Ptr</code> in solchen Fällen äquivalent zu <code>ComObjValue(ComObj)</code>.</p>
+<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts VT_UNKNOWN (13) oder VT_DISPATCH (9) ist und der gewrappte Pointer Null (0) ist, kann die <code>Ptr</code>-Eigenschaft genutzt werden, um den aktuellen Null-Wert abzurufen oder um dem Wrapper-Objekt einen Pointer zuzuweisen. Nach der Zuweisung (falls ungleich Null) wird der Pointer automatisch freigegeben, wenn das Wrapper-Objekt freigegeben wird. Dies kann zusammen mit <a href="DllCall.htm">DllCall</a>- oder <a href="ComCall.htm">ComCall</a>-Ausgabeparametern vom Typ <code>"Ptr*"</code> oder <code>"PtrP"</code> verwendet werden, um sicherzustellen, dass der Pointer automatisch freigegeben wird, z.B. wenn ein Fehler auftritt. Ein Beispiel dazu finden Sie unter <a href="ComObjQuery.htm#ExIE">ComObjQuery</a>.</p>
 <p>Wenn einem Wrapper-Objekt mit <em>VarTyp</em> VT_DISPATCH (9) und einem Null-Pointer (0) ein Pointer-Wert ungleich Null zugewiesen wird, ändert sich dessen Typ von <code>ComValue</code> zu <code>ComObject</code>. Die Eigenschaften und Methoden des gewrappten Objekts werden verfügbar gemacht, während die <code>Ptr</code>-Eigenschaft nicht mehr zur Verfügung steht.</p>
 
 <h2 id="ByRef">ByRef</h2>
-<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts den VT_BYREF-Flag (0x4000) enthält, können leere eckige Klammern <code>[]</code> zum Lesen oder Schreiben des referenzierten Wertes genutzt werden.</p>
-<p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder eines Pufferspeichers mit genügend Kapazität sein, um einen Wert bestimmten Typs enthalten zu können. Das folgende Beispiel erstellt eine Variable, die von einer VBScript-Funktion beschrieben werden kann:</p>
+<p>Wenn der <a href="ComObjType.htm#vt"><em>VarTyp</em></a> eines Wrapper-Objekts das VT_BYREF-Flag (0x4000) enthält, können leere eckige Klammern <code>[]</code> zum Lesen oder Schreiben des referenzierten Wertes verwendet werden.</p>
+<p>Beim Erstellen einer Referenz muss <em>Wert</em> die Speicheradresse einer Variable oder eines Pufferspeichers mit ausreichender Kapazität zur Aufbewahrung eines Wertes bestimmten Typs sein. Das folgende Beispiel erstellt eine Variable, die von einer VBScript-Funktion beschrieben werden kann:</p>
 <pre>vbuf := Buffer(24, 0)
-vref := ComValue(0x400C, vbuf.ptr)  <em>; 0x400C ist eine Kombination von VT_BYREF und VT_VARIANT.</em>
+vref := ComValue(0x400C, vbuf.ptr)  <em>; 0x400C ist eine Kombination aus VT_BYREF und VT_VARIANT.</em>
 
 vref[] := "Eingabewert"
 sc.Run("Beispiel", vref)  <em>; sc sollte wie im <a href="#ExByRef">Beispiel unten</a> initialisiert werden.</em>
 MsgBox vref[]</pre>
-<p>Beachten Sie, dass zwar jeder vorherige Wert freigegeben wird, wenn ein neuer Wert mittels <code>vref[]</code> oder der COM-Methode zugewiesen wird, aber der finale Wert nicht automatisch freigegeben wird. Für die Freigabe des Wertes muss man wissen, um welchen Typ es sich handelt. Da es sich in diesem Fall um VT_VARIANT handelt, kann es durch Aufrufen von <a href="https://learn.microsoft.com/windows/win32/api/oleauto/nf-oleauto-variantclear">VariantClear</a> mit <a href="DllCall.htm">DllCall</a> oder durch Verwendung einer einfacheren Methode freigegeben werden: weisen Sie einen Integer zu, z. B. <code>vref[] := 0</code>.</p>
+<p>Beachten Sie, dass, obwohl alle vorherigen Werte freigegeben werden, wenn ein neuer Wert mittels <code>vref[]</code> oder der COM-Methode zugewiesen wird, der finale Wert nicht automatisch freigegeben wird. Um den Wert freizugeben, muss man wissen, um welchen Typ es sich handelt. Da es sich in diesem Fall um VT_VARIANT handelt, kann der Wert durch Aufruf von <a href="https://learn.microsoft.com/windows/win32/api/oleauto/nf-oleauto-variantclear">VariantClear</a> mit <a href="DllCall.htm">DllCall</a> oder durch Nutzung einer einfacheren Methode freigegeben werden: weisen Sie einen Integer zu, z.B. <code>vref[] := 0</code>.</p>
 <p>Wenn die Methode wie oben gezeigt eine Kombination aus VT_BYREF und VT_VARIANT akzeptiert, kann stattdessen eine <a href="../Concepts.htm#variable-references">VarRef</a> verwendet werden. Zum Beispiel:</p>
 <pre>eine_var := "Eingabewert"
 sc.Run("Beispiel", &amp;eine_var)
 MsgBox eine_var</pre>
-<p>Einige Methoden erfordern jedoch einen spezifischeren Variantentyp, wie z. B. <code>VT_BYREF | VT_I4</code>. In solchen Fällen muss die erste oben gezeigte Vorgehensweise verwendet werden, wobei 0x400C mit dem entsprechenden Variantentyp ersetzt wird.</p>
+<p>Einige Methoden erfordern jedoch einen spezifischeren Variantentyp, wie z.B. <code>VT_BYREF | VT_I4</code>. In solchen Fällen muss die erste oben gezeigte Vorgehensweise verwendet werden, wobei 0x400C mit dem entsprechenden Variantentyp ersetzt wird.</p>
 
 <h2 id="Remarks">Allgemeine Bemerkungen</h2>
 <p>Wenn diese Funktion zum Wrappen eines <a href="https://learn.microsoft.com/windows/win32/winauto/idispatch-interface">IDispatch</a>- oder IUnknown-Interface-Pointers (wenn als Integer übergeben) genutzt wird, ist das Wrapper-Objekt zum Freigeben des Pointers verantwortlich, falls erforderlich. Wenn das Skript also beabsichtigt, den Pointer nach dem Aufruf dieser Funktion weiter zu verwenden, muss es zuerst <code><a href="ObjAddRef.htm">ObjAddRef</a>(DispPtr)</code> aufrufen. Das ist nicht notwendig, wenn <em>Wert</em> selbst ein ComValue oder ComObject ist.</p>
@@ -104,7 +104,7 @@ var[] := "Eingabewert"
 sc.Run("Beispiel", var.ref)
 MsgBox var[]
 
-<em>; Das Gleiche noch einmal, aber direkter:</em>
+<em>; Dasselbe noch einmal, aber direkter:</em>
 variant_buf := Buffer(24, 0)  <em>; Einen Puffer anlegen, der groß genug für ein VARIANT ist.</em>
 var := ComValue(0x400C, variant_buf.ptr)  <em>; Referenz auf ein VARIANT machen.</em>
 var[] := "Eingabewert"
@@ -126,7 +126,7 @@ MsgBox var
 ;   this.ref ruft ein ByRef-Objekt zur Übergabe an eine COM-Methode ab.</em>
 class ComVar {
     __new(vType := 0xC) {
-        <em>; Speicher für ein VARIANT reservieren, damit unser Wert reinpasst. VARIANT wird auch dann
+        <em>; Speicher für ein VARIANT reservieren, damit unser Wert hineinpasst. VARIANT wird auch dann
         ; verwendet, wenn vType != VT_VARIANT, damit VariantClear von __delete verwendet werden kann.</em>
         this.var := Buffer(24, 0)
         <em>; Ein Objekt erstellen, mit dem die Variable via ByRef übergeben werden kann.</em>

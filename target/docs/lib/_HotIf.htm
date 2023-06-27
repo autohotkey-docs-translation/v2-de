@@ -23,38 +23,38 @@
 
   <dt>Ausdruck</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#boolean">Boolescher Wert</a></p>
-    <p>Beliebiger gültiger <a href="../Variables.htm#Expressions">Ausdruck</a>. Dies wird zum Rückgabewert einer impliziten Funktion, die einen Parameter hat (<a href="../Hotkeys.htm#ThisHotkey">ThisHotkey</a>). Die Funktion kann globale Variablen nicht direkt verändern (da sie wie üblich eine <a href="../Functions.htm#AssumeLocal">Assume-Local</a>-Funktion ist und keine Deklarationen enthalten darf), kann aber andere Funktionen aufrufen, die dies tun.</p>
+    <p>Typ: <a href="../Concepts.htm#boolean">Boolesch</a></p>
+    <p>Ein gültiger <a href="../Variables.htm#Expressions">Ausdruck</a>. Dies wird zum Rückgabewert einer impliziten Funktion, die einen Parameter hat (<a href="../Hotkeys.htm#ThisHotkey">ThisHotkey</a>). Die Funktion kann globale Variablen nicht direkt verändern (da sie wie üblich eine <a href="../Functions.htm#AssumeLocal">Assume-Local</a>-Funktion ist und keine Deklarationen enthalten darf), kann aber andere Funktionen aufrufen, die dies tun.</p>
   </dd>
 
 </dl>
 
-<h2 id="howto">Grundlagen zur Bedienung</h2>
+<h2 id="howto">Grundlegende Bedienung</h2>
 <p>Die #HotIf-Direktive bestimmt den Ausdruck, der von nachfolgend erstellten Hotkeys genutzt wird, um festzustellen, ob sie aktiviert werden sollen. Dieser Ausdruck wird ausgewertet, wenn die Taste, die Maustaste oder die Kombination gedrückt wird, oder zu anderen Zeiten, wenn das Programm wissen muss, ob der Hotkey aktiv ist.</p>
 <p>Um <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> kontextabhängig zu machen, stellen Sie ihnen einfach die #HotIf-Direktive voran. Zum Beispiel:</p>
 <pre>#HotIf WinActive("ahk_class Notepad") or WinActive(MeinFensterTitel)
-#Space::MsgBox "Sie haben WIN+LEERTASTE im Texteditor oder " MeinFensterTitel " gedrückt."</pre>
+#Space::MsgBox "Sie haben WIN+LEERTASTE in Notepad oder " MeinFensterTitel " gedrückt."</pre>
 <p>Die #HotIf-Direktive ist von der Position abhängig: sie beeinflusst nur Hotkeys und Hotstrings, die sich im Skript physisch darunter befinden, bis gegebenenfalls die nächste #HotIf-Direktive erreicht ist.</p>
 <p class="warning"><strong>Hinweis:</strong> Im Gegensatz zu <a href="If.htm">if-Anweisungen</a> haben geschweifte Klammern bei der #HotIf-Direktive keine Wirkung.</p>
 <p>Um die Kontextabhängigkeit zu deaktivieren, geben Sie #HotIf ohne Parameter an. Zum Beispiel:</p>
 <pre>#HotIf</pre>
 <p>#HotIf kann wie alle anderen Direktiven nicht bedingt ausgeführt werden.</p>
-<p>Wenn ein Maus- oder Tastatur-Hotkey per #HotIf deaktiviert wurde, wird er seine ursprüngliche Funktion ausführen; das heißt, dass die Tasten an das aktive Fenster gesendet werden, als gäbe es diesen Hotkey nicht. Es gibt eine Ausnahme: Joystick-Hotkeys: Obwohl #HotIf bei diesen Hotkeys funktioniert, kann die Direktive nicht verhindern, dass andere Programme den Tastendruck eines Joysticks wahrnehmen.</p>
-<p>#HotIf kann auch genutzt werden, um das Verhalten einer gewöhnlichen Taste wie <kbd>Enter</kbd> oder <kbd>Leer</kbd> zu ändern. Das ist nützlich, wenn ein bestimmtes Fenster diese Taste ignoriert oder eine Aktion ausführt, die unerwünscht ist. Zum Beispiel:</p>
+<p>Wenn ein Maus- oder Tastatur-Hotkey per #HotIf deaktiviert wurde, wird er seine ursprüngliche Funktion ausführen, d.h. der Hotkey wird an das aktive Fenster weitergereicht, als gäbe es ihn nicht. Es gibt eine Ausnahme: Controller-Hotkeys: Obwohl #HotIf mit diesen Hotkeys funktioniert, kann die Direktive nicht verhindern, dass andere Programme die Tastendrücke eines Controllers wahrnehmen.</p>
+<p>#HotIf kann auch genutzt werden, um das Verhalten einer gewöhnlichen Taste wie <kbd>Enter</kbd> oder <kbd>Leer</kbd> zu ändern. Das ist nützlich, wenn ein bestimmtes Fenster diese Taste ignoriert oder eine unerwünschte Aktion ausführt. Zum Beispiel:</p>
 <pre>#HotIf WinActive("Erinnerung ahk_class #32770")  <em>; Das Erinnerungsfenster von Outlook.</em>
-Enter::Send "!o"  <em>; Mit einem "Enter"-Tastendruck die markierte Erinnerung öffnen, anstatt sie in den Snooze-Modus zu versetzen.</em>
+Enter::Send "!o"  <em>; ENTER soll die markierte Erinnerung öffnen statt snoozen.</em>
 #HotIf</pre>
 
 <h2 id="variant">Hotkey-Varianten (-Duplikate)</h2>
-<p>Sie können einen bestimmten <a href="../Hotkeys.htm">Hotkey</a> oder <a href="../Hotstrings.htm">Hotstring</a> mehrmals im Skript definieren, indem Sie jeder Definition ein anderes #HotIf-Kriterium zuweisen. Auch bekannt als <em>Hotkey-Varianten</em>. Zum Beispiel:</p>
+<p>Sie können einen bestimmten <a href="../Hotkeys.htm">Hotkey</a> oder <a href="../Hotstrings.htm">Hotstring</a> mehrmals im Skript definieren, indem Sie jeder Definition ein anderes #HotIf-Kriterium zuweisen. Diese werden als <em>Hotkey-Varianten</em> bezeichnet. Zum Beispiel:</p>
 <pre>#HotIf <a href="WinActive.htm">WinActive</a>("ahk_class Notepad")
-^!c::MsgBox "Sie haben STRG+ALT+C im Texteditor gedrückt."
+^!c::MsgBox "Sie haben STRG+ALT+C in Notepad gedrückt."
 #HotIf WinActive("ahk_class WordPadClass")
 ^!c::MsgBox "Sie haben STRG+ALT+C in WordPad gedrückt."
 #HotIf
-^!c::MsgBox "Sie haben STRG+ALT+C in einem beliebigen Fenster gedrückt (außer Texteditor/WordPad)."</pre>
-<p>Sollte der Fall eintreten, dass mehrere Varianten ausgelöst werden können, hat die erste gefundene Variante im Skript die höchste Priorität. Die Ausnahme hiervon ist die globale Variante (die Variante ohne #HotIf-Kriterium): Sie hat immer die niedrigste Priorität; das heißt, dass sie nur ausgelöst wird, wenn keine andere Variante infrage kommt (diese Ausnahme gilt nicht für <a href="../Hotstrings.htm">Hotstrings</a>).</p>
-<p>Beim Erstellen von Hotkey-Duplikaten spielt die Reihenfolge der <a href="../Hotkeys.htm#Symbols">Modifikatorzeichen</a> (z. B. ^!+#) keine Rolle. Zum Beispiel wäre <code>^!c</code> das gleiche wie <code>!^c</code>. Die Schreibweise der Tasten muss jedoch konsistent sein. <em>Esc</em> beispielsweise ist in diesem Zusammenhang nicht das gleiche wie <em>Escape</em> (die Groß- und Kleinschreibung hingegen ist egal). Außerdem werden Hotkeys mit einem <a href="../Hotkeys.htm#wildcard">Platzhalter-Präfix (*)</a> und Hotkeys ohne Platzhalter getrennt behandelt; zum Beispiel hätten <code>*F1</code> und <code>F1</code> jeweils ihre eigenen Varianten.</p>
+^!c::MsgBox "Sie haben STRG+ALT+C in einem anderen Fenster als Notepad/WordPad gedrückt."</pre>
+<p>Wenn mehr als eine Variante zum Auslösen geeignet ist, wird nur die Variante ausgelöst, die dem Anfang des Skripts am nächsten ist. Die Ausnahme hiervon ist die globale Variante (die Variante ohne #HotIf-Kriterium): Sie hat immer die niedrigste Priorität und wird daher nur ausgelöst, wenn keine andere Variante zum Auslösen geeignet ist (diese Ausnahme gilt nicht für <a href="../Hotstrings.htm">Hotstrings</a>).</p>
+<p>Beim Erstellen von Hotkey-Duplikaten spielt die Reihenfolge von <a href="../Hotkeys.htm#Symbols">Modifikatorsymbolen</a> wie z.B. <code>^!+#</code> keine Rolle. Zum Beispiel ist <code>^!c</code> dasselbe wie <code>!^c</code>. Die Tasten müssen jedoch einheitlich geschrieben sein. Zum Beispiel ist <em>Esc</em> in diesem Fall nicht dasselbe wie <em>Escape</em> (Groß-/Kleinschreibung ist jedoch egal). Außerdem werden Hotkeys mit einem <a href="../Hotkeys.htm#wildcard">Platzhalter-Präfix (*)</a> und Hotkeys ohne Platzhalter getrennt behandelt. Zum Beispiel hätten <code>*F1</code> und <code>F1</code> jeweils ihre eigenen Varianten.</p>
 
 <p>Eine <a href="GroupAdd.htm">Fenstergruppe</a> kann verwendet werden, um einen Hotkey für eine Gruppe von Fenstern ausführen zu lassen. Zum Beispiel:
 <pre>
@@ -62,22 +62,22 @@ GroupAdd "MeineGruppe", "ahk_class Notepad"
 GroupAdd "MeineGruppe", "ahk_class WordPadClass"
 
 #HotIf WinActive("ahk_group MeineGruppe")
-#z::MsgBox "Sie haben WIN+Z entweder im Texteditor oder in WordPad gedrückt."
+#z::MsgBox "Sie haben WIN+Z entweder in Notepad oder WordPad gedrückt."
 </pre>
 </p>
 <p>Um Hotkey-Varianten dynamisch zu erstellen (während das Skript läuft), siehe <a href="HotIf.htm">HotIf</a>.</p>
 
 <h2 id="expression-evaluation">Ausdrucksauswertung</h2>
-<p>Sobald die Tastatur-, Maus- oder Joystick-Tastenkombination eines Hotkeys gedrückt wird, wird der #HotIf-Ausdruck ausgewertet, um zu überprüfen, ob der Hotkey aktiviert werden darf.</p>
-<p class="warning"><strong>Hinweis:</strong> Ein Skript sollte nicht davon ausgehen, dass der Ausdruck nur ausgewertet wird, wenn die Taste gedrückt wird (siehe unten).</p>
-<p>Der Ausdruck wird eventuell auch ausgewertet, wenn das Programm feststellen muss, ob der Hotkey aktiv ist. Der #HotIf-Ausdruck einer benutzerdefinierten Kombination wie <code>a &amp; b::</code> beispielsweise wird eventuell ausgewertet, wenn die Präfixtaste (<code>a</code> in diesem Fall) gedrückt wird, um festzustellen, ob sie als benutzerdefinierte Modifikatortaste fungieren soll.</p>
+<p>Sobald die Tastatur-, Maus- oder Controller-Tastenkombination eines Hotkeys gedrückt wird, wird der #HotIf-Ausdruck ausgewertet, um zu prüfen, ob der Hotkey aktiviert werden soll.</p>
+<p class="warning"><strong>Hinweis:</strong> Ein Skript sollte nicht davon ausgehen, dass der Ausdruck nur beim Drücken der Taste ausgewertet wird (siehe unten).</p>
+<p>Der Ausdruck kann auch ausgewertet werden, wenn das Programm wissen muss, ob der Hotkey aktiv ist. Zum Beispiel könnte der #HotIf-Ausdruck einer benutzerdefinierten Kombination wie <code>a &amp; b::</code> auch ausgewertet werden, wenn die Präfixtaste (<code>a</code> in diesem Fall) gedrückt wird, um zu prüfen, ob sie als benutzerdefinierte Modifikatortaste fungieren soll.</p>
 <p class="warning" id="lag"><strong>Hinweis:</strong> Das Verwenden von #HotIf in einem Skript, das nicht reagiert, kann Eingabeverzögerungen verursachen oder Hotkeys unbrauchbar machen (siehe unten).</p>
 <p>Der #HotIf-Direktive sind noch einige weitere Einschränkungen auferlegt:</p>
 <ul>
-  <li>Tastatur- oder Mauseingaben werden gepuffert (verzögert), bis die Auswertung des Ausdrucks abgeschlossen ist oder das <a href="_HotIfTimeout.htm">Zeitlimit überschritten ist</a>.</li>
-  <li>Die Auswertung von Ausdrücken wird nicht vom Tastatur-/Maus-Hook, sondern vom Haupt-Thread des Skripts (auf Betriebssystemebene, nicht vom <a href="../misc/Threads.htm">Pseudo-Thread</a>) durchgeführt. Wenn das Skript beschäftigt oder auf nichts reagiert, z. B. wenn FileCopy gerade eine Datei kopiert, wird die Auswertung des Ausdrucks verzögert oder im schlimmsten Fall verworfen, weil das Zeitlimit überschritten wurde.</li>
+  <li>Tastatur- oder Mauseingaben werden üblicherweise gepuffert (verzögert), bis die Auswertung des Ausdrucks abgeschlossen ist oder das <a href="_HotIfTimeout.htm">Zeitlimit überschritten ist</a>.</li>
+  <li>Die Auswertung von Ausdrücken kann nur durch den Hauptthread des Skripts (auf OS-Ebene, kein <a href="../misc/Threads.htm">Pseudo-Thread</a>) erfolgen, nicht direkt durch den Tastatur-/Maus-Hook. Wenn das Skript beschäftigt ist oder auf nichts reagiert, z.B. wenn FileCopy gerade eine Datei kopiert, wird die Auswertung des Ausdrucks verzögert oder im schlimmsten Fall verworfen, weil das Zeitlimit überschritten wurde.</li>
   <li>Wenn das <a href="_HotIfTimeout.htm#LowLevelHooksTimeout">systemdefinierte Zeitlimit</a> überschritten wurde, kann es vorkommen, dass das System aufhört, dem Skript Tastatur- oder Mauseingaben mitzuteilen (siehe #HotIfTimeout, um mehr zu erfahren).</li>
-  <li>Das Senden von Tastendrücken oder Mausklicks während der Auswertung des Ausdrucks (z. B. mit einer Funktion, die sie selbst aufruft) kann zu Komplikationen führen und sollte vermieden werden.</li>
+  <li>Das Senden von Tastendrücken oder Mausklicks während der Auswertung des Ausdrucks (z.B. mit einer Funktion, die sie selbst aufruft) kann zu Komplikationen führen und sollte vermieden werden.</li>
 </ul>
 <p>Das Setzen von <a href="../Hotkeys.htm#ThisHotkey">ThisHotkey</a>, <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a> und <a href="../Variables.htm#TimeSinceThisHotkey">A_TimeSinceThisHotkey</a> basiert auf den Hotkey, den der aktuelle #HotIf-Ausdruck ausgewertet hat.</p>
 <p><a href="../Variables.htm#PriorHotkey">A_PriorHotkey</a> und <a href="../Variables.htm#TimeSincePriorHotkey">A_TimeSincePriorHotkey</a> enthalten vorübergehend die vorherigen Werte der entsprechenden "This"-Variablen.</p>
@@ -108,8 +108,8 @@ Hotkey "#n", "On"   <em>; Schaltet denselben Hotkey wieder ein.</em>
 </ul>
 
 <h2 id="general-remarks">Allgemeine Bemerkungen</h2>
-<p>Wenn nötig, stellt #HotIf außerdem die ursprüngliche Funktion der Präfixtasten wieder her (eine <a href="../Hotkeys.htm#prefix">Präfixtaste</a> ist beispielsweise <kbd>A</kbd> bei einem Hotkey wie <code>a &amp; b</code>). Dies geschieht immer dann, wenn für ein bestimmtes Präfix keine aktivierten Hotkeys verfügbar sind.</p>
-<p>Die Tastatur- oder Maustaste eines via #HotIf deaktivierten Hotkeys sind im <a href="KeyHistory.htm">Tastenverlauf</a> innerhalb der Spalte "Type" mit einem Rautezeichen (#) gekennzeichnet. Solche Informationen können helfen, ein Skript zu debuggen (Fehler zu finden und zu beseitigen).</p>
+<p>#HotIf stellt auch bei Bedarf die ursprüngliche Funktion der Präfixtasten wieder her (eine <a href="../Hotkeys.htm#prefix">Präfixtaste</a> ist bspw. <kbd>A</kbd> bei einem Hotkey wie <code>a &amp; b</code>). Dies geschieht immer dann, wenn für ein bestimmtes Präfix keine aktivierten Hotkeys verfügbar sind.</p>
+<p>Die Tastatur- oder Maustaste eines via #HotIf deaktivierten Hotkeys sind im <a href="KeyHistory.htm">Tastenverlauf</a> innerhalb der Spalte "Type" mit einem Rautezeichen (#) gekennzeichnet. Dies kann helfen, <a href="../Scripts.htm#debug">ein Skript zu debuggen</a>.</p>
 <p><a href="../Hotkeys.htm#alttab">Alt-Tab-Hotkeys</a> werden nicht von #HotIf beeinflusst: sie gelten für alle Fenster.</p>
 <p>Das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> kann via #HotIf gesetzt werden. Zum Beispiel:</p>
 <pre>#HotIf <a href="WinExist.htm">WinExist</a>("ahk_class Notepad")
@@ -121,17 +121,17 @@ Hotkey "#n", "On"   <em>; Schaltet denselben Hotkey wieder ein.</em>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Erstellt zwei Hotkeys und einen Hotstring, die nur funktionieren, wenn der Texteditor aktiv ist, und einen Hotkey, der für ein beliebiges Fenster außer dem Texteditor funktioniert.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Erstellt zwei Hotkeys und einen Hotstring, die nur funktionieren, wenn Notepad aktiv ist, und einen Hotkey, der für alle Fenster außer Notepad funktioniert.</p>
 <pre>#HotIf WinActive("ahk_class Notepad")
-^!a::MsgBox "Sie haben STRG+ALT+A gedrückt, während der Texteditor aktiv ist."
-#c::MsgBox "Sie haben WIN+C gedrückt, während der Texteditor aktiv ist."
-::bzw::Dieser Ersatztext für "bzw" wird nur im Texteditor erscheinen.
+^!a::MsgBox "Sie haben STRG+ALT+A gedrückt, während Notepad aktiv ist."
+#c::MsgBox "Sie haben WIN+C gedrückt, während Notepad aktiv ist."
+::bzw::Dieser Ersatztext für "bzw" erscheint nur in Notepad.
 #HotIf
-#c::MsgBox "Sie haben WIN+C in einem Fenster gedrückt, das nicht der Texteditor ist."</pre>
+#c::MsgBox "Sie haben WIN+C in einem anderen Fenster als Notepad gedrückt."</pre>
 </div>
 
 <div class="ex" id="ExVolume">
-<p><a class="ex_number" href="#ExVolume"></a> Ermöglicht das Anpassen der Lautstärke durch Drehen des Mausrads über der Taskleiste.</p>
+<p><a class="ex_number" href="#ExVolume"></a> Ermöglicht das Einstellen der Lautstärke durch Drehen des Mausrads über der Taskleiste.</p>
 <pre>
 #HotIf MausIstÜber("ahk_class Shell_TrayWnd")
 WheelUp::Send "{Volume_Up}"

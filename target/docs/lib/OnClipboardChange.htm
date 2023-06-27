@@ -12,54 +12,44 @@
 <body>
 
 <h1>OnClipboardChange</h1>
+<p>Registriert eine <a href="../Functions.htm">Funktion</a>, die jedes Mal automatisch aufgerufen wird, wenn sich der Inhalt der Zwischenablage ändert.</p>
 
-<p>Registriert eine Funktion, die jedes Mal automatisch aufgerufen wird, wenn sich der Inhalt der Zwischenablage ändert.</p>
-
-<pre class="Syntax"><span class="func">OnClipboardChange</span> Funktion <span class="optional">, HinzufügenEntfernen</span></pre>
+<pre class="Syntax"><span class="func">OnClipboardChange</span> Rückruf <span class="optional">, HinzufügenEntfernen</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Funktion</dt>
+  <dt>Rückruf</dt>
   <dd>
     <p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Ein Funktionsobjekt, das aufgerufen werden soll. Die Parameter und der Rückgabewert der Funktion sind <a href="#Function">unten</a> beschrieben.</p>
+    <p>Eine Funktion, die aufgerufen werden soll.</p>
+    <p>Die Rückruffunktion akzeptiert einen Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(DatenTyp) { ...</pre>
+    <p>Obwohl der Name, den Sie dem Parameter geben, nicht wichtig ist, wird ihm eine der folgenden Zahlen zugewiesen:</p>
+    <ul>
+      <li>0 = Die Zwischenablage ist jetzt leer.</li>
+      <li>1 = Die Zwischenablage enthält etwas, das als Text ausgegeben werden kann (z.B. <a href="A_Clipboard.htm#CopiedFiles">kopierte Dateien</a> aus einem Explorer-Fenster).</li>
+      <li>2 = Die Zwischenablage enthält etwas, das nicht als Text ausgegeben werden kann, z.B. ein Bild.</li>
+    </ul>
+    <p>Sie können den Parameter der Rückruffunktion weglassen, wenn Sie die entsprechende Information nicht benötigen, aber dann muss ein Sternchen angegeben werden, z.B. <code>MeinRückruf(*)</code>.</p>
+    <p>Wenn dies die letzte oder einzige Rückruffunktion ist, wird der Rückgabewert ignoriert. Andernfalls kann sie einen Integer ungleich 0 zurückgeben, um zu verhindern, dass nachfolgende Rückruffunktionen aufgerufen werden.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Lässt man diesen Parameter weg, wird standardmäßig 1 (die Funktion nach anderen zuvor registrierten Funktionen aufrufen) verwendet. Ansonsten können Sie eine der folgenden Zahlen angeben:</p>
+    <p>Wenn ungesetzt oder weggelassen, wird standardmäßig 1 verwendet (die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
     <ul>
-      <li>1 = Die Funktion nach anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>-1 = Die Funktion vor anderen zuvor registrierten Funktionen aufrufen.</li>
-      <li>0 = Die Funktion nicht aufrufen.</li>
+      <li>1 = Die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>-1 = Die Rückruffunktion vor anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
+      <li>0 = Die Rückruffunktion nicht aufrufen.</li>
     </ul>
   </dd>
 
 </dl>
-
-<h2 id="Function">Funktion</h2>
-<p>Die Funktion sollte einen Parameter akzeptieren:</p>
-<pre class="Syntax"><i>FunktionName</i>(Typ)</pre>
-<dl>
-  <dt>Typ</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Eine der folgenden Zahlen:</p>
-    <ul>
-      <li>0 = Die Zwischenablage ist jetzt leer.</li>
-      <li>1 = Die Zwischenablage enthält etwas, das als Text ausgegeben werden kann (dazu gehören <a href="A_Clipboard.htm#CopiedFiles">Dateien, die aus einem Explorer-Fenster kopiert wurden</a>).</li>
-      <li>2 = Die Zwischenablage enthält etwas völlig textfreies, wie z. B. ein Bild.</li>
-    </ul>
-  </dd>
-</dl>
-
-<h3 id="Return_Value">Rückgabewert</h3>
-<p>Ist dies die letzte bzw. einzige OnClipboardChange-Funktion, wird der Rückgabewert ignoriert. Ansonsten kann die Funktion einen Integer ungleich null zurückgeben, um zu verhindern, dass nachfolgende Funktionen aufgerufen werden.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Wenn die Zwischenablage geändert wird, während eine OnClipboardChange-Funktion läuft, geht das Benachrichtigungsereignis verloren. Falls das unerwünscht ist, verwenden Sie <a href="Critical.htm">Critical</a>. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> gepuffert/hinausgezögert (z. B. das Drücken eines Hotkeys), während der OnClipboardChange-Thread läuft.</p>
-<p>Sobald das Skript selbst die Zwischenablage ändert, wird seine OnClipboardChange-Funktion normalerweise nicht sofort ausgeführt. Das heißt, dass Funktionen unterhalb der Funktion, die die Zwischenablage geändert hat, wahrscheinlich vorher ausgeführt werden. Um die sofortige Ausführung der Funktion zu erzwingen, führen Sie nach dem Ändern der Zwischenablage eine kurze Verzögerung wie z. B. <code><a href="Sleep.htm">Sleep 20</a></code> durch.</p>
+<p>Wenn sich die Zwischenablage ändert, während eine Rückruffunktion ausgeführt wird, geht dieses Benachrichtigungsereignis verloren. Falls das unerwünscht ist, verwenden Sie <a href="Critical.htm">Critical</a>. Allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a> gepuffert/verzögert (z.B. das Drücken eines Hotkeys), die während der Ausführung des OnClipboardChange-Threads auftreten.</p>
+<p>Wenn das Skript selbst die Zwischenablage ändert, werden die Rückruffunktionen in der Regel nicht sofort ausgeführt. Daher kann es vorkommen, dass Anweisungen, die unmittelbar nach der Anweisung folgen, die für die Änderung der Zwischenablage verantwortlich ist, noch ausgeführt werden. Um die sofortige Ausführung der Rückruffunktionen zu erzwingen, veranlassen Sie nach der Änderung der Zwischenablage eine kurze Verzögerung, z.B. <code><a href="Sleep.htm">Sleep</a> 20</code>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="A_Clipboard.htm">A_Clipboard</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="CallbackCreate.htm">CallbackCreate</a></p>
@@ -69,10 +59,10 @@
 <p><a class="ex_number" href="#ExBasic"></a> Zeigt bei jeder Änderung der Zwischenablage kurz einen Tooltip an.</p>
 <pre>OnClipboardChange ZwischenablageGeändert
 
-ZwischenablageGeändert(Typ) {
-    ToolTip "Datentyp der Zwischenablage: " Typ
+ZwischenablageGeändert(DatenTyp) {
+    ToolTip "Datentyp der Zwischenablage: " DatenTyp
     Sleep 1000
-    ToolTip  <em>; Schaltet den Tooltip aus.</em>
+    ToolTip  <em>; Tooltip ausschalten.</em>
 }</pre>
 </div>
 

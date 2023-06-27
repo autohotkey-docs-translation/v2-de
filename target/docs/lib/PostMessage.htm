@@ -15,7 +15,7 @@
 
 <p>Platziert eine Meldung in die Meldungswarteschlange eines Fensters oder Steuerelements.</p>
 
-<pre class="Syntax"><span class="func">PostMessage</span> Mld <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span></pre>
+<pre class="Syntax"><span class="func">PostMessage</span> Mld <span class="optional">, wParam, lParam, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -28,51 +28,33 @@
   <dt>wParam, lParam</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die Parameter der Meldung. Lässt man einen Parameter weg, wird standardmäßig 0 verwendet.</p>
+    <p>Wenn einer dieser Parameter ungesetzt ist oder weggelassen wird, wird 0 gesendet. Andernfalls geben Sie die erste und zweite Komponente der Meldung an.</p>
     <p>Jeder Parameter muss ein <a href="../Concepts.htm#numbers">Integer</a> sein.</p>
-    <p>Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die niedrigen 32 Bits verwendet; das heißt, dass Werte gekürzt werden, wenn sie vorzeichenfähig sind und außerhalb des Bereichs von -2147483648 bis 4294967295 (-0x80000000 bis 0x7FFFFFFF) liegen oder wenn sie vorzeichenlos sind und außerhalb des Bereichs von 0 bis 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Concepts.htm#pure-numbers">der von AutoHotkey unterstützt wird</a>, verwendet werden.</p>
+    <p>Wenn AutoHotkey oder das Zielfenster 32-Bit ist, werden nur die unteren 32 Bits des Parameters verwendet, d.h. die Werte werden gekürzt, wenn sie vorzeichenfähig sind und außerhalb des Bereichs von -2147483648 bis 4294967295 (-0x80000000 bis 0x7FFFFFFF) liegen oder wenn sie vorzeichenlos sind und außerhalb des Bereichs von 0 bis 4294967295 (0xFFFFFFFF) liegen. Wenn sowohl AutoHotkey als auch das Zielfenster 64-Bit sind, kann jeder Integer, <a href="../Concepts.htm#pure-numbers">der von AutoHotkey unterstützt wird</a>, verwendet werden.</p>
   </dd>
 
   <dt>Steuerelement</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Lässt man diesen Parameter weg, wird die Meldung direkt an das Zielfenster gesendet, anstatt an eines der darin enthaltenen Steuerelemente. Ansonsten kann dieser Parameter die ClassNN-Bezeichnung, der Text oder die HWND-Nummer (eindeutige ID) des Steuerelements oder ein Objekt mit einer <code>Hwnd</code>-Eigenschaft sein. Einzelheiten finden Sie unter <a href="Control.htm#Parameter">Der Steuerelement-Parameter</a>.</p>
-    <p>Die hier angegebene HWND-Nummer (egal ob als Integer oder Objekt) muss nicht unbedingt die HWND-Nummer eines Steuerelements (bzw. eines untergeordneten Fensters) sein. Das heißt, dass sie auch die HWND-Nummer eines nicht-untergeordneten Fensters sein kann.</p>
+    <p>Wenn ungesetzt oder weggelassen, wird die Meldung direkt an das Zielfenster gepostet, nicht an eines seiner Steuerelemente. Andernfalls geben Sie die ClassNN-Bezeichnung, den Text oder die HWND-Nummer des Steuerelements an, oder ein Objekt mit einer <code>Hwnd</code>-Eigenschaft. Einzelheiten finden Sie unter <a href="Control.htm#Parameter">Der Steuerelement-Parameter</a>.</p>
+    <p>Die hier angegebene HWND-Nummer (egal ob als Integer oder Objekt) muss nicht unbedingt die HWND-Nummer eines Steuerelements (bzw. eines untergeordneten Fensters) sein. Das heißt, dass sie auch die HWND-Nummer eines Top-Level-Fensters sein kann.</p>
   </dd>
 
-  <dt>FensterTitel</dt>
+  <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
-  </dd>
-
-  <dt>FensterText</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
-  </dd>
-
-  <dt>IgnoriereTitel</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
-  </dd>
-
-  <dt>IgnoriereText</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+    <p>Wenn jeder dieser Parameter ungesetzt ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> ein <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" aufgedeckt werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
   </dd>
 
 </dl>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster oder Steuerelement nicht gefunden werden konnte.</p>
-<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn die Meldung nicht gesendet werden konnte. Wenn z. B. das Zielfenster auf einer höheren Sicherheitsstufe als das Skript läuft (also wenn es im Gegensatz zum Skript mit Adminrechten läuft), können Meldungen blockiert werden.</p>
+<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn die Meldung nicht gesendet werden konnte. Wenn z.B. das Zielfenster auf einer höheren Sicherheitsstufe als das Skript läuft (also wenn es im Gegensatz zum Skript mit Adminrechten läuft), können Meldungen blockiert werden.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Seien Sie vorsichtig, wenn Sie diese Funktion verwenden - das Senden einer Meldung an das falsche Fenster (oder Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht darauf abgestimmt, bestimmte Arten von Meldungen aus externen Quellen zu erwarten.</p>
-<p>PostMessage setzt die Meldung in die Meldungswarteschlange des Zielfensters. PostMessage wartet nicht auf eine Bestätigung oder Antwort. <a href="SendMessage.htm">SendMessage</a> hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
+<p>Seien Sie vorsichtig, wenn Sie diese Funktion verwenden - das Senden einer Meldung an das falsche Fenster (oder Senden einer ungültigen Meldung) kann dazu führen, dass die Zielanwendung sich falsch verhält oder abstürzt. Die meisten Anwendungen sind nicht dafür ausgelegt, bestimmte Arten von Meldungen aus externen Quellen zu empfangen.</p>
+<p>PostMessage platziert die Meldung in die Meldungswarteschlange des Zielfensters und wartet nicht auf eine Bestätigung oder Antwort. <a href="SendMessage.htm">SendMessage</a> hingegen wartet, bis das Zielfenster die Meldung verarbeitet hat oder bis das Zeitlimit überschritten wurde.</p>
 <p>Im Gegensatz zu <a href="SendMessage.htm">SendMessage</a> sendet PostMessage in der Regel nur einfache numerische Werte, keine Pointer, die auf Strukturen und Zeichenketten verweisen.</p>
 <p>Um allen Fenstern im Betriebssystem eine Meldung zu senden - einschließlich solcher, die versteckt oder deaktiviert sind - fügen Sie <code>0xFFFF</code> in <em>FensterTitel</em> ein (0xFFFF ist HWND_BROADCAST). Diese Technik sollte nur für Meldungen benutzt werden, die zum Broadcasten geeignet sind.</p>
 <p>Mit <a href="OnMessage.htm">OnMessage</a> kann ein Skript eine Meldung abfangen.</p>

@@ -16,7 +16,7 @@
 <p>Dieses Dokument enthält einige Themen, die manchmal wichtig sind, wenn externe Bibliotheken verwendet werden oder Meldungen an ein Steuerelement oder Fenster gesendet werden.</p>
 
 <ul>
-  <li><a href="#Format">Unicode vs ANSI</a>
+  <li><a href="#Format">Unicode vs. ANSI</a>
     <ul>
       <li><a href="#Buffer">Puffer</a></li>
       <li><a href="#DllCall">DllCall</a></li>
@@ -26,7 +26,7 @@
   <li><a href="#ptr">Pointer-Größe</a></li>
 </ul>
 
-<h2 id="Format">Unicode vs ANSI</h2>
+<h2 id="Format">Unicode vs. ANSI</h2>
 <p class="note"><strong>Hinweis:</strong> Dieser Abschnitt baut auf Themen auf, die in anderen Teilen der Dokumentation behandelt werden: <a href="Concepts.htm#strings">Zeichenketten (Strings)</a>, <a href="Concepts.htm#string-encoding">Zeichenkettencodierung</a>.</p>
 <p>Innerhalb einer Zeichenkette (Textwert) ist der numerische Zeichencode und die Größe (in Byte) jedes einzelnen Zeichens von der <a href="Concepts.htm#string-encoding">Codierung</a> der Zeichenkette abhängig. Solche Details sind in der Regel nur für Skripte interessant, die folgende Aktionen durchführen:</p>
 <ul>
@@ -36,9 +36,9 @@
   <li>Pufferspeicher via <a href="#Buffer">Buffer</a> reservieren, um darin eine bestimmte Anzahl von Zeichen zu speichern.</li>
 </ul>
 <p>AutoHotkey v2 verwendet von sich aus Unicode (UTF-16), aber einige externe Bibliotheken oder Fenstermeldungen benötigen ggf. ANSI-Zeichenketten.</p>
-<p><strong>ANSI</strong>: Jedes Zeichen ist <strong>ein Byte</strong> groß (8 Bits). Zeichencodes über 127 sind abhängig von den Spracheinstellungen Ihres Systems (oder vom Zeichensatz, der bei der Codierung des Textes gewählt wurde, z. B. beim Schreiben in eine Datei).</p>
+<p><strong>ANSI</strong>: Jedes Zeichen ist <strong>ein Byte</strong> groß (8 Bits). Zeichencodes über 127 sind abhängig von den Spracheinstellungen Ihres Systems (oder von der Codepage, die bei der Codierung des Textes gewählt wurde, z.B. beim Schreiben in eine Datei).</p>
 <p><strong>Unicode</strong>: Jedes Zeichen ist <strong>zwei Bytes</strong> groß (16 Bits). Zeichencodes sind durch das <a href="https://en.wikipedia.org/wiki/UTF-16">UTF-16-Format</a> definiert.</p>
-<p class="Indent"><em>Semantischer Hinweis</em>: Technisch gesehen sind einige Unicode-Zeichen durch <i>zwei</i> 16-Bit-Code-Einheiten vertreten, auch allgemein bekannt als "Ersatzzeichenpaar" (surrogate pair). Ebenso enthalten einige <a href="https://learn.microsoft.com/windows/win32/intl/code-pages">ANSI-Zeichensätze</a> (allgemein bekannt als <a href="https://learn.microsoft.com/windows/win32/intl/double-byte-character-sets">Doppel-Byte-Zeichensätze</a>) einige Doppel-Byte-Zeichen. Allerdings werden solche aus praktischen Gründen fast immer als zwei einzelne Einheiten (bzw. Zeichen) behandelt.</p>
+<p class="Indent"><em>Semantischer Hinweis</em>: Technisch gesehen sind einige Unicode-Zeichen durch <i>zwei</i> 16-Bit-Codeeinheiten vertreten, ugs. "Ersatzzeichenpaar" (surrogate pair). Ebenso enthalten einige <a href="https://learn.microsoft.com/windows/win32/intl/code-pages">ANSI-Codepages</a> (ugs. <a href="https://learn.microsoft.com/windows/win32/intl/double-byte-character-sets">Doppelbyte-Zeichensätze</a>) einige Doppelbyte-Zeichen. Aus praktischen Gründen werden diese jedoch fast immer als zwei einzelne Einheiten behandelt (der Einfachheit halber als "Zeichen" bezeichnet).</p>
 
 <h3 id="Buffer">Puffer</h3>
 <p>Achten Sie bei der Reservierung eines Pufferspeichers via <a href="lib/Buffer.htm">Buffer</a> darauf, dass Sie die korrekte Anzahl von <em>Bytes</em> für die jeweils benötigte Codierung angeben. Zum Beispiel:</p>
@@ -50,15 +50,15 @@ ansi_buf := Buffer(required_bytes)
 StrPut(source_string, ansi_buf)</pre>
 
 <h3 id="DllCall">DllCall</h3>
-<p>Der "Str"-Typ, falls vorhanden, kennzeichnet eine Zeichenkette im nativen Format des aktuellen Builds. Da einige Funktionen möglicherweise Zeichenketten in einem bestimmten Format benötigen oder zurückgeben müssen, stehen folgende Zeichenkettentypen zur Verfügung:</p>
+<p>Verwendet man den "Str"-Typ, handelt es sich um eine Zeichenkette im nativen Format des aktuellen Builds. Da einige Funktionen möglicherweise Zeichenketten in einem bestimmten Format benötigen oder zurückgeben müssen, stehen folgende Zeichenkettentypen zur Verfügung:</p>
 <table class="info">
   <tr><th>&nbsp;</th><th class="center">Zeichengröße</th><th>C / Win32-Typen</th><th>Codierung</th></tr>
   <tr><td class="Syntax center">WStr</td><td class="center">16-Bit</td><td>wchar_t*, WCHAR*, LPWSTR, LPCWSTR</td><td>UTF-16</td></tr>
-  <tr><td class="Syntax center">AStr</td><td class="center">8-Bit</td><td>char*, CHAR*, LPSTR, LPCSTR</td><td>ANSI (der Standard-ANSI-Zeichensatz des Systems)</td></tr>
+  <tr><td class="Syntax center">AStr</td><td class="center">8-Bit</td><td>char*, CHAR*, LPSTR, LPCSTR</td><td>ANSI (die Standard-ANSI-Codepage des Systems)</td></tr>
   <tr><td class="Syntax center">Str</td><td class="center">--</td><td>TCHAR*, LPTSTR, LPCTSTR</td><td>Äquivalent zu <b>WStr</b> in AutoHotkey v2.</td></tr>
 </table>
 <p>Wenn "Str" oder "WStr" für einen Parameter verwendet wird, wird die Adresse der Zeichenkette an die Funktion übergeben. Bei "AStr" wird eine temporäre ANSI-Kopie der Zeichenkette erstellt und die Adresse dieser Kopie übergeben. Generell sollte "AStr" nicht für einen Ausgabeparameter verwendet werden, da der Pufferspeicher gerade so groß genug ist, um die eingehende Zeichenkette aufzunehmen.</p>
-<p class="note"><b>Hinweis</b>: "AStr" und "WStr" sind sowohl bei Parametern als auch beim Rückgabewert einer Funktion gültig.</p>
+<p class="note"><b>Hinweis:</b> "AStr" und "WStr" können sowohl für die Parameter als auch für den Rückgabewert der Funktion verwendet werden.</p>
 <p>Wenn ein Skript eine Funktion via DllCall aufruft, die eine Zeichenkette als Parameter akzeptiert, muss eine oder mehr der folgenden Methoden durchgeführt werden:</p>
 <ol>
   <li>Wenn sowohl eine Unicode- (W) als auch ANSI-Version (A) der Funktion verfügbar ist, lassen Sie das Suffix W oder A weg und verwenden Sie den "Str"-Typ für die Eingabeparameter oder den Rückgabewert. Zum Beispiel wird die DeleteFile-Funktion von kernel32.dll als <code>DeleteFileA</code> und <code>DeleteFileW</code> exportiert. Da <code>DeleteFile</code> selbst nicht wirklich existiert, wird DllCall automatisch <code>DeleteFileW</code> versuchen:
@@ -73,7 +73,7 @@ DllCall("DeleteFileW", "WStr", DateiName)</pre></li>
 </ol>
 
 <h3 id="NumPutGet">NumPut / NumGet</h3>
-<p>Wenn man NumPut oder NumGet bei Zeichenketten anwendet, muss der korrekte Offset und Typ für den angegebenen Zeichenkettentyp angegeben werden. Das folgende Beispiel könnte Ihnen dabei helfen:</p>
+<p>Wenn man NumPut oder NumGet bei Zeichenketten anwendet, muss der korrekte Offset und Typ für den angegebenen Zeichenkettentyp angegeben werden. Folgendes kann Ihnen dabei helfen:</p>
 <pre><em>;  8-bit/ANSI   strings:  size_of_char=1  type_of_char="UChar"
 ; 16-Bit/UTF-16 Zeichenketten:  size_of_char=2  type_of_char="UShort"</em>
 <i>n</i>th_char := NumGet(buffer_or_address, (<i>n</i>-1)*size_of_char, type_of_char)
@@ -81,14 +81,14 @@ NumPut(type_of_char, <i>n</i>th_char, buffer_or_address, (<i>n</i>-1)*size_of_ch
 <p>Für das erste Zeichen sollte <em>n</em> den Wert 1 haben.</p>
 
 <h2 id="ptr">Pointer-Größe</h2>
-<p>Pointer sind in 32-Bit-Builds 4 Bytes groß und in 64-Bit-Builds 8 Bytes. Skripte, die Strukturen oder DllCalls verwenden, sollten dies berücksichtigen, um eine korrekte Ausführung auf beiden Plattformen zu gewährleisten. Bestimmte Bereiche, die auch betroffen sind:</p>
+<p>Pointer sind in 32-Bit-Builds 4 Bytes groß und in 64-Bit-Builds 8 Bytes. Skripte, die Strukturen oder DllCalls verwenden, sollten das berücksichtigen, um eine korrekte Ausführung auf beiden Plattformen zu gewährleisten. Bestimmte Bereiche, die auch betroffen sind:</p>
 <ul>
   <li>Offset-Berechnung bei Strukturfeldern, die ein oder mehr Pointer enthalten.</li>
   <li>Größenberechnung bei Strukturen, die ein oder mehr Pointer enthalten.</li>
   <li>Typennamen, die mit <a href="lib/DllCall.htm">DllCall</a>, <a href="lib/NumPut.htm">NumPut</a> oder <a href="lib/NumGet.htm">NumGet</a> verwendet werden.</li>
 </ul>
-<p>Mit <a href="Variables.htm#PtrSize">A_PtrSize</a> kann man Größe und Offset berechnen. Je nachdem wo es angebracht ist, kann man den <a href="lib/DllCall.htm">Ptr</a>-Typ bei DllCall, NumPut und NumGet verwenden.</p>
-<p>Beachten Sie, dass der Offset eines Felds üblicherweise die Gesamtgröße aller vorherigen Felder ist. Beachten Sie auch, dass Handles (einschließlich Typen wie HWND und HBITMAP) prinzipiell Pointer-Typen sind.</p>
+<p>Für Größen- und Offset-Berechnungen kann <a href="Variables.htm#PtrSize">A_PtrSize</a> verwendet werden. Je nachdem wo es angebracht ist, kann man den <a href="lib/DllCall.htm">Ptr</a>-Typ bei DllCall, NumPut und NumGet verwenden.</p>
+<p>Beachten Sie, dass der Offset eines Feldes üblicherweise die Gesamtgröße aller vorherigen Felder ist. Beachten Sie auch, dass Handles (einschließlich Typen wie HWND und HBITMAP) prinzipiell Pointer-Typen sind.</p>
 <pre><em>/*
   typedef struct _PROCESS_INFORMATION {
     HANDLE hProcess;    // Ptr

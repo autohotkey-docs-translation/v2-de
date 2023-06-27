@@ -28,7 +28,7 @@
 <p>Die geschweifte Startklammer kann auch in die gleiche Zeile wie der Hotkey geschrieben werden, nach <code>::</code>.</p>
 <p>Der Block nach einem Doppelpunktpaar-Hotkey ist quasi der Körper einer <a href="../Functions.htm">Funktion</a>, aber das ist nur wichtig, wenn Sie Ihre eigenen <a href="../Concepts.htm#variables">Variablen</a> definieren. Vorerst genügt es zu wissen, dass Blöcke dazu dienen, mehrere Zeilen zu einer einzigen Aktion oder <em>Anweisung</em> zusammenzufassen (siehe <a href="../Concepts.htm#control-flow">Kontrollfluss</a>, wenn Sie mehr darüber erfahren möchten).</p>
 
-<h2>Einfache Hotkeys</h2>
+<h2 id="Basic_Hotkeys">Einfache Hotkeys</h2>
 <p>Bei den meisten Hotkeys besteht der <em>Hotkey-Name</em> aus optionalen Modifikatorsymbolen, unmittelbar gefolgt von einem einzelnen Buchstaben oder Symbol, oder einem <a href="../KeyList.htm">Tastennamen</a>. Versuchen Sie, die folgenden Änderungen am obigen Beispiel vorzunehmen:</p>
 <ul>
   <li>Entfernen Sie <code>#</code>, damit der Hotkey immer dann aktiviert wird, wenn Sie nur <kbd>N</kbd> drücken. Denken Sie daran, dass Sie das Skript jederzeit <a href="RunExamples.htm#bailing-out">beenden</a> können, wenn etwas schief geht.</li>
@@ -55,7 +55,7 @@
 <p>Um einen Hotkey nur beim Loslassen und nicht beim Drücken der Taste auszulösen, verwenden Sie das <a href="../Hotkeys.htm#keyup">UP-Suffix</a>.</p>
 <p><strong>Siehe auch:</strong> <a href="../Hotkeys.htm#Symbols">Hotkey-Modifikatorsymbole</a>, <a href="../KeyList.htm">Tastenliste</a></p>
 
-<h2>Kontextabhängige Hotkeys</h2>
+<h2 id="Context-sensitive_Hotkeys">Kontextabhängige Hotkeys</h2>
 <p>Mit der <a href="../lib/_HotIf.htm">#HotIf</a>-Direktive kann eine Bedingung angegeben werden, die erfüllt sein muss, damit der Hotkey aktiviert wird, zum Beispiel:</p>
 <ul>
   <li>Wenn ein Fenster einer bestimmten Applikation beim Drücken des Hotkeys aktiv ist.</li>
@@ -64,11 +64,11 @@
 </ul>
 <p>Zum Beispiel:</p>
 <pre>#HotIf WinActive("ahk_class Notepad")
-^a::MsgBox "Sie haben STRG+A gedrückt, während der Texteditor aktiv ist. Drückt man STRG+A in irgendeinem anderen Fenster, wird die Tastenkombination selbst gesendet."
-#c::MsgBox "Sie haben WIN+C gedrückt, während der Texteditor aktiv ist."
+^a::MsgBox "Sie haben STRG+A gedrückt, während Notepad aktiv ist. Drückt man STRG+A in irgendeinem anderen Fenster, wird die Tastenkombination selbst gesendet."
+#c::MsgBox "Sie haben WIN+C gedrückt, während Notepad aktiv ist."
 
 #HotIf
-#c::MsgBox "Sie haben WIN+C gedrückt, während ein beliebiges Fenster außer Texteditor aktiv ist."</pre>
+#c::MsgBox "Sie haben WIN+C gedrückt, während ein anderes Fenster als Notepad aktiv ist."</pre>
 <p>Die Bedingung definieren Sie über einen <a href="../Language.htm#expressions">Ausdruck</a>, der ausgewertet wird, sobald Sie den Hotkey drücken. Wenn die Auswertung des Ausdrucks <a href="../Concepts.htm#boolean">wahr ergibt</a>, wird die Aktion des Hotkeys ausgeführt.</p>
 <p>Derselbe Hotkey kann mehrfach verwendet werden, indem für jedes Vorkommen des Hotkeys bzw. für jede <em>Hotkey-Variante</em> eine andere Bedingung angegeben wird. Wenn Sie den Hotkey drücken, führt das Programm die erste Hotkey-Variante aus, deren Bedingung erfüllt ist, oder die Variante ohne Bedingung (wie die letzte <code>#c::</code> im obigen Beispiel).</p>
 <p>Wenn die Bedingung des Hotkeys nicht erfüllt ist und es keine unbedingte Variante des Hotkeys gibt, wird der Tastendruck an das aktive Fenster weitergeleitet, als hätte es nie eine Definition für den Hotkey gegeben. Zum Beispiel: Wenn Notepad <em>nicht</em> aktiv ist, während das obige Beispiel läuft, verrichtet <kbd>Strg</kbd>+<kbd>A</kbd> seine normale Funktion (üblicherweise "Alles markieren").</p>
@@ -76,19 +76,19 @@
 <ul>
   <li>Ersetzen Sie <code>WinActive</code> mit <code>WinExist</code>, damit die Hotkeys aktiviert werden, wenn Notepad läuft, auch dann, wenn Notepad nicht den Fokus hat.</li>
   <li>Ersetzen Sie die Bedingung mit <code>GetKeyState("CapsLock", "T")</code>, damit die Hotkeys nur aktiviert werden, wenn die Feststelltaste eingeschaltet ist.</li>
-  <li>Fügen Sie einen weiteren ^a- oder #c-Hotkey für ein anderes Fenster hinzu, z. B. für Ihren Webbrowser oder Editor. Beachten Sie, dass wir <a href="../misc/WinTitle.htm#ahk_class">ahk_class</a> verwenden, damit das Beispiel auf nicht-englischen Systemen funktioniert, aber Sie können es auch entfernen und den Fenstertitel verwenden, wenn Sie möchten.</li>
+  <li>Fügen Sie einen weiteren ^a- oder #c-Hotkey für ein anderes Fenster hinzu, z.B. für Ihren Webbrowser oder Editor. Beachten Sie, dass wir <a href="../misc/WinTitle.htm#ahk_class">ahk_class</a> verwenden, damit das Beispiel auf nicht-englischen Systemen funktioniert, aber Sie können es auch entfernen und den Fenstertitel verwenden, wenn Sie möchten.</li>
 </ul>
 <p>Die korrekte Identifizierung des Fensters, auf das sich der Hotkey auswirken soll, erfordert manchmal die Nutzung von Kriterien, die über den Fenstertitel hinausgehen. Weitere Informationen finden Sie unter <a href="ManageWindows.htm">Wie man Fenster manipuliert</a>.</p>
 <p><strong>Siehe auch:</strong> <a href="../lib/_HotIf.htm">#HotIf</a>, <a href="../Language.htm#expressions">Ausdrücke (Expressions)</a>, <a href="../lib/WinActive.htm">WinActive</a></p>
 
-<h2>Benutzerdefinierte Kombinationen</h2>
+<h2 id="Custom_Combinations">Benutzerdefinierte Kombinationen</h2>
 <p>Eine <em>benutzerdefinierte Kombination</em> ist ein Hotkey, der zwei Tasten kombiniert, die normalerweise nicht zusammen verwendet werden können. Zum Beispiel definiert <code>Numpad0 &amp; Numpad1::</code> einen Hotkey, der aktiviert wird, wenn man Numpad0 gedrückt hält und Numpad1 drückt.</p>
 <p>Wenn Sie eine Taste als Präfix in einer benutzerdefinierten Kombination verwenden, geht AutoHotkey davon aus, dass Sie nicht möchten, dass die normale Funktion der Taste aktiviert wird, da das mit deren Nutzung als Modifikatortaste kollidieren würde. Es gibt zwei Möglichkeiten, die normale Funktion der Taste wiederherzustellen:</p>
 <ol>
-  <li>Verwenden Sie einen anderen Hotkey, z. B. <code>Numpad0::Send "{Numpad0}"</code>, um die ursprüngliche Funktion der Taste wiederherzustellen. Standardmäßig wird der Hotkey nur aktiviert, wenn Sie Numpad0 <em>loslassen</em>, und nur, wenn Sie Numpad0 und Numpad1 nicht gleichzeitig gedrückt haben.</li>
+  <li>Verwenden Sie einen anderen Hotkey, z.B. <code>Numpad0::Send "{Numpad0}"</code>, um die ursprüngliche Funktion der Taste wiederherzustellen. Standardmäßig wird der Hotkey nur aktiviert, wenn Sie Numpad0 <em>loslassen</em>, und nur, wenn Sie Numpad0 und Numpad1 nicht gleichzeitig gedrückt haben.</li>
   <li>Stellen Sie der Kombination ein <a href="../Hotkeys.htm#Tilde">Tildezeichen (~)</a> voran, wie in <code>~Numpad0 &amp; Numpad1::</code>. Dadurch wird verhindert, dass AutoHotkey die normale Funktion von Numpad0 unterdrückt, es sei denn, Sie haben auch <code>Numpad0::</code> definiert, dann wird das Tildezeichen dafür sorgen, dass der letztere Hotkey sofort aktiviert wird und nicht erst, wenn Sie Numpad0 loslassen.</li>
 </ol>
-<p class="note"><strong>Hinweis:</strong> Benutzerdefinierte Kombinationen unterstützen nur 2-Tasten-Kombinationen und können nicht mit anderen Modifikatoren kombiniert werden, wie z. B. <code>!#^+</code> für ALT, WIN, STRG und UMSCHALT.</p>
+<p class="note"><strong>Hinweis:</strong> Benutzerdefinierte Kombinationen unterstützen nur 2-Tasten-Kombinationen und können nicht mit anderen Modifikatoren kombiniert werden, wie z.B. <code>!#^+</code> für ALT, WIN, STRG und UMSCHALT.</p>
 <p>AutoHotkey bietet zwar keine direkte Unterstützung für benutzerdefinierte Kombinationen von mehr als zwei Tasten, aber ein ähnliches Ergebnis kann mit <a href="../lib/_HotIf.htm">#HotIf</a> erzielt werden. Wenn Sie das untere Beispiel ausführen und <kbd>Strg</kbd>+<kbd>Feststell</kbd>+<kbd>Leer</kbd> oder <kbd>Strg</kbd>+<kbd>Leer</kbd>+<kbd>Feststell</kbd> drücken, sollte eine Meldung erscheinen:</p>
 <pre>#HotIf GetKeyState("Ctrl")
 Space &amp; CapsLock::
@@ -96,7 +96,7 @@ CapsLock &amp; Space::MsgBox "Erfolg!"</pre>
 <p>In diesem Beispiel ist es notwendig, zuerst STRG zu drücken. Dies hat den Vorteil, dass die Leer- und Feststelltaste ihre normale Funktion verrichten, wenn Sie STRG nicht gedrückt halten.</p>
 <p><strong>Siehe auch:</strong> <a href="../Hotkeys.htm#combo">Benutzerdefinierte Kombinationen</a></p>
 
-<h2>Sonstige Features</h2>
+<h2 id="Other_Features">Sonstige Features</h2>
 <p>Die Hotkeys von AutoHotkey bieten noch einige andere Features, die es zu erkunden lohnt. Während die meisten Applikationen nur Kombinationen von STRG, ALT, UMSCHALT und manchmal WIN mit nur einer weiteren Taste ermöglichen (und oft nicht alle Tasten der Tastatur unterstützen), ist AutoHotkey nicht so eingeschränkt. Weitere Informationen finden Sie unter <a href="../Hotkeys.htm">Hotkeys</a>.</p>
 
 </body>

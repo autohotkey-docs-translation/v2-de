@@ -11,8 +11,8 @@
 </head>
 <body>
 <h1>Skriptsprache</h1>
-<p>Ein AutoHotkey-Skript ist im Grunde eine Reihe von Instruktionen, die das Programm befolgen muss und in einer benutzerdefinierten Sprache geschrieben ist, die nur AutoHotkey versteht. Diese Sprache weist einige Ähnlichkeiten mit anderen Skriptsprachen auf, hat aber auch ihre eigenen Stärken und Schwächen. Dieses Dokument beschreibt die Sprache und versucht zudem, häufig auftretende Problemfälle aufzuzeigen.</p>
-<p class="note">Unter <a href="Concepts.htm">Konzepte und Konventionen</a> finden Sie eine allgemeinere Erklärung der verschiedenen Konzepte, auf die AutoHotkey basiert.</p>
+<p>Ein AutoHotkey-Skript ist im Grunde eine Reihe von Instruktionen, die das Programm befolgen muss, geschrieben in einer benutzerdefinierten Sprache, die nur AutoHotkey versteht. Diese Sprache weist einige Ähnlichkeiten mit anderen Skriptsprachen auf, hat aber auch ihre eigenen Stärken und Schwächen. Dieses Dokument beschreibt die Sprache und versucht zudem, häufig auftretende Problemfälle aufzuzeigen.</p>
+<p class="note">Unter <a href="Concepts.htm">Konzepte und Konventionen</a> finden Sie eine allgemeinere Erklärung der verschiedenen Konzepte, auf denen AutoHotkey basiert.</p>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
@@ -35,7 +35,7 @@
   <li><a href="#control-flow">Kontrollanweisungen</a>
   <ul>
     <li><a href="#control-flow-vs">Kontrollfluss vs. andere Anweisungen</a></li>
-    <li><a href="#loop-statement">Loop-Anweisung</a></li>
+    <li><a href="#loop-statement">Schleifenanweisung</a></li>
     <li><a href="#not-control-flow">Kein Kontrollfluss</a></li>
   </ul></li>
   <li><a href="#structure-of-a-script">Aufbau eines Skripts</a>
@@ -50,7 +50,7 @@
     <ul>
       <li><a href="#pseudo-arrays">Pseudo-Arrays</a></li>
     </ul></li>
-    <li><a href="#labels">Label</a></li>
+    <li><a href="#labels">Labels</a></li>
   </ul></li>
 </ul>
 <!-- TODO:
@@ -61,18 +61,18 @@ Methods?
 -->
 
 <h2 id="general-conventions">Allgemeine Konventionen</h2>
-<p><strong>Namen:</strong> Variablen- und Funktionsnamen sind nicht Groß-/Kleinschreibung-sensitiv (zum Beispiel wäre <code>AktuellesDatum</code> das gleiche wie <code>aktuellesdatum</code>). Einzelheiten wie maximale Länge und verwendbare Zeichen finden Sie unter <a href="Concepts.htm#names">Namen</a>.</p>
-<p><strong>Keine typisierten Variablen:</strong> Variablen haben keinen explizit definierten Typ; stattdessen kann ein beliebiger Wert in eine beliebige Variable (außer Konstante und interne Variable) gespeichert werden. Zahlen können je nach Situation automatisch in Zeichenketten (Text) umgewandelt werden und umgekehrt.</p>
+<p><strong>Namen:</strong> Variablen- und Funktionsnamen sind nicht Groß-/Kleinschreibung-sensitiv (zum Beispiel ist <code>AktuellesDatum</code> dasselbe wie <code>aktuellesdatum</code>). Einzelheiten, einschließlich der maximalen Länge und der erlaubten Zeichen, finden Sie unter <a href="Concepts.htm#names">Namen</a>.</p>
+<p><strong>Keine typisierten Variablen:</strong> Variablen haben keinen explizit definierten Typ; stattdessen kann ein beliebiger Wert in eine beliebige Variable (außer Konstante und interne Variable) gespeichert werden. Es kann vorkommen, dass Zahlen je nach Situation automatisch in Zeichenketten (Text) umgewandelt werden und umgekehrt.</p>
 <p><strong>Deklarationen sind optional:</strong> Im Normalfall müssen Variablen nicht deklariert werden (in <a href="Functions.htm">Funktionen</a> gibt es Ausnahmen). Allerdings wird der Versuch, eine Variable zu lesen, bevor ihr ein Wert zugewiesen wurde, als Fehler angesehen.</p>
-<p><strong>Leer- und Tabulatorzeichen werden größtenteils ignoriert:</strong> Einrückungen (Leer- und Tabulatorzeichen am Anfang) sind wichtig, um den Code besser lesbar zu machen, allerdings werden sie nicht vom Programm benötigt und werden in der Regel ignoriert. Leer- und Tabulatorzeichen werden <em>grundsätzlich</em> am Ende einer Zeile und innerhalb eines Ausdrucks (außer zwischen Anführungszeichen) ignoriert. Allerdings sind solche Zeichen in einigen Fällen signifikant:</p>
+<p><strong>Leer- und Tabulatorzeichen werden meist ignoriert:</strong> Einrückungen (Leer- und Tabulatorzeichen am Anfang) sind nur für die Lesbarkeit des Codes wichtig, nicht für die Ausführung. Sie werden vom Programm nicht benötigt und werden in der Regel ignoriert. Leer- und Tabulatorzeichen werden <em>grundsätzlich</em> am Ende einer Zeile und innerhalb eines Ausdrucks (außer zwischen Anführungszeichen) ignoriert. In einigen Fällen sind diese Zeichen jedoch von Bedeutung:</p>
 <ul>
-  <li><a href="#function-calls">Funktions</a>- und Methodenaufrufe verlangen, dass zwischen dem Funktions-/Methodennamen und <code>(</code> kein Leerzeichen steht.</li>
+  <li><a href="#function-calls">Funktions</a>- und Methodenaufrufe erfordern, dass zwischen dem Funktions- bzw. Methodennamen und <code>(</code> kein Leerzeichen steht.</li>
   <li>Leerzeichen werden zum Verketten von Elementen benötigt.</li>
   <li>Zwischen zwei Operatoren sind eventuell Leerzeichen erforderlich, um Mehrdeutigkeiten zu vermeiden.</li>
   <li>Einzeilige <a href="#comments">Kommentare</a> müssen mit einem Leerzeichen beginnen, wenn sie nicht am Zeilenanfang stehen.</li>
 </ul>
 <p><strong>Zeilenumbrüche sind von Bedeutung:</strong> Zeilenumbrüche dienen in der Regel als Trennzeichen für Anweisungen und terminieren den vorherigen Funktionsaufruf oder eine andere Anweisung. (Eine <em>Anweisung</em> ist einfach gesagt das kleinste eigenständige Element der Sprache, das eine ausführende Aktion ausdrückt.) Die Ausnahme davon ist die Zeilenfortsetzung (siehe unten).</p>
-<p><strong>Zeilenfortsetzung:</strong> Lange Zeilen können in mehreren kurzen Zeilen aufgeteilt werden, um die Übersichtlichkeit und Wartbarkeit des Skripts zu erhöhen. Dies erfolgt präprozedural; das heißt, dass sie im eigentlichen Sinne nicht zur Sprache gehört. Es gibt drei Methoden:</p>
+<p><strong>Zeilenfortsetzung:</strong> Lange Zeilen können in mehrere kurze Zeilen aufgeteilt werden, um die Lesbarkeit und Wartbarkeit des Skripts zu verbessern. Dies erfolgt präprozedural, d.h. es ist nicht Teil der Sprache im eigentlichen Sinne. Es gibt drei Methoden:</p>
 <ul>
   <li><a href="Scripts.htm#continuation-line">Fortsetzungspräfix</a>: Zeilen, die mit einem <a href="Variables.htm#operators">Ausdrucksoperator</a> beginnen (außer ++ und --), werden mit der vorherigen Zeile verbunden. Zeilen werden immer zusammengeführt, egal ob die Zeile tatsächlich einen Ausdruck enthält.</li>
   <li><a href="Scripts.htm#continuation-expr">Fortsetzung durch Umschließen</a>: Ein Teilausdruck, der mit (), [] oder {} umschlossen ist, kann in den meisten Fällen automatisch mehrere Zeilen umfassen.</li>
@@ -81,12 +81,12 @@ Methods?
  
 
 <h2 id="comments">Kommentare</h2>
-<p><em>Kommentare</em> sind Textbereiche innerhalb des Skripts, die vom Programm ignoriert werden. Sie werden in der Regel eingesetzt, um Erklärungen hinzuzufügen oder Teile des Codes zu deaktivieren.</p>
-<p>Um in Skripten etwas zu kommentieren, muss am Anfang einer Zeile ein Semikolon gesetzt werden. Zum Beispiel:</p>
+<p><em>Kommentare</em> sind Textbereiche innerhalb des Skripts, die vom Programm ignoriert werden. Sie werden in der Regel verwendet, um Erklärungen hinzuzufügen oder Teile des Codes zu deaktivieren.</p>
+<p>Skripte können durch ein Semikolon am Anfang einer Zeile kommentiert werden. Zum Beispiel:</p>
 <pre><em>; Diese ganze Zeile ist ein Kommentar.</em></pre>
-<p>Kommentare können auch am Ende einer Zeile stehen - in diesem Fall muss auf der linken Seite des Semikolons mindestens ein Leer- oder Tabulatorzeichen erfolgen. Zum Beispiel:</p>
+<p>Kommentare können auch am Ende einer Zeile stehen - in diesem Fall muss links vom Semikolon mindestens ein Leer- oder Tabulatorzeichen stehen. Zum Beispiel:</p>
 <pre>Run "Notepad"  <em>; Dieser Kommentar befindet sich auf derselben Zeile wie der Funktionsaufruf.</em></pre>
-<p>Mithilfe der Symbole <code><em>/*</em></code> und <code><em>*/</em></code> können ganze Bereiche auskommentiert werden. Zum Beispiel:</p>
+<p>Mit den Symbolen <code><em>/*</em></code> und <code><em>*/</em></code> können ganze Bereiche auskommentiert werden. Zum Beispiel:</p>
 <pre><em>/*
 MsgBox "Diese Zeile ist auskommentiert (deaktiviert)."
 MsgBox "Häufiger Fehler:" */ " Dies beendet nicht den Kommentar."
@@ -97,30 +97,30 @@ MsgBox "Diese Zeile ist nicht auskommentiert."
 MsgBox "Diese Zeile ist nicht auskommentiert."
 </pre>
 <p>Ohne Berücksichtigung von Tabulator- und Leerzeichen muss <code><em>/*</em></code> am Anfang der Zeile erscheinen, während <code><em>*/</em></code> nur am Anfang oder Ende einer Zeile erscheinen kann. Es ist auch möglich, <code><em>*/</em></code> wegzulassen - in diesem Fall wird der Rest der Datei auskommentiert.</p>
-<p>Kommentare werden beim Lesen des Skripts aus der Datei herausgefiltert, daher haben sie keinerlei Einfluss auf die Leistung oder Speicherauslastung.</p>
+<p>Kommentare werden beim Lesen des Skripts aus der Datei herausgefiltert und haben daher keinen Einfluss auf die Performanz oder Speicherauslastung.</p>
 
 <h2 id="expressions">Ausdrücke (Expressions)</h2>
-<p><em>Ausdrücke</em> sind Kombinationen aus ein oder mehreren <a href="Concepts.htm#values">Werten</a>, <a href="Concepts.htm#variables">Variablen</a>, <a href="#operators">Operatoren</a> und <a href="#function-calls">Funktionsaufrufen</a>. Zum Beispiel sind <code>10</code>, <code>1+1</code> und <code>MeineVar</code> gültige Ausdrücke. Ein Ausdruck nimmt in der Regel einen oder mehrere Eingabewerte, führt eine oder mehrere Operationen durch, und erzeugt einen Ausgabewert. Der Vorgang zum Herausfinden des Wertes eines Ausdrucks nennt man <em>Auswertung</em>. Der Ausdruck <code>1+1</code> wird beispielsweise zu der Zahl 2 <em>ausgewertet</em>.</p>
-<p>Einfache Ausdrücke können zu immer komplexeren Ausdrücken zusammengesetzt werden können. Wenn <code>Rabatt/100</code> beispielsweise einen Rabattprozentsatz in eine Bruchzahl umwandelt, könnte man mit <code>1 - Rabatt/100</code> eine Bruchzahl errechnen, die den verbleibenden Betrag repräsentiert, und mit <code>Preis * (1 - Rabatt/100)</code> den Nettopreis errechnen.</p>
-<p><em>Werte</em> sind <a href="Concepts.htm#numbers">Zahlen</a>, <a href="Concepts.htm#objects">Objekte</a> oder <a href="Concepts.htm#strings">Zeichenketten</a>. Ein <em>literaler</em> Wert ist ein Wert, der physisch in das Skript geschrieben wird; einer, den man sehen kann, wenn man auf den Code schaut.</p>
+<p><em>Ausdrücke</em> sind Kombinationen beliebig vieler <a href="Concepts.htm#values">Werte</a>, <a href="Concepts.htm#variables">Variablen</a>, <a href="#operators">Operatoren</a> und <a href="#function-calls">Funktionsaufrufe</a>. Zum Beispiel sind <code>10</code>, <code>1+1</code> und <code>MeineVar</code> gültige Ausdrücke. Ein Ausdruck nimmt in der Regel einen oder mehrere Eingabewerte, führt eine oder mehrere Operationen durch, und erzeugt einen Ausgabewert. Die Prozedur, mit der der Wert eines Ausdrucks ermittelt wird, nennt sich <em>Auswertung</em>. Zum Beispiel wird der Ausdruck <code>1+1</code> zu der Zahl 2 <em>ausgewertet</em>.</p>
+<p>Einfache Ausdrücke können zu immer komplexeren Ausdrücken zusammengesetzt werden können. Wenn z.B. <code>Rabatt/100</code> einen Rabattprozentsatz in eine Bruchzahl umwandelt, berechnet <code>1 - Rabatt/100</code> eine Bruchzahl, die den Restbetrag darstellt, während <code>Preis * (1 - Rabatt/100)</code> diese Bruchzahl verwendet, um den Nettopreis zu berechnen.</p>
+<p><em>Werte</em> sind <a href="Concepts.htm#numbers">Zahlen</a>, <a href="Concepts.htm#objects">Objekte</a> oder <a href="Concepts.htm#strings">Zeichenketten</a>. Ein <em>literaler</em> Wert ist ein Wert, der physisch in das Skript geschrieben wird; also ein Wert, den Sie direkt im Code sehen können.</p>
 
 <h3 id="strings">Zeichenketten / Text</h3>
-<p class="note">Eine allgemeinere Erklärung zu Zeichenketten finden Sie unter <a href="Concepts.htm#strings">Zeichenketten (Strings)</a>.</p>
+<p class="note">Eine allgemeinere Erklärung von Zeichenketten finden Sie unter <a href="Concepts.htm#strings">Zeichenketten (Strings)</a>.</p>
 <p>Eine <em><em>Zeichenkette</em></em> ist einfach nur ein Textwert. In einem Ausdruck muss direkt geschriebener Text mit einfachen oder doppelten Anführungszeichen umschlossen werden, um ihn von einem Variablennamen oder einem anderen Ausdruck zu unterscheiden. Dieser Zustand wird oft als <em>in Anführungszeichen gesetzte, direkt geschriebene Zeichenkette</em> oder einfach nur <em>in Anführungszeichen gesetzte Zeichenkette</em> bezeichnet. Zum Beispiel: <code>"Dies ist eine in Anführungszeichen gesetzte Zeichenkette."</code> oder <code>'diese auch'</code>.</p>
 <p>Um ein <em>tatsächliches</em> Anführungszeichen innerhalb einer in Anführungszeichen gesetzte Zeichenkette einzufügen, können Sie entweder die <a href="misc/EscapeChar.htm#quote">Escapesequenzen</a> <code>`"</code> oder <code>`'</code> verwenden oder das Zeichen mit den gegenteiligen Anführungszeichen umschließen. Zum Beispiel: <code>'Sie sagte: "Ein Apfel täglich."'</code>.</p>
-<p>In Anführungszeichen gesetzte Zeichenketten können auch andere <a href="misc/EscapeChar.htm">Escapesequenzen</a> wie z. B. <code>`t</code> (Tabulator), <code>`n</code> (LF-Zeilenumbruchszeichen) und <code>`r</code> (CR-Zeilenumbruchszeichen) enthalten.</p>
+<p>In Anführungszeichen gesetzte Zeichenketten können andere <a href="misc/EscapeChar.htm">Escapesequenzen</a> wie z.B. <code>`t</code> (Tabulator), <code>`n</code> (LF) und <code>`r</code> (CR) enthalten.</p>
 
 <h3 id="variables">Variablen</h3>
 <p class="note">Eine grundlegende Erklärung und allgemeine Details zu Variablen finden Sie unter <a href="Concepts.htm#variables">Variablen</a>.</p>
-<p>Um <em>Variablen</em> in einem Ausdruck zu nutzen, geben Sie einfach den Namen der Variable an. Zum Beispiel: <code>A_ScreenWidth/2</code>. Allerdings können Variablen nicht in einer in Anführungszeichen gesetzten Zeichenkette verwendet werden. Stattdessen greift man auf eine Vorgehensweise zurück, die sich <a href="Variables.htm#concat"><em>Verkettung</em></a> nennt, um Variablen und andere Werte zu kombinieren. Es gibt zwei Wege, um Werte in einem Ausdruck zu <em>verketten</em>:</p>
+<p>Um <em>Variablen</em> in einem Ausdruck zu verwenden, geben Sie einfach den Namen der Variable an. Zum Beispiel: <code>A_ScreenWidth/2</code>. Allerdings können Variablen nicht in einer in Anführungszeichen gesetzten Zeichenkette verwendet werden. Stattdessen greift man auf eine Vorgehensweise zurück, die sich <a href="Variables.htm#concat"><em>Verkettung</em></a> nennt, um Variablen und andere Werte zu kombinieren. Es gibt zwei Möglichkeiten, um Werte in einem Ausdruck zu <em>verketten</em>:</p>
 <ul>
   <li>Implizite Verkettung: <code>"Der Wert ist " MeineVar</code></li>
   <li>Explizite Verkettung: <code>"Der Wert ist " . MeineVar</code></li>
 </ul>
-<p>Implizite Verkettung wird auch <em>Auto-Verkettung</em> genannt. In beiden Fällen müssen die Leerzeichen vor der Variable und der Punkt vorhanden sein.</p>
-<p>Die <a href="lib/Format.htm">Format</a>-Funktion kann auch für diesen Zweck genutzt werden. Zum Beispiel:</p>
+<p>Implizite Verkettung wird auch <em>Auto-Verkettung</em> genannt. In beiden Fällen sind die Leerzeichen vor der Variable und dem Punkt zwingend erforderlich.</p>
+<p>Alternativ können Sie auch die <a href="lib/Format.htm">Format</a>-Funktion verwenden. Zum Beispiel:</p>
 <pre>MsgBox Format("Sie verwenden AutoHotkey v{1} {2}-Bit.", A_AhkVersion, A_PtrSize*8)</pre>
-<p>Um einer Variable einen Wert zuzuweisen, müssen Sie den <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> <code>:=</code> verwenden, wie z. B. in <code>MeineVar := "Beliebiger Text"</code>.</p>
+<p>Um einer Variable einen Wert zuzuweisen, verwenden Sie den <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> <code>:=</code>, wie in <code>MeineVar := "Beliebiger Text"</code>.</p>
 <p><em>Prozentzeichen</em> innerhalb eines Ausdrucks werden genutzt, um <a href="#dynamic-variables">dynamische Variablenreferenzen</a> zu erzeugen, allerdings werden sie selten benötigt.</p>
 
 <h3 id="constants">Konstanten</h3>
@@ -133,27 +133,27 @@ MsgBox "Diese Zeile ist nicht auskommentiert."
 <p>Im Gegensatz zu den schreibgeschützten <a href="Variables.htm#BuiltIn">internen Variablen</a>, können diese nicht über eine <a href="#dynamic-variables">dynamische Referenz</a> zurückgegeben werden.</p>
 
 <h3 id="operators">Operatoren</h3>
-<p><em>Operatoren</em> haben die Form eines Symbols oder einer Gruppe von Symbolen, wie z. B. <code>+</code> oder <code>:=</code>, oder eines der Wörter <code>and</code>, <code>or</code>, <code>not</code>, <code>is</code>, <code>in</code> oder <code>contains</code>. Sie nehmen einen, zwei oder drei Eingabewerte und geben einen Ausgabewert zurück. Ein Wert oder Teilausdruck, der als Eingabe für einen Operator dient, wird als <em>Operand</em> bezeichnet.</p>
+<p><em>Operatoren</em> haben die Form eines Symbols oder einer Gruppe von Symbolen, wie z.B. <code>+</code> oder <code>:=</code>, oder eines der Wörter <code>and</code>, <code>or</code>, <code>not</code>, <code>is</code>, <code>in</code> oder <code>contains</code>. Sie nehmen einen, zwei oder drei Eingabewerte und geben einen Ausgabewert zurück. Ein Wert oder Teilausdruck, der als Eingabe für einen Operator dient, wird als <em>Operand</em> bezeichnet.</p>
 <ul>
-  <li><em>Unäre</em> (einstellige) Operatoren werden je nach Operator entweder vor oder nach einem einzelnen Operanden geschrieben. Zum Beispiel: <code>-x</code> oder <code>not TasteIstUnten</code>.</li>
-  <li><em>Binäre</em> (zweistellige) Operatoren werden zwischen ihre beiden Operanden geschrieben. Zum Beispiel: <code>1+1</code> oder <code>2 * 5</code>.</li>
-  <li>AutoHotkey hat nur einen <em>ternären</em> (dreistelligen) Operator, der die Form <a href="Variables.htm#ternary"><code>Bedingung ? WertWennTrue : WertWennFalse</code></a> hat.</li>
+  <li><em>Unäre</em> (einwertige) Operatoren werden je nach Operator entweder vor oder nach einem einzelnen Operanden geschrieben. Zum Beispiel: <code>-x</code> oder <code>not TasteIstUnten</code>.</li>
+  <li><em>Binäre</em> (zweiwertige) Operatoren befinden sich zwischen zwei Operanden. Zum Beispiel: <code>1+1</code> oder <code>2 * 5</code>.</li>
+  <li>AutoHotkey hat nur einen <em>ternären</em> (dreiwertigen) Operator, der die Form <a href="Variables.htm#ternary"><code>Bedingung ? WertWennTrue : WertWennFalse</code></a> hat.</li>
 </ul>
-<p>Einige unäre und binäre Operatoren teilen sich die gleichen Symbole - in diesem Fall hängt die Bedeutung des Operators davon ab, ob er vor, nach oder zwischen zwei Werten geschrieben wird. Zum Beispiel führt <code>x-y</code> eine Subtraktion durch, während <code>-x</code> das Vorzeichen von <code>x</code> invertiert (einen positiven Wert von einem negativen Wert erzeugen und umgekehrt).</p>
-<p>Operatoren gleicher Priorität wie Multiplizieren (<code>*</code>) und Dividieren (<code>/</code>) werden von links nach rechts ausgewertet, sofern nicht anders in der <a href="Variables.htm#operators">Operatorentabelle</a> angegeben. Ein Operator mit niedrigerer Priorität wie Addieren (<code>+</code>) wird erst ausgewertet, wenn ein höherer Operator wie Multiplizieren (<code>*</code>) ausgewertet wurde. Zum Beispiel würde <code>3 + 2 * 2</code> als <code>3 + (2 * 2)</code> ausgewertet werden. Mit runden Klammern können die Prioritäten überschrieben werden. Zum Beispiel: <code>(3 + 2) * 2</code></p>
+<p>Einige unäre und binäre Operatoren teilen sich die gleichen Symbole - in diesem Fall hängt die Bedeutung des Operators davon ab, ob er vor, nach oder zwischen zwei Werten geschrieben wird. Zum Beispiel führt <code>x-y</code> eine Subtraktion durch, während <code>-x</code> das Vorzeichen von <code>x</code> invertiert (einen positiven Wert aus einem negativen Wert erzeugen und umgekehrt).</p>
+<p>Operatoren gleicher Priorität wie Multiplizieren (<code>*</code>) und Dividieren (<code>/</code>) werden von links nach rechts ausgewertet, sofern in der <a href="Variables.htm#operators">Operatorentabelle</a> nichts anderes angegeben ist. Ein Operator mit niedrigerer Priorität wie Addieren (<code>+</code>) wird erst ausgewertet, wenn ein höherer Operator wie Multiplizieren (<code>*</code>) ausgewertet wurde. Zum Beispiel wird <code>3 + 2 * 2</code> als <code>3 + (2 * 2)</code> ausgewertet. Die Priorität kann mit runden Klammern überschrieben werden. Zum Beispiel: <code>(3 + 2) * 2</code></p>
 
 <h3 id="function-calls">Funktionsaufrufe</h3>
 <p class="note">Eine allgemeine Erläuterung zu Funktionen und verwandter Fachbegriffe finden Sie unter <a href="Concepts.htm#functions">Funktionen</a>.</p>
-<p><em>Funktionen</em> nehmen eine unterschiedliche Anzahl von Eingabewerten, führen eine Aktion oder Berechnung durch und geben dann ein Ergebnis via <a href="Concepts.htm#return-a-value"><em>Return</em></a> zurück. Die Eingabewerte einer Funktion werden als <a href="Concepts.htm#parameters"><em>Parameter</em></a> oder <em>Argumente</em> bezeichnet. Um eine Funktion <a href="Concepts.htm#call"><em>aufzurufen</em></a>, geben Sie einfach die Zielfunktion an, gefolgt von in Klammern gesetzten Parametern. <code>GetKeyState("Shift")</code> beispielsweise gibt 1 zurück (wird zu dieser Zahl ausgewertet), wenn <kbd>Umschalt</kbd> gedrückt gehalten wird, oder 0, wenn nicht.</p>
+<p><em>Funktionen</em> akzeptieren eine beliebige Anzahl von Eingabewerten, führen eine Aktion oder Berechnung durch und geben dann ein Ergebnis via <a href="Concepts.htm#return-a-value"><em>Return</em></a> zurück. Die Eingabewerte einer Funktion werden als <a href="Concepts.htm#parameters"><em>Parameter</em></a> oder <em>Argumente</em> bezeichnet. Um eine Funktion <a href="Concepts.htm#call"><em>aufzurufen</em></a>, geben Sie einfach die Zielfunktion an, gefolgt von in Klammern gesetzten Parametern. <code>GetKeyState("Shift")</code> beispielsweise gibt 1 zurück (wird zu dieser Zahl ausgewertet), wenn <kbd>Umschalt</kbd> gedrückt gehalten wird, andernfalls 0.</p>
 <p class="warning"><strong>Hinweis:</strong> Zwischen der Funktion und der runden Startklammer darf kein Leerzeichen stehen.</p>
 <p>Für Programmieranfänger mag die Forderung nach Klammern zunächst kryptisch oder umständlich erscheinen, aber gerade sie ermöglichen es, einen Funktionsaufruf mit anderen Operationen zu kombinieren. Zum Beispiel wird der Ausdruck <code>GetKeyState("Shift", "P") and GetKeyState("Ctrl", "P")</code> erst eine 1 zurückgeben, wenn beide Tasten physisch gedrückt gehalten werden.</p>
 <p>Obwohl ein Funktionsaufrufausdruck normalerweise mit einem direkt geschriebenen Funktionsnamen beginnt, kann das Ziel des Aufrufs ein beliebiger Ausdruck sein, der ein <a href="misc/Functor.htm">Funktionsobjekt</a> erzeugt. Im Ausdruck <code>GetKeyState("Shift")</code> ist <em>GetKeyState</em> eigentlich eine Variablenreferenz, obwohl sie üblicherweise auf eine schreibgeschützte Variable verweist, die eine interne Funktion enthält.</p>
 
 <h4 id="function-call-statements">Funktionsaufrufanweisungen</h4>
-<p>Wenn der Rückgabewert der Funktion nicht benötigt wird und der Funktionsname am Zeilenanfang geschrieben wird (oder in anderen Kontexten, wo eine <a href="Concepts.htm#statement">Anweisung</a> erlaubt ist, wie z. B. nach einem <code>else</code> oder einem <a href="Hotkeys.htm">Hotkey</a>), können die Klammern weggelassen werden. In diesem Fall wird der Rest der Zeile als Parameterliste der Funktion übernommen. Zum Beispiel:</p>
+<p>Wenn der Rückgabewert der Funktion nicht benötigt wird und der Funktionsname am Zeilenanfang geschrieben wird (oder in anderen Kontexten, wo eine <a href="Concepts.htm#statement">Anweisung</a> erlaubt ist, wie z.B. nach einem <code>else</code> oder einem <a href="Hotkeys.htm">Hotkey</a>), können die Klammern weggelassen werden. In diesem Fall wird der Rest der Zeile als Parameterliste der Funktion übernommen. Zum Beispiel:</p>
 <pre>Ergebnis := MsgBox("Hierfür sind Klammern erforderlich.",, "OKCancel")
 MsgBox "Hierfür nicht. Das Ergebnis war " Ergebnis "."</pre>
-<p>Die runden Klammern können auch beim Aufrufen einer <a href="Concepts.htm#methods">Methode</a> weggelassen werden, wenn das Zielobjekt entweder eine Variable oder eine direkt benannte Eigenschaft ist, wie z. B. <code>meineVar.meineMethode</code> oder <code>meineVar.meineEigenschaft.meineMethode</code>.</p>
+<p>Die runden Klammern können auch beim Aufrufen einer <a href="Concepts.htm#methods">Methode</a> weggelassen werden, wenn das Zielobjekt entweder eine Variable oder eine direkt benannte Eigenschaft ist, wie z.B. <code>meineVar.meineMethode</code> oder <code>meineVar.meineEigenschaft.meineMethode</code>.</p>
 <p>Bei Funktionsaufrufausdrücken muss das Ziel einer Funktionsaufrufanweisung keine vordefinierte Funktion sein; es kann stattdessen eine Variable sein, die ein <a href="misc/Functor.htm">Funktionsobjekt</a> enthält.</p>
 <p>Eine Funktionsaufrufanweisung kann sich <a href="Scripts.htm#continuation">über mehrere Zeilen erstrecken</a>.</p>
 <p>Funktionsaufrufanweisungen haben die folgenden Einschränkungen:</p>
@@ -182,8 +182,8 @@ Run("notepad.exe", , , &amp;notepadPID)
 <p>Mit dem <a href="Variables.htm#maybe">Vielleicht-Operator (<em>Var</em><strong>?</strong>)</a> kann eine Variable übergeben oder weggelassen werden, je nachdem, ob sie einen Wert hat. Zum Beispiel ist <code>Array(MeineVar?)</code> äquivalent zu <code>Array(IsSet(MeineVar) ? MeineVar : unset)</code>.</p>
 
 <h3 id="operators-for-objects">Operatoren für Objekte</h3>
-<p>Es gibt noch andere Symbole, die in Ausdrücken verwendet werden, die nicht ganz in eine der oben genannten Kategorien passen oder die Bedeutung anderer Teile des Ausdrucks beeinflussen, wie unten beschrieben. Diese Symbole beziehen sich alle irgendwie auf <em>Objekte</em>. Eine vollständige Erläuterung dessen, was jedes Konstrukt tut, würde die Einführung weiterer Konzepte erfordern, die nicht in den Geltungsbereich dieses Abschnitts fallen.</p>
-<p><code>Alpha.Beta</code> wird oft als <em>Objektelementzugriff</em> bezeichnet. <em>Alpha</em> ist eine gewöhnliche Variable und kann mit einem Funktionsaufruf oder einem anderen Teilausdruck, der ein Objekt zurückgibt, ersetzt werden. Beim Auswerten wird das Objekt mit der Anfrage konfrontiert, entweder den Wert oder die Eigenschaft <em>Beta</em> abzurufen, diesen Wert in die Eigenschaft <em>Beta</em> zu speichern oder die Methode namens <em>Beta</em> aufzurufen. Mit anderen Worten ist <em>Beta</em> ein Name, der für das Objekt von Bedeutung ist; es ist keine lokale oder globale Variable.</p>
+<p>Es gibt noch andere Symbole, die in Ausdrücken verwendet werden, die nicht ganz in eine der oben genannten Kategorien passen oder die einen Einfluss auf die Bedeutung anderer Teile des Ausdrucks haben, wie unten beschrieben. Diese Symbole beziehen sich alle in irgendeiner Weise auf <em>Objekte</em>. Eine vollständige Erklärung dessen, was jedes Konstrukt tut, würde die Einführung weiterer Konzepte erfordern, die nicht in den Geltungsbereich dieses Abschnitts fallen.</p>
+<p><code>Alpha.Beta</code> wird oft als <em>Objektelementzugriff</em> bezeichnet. <em>Alpha</em> ist eine gewöhnliche Variable und kann mit einem Funktionsaufruf oder einem anderen Teilausdruck, der ein Objekt zurückgibt, ersetzt werden. Beim Auswerten wird das Objekt mit der Anfrage konfrontiert, entweder den Wert oder die Eigenschaft <em>Beta</em> abzurufen, diesen Wert in die Eigenschaft <em>Beta</em> zu speichern oder die Methode namens <em>Beta</em> aufzurufen. Mit anderen Worten, <em>Beta</em> ist ein Name, der für das Objekt von Bedeutung ist; es ist keine lokale oder globale Variable.</p>
 <p><code>Alpha.Beta()</code> ist ein <em>Methodenaufruf</em>, wie oben beschrieben. Die runden Klammern können in bestimmten Fällen weggelassen werden; siehe <a href="#function-call-statements">Funktionsaufrufanweisungen</a>.</p>
 <p><code>Alpha.Beta[Param]</code> ist eine spezielle Form des Objektelementzugriffs, die zusätzliche Parameter in die Anfrage einbezieht. Während <em>Beta</em> ein einfacher Name ist, ist <em>Param</em> eine gewöhnliche Variable oder ein Teilausdruck, oder eine Liste von Teilausdrücken, die durch Kommas getrennt sind (wie in der Parameterliste einer Funktion). <a href="Functions.htm#VariadicCall">Variadische Aufrufe</a> sind erlaubt.</p>
 <p><code>Alpha.%vBeta%</code>, <code>Alpha.%vBeta%[Param]</code> und <code>Alpha.%vBeta%()</code> sind ebenfalls Objektelementzugriffe, aber <em>vBeta</em> ist eine Variable oder ein Teilausdruck. Dadurch kann der Name der Eigenschaft oder Methode ermittelt werden, während das Skript ausgeführt wird. Solche Methodenaufrufe benötigen runde Klammern.</p>
@@ -193,37 +193,37 @@ Run("notepad.exe", , , &amp;notepadPID)
 <p><code>MeineFunk(Params*)</code> ist ein <a href="Functions.htm#VariadicCall">variadischer Funktionsaufruf</a>. Das Sternchen muss unmittelbar vor der runden Endklammer am Ende der Parameterliste der Funktion stehen. <em>Params</em> muss eine Variable oder ein Teilausdruck, der ein <a href="lib/Array.htm">Array</a> oder ein anderes enumerierbares Objekt zurückgibt, sein. Obwohl <code>Params*</code> nicht überall erlaubt ist, kann es in einem direkt geschriebenen Array (<code>[A, B, C, AnzufügendesArray*]</code>) oder in der Parameterliste einer Eigenschaft (<code>Alpha.Beta[Params*]</code> oder <code>Alpha[Params*]</code>) verwendet werden.</p>
 
 <h3 id="expression-statements">Ausdrucksanweisungen</h3>
-<p>Nicht alle Ausdrücke sollten allein auf einer Zeile stehen. Zum Beispiel würde eine Zeile, die nur aus <code>21*2</code> oder <code>"Etwas Text"</code> besteht, keinen Sinn ergeben. Die <em>Ausdrucksanweisung</em> ist ein eigenständiger Ausdruck, der in der Regel für seine Nebenwirkungen verwendet wird. Die meisten Ausdrücke mit Nebenwirkungen können auf diese Weise verwendet werden, daher ist es grundsätzlich nicht notwendig, sich die Details dieses Abschnitts zu merken.</p>
+<p>Nicht alle Ausdrücke können allein auf einer Zeile stehen. Zum Beispiel würde eine Zeile, die nur aus <code>21*2</code> oder <code>"Etwas Text"</code> besteht, keinen Sinn ergeben. Die <em>Ausdrucksanweisung</em> ist ein eigenständiger Ausdruck, der in der Regel für seine Nebenwirkungen verwendet wird. Die meisten Ausdrücke mit Nebenwirkungen können auf diese Weise verwendet werden, daher ist es grundsätzlich nicht notwendig, sich die Details dieses Abschnitts zu merken.</p>
 <p>Die folgenden Typen von Ausdrücken können als Anweisungen verwendet werden:</p>
 <p>Zuweisungen, wie in <code>x := y</code>, Verbundzuweisungen wie <code>x += y</code>, und Inkrement-/Dekrementoperatoren wie <code>++x</code> und <code>x--</code>.</p>
 <p class="warning"><strong>Bekannte Einschränkung:</strong> Bei <code>x++</code> und <code>x--</code> darf derzeit kein Leerzeichen zwischen Variablenname und Operator stehen.</p>
-<p>Funktionsaufrufe wie <code>MeineFunk(Params)</code>. Nach einem alleinstehenden Funktionsaufruf kann jedoch keine geschweifte Startklammer <code>{</code> (am Zeilenende oder auf der nächsten Zeile) erfolgen, da dies als Funktionsdeklaration fehlinterpretiert werden würde.</p>
+<p>Funktionsaufrufe wie <code>MeineFunk(Params)</code>. Nach einem alleinstehenden Funktionsaufruf sollte jedoch keine geschweifte Startklammer <code>{</code> (am Zeilenende oder auf der nächsten Zeile) folgen, da dies als Funktionsdeklaration fehlinterpretiert werden würde.</p>
 <p>Methodenaufrufe wie <code>MeinObj.MeineMethode()</code>.</p>
-<p>Objektelementzugriff via eckige Klammern, wie z. B. <code>MeinObj[Index]</code>, das Nebenwirkungen wie ein Funktionsaufruf haben kann.</p>
+<p>Objektelementzugriff via eckige Klammern, wie z.B. <code>MeinObj[Index]</code>, das Nebenwirkungen wie ein Funktionsaufruf haben kann.</p>
 <p>Ternäre Ausdrücke wie <code>x ? AufrufenWennTrue() : AufrufenWennFalse()</code>. Es ist jedoch sicherer, die unten beschriebene Regel anzuwenden; also den Ausdruck (oder nur die Bedingung) immer mit Klammern zu umschließen.</p>
-<p class="warning"><strong>Bekannte Einschränkung:</strong> Aufgrund von Mehrdeutigkeiten bei <a href="#function-call-statements">Funktionsaufrufanweisungen</a> sollten Bedingungen, die mit einem Variablennamen und Leerzeichen beginnen (aber auch andere Operatoren enthalten), in runden Klammern gesetzt werden. <code>(x + 1) ? y : z</code> und <code>x+1 ? y : z </code> beispielsweise sind Ausdruckszuweisungen, während <code>x + 1 ? y : z</code> eine Funktionsaufrufanweisung ist.</p>
+<p class="warning"><strong>Bekannte Einschränkung:</strong> Aufgrund von Mehrdeutigkeiten bei <a href="#function-call-statements">Funktionsaufrufanweisungen</a> sollten Bedingungen, die mit einem Variablennamen und Leerzeichen beginnen (aber auch andere Operatoren enthalten), in runden Klammern gesetzt werden. Zum Beispiel sind <code>(x + 1) ? y : z</code> und <code>x+1 ? y : z </code> Ausdruckszuweisungen, während <code>x + 1 ? y : z</code> eine Funktionsaufrufanweisung ist.</p>
 <p class="warning"><strong>Hinweis:</strong> Die Bedingung darf nicht mit <code>!</code> oder einem anderen Ausdrucksoperator beginnen, da sie sonst als <a href="Scripts.htm#continuation-line">Fortsetzungszeile</a> interpretiert werden würde.</p>
-<p>Ausdrücke, die mit <code>(</code> beginnen. In der Regel muss jedoch auf der gleichen Zeile ein entsprechendes <code>)</code> stehen, sonst wird die Zeile als Anfang eines <a href="Scripts.htm#continuation">Fortsetzungsbereichs</a> interpretiert.</p>
-<p>Ausdrücke, die mit einer Doppeldereferenzierung beginnen, wie z. B. <code>%VarName% := 1</code>. Dies ist in erster Linie auf die Komplexität der Implementierung zurückzuführen.</p>
-<p>Ausdrücke, die mit den oben genannten Elementen beginnen (aber nicht mit den unten genannten), sind aus praktischen Gründen ebenfalls erlaubt. Zum Beispiel ist <code>MeineFunk()+1</code> momentan erlaubt, obwohl <code>+1</code> keine Wirkung hat und das Ergebnis verworfen wird. Solche Ausdrücke können in Zukunft durch eine erweiterte Fehlerprüfung ungültig werden.</p>
+<p>Ausdrücke, die mit <code>(</code> beginnen. In der Regel muss jedoch auf der gleichen Zeile ein entsprechendes <code>)</code> stehen, sonst wird die Zeile als Beginn eines <a href="Scripts.htm#continuation">Fortsetzungsbereichs</a> interpretiert.</p>
+<p>Ausdrücke, die mit einer Doppeldereferenzierung beginnen, wie z.B. <code>%VarName% := 1</code>. Dies ist in erster Linie auf die Komplexität der Implementierung zurückzuführen.</p>
+<p>Ausdrücke, die mit den oben genannten Elementen beginnen (aber nicht mit den unten genannten), sind aus praktischen Gründen ebenfalls erlaubt. Zum Beispiel ist <code>MeineFunk()+1</code> derzeit erlaubt, obwohl <code>+1</code> keine Wirkung hat und das Ergebnis verworfen wird. Solche Ausdrücke können in Zukunft durch eine erweiterte Fehlerprüfung ungültig werden.</p>
 <p><a href="#function-call-statements">Funktionsaufrufanweisungen</a> sind ähnlich wie Ausdrucksanweisungen, aber technisch gesehen keine reinen Ausdrücke. Zum Beispiel: <code>MsgBox "Hallo, Welt!"</code>, <code>meineGui.Show</code> oder <code>x.y.z "meine Parameter"</code>.</p>
 
 <h2 id="control-flow">Kontrollanweisungen</h2>
-<p class="note">Eine allgemeine Erläuterung zum Kontrollfluss finden Sie unter <a href="Concepts.htm#control-flow">Kontrollfluss</a>.</p>
-<p>Um <a href="Concepts.htm#statement">Anweisungen</a> zu einem <a href="lib/Block.htm"><em>Block</em></a> zusammenzufassen, umschließen Sie sie mit geschweiften Klammern <code>{}</code>, wie in C, JavaScript und anderen ähnlichen Sprachen, allerdings müssen die Klammern in der Regel am Anfang einer Zeile stehen. Kontrollanweisungen können auf einen ganzen Block oder nur auf eine einzelne Anweisung angewendet werden.</p>
-<p>Der <a href="Concepts.htm#cf-body">Körper</a> einer Kontrollanweisung besteht immer aus einer einzigen <em>Gruppe</em> von Anweisungen. Ein Block zählt als eine Gruppe von Anweisungen, ebenso wie eine Kontrollanweisung und ihr Körper. Die folgenden verwandten Anweisungen werden ebenfalls mit ihren Körpern gruppiert: <code>If</code> mit <code>Else</code>; <code>Loop</code>/<code>For</code> mit <code>Until</code> oder <code>Else</code>; <code>Try</code> mit <code>Catch</code> und/oder <code>Else</code> und/oder <code>Finally</code>. Mit anderen Worten: Wenn eine Gruppe dieser Anweisungen als Ganzes verwendet wird, muss sie nicht immer mit geschweiften Klammern umschlossen werden (einige Programmierstile enthalten jedoch aus Gründen der Übersichtlichkeit immer die geschweiften Klammern).</p>
-<p>Kontrollanweisungen, die einen Körper haben und deshalb immer eine nachfolgende Anweisung oder eine Gruppe von Anweisungen haben müssen: <code>If</code>, <code>Else</code>, <code>Loop</code>, <code>While</code>, <code>For</code>, <code>Try</code>, <code>Catch</code> und <code>Finally</code>.</p>
-<p id="control-flow-list">Es gibt die folgenden Kontrollanweisungen:</p>
+<p class="note">Eine allgemeine Erklärung des Kontrollflusses finden Sie unter <a href="Concepts.htm#control-flow">Kontrollfluss</a>.</p>
+<p>Um <a href="Concepts.htm#statement">Anweisungen</a> zu einem <a href="lib/Block.htm"><em>Block</em></a> zusammenzufassen, umschließt man sie mit geschweiften Klammern <code>{}</code>, wie es auch in C, JavaScript und anderen ähnlichen Sprachen der Fall ist, allerdings müssen die Klammern in der Regel am Anfang einer Zeile stehen. Kontrollanweisungen können sich auf einen ganzen Block oder auf eine einzelne Anweisung beziehen.</p>
+<p>Der <a href="Concepts.htm#cf-body">Körper</a> einer Kontrollanweisung besteht immer aus einer <em>Gruppe</em> von Anweisungen. Ein Block zählt als eine Gruppe von Anweisungen, ebenso wie eine Kontrollanweisung und ihr Körper. Die folgenden verwandten Anweisungen werden ebenfalls mit ihren Körpern gruppiert: <code>If</code> mit <code>Else</code>; <code>Loop</code>/<code>For</code> mit <code>Until</code> oder <code>Else</code>; <code>Try</code> mit <code>Catch</code> und/oder <code>Else</code> und/oder <code>Finally</code>. Mit anderen Worten: Wenn eine Gruppe dieser Anweisungen als Ganzes verwendet wird, muss sie nicht immer mit geschweiften Klammern umschlossen werden (einige Programmierstile verwenden jedoch immer die geschweiften Klammern, aus Gründen der Übersichtlichkeit).</p>
+<p>Kontrollanweisungen, die einen Körper haben und daher immer eine nachfolgende Anweisung oder eine Gruppe von Anweisungen haben müssen: <code>If</code>, <code>Else</code>, <code>Loop</code>, <code>While</code>, <code>For</code>, <code>Try</code>, <code>Catch</code> und <code>Finally</code>.</p>
+<p id="control-flow-list">Es gibt folgende Kontrollanweisungen:</p>
 <ul>
-  <li>Ein <a href="lib/Block.htm">Block</a> (gekennzeichnet durch ein Paar von geschweiften Klammern) gruppiert null oder mehr Anweisungen, um als eine einzige Anweisung zu fungieren.</li>
+  <li>Ein <a href="lib/Block.htm">Block</a> (gekennzeichnet durch ein Paar von geschweiften Klammern) gruppiert beliebig viele Anweisungen, um als eine Anweisung zu fungieren.</li>
   <li>Eine <a href="lib/If.htm">If-Anweisung</a> führt ihren Körper aus, wenn eine Bedingung erfüllt ist. Sie kann mit einer nachfolgenden <a href="lib/Else.htm">Else</a>-Anweisung verbunden werden, die nur ausgeführt wird, wenn eine Bedingung nicht erfüllt ist.</li>
   <li><a href="lib/Goto.htm">Goto</a> springt zu einem bestimmten Label und setzt dort die Ausführung fort.</li>
   <li><a href="lib/Return.htm">Return</a> kehrt aus einer Funktion zurück.</li>
-  <li>Eine <a href="#loop-statement">Loop-Anweisung</a> (<a href="lib/Loop.htm">Loop</a>, <a href="lib/While.htm">While</a> oder <a href="lib/For.htm">For</a>) führt ihren Körper wiederholt aus.
+  <li>Eine <a href="#loop-statement">Schleifenanweisung</a> (<a href="lib/Loop.htm">Loop</a>, <a href="lib/While.htm">While</a> oder <a href="lib/For.htm">For</a>) führt ihren Körper wiederholt aus.
   <ul>
     <li><a href="lib/Break.htm">Break</a> verlässt (unterbricht) eine Schleife.</li>
-    <li><a href="lib/Continue.htm">Continue</a> überspringt den Rest der aktuellen Schleife und beginnt einen neuen Durchlauf.</li>
-    <li><a href="lib/Until.htm">Until</a> unterbricht eine Schleife, wenn ein Ausdruck als True gewertet wird. Der Ausdruck wird nach jedem Schleifendurchlauf ausgewertet.</li>
+    <li><a href="lib/Continue.htm">Continue</a> überspringt den Rest des aktuellen Schleifendurchlaufs und beginnt einen neuen Durchlauf.</li>
+    <li><a href="lib/Until.htm">Until</a> unterbricht eine Schleife, wenn ein Ausdruck als wahr gewertet wird. Der Ausdruck wird nach jedem Schleifendurchlauf ausgewertet.</li>
   </ul></li>
   <li><a href="lib/Switch.htm">Switch</a> führt eine Case-Anweisung aus einer Liste von Kandidaten aus, die sich gegenseitig ausschließen.</li>
   <li>Ausnahmebehandlung:
@@ -231,7 +231,7 @@ Run("notepad.exe", , , &amp;notepadPID)
     <li><a href="lib/Try.htm">Try</a> schützt seinen Körper vor Laufzeitfehlern und Werten, die von der Throw-Anweisung ausgelöst werden.</li>
     <li><a href="lib/Catch.htm">Catch</a> wird ausgeführt, wenn innerhalb einer Try-Anweisung eine Ausnahme eines bestimmten Typs ausgelöst wird.</li>
     <li><a href="lib/Else.htm">Else</a>, das nach einer Catch-Anweisung verwendet wird, wird nur ausgeführt, wenn innerhalb einer Try-Anweisung keine Ausnahme ausgelöst wird.</li>
-    <li><a href="lib/Finally.htm">Finally</a> führt seinen Körper aus, wenn die Kontrolle aus dem Körper einer Try- oder Catch-Anweisung heraustransferiert verlässt.</li>
+    <li><a href="lib/Finally.htm">Finally</a> führt seinen Körper aus, wenn die Kontrolle aus dem Körper einer Try- oder Catch-Anweisung heraustransferiert wird.</li>
     <li><a href="lib/Throw.htm">Throw</a> löst eine Ausnahme aus, um von Tray/Catch oder <a href="lib/OnError.htm">OnError</a> behandelt zu werden oder um ein Fehlerdialogfenster anzuzeigen.</li>
   </ul></li>
 </ul>
@@ -240,40 +240,40 @@ Run("notepad.exe", , , &amp;notepadPID)
 <p>Kontrollanweisungen unterscheiden sich von <a href="#function-call-statements">Funktionsaufrufanweisungen</a> in mehrfacher Hinsicht:</p>
 <ul>
   <li>Die geschweifte Startklammer eines <a href="lib/Block.htm">Blocks</a> kann auf derselben Zeile am Ende der Anweisung <a href="lib/If.htm">If</a>, <a href="lib/Else.htm">Else</a>, <a href="#loop-statement">Loop</a>, <a href="lib/While.htm">While</a>, <a href="lib/For.htm">For</a>, <a href="lib/Try.htm">Try</a>, <a href="lib/Catch.htm">Catch</a> oder <a href="lib/Finally.htm">Finally</a> geschrieben werden (im Prinzip jede Kontrollanweisung, die einen <a href="Concepts.htm#cf-body">Körper</a> hat). Dies wird als One True Brace (OTB) Style bezeichnet.</li>
-  <li><a href="lib/Else.htm">Else</a>, <a href="lib/Try.htm">Try</a> und <a href="lib/Finally.htm">Finally</a> erlauben auf ihrer rechten Seite eine beliebige gültige Anweisung, da sie keine Parameter sondern einen <a href="Concepts.htm#cf-body">Körper</a> benötigen.</li>
+  <li><a href="lib/Else.htm">Else</a>, <a href="lib/Try.htm">Try</a> und <a href="lib/Finally.htm">Finally</a> erlauben auf ihrer rechten Seite eine beliebige gültige Anweisung, da sie einen <a href="Concepts.htm#cf-body">Körper</a> benötigen, aber keine Parameter haben.</li>
   <li><a href="lib/If.htm">If</a>, <a href="lib/While.htm">While</a>, <a href="lib/Return.htm">Return</a>, <a href="lib/Until.htm">Until</a>, <a href="lib/Loop.htm">Loop <em>Anzahl</em></a> und <a href="lib/Goto.htm">Goto</a> erlauben die Verwendung einer runden Startklammer unmittelbar nach dem Namen, um die gesamte Parameterliste zu umschließen. Sie sehen zwar wie Funktionsaufrufe aus, sind es aber nicht und können auch nicht innerhalb eines Ausdrucks verwendet werden. Zum Beispiel: <code>if(Ausdruck)</code>.</li>
   <li>Kontrollanweisungen können nicht durch Definieren einer gleichnamigen Funktion überschrieben werden.</li>
 </ul>
 
-<h3 id="loop-statement">Loop-Anweisung</h3>
-<p>Es gibt verschiedene Typen von Loop-Anweisungen:</p>
+<h3 id="loop-statement">Schleifenanweisung</h3>
+<p>Es gibt verschiedene Varianten von Schleifenanweisungen:</p>
 <ul>
-  <li><a href="lib/Loop.htm">Loop <em>Anzahl</em></a> führt eine Anweisung wiederholt aus - entweder eine bestimmte Anzahl von Wiederholungen oder bis ein Break auftritt.</li>
-  <li><a href="lib/LoopReg.htm">Loop Reg</a> ruft die Inhalte eines bestimmten Registry-Unterschlüssels einzeln ab.</li>
-  <li><a href="lib/LoopFiles.htm">Loop Files</a> ruft bestimmte Dateien oder Ordner einzeln ab.</li>
-  <li><a href="lib/LoopParse.htm">Loop Parse</a> ruft Teile (Felder) einer Zeichenkette einzeln ab.</li>
-  <li><a href="lib/LoopRead.htm">Loop Read</a> ruft die Zeilen einer Textdatei einzeln ab.</li>
+  <li><a href="lib/Loop.htm">Loop <em>Anzahl</em></a> führt eine Anweisung wiederholt aus: Entweder eine bestimmte Anzahl oder bis ein Break auftritt.</li>
+  <li><a href="lib/LoopReg.htm">Loop Reg</a> ruft die Inhalte eines bestimmten Registry-Unterschlüssels nacheinander ab.</li>
+  <li><a href="lib/LoopFiles.htm">Loop Files</a> ruft bestimmte Dateien oder Ordner nacheinander ab.</li>
+  <li><a href="lib/LoopParse.htm">Loop Parse</a> ruft Teile (Felder) einer Zeichenkette nacheinander ab.</li>
+  <li><a href="lib/LoopRead.htm">Loop Read</a> ruft die Zeilen einer Textdatei nacheinander ab.</li>
   <li><a href="lib/While.htm">While</a> führt eine Anweisung wiederholt aus, bis ein bestimmter Ausdruck als falsch gewertet wird. Der Ausdruck wird vor jedem Schleifendurchlauf ausgewertet.</li>
-  <li><a href="lib/For.htm">For</a> führt eine Anweisung einmal für jeden Wert oder jedes Wertepaar aus, das von einem Enumerator zurückgegeben wird, wie z. B. für jedes Schlüssel-Wert-Paar in einem Objekt.</li>
+  <li><a href="lib/For.htm">For</a> führt eine Anweisung einmal für jeden Wert oder jedes Wertepaar aus, das von einem Enumerator zurückgegeben wird, wie z.B. für jedes Schlüssel-Wert-Paar eines Objekts.</li>
 </ul>
 <p><a href="lib/Break.htm">Break</a> verlässt (unterbricht) eine Schleife und bewirkt dadurch, dass die Zeile nach dem Schleifenkörper angesprungen wird.</p>
-<p><a href="lib/Continue.htm">Continue</a> überspringt den Rest der aktuellen Schleife und beginnt einen neuen Durchlauf.</p>
-<p><a href="lib/Until.htm">Until</a> unterbricht eine Schleife, wenn ein Ausdruck als True gewertet wird. Der Ausdruck wird nach jedem Schleifendurchlauf ausgewertet.</p>
-<p id="named-loops">Ein <a href="#labels">Label</a> kann genutzt werden, um eine Schleife für <a href="lib/Continue.htm">Continue</a> und <a href="lib/Break.htm">Break</a> zu "benennen". Dies ermöglicht dem Skript, von einer inneren Schleife heraus den aktuellen Durchlauf einer äußeren Schleife zu überspringen oder die äußere Schleife zu unterbrechen, ohne <a href="lib/Goto.htm">Goto</a> verwenden zu müssen.</p>
-<p>Die interne Variable <strong>A_Index</strong> enthält die Nummer des aktuellen Schleifendurchlaufs. Sie enthält eine 1, wenn der Schleifenkörper das erste Mal durchgeführt wurde. Beim zweiten Mal enthält sie eine 2; und so weiter. Wenn eine innere Schleife von einer äußeren Schleife umschlossen ist, hat die innere Schleife Vorrang. A_Index funktioniert in jeder Schleifenvariante, aber außerhalb einer Schleife enthält sie eine 0.</p>
-<p>Einige Schleifentypen haben noch andere interne Variablen, die Informationen über das aktuelle Schleifenelement liefern (Registry-Schlüssel/Wert, Datei, Teilzeichenkette oder Textzeile). Solche Variablen haben Namen, die mit <strong>A_Loop</strong> beginnen, wie z. B. A_LoopFileName und A_LoopReadLine. Ihre Werte gehören immer der zuletzt gestarteten (aber noch nicht gestoppten) Schleife des entsprechenden Typs. A_LoopField beispielsweise gibt die aktuelle Teilzeichenkette der innersten Parsing-Schleife zurück, auch wenn sie innerhalb einer Datei- oder Registry-Schleife verwendet wird.</p>
+<p><a href="lib/Continue.htm">Continue</a> überspringt den Rest des aktuellen Schleifendurchlaufs und beginnt einen neuen Durchlauf.</p>
+<p><a href="lib/Until.htm">Until</a> unterbricht eine Schleife, wenn ein Ausdruck als wahr gewertet wird. Der Ausdruck wird nach jedem Schleifendurchlauf ausgewertet.</p>
+<p id="named-loops">Ein <a href="#labels">Label</a> kann verwendet werden, um eine Schleife für <a href="lib/Continue.htm">Continue</a> und <a href="lib/Break.htm">Break</a> zu "benennen". Dadurch kann das Skript von einer inneren Schleife heraus den aktuellen Durchlauf einer äußeren Schleife überspringen oder die äußere Schleife unterbrechen, ohne <a href="lib/Goto.htm">Goto</a> verwenden zu müssen.</p>
+<p>Die interne Variable <strong>A_Index</strong> enthält die Nummer des aktuellen Schleifendurchlaufs. Sie enthält 1, wenn der Körper der Schleife zum ersten Mal ausgeführt wurde. Beim zweiten Mal enthält sie 2 und so weiter. Wenn eine innere Schleife von einer äußeren Schleife umschlossen ist, hat die innere Schleife Vorrang. A_Index funktioniert in jeder Schleifenvariante, enthält aber außerhalb einer Schleife eine 0.</p>
+<p>Einige Schleifenvarianten haben weitere interne Variablen, die Informationen über das aktuelle Schleifenelement liefern (Registry-Schlüssel/Wert, Datei, Teilzeichenkette oder Textzeile). Solche Variablen haben Namen, die mit <strong>A_Loop</strong> beginnen, wie z.B. A_LoopFileName und A_LoopReadLine. Ihre Werte gehören immer zur zuletzt gestarteten (aber noch nicht gestoppten) Schleife des entsprechenden Typs. Zum Beispiel gibt A_LoopField die aktuelle Teilzeichenkette der innersten Parsing-Schleife zurück, sogar wenn es innerhalb einer Datei- oder Registry-Schleife verwendet wird.</p>
 <pre>t := "Spalte 1`tSpalte 2`nWert 1`tWert 2"
 Loop Parse t, "`n"
 {
     ZeileText := A_LoopField
-    ZeileNummer := A_Index  <em>; Für die Verwendung in der zweiten Schleife unten speichern.</em>
+    ZeileNummer := A_Index  <em>; Zur Verwendung in der zweiten Schleife unten speichern.</em>
     Loop Parse ZeileText, "`t"
     {
         MsgBox ZeileNummer ":" A_Index " = " A_LoopField
     }
 }
 </pre>
-<p>Schleifenvariablen können auch außerhalb des Schleifenkörpers verwendet werden, wie z. B. in einer Funktion, die aus einer Schleife heraus aufgerufen wird.</p>
+<p>Schleifenvariablen können auch außerhalb des Schleifenkörpers verwendet werden, wie z.B. in einer Funktion, die aus einer Schleife heraus aufgerufen wird.</p>
 
 <h3 id="not-control-flow">Kein Kontrollfluss</h3>
 <p>Da Direktiven, Label, Zweifach-Doppelpunkt-Tags von Hotkeys und Hotstrings und Deklarationen ohne Zuweisungen bereits verarbeitet werden, während das Skript aus der Datei geladen wird, unterliegen sie nicht dem Kontrollfluss. Das heißt, dass sie bedingungslos wirksam werden, bevor das Skript überhaupt Kontrollanweisungen ausführt. Die <a href="lib/_HotIf.htm">#HotIf</a>-Direktive hat ebenfalls keinen Einfluss auf den Kontrollfluss; sie legt lediglich die Kriterien für die im Code angegebenen Hotkeys und Hotstrings fest. Die Kriterien eines Hotkeys werden jedes Mal ausgewertet, wenn er gedrückt wird, und nicht, wenn die Ausführung auf die #HotIf-Direktive trifft.</p>
@@ -281,7 +281,7 @@ Loop Parse t, "`n"
 <h2 id="structure-of-a-script">Aufbau eines Skripts</h2>
 
 <h3 id="global-code">Globaler Code</h3>
-<p>Nach dem Laden des Skripts wird der <em>Auto-Execute-Thread</em> die Ausführung bei der Zeile ganz oben im Skript beginnen und diese fortsetzen, bis ihm befohlen wird, zu stoppen, z. B. via <a href="lib/Return.htm">Return</a>, <a href="lib/ExitApp.htm">ExitApp</a> oder <a href="lib/Exit.htm">Exit</a>. Das physische Ende des Skripts fungiert auch als <a href="lib/Exit.htm">Exit</a>.</p>
+<p>Nach dem Laden des Skripts wird der <em>Auto-Execute-Thread</em> die Ausführung bei der Zeile ganz oben im Skript beginnen und diese fortsetzen, bis ihm befohlen wird, zu stoppen, z.B. via <a href="lib/Return.htm">Return</a>, <a href="lib/ExitApp.htm">ExitApp</a> oder <a href="lib/Exit.htm">Exit</a>. Das physische Ende des Skripts fungiert auch als <a href="lib/Exit.htm">Exit</a>.</p>
 <p>Globaler Code oder Code im globalen <a href="Concepts.htm#scope">Gültigkeitsbereich</a> ist ein ausführbarer Code, der sich nicht innerhalb einer Funktions- oder Klassendefinition befindet. Alle dort befindlichen Variablenreferenzen werden als <a href="Functions.htm#Global">global</a> bezeichnet, da sie von jeder Funktion (mit der entsprechenden Deklaration) angesprochen werden können. Ein solcher Code wird oft genutzt, um Einstellungen zu konfigurieren, die für jeden neu gestarteten <a href="misc/Threads.htm">Thread</a> gelten sollen, oder um globale Variablen zu <a href="Concepts.htm#uninitialized-variables">initialisieren</a>, die von Hotkeys und anderen Funktionen verwendet werden.</p>
 <p>Code, der bei der Startphase des Skripts (also sofort beim Starten des Skripts) ausgeführt werden soll, wird oft am Anfang der Datei platziert. Derartiger Code kann jedoch in der gesamten Datei zwischen (aber nicht innerhalb von) Funktions- und Klassendefinitionen platziert werden. Dies liegt daran, dass die Ausführung den Körper jeder Funktions- oder Klassendefinition überspringt. In einigen Fällen kann das Skript komplett aus globalem Code bestehen.</p>
 <p><strong>Siehe auch:</strong> <a href="Scripts.htm#auto">Startphase des Skripts (der Auto-Execute-Thread)</a></p>
@@ -294,7 +294,7 @@ Loop Parse t, "`n"
 <p>Neben den vielen nützlichen <a href="lib/index.htm">vordefinierten Funktionen</a> kann ein Skript auch seine eigenen Funktionen definieren. Diese Funktionen können grundsätzlich auf zwei verschiedene Weisen genutzt werden:</p>
 <ol>
   <li>Eine Funktion kann vom Skript selbst aufgerufen werden. Diese Art von Funktion kann genutzt werden, um Wiederholungen zu vermeiden, um den Code leichter verwalten zu können, oder auch für andere Zwecke.</li>
-  <li>Eine Funktion kann vom Programm als Reaktion auf ein Ereignis aufgerufen werden, z. B. wenn der Benutzer einen Hotkey drückt. Zum Beispiel ist jedem Hotkey eine Funktion zugeordnet, die beim Drücken des Hotkeys ausgeführt wird.</li>
+  <li>Eine Funktion kann vom Programm als Reaktion auf ein Ereignis aufgerufen werden, z.B. wenn der Benutzer einen Hotkey drückt. Zum Beispiel ist jedem Hotkey eine Funktion zugeordnet, die beim Drücken des Hotkeys ausgeführt wird.</li>
 </ol>
 <p>Es gibt mehrere Möglichkeiten, eine Funktion zu definieren:</p>
 <ul>
@@ -333,33 +333,33 @@ SageHallo  <em>; SageHallo-Funktion aufrufen.</em></pre>
     return "ein Wert"
 }
 </pre>
-<p>Wie bei Funktionsaufrufen auch, darf zwischen dem Funktionsnamen und der runden Startklammer kein Leerzeichen stehen.</p>
-<p>Der Zeilenumbruch zwischen der runden Endklammer und der geschweiften Startklammer ist optional. Es kann eine beliebige Anzahl von Leerraumzeichen oder Kommentaren zwischen den beiden sein.</p>
-<p>Der <a href="Functions.htm#ByRef">ByRef-Marker (&amp;)</a> kennzeichnet, dass der Aufrufer eine Variablenreferenz übergeben muss. Innerhalb der Funktion wird jegliche Referenz, die auf den Parameter verweist, tatsächlich auf die Variable des Aufrufers zugreifen. Dies ähnelt dem Weglassen von <code>&amp;</code> und der expliziten <a href="Variables.htm#deref">Dereferenzierung</a> des Parameters innerhalb der Funktion (z. B. <code>%Dritter%</code>), allerdings werden in diesem Fall die Prozentzeichen weggelassen. Wenn der Parameter optional ist und der Aufrufer ihn weglässt, verhält sich der Parameter wie eine normale lokale Variable.</p>
+<p>Wie bei Funktionsaufrufen darf zwischen dem Funktionsnamen und der runden Startklammer kein Leerzeichen stehen.</p>
+<p>Der Zeilenumbruch zwischen der runden Endklammer und der geschweiften Startklammer ist optional. Zwischen der runden Endklammer und der geschweiften Startklammer können beliebig viele Leerraumzeichen oder Kommentare stehen.</p>
+<p>Der <a href="Functions.htm#ByRef">ByRef-Marker (&amp;)</a> kennzeichnet, dass der Aufrufer eine Variablenreferenz übergeben muss. Innerhalb der Funktion wird jegliche Referenz, die auf den Parameter verweist, tatsächlich auf die Variable des Aufrufers zugreifen. Dies ähnelt dem Weglassen von <code>&amp;</code> und der expliziten <a href="Variables.htm#deref">Dereferenzierung</a> des Parameters innerhalb der Funktion (z.B. <code>%Dritter%</code>), allerdings werden in diesem Fall die Prozentzeichen weggelassen. Wenn der Parameter optional ist und der Aufrufer ihn weglässt, verhält sich der Parameter wie eine normale lokale Variable.</p>
 <p>Um einen <a href="Functions.htm#optional">optionalen</a> Parameter anzugeben, müssen Sie nach dem Parameternamen <code>:=</code> anfügen, gefolgt von einer direkt geschriebenen, in Anführungszeichen gesetzte Zeichenkette, einer Zahl, <code>true</code>, <code>false</code> oder <code>unset</code>.</p>
 <p>Die Funktion kann <a href="Functions.htm#return">einen Wert via Return zurückgeben</a>. Wenn sie das nicht tut, gibt sie standardmäßig eine leere Zeichenkette zurück.</p>
 <p>Eine Funktionsdefinition muss nicht vor dem Aufruf dieser Funktion stehen.</p>
 <p class="note">Einzelheiten finden Sie unter <a href="Functions.htm">Funktionen</a>.</p>
 
 <h3 id="-include">#Include</h3>
-<p>Die <a href="lib/_Include.htm">#Include</a>-Direktive veranlasst das Skript, sich so zu verhalten, als wäre der Inhalt einer bestimmten Datei an genau dieser Stelle vorhanden. Dies wird oft verwendet, um Code in separaten Dateien aufzuteilen oder um Skriptbibliotheken anderer Benutzer zu nutzen.</p>
-<p>Eine #Include-Datei kann <a href="#global-code">globalen Code</a> enthalten, der während der <a href="Scripts.htm#auto">Startphase des Skripts</a> ausgeführt werden soll, allerdings wird, analog zum Code in der Hauptskriptdatei, solcher Code nur ausgeführt, wenn der Auto-Execute-Thread nicht bereits vor der #Include-Direktive terminiert wird (z. B. mit einem bedingungslosen <code>Return</code>). Es wird standardmäßig eine <a href="lib/_Warn.htm#Unreachable">Warnung</a> angezeigt, wenn ein Code aufgrund eines vorhergehenden <code>Return</code> nicht ausgeführt werden kann.</p>
-<p>Im Gegensatz zu C/C++ macht #Include nichts, wenn die Datei bereits von einer früheren Direktive eingebunden wurde. Um den Inhalt einer Datei mehrfach einzubinden, verwenden Sie <a href="lib/_Include.htm">#IncludeAgain</a>.</p>
+<p>Die <a href="lib/_Include.htm">#Include</a>-Direktive veranlasst das Skript, sich so zu verhalten, als wäre der Inhalt einer bestimmten Datei an genau dieser Stelle vorhanden. Dies wird oft verwendet, um Code in separate Dateien aufzuteilen oder um Skriptbibliotheken anderer Benutzer zu verwenden.</p>
+<p>Eine #Include-Datei kann <a href="#global-code">globalen Code</a> enthalten, der während der <a href="Scripts.htm#auto">Startphase des Skripts</a> ausgeführt werden soll, allerdings wird, analog zum Code in der Hauptskriptdatei, solcher Code nur ausgeführt, wenn der Auto-Execute-Thread nicht bereits vor der #Include-Direktive terminiert wird (z.B. mit einem bedingungslosen <code>Return</code>). Es wird standardmäßig eine <a href="lib/_Warn.htm#Unreachable">Warnung</a> angezeigt, wenn ein Code aufgrund eines vorhergehenden <code>Return</code> nicht ausgeführt werden kann.</p>
+<p>Im Gegensatz zu C/C++ macht #Include nichts, wenn die Datei bereits durch eine frühere Direktive inkludiert wurde. Um den Inhalt einer Datei mehrfach zu inkludieren, verwenden Sie <a href="lib/_Include.htm">#IncludeAgain</a>.</p>
 <p>Um die gemeinsame Nutzung von Skripten zu erleichtern, sucht #Include an vordefinierten Standorten nach einem Bibliotheksskript. Weitere Informationen finden Sie unter <a href="Scripts.htm#lib">Skriptbibliotheksordner</a>.</p>
 
 <h2 id="misc">Verschiedenes</h2>
 
 <h3 id="dynamic-variables">Dynamische Variablen</h3>
-<p>Eine <em>dynamische Variablenreferenz</em> nimmt einen Textwert und interpretiert ihn als Namen einer Variable.</p>
+<p>Eine <em>dynamische Variablenreferenz</em> nimmt einen Textwert und interpretiert ihn als den Namen einer Variable.</p>
 <p class="note"><strong>Hinweis:</strong> Eine Variable kann nicht durch eine dynamische Referenz <em>erstellt</em> werden, aber existierende Variablen können zugewiesen werden. Dazu gehören alle Variablen, zu denen das Skript nicht-dynamische Referenzen enthält, auch wenn ihnen keine Werte zugewiesen wurden.</p>
-<p>Die bekannteste Form einer dynamischen Variablenreferenz nennt sich <em>Doppelreferenzierung</em> oder <em>double-deref</em>. Bevor man eine Doppelreferenzierung durchführen kann, muss der Name der Zielvariable in einer zweiten Variable gespeichert sein. Diese zweite Variable kann genutzt werden, um der Zielvariable indirekt einen Wert via Doppelreferenzierung zuzuweisen. Zum Beispiel:</p>
+<p>Die bekannteste Form einer dynamischen Variablenreferenz nennt sich <em>Doppelreferenzierung</em> oder <em>double-deref</em>. Bevor eine Doppelreferenzierung erfolgt, muss der Name der Zielvariable in einer zweiten Variable gespeichert werden. Diese zweite Variable kann verwendet werden, um der Zielvariable indirekt einen Wert via Doppelreferenzierung zuzuweisen. Zum Beispiel:</p>
 <pre>Ziel := 42
 ZweiteVar := "Ziel"
 MsgBox  ZweiteVar   <em>; Normale (einfache) Variablenreferenz =&gt; Ziel</em>
 MsgBox %ZweiteVar%  <em>; Doppelreferenzierung =&gt; 42</em>
 </pre>
 <p>Momentan muss <code>ZweiteVar</code> im zweiten Fall immer einen Variablennamen enthalten; beliebige Ausdrücke werden nicht unterstützt.</p>
-<p>Eine dynamische Variablenreferenz kann auch einen oder mehrere direkt geschriebene Texte und den Inhalt einer oder mehrerer Variablen zu einem einzigen Variablennamen zusammenfügen. Dazu schreibt man einfach die Bestandteile des Namens und die mit Prozentzeichen umschlossenen Variablen der Reihe nach ohne Leerzeichen auf. Zum Beispiel: <code>MeinArray%A_Index%</code> oder <code>MeinRaster%X%_%Y%</code>. Mit dieser Methode kann man auf <em>Pseudo-Arrays</em> zugreifen, wie unten beschrieben.</p>
+<p>Eine dynamische Variablenreferenz kann auch einen oder mehrere direkt geschriebene Texte und den Inhalt einer oder mehrerer Variablen zu einem einzigen Variablennamen zusammenfassen. Schreiben Sie einfach die Bestandteile des Namens und die mit Prozentzeichen umschlossenen Variablen der Reihe nach ohne Leerzeichen auf. Zum Beispiel: <code>MeinArray%A_Index%</code> oder <code>MeinRaster%X%_%Y%</code>. Dies ermöglicht den Zugriff auf <em>Pseudo-Arrays</em>, wie unten beschrieben.</p>
 <p>Diese Techniken können auch auf Eigenschaften und Methoden von Objekten angewendet werden. Zum Beispiel:</p>
 <pre>Farbe := {}
 for n, Komponente in ["Rot", "Grün", "Blau"]
@@ -385,9 +385,9 @@ Loop 3
   <li>Aktuelle Versionen der Sprache bieten keine Möglichkeit, neue Variablen dynamisch zu erstellen. Dies dient zum einen dazu, bewährte Verfahren zu fördern, und zum anderen, um Inkonsistenzen zwischen dynamischen und nicht-dynamischen Variablenreferenzen in Funktionen zu vermeiden.</li>
 </ul>
 
-<h3 id="labels">Label</h3>
+<h3 id="labels">Labels</h3>
 <p>Ein Label identifiziert eine Codezeile. Es kann verwendet werden, um als Ziel für <a href="lib/Goto.htm">Goto</a> zu dienen oder <a href="#named-loops">eine Schleife zu spezifizieren</a>, um aus dieser auszubrechen oder bei ihr fortzufahren. Ein Label besteht aus einem <a href="Concepts.htm#names">Namen</a>, gefolgt von einem Doppelpunkt:</p>
 <pre>das_ist_ein_Label:</pre>
-<p>Abgesehen von Leerraumzeichen und Kommentaren darf kein anderer Code auf der Zeile eines Labels stehen. Weitere Informationen finden Sie unter <a href="misc/Labels.htm">Label</a>.</p>
+<p>Abgesehen von Leerraumzeichen und Kommentaren darf kein anderer Code auf der Zeile eines Labels stehen. Weitere Informationen finden Sie unter <a href="misc/Labels.htm">Labels</a>.</p>
 </body>
 </html>

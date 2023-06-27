@@ -23,21 +23,22 @@
   <dt>SchlüsselName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der vollständige Name des Registry-Schlüssels.</p>
-    <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_USER, HKEY_CLASSES_ROOT oder HKEY_CURRENT_CONFIG beginnen (oder jeweils die Abkürzung, wie z. B. HKLM). Um Zugriff auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zu erhalten, setzen Sie wie folgt den Computernamen und einen Schrägstrich davor: \\workstation01\HKEY_LOCAL_MACHINE</p>
+    <p>Der vollständige Name des Registry-Schlüssels, z.B. <code>"HKLM\Software\BeliebigeAnwendung"</code>.</p>
+    <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC) beginnen.</p>
+    <p>Um auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zuzugreifen, stellen Sie den Computernamen und einen umgekehrten Schrägstrich voran, z.B. <code>"\\workstation01\HKLM"</code>.</p>
     <p><em>SchlüsselName</em> kann nur weggelassen werden, wenn eine <a href="LoopReg.htm">Registry-Schleife</a> läuft - in diesem Fall wird standardmäßig der Schlüssel des aktuellen Schleifenelements verwendet. Wenn das Element ein Unterschlüssel ist, wird standardmäßig der vollständige Name dieses Unterschlüssels benutzt. Wenn das Element ein Wert ist, gilt für <em>WertName</em> standardmäßig der Name dieses Wertes, was aber überschrieben werden kann.</p>
   </dd>
 
   <dt>WertName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der Name des Wertes, der abgerufen werden soll. Wenn dieser Parameter weggelassen wird oder leer ist, wird der Standardwert des Schlüssels abgerufen (außer wie oben erwähnt). Der Standardwert wird im RegEdit-Tool als "(Standard)" angezeigt. Wenn es keinen Standardwert gibt (also wenn das RegEdit-Tool "Wert nicht festgelegt" anzeigt), wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst.</p>
+    <p>Wenn ungesetzt oder weggelassen, wird der Standardwert des Schlüssels abgerufen (außer wie oben erwähnt) - das ist der Wert, den RegEdit als "(Standard)" anzeigt. Andernfalls geben Sie den Namen des abzurufenden Wertes an. Wenn es keinen Standardwert gibt (also wenn das RegEdit-Tool "Wert nicht festgelegt" anzeigt), wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst.</p>
   </dd>
   
   <dt>Standardwert</dt>
   <dd>
     <p>Typ: Any</p>
-    <p>Ein Wert, der zurückgegeben werden soll, wenn der angegebene Schlüssel oder Wert nicht existiert. Lässt man diesen Parameter weg, wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, anstatt einen Standardwert zurückzugeben.</p>
+    <p>Wenn ungesetzt oder weggelassen, wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, anstatt einen Standardwert zurückzugeben. Andernfalls geben Sie einen Wert an, der zurückgegeben werden soll, wenn der angegebene Schlüssel oder Wert nicht existiert.</p>
   </dd>
 
 </dl>
@@ -47,17 +48,17 @@
 <p>Diese Funktion gibt einen Wert des angegebenen Registry-Schlüssels zurück.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
-<p>Bei Misserfolg wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst. Zu den Misserfolgen gehört z. B. ein nicht-existierender Schlüssel oder Wert bei weggelassenem <em>Standardwert</em> oder ein Berechtigungsfehler.</p>
+<p>Bei Misserfolg wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst. Zu den Misserfolgen gehört z.B. ein nicht-existierender Schlüssel oder Wert bei weggelassenem <em>Standardwert</em> oder ein Berechtigungsfehler.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Zurzeit werden nur die folgenden Werttypen unterstützt: REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ, REG_DWORD und REG_BINARY.</p>
-<p>REG_DWORD-Werte werden immer als positive Dezimalzahlen dargestellt. Wenn die Zahl dazu gedacht war, negativ zu sein, können Sie sie mit <code>AusgabeVar := AusgabeVar &lt;&lt; 32 &gt;&gt; 32</code> oder ähnlichem in einen vorzeichenfähigen 32-Bit-Integer umwandeln.</p>
-<p>Beim Lesen eines REG_BINARY-Schlüssels ist das Ergebnis eine Zeichenkette mit hexadezimalen Zeichen. Zum Beispiel würde ein REG_BINARY-Wert von 01,a9,ff,77 als Zeichenkette 01A9FF77 gelesen werden.</p>
-<p>Beim Lesen eines REG_MULTI_SZ-Schlüssels endet jede Komponente mit einem Zeilenumbruchszeichen (`n). Sind keine Komponenten vorhanden, wird eine leere Zeichenkette zurückgegeben. Auf <a href="FileSelect.htm">FileSelect</a>-Seite finden Sie ein Beispiel, wie einzelne Komponenten aus dem Rückgabewert extrahiert werden können.</p>
+<p>REG_DWORD-Werte sind in der Registry immer positive Dezimalzahlen. Wenn ein REG_DWORD-Wert als negative Zahl gedacht war, wandeln Sie ihn mit <code>AusgabeVar := AusgabeVar &lt;&lt; 32 &gt;&gt; 32</code> o.ä. in einen vorzeichenfähigen 32-Bit-Integer um.</p>
+<p>Wenn ein REG_BINARY-Schlüssel gelesen wird, ist das Ergebnis eine Zeichenkette aus hexadezimalen Zeichen. Zum Beispiel wird der REG_BINARY-Wert 01,a9,ff,77 als 01A9FF77 gelesen.</p>
+<p>Wenn ein REG_MULTI_SZ-Schlüssel gelesen wird, endet jede Komponente mit einem LF-Zeichen (`n). Sind keine Komponenten vorhanden, wird eine leere Zeichenkette zurückgegeben. Um die einzelnen Komponenten aus dem Rückgabewert zu extrahieren, verwenden Sie eine <a href="LoopParse.htm">parsende Schleife</a>.</p>
 <p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Schlüssel und -Werte abgerufen und bearbeitet werden.</p>
-<p>In den Bemerkungen zur <a href="LoopReg.htm#remote">Registry-Schleife</a> finden Sie Hinweise, wie man auf die Registry eines Remotecomputers zugreifen kann.</p>
-<p>Mit <a href="SetRegView.htm">SetRegView</a> können Einträge von den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript oder umgekehrt gelesen und geschrieben werden.</p>
+<p>In den Bemerkungen zur <a href="LoopReg.htm#remote">Registry-Schleife</a> finden Sie Informationen darüber, wie auf die Registry eines Remote-Computers zugegriffen werden kann.</p>
+<p>Um Einträge aus den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript zu lesen und zu schreiben oder umgekehrt, verwenden Sie <a href="SetRegView.htm">SetRegView</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="RegCreateKey.htm">RegCreateKey</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniRead.htm">IniRead</a></p>
@@ -69,9 +70,9 @@
 </div>
 
 <div class="ex" id="ExProgramFiles">
-<p><a class="ex_number" href="#ExProgramFiles"></a> Ermittelt und meldet den Pfad des "Program Files"-Ordners. Eine alternative Methode finden Sie unter <a href="EnvGet.htm#ExProgramFiles">EnvGet-Beispiel #2</a>.</p>
-<pre><em>; Die nachfolgende Zeile stellt sicher, dass die 64-Bit-Version des Programm-Ordners
-; zurückgegeben wird, wenn das Betriebssystem 64-Bit ist und das Skript nicht.</em>
+<p><a class="ex_number" href="#ExProgramFiles"></a> Ruft den Pfad des "Program Files"-Ordners ab und meldet ihn. Eine alternative Methode finden Sie unter <a href="EnvGet.htm#ExProgramFiles">EnvGet-Beispiel #2</a>.</p>
+<pre><em>; Die folgende Zeile stellt sicher, dass der Pfad des 64-Bit-Programmordners
+; zurückgegeben wird, wenn das System 64-Bit ist und das Skript nicht.</em>
 <a href="SetRegView.htm">SetRegView</a> 64
 
 ProgramFilesDir := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "ProgramFilesDir")
@@ -80,7 +81,7 @@ MsgBox "Programme sind in: " ProgramFilesDir</pre>
 
 
 <div class="ex" id="ExType">
-<p><a class="ex_number" href="#ExType"></a> Ermittelt den TYP eines Registry-Wertes (z. B. REG_SZ oder REG_DWORD).</p>
+<p><a class="ex_number" href="#ExType"></a> Ruft den Typ eines Registry-Wertes (z.B. REG_SZ oder REG_DWORD) ab.</p>
 <pre>MsgBox RegSchlüsselTyp("HKCU", "Environment", "TEMP")
 return
 

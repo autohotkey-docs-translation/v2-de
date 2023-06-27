@@ -21,18 +21,18 @@
 </ol>
 <p>Man muss sich darüber im Klaren sein, dass das Senden einer Taste den Vorgang des physischen Tastendrucks nicht perfekt nachahmt, selbst wenn man ihn auf menschliche Geschwindigkeit verlangsamt. Aber bevor wir darauf eingehen, werden wir einige Grundlagen besprechen.</p>
 
-<h2>Die Beispiele ausprobieren</h2>
+<h2 id="Trying_the_examples">Die Beispiele ausprobieren</h2>
 <p>Wenn Sie ein Beispiel wie <code>SendText "Hi!"</code> ausführen, wird der Text sofort an das aktive (fokussierte) Fenster gesendet, was je nach Art der Ausführung des Beispiels eher kontraproduktiv sein kann. In der Regel ist es besser, einen Hotkey zu definieren und ihn mit dem Beispiel zu bestücken. Drücken Sie anschließend den Hotkey, wenn Sie seine Wirkung testen wollen. Einige der folgenden Beispiele verwenden nummerierte Hotkeys wie <code>^1::</code> (<kbd>Strg</kbd> und eine Zahl, so dass Sie mehrere Beispiele auf einmal ausprobieren können, sofern es keine Duplikate gibt), aber Sie können das nach Belieben ändern.</p>
 <p>Wie Sie die Hotkeys anpassen oder eigene Hotkeys erstellen können, erfahren Sie unter <a href="WriteHotkeys.htm">Wie man Hotkeys schreibt</a>.</p>
 <p>Wenn Sie nicht sicher sind, wie man die Beispiele ausprobiert, werfen Sie einen Blick auf <a href="RunExamples.htm">Wie man Beispielcodes ausführt</a>.</p>
 
-<h2>Wie man den Code schreibt</h2>
-<p>Beim Senden von Tasten möchten Sie in der Regel entweder eine Taste oder eine Tastenkombination senden, um etwas zu bewirken (z. B. <kbd>Strg</kbd>+<kbd>C</kbd> zum Kopieren in die Zwischenablage), oder einen Text eingeben. Die Eingabe von Text ist leichter, also fangen wir damit an: Rufen Sie einfach die <a href="../lib/Send.htm">SendText</a>-Funktion auf und <a href="../Concepts.htm#pass-parameters">übergeben</a> Sie ihr den genauen Text, den Sie senden möchten.</p>
+<h2 id="How_to_write_the_code">Wie man den Code schreibt</h2>
+<p>Beim Senden von Tasten möchten Sie in der Regel entweder eine Taste oder eine Tastenkombination senden, um etwas zu bewirken (z.B. <kbd>Strg</kbd>+<kbd>C</kbd> zum Kopieren in die Zwischenablage), oder einen Text eingeben. Die Eingabe von Text ist leichter, also fangen wir damit an: Rufen Sie einfach die <a href="../lib/Send.htm">SendText</a>-Funktion auf und <a href="../Concepts.htm#pass-parameters">übergeben</a> Sie ihr den genauen Text, den Sie senden möchten.</p>
 <pre>^1::SendText "Sehr geehrte Damen und Herren"</pre>
 <p>Technisch gesehen sendet SendText eigentlich Unicode-Zeichenpakete und keine Tastendrücke, wodurch es viel zuverlässiger für Zeichen ist, die normalerweise mit einer Tastenkombination wie <kbd>Umschalt</kbd>+<kbd>2</kbd> oder <kbd>AltGr</kbd>+<kbd>a</kbd> eingegeben werden.</p>
 
-<h3>Anführungszeichen</h3>
-<p>SendText sendet den Text ohne Abweichungen, aber unter Berücksichtigung der Regeln der <a href="../Language.htm">Sprache</a>. So muss z. B. <a href="../Language.htm#strings">direkt geschriebener Text</a> in Anführungszeichen (doppeltes <code>"</code> oder einfaches <code>'</code>) gesetzt werden, die von der SendText-Funktion nicht "gesehen" werden. Um ein direkt geschriebenes Anführungszeichen zu senden, umschließen Sie es mit dem entgegengesetzten Typ von Anführungszeichen. Zum Beispiel:</p>
+<h3 id="Rules_of_quoted_strings">Anführungszeichen</h3>
+<p>SendText sendet den Text ohne Abweichungen, aber unter Berücksichtigung der Regeln der <a href="../Language.htm">Sprache</a>. So muss z.B. <a href="../Language.htm#strings">direkt geschriebener Text</a> in Anführungszeichen (doppeltes <code>"</code> oder einfaches <code>'</code>) gesetzt werden, die von der SendText-Funktion nicht "gesehen" werden. Um ein direkt geschriebenes Anführungszeichen zu senden, umschließen Sie es mit dem entgegengesetzten Typ von Anführungszeichen. Zum Beispiel:</p>
 <pre>^2::SendText 'Anführungszeichen sind auch als "Gänsefüßchen" bekannt.'</pre>
 <p>Alternativ können Sie auch eine <a href="../misc/EscapeChar.htm">Escapesequenz</a> verwenden. Innerhalb einer in Anführungszeichen gesetzten Zeichenkette wird <code>`"</code> in ein direkt geschriebenes <code>"</code> und <code>`'</code> in ein direkt geschriebenes <code>'</code> übersetzt. Zum Beispiel:</p>
 <pre>^3::{
@@ -44,9 +44,9 @@
 <p>Die beiden Zeichenketten werden zusammengefügt (<a href="../Variables.htm#concat">verkettet</a>), bevor sie an die SendText-Funktion übergeben werden. Der Punkt (<code>.</code>) kann weggelassen werden, aber das macht es schwieriger zu erkennen, wo das eine endet und das andere beginnt.</p>
 <p>Wie Sie oben bereits gesehen haben, hat das Escapezeichen <code>`</code> (auch bekannt als <em>Akzentzeichen</em>, <em>Gravis</em>, <em>Abwärtsakzent</em> usw.) eine besondere Bedeutung. Wenn Sie dieses Zeichen (oder die entsprechende Taste) direkt senden wollen, müssen Sie es doppelt angeben, wie in <code>Send "``"</code>. Andere gängige Escapesequenzen sind <code>`n</code> für Zeilenvorschub (Enter) und <code>`t</code> für Tabulator. Weitere finden Sie unter <a href="../misc/EscapeChar.htm">Escapesequenzen</a>.</p>
 
-<h3>Tasten und Tastenkombinationen senden</h3>
-<p><a href="../lib/Send.htm">SendText</a> ist am besten geeignet, um Text ohne Abweichungen zu senden, aber es kann keine Tasten senden, die keinen Text erzeugen, wie z. B. <kbd>←</kbd> oder <kbd>Pos1</kbd>. <a href="../lib/Send.htm">Send</a>, <a href="../lib/Send.htm">SendInput</a>, <a href="../lib/Send.htm">SendPlay</a>, <a href="../lib/Send.htm">SendEvent</a> und <a href="../lib/ControlSend.htm">ControlSend</a> können sowohl Text als auch Tastenkombinationen oder Tasten, die keinen Text erzeugen, senden. Um das alles möglich zu machen, fügen sie den folgenden Symbolen eine besondere Bedeutung hinzu: <code>^!+#{}</code></p>
-<p>Die ersten vier Symbole entsprechen den regulären Modifikatortasten: Strg (<code>^</code>), Alt (<code>!</code>), Umschalt (<code>+</code>) und Win (<code>#</code>). Diese können kombiniert werden, wirken sich aber ansonsten nur auf die nächste Taste aus.</p>
+<h3 id="Sending_keys_and_key_combinations">Tasten und Tastenkombinationen senden</h3>
+<p><a href="../lib/Send.htm">SendText</a> ist am besten geeignet, um Text ohne Abweichungen zu senden, aber es kann keine Tasten senden, die keinen Text erzeugen, wie z.B. <kbd>←</kbd> oder <kbd>Pos1</kbd>. <a href="../lib/Send.htm">Send</a>, <a href="../lib/Send.htm">SendInput</a>, <a href="../lib/Send.htm">SendPlay</a>, <a href="../lib/Send.htm">SendEvent</a> und <a href="../lib/ControlSend.htm">ControlSend</a> können sowohl Text als auch Tastenkombinationen oder Tasten, die keinen Text erzeugen, senden. Um das alles möglich zu machen, fügen sie den folgenden Symbolen eine besondere Bedeutung hinzu: <code>^!+#{}</code></p>
+<p>Die ersten vier Symbole entsprechen den regulären Modifikatortasten: Strg (<code>^</code>), Alt (<code>!</code>), Umschalt (<code>+</code>) und Win (<code>#</code>). Diese können kombiniert werden, wirken sich aber sonst nur auf die nächste Taste aus.</p>
 <p>Um eine Taste per Name zu senden oder eines der oben genannten Symbole direkt zu senden, umschließen Sie es mit geschweiften Klammern. Zum Beispiel:</p>
 <ul>
   <li><code>^+{Left}</code> erzeugt <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>←</kbd></li>
@@ -56,7 +56,7 @@
 <p>Wenn Sie mit dem folgenden Beispiel <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>"</kbd> drücken, werden zwei Anführungszeichen gesendet, und der Textcursor nach links verschoben, um sofort mit dem Schreiben innerhalb der Anführungszeichen beginnen zu können:</p>
 <!-- span works around a highlighter bug (4/12/22) -->
 <pre><span class="no-highlight">^+"</span>::Send '""{Left}'</pre>
-<p>Alle anderen Zeichen außer <code>^!+#{}</code> werden von Send in die entsprechende Tastenkombination umgewandelt; Send drückt diese Kombination und lässt sie wieder los. <code>Send "aB"</code> beispielsweise wird <kbd>A</kbd> drücken und loslassen, und dann <kbd>Umschalt</kbd>+<kbd>B</kbd> drücken und loslassen. Genauso wird jeder Tastenname, der von geschweiften Klammern umschlossen ist, standardmäßig gedrückt und losgelassen. <code>Send "{Ctrl}a"</code> beispielsweise wird <kbd>Strg</kbd> drücken und loslassen, und dann <kbd>A</kbd> drücken und loslassen; vermutlich nicht das, was Sie wollen.</p>
+<p>Alle anderen Zeichen außer <code>^!+#{}</code> werden von Send in die entsprechende Tastenkombination umgewandelt; Send drückt diese Kombination und lässt sie wieder los. Zum Beispiel bewirkt <code>Send "aB"</code>, dass <kbd>A</kbd> gedrückt und losgelassen wird und dann <kbd>Umschalt</kbd>+<kbd>B</kbd> gedrückt und losgelassen wird. Genauso wird jeder Tastenname, der von geschweiften Klammern umschlossen ist, standardmäßig gedrückt und losgelassen. Zum Beispiel bewirkt <code>Send "{Ctrl}a"</code>, dass <kbd>Strg</kbd> gedrückt und losgelassen wird und dann <kbd>A</kbd> gedrückt und losgelassen wird; vermutlich nicht das, was Sie wollen.</p>
 <p>Um eine Taste nur zu drücken (gedrückt zu halten) oder nur loszulassen, umschließen Sie den Tastennamen mit geschweiften Klammern, gefolgt von einem Leerzeichen und dem Wort "down" oder "up". Das folgende Beispiel bewirkt, dass <kbd>Strg</kbd>+<kbd>Feststell</kbd> als Schalter für <kbd>Umschalt</kbd> fungiert:</p>
 <pre>*^CapsLock::{
     if GetKeyState("Shift")
@@ -65,27 +65,27 @@
         Send "{Shift down}"
 }</pre>
 
-<h3>Hotkeys vs. Send</h3>
+<h3 id="Hotkeys_vs_Send">Hotkeys vs. Send</h3>
 <p class="warning"><strong>Warnung:</strong> Hotkeys und Send weisen einige Unterschiede auf, über die Sie sich im Klaren sein sollten.</p>
 <p>Obwohl <a href="../Hotkeys.htm">Hotkeys</a> ebenfalls die Symbole <code>^!+#</code> und die Tastennamen verwenden, gibt es einige wichtige Unterschiede:</p>
 <ul>
   <li>Andere Hotkey-Modifikatorsymbole werden von Send nicht unterstützt. <code>&gt;^a::</code> beispielsweise bedeutet <kbd>RCtrl</kbd>+<kbd>A</kbd>, aber um diese Kombination zu senden, müssen Sie den Tastennamen vollständig ausschreiben, wie in <code>Send "{RCtrl down}a{RCtrl up}"</code>.</li>
   <li>Tastennamen werden innerhalb von Hotkeys nie mit geschweiften Klammern umschlossen, müssen aber bei Send (wenn sie länger als ein Zeichen sind) immer mit geschweiften Klammern umschlossen sein.</li>
-  <li>Send ist Groß-/Kleinschreibung-sensitiv. <code>Send "^A"</code> beispielsweise sendet <kbd>Strg</kbd> in Kombination mit einem <em>großen</em> "a", also <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>A</kbd>. <code>^a::</code> und <code>^A::</code> sind dagegen äquivalent.</li>
+  <li>Send ist Groß-/Kleinschreibung-sensitiv. Zum Beispiel bewirkt <code>Send "^A"</code>, dass <kbd>Strg</kbd> in Kombination mit einem <em>großen</em> "a" gesendet wird, also <kbd>Strg</kbd>+<kbd>Umschalt</kbd>+<kbd>A</kbd>. <code>^a::</code> und <code>^A::</code> sind dagegen äquivalent.</li>
 </ul>
 <p>Der Grund dafür ist, dass Send mehrere Zwecke erfüllt, während Hotkeys für Tastenkombinationen optimiert sind.</p>
 <p>Ergänzend sei angemerkt, dass <a href="../Hotstrings.htm">Hotstrings</a> ausschließlich der Erkennung von Texteingaben dient, so dass die Symbole <code>^!+#{}</code> innerhalb des Auslösetextes keine besondere Bedeutung haben. Allerdings verwendet der <em>Ersatztext</em> eines Hotstrings die gleiche Syntax wie Send (außer wenn die <a href="../Hotstrings.htm#T">T-Option</a> verwendet wird). Jedes Mal, wenn Sie "{" eingeben, während der folgende Hotstring aktiv ist, sendet er "}" und dann <kbd>←</kbd>, um den Textcursor wieder zwischen die geschweiften Klammern zu setzen:</p>
 <pre>:*?B0:{::{}}{Left}</pre>
 
-<h3>Blind-Modus</h3>
-<p>Normalerweise geht Send davon aus, dass alle Modifikatortasten, die Sie physisch gedrückt halten, nicht mit den Tasten kombiniert werden sollten, die Sie senden möchten. Wenn Sie z. B. <kbd>Strg</kbd> gedrückt halten und <code>Send "Hi"</code> ausführen, lässt Send <kbd>Strg</kbd> automatisch los, bevor es "Hi" sendet, und drückt es danach wieder herunter.</p>
+<h3 id="Blind_mode">Blind-Modus</h3>
+<p>Normalerweise geht Send davon aus, dass alle Modifikatortasten, die Sie physisch gedrückt halten, nicht mit den Tasten kombiniert werden sollten, die Sie senden möchten. Wenn Sie z.B. <kbd>Strg</kbd> gedrückt halten und <code>Send "Hi"</code> ausführen, lässt Send <kbd>Strg</kbd> automatisch los, bevor es "Hi" sendet, und drückt es danach wieder herunter.</p>
 <p>Manchmal möchte man einige Tasten in Kombination mit anderen Modifikatoren senden, die zuvor gedrückt oder gesendet wurden. Verwenden Sie dafür das <code>{Blind}</code>-Präfix. Versuchen Sie, während Sie das folgende Beispiel ausführen, einen nicht leeren Texteditor oder ein Eingabefeld zu fokussieren und <kbd>1</kbd> oder <kbd>2</kbd> zu drücken, während Sie <kbd>Strg</kbd> oder <kbd>Strg</kbd>+<kbd>Umschalt</kbd> gedrückt halten:</p>
 <pre>*^1::Send "{Blind}{Home}"
 *^2::Send "{Blind}{End}"</pre>
 <p>Weitere Informationen zum Thema <code>{Blind}</code> finden Sie unter <a href="../lib/Send.htm#Blind">Blind-Modus</a>.</p>
 
-<h3>Sonstige</h3>
-<p>Send unterstützt einige andere spezielle Konstrukte, wie z. B.:</p>
+<h3 id="Others">Sonstige</h3>
+<p>Send unterstützt einige andere spezielle Konstrukte, wie z.B.:</p>
 <ul>
   <li><code>{U+00B5}</code>, um ein Unicodezeichen über dessen Ordinalwert (Zeichencode) zu senden.</li>
   <li><code>{ASC 0181}</code>, um eine Alt+Ziffernblock-Sequenz zu senden.</li>
@@ -93,16 +93,16 @@
 </ul>
 <p>Eine vollständige Liste finden Sie unter <a href="../lib/Send.htm#keynames">Tastennamen</a>.</p>
 
-<h2>Modi und Optionen</h2>
+<h2 id="Modes_and_options">Modi und Optionen</h2>
 <p>Das Senden einer Taste ahmt den Vorgang des physischen Tastendrucks nicht perfekt nach. Das Betriebssystem bietet verschiedene Möglichkeiten zum Senden von Tasten, für die es jeweils unterschiedliche Vorbehalte gibt. Um das gewünschte Ergebnis zu erzielen, genügt es nicht nur, verschiedene Methoden auszuprobieren, sondern auch das Timing zu optimieren.</p>
 <p>Die <a href="../lib/Send.htm#Send_variants">Hauptmethoden</a> sind SendInput, SendEvent und SendPlay. SendInput ist grundsätzlich am zuverlässigsten, daher ist Send standardmäßig synonym mit SendInput. Sie können <a href="../lib/SendMode.htm">SendMode</a> verwenden, um Send stattdessen synonym mit SendEvent oder SendPlay zu machen. In der Dokumentation werden weitere Vor- und Nachteile von <a href="../lib/Send.htm#SendInputDetail">SendInput</a> und <a href="../lib/Send.htm#SendPlayDetail">SendPlay</a> ausführlich beschrieben, aber ich würde vorschlagen, einfach SendEvent oder SendPlay auszuprobieren, wenn Sie Probleme mit SendInput haben.</p>
 <p class="warning"><strong>Warnung:</strong> SendPlay funktioniert in der Regel nicht in modernen Systemen, es sei denn, Sie verwenden <a href="../Program.htm#Installer_uiAccess">UI-Access</a>.</p>
 <p>Eine weitere lohnenswerte Option ist <a href="../lib/ControlSend.htm">ControlSend</a>. Es verwendet keine offizielle Methode zum Senden von Tastendrücken, sondern sendet stattdessen Meldungen direkt an das von Ihnen angegebene Fenster. Der Hauptvorteil davon ist, dass das Fenster normalerweise nicht aktiv sein muss, um diese Meldungen zu empfangen. Da es aber die normale Verarbeitung von Tastatureingaben vom System umgeht, funktioniert es manchmal nicht.</p>
 
-<h3>Timing und Verzögerungen</h3>
+<h3 id="Timing_and_delays">Timing und Verzögerungen</h3>
 <p>Manchmal ist es möglich, eine Flut von Tastendrücken schneller als ein Mensch zu senden, manchmal aber auch nicht. In der Regel gibt es zwei Situationen, wo eine Verzögerung sinnvoll sein könnte:</p>
 <ul>
-  <li>Ein Tastendruck soll eine Änderung in der Zielapplikation bewirken (z. B. um ein neues Steuerelement oder Fenster anzuzeigen). Ein weiterer Tastendruck, bevor die gewollte Änderung eintritt, wäre kontraproduktiv.</li>
+  <li>Ein Tastendruck soll eine Änderung in der Zielapplikation bewirken (z.B. um ein neues Steuerelement oder Fenster anzuzeigen). Ein weiterer Tastendruck, bevor die gewollte Änderung eintritt, wäre kontraproduktiv.</li>
   <li>Die Applikation kann mit der Flut von Tastendrücken nicht mithalten, deshalb müssen Sie diese verlangsamen.</li>
 </ul>
 <p>Für den ersten Punkt können Sie einfach Send, dann <a href="../lib/Sleep.htm">Sleep</a>, dann Send, und so weiter verwenden.</p>
@@ -114,7 +114,7 @@
 <p class="warning"><strong>Warnung:</strong> SendInput unterstützt keine Tastenverzögerungen, ebenso wenig wie das reguläre Send.</p>
 <p>SetKeyDelay funktioniert grundsätzlich nur, wenn Sie entweder <code>SendMode "Event"</code> verwenden oder SendEvent, SendPlay oder ControlSend anstelle von Send oder SendText aufrufen.</p>
 
-<h2>Sehr viel Text senden</h2>
+<h2 id="Sending_a_lot_of_text">Sehr viel Text senden</h2>
 <p>Eine Möglichkeit, mehrere Textzeilen zu senden, ist die Nutzung eines <a href="../Scripts.htm#continuation-section">Fortsetzungsbereichs</a>:</p>
 <pre>SendText "
 (
@@ -123,7 +123,7 @@
     Zeilenumbrüche werden beibehalten,
     es sei denn, Sie verwenden die Join-Option.
 )"</pre>
-<p>Obwohl SendText in der Regel recht schnell ist, muss es jedes Zeichen einzeln senden, während Send in der Regel mindestens doppelt so viele Meldungen senden muss (Taste-Unten <em>und</em> Taste-Oben). Dies führt zu einer spürbaren Verzögerung, wenn eine große Menge an Text gesendet wird. Außerdem ist es weniger zuverlässiger, denn je länger die Verzögerung, desto größer ist das Risiko, dass es zu Konflikten mit Benutzereingaben kommt, sich der Tastaturfokus verschiebt oder sich andere Bedingungen ändern.</p>
+<p>Obwohl SendText in der Regel recht schnell ist, muss es jedes Zeichen nacheinander senden, während Send in der Regel mindestens doppelt so viele Meldungen senden muss (Taste-Unten <em>und</em> Taste-Oben). Dies führt zu einer spürbaren Verzögerung, wenn eine große Menge an Text gesendet wird. Außerdem ist es weniger zuverlässiger, denn je länger die Verzögerung, desto größer ist das Risiko, dass es zu Konflikten mit Benutzereingaben kommt, sich der Tastaturfokus verschiebt oder sich andere Bedingungen ändern.</p>
 <p>In der Regel ist es schneller und zuverlässiger, wenn man den Text stattdessen in die Zwischenablage kopiert und <em>einfügt</em>. Zum Beispiel:</p>
 <pre>^1::{
     old_clip := ClipboardAll()  <em>; Zwischenablage speichern</em>

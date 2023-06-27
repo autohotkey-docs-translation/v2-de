@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Loop Parse - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die Loop-Parse-Anweisung ruft Teile (Felder) einer Zeichenkette einzeln ab." />
+<meta name="description" content="Die Loop-Parse-Anweisung ruft Teile (Felder) einer Zeichenkette nacheinander ab." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>Loop Parse</h1>
 
-<p>Ruft Teile (Felder) einer Zeichenkette einzeln ab.</p>
+<p>Ruft Teile (Felder) einer Zeichenkette nacheinander ab.</p>
 
 <pre class="Syntax"><span class="func">Loop Parse</span> Zkette <span class="optional">, Trennzeichen, WegzulassendeZeichen</span></pre>
 <h2 id="Parameters">Parameter</h2>
@@ -28,15 +28,15 @@
   <dt>Trennzeichen</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Wenn dieser Parameter weggelassen wird oder leer ist, wird jedes Zeichen der eingehenden Zeichenkette als einzelne Teilzeichenkette behandelt.</p>
-      <p id="CSV">Wenn dieser Parameter <code>"CSV"</code> ist, geht die Schleife davon aus, dass die Zeichenkette kommagetrennte Werte enthält (Comma-Separated Values). Das folgende Beispiel ist eine CSV-Zeile, die mit MS-Excel erstellt wurde:</p>
-<pre class="no-highlight">"Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in direkt geschriebenen Anführungszeichen",,"Letztes Feld, das ein direkt geschriebenes Komma hat"</pre>
-      <p>Ansonsten kann <em>Trennzeichen</em> ein oder mehrere Zeichen enthalten (Groß-/Kleinschreibung-sensitiv), um zu bestimmen, wo die Abgrenzungen zwischen den Teilzeichenketten erfolgen sollen.</p>
-      <p>Die Trennzeichen selbst werden nicht als Teil der Teilzeichenkette angesehen. Wenn zwischen zwei Trennzeichen nichts finden ist, wird die entsprechende Teilzeichenkette leer sein.</p>
+      <p>Wenn leer oder weggelassen, wird jedes Zeichen der eingehenden Zeichenkette als einzelne Teilzeichenkette behandelt.</p>
+      <p id="CSV">Wenn dieser Parameter <code>"CSV"</code> ist, geht die Schleife davon aus, dass die Zeichenkette kommagetrennte Werte enthält (Comma-Separated Values). Das folgende Beispiel ist eine CSV-Zeile, die mit MS Excel erstellt wurde:</p>
+<pre class="no-highlight">"Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in direkt geschriebenen Anführungszeichen",,"Letztes Feld, mit direkt geschriebenem Komma"</pre>
+      <p>Andernfalls geben Sie für <em>Trennzeichen</em> ein oder mehrere Zeichen an (Groß-/Kleinschreibung-sensitiv), um zu bestimmen, wo die Grenzen zwischen den Teilzeichenketten liegen.</p>
+      <p>Die Trennzeichen selbst werden nicht als Teil der Teilzeichenkette betrachtet. Wenn zwischen zwei Trennzeichen nichts finden ist, wird die entsprechende Teilzeichenkette leer sein.</p>
       <p>Zum Beispiel: <code>','</code> (ein Komma) würde die Zeichenkette jeweils bei einem Komma teilen. Im Vergleich dazu würde <code>A_Tab A_Space</code> eine neue Teilzeichenkette erstellen, wann immer ein Leer- oder Tabulatorzeichen in der Zeichenkette gefunden wird.</p>
       <p>Um eine Zeichenkette anstelle eines Zeichens als Trennung zu verwenden, verwenden Sie zunächst <a href="StrReplace.htm">StrReplace</a>, um alle Vorkommen der Zeichenkette mit einem einzelnen Zeichen zu ersetzen, das nie im Text genutzt wird. Zum Beispiel: ¢¤¥¦§©ª«®µ¶. Das folgende Beispiel zeigt, wie die Zeichenkette &lt;br&gt; als Trennung verwendet werden kann:</p>
       <pre>NeueHTML := StrReplace(HTMLZkette, "&lt;br&gt;", "¢")
-Loop Parse, NeueHTML, "¢" <em>; Parst die Zeichenkette basierend auf dem Cent-Symbol.</em>
+Loop Parse, NeueHTML, "¢" <em>; Die Zeichenkette via Cent-Symbol parsen.</em>
 {
 ...
 }</pre>
@@ -45,19 +45,19 @@ Loop Parse, NeueHTML, "¢" <em>; Parst die Zeichenkette basierend auf dem Cent-S
   <dt>WegzulassendeZeichen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine optionale Liste mit Zeichen (Groß-/Kleinschreibung-sensitiv), die bei jeder Teilzeichenkette am Anfang und Ende entfernt werden sollen. Wenn <em>WegzulassendeZeichen</em> beispielsweise <code>A_Space A_Tab</code> wäre, wird bei jeder abgerufenen Teilzeichenkette Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
-    <p>Wenn <em>Trennzeichen</em> leer ist, gibt <em>WegzulassendeZeichen</em> an, welche Zeichen ignoriert werden sollen (die Schleife wird diese nicht sehen).</p>
+    <p>Eine optionale Liste von Zeichen (Groß-/Kleinschreibung-sensitiv), die bei jeder Teilzeichenkette am Anfang und Ende entfernt werden sollen. Wenn <em>WegzulassendeZeichen</em> beispielsweise <code>A_Space A_Tab</code> wäre, wird bei jeder abgerufenen Teilzeichenkette Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
+    <p>Wenn <em>Trennzeichen</em> leer ist, gibt <em>WegzulassendeZeichen</em> an, welche Zeichen ignoriert werden (die Schleife wird diese nicht sehen).</p>
   </dd>
 
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Eine zeichenkettenparsende Schleife ist nützlich, wenn Sie alle Felder in einer Zeichenkette einzeln abarbeiten wollen. Eine parsende Schleife verbraucht weniger Speicher als <a href="StrSplit.htm">StrSplit</a> (obwohl in beiden Fällen die Speichernutzung temporär ist) und ist in den meisten Fällen leichter zu verwenden.</p>
+<p>Eine parsende Schleife ist nützlich, wenn alle Felder in einer Zeichenkette nacheinander abgearbeitet werden sollen. Eine parsende Schleife verbraucht weniger Speicher als <a href="StrSplit.htm">StrSplit</a> (obwohl in beiden Fällen die Speichernutzung temporär ist) und ist in den meisten Fällen leichter zu verwenden.</p>
 <p id="LoopField">Die interne Variable <strong>A_LoopField</strong> ist nur in einer parsenden Schleife von Bedeutung. Sie enthält den Inhalt der aktuellen Teilzeichenkette (Feld). Wenn eine innere parsende Schleife von einer äußeren parsenden Schleife umschlossen ist, hat das Feld der innersten Schleife Vorrang.</p>
-<p>Zwar gibt es nicht die interne Variable "A_LoopDelimiter", allerdings zeigt das Beispiel ganz unten, wie man ermitteln kann, welche Trennung bei jedem Feld verwendet wurde.</p>
+<p>Es gibt keine interne Variable namens A_LoopDelimiter, allerdings zeigt das Beispiel ganz unten, wie man herausfindet, welche Trennung für jedes Feld verwendet wurde.</p>
 <p>Die Zeichenkette oder ihre Felder können eine unbegrenzte Größe haben.</p>
 <p>Mit der <a href="Sort.htm">Sort</a>-Funktion können die Felder vor dem Parsen neu angeordnet werden.</p>
-<p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (sie können in jeder Schleifenvariante verwendet werden).</p>
+<p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (die in jeder Schleifenvariante verwendet werden kann).</p>
 <p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung erfolgen, die ausgeführt wird, wenn die Schleife null Iterationen hatte. Beachten Sie, dass die Schleife immer mindestens eine Iteration hat, es sei denn, <em>Zkette</em> ist leer oder <em>Trennzeichen</em> wird weggelassen und alle Zeichen in <em>Zkette</em> sind in <em>WegzulassendeZeichen</em> enthalten.</p>
 
 <h2 id="Related">Siehe auch</h2>
@@ -74,8 +74,8 @@ Loop parse, Farben, ","
 </div>
 
 <div class="ex" id="ExFileRead">
-<p><a class="ex_number" href="#ExFileRead"></a> Liest den Inhalt einer Variable zeilenweise aus (so ähnlich wie eine <a href="LoopRead.htm">dateilesende</a> Schleife). Mit <a href="FileRead.htm">FileRead</a> kann eine Datei in eine Variable geladen werden.</p>
-<pre>Loop parse, DateiInhalt, "`n", "`r"  <em>; Durch die Angabe von `n vor `r können sowohl Windows- als auch Unix-Dateien geparst werden.</em>
+<p><a class="ex_number" href="#ExFileRead"></a> Liest den Inhalt einer Variable zeilenweise aus (ähnlich einer <a href="LoopRead.htm">dateilesenden Schleife</a>). Mit <a href="FileRead.htm">FileRead</a> kann eine Datei in eine Variable geladen werden.</p>
+<pre>Loop parse, DateiInhalt, "`n", "`r"  <em>; Durch Angabe von `n vor `r können sowohl Windows- als auch Unix-Dateien geparst werden.</em>
 {
     Ergebnis := MsgBox("Zeilennummer " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
 }
@@ -83,7 +83,7 @@ until Ergebnis = "No"</pre>
 </div>
 
 <div class="ex" id="ExClipboard">
-<p><a class="ex_number" href="#ExClipboard"></a> Dieses Beispiel ist das gleiche wie oben, außer dass es für die Zwischenablage ist. Es ist nützlich, wann immer die Zwischenablage Dateien enthält, wie z. B. solche, die von einem offenen Explorer-Fenster kopiert wurden (das Programm wandelt solche Dateien automatisch in ihre Dateinamen um).</p>
+<p><a class="ex_number" href="#ExClipboard"></a> Dies ist dasselbe wie das Beispiel oben, aber für die <a href="A_Clipboard.htm">Zwischenablage</a>. Es ist nützlich, wenn sich in der Zwischenablage Dateien befinden, die z.B. aus einem geöffneten Explorer-Fenster kopiert wurden (das Programm wandelt solche Dateien automatisch in ihre Dateinamen um).</p>
 <pre>Loop parse, A_Clipboard, "`n", "`r"
 {
     Ergebnis := MsgBox("Dateinummer " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
@@ -92,7 +92,7 @@ until Ergebnis = "No"</pre>
 </div>
 
 <div class="ex" id="ExCSV">
-<p><a class="ex_number" href="#ExCSV"></a> Parst eine Datei mit kommagetrennten Werten (CSV).</p>
+<p><a class="ex_number" href="#ExCSV"></a> Parst eine Datei, die kommagetrennte Werte enthält (CSV).</p>
 <pre>Loop read, "C:\Datenbank-Export.csv"
 {
     ZeileNummer := A_Index
@@ -107,16 +107,16 @@ until Ergebnis = "No"</pre>
 
 <div class="ex" id="ExDelimiter">
 <p><a class="ex_number" href="#ExDelimiter"></a> Ermittelt, welche Trennung verwendet wurde.</p>
-<pre><em>; Initialisiert die zu durchsuchenden Zeichenkette.</em>
+<pre><em>; Zeichenkette zum Durchsuchen initialisieren.</em>
 Farben := "Rot,Grün|Blau;Gelb|Cyan,Magenta"
-<em>; Initialisiert einen Zähler, um unsere aktuelle Zeichenkettenposition im Auge zu behalten.</em>
+<em>; Zähler für aktuelle Zeichenkettenposition initialisieren.</em>
 Position := 0
 
 Loop Parse, Farben, ",|;"
 {
-    <em>; Berechnet die Position der Trennung am Ende dieses Feldes.</em>
+    <em>; Position der Trennung am Ende dieses Feldes berechnen.</em>
     Position += StrLen(A_LoopField) + 1
-    <em>; Ermittelt die Trennung, die von der parsenden Schleife gefunden wurde.</em>
+    <em>; Trennung abrufen, die von der parsenden Schleife gefunden wurde.</em>
     Trennung := SubStr(Farben, Position, 1)
 
     MsgBox "Feld: " A_LoopField "`nTrennung: " Trennung

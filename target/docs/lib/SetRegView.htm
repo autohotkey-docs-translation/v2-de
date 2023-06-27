@@ -21,8 +21,8 @@
   <dt>RegAnsicht</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Geben Sie <strong>32</strong> an, um die Registry aus Sicht einer 32-Bit-Anwendung zu sehen, oder <strong>64</strong>, um die Registry aus Sicht einer 64-Bit-Anwendung zu sehen.</p>
-      <p>Mit dem Wort <strong>Default</strong> wird das normale Verhalten wiederhergestellt.</p>
+      <p>Geben Sie <strong>32</strong> an, um die Registry aus Sicht einer 32-Bit-Anwendung zu behandeln, oder <strong>64</strong>, um die Registry aus Sicht einer 64-Bit-Anwendung zu behandeln.</p>
+      <p>Geben Sie das Wort <strong>Default</strong> an, um das normale Verhalten wiederherzustellen.</p>
   </dd>
 
 </dl>
@@ -33,10 +33,10 @@
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Diese Funktion ist nur in der 64-Bit-Version von Windows nützlich. In der 32-Bit-Version von Windows hat SetRegView keine Wirkung.</p>
-<p>In einem 64-Bit-Betriebssystem werden 32-Bit-Anwendungen über das Untersystem von Windows namens <a href="https://learn.microsoft.com/windows/win32/winprog64/running-32-bit-applications">WOW64</a> ausgeführt. Standardmäßig leitet das System bestimmte <a href="https://learn.microsoft.com/windows/win32/winprog64/shared-registry-keys">Registry-Schlüssel</a> weiter, um Konflikte zu vermeiden. Zum Beispiel wird in einem 32-Bit-Skript <code>HKLM\SOFTWARE\AutoHotkey</code> nach <code>HKLM\SOFTWARE\Wow6432Node\AutoHotkey</code> weitergeleitet. SetRegView bewirkt, dass Registry-Funktionen in einem 32-Bit-Skript auf die 64-Bit-Registry-Ansicht zugreifen können und umgekehrt.</p>
+<p>In einem 64-Bit-System werden 32-Bit-Anwendungen über das Windows-Subsystem namens <a href="https://learn.microsoft.com/windows/win32/winprog64/running-32-bit-applications">WOW64</a> ausgeführt. Standardmäßig leitet das System bestimmte <a href="https://learn.microsoft.com/windows/win32/winprog64/shared-registry-keys">Registry-Schlüssel</a> weiter, um Konflikte zu vermeiden. Zum Beispiel wird in einem 32-Bit-Skript <code>HKLM\SOFTWARE\AutoHotkey</code> zu <code>HKLM\SOFTWARE\Wow6432Node\AutoHotkey</code> weitergeleitet. SetRegView bewirkt, dass Registry-Funktionen in einem 32-Bit-Skript auf die 64-Bit-Registry-Ansicht zugreifen können und umgekehrt.</p>
 
 <p>Die interne Variable <strong>A_RegView</strong> enthält die aktuelle Einstellung.</p>
-<p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z. B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) verwendet vorerst die Standardeinstellung der Funktion. Um diese zu ändern, nutzen Sie die Funktion während der <a href="../Scripts.htm#auto">Startphase des Skripts</a>.</p>
+<p>Jeder neu gestartete <a href="../misc/Threads.htm">Thread</a> (z.B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) verwendet vorerst die Standardeinstellung der Funktion. Um diese zu ändern, nutzen Sie die Funktion während der <a href="../Scripts.htm#auto">Startphase des Skripts</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegCreateKey.htm">RegCreateKey</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a>, <a href="LoopReg.htm">Loop Reg</a></p>
@@ -45,26 +45,26 @@
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Zeigt, wie eine bestimmte Registry-Ansicht gesetzt werden kann und wie die Registry-Weiterleitung das Skript beeinflusst.</p>
 <pre>
-<em>; Greift auf die Registry zu, wie es eine 32-Bit-Anwendung tun würde.</em>
+<em>; Auf die Registry aus Sicht einer 32-Bit-Anwendung zugreifen.</em>
 SetRegView 32
 RegWrite "REG_SZ", "HKLM\SOFTWARE\Test.ahk", "Wert", 123
 
-<em>; Greift auf die Registry zu, wie es eine 64-Bit-Anwendung tun würde.</em>
+<em>; Auf die Registry aus Sicht einer 64-Bit-Anwendung zugreifen.</em>
 SetRegView 64
 Wert := RegRead("HKLM\SOFTWARE\Wow6432Node\Test.ahk", "Wert")
 RegDelete "HKLM\SOFTWARE\Wow6432Node\Test.ahk"
 
 MsgBox "Gelesener Wert '" Wert '" via Wow6432Node."
 
-<em>; Stellt die Standard-Registry-Ansicht wieder her, je
-; nachdem, ob das Skript im 32-Bit- oder 64-Bit-Format ist.</em>
+<em>; Standard-Registry-Ansicht wiederherstellen,
+; je nachdem, ob das Skript 32-Bit oder 64-Bit ist.</em>
 SetRegView "Default"
 <em>;...</em>
 </pre>
 </div>
 
 <div class="ex" id="Ex32Or64">
-<p><a class="ex_number" href="#Ex32Or64"></a> Zeigt, wie der Typ der EXE und des Betriebssystems, auf dem das Skript läuft, erkannt werden kann.</p>
+<p><a class="ex_number" href="#Ex32Or64"></a> Zeigt, wie der EXE-Typ und das Betriebssystem, auf dem das Skript läuft, erkannt werden können.</p>
 <pre>if (A_PtrSize = 8)
     Skript_ist := "64-Bit"
 else <em>; if (A_PtrSize = 4)</em>

@@ -13,9 +13,9 @@
 
 <h1>ControlFocus</h1>
 
-<p>Setzt den Eingabefokus auf das angegebene Steuerelement innerhalb eines Fensters.</p>
+<p>Setzt den Eingabefokus auf ein bestimmtes Steuerelement innerhalb eines Fensters.</p>
 
-<pre class="Syntax"><span class="func">ControlFocus</span> Steuerelement <span class="optional">, FensterTitel, FensterText, IgnoriereTitel, IgnoriereText</span></pre>
+<pre class="Syntax"><span class="func">ControlFocus</span> Steuerelement <span class="optional">, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -25,28 +25,10 @@
     <p>ClassNN-Bezeichnung, Text oder HWND-Nummer des Steuerelements, oder ein Objekt mit einer <code>Hwnd</code>-Eigenschaft. Einzelheiten finden Sie unter <a href="Control.htm#Parameter">Der Steuerelement-Parameter</a>.</p>
   </dd>
 
-  <dt>FensterTitel</dt>
+  <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Der Titel oder andere Möglichkeiten zum Identifizieren des Zielfensters. Weitere Informationen finden Sie unter <a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>.</p>
-  </dd>
-
-  <dt>FensterText</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine Zeichenkette, die in einem der Textelemente des Zielfensters enthalten ist (eventuell vorhandene Textelemente können mit dem internen Tool Window Spy aufgedeckt werden). Versteckte Textelemente werden nur erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet ist.</p>
-  </dd>
-
-  <dt>IgnoriereTitel</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Alle Fenster, die diesen Wert in ihren Titeln enthalten, werden ignoriert.</p>
-  </dd>
-
-  <dt>IgnoriereText</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Alle Fenster, die diesen Wert in ihren Textelementen enthalten, werden ignoriert.</p>
+    <p>Wenn jeder dieser Parameter ungesetzt ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> ein <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" aufgedeckt werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
   </dd>
 
 </dl>
@@ -55,17 +37,17 @@
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster oder Steuerelement nicht gefunden werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Um die gewünschte Wirkung zu erzielen, darf das Fenster des Steuerelements weder minimiert noch versteckt sein.</p>
+<p>Um den gewünschten Effekt zu erzielen, darf das Fenster des Steuerelements weder minimiert noch versteckt sein.</p>
 <p>Um die Zuverlässigkeit der Funktion zu verbessern, erfolgt jedes Mal, wenn sie durchgeführt wurde, automatisch eine Verzögerung. Diese Verzögerung kann via <a href="SetControlDelay.htm">SetControlDelay</a> geändert werden.</p>
 <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
-<p id="WM_NEXTDLGCTL">Wenn ein Steuerelement durch eine Benutzereingabe fokussiert wird (z. B. durch Drücken der Tabulatortaste), werden zusätzliche Effekte angewendet, die unabhängig vom fokussierten Steuerelement sind. Diese Effekte werden nicht von ControlFocus angewendet, daher gelten die folgenden Einschränkungen:</p>
+<p id="WM_NEXTDLGCTL">Wenn ein Steuerelement durch eine Benutzereingabe fokussiert wird (z.B. durch Drücken der Tabulatortaste), werden zusätzliche Effekte unabhängig vom fokussierten Steuerelement angewendet. Diese Effekte werden nicht von ControlFocus angewendet, daher gelten die folgenden Einschränkungen:</p>
 <ul>
   <li>Beim Fokussieren einer Schaltfläche wird diese nicht automatisch zur Standardschaltfläche gemacht (normalerweise geschieht das nur, wenn eine Schaltfläche durch eine Benutzereingabe fokussiert wird). Die Standardschaltfläche kann üblicherweise durch Drücken der Eingabetaste aktiviert werden.</li>
   <li>Wenn eine Benutzereingabe zuvor eine kurzzeitige Änderung der Standardschaltfläche bewirkt hat, wird beim Fokussieren eines Steuerelements, das keine Schaltfläche ist, die Standardhervorhebung nicht automatisch auf die eigentliche Standardschaltfläche zurückgesetzt. Drückt man dann die Eingabetaste, kann es passieren, dass die Standardschaltfläche aktiviert wird, obwohl sie nicht hervorgehoben ist.</li>
-  <li>Beim Fokussieren eines Eingabefeldes wird dessen Text nicht automatisch markiert. Stattdessen wird die Einfügemarke (der Textcursor) in der Regel dort positioniert, wo sie sich beim letzten Mal befand, als das Steuerelement den Fokus hatte.</li>
+  <li>Beim Fokussieren eines Eingabefeldes wird dessen Text nicht automatisch markiert. Stattdessen wird die Einfügemarke (Textcursor) in der Regel an der Stelle positioniert, an der sie sich befand, als das Steuerelement zuletzt den Fokus hatte.</li>
 </ul>
 <p>Die <a href="https://learn.microsoft.com/windows/win32/dlgbox/wm-nextdlgctl">WM_NEXTDLGCTL</a>-Meldung kann verwendet werden, um das Steuerelement zu fokussieren und diese zusätzlichen Effekte anzuwenden. Zum Beispiel:</p>
-<pre>WinExist("A") <em>; Setzt das zuletzt gefundene Fenster auf das aktive Fenster</em>
+<pre>WinExist("A") <em>; Macht das aktive Fenster zum zuletzt gefundenen Fenster </em>
 ControlGet, StrlmntHwnd, Hwnd,, Button1  <em>; Holt HWND der ersten Schaltfläche</em>
 SendMessage, 0x0028, StrlmntHwnd, True  <em>; 0x0028 ist WM_NEXTDLGCTL</em></pre>
 
