@@ -15,6 +15,35 @@
 <p><a href="v2-changes.htm">Änderungen von v1.1 bis v2.0</a> behandelt die Unterschiede zwischen v1.1 und v2.0.</p>
 <p>Alle technischen Einzelheiten zu den Änderungen finden Sie auf <a href="https://github.com/AutoHotkey/AutoHotkey/tree/alpha">GitHub</a>.</p>
 
+<h2 id="v2.0.4">2.0.4 - 3. Juli 2023</h2>
+<p>Geändert: Die Reload-Schaltfläche in Fehler-/Warndialogfenstern schließt das Fenster nun explizit, auch dann, wenn die aktuelle Skriptinstanz nicht terminiert ist.</p>
+<p>Entfernt: Eine Optimierung für <code>return var</code>, die dazu führte, dass die Variable beim Zugriff innerhalb eines <code>finally</code>-Blocks leer erschien.</p>
+<p>Behoben: Default (Switch) erlaubt nun Leerzeichen vor dem Doppelpunkt.</p>
+<p>Behoben: Array.Prototype.RemoveAt gibt nun den entfernten Wert zurück, wenn Länge mit <code>unset</code> oder <code>var?</code> "explizit weggelassen" wird.</p>
+<p>Behoben: Kein Absturz mehr, wenn ein ComObject an eine For-Schleife übergeben wird, bei der nur die zweite Variable angegeben ist.</p>
+<p><strong>Änderungen von v1.1.37.00 und v1.1.37.01 übernommen:</strong></p>
+<p>Geändert: COM-Methodenaufrufe und -Eigenschaftsaufrufe übergeben große Integer nun als VT_I8, nicht mehr als VT_R8 (Floating-Point), um den ursprünglichen Typ und die Genauigkeit beizubehalten. Integer im 32-Bit-Bereich werden weiterhin als VT_I4 übergeben.</p>
+<p>Hinzugefügt: Unterstützung für Multi-Variablen-Enumeratoren (For-Schleifen) mit IDispatch-gewrappten AutoHotkey-Objekten. Sowohl das Skript, das das Objekt aufruft, als auch das Objekt selbst müssen mit einer unterstützten AutoHotkey-Version ausgeführt werden.</p>
+<p>Behoben: Weggelassene Parameter erhalten nun ihre Standardwerte und nicht mehr den Marker "optionales Argument", wenn eine AutoHotkey-Methode über IDispatch (COM) aufgerufen wird. Die umgekehrte Übersetzung wurde bereits in früheren Versionen beim <em>Aufruf</em> von COM-Methoden durchgeführt.</p>
+<p>Behoben: <code>VerCompare(a, "&gt;" b)</code> und geringfügige Reduzierung der Codegröße.</p>
+<p>Behoben: AltTab-bezogene Ladezeitfehler sind nun konsistent mit anderen Fehlern.</p>
+<p>Behoben: Fehler, die durch einen ComObject-Wrapper ausgelöst werden, wurden nicht korrekt weitergegeben, wenn dieser über ein Objekt/COM aufgerufen wird.</p>
+<p>Behoben: Das Hotkey-GUI-Steuerelement erlaubt nun das Setzen der Symbole <code>^</code>, <code>!</code> und <code>+</code> als Hotkeys.</p>
+<p>Behoben: Das Hotkey-Steuerelement inkludiert nun Modifikatoren, wenn sein Wert auf ein Symbol gesetzt ist.</p>
+<p>Behoben: Mögliches Fehlverhalten von InputHook.KeyOpt() bei einzelnen Zeichen.</p>
+<ul>
+<li>Die Entfernung einer Option hat potenziell keinen Einfluss auf den entsprechenden SC.</li>
+<li>Optionen, die potenziell auch auf sc000 angewendet werden.</li>
+</ul>
+<p>Behoben: Ein Bug bei benutzerdefinierten Kombos, bei dem ein Satz von Hotkeys wie <code>a &amp; b::</code>, <code>a::</code> und <code>a up::</code> das Loslassen von <kbd>a</kbd> nicht unterdrücken konnte, wenn <code>a::</code> allein mit #HotIf deaktiviert wurde.</p>
+<p>Behoben: Ein Bug, bei dem ein Taste-Unten-Ereignis korrekt durch einen Hotkey unterdrückt wurde, aber das Senden eines zusätzlichen Taste-Unten mit SendLevel &gt; 0 verhinderte, dass das nachfolgende Taste-Oben unterdrückt wurde, selbst wenn das gesendete Ereignis aufgrund von #InputLevel ignoriert wurde.</p>
+<p>Behoben: <code>a &amp; b up::</code> unterdrückte <kbd>b</kbd> nicht, wenn <code>a &amp; b::</code> vorhanden, aber durch #HotIf deaktiviert ist.</p>
+<p>Behoben: Hotkeys wurden aufgrund einer Race Condition nicht ausgelöst. Wenn ein Modifikator-Hotkey wie <code>~*RWin::</code> zu früh Send oder GetKeyState aufruft, kann das System melden, dass RWin nicht unten ist, wodurch der Modifikatorstatus des Hooks "korrigiert" wird und Hotkeys fälschlicherweise ausgelöst oder nicht ausgelöst werden. Dies trat wahrscheinlich nur auf, wenn ein anderer Tastatur-Hook vor dem Hook des Skripts installiert wurde, da in diesem Fall das System den Status der Tasten nicht aktualisiert, bis der Thread des anderen Hooks fortgesetzt wird und zurückkehrt.</p>
+<p>Behoben: Hotstrings verwenden nun das Zuletzt Gefundene Fenster von #HotIf.</p>
+<p>Behoben: Der Versuch, den Tastatur- oder Maus-Hook neu zu installieren, schlug fehl, wenn das System den Hook automatisch deinstalliert hat. Nach wie vor müssen bestimmte Bedingungen erfüllt sein, bevor ein solcher Versuch unternommen werden kann.</p>
+<p>Optimiert: Speicherreservierung von zwischengespeicherten COM-Eigenschaftsnamen für internes IDispatch.</p>
+<p>Code überarbeitet: Unterstützung einer Build-Konfiguration für AutoHotkey als DLL.</p>
+
 <h2 id="v2.0.3">2.0.3 - 19. Juni 2023</h2>
 <p>Behoben: <code>Hotkey("a", "b")</code> verwendet nun die Originalfunktion von "b", nicht "a". [PR #318]</p>
 <p>Behoben: FileSetAttrib stürzt nicht mehr ab, wenn es in einer dateilesenden Schleife verwendet wird. [PR #323]</p>
