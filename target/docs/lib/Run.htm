@@ -28,7 +28,7 @@ ExitCode := <span class="func">RunWait</span>(Ziel <span class="optional">, Arbe
   <dt>Ziel</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Ein Dokument, eine URL, eine ausführbare Datei (.exe, .com, .bat usw.), eine Verknüpfung (.lnk) oder ein <a href="#verbs">Systemverb</a> (siehe Bemerkungen). Wenn <em>Ziel</em> eine lokale Datei ohne Pfadangabe ist, wird zuerst <a href="../Variables.htm#WorkingDir">A_WorkingDir</a> durchsucht. Wenn die Datei dort nicht gefunden wird, wird das System nach ihr suchen und sie gegebenenfalls starten, wenn sie integriert ("bekannt") ist, z.B. weil sie in einem der PATH-Ordner enthalten ist.</p>
+      <p>Ein Dokument, eine URL, eine ausführbare Datei (.exe, .com, .bat usw.), eine Verknüpfung (.lnk), eine <a href="#CLSID">CLSID</a> oder ein <a href="#verbs">Systemverb</a> (siehe Bemerkungen). Wenn <em>Ziel</em> eine lokale Datei ohne Pfadangabe ist, wird zuerst <a href="../Variables.htm#WorkingDir">A_WorkingDir</a> durchsucht. Wenn die Datei dort nicht gefunden wird, wird das System nach ihr suchen und sie gegebenenfalls starten, wenn sie integriert ("bekannt") ist, z.B. weil sie in einem der PATH-Ordner enthalten ist.</p>
       <p>Um Parameter zu übergeben, fügen Sie diese wie folgt direkt nach dem Programm- oder Dokumentnamen hinzu:</p>
       <pre>Run 'MeinProgramm.exe Param1 Param2'</pre>
       <p>Wenn der Programm-/Dokumentname oder ein Parameter Leerzeichen enthält, ist es am sichersten, ihn wie folgt in doppelte Anführungszeichen zu setzen (obwohl es in einigen Fällen auch ohne geht):</p>
@@ -38,13 +38,13 @@ ExitCode := <span class="func">RunWait</span>(Ziel <span class="optional">, Arbe
   <dt>ArbeitVerz</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Wenn ungesetzt oder weggelassen, wird das Arbeitsverzeichnis des Skripts verwendet (<a href="../Variables.htm#WorkingDir">A_WorkingDir</a>). Andernfalls geben Sie das Arbeitsverzeichnis für <em>Ziel</em> an.</p>
+      <p>Wenn leer oder weggelassen, wird das Arbeitsverzeichnis des Skripts verwendet (<a href="../Variables.htm#WorkingDir">A_WorkingDir</a>). Andernfalls geben Sie das Arbeitsverzeichnis für <em>Ziel</em> an.</p>
   </dd>
 
   <dt>Optionen</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Wenn ungesetzt oder weggelassen, wird <em>Ziel</em> normal gestartet. Andernfalls geben Sie eine oder mehrere der folgenden Optionen an:</p>
+      <p>Wenn leer oder weggelassen, wird <em>Ziel</em> normal gestartet. Andernfalls geben Sie eine oder mehrere der folgenden Optionen an:</p>
       <p><strong>Max:</strong> Maximiert starten</p>
       <p><strong>Min:</strong> Minimiert starten</p>
       <p><strong>Hide:</strong> Versteckt starten (kann nicht zusammen mit einem der obigen verwendet werden)</p>
@@ -54,7 +54,7 @@ ExitCode := <span class="func">RunWait</span>(Ziel <span class="optional">, Arbe
   <dt>&amp;AusgabeVarPID</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#variable-references">VarRef</a></p>
-      <p>Wenn ungesetzt oder weggelassen, wird keine Ausgabevariable verwendet. Andernfalls geben Sie eine Referenz an, die auf eine Ausgabevariable verweist, in der die eindeutige <a href="../misc/WinTitle.htm#ahk_pid">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte. Dies geschieht in der Regel, wenn ein Systemverb, ein Dokument oder eine Verknüpfung anstelle einer direkt ausführbaren Datei gestartet wird. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> geprüft werden (andernfalls wäre die PID ungültig, weil der Prozess nach der Ausführung von RunWait nicht mehr existiert).</p>
+      <p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie eine Referenz an, die auf eine Ausgabevariable verweist, in der die eindeutige <a href="../misc/WinTitle.htm#ahk_pid">Prozess-ID (PID)</a> des neu gestarteten Programms gespeichert werden soll. Die Variable wird leer gemacht, wenn die PID nicht ermittelt werden konnte. Dies geschieht in der Regel, wenn ein Systemverb, ein Dokument oder eine Verknüpfung anstelle einer direkt ausführbaren Datei gestartet wird. RunWait unterstützt diesen Parameter auch, allerdings muss seine <em>AusgabeVarPID</em> in einem <a href="../misc/Threads.htm">anderen Thread</a> geprüft werden (andernfalls wäre die PID ungültig, weil der Prozess nach der Ausführung von RunWait nicht mehr existiert).</p>
       <p>Nachdem die Run-Funktion eine PID abgerufen hat, ist es möglich, dass die vom Prozess zu erstellenden Fenster noch nicht existieren. Um auf mindestens eines dieser Fenster zu warten, verwenden Sie <code><a href="WinWait.htm">WinWait</a> "ahk_pid " AusgabeVarPID</code>.</p>
   </dd>
 
@@ -76,9 +76,10 @@ catch
 <p>Wenn ein Programm via <a href="../Variables.htm#ComSpec">ComSpec</a> (cmd.exe) gestartet wird, um z.B. die Ein- oder Ausgabe des Programms umzuleiten, muss, sofern Leerzeichen im Pfad oder Namen enthalten sind, die komplette Zeichenkette mit einem äußeren Paar von Anführungszeichen umschlossen werden. Im folgenden Beispiel sind die äußeren Anführungszeichen gelb hervorgehoben:</p>
 <pre>Run A_ComSpec ' /c <span class="style3">"</span>"C:\Mein Tool.exe" "param 1" "zweiter param" &gt;"C:\Meine Datei.txt"<span class="style3">"</span>'</pre>
 <p>Die Performanz kann etwas verbessert werden, wenn <em>Ziel</em> ein genauer Pfad ist, wie z.B. <code>Run 'C:\Windows\Notepad.exe "C:\Meine Dokumente\Test.txt"'</code> anstelle von <code>Run "C:\Meine Dokumente\Test.txt"</code>.</p>
-<p>Es können spezielle <a href="../misc/CLSID-List.htm">CLSID-Ordner</a> via Run geöffnet werden. Zum Beispiel:</p>
-<pre>Run "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"  <em>; Öffnet Arbeitsplatz/Computer.</em>
-Run "::{645ff040-5081-101b-9f08-00aa002f954e}"  <em>; Öffnet Papierkorb.</em></pre>
+<p id="CLSID">Es können spezielle <a href="../misc/CLSID-List.htm">CLSIDs</a> via Run geöffnet werden. Die meisten von ihnen können mit dem Präfix shell: geöffnet werden. Einige können auch ohne dieses Präfix geöffnet werden. Zum Beispiel:</p>
+<pre>Run "shell:::{D20EA4E1-3957-11D2-A40B-0C5020524153}"  <em>; Windows-Tools.</em>
+Run "::{20D04FE0-3AEA-1069-A2D8-08002B30309D}"  <em>; Arbeitsplatz/Computer.</em>
+Run "::{645FF040-5081-101B-9F08-00AA002F954E}"  <em>; Papierkorb.</em></pre>
 <p id="verbs">Systemverben beziehen sich auf Aktionen, die im Rechtsklickmenü einer Datei innerhalb des Explorers verfügbar sind. Wenn eine Datei ohne Verb gestartet wird, wird das Standardverb (üblicherweise "open") für diesen bestimmten Dateityp verwendet. Andernfalls geben Sie das Verb vor dem Namen der Zieldatei an. Zurzeit werden folgende Verben unterstützt:</p>
 <table class="info">
   <tr>
@@ -184,9 +185,9 @@ Persistent  <em>; Verhindern, dass sich das Skript beendet, sonst wird das Eigen
 <div class="ex" id="ExCLSID">
 <p><a class="ex_number" href="#ExCLSID"></a> Run kann <a href="../misc/CLSID-List.htm">CLSIDs</a> starten:</p>
 <p>Folgendes öffnet den Papierkorb.</p>
-<pre>Run "::{645ff040-5081-101b-9f08-00aa002f954e}"</pre>
+<pre>Run "::{645FF040-5081-101B-9F08-00AA002F954E}"</pre>
 <p>Folgendes öffnet das "Dieser PC"-Verzeichnis.</p>
-<pre>Run "::{20d04fe0-3aea-1069-a2d8-08002b30309d}"</pre>
+<pre>Run "::{20D04FE0-3AEA-1069-A2D8-08002B30309D}"</pre>
 </div>
 
 <div class="ex" id="ExMultipleCmds">

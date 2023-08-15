@@ -41,8 +41,9 @@ NotwPufGröße      := <span class="func">StrPut</span>(Zkette <span class="opti
   <dt>Länge</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Dies kann ungesetzt sein oder weggelassen werden, wenn <em>Ziel</em> keine reine Speicheradresse ist wenn bekannt ist, dass die Puffergröße ausreicht, z.B. wenn der Pufferspeicher auf Basis eines früheren StrPut-Aufrufs mit derselben <em>Zkette</em> und <em>Codierung</em> reserviert wurde. Andernfalls geben Sie die maximale Anzahl der zu schreibenden <a href="../Concepts.htm#character">Zeichen</a> an, einschließlich des <a href="../Concepts.htm#null-termination">Null-Terminators</a>, falls erforderlich.</p>
+    <p>Die maximale Anzahl der zu schreibenden <a href="../Concepts.htm#character">Zeichen</a>, einschließlich des <a href="../Concepts.htm#null-termination">Null-Terminators</a>, falls erforderlich.</p>
     <p>Wenn <em>Länge</em> 0 oder kleiner als die nach der Konvertierung voraussichtliche Länge (oder die Länge der Quellzeichenkette, wenn die Konvertierung nicht erforderlich ist) ist, wird eine Ausnahme ausgelöst.</p>
+    <p><em>Länge</em> darf nicht weggelassen werden, wenn <em>Ziel</em> eine reine Speicheradresse ist, es sei denn, man weiß, dass die Puffergröße ausreicht, z.B. wenn der Pufferspeicher basierend auf einem vorherigen Aufruf von StrPut, das die gleiche <em>Zkette</em> und <em>Codierung</em> hat, reserviert wurde.</p>
     <p>Wenn <em>Ziel</em> ein Objekt ist, löst eine <em>Länge</em> größer als die Puffergröße, welche über <code><i>Ziel</i>.Size</code> ermittelt wird, einen Fehler aus, auch wenn die umgewandelte Zeichenkette in den Pufferspeicher passen würde.</p>
     <p class="warning"><strong>Hinweis:</strong> Wenn <em>Codierung</em> angegeben ist, muss <em>Länge</em> die Größe des Pufferspeichers (in Zeichen) sein, <strong>nicht</strong> die Länge von <em>Zkette</em> oder einer Teilzeichenkette, da die Umwandlung deren Länge erhöhen kann.</p>
     <p class="warning"><strong>Hinweis:</strong> <em>Länge</em> wird in Zeichen gemessen, während Puffergrößen normalerweise in Bytes gemessen werden, ebenso wie der Rückgabewert von StrPut. Um die Puffergröße in Bytes anzugeben, muss ein <a href="Buffer.htm">Buffer</a>-ähnliches Objekt im <em>Ziel</em>-Parameter verwendet werden.</p>
@@ -51,15 +52,15 @@ NotwPufGröße      := <span class="func">StrPut</span>(Zkette <span class="opti
   <dt>Codierung</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn ungesetzt oder weggelassen, wird die Zeichenkette einfach kopiert oder gemessen, ohne dass eine Umwandlung stattfindet. Andernfalls geben Sie die Zielcodierung an, z.B. <code>"UTF-8"</code>, <code>"UTF-16"</code> oder <code>"CP936"</code>. Bei numerischen Identifikatoren kann das Präfix "CP" nur weggelassen werden, wenn <em>Länge</em> angegeben ist. Geben Sie eine leere Zeichenkette oder <code>"CP0"</code> an, um die Standard-ANSI-Codepage des Systems zu verwenden.</p>
+    <p>Wenn weggelassen, wird die Zeichenkette einfach kopiert oder gemessen, ohne dass eine Umwandlung stattfindet. Andernfalls geben Sie die Zielcodierung an, z.B. <code>"UTF-8"</code>, <code>"UTF-16"</code> oder <code>"CP936"</code>. Für numerische Identifikatoren kann das Präfix "CP" nur im 4-Parameter-Modus weggelassen werden. Geben Sie eine leere Zeichenkette oder <code>"CP0"</code> an, um die Standard-ANSI-Codepage des Systems zu verwenden.</p>
   </dd>
 
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Lässt man <em>Ziel</em> weg, gibt diese Funktion die erforderliche Puffergröße in Bytes zurück, inklusive Platz für den Null-Terminator.</p>
-<p>Wenn <em>Ziel</em> angegeben ist, gibt diese Funktion die Anzahl der geschriebenen Bytes zurück. Ein Null-Terminator wird nur dann geschrieben und zum Rückgabewert hinzugefügt, wenn genügend Platz vorhanden ist, d.h. er wird weggelassen, wenn <em>Länge</em> oder <code><i>Ziel</i>.Size</code> (multipliziert mit der Größe eines Zeichens) exakt mit der Länge der umgewandelten Zeichenkette übereinstimmt.</p>
+<p>Im 4- oder 3-Parameter-Modus gibt diese Funktion die Anzahl der geschriebenen Bytes zurück. Ein Null-Terminator wird nur dann geschrieben und zum Rückgabewert hinzugefügt, wenn genügend Platz vorhanden ist, d.h. er wird weggelassen, wenn <em>Länge</em> oder <code><i>Ziel</i>.Size</code> (multipliziert mit der Größe eines Zeichens) exakt mit der Länge der umgewandelten Zeichenkette übereinstimmt.</p>
+<p>Im 2-Parameter-Modus gibt diese Funktion die erforderliche Puffergröße in Bytes zurück, inklusive Platz für den Null-Terminator.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#ValueError">ValueError</a> ausgelöst, wenn ungültige Parameter erkannt werden, z.B. wenn die umgewandelte Zeichenkette länger als <em>Länge</em> oder <code><i>Ziel</i>.Size</code> ist.</p>

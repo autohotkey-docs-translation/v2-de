@@ -25,27 +25,27 @@
     <p>Eine Zeichenkette, die geparst werden soll.</p>
   </dd>
 
-  <dt>Separatoren</dt>
+  <dt>Trennzeichen</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
       <p>Wenn leer oder weggelassen, wird jedes Zeichen in der Eingabezeichenkette als einzelne Teilzeichenkette behandelt.</p>
       <p id="CSV">Wenn dieser Parameter <code>"CSV"</code> ist, geht die Schleife davon aus, dass die Zeichenkette kommagetrennte Werte enthält (Comma-Separated Values). Das folgende Beispiel ist eine CSV-Zeile, die mit MS Excel erstellt wurde:</p>
 <pre class="no-highlight">"Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in direkt geschriebenen Anführungszeichen",,"Letztes Feld, mit direkt geschriebenem Komma"</pre>
-      <p>Andernfalls geben Sie für <em>Trennzeichen</em> ein oder mehrere Zeichen an (Groß-/Kleinschreibung-sensitiv), um zu bestimmen, wo die Grenzen zwischen den Teilzeichenketten liegen.</p>
-      <p>Die Trennzeichen selbst werden nicht als Teil der Teilzeichenkette betrachtet. Wenn zwischen zwei Trennzeichen nichts finden ist, wird die entsprechende Teilzeichenkette leer sein.</p>
-      <p>Zum Beispiel: <code>','</code> (ein Komma) würde die Zeichenkette jeweils bei einem Komma teilen. Im Vergleich dazu würde <code>A_Tab A_Space</code> eine neue Teilzeichenkette erstellen, wann immer ein Leer- oder Tabulatorzeichen in der Zeichenkette gefunden wird.</p>
-      <p>Um eine Zeichenkette anstelle eines Zeichens als Trennung zu verwenden, verwenden Sie zunächst <a href="StrReplace.htm">StrReplace</a>, um alle Vorkommen der Zeichenkette mit einem einzelnen Zeichen zu ersetzen, das nie im Text genutzt wird. Zum Beispiel: ¢¤¥¦§©ª«®µ¶. Das folgende Beispiel zeigt, wie die Zeichenkette &lt;br&gt; als Trennung verwendet werden kann:</p>
+      <p>Andernfalls geben Sie ein oder mehrere Zeichen an (Groß-/Kleinschreibung-sensitiv), die jeweils zur Abgrenzung der Teilzeichenketten verwendet werden.</p>
+      <p>Die Trennzeichen selbst werden nicht als Teil der Teilzeichenkette betrachtet. Wenn sich zwischen zwei Trennzeichen in der Eingabezeichenkette nichts befindet, wird die entsprechende Teilzeichenkette leer sein.</p>
+      <p>Zum Beispiel: <code>','</code> (ein Komma) würde die Zeichenkette jeweils bei einem Komma teilen. Im Vergleich dazu würde <code>A_Space A_Tab</code> eine neue Teilzeichenkette erstellen, wann immer ein Leer- oder Tabulatorzeichen in der Zeichenkette gefunden wird.</p>
+      <p>Um eine Zeichenkette anstelle eines Zeichens als Trennung zu verwenden, verwenden Sie zunächst <a href="StrReplace.htm">StrReplace</a>, um alle Vorkommen der Zeichenkette mit einem einzelnen Zeichen zu ersetzen, das nie im Text genutzt wird. Zum Beispiel: <code>¢¤¥¦§©ª«®µ¶</code>. Das folgende Beispiel zeigt, wie die Zeichenkette &lt;br&gt; als Trennung verwendet werden kann:</p>
       <pre>NeueHTML := StrReplace(HTMLZkette, "&lt;br&gt;", "¢")
 Loop Parse, NeueHTML, "¢" <em>; Die Zeichenkette via Cent-Symbol parsen.</em>
 {
-...
+    <em>; ...</em>
 }</pre>
   </dd>
 
   <dt>ZuEntfernendeZeichen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Eine optionale Liste von Zeichen (Groß-/Kleinschreibung-sensitiv), die am Anfang und Ende jeder Teilzeichenkette entfernt werden sollen. Wenn <em>ZuEntfernendeZeichen</em> beispielsweise <code>A_Space A_Tab</code> wäre, wird bei jeder abgerufenen Teilzeichenkette Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
+    <p>Wenn leer oder weggelassen, werden keine Zeichen entfernt. Andernfalls geben Sie eine Liste von Zeichen an (Groß-/Kleinschreibung-sensitiv), die am Anfang und Ende jeder Teilzeichenkette entfernt werden sollen. Wenn <em>ZuEntfernendeZeichen</em> beispielsweise <code>A_Space A_Tab</code> wäre, wird bei jeder abgerufenen Teilzeichenkette Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
     <p>Wenn <em>Trennzeichen</em> leer ist, gibt <em>ZuEntfernendeZeichen</em> die Zeichen an, die ignoriert werden sollen (die Schleife wird diese nicht sehen).</p>
   </dd>
 
@@ -54,7 +54,7 @@ Loop Parse, NeueHTML, "¢" <em>; Die Zeichenkette via Cent-Symbol parsen.</em>
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Eine parsende Schleife ist nützlich, wenn alle Felder in einer Zeichenkette nacheinander abgearbeitet werden sollen. Eine parsende Schleife verbraucht weniger Speicher als <a href="StrSplit.htm">StrSplit</a> (obwohl in beiden Fällen die Speichernutzung temporär ist) und ist in den meisten Fällen leichter zu verwenden.</p>
 <p id="LoopField">Die interne Variable <strong>A_LoopField</strong> ist nur in einer parsenden Schleife von Bedeutung. Sie enthält den Inhalt der aktuellen Teilzeichenkette (Feld). Wenn eine innere parsende Schleife von einer äußeren parsenden Schleife umschlossen ist, hat das Feld der innersten Schleife Vorrang.</p>
-<p>Es gibt keine interne Variable namens A_LoopDelimiter, allerdings zeigt das Beispiel ganz unten, wie man herausfindet, welche Trennung für jedes Feld verwendet wurde.</p>
+<p>Es gibt keine interne Variable namens A_LoopDelimiter, allerdings zeigt das Beispiel ganz unten, wie man herausfindet, welches Trennzeichen für jedes Feld verwendet wurde.</p>
 <p>Die Zeichenkette oder ihre Felder können eine unbegrenzte Größe haben.</p>
 <p>Mit der <a href="Sort.htm">Sort</a>-Funktion können die Felder vor dem Parsen neu angeordnet werden.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (die in jeder Schleifenvariante verwendet werden kann).</p>
@@ -106,7 +106,7 @@ until Ergebnis = "No"</pre>
 </div>
 
 <div class="ex" id="ExDelimiter">
-<p><a class="ex_number" href="#ExDelimiter"></a> Ermittelt, welche Trennung verwendet wurde.</p>
+<p><a class="ex_number" href="#ExDelimiter"></a> Ermittelt, welches Trennzeichen verwendet wurde.</p>
 <pre><em>; Zeichenkette zum Durchsuchen initialisieren.</em>
 Farben := "Rot,Grün|Blau;Gelb|Cyan,Magenta"
 <em>; Zähler für aktuelle Zeichenkettenposition initialisieren.</em>
@@ -114,12 +114,12 @@ Position := 0
 
 Loop Parse, Farben, ",|;"
 {
-    <em>; Position der Trennung am Ende dieses Feldes berechnen.</em>
+    <em>; Position des Trennzeichens am Ende dieses Feldes berechnen.</em>
     Position += StrLen(A_LoopField) + 1
-    <em>; Trennung abrufen, die von der parsenden Schleife gefunden wurde.</em>
-    Trennung := SubStr(Farben, Position, 1)
+    <em>; Trennzeichen abrufen, das von der parsenden Schleife gefunden wurde.</em>
+    Trennzeichen := SubStr(Farben, Position, 1)
 
-    MsgBox "Feld: " A_LoopField "`nTrennung: " Trennung
+    MsgBox "Feld: " A_LoopField "`nTrennzeichen: " Trennzeichen
 }</pre>
 </div>
 

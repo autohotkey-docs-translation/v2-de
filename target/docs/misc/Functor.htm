@@ -16,10 +16,10 @@
 <p>"Funktionsobjekt" bedeutet in der Regel folgendes:</p>
 <ul>
   <li>Ein <a href="../lib/Func.htm">Func</a>- oder <a href="../Functions.htm">Closure</a>-Objekt, das eine tatsächliche <a href="../Functions.htm#closures">Funktion</a> repräsentiert; entweder eine interne oder im Skript definierte Funktion.</li>
-  <li>Ein benutzerdefiniertes Objekt, das wie eine Funktion aufgerufen werden kann. Dies bezeichnet man manchmal auch als "Funktor".</li>
+  <li>Ein benutzerdefiniertes Objekt, das wie eine Funktion aufgerufen werden kann. Dies wird manchmal als "Funktor" bezeichnet.</li>
   <li>Jedes andere Objekt, das wie eine Funktion aufgerufen werden kann, wie z.B. ein <a href="#BoundFunc">BoundFunc-Objekt</a> oder ein JavaScript-Funktionsobjekt, zurückgegeben von einer COM-Methode.</li>
 </ul>
-<p>Funktionsobjekte können in Verbindung mit folgenden Dingen verwendet werden:</p>
+<p>Funktionsobjekte können mit folgenden Dingen verwendet werden:</p>
 <ul>
   <li><a href="../lib/CallbackCreate.htm">CallbackCreate</a></li>
   <li><a href="../lib/GuiOnEvent.htm">Gui-Ereignisse</a></li>
@@ -47,7 +47,7 @@
 <!-- TODO: Explain how a user-defined object could be useful -->
 <p>Benutzerdefinierte Funktionsobjekte müssen eine <em>Call</em>-Methode definieren, die die Implementierung von der "Funktion" enthält.</p>
 <pre>class MeineKlasseName {
-    Call(a, b) {  <em>; Deklariere Parameter je nach Bedarf, oder ein <a href="../Functions.htm#Variadic">Array*</a>.</em>
+    Call(a, b) {  <em>; Parameter je nach Bedarf deklarieren, oder ein <a href="../Functions.htm#Variadic">Array*</a>.</em>
         <em>;...</em>
         return c
     }
@@ -56,21 +56,21 @@
 </pre>
 <p>Dies gilt für <em>Instanzen</em> von <em>MeineKlasseName</em>, wie z.B. das von <code>MeineKlasseName()</code> zurückgegebene Objekt. Das Ersetzen von <code>Call</code> mit <code>static Call</code> würde stattdessen das überschreiben, was passiert, wenn <em>MeineKlasseName</em> selbst aufgerufen wird.</p>
 <h3 id="User-Defined-Examples">Beispiele</h3>
-<p>Das folgende Beispiel definiert ein Funktions-Array, das aufgerufen werden kann; wenn man das Array aufruft, wird es jedes seiner Elemente nacheinander aufrufen.</p>
+<p>Das folgende Beispiel definiert ein aufrufbares Funktionsarray, das beim Aufruf jedes seiner Elemente der Reihe nach aufruft.</p>
 <pre>class FunkArrayTyp extends Array {
     Call(params*) {
-        <em>; Ruft eine Liste von Funktionen auf.</em>
+        <em>; Eine Liste von Funktionen aufrufen.</em>
         for fn in this
             fn(params*)
     }
 }
 
-<em>; Erstellt ein Array mit Funktionen.</em>
+<em>; Ein Array von Funktionen erstellen.</em>
 FunkArray := FunkArrayTyp()
-<em>; Fügt einige Funktionen in das Array ein (kann jederzeit gemacht werden).</em>
+<em>; Einige Funktionen in das Array einfügen (kann jederzeit gemacht werden).</em>
 FunkArray.Push(Eins)
 FunkArray.Push(Zwei)
-<em>; Erstellt ein Objekt, das das Array als Methode benutzt.</em>
+<em>; Ein Objekt erstellen, das das Array als Methode verwendet.</em>
 obj := {Methode: FunkArray}
 <em>; Methode aufrufen (und folglich sowohl Eins als auch Zwei).</em>
 obj.Methode("2.")
@@ -87,13 +87,13 @@ Zwei(param1, param2) {
 }</pre>
 
 <h2 id="BoundFunc">BoundFunc-Objekt</h2>
-<p>Verhält sich wie eine Funktion, aber übergibt nur vordefinierte Parameter an eine andere Funktion.</p>
-<p>Es gibt zwei Möglichkeiten, wie BoundFunc-Objekte erstellt werden können:</p>
+<p>Verhält sich wie eine Funktion, übergibt aber nur vordefinierte Parameter an eine andere Funktion.</p>
+<p>BoundFunc-Objekte können auf zwei Arten erzeugt werden:</p>
 <ul>
   <li>Durch Aufrufen der <a href="../lib/Func.htm#Bind">Func.Bind</a>-Methode, die Parameterwerte an eine Funktion bindet.</li>
   <li>Durch Aufrufen der <a href="../lib/ObjBindMethod.htm">ObjBindMethod</a>-Funktion, die Parameterwerte und Methodennamen an ein Zielobjekt bindet.</li>
 </ul>
-<p>Im unteren Beispiel wird gezeigt, wie BoundFunc-Objekte aufgerufen werden können. Wenn das BoundFunc-Objekt aufgerufen wird, ruft es die Funktion oder Methode auf, an der es gebunden wurde, und übergibt eine Kombination aus gebundenen Parametern und Parametern des Aufrufers. Ungebundene Parameterpositionen werden Positionen aus der Parameterliste des Aufrufers zugewiesen, von links nach rechts. Zum Beispiel:</p>
+<p>Das folgende Beispiel zeigt, wie BoundFunc-Objekte aufgerufen werden können. Wenn das BoundFunc-Objekt aufgerufen wird, ruft es die Funktion oder Methode auf, an der es gebunden wurde, und übergibt eine Kombination aus gebundenen Parametern und Parametern des Aufrufers. Ungebundene Parameterpositionen werden Positionen aus der Parameterliste des Aufrufers zugewiesen, von links nach rechts. Zum Beispiel:</p>
 <pre>fn := EchteFn.Bind(1)  <em>; Nur mit ersten Parameter verbinden</em>
 fn(2)      <em>; Zeigt "1, 2"</em>
 fn.Call(3) <em>; Zeigt "1, 3"</em>
@@ -111,7 +111,7 @@ EchteFn(a, b, c:="c") {
 RunBox := ObjBindMethod(Shell, "FileRun")
 <em>; Ausführen-Dialogfenster öffnen.</em>
 RunBox</pre>
-<p>Ein komplexeres Beispiel finden Sie bei <a href="../lib/SetTimer.htm#ExampleClass">SetTimer</a>.</p>
+<p>Ein komplexeres Beispiel finden Sie unter <a href="../lib/SetTimer.htm#ExampleClass">SetTimer</a>.</p>
 <p>Andere Eigenschaften und Methoden werden von <a href="../lib/Func.htm">Func</a> geerbt, allerdings spiegeln sie nicht die Eigenschaften der Zielfunktion oder -methode wider (die nicht als Funktion implementiert sein muss). Das BoundFunc-Objekt fungiert als anonyme variadische Funktion ohne weitere Formalparameter, ähnlich der <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a> unten:</p>
 <pre>Func_Bind(fn, bound_args*) {
     return (args*) =&gt; (args.InsertAt(1, bound_args*), fn(args*))

@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Bild-Handles - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Bild-Handles können anstelle von Bilddateinamen verwendet werden, um eine Bitmap oder ein Symbol aus dem Speicher zu verwenden." />
+<meta name="description" content="Bild-Handles anstelle von Bilddateinamen verwenden, um eine Bitmap oder ein Symbol aus dem Speicher zu verwenden." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,10 +13,10 @@
 <body>
 <h1>Bild-Handles</h1>
 
-<p>Die folgende Syntax kann angewendet werden, um ein Symbol- oder Bitmap-Handle anstelle eines Bild-Dateinamens zu nutzen:</p>
-<pre class="Syntax">HBITMAP:<i>Bitmap-Handle</i>
-HICON:<i>Symbol-Handle</i></pre>
-<p>Ersetzen Sie <em>Bitmap-Handle</em> oder <em>Symbol-Handle</em> mit dem eigentlichen Handle-Wert. Zum Beispiel <code>"hicon:" handle</code>, wo <em>handle</em> eine Variable ist, die ein Symbol-Handle enthält.</p>
+<p>Mit der folgenden Syntax können Sie ein Symbol- oder Bitmap-Handle anstelle eines Bilddateinamens verwenden:</p>
+<pre class="Syntax">HBITMAP:<i>BitmapHandle</i>
+HICON:<i>SymbolHandle</i></pre>
+<p>Ersetzen Sie <em>BitmapHandle</em> oder <em>SymbolHandle</em> mit dem eigentlichen Handle-Wert. Zum Beispiel <code>"hicon:" handle</code>, wo <em>handle</em> eine Variable ist, die ein Symbol-Handle enthält.</p>
 <p>Die folgenden Dinge unterstützen diese Syntax:</p>
 <ul>
   <li><a href="../lib/GuiControls.htm#Picture">Gui.AddPicture</a> (und <a href="../lib/GuiControl.htm#Value">GuiCtrl.Value</a> zum Setzen des Inhalts eines Picture-Steuerelements).</li>
@@ -26,42 +26,43 @@ HICON:<i>Symbol-Handle</i></pre>
   <li><a href="../lib/ImageSearch.htm">ImageSearch</a></li>
   <li><a href="../lib/TraySetIcon.htm">TraySetIcon</a> oder <a href="../lib/Menu.htm#SetIcon">Menu.SetIcon</a></li>
 </ul>
-<p>Ein Bitmap- oder Symbol-Handle ist ein numerischer Wert, der eine Bitmap oder ein Symbol im Arbeitsspeicher kennzeichnet. Die Mehrheit der Skripte muss nie auf Handles zurückgreifen, weil AutoHotkey sich in den meisten Fällen darum kümmert, das Bild aus einer Datei zu laden und es wieder freizugeben, wenn es nicht länger benötigt wird. Die oben gezeigte Syntax sollte man nur einsetzen, wenn das Skript ein Symbol- oder Bitmap-Handle aus einer anderen Quelle bezieht, z.B. durch Senden der WM_GETICON-Meldung an ein Fenster. Man kann sie auch in Kombination mit <a href="../lib/LoadPicture.htm">LoadPicture</a> verwenden, um ein mehrfaches Laden eines Bildes aus einer Datei zu vermeiden.</p>
+<p>Ein Bitmap- oder Symbol-Handle ist ein numerischer Wert, der eine Bitmap oder ein Symbol im Arbeitsspeicher identifiziert. Viele Skripte müssen sich nie mit Handles befassen, da AutoHotkey in den meisten Fällen automatisch das Bild aus der Datei lädt und es wieder freigibt, wenn es nicht mehr benötigt wird. Die oben gezeigte Syntax sollte nur verwendet werden, wenn das Skript ein Symbol- oder Bitmap-Handle aus einer anderen Quelle bezieht, z.B. durch Senden der WM_GETICON-Meldung an ein Fenster. Man kann sie auch in Kombination mit <a href="../lib/LoadPicture.htm">LoadPicture</a> verwenden, um ein mehrfaches Laden eines Bildes aus einer Datei zu vermeiden.</p>
 <p>Standardmäßig wird das Handle so behandelt, als hätte AutoHotkey das Bild aus einer Datei geladen - zum Beispiel wird eine Bitmap, die für ein Picture-Steuerelement verwendet wird, gelöscht, wenn die GUI zerstört wird, außerdem wird ein Bild grundsätzlich sofort gelöscht, wenn dessen Größe geändert werden muss. Um das zu verhindern, fügen Sie einfach ein Sternchen zwischen dem Doppelpunkt und dem Handle ein. Zum Beispiel: <code>"hbitmap:*" handle</code>. Diese Methode zwingt die Funktion, außer ImageSearch, eine Kopie des Bildes anzulegen.</p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExHICON">
-<p><a class="ex_number" href="#ExHICON"></a> Zeigt ein Menü der ersten <em>n</em> Dateien an, die dem Suchmuster entsprechen, und ihre Symbole.</p>
+<p><a class="ex_number" href="#ExHICON"></a> Zeigt ein Menü der ersten <em>n</em> gefundenen Dateien an, inklusive Symbole.</p>
 <pre>Suchmuster := A_ScriptDir "\*"
 n := 15
 
 <em>; Erstellt ein Menü.</em>
 Fmenu := Menu()
 
-<em>; Reserviert Speicher für eine SHFILEINFOW-Struktur.</em>
+<em>; Speicher für eine SHFILEINFOW-Struktur reservieren.</em>
 DateiInfo := Buffer(DateiGröße := A_PtrSize + 688)
 
 Loop Files, Suchmuster, "FD"
 {
-    <em>; Fügt ein Menüpunkt für jede Datei ein.</em>
+    <em>; Menüpunkt pro Datei hinzufügen.</em>
     Fmenu.Add A_LoopFileName, (*) =&gt; "" <em>; Nichts tun.</em>
     
-    <em>; Ruft das Symbol der Datei ab.</em>
+    <em>; Symbol der Datei abrufen.</em>
     if DllCall("shell32\SHGetFileInfoW", "WStr", A_LoopFileFullPath
         , "UInt", 0, "Ptr", DateiInfo, "UInt", DateiGröße, "UInt", 0x100)
     {
         hicon := NumGet(DateiInfo, 0, "Ptr")
-        <em>; Setzt das Symbol des Menüpunkts.</em>
+        <em>; Symbol des Menüpunkts setzen.</em>
         Fmenu.SetIcon A_Index "&amp;", "HICON:" hicon
-        <em>; Da wir hier ":" anstelle von ":*" verwenden, wird das Symbol automatisch
-        ; freigegeben, wenn das Programm beendet oder wenn das Menü oder der Menüpunkte gelöscht wird.</em>
+        <em>; Da wir hier ":" statt ":*" verwenden, wird das Symbol automatisch
+        ; freigegeben, wenn das Programm beendet oder wenn das Menü oder der
+        ; Menüpunkt gelöscht wird.</em>
     }
 }
 until A_Index = n
 Fmenu.Show
 </pre>
 </div>
-<p>Siehe auch: <a href="../lib/LoadPicture.htm">LoadPicture</a>.</p>
+<p>Siehe auch <a href="../lib/LoadPicture.htm#ExSlideShow">LoadPicture-Beispiel #1</a>.</p>
 
 </body>
 </html>

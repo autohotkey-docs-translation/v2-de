@@ -44,10 +44,9 @@
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Die interne Variable <a href="A_Clipboard.htm">A_Clipboard</a> spiegelt den aktuellen Inhalt der Windows-Zwischenablage in Textform wider, kann aber einem ClipboardAll-Objekt zugewiesen werden, um ihren Inhalt in die Zwischenablage zurückzuschreiben.</p>
 <p><em>ClipboardAll</em> wird häufig verwendet, um den aktuellen Inhalt der Zwischenablage zu sichern, damit die Zwischenablage vorübergehend für eine andere Operation verwendet werden kann. Sobald die Operation abgeschlossen wurde, kann der originale Inhalt der Zwischenablage wiederhergestellt werden, wie in <a href="#ExVar">Beispiel #1</a> und <a href="#ExFile">Beispiel #2</a> gezeigt.</p>
-<p>Falls <em>ClipboardAll</em> nicht in der Lage ist, eine oder mehrere Datenobjekte (Formate) von der Zwischenablage abzurufen, werden die Objekte ausgelassen und die restlichen gespeichert.</p>
-<p>Mit <a href="ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (wahlweise auch Daten, die kein Text sind).</p>
-<p>Die im Objekt enthaltenen Binärdaten bestehen aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die nächsten 4 Bytes die Datenblockgröße und zum Schluss den Datenblock des Formats. Falls die Zwischenablage mehr als ein Format enthält (dass fast immer der Fall ist), werden diese drei Elemente so oft wiederholt, bis alle Formate enthalten sind. Anschließend enden die Daten mit einem Formattyp (4 Byte groß), wobei jedoch eine 0 enthalten ist.</p>
-<p>Bekannte Einschränkung: Verwendet man <em>ClipboardAll</em>, während Zellen von MS Excel enthalten sind, kann es passieren, dass in Excel ein Dialogfenster mit "Keine Drucker" angezeigt wird.</p>
+<p>Wenn <em>ClipboardAll</em> nicht in der Lage ist, bestimmte Datenobjekte (Formate) aus der Zwischenablage abzurufen, werden diese übersprungen und der Rest wird gespeichert.</p>
+<p>Mit <a href="ClipWait.htm">ClipWait</a> kann festgestellt werden, wann die Zwischenablage Daten enthält (optional auch Nicht-Text-Daten).</p>
+<p>Die im Objekt enthaltenen Binärdaten bestehen aus mehreren Teilen: Die ersten 4 Bytes enthalten den Formattyp, die nächsten 4 Bytes die Datenblockgröße und zum Schluss den Datenblock des Formats. Wenn die Zwischenablage mehr als ein Format enthält (was fast immer der Fall ist), werden diese drei Elemente wiederholt, bis alle Formate enthalten sind. Anschließend enden die Daten mit einem Formattyp (4 Byte groß), wobei jedoch eine 0 enthalten ist.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="A_Clipboard.htm">A_Clipboard</a>, <a href="ClipWait.htm">ClipWait</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="_ClipboardTimeout.htm">#ClipboardTimeout</a>, <a href="Buffer.htm">Buffer</a></p>
@@ -56,7 +55,7 @@
 
 <div class="ex" id="ExVar">
 <p><a class="ex_number" href="#ExVar"></a> Speichert den Inhalt der Zwischenablage in eine Variable und stellt ihn wieder her.</p>
-<pre>ClipSicherung := ClipboardAll()   <em>; Speichert die gesamte Zwischenablage in eine beliebige Variable.
+<pre>ClipSicherung := ClipboardAll()   <em>; Zwischenablage in eine beliebige Variable speichern.
 ; ... hier kann man kurzzeitig die Zwischenablage nutzen, um z.B. schnell eine große Textmenge einzufügen ...</em>
 A_Clipboard := ClipSicherung   <em>; Originale Zwischenablage wiederherstellen. Beachten Sie, dass <i>A_Clipboard</i> verwendet wurde (nicht <i>ClipboardAll</i>).</em>
 ClipSicherung := ""  <em>; Speicher freigeben, falls die Zwischenablage sehr groß war.</em></pre>
@@ -66,7 +65,7 @@ ClipSicherung := ""  <em>; Speicher freigeben, falls die Zwischenablage sehr gro
 <p><a class="ex_number" href="#ExFile"></a> Speichert den Inhalt der Zwischenablage in eine Datei und stellt ihn wieder her.</p>
 <pre><em>; Option 1: Lösche die Datei, falls vorhanden, und benutze dann FileAppend.</em>
 <a href="FileDelete.htm">FileDelete</a> "Firmenlogo.clip"
-<a href="FileAppend.htm">FileAppend</a> ClipboardAll(), "Firmenlogo.clip" <em>; Die Dateierweiterung spielt hierbei keine Rolle.</em>
+<a href="FileAppend.htm">FileAppend</a> ClipboardAll(), "Firmenlogo.clip" <em>; Die Dateiendung ist egal.</em>
 
 <em>; Option 2: Benutze FileOpen im Überschreibmodus und File.RawWrite.</em>
 ClipDaten := ClipboardAll()

@@ -23,13 +23,14 @@
   <dt>URL</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>URL der Datei, die heruntergeladen werden soll. Zum Beispiel könnte mit "https://someorg.org" die Willkommensseite dieser Organisation abgerufen werden.</p>
+    <p>URL der Datei, die heruntergeladen werden soll. Zum Beispiel bewirkt <code>"https://someorg.org"</code>, dass die Willkommensseite dieser Organisation abgerufen wird.</p>
   </dd>
 
   <dt>DateiName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Geben Sie den Namen der Datei an, die lokal erstellt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Jede vorhandene Datei wird mit der neuen Datei <strong>überschrieben</strong>.</p>
+    <p>Geben Sie den Namen der Datei an, die lokal erstellt werden soll. Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Eine bereits vorhandene Datei wird mit der neuen Datei <u>überschrieben</u>.</p>
+    <p>Diese Funktion speichert die heruntergeladenen Daten in eine Datei. Um stattdessen in eine Variable herunterzuladen, siehe das <a href="#ExWHR">Beispiel</a> unten.</p>
   </dd>
 
 </dl>
@@ -38,10 +39,9 @@
 <p>Bei Misserfolg wird eine Ausnahme ausgelöst.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Diese Funktion speichert die heruntergeladenen Daten in eine Datei. Um die Daten stattdessen in eine Variable zu speichern, schauen Sie sich das Beispiel weiter unten an. Alternativen dazu finden Sie im folgenden Forumsbeitrag: <a href="https://www.autohotkey.com/forum/topic10466.html">www.autohotkey.com/forum/topic10466.html</a></p>
-<p>Der Download wird möglicherweise auch dann als erfolgreich angesehen, wenn die Remote-Datei nicht vorhanden ist. Das liegt daran, dass viele Webserver anstelle der fehlenden Datei eine Fehlerseite senden. Das heißt, dass in <em>DateiName</em> die Fehlerseite gespeichert wird.</p>
+<p>Der Download könnte auch dann als Erfolg gewertet werden, wenn die Remote-Datei nicht existiert. Der Grund dafür ist, dass viele Webserver anstelle der fehlenden Datei eine Fehlerseite senden. Und genau diese Fehlerseite wird anstelle von <em>DateiName</em> gespeichert.</p>
 <p>Firewalls oder das Vorhandensein mehrerer Netzwerkadapter können dazu führen, dass die Funktion fehlschlägt. Zudem ist es möglich, dass einige Webseiten solche Downloads blockieren.</p>
-<p><strong>Caching:</strong> Standardmäßig wird die URL direkt vom Remote-Server abgerufen (also nie vom Cache des Internet Explorers). Um das Caching zuzulassen, fügen Sie vor der URL ein *0 gefolgt von einem Leerzeichen ein, z.B. <em>*0 https://someorg.org</em>. Die 0 nach dem Sternchen kann mit einer beliebigen gültigen dwFlags-Nummer ersetzt werden; suchen Sie nach InternetOpenUrl auf <a href="https://www.microsoft.com">www.microsoft.com</a> für weitere Details.</p>
+<p><strong>Caching:</strong> Standardmäßig wird die URL direkt vom Remote-Server abgerufen (also nie vom Cache des Internet Explorers). Um das Caching zu erlauben, stellen Sie der URL ein *0 gefolgt von einem Leerzeichen voran, z.B. <code>"*0 https://someorg.org"</code>. Die 0 nach dem Sternchen kann mit einer gültigen dwFlags-Nummer ersetzt werden; suchen Sie nach InternetOpenUrl auf <a href="https://www.microsoft.com">www.microsoft.com</a> für weitere Details.</p>
 <p><strong>Proxies:</strong> Download wird einen Proxy-Server für den Internetzugriff verwenden, falls so ein Proxy in den Einstellungen des Internet Explorers konfiguriert wurde.</p>
 <p><strong>FTP- und Gopher</strong>-URLs werden auch unterstützt. Zum Beispiel:</p>
 <pre>Download "ftp://example.com/home/Meine Datei.zip", "C:\Mein Ordner\Meine Datei.zip"  <em>; Anonym anmelden.</em>
@@ -67,7 +67,7 @@ Download "ftp://benutzer:passwort@beispiel.com/Mein Verzeichnis", "C:\Verzeichni
 <pre>whr := ComObject("WinHttp.WinHttpRequest.5.1")
 whr.Open("GET", "https://www.autohotkey.com/download/2.0/version.txt", true)
 whr.Send()
-<em>; Durch das 'true' oben und dem Aufruf unten bleibt das Skript ansprechbar.</em>
+<em>; Durch das 'true' oben und den Aufruf unten bleibt das Skript responsiv.</em>
 whr.WaitForResponse()
 version := whr.ResponseText
 MsgBox version
@@ -77,17 +77,17 @@ MsgBox version
 <div class="ex" id="ExXHR">
 <p><a class="ex_number" href="#ExXHR"></a> Macht einen asynchronen HTTP-Request.</p>
 <pre>req := ComObject("Msxml2.XMLHTTP")
-<em>; Öffnet einen Request mit aktivierter async.</em>
+<em>; Request mit aktiviertem async öffnen.</em>
 req.open("GET", "https://www.autohotkey.com/download/2.0/version.txt", true)
 <em>; Setzt unsere Rückruffunktion.</em>
 req.onreadystatechange := Ready
-<em>; Sendet den Request.  Ready() wird aufgerufen, wenn es fertig ist.</em>
+<em>; Sendet den Request.  Ready() wird bei Abschluss aufgerufen.</em>
 req.send()
 <em>/*
 ; Wenn Sie warten wollen, brauchen Sie kein onreadystatechange.
-; Durch Setzen von async=true und Warten auf diese Weise bleibt das Skript
-; ansprechbar, während der Download läuft, dagegen macht async=false
-; das Skript unansprechbar.
+; Wenn Sie async=true setzen und auf diese Weise warten, bleibt das Skript
+; responsiv, während der Download läuft, wogegen async=false
+; das Skript unresponsiv macht.
 while req.readyState != 4
     sleep 100
 */</em>
