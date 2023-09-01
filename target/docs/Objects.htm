@@ -20,7 +20,7 @@ ul.list_of_p li { margin: 1em 0; }
 <p>Ein <i>Objekt</i> ist eine Kombination aus <em>Eigenschaften</em> und <a href="Concepts.htm#methods"><em>Methoden</em></a>.</p>
 <p>Verwandte Themen:</p>
 <ul>
-  <li><a href="Concepts.htm#objects">Objekte</a>: Allgemeine Erklärung zu Objekten.</li>
+  <li><a href="Concepts.htm#objects">Objekte</a>: Allgemeine Erklärung von Objekten.</li>
   <li><a href="Concepts.htm#object-protocol">Objektorientierte Schnittstelle</a>: Einzelheiten darüber, wie ein Skript mit einem Objekt interagiert.</li>
   <li><a href="misc/Functor.htm">Funktionsobjekte</a>: Objekte, die <em>aufgerufen</em> werden können.</li>
 </ul>
@@ -31,7 +31,7 @@ ul.list_of_p li { margin: 1em 0; }
 <p>Eine Auflistung der verfügbaren Objekttypen finden Sie unter <a href="ObjList.htm">Interne Klassen</a>. Es gibt zwei grundlegende Typen:</p>
 <ul>
   <li><strong>AutoHotkey-Objekte</strong> sind Instanzen der <a href="lib/Object.htm">Object</a>-Klasse. Diese unterstützen Ad-hoc-Eigenschaften, und verfügen über Methoden, um herauszufinden, welche Eigenschaften existieren. <a href="lib/Array.htm">Array</a>, <a href="lib/Map.htm">Map</a> und alle benutzerdefinierten und internen Klassen stammen von der Object-Klasse ab.</li>
-  <li><strong>COM-Objekte</strong>, wie solche, die via <a href="lib/ComObject.htm">ComObject</a> erstellt werden. Diese sind in externen Bibliotheken implementiert und unterscheiden sich daher von AutoHotkey-Objekten in Bezug auf das Verhalten. ComObject repräsentiert typischerweise ein COM- oder "Automation"-Objekt mit einer implementierten <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nn-oaidl-idispatch">IDispatch-Schnittstelle</a>. Es wird auch genutzt, um <a href="lib/ComValue.htm">Werte von spezifischen Typen zu wrappen</a>, damit diese an COM-Objekten und Funktionen übergeben werden können.</li>
+  <li><strong>COM-Objekte</strong>, wie solche, die via <a href="lib/ComObject.htm">ComObject</a> erstellt werden. Diese sind in externen Bibliotheken implementiert und unterscheiden sich daher von AutoHotkey-Objekten in Bezug auf das Verhalten. ComObject repräsentiert typischerweise ein COM- oder "Automation"-Objekt mit einer implementierten <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nn-oaidl-idispatch">IDispatch-Schnittstelle</a>. Es wird auch verwendet, um <a href="lib/ComValue.htm">Werte von spezifischen Typen zu wrappen</a>, damit diese an COM-Objekten und Funktionen übergeben werden können.</li>
 </ul>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
@@ -40,7 +40,7 @@ ul.list_of_p li { margin: 1em 0; }
   <li><a href="#Extended_Usage">Erweiterte Verwendung</a> - <a href="#Usage_Arrays_of_Arrays">Mehrdimensionale Arrays</a></li>
   <li><a href="#Custom_Objects">Benutzerdefinierte Objekte</a> - <a href="#creating-a-base-object">Basisobjekt erstellen</a>, <a href="#Custom_Classes">Klassen</a>, <a href="#Custom_NewDelete">Konstruktion und Destruktion</a>, <a href="#Meta_Functions">Metafunktionen</a></li>
   <li><a href="#primitive">Primitive Werte</a></li>
-  <li><a href="#Implementation">Implementierung</a> - <a href="#Reference_Counting">Referenzzählung</a>, <a href="#ObjPtr">Objekt-Pointer</a></li>
+  <li><a href="#Implementation">Implementierung</a> - <a href="#Reference_Counting">Referenzzählung</a>, <a href="#ObjPtr">Objektpointer</a></li>
 </ul>
 
 <span id="Syntax"></span><h2 id="Usage">Grundlegende Verwendung</h2>
@@ -53,22 +53,22 @@ MeinArray := Array(Element1, Element2, ..., ElementN)</pre>
 <pre>Wert := MeinArray[Index]</pre>
 <p>Ändern eines Elementwertes (<code>Index</code> muss zwischen 1 und Länge liegen, oder ein äquivalenter umgekehrter Index):</p>
 <pre>MeinArray[Index] := Wert</pre>
-<p>Einfügen eines oder mehrerer Elemente ab einem bestimmten Index mittels <a href="lib/Array.htm#InsertAt">InsertAt</a>-Methode:</p>
+<p>Einfügen eines oder mehrerer Elemente ab einem bestimmten Index via <a href="lib/Array.htm#InsertAt">InsertAt</a>-Methode:</p>
 <pre>MeinArray.InsertAt(Index, Wert, Wert2, ...)</pre>
-<p>Anfügen eines oder mehrerer Elemente mittels <a href="lib/Array.htm#Push">Push</a>-Methode:</p>
+<p>Anfügen eines oder mehrerer Elemente via <a href="lib/Array.htm#Push">Push</a>-Methode:</p>
 <pre>MeinArray.Push(Wert, Wert2, ...)</pre>
-<p>Entfernen eines Elements mittels <a href="lib/Array.htm#RemoveAt">RemoveAt</a>-Methode:</p>
+<p>Entfernen eines Elements via <a href="lib/Array.htm#RemoveAt">RemoveAt</a>-Methode:</p>
 <pre>EntfernterWert := MeinArray.RemoveAt(Index)</pre>
-<p>Entfernen eines Elements mittels <a href="lib/Array.htm#Pop">Pop</a>-Methode:</p>
+<p>Entfernen eines Elements via <a href="lib/Array.htm#Pop">Pop</a>-Methode:</p>
 <pre>EntfernterWert := MeinArray.Pop()</pre>
-<p><a href="lib/Array.htm#Length">Length</a> gibt die Anzahl aller Elemente im Array zurück. Um die Inhalte des Arrays zu durchlaufen, erfolgt dies entweder via Index oder mit einer For-Schleife. Zum Beispiel:</p>
+<p><a href="lib/Array.htm#Length">Length</a> gibt die Anzahl aller Elemente im Array zurück. Um die Elemente eines Arrays einzeln durchzugehen, verwenden Sie entweder A_Index oder eine For-Schleife. Zum Beispiel:</p>
 <pre>MeinArray := ["eins", "zwei", "drei"]
 
-<em>; Durchläuft das Array von 1 bis zu seinem Ende:</em>
+<em>; Von 1 bis zum Ende des Arrays iterieren:</em>
 Loop MeinArray.Length
     MsgBox MeinArray[A_Index]
 
-<em>; Enumeriert die Inhalte des Arrays:</em>
+<em>; Den Inhalt des Arrays enumerieren:</em>
 For Index, Wert in MeinArray
     MsgBox "Element " Index " ist '" Wert "'"
     
@@ -84,7 +84,7 @@ For Wert in MeinArray
 <pre>Wert := MeinMap[Schlüssel]</pre>
 <p>Zuweisen eines Elements:</p>
 <pre>MeinMap[Schlüssel] := Wert</pre>
-<p>Entfernen eines Elements mittels <a href="lib/Array.htm#Delete">Delete</a>-Methode:</p>
+<p>Entfernen eines Elements via <a href="lib/Array.htm#Delete">Delete</a>-Methode:</p>
 <pre>EntfernterWert := MeinMap.Delete(Schlüssel)</pre>
 <p>Enumerieren von Elementen:</p>
 <pre>MeinMap := Map("zehn", 10, "zwanzig", 20, "dreißig", 30)
@@ -107,7 +107,7 @@ For Wert in MeinArray
 <p>Manchmal werden beim Abrufen oder Zuweisen von Eigenschaften Parameter akzeptiert:</p>
 <pre>Wert := MeinObjekt.Eigenschaft[Params]
 MeinObjekt.Eigenschaft[Params] := Wert</pre>
-<p>Ein Objekt kann auch die Indexierung unterstützen: <code>MeinArray[Index]</code> ruft eigentlich die <a href="#__Item">__Item</a>-Eigenschaft von <code>MeinArray</code> auf und übergibt <code>Index</code> als Parameter.</p>
+<p>Ein Objekt kann auch die Indexierung unterstützen: <code>MeinArray[Index]</code> ruft eigentlich automatisch die <a href="#__Item">__Item</a>-Eigenschaft von <code>MeinArray</code> auf und übergibt <code>Index</code> als Parameter.</p>
 
 <h3 id="object-literal">Direkte Objekt-Schreibweise</h3>
 <p>Die direkte Objekt-Schreibweise kann innerhalb eines <a href="Language.htm#expressions">Ausdrucks</a> verwendet werden, um ein improvisiertes Objekt zu erstellen. Die direkte Objekt-Schreibweise besteht aus zwei geschweiften Klammern (<code>{}</code>), die eine Liste von kommagetrennten Name-Wert-Paaren umschließen. Jedes Paar besteht aus einem direkt geschriebenen (in Anführungszeichen gesetzten) <a href="Concepts.htm#names">Eigenschaftsnamen</a> und einem Wert (Teilausdruck), die mit einem Doppelpunkt (<code>:</code>) voneinander getrennt sind. Zum Beispiel:</p>
@@ -123,22 +123,22 @@ Teil := {%Teile[1]%: Teile[2]}
 MsgBox Teil.Schlüssel</pre>
 
 <h3 id="Usage_Freeing_Objects">Freigeben von Objekten</h3>
-<p>Skripte geben Objekte nicht explizit frei. Sobald die letzte Referenz zu einem Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Eine Referenz, die in einer Variable gespeichert ist, wird automatisch freigegeben, wenn diese Variable irgendeinen anderen Wert zugewiesen bekommt. Zum Beispiel:</p>
+<p>Skripte geben Objekte nicht explizit frei. Sobald die letzte Referenz zu einem Objekt freigegeben ist, wird das Objekt automatisch freigegeben. Eine Referenz, die in einer Variable gespeichert ist, wird automatisch freigegeben, sobald dieser Variable ein anderer Wert zugewiesen wird. Zum Beispiel:</p>
 <pre>obj := {}  <em>; Erstellt ein Objekt.</em>
 obj := ""  <em>; Gibt die letzte Referenz frei, wodurch das Objekt freigegeben wird.</em></pre>
 <p>Außerdem wird eine Referenz, die in einer Eigenschaft oder einem Array-Element gespeichert ist, freigegeben, wenn diese Eigenschaft oder dieses Array-Element irgendeinen anderen Wert zugewiesen bekommt oder aus dem Objekt entfernt wird.</p>
 <pre>arr := [{}]  <em>; Erstellt ein Array, das ein Objekt enthält.</em>
 arr[1] := {}  <em>; Erstellt ein zweites Objekt, wodurch das erste Objekt indirekt freigegeben wird.</em>
 arr.RemoveAt(1)  <em>; Entfernt das zweite Objekt und gibt es frei.</em></pre>
-<p id="Circular_References">Da alle Referenzen zu einem Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn beispielsweise <code>x.child</code> auf <code>y</code> verweist und <code>y.parent</code> auf <code>x</code> verweist, würde es nicht genügen, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch eine Referenz zum Child-Objekt enthält, und umgekehrt. Um diese Situation in den Griff zu bekommen, entfernen Sie den Zirkelbezug.</p>
+<p id="Circular_References">Da alle Referenzen zu einem Objekt freigegeben werden müssen, bevor das Objekt freigegeben werden kann, können Objekte mit Zirkelbezügen nicht automatisch freigegeben werden. Wenn z.B. <code>x.child</code> auf <code>y</code> und <code>y.parent</code> auf <code>x</code> verweist, genügt es nicht, <code>x</code> und <code>y</code> zu leeren, weil das Parent-Objekt noch eine Referenz zum Child-Objekt enthält, und umgekehrt. Um diese Situation zu lösen, entfernen Sie den Zirkelbezug.</p>
 <pre>
-x := {}, y := {}             <em>; Erstellt zwei Objekte.</em>
-x.child := y, y.parent := x  <em>; Erstellt ein Zirkelbezug.</em>
+x := {}, y := {}             <em>; Zwei Objekte erstellen.</em>
+x.child := y, y.parent := x  <em>; Einen Zirkelbezug erstellen.</em>
 
 y.parent := ""               <em>; Der Zirkelbezug muss entfernt werden, bevor die Objekte freigegeben werden können.</em>
-x := "", y := ""             <em>; Wenn die Zeile darüber fehlen würde, könnten die Objekte auf diese Weise nicht freigegeben werden.</em>
+x := "", y := ""             <em>; Ohne die obige Zeile würde dies die Objekte nicht freigeben.</em>
 </pre>
-<p>Für mehr Details, siehe <a href="#Reference_Counting">Referenzzählung</a>.</p>
+<p>Eine ausführlichere Verwendung und Informationen finden Sie unter <a href="#Reference_Counting">Referenzzählung</a>.</p>
 
 <h2 id="Extended_Usage">Erweiterte Verwendung</h2>
 
@@ -189,14 +189,14 @@ MsgBox Gittertext
   <li><em>Ad hoc</em>: Ein Objekt erstellen und Eigenschaften hinzufügen.</li>
   <li><em>Delegation</em>: Eigenschaften in einem <em>Basisobjekt</em> oder einer Klasse definieren.</li>
 </ul>
-<p><a href="#Meta_Functions">Metafunktionen</a> können genutzt werden, um das Verhalten eines Objekts noch genauer zu steuern.</p>
+<p><a href="#Meta_Functions">Metafunktionen</a> können verwendet werden, um das Verhalten eines Objekts noch genauer zu steuern.</p>
 <p class="note"><strong>Hinweis:</strong> In diesem Abschnitt ist ein <em>Objekt</em> eine beliebige Instanz der <a href="lib/Object.htm">Object</a>-Klasse. Dieser Abschnitt gilt nicht für COM-Objekte.</p>
 
 <h3 id="ad-hoc">Ad Hoc</h3>
 <p>Ein neues Objekt kann grundsätzlich zu jeder Zeit um Eigenschaften und Methoden (aufrufbaren Eigenschaften) erweitert werden. Das folgende Beispiel zeigt, wie ein Objekt mit einer Eigenschaft und einer Methode konstruiert werden kann:</p>
-<pre><em>; Erstellt ein Objekt.</em>
+<pre><em>; Ein Objekt erstellen.</em>
 obj := {}
-<em>; Speichert einen Wert.</em>
+<em>; Einen Wert speichern.</em>
 obj.foo := "bar"
 <em>; Definiert eine Methode.</em>
 obj.test := obj_test
@@ -207,7 +207,7 @@ obj_test(this) {
     MsgBox this.foo
 }</pre>
 <p>Das obige Objekt könnte auch mit <code>obj := {foo: "bar"}</code> erstellt werden. Bei der {Eigenschaft:Wert}-Schreibweise dürfen die Eigenschaften nicht in Anführungszeichen gesetzt werden.</p>
-<p>Sobald <code>obj.test()</code> aufgerufen wird, wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Standardmäßig wird der Name der Funktion aus folgenden Komponenten gebildet (aber nicht zwingend notwendig): der "Typ" des Objekts und der Name der Methode.</p>
+<p>Beim Aufruf von <code>obj.test()</code> wird <i>obj</i> automatisch an den Anfang der Parameterliste gesetzt. Standardmäßig wird der Name der Funktion aus folgenden Komponenten gebildet (aber nicht zwingend notwendig): der "Typ" des Objekts und der Name der Methode.</p>
 <p>Im obigen Beispiel kann <em>test</em>, nachdem es definiert wurde, eine andere Funktion oder ein anderer Wert zugewiesen werden; die ursprüngliche Funktion geht in diesem Fall verloren und kann nicht über diese Eigenschaft aufgerufen werden. Alternativ können Sie wie folgt eine schreibgeschützte Methode definieren:</p>
 <pre>obj.DefineProp 'test', {call: obj_test}</pre>
 <p>Siehe auch: <a href="lib/Object.htm#DefineProp">DefineProp</a></p>
@@ -231,11 +231,11 @@ obj_test(this) {
 <pre>anderesObj := {}
 anderesObj.base := obj
 anderesObj.test()</pre>
-<p>In diesem Fall erbt <i>anderesObj</i> das <i>foo</i> und <i>test</i> von <i>obj</i>. Diese Vererbung ist dynamisch - das heißt, wenn <code>obj.foo</code> modifiziert wird, wird <code>anderesObj.foo</code> diese Änderung widerspiegeln. Wenn das Skript <code>anderesObj.foo</code> einen Wert zuweist, wird dieser Wert in <i>anderesObj</i> gespeichert; weitere Änderungen an <code>obj.foo</code> hätten keinen Einfluss auf <code>anderesObj.foo</code>. Sobald <code>anderesObj.test()</code> aufgerufen wird, enthält ihr <i>this</i>-Parameter eine Referenz zu <i>anderesObj</i> statt zu <i>obj</i>.</p>
+<p><i>anderesObj</i> erbt in diesem Fall <i>foo</i> und <i>test</i> von <i>obj</i>. Diese Vererbung ist dynamisch, d.h. wenn <code>obj.foo</code> geändert wird, wird diese Änderung durch <code>anderesObj.foo</code> widergespiegelt. Wenn das Skript <code>anderesObj.foo</code> einen Wert zuweist, wird dieser Wert in <i>anderesObj</i> gespeichert; weitere Änderungen an <code>obj.foo</code> hätten keinen Effekt auf <code>anderesObj.foo</code>. Beim Aufruf von <code>anderesObj.test()</code> enthält dessen <i>this</i>-Parameter eine Referenz zu <i>anderesObj</i> statt zu <i>obj</i>.</p>
 
 <h3 id="Custom_Classes">Klassen</h3>
 <blockquote>Unter einer Klasse (auch Objekttyp genannt) versteht man in der objektorientierten Programmierung ein abstraktes Modell bzw. einen Bauplan für eine Reihe von ähnlichen Objekten. <a href="https://en.wikipedia.org/wiki/Class_(computer_programming)" class="source">Wikipedia</a></blockquote>
-<p>Allgemein ausgedrückt ist eine <em>Klasse</em> eine Gruppe oder Kategorie von Dingen, die Eigenschaften oder Attribute gemeinsam nutzen. In AutoHotkey definiert <code>class</code> Eigenschaften, die von Instanzen der Klasse gemeinsam genutzt werden (und Methoden, die aufrufbare Eigenschaften sind). Eine <em>Instanz</em> ist schlicht ein Objekt, das Eigenschaften von der Klasse erbt und typischerweise auch als Teil dieser Klasse verstanden werden kann (z.B. mit dem Ausdruck <code><i>Instanz</i> is <i>KlasseName</i></code>). Instanzen werden typischerweise durch den Aufruf von <a href="lib/Class.htm#Call"><em>KlasseName</em>()</a> erzeugt.</p>
+<p>Allgemein ausgedrückt ist eine <em>Klasse</em> eine Gruppe oder Kategorie von Dingen, die Eigenschaften oder Attribute gemeinsam nutzen. In AutoHotkey definiert <code>class</code> Eigenschaften, die von Instanzen der Klasse gemeinsam verwendet werden (und Methoden, die aufrufbare Eigenschaften sind). Eine <em>Instanz</em> ist schlicht ein Objekt, das Eigenschaften von der Klasse erbt und typischerweise auch als Teil dieser Klasse verstanden werden kann (z.B. mit dem Ausdruck <code><i>Instanz</i> is <i>KlasseName</i></code>). Instanzen werden typischerweise durch den Aufruf von <a href="lib/Class.htm#Call"><em>KlasseName</em>()</a> erzeugt.</p>
 <p>Da Instanzen der <a href="lib/Object.htm">Object</a>-Klasse <a href="#ad-hoc">dynamisch</a> und <a href="#delegation">prototypenbasiert</a> sind, besteht jede Klasse aus zwei Teilen:</p>
 <ul>
   <li>Die Klasse hat ein <a href="lib/Class.htm#Prototype">Prototyp</a>-Objekt, auf dem alle Instanzen der Klasse basieren. Alle Methoden und dynamischen Eigenschaften, die sich auf Instanzen der Klasse beziehen, sind im Prototypobjekt enthalten. Dazu gehören alle Eigenschaften und Methoden, denen das Schlüsselwort <code>static</code> fehlt.</li>
@@ -283,7 +283,7 @@ anderesObj.test()</pre>
 }
 </pre>
 <p>Dies konstruiert, nachdem das Skript geladen wurde, ein <a href="lib/Class.htm">Class</a>-Objekt und speichert es in eine <a href="Functions.htm#Global">globale</a> Konstante (schreibgeschützte Variable) namens <i>KlasseName</i>. Wenn <code>extends BasisklasseName</code> vorhanden ist, muss der <i>BasisklasseName</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>KlasseName</i>.Prototype.__Class</code> gespeichert.</p>
-<p>Da der Zugriff auf die Klasse selbst über eine Variable erfolgt, kann der Klassenname nicht genutzt werden, um im selben Kontext sowohl die Klasse zu verweisen als auch eine separate Variable zu erstellen (um z.B. eine Instanz der Klasse zu enthalten). Zum Beispiel wird <code>box := Box()</code> nicht funktionieren, weil sowohl <code>box</code> als auch <code>Box</code> in dasselbe aufgelöst werden. Der Versuch, eine Top-Level-Klasse (nicht verschachtelte Klasse) auf diese Weise neu zuzuweisen, führt zu einem Ladezeitfehler.</p>
+<p>Da der Zugriff auf die Klasse selbst über eine Variable erfolgt, kann der Klassenname nicht verwendet werden, um im selben Kontext sowohl die Klasse zu verweisen als auch eine separate Variable zu erstellen (um z.B. eine Instanz der Klasse zu enthalten). Zum Beispiel wird <code>box := Box()</code> nicht funktionieren, weil sowohl <code>box</code> als auch <code>Box</code> in dasselbe aufgelöst werden. Der Versuch, eine Top-Level-Klasse (nicht verschachtelte Klasse) auf diese Weise neu zuzuweisen, führt zu einem Ladezeitfehler.</p>
 <p>In dieser Dokumentation bezieht sich das Wort "Klasse" in der Regel auf ein Klassenobjekt, das mit dem Schlüsselwort <code>class</code> erstellt wurde.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und Unterklassendefinitionen enthalten.</p>
 
@@ -292,7 +292,7 @@ anderesObj.test()</pre>
 <pre>InstanzVar := Ausdruck</pre>
 <p>Solche Deklarationen werden jedes Mal ausgewertet, wenn eine neue Instanz der Klasse mit <a href="lib/Class.htm#Call"><em>KlasseName</em>()</a> erstellt wird, nachdem alle Basisklassendeklarationen ausgewertet wurden, aber bevor <a href="#Custom_NewDelete">__New</a> aufgerufen wird. Dies wird erreicht, indem automatisch eine Methode mit dem Namen <em>__Init</em> erstellt wird, die einen Aufruf von <code>super.__Init()</code> enthält, und jede Deklaration in diese eingefügt wird. Daher darf eine einzelne Klassendefinition weder eine __Init-Methode noch eine Instanzvariablendeklaration enthalten.</p>
 <p><em>Ausdruck</em> kann mit <code>this</code> auf andere Instanzvariablen und Methoden zugreifen. Globale Variablen können gelesen, aber nicht zugewiesen werden. Eine zusätzliche Zuweisung (oder die Verwendung des <a href="Variables.htm#ref">Referenzoperators</a>) innerhalb des Ausdrucks erzeugt in der Regel eine Variable, die lokal für die __Init-Methode ist. <code>x := y := 1</code> beispielsweise würde <code>this.x</code> und eine lokale Variable <code>y</code> setzen (die wieder freigegeben wird, sobald alle Initialisierungen ausgewertet wurden).</p>
-<p>Um Zugriff auf eine Instanzvariable zu erhalten (sogar innerhalb einer Methode), müssen Sie immer das Zielobjekt angeben, z.B. <code><b>this</b>.InstanzVar</code>.</p>
+<p>Um auf eine Instanzvariable zuzugreifen (auch innerhalb einer Methode), geben Sie immer das Zielobjekt an, z.B. <code><b>this</b>.InstanzVar</code>.</p>
 <p>Deklarationen wie <code>x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse definiert wurde. <code>x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code>this.x.y</code> initialisieren.</p>
 
 <h4 id="Custom_Classes_staticvar">Statische bzw. Klassenvariablen</h4>
@@ -300,8 +300,8 @@ anderesObj.test()</pre>
 <pre>static KlasseVar := Ausdruck</pre>
 <p>Diese Deklarationen werden nur einmal ausgewertet, während die Klasse <a href="#static__New">initialisiert</a> wird. Zu diesem Zweck wird automatisch eine statische Methode namens <em>__Init</em> definiert.</p>
 <p>Jede Deklaration fungiert wie eine normale Eigenschaftszuweisung, mit dem Klassenobjekt als Ziel. <em>Ausdruck</em> wird ähnlich interpretiert wie bei Instanzvariablen, außer dass <code>this</code> auf die Klasse selbst verweist.</p>
-<p>Um einer Klassenvariable irgendwo anders etwas zuzuweisen, müssen Sie immer das Klassenobjekt angeben; zum Beispiel <code><b>KlasseName</b>.KlasseVar := Wert</code>. Wenn eine Unterklasse keine Eigenschaft mit diesem Namen besitzt, kann <code><i>Unterklasse</i>.KlasseVar</code> auch genutzt werden, um den Wert abzurufen; wenn der Wert eine Referenz zu einem Objekt ist, werden Unterklassen sich dieses Objekt standardmäßig teilen. Allerdings würde <code><i>Unterklasse</i>.KlasseVar := y</code> den Wert nicht in <em>KlasseName</em>, sondern in <em>Unterklasse</em> speichern.</p>
-<p>Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse definiert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code><i>KlasseName</i>.x.y</code> initialisieren. Da <a href="lib/Class.htm#Prototype">Prototype</a> implizit in jeder Klasse definiert ist, kann <code>static Prototype.gemeinsamerWert := 1</code> genutzt werden, um Werte zu setzen, die dynamisch von allen Instanzen der Klasse geerbt werden (bis sie von einer Eigenschaft auf der Instanz selbst überschattet werden).</p>
+<p>Um einer Klassenvariable irgendwo anders etwas zuzuweisen, müssen Sie immer das Klassenobjekt angeben; zum Beispiel <code><b>KlasseName</b>.KlasseVar := Wert</code>. Wenn eine Unterklasse keine Eigenschaft mit diesem Namen besitzt, kann <code><i>Unterklasse</i>.KlasseVar</code> auch verwendet werden, um den Wert abzurufen; wenn der Wert eine Referenz zu einem Objekt ist, werden Unterklassen sich dieses Objekt standardmäßig teilen. Allerdings würde <code><i>Unterklasse</i>.KlasseVar := y</code> den Wert nicht in <em>KlasseName</em>, sondern in <em>Unterklasse</em> speichern.</p>
+<p>Deklarationen wie <code>static x.y := z</code> werden auch unterstützt, sofern <code>x</code> zuvor in dieser Klasse definiert wurde. <code>static x := {}, x.y := 42</code> würde beispielsweise <code>x</code> deklarieren und außerdem <code><i>KlasseName</i>.x.y</code> initialisieren. Da <a href="lib/Class.htm#Prototype">Prototype</a> implizit in jeder Klasse definiert ist, kann <code>static Prototype.gemeinsamerWert := 1</code> verwendet werden, um Werte zu setzen, die dynamisch von allen Instanzen der Klasse geerbt werden (bis sie von einer Eigenschaft auf der Instanz selbst überschattet werden).</p>
 
 <h4 id="Custom_Classes_class">Verschachtelte Klassen</h4>
 <p>Verschachtelten Klassendefinitionen ermöglichen es, ein Klassenobjekt mit einer statischen Variable/Klassenvariable der äußeren Klasse statt mit einer separaten globalen Variablen zu assoziieren. Im obigen Beispiel konstruiert <code>class VerschachtelteKlasse</code> ein <a href="lib/Class.htm">Class</a>-Objekt und speichert es in <code>KlasseName.VerschachtelteKlasse</code>. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall kann mit <code>(<i>WelcheKlasse</i>.VerschachtelteKlasse)()</code> eine geeignete Klasse instanziiert werden).</p>
@@ -329,16 +329,16 @@ Methode()
 }
 </pre>
 
-<p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann genutzt werden, um eine einzeilige Methode für die Rückgabe eines Ausdrucks zu definieren:</p>
+<p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann verwendet werden, um eine einzeilige Methode für die Rückgabe eines Ausdrucks zu definieren:</p>
 <pre>Methode() =&gt; <i>Ausdruck</i></pre>
 
 <h4 id="Custom_Classes_super">Super</h4>
 <p>Innerhalb einer Methode oder eines Eigenschaft-Getters/Setters kann das Schlüsselwort <code>super</code> anstelle von <code>this</code> verwendet werden, um auf Superklassen-Versionen von Methoden oder Eigenschaften, die in einer abgeleiteten Klasse überschrieben werden, zugreifen zu können. <code>super.Methode()</code> in der Klasse oben würde beispielsweise bewirken, dass typischerweise eine Version von <em>Methode</em> aufgerufen wird, die innerhalb von <em>BasisklasseName</em> definiert wurde. Hinweis:</p>
 <ul>
-  <li><code>super.Methode()</code> ruft immer die Basis der Klasse oder des Prototypobjekts auf, das mit der ursprünglichen Definition der aktuellen Methode verknüpft ist, sogar wenn <code>this</code> von einer <em>Unterklasse</em> aus dieser Klasse oder von einer ganz anderen Klasse abstammt.</li>
+  <li><code>super.Methode()</code> ruft immer automatisch die Basis der Klasse oder des Prototypobjekts auf, das mit der ursprünglichen Definition der aktuellen Methode verknüpft ist, sogar wenn <code>this</code> von einer <em>Unterklasse</em> aus dieser Klasse oder von einer ganz anderen Klasse abstammt.</li>
   <li><code>super.Methode()</code> übergibt implizit <code>this</code> als ersten (versteckten) Parameter.</li>
   <li>Da nicht bekannt ist, wo (oder ob) <em>KlasseName</em> innerhalb der Kette von Basisobjekten existiert, wird <em>KlasseName</em> selbst als Ausgangspunkt verwendet. Daher ist <code>super.Methode()</code> meistens äquivalent zu <code>(<i>KlasseName</i>.Prototype.base.Methode)(this)</code> (aber ohne <em>Prototype</em>, wenn <em>Methode</em> statisch ist). Allerdings wird <code><i>KlasseName</i>.Prototype</code> beim Laden des Skripts aufgelöst.</li>
-  <li>Es wird ein Fehler ausgelöst, wenn die Eigenschaft nicht in einer Superklasse definiert ist oder nicht aufgerufen werden kann.</li>
+  <li>Es wird ein Fehler ausgelöst, wenn die Eigenschaft nicht in einer Superklasse definiert ist oder nicht automatisch aufgerufen werden kann.</li>
 </ul>
 <p>Nach dem Schlüsselwort <code>super</code> muss eines der folgenden Symbole erfolgen: <code>.[(</code></p>
 <p><code>super()</code> ist äquivalent zu <code>super.call()</code>.</p>
@@ -355,17 +355,17 @@ Methode()
     }
 }
 </pre>
-<p><em>Eigenschaft</em> ist der Name der Eigenschaft, mit dem sie aufgerufen werden kann. <code>obj.Eigenschaft</code> würde beispielsweise <em>get</em> aufrufen, und <code>obj.Eigenschaft := Wert</code> würde <em>set</em> aufrufen. Innerhalb von <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das aufgerufen wird. Innerhalb von <em>set</em> enthält <code>value</code> den Wert, der zugewiesen wird.</p>
-<p>Die Definition und Übergabe von Parametern erfolgt auf der rechten Seite des Eigenschaftsnamens, in eckigen Klammern - allerdings sollten diese weggelassen werden, wenn keine Parameter vorhanden sind (siehe unten). Abgesehen von den eckigen Klammern werden Eigenschaftsparameter genauso wie Methodenparameter definiert - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
-<p>Wenn eine Eigenschaft mit Parametern aufgerufen wird, aber keine definiert sind, werden Parameter automatisch an die <a href="#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet. <code>this.Eigenschaft[x]</code> beispielsweise hätte die gleiche Wirkung wie <code>(this.Eigenschaft)[x]</code> oder <code>y := this.Eigenschaft, y[x]</code>. Leere Klammern (<code>this.Eigenschaft[]</code>) führen dazu, dass die __Item-Eigenschaft des Wertes von <em>Eigenschaft</em> immer aufgerufen wird, aber ein variadischer Aufruf wie <code>this.Eigenschaft[Args*]</code> hat diesen Effekt nur, wenn die Anzahl der Parameter ungleich Null ist.</p>
+<p><em>Eigenschaft</em> ist der Name der Eigenschaft, der für ihren automatischen Aufruf verwendet wird. Zum Beispiel bewirkt <code>obj.Eigenschaft</code>, dass <em>get</em> aufgerufen wird, und <code>obj.Eigenschaft := Wert</code>, dass <em>set</em> aufgerufen wird. Innerhalb von <em>get</em> oder <em>set</em> bezieht sich <code>this</code> auf das Objekt, das gerade automatisch aufgerufen wird. Innerhalb von <em>set</em> enthält <code>value</code> den Wert, der gerade zugewiesen wird.</p>
+<p>Die Definition und Übergabe von Parametern erfolgt auf der rechten Seite des Eigenschaftsnamens, in eckigen Klammern - allerdings sollten diese weggelassen werden, wenn keine Parameter vorhanden sind (siehe unten). Abgesehen von der Verwendung eckiger Klammern werden die Parameter von Eigenschaften genauso definiert wie die Parameter von Methoden - optionale, variadische und ByRef-Parameter werden unterstützt.</p>
+<p>Wenn eine Eigenschaft mit Parametern automatisch aufgerufen wird, aber keine definiert sind, werden Parameter automatisch an die <a href="#__Item">__Item</a>-Eigenschaft des von <em>get</em> zurückgegebenen Objekts weitergeleitet. <code>this.Eigenschaft[x]</code> beispielsweise hätte die gleiche Wirkung wie <code>(this.Eigenschaft)[x]</code> oder <code>y := this.Eigenschaft, y[x]</code>. Leere Klammern (<code>this.Eigenschaft[]</code>) führen dazu, dass die __Item-Eigenschaft des Wertes von <em>Eigenschaft</em> immer automatisch aufgerufen wird, aber ein variadischer Aufruf wie <code>this.Eigenschaft[Args*]</code> hat diesen Effekt nur, wenn die Anzahl der Parameter ungleich Null ist.</p>
 <p>Um statische Eigenschaften zu definieren, muss vor dem Eigenschaftsnamen das separate Schlüsselwort <code>static</code> verwendet werden. In diesem Fall verweist <code>this</code> auf die Klasse selbst oder eine Unterklasse.</p>
 <p>Der Rückgabewert von <em>set</em> wird ignoriert. <code>Wert := obj.Eigenschaft := 42</code> beispielsweise wird immer <code>Wert := 42</code> zuweisen, egal was die Eigenschaft macht, es sei denn, sie löst eine Ausnahme aus oder beendet den Thread.</p>
 <p>Jede Klasse kann eine oder beide Hälften einer Eigenschaft definieren. Wenn eine Klasse eine Eigenschaft überschreibt, kann sie <code><a href="#Custom_Classes_super">super.Eigenschaft</a></code> benutzen, um auf die via eigene Basisklasse definierte Eigenschaft zugreifen zu können. Wenn <em>Get</em> oder <em>Set</em> nicht definiert ist, kann es von einem Basisobjekt geerbt werden. Wenn <em>Get</em> undefiniert ist, kann die Eigenschaft einen Wert zurückgeben, der von einer Basis geerbt wurde. Wenn <em>Set</em> in diesem und allen Basisobjekten undefiniert ist (oder von einer geerbten Werteigenschaft verschleiert wird), führt der Versuch, die Eigenschaft zu setzen, zum Auslösen einer Ausnahme.</p>
 <p>Eine Eigenschaftsdefinition mit sowohl <em>Get</em> als auch <em>Set</em> erstellt faktisch zwei separate Funktionen, die weder lokale oder statische Variablen noch verschachtelte Funktionen gemeinsam nutzen. Analog zu den Methoden hat jede Funktion einen versteckten Parameter namens <code>this</code>, und <em>Set</em> hat einen zweiten versteckten Parameter namens <code>value</code>. Explizit definierte Parameter erfolgen danach.</p>
-<p>Während eine Eigenschaftsdefinition die <em>Get</em>- und <em>Set</em>-Akzessorfunktionen für eine Eigenschaft auf die gleiche Weise wie <a href="lib/Object.htm#DefineProp">DefineProp</a> definiert, definiert eine Methodendefinition die <em>Call</em>-Akzessorfunktion. Jede Klasse kann eine Eigenschaftsdefinition und eine Methodendefinition mit demselben Namen enthalten. Wenn eine Eigenschaft ohne <em>Call</em>-Akzessorfunktion (eine Methode) aufgerufen wird, wird <em>Get</em> ohne Parameter aufgerufen und das Ergebnis anschließend als Methode aufgerufen.</p>
+<p>Während eine Eigenschaftsdefinition die <em>Get</em>- und <em>Set</em>-Akzessorfunktionen für eine Eigenschaft auf die gleiche Weise wie <a href="lib/Object.htm#DefineProp">DefineProp</a> definiert, definiert eine Methodendefinition die <em>Call</em>-Akzessorfunktion. Jede Klasse kann eine Eigenschaftsdefinition und eine Methodendefinition mit demselben Namen enthalten. Wenn eine Eigenschaft ohne <em>Call</em>-Akzessorfunktion (eine Methode) aufgerufen wird, wird <em>Get</em> ohne Parameter automatisch aufgerufen und das Ergebnis anschließend als Methode aufgerufen.</p>
 
 <h4 id="Custom_Classes_property_short">Fat-Arrow-Eigenschaften</h4>
-<p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann genutzt werden, um einen <a href="#Custom_Classes_property">Eigenschaft</a>-Getter oder -Setter für die Rückgabe eines Ausdrucks zu definieren:</p>
+<p>Die <a href="Variables.htm#fat-arrow">Fat-Arrow-Syntax</a> kann verwendet werden, um einen <a href="#Custom_Classes_property">Eigenschaft</a>-Getter oder -Setter für die Rückgabe eines Ausdrucks zu definieren:</p>
 <pre>KurzeEigenschaft[<i>Parameter</i>]
 {
     <span class="dec">get</span> =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
@@ -381,7 +381,7 @@ Methode()
 <p><em>AnzahlVars</em> enthält die Anzahl der Variablen, die an die For-Schleife übergeben wurden. Wenn <em>AnzahlVars</em> 2 ist, wird erwartet, dass der Enumerator dem ersten Parameter den Schlüssel oder Index eines Elements und dem zweiten Parameter den Wert zuweist. Jeder Schlüssel oder Index sollte als Parameter der <a href="#__Item">__Item</a>-Eigenschaft akzeptiert werden. Dadurch können <a href="AHKL_DBGPClients.htm">DBGp-basierte Debugger</a> ein bestimmtes Element abrufen oder setzen, nachdem sie via Enumerator aufgelistet wurden.</p>
 
 <h3 id="__Item">__Item-Eigenschaft</h3>
-<p>Die __Item-Eigenschaft wird indirekt aufgerufen, wenn der Indexierungsoperator (Array-Syntax) in Verbindung mit dem Objekt verwendet wird. Im folgenden Beispiel wird die Eigenschaft als statisch deklariert, so dass der Indexierungsoperator bei der Env-Klasse selbst angewendet werden kann. Ein weiteres Beispiel finden Sie unter <a href="#Array2D">Array2D</a>.</p>
+<p>Die __Item-Eigenschaft wird automatisch aufgerufen, wenn der Indexierungsoperator (Array-Syntax) in Verbindung mit dem Objekt verwendet wird. Im folgenden Beispiel wird die Eigenschaft als statisch deklariert, so dass der Indexierungsoperator bei der Env-Klasse selbst angewendet werden kann. Ein weiteres Beispiel finden Sie unter <a href="#Array2D">Array2D</a>.</p>
 <pre>class Env {
     static __Item[name] {
         get =&gt; EnvGet(name)
@@ -404,7 +404,7 @@ obj["base"] := 10
 MsgBox obj.base = Object.prototype  <em>; True</em>
 MsgBox obj["base"]                  <em>; 10</em>
 </pre>
-<p class="note"><strong>Hinweis:</strong> Wenn ein expliziter Eigenschaftsname mit leeren eckigen Klammern kombiniert wird, wie in <code>obj.prop[]</code>, wird dies als zwei separate Operationen behandelt: zuerst wird <code>obj.prop</code> abgerufen, danach indirekt die Standardeigenschaft des Ergebnisses aufgerufen. Dies ist Bestandteil der Sprachsyntax und somit objektunabhängig.</p>
+<p class="note"><strong>Hinweis:</strong> Wenn ein expliziter Eigenschaftsname mit leeren eckigen Klammern kombiniert wird, wie in <code>obj.prop[]</code>, wird dies als zwei separate Operationen behandelt: zuerst wird <code>obj.prop</code> abgerufen, danach automatisch die Standardeigenschaft des Ergebnisses aufgerufen. Dies ist Bestandteil der Sprachsyntax und somit objektunabhängig.</p>
 
 <h3 id="Custom_NewDelete">Konstruktion und Destruktion</h3>
 <p>Wenn ein Objekt mit der Standardimplementierung von <a href="lib/Class.htm#Call"><em>KlasseName</em>()</a> erstellt wird, wird die <code>__New</code>-Methode des neuen Objekts aufgerufen, um eine benutzerdefinierte Initialisierung zu ermöglichen. Alle Parameter, die an <code><i>KlasseName</i>()</code> übergeben werden, werden an <code>__New</code> weitergeleitet, so dass sie den ursprünglichen Inhalt des Objekts oder die Art und Weise, wie es konstruiert ist, beeinflussen können. Zerstört man ein Objekt, wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
@@ -429,9 +429,9 @@ class GMem<span id="GMem"></span>
     }
 }</pre>
 <p>__Delete wird nicht bei Objekten aufgerufen, die eine Eigenschaft namens "__Class" besitzen. <a href="lib/Class.htm#Prototype">Prototypobjekte</a> haben standardmäßig diese Eigenschaft.</p>
-<p>Wenn eine Ausnahme oder ein Laufzeitfehler ausgelöst wird, während __Delete ausgeführt wird, und nicht innerhalb von __Delete behandelt wird, verhält es sich so, als wäre __Delete von einem neuen <a href="misc/Threads.htm">Thread</a> aufgerufen wurden. Das heißt, dass ein Fehlerdialogfenster angezeigt und __Delete durchgeführt wird, aber der Thread nicht beendet wird (es sei denn, er wurde bereits beendet).</p>
-<p>Wenn das Skript auf irgendeine Weise direkt terminiert wird, z.B. über das Tray-Menü oder <a href="lib/ExitApp.htm">ExitApp</a>, erhalten alle Funktionen, die noch nicht zu ihrem Aufrufer zurückgekehrt sind, keine Chance, dies jemals zu tun. Daher werden alle Objekte, die von lokalen Variablen dieser Funktionen referenziert werden, nicht freigegeben, was zur Folge hat, dass __Delete nicht aufgerufen wird.</p>
-<p>Wenn das Skript beendet wird, werden Objekte, die in globalen und statischen Variablen enthalten sind, automatisch in einer willkürlichen, von der Implementierung festgelegten Reihenfolge freigegeben. Wenn __Delete während dieses Vorgangs aufgerufen wird, können einige globale oder statische Variablen bereits freigegeben worden sein, aber alle Referenzen, die das Objekt selbst enthält, sind nach wie vor gültig. Daher ist es am besten, wenn __Delete völlig eigenständig ist und nicht auf globale oder statische Variablen angewiesen ist.</p>
+<p>Wenn eine Ausnahme oder ein Laufzeitfehler ausgelöst wird, während __Delete ausgeführt wird, und nicht innerhalb von __Delete behandelt wird, verhält es sich so, als wäre __Delete von einem neuen <a href="misc/Threads.htm">Thread</a> aufgerufen wurden. Das heißt, dass ein Fehlerdialogfenster angezeigt wird und __Delete zurückkehrt, aber der Thread nicht beendet wird (es sei denn, er wurde bereits beendet).</p>
+<p>Wenn das Skript auf irgendeine Weise direkt terminiert wird, z.B. über das Tray-Menü oder <a href="lib/ExitApp.htm">ExitApp</a>, erhalten alle Funktionen, die noch nicht zu ihrem Aufrufer zurückgekehrt sind, keine Chance, dies jemals zu tun. Daher werden alle Objekte, die von lokalen Variablen dieser Funktionen referenziert werden, nicht freigegeben, was dazu führt, dass __Delete nicht aufgerufen wird.</p>
+<p>Bei Beendigung des Skripts werden Objekte, die in globalen und statischen Variablen enthalten sind, automatisch in einer willkürlichen, von der Implementierung festgelegten Reihenfolge freigegeben. Wenn __Delete während dieses Vorgangs aufgerufen wird, können einige globale oder statische Variablen bereits freigegeben worden sein, aber alle Referenzen, die das Objekt selbst enthält, sind noch gültig. Daher ist es am besten, wenn __Delete völlig eigenständig ist und nicht auf globale oder statische Variablen angewiesen ist.</p>
 
 <h4 id="static__New">Initialisierung einer Klasse</h4>
 <p>Jede Klasse wird automatisch initialisiert, wenn eine Referenz zur Klasse erstmals ausgewertet wird. Wenn z.B. <em>MeineKlasse</em> noch nicht initialisiert wurde, würde <code>MeineKlasse.MeineEigen</code> bewirken, dass die Klasse initialisiert wird, bevor die Eigenschaft abgerufen wird. Die Initialisierung umfasst den Aufruf von zwei statischen Methoden: __Init und __New.</p>
@@ -469,7 +469,7 @@ class <i>KlasseName</i> {
   <dt>Wert</dt>
   <dd><p>Der Wert, der zugewiesen wird.</p></dd>
 </dl>
-<p>Metafunktionen definieren, was passieren soll, wenn eine undefinierte Eigenschaft oder Methode aufgerufen wird. Wenn <code>obj.unk</code> beispielsweise keinen Wert zugewiesen bekommen hat, wird die <i>__Get</i>-Metafunktion aufgerufen. <code>obj.unk := value</code> veranlasst hingegen den Aufruf von <i>__Set</i> und <code>obj.unk()</code> den Aufruf von <i>__Call</i>.</p>
+<p>Metafunktionen definieren, was passieren soll, wenn eine undefinierte Eigenschaft oder Methode automatisch aufgerufen wird. Wenn z.B. <code>obj.unk</code> keinen Wert zugewiesen bekommen hat, ruft es automatisch die <i>__Get</i>-Metafunktion automatisch auf. <code>obj.unk := value</code> veranlasst hingegen den automatischen Aufruf von <i>__Set</i> und <code>obj.unk()</code> den automatischen Aufruf von <i>__Call</i>.</p>
 <p>Eigenschaften und Methoden können im Objekt selbst oder in einem seiner <a href="#delegation">Basisobjekte</a> definiert werden. Damit für jede Eigenschaft eine Metafunktion aufgerufen werden kann, sollten Sie grundsätzlich vermeiden, irgendwelche Eigenschaften zu definieren. Interne Eigenschaften wie <a href="lib/Object.htm#Base">Base</a> können mit einer <a href="#Custom_Classes_property">Eigenschaftsdefinition</a> oder <a href="lib/Object.htm#DefineProp">DefineProp</a> überschrieben werden.</p>
 <p>Wenn eine Metafunktion definiert ist, muss sie die gewünschte Standardaktion ausführen. Zum Beispiel kann Folgendes erwartet werden:</p>
 <ul>
@@ -481,14 +481,14 @@ class <i>KlasseName</i> {
 <p>Es kann ein beliebiges <a href="misc/Functor.htm">aufrufbares Objekt</a> als Metafunktion verwendet werden, wenn man es der entsprechenden Eigenschaft zuweist.</p>
 <p>Metafunktionen werden in den folgenden Fällen nicht aufgerufen:</p>
 <ul>
-  <li><code>x[y]</code>: Die Verwendung von eckigen Klammern ohne Eigenschaftsnamen ruft nur die <a href="#__Item">__Item</a>-Eigenschaft auf.</li>
-  <li><code>x()</code>: Der Aufruf des Objekts selbst ruft nur die <code>Call</code>-Methode auf. Dazu gehören interne Aufrufe von internen Funktionen wie <a href="lib/SetTimer.htm">SetTimer</a> und <a href="lib/Hotkey.htm">Hotkey</a>.</li>
+  <li><code>x[y]</code>: Die Verwendung von eckigen Klammern ohne Eigenschaftsnamen ruft nur die <a href="#__Item">__Item</a>-Eigenschaft automatisch auf.</li>
+  <li><code>x()</code>: Der Aufruf des Objekts selbst ruft nur die <code>Call</code>-Methode automatisch auf. Dazu gehören interne Aufrufe von internen Funktionen wie <a href="lib/SetTimer.htm">SetTimer</a> und <a href="lib/Hotkey.htm">Hotkey</a>.</li>
   <li>Interne Aufrufe von anderen Metafunktionen oder Doppel-Unterstrich-Methoden lösen <code>__Call</code> nicht aus.</li>
 </ul>
 
 <h4 id="Dynamic_Properties">Dynamische Eigenschaften</h4>
-<p>Mit der <a href="#Custom_Classes_property">Eigenschaftssyntax</a> und <a href="lib/Object.htm#DefineProp">DefineProp</a> können Eigenschaften definiert werden, die jedes Mal, wenn sie ausgewertet werden, einen Wert berechnen, allerdings muss jede Eigenschaft im Voraus definiert sein. Mit <em>__Get</em> und <em>__Set</em> können hingegen Eigenschaften implementiert werden, die erst zum Zeitpunkt ihres Aufrufs bekannt sind.</p>
-<p>Zum Beispiel kann ein "Proxy-Objekt" mit Eigenschaften erstellt werden, die den aktuellen Wert über das Netzwerk (oder über einen anderen Kanal) abfragen. Ein Remote-Server sendet eine Antwort zurück, die den Wert der Eigenschaft enthält, und das Proxy-Objekt übergibt den Wert an seinen Aufrufer. Auch wenn der Name jeder Eigenschaft im Voraus bekannt war, wäre es unlogisch, jede Eigenschaft einzeln in der Proxy-Klasse zu definieren, da jede Eigenschaft dasselbe tun würde (eine Netzwerkanfrage senden). Metafunktionen bekommen den Namen der Eigenschaft als Parameter, demzufolge sind sie eine gute Lösung für dieses Problem.</p>
+<p>Mit der <a href="#Custom_Classes_property">Eigenschaftssyntax</a> und <a href="lib/Object.htm#DefineProp">DefineProp</a> können Eigenschaften definiert werden, die jedes Mal, wenn sie ausgewertet werden, einen Wert berechnen, allerdings muss jede Eigenschaft im Voraus definiert sein. Mit <em>__Get</em> und <em>__Set</em> können hingegen Eigenschaften implementiert werden, die erst zum Zeitpunkt ihres automatischen Aufrufs bekannt sind.</p>
+<p>Zum Beispiel kann ein "Proxy-Objekt" mit Eigenschaften erstellt werden, die den aktuellen Wert über das Netzwerk (oder über einen anderen Kanal) abfragen. Ein Remote-Server sendet eine Antwort zurück, die den Wert der Eigenschaft enthält, und das Proxy-Objekt übergibt den Wert an seinen Aufrufer. Selbst wenn der Name jeder Eigenschaft im Voraus bekannt wäre, würde es keinen Sinn machen, jede Eigenschaft einzeln in der Proxy-Klasse zu definieren, da jede Eigenschaft dasselbe bewirkt (eine Netzwerkanfrage senden). Metafunktionen bekommen den Namen der Eigenschaft als Parameter, demzufolge sind sie eine gute Lösung für dieses Problem.</p>
 
 <h2 id="primitive">Primitive Werte</h2>
 <p>Primitive Werte, wie Zeichenketten und Zahlen, können keine eigenen Eigenschaften und Methoden haben. Allerdings unterstützen primitive Werte die gleiche Art von <a href="#delegation">Delegation</a> wie Objekte. Das heißt, dass jede Eigenschaft oder Methode, die einen primitiven Wert aufruft, an ein vordefiniertes Prototypobjekt delegiert wird, das auch über die <a href="lib/Class.htm#Prototype">Prototype</a>-Eigenschaft der entsprechenden Klasse zugänglich ist. Die folgenden Klassen beziehen sich auf primitive Werte:</p>
@@ -516,24 +516,24 @@ MsgBox A_AhkPath.length " == " StrLen(A_AhkPath)
 <pre>"".base.test := 1  <em>; Bitte nicht nachmachen.</em>
 MsgBox "".test  <em>; 1</em>
 "".test := 2  <em>; Fehler: Eigenschaft ist schreibgeschützt.</em></pre>
-<p>Obwohl __Set- und Eigenschaft-Setter genutzt werden können, sind sie nicht nützlich, da primitive Werte als unveränderlich zu betrachten sind.</p>
+<p>Obwohl __Set- und Eigenschaft-Setter verwendet werden können, sind sie nicht nützlich, da primitive Werte als unveränderlich zu betrachten sind.</p>
 
 <h2 id="Implementation">Implementierung</h2>
 <span id="Refs"></span><h3 id="Reference_Counting">Referenzzählung</h3>
-<p>AutoHotkey verwendet einen einfachen Referenzzählungsmechanismus, um automatisch Ressourcen freizugeben, falls ein Objekt nicht länger in einem Skript benötigt bzw. verwiesen wird. Skript-Autoren sollten diesen Mechanismus nicht explizit aufrufen, es sei denn, sie müssen sich direkt mit unverwalteten <a href="#ObjPtr">Objekt-Pointern</a> befassen.</p>
+<p>AutoHotkey verwendet einen einfachen Referenzzählmechanismus, um belegte Ressourcen eines Objekts automatisch freizugeben, wenn es nicht länger im Skript referenziert wird. Skriptautoren sollten diesen Mechanismus nicht explizit aufrufen, es sei denn, sie arbeiten direkt mit unverwalteten <a href="#ObjPtr">Objektpointern</a>.</p>
 <p>Temporär zurückgegebene Referenzen von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Im folgenden Beispiel wird das neue <a href="#GMem">GMem</a>-Objekt erst nach Durchführung von MsgBox freigegeben:</p>
 <pre>MsgBox <a href="lib/DllCall.htm">DllCall</a>("GlobalSize", "ptr", GMem(0, 20).ptr, "ptr")  <em>; 20</em></pre>
 <p class="note"><strong>Hinweis:</strong> In diesem Beispiel kann <code>.ptr</code> auch weggelassen werden, da der <a href="lib/DllCall.htm#ptr">Ptr</a>-Argumenttyp Objekte mit einer <code>Ptr</code>-Eigenschaft zulässt. Allerdings funktioniert das oben gezeigte Muster auch mit anderen Eigenschaftsnamen.</p>
-<p>Um eine Aktion nach Freigabe der letzten Referenz zu einem Objekt durchzuführen, implementieren Sie die <a href="#Custom_NewDelete">__Delete</a>-Metafunktion.</p>
+<p>Um Code beim Freigeben der letzten Referenz zu einem Objekt auszuführen, implementieren Sie die <a href="#Custom_NewDelete">__Delete</a>-Metafunktion.</p>
 <p><b>Bekannte Einschränkungen:</b></p>
 <ul>
-  <li>Zirkelbezüge müssen unterbrochen werden, bevor ein Objekt freigegeben werden kann. Siehe <a href="#Circular_References">Freigeben von Objekten</a>, um anhand eines Beispiels mehr darüber zu erfahren.</li>
-  <li>Im Gegensatz zu Referenzen in statischen und globalen Variablen werden Referenzen in nicht-statischen lokalen Variablen oder im Ausdrucksauswertungsstapel nicht automatisch freigegeben, sobald das Programm beendet wird. Solche Referenzen werden nur freigegeben, wenn die Funktion oder der Ausdruck regulär beendet werden kann.</li>
+  <li>Zirkelbezüge müssen unterbrochen werden, bevor ein Objekt freigegeben werden kann. Weitere Informationen und ein Beispiel finden Sie unter <a href="#Circular_References">Freigeben von Objekten</a>.</li>
+  <li>Referenzen in statischen und globalen Variablen werden bei Beendigung des Programms automatisch freigegeben. Dies gilt jedoch nicht für Referenzen in nicht-statischen lokalen Variablen oder im Ausdrucksauswertungsstapel. Solche Referenzen werden erst freigegeben, wenn die Funktion oder der Ausdruck regulär beendet werden kann.</li>
 </ul>
-<p>Obwohl das Betriebssystem den vom Objekt benutzten Speicher zurückfordert, sobald das Programm beendet wird, kann <a href="#Custom_NewDelete">__Delete</a> erst aufgerufen werden, wenn alle Referenzen zum Objekt freigegeben worden sind. Das kann wichtig sein, wenn andere Ressourcen freigegeben werden, die nicht automatisch vom Betriebssystem zurückgefordert werden, wie zum Beispiel temporäre Dateien.</p>
+<p>Obwohl das Betriebssystem den vom Objekt belegten Speicher bei Beendigung des Programms zurückfordern wird, wird <a href="#Custom_NewDelete">__Delete</a> erst aufgerufen, wenn alle Referenzen zum Objekt freigegeben wurden. Dies kann wichtig sein, wenn es andere Ressourcen freigibt, die nicht automatisch vom Betriebssystem zurückgefordert werden, wie z.B. temporäre Dateien.</p>
 
-<h3 id="ObjPtr">Objekt-Pointer</h3>
-<p>In einigen seltenen Fällen ist es eventuell erforderlich, dass ein Objekt via DllCall an einen externen Code übergeben werden muss, oder dass ein Objekt in eine binäre Datenstruktur gespeichert werden muss, damit es später abgerufen werden kann. Die Adresse eines Objekts kann via <code>Adresse := ObjPtr(meinObjekt)</code> abgerufen werden; dies würde allerdings effektiv zwei Referenzen zum Objekt erzeugen, während das Programm selbst nur die eine Referenz in <em>meinObjekt</em> kennt. Das Objekt wird gelöscht, sobald die letzte <em>bekannte</em> Referenz zum Objekt freigegeben wird. Demzufolge muss das Skript das Objekt darüber informieren, dass es eine Referenz erhalten hat. Dies kann man wie folgt erreichen (die folgenden zwei Zeilen sind äquivalent):</p>
+<h3 id="ObjPtr">Objektpointer</h3>
+<p>In einigen seltenen Fällen ist es eventuell erforderlich, dass ein Objekt via DllCall an einen externen Code übergeben werden muss, oder dass ein Objekt in eine binäre Datenstruktur gespeichert werden muss, damit es später abgerufen werden kann. Die Adresse eines Objekts kann via <code>Adresse := ObjPtr(meinObjekt)</code> abgerufen werden; dies würde allerdings effektiv zwei Referenzen zum Objekt erzeugen, während das Programm selbst nur die eine Referenz in <em>meinObjekt</em> kennt. Das Objekt wird gelöscht, sobald die letzte <em>bekannte</em> Referenz zum Objekt freigegeben wird. Folglich muss das Skript dem Objekt mitteilen, dass es eine Referenz erhalten hat. Dies kann man wie folgt erreichen (die folgenden zwei Zeilen sind äquivalent):</p>
 <pre>
 ObjAddRef(Adresse := ObjPtr(meinObjekt))
 Adresse := ObjPtrAddRef(meinObjekt)

@@ -35,8 +35,8 @@
     <p>Wenn leer oder weggelassen, werden nur Dateien einbezogen und Unterverzeichnisse nicht rekursiv durchwandert. Andernfalls geben Sie einen oder mehrere der folgenden Buchstaben an:</p>
     <ul>
       <li>D = Verzeichnisse (Ordner) einbeziehen.</li>
-      <li>F = Dateien einbeziehen. Lässt man sowohl F als auch D weg, werden nur Dateien einbezogen, keine Ordner.</li>
-      <li>R = Unterverzeichnisse (Unterordner) werden rekursiv durchwandert. Es werden alle Unterordner rekursiv durchwandert, nicht nur solche, die dem <em>DateiMuster</em> entsprechen. Lässt man R weg, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</li>
+      <li>F = Dateien einbeziehen. Wenn sowohl F als auch D weggelassen werden, werden nur Dateien einbezogen, keine Ordner.</li>
+      <li>R = Unterverzeichnisse (Unterordner) werden rekursiv durchwandert. Es werden alle Unterordner rekursiv durchwandert, nicht nur solche, die dem <em>DateiMuster</em> entsprechen. Wenn R weggelassen wird, werden Dateien und Ordner in den Unterordnern nicht mit einbezogen.</li>
     </ul>
   </dd>
 
@@ -116,14 +116,14 @@
 <p>Alle gefundenen Dateien werden abgerufen, auch versteckte Dateien. OS-Features wie der DIR-Befehl ignorieren hingegen standardmäßig versteckte Dateien. Um versteckte, systemspezifische und/oder schreibgeschützte Dateien innerhalb einer Schleife zu überspringen, kann z.B. Folgendes verwendet werden:</p>
 <pre>if A_LoopFileAttrib ~= "[HRS]"  <em>; Überspringt jede Datei, die H (versteckt), R (schreibgeschützt) oder S (systemspezifisch) ist. Siehe <a href="../Variables.htm#regex">Tilde-Operator</a>.</em>
     continue  <em>; Diese Datei überspringen und zur nächsten übergehen.</em></pre>
-<p>Um bei einer rekursiven Suche relative statt absolute Pfade von Dateien abzurufen, ist es erforderlich, <a href="SetWorkingDir.htm">SetWorkingDir</a> zu verwenden, um den Basisordner für die nachfolgende Schleife zu bestimmen, und dann die Schleife ohne Pfad anzugeben (z.B. <code>Loop Files, "*.*", "R"</code>). Dies hat zur Folge, dass <a href="#LoopFilePath">A_LoopFilePath</a> einen Dateipfad enthalten wird, der relativ zum Basisordner ist.</p>
+<p>Um bei einer rekursiven Suche relative statt absolute Dateipfade abzurufen, ändern Sie den Basisordner mit <a href="SetWorkingDir.htm">SetWorkingDir</a>, bevor Sie die Schleife verwenden, und lassen Sie dann den Pfad bei der Schleife weg (z.B. <code>Loop Files, "*.*", "R"</code>). Dies hat zur Folge, dass <a href="#LoopFilePath">A_LoopFilePath</a> einen Dateipfad enthalten wird, der relativ zum Basisordner ist.</p>
 <p>Eine Datei-Schleife kann sich selbst unterbrechen, wenn sie Dateien oder Ordner innerhalb ihres eigenen Geltungsbereichs erstellt oder umbenennt. Verwendet die Schleife z.B. <a href="FileMove.htm">FileMove</a>, um Dateien umzubenennen, könnten solche Dateien zweimal gefunden werden: Einmal mit dem alten Namen und ein weiteres Mal mit dem neuen Namen. Um das zu umgehen, erstellen Sie zuerst eine Liste von Dateien, bevor Sie sie umbenennen. Zum Beispiel:</p>
 <pre>DateiListe := ""
 Loop Files, "*.jpg"
     DateiListe .= A_LoopFileName "`n"
 Loop Parse, DateiListe, "`n"
     FileMove A_LoopField, "umbenannt_" A_LoopField</pre>
-<p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Bei anderen Dateisystemen ist die Reihenfolge unbestimmt. Im Beispiel-Abschnitt unten wird gezeigt, wie die <a href="Sort.htm">Sort</a>-Funktion genutzt werden kann, um eine konsistente Reihenfolge zu gewährleisten.</p>
+<p>Dateien in einem NTFS-Dateisystem werden wahrscheinlich immer in alphabetischer Reihenfolge abgerufen. Bei anderen Dateisystemen ist die Reihenfolge unbestimmt. Im Beispiel-Abschnitt unten wird gezeigt, wie die <a href="Sort.htm">Sort</a>-Funktion verwendet werden kann, um eine konsistente Reihenfolge zu gewährleisten.</p>
 <p>Dateimuster länger als 259 Zeichen werden nur unterstützt, wenn mindestens eine der folgenden Bedingungen erfüllt ist:</p>
 <ul>
   <li>Auf dem System ist die <a href="../misc/LongPaths.htm">Langer-Pfad-Unterstützung</a> aktiviert (erfordert Windows 10 Version 1607 oder höher).</li>
@@ -192,7 +192,7 @@ Loop Parse, DateiListe, "`n"
 </div>
 
 <div class="ex" id="ExFileCopy">
-<p><a class="ex_number" href="#ExFileCopy"></a> Kopiert nur Quelldateien ins Ziel, die neuer sind als ihr Gegenstück. Rufen Sie diese Funktion mit einem Quellmuster wie "A:\Skripte\*.ahk" und einem <strong>existierenden</strong> Zielverzeichnis wie "B:\Skript-Backup" auf.</p>
+<p><a class="ex_number" href="#ExFileCopy"></a> Kopiert nur Quelldateien ins Ziel, die neuer sind als ihr Gegenstück. Rufen Sie diese Funktion mit einem Quellmuster wie "A:\Skripte\*.ahk" und einem <strong>existierenden</strong> Zielverzeichnis wie "B:\Skriptbackup" auf.</p>
 <pre>KopiereWennNeuer(QuelleMuster, Ziel)
 {
     Loop Files, QuelleMuster

@@ -31,7 +31,7 @@
       <li><a href="#WriteNum">Write<em>ZahlTyp</em></a>: Schreibt eine Zahl in die Datei und rückt den Dateizeiger vor.</li>
       <li><a href="#RawRead">RawRead</a>: Liest rohe Binärdaten aus der Datei in den Speicher und rückt den Dateizeiger vor.</li>
       <li><a href="#RawWrite">RawWrite</a>: Schreibt rohe Binärdaten in die Datei und rückt den Dateizeiger vor.</li>
-      <li><a href="#Seek">Seek</a>: Verschiebt den Dateizeiger. Lässt man den zweiten Parameter weg, ist dies äquivalent zu <code>FileObj.Pos := Distanz</code>.</li>
+      <li><a href="#Seek">Seek</a>: Verschiebt den Dateizeiger. Wenn der zweite Parameter weggelassen wird, ist dies äquivalent zu <code>FileObj.Pos := Distanz</code>.</li>
       <li><a href="#Close">Close</a>: Schließt die Datei, entleert alle Daten im Cache auf die Festplatte und hebt Freigabesperren auf.</li>
     </ul>
   </li>
@@ -40,7 +40,7 @@
       <li><a href="#Pos">Pos</a>: Ermittelt oder setzt die Position des Dateizeigers.</li>
       <li><a href="#Length">Length</a>: Ermittelt oder setzt die Größe der Datei.</li>
       <li><a href="#AtEOF">AtEOF</a>: Ermittelt einen Wert ungleich 0, wenn der Dateizeiger das Ende der Datei erreicht hat.</li>
-      <li><a href="#Encoding">Encoding</a>: Ermittelt oder setzt die Textcodierung des File-Objekts.</li>
+      <li><a href="#Encoding">Encoding</a>: Ermittelt oder setzt die Textkodierung des File-Objekts.</li>
       <li><a href="#Handle">Handle</a>: Ermittelt ein System-Datei-Handle, das für DllCall verwendet werden kann.</li>
     </ul>
   </li>
@@ -122,7 +122,7 @@
   <dd>
     <p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>Ein <a href="Buffer.htm">Buffer</a>-ähnliches Objekt oder eine Speicheradresse, in der die Daten gespeichert werden sollen.</p>
-    <p>Es wird empfohlen, zum Einlesen ein <a href="Buffer.htm">Buffer</a>-Objekt zu verwenden. Lässt man <em>Bytes</em> weg, wird standardmäßig die Größe des Pufferspeichers verwendet. Es wird eine Ausnahme ausgelöst, wenn <em>Bytes</em> die Größe des Pufferspeichers überschreitet.</p>
+    <p>Es wird empfohlen, zum Einlesen ein <a href="Buffer.htm">Buffer</a>-Objekt zu verwenden. Wenn <em>Bytes</em> weggelassen wird, wird standardmäßig die Größe des Pufferspeichers verwendet. Es wird eine Ausnahme ausgelöst, wenn <em>Bytes</em> die Größe des Pufferspeichers überschreitet.</p>
     <p>Wenn eine Speicheradresse übergeben wird, muss <em>Bytes</em> auch angegeben werden.</p>
   </dd>
   <dt>Bytes</dt>
@@ -171,7 +171,7 @@
       <li>1 (SEEK_CUR): Aktuelle Position des Dateizeigers.</li>
       <li>2 (SEEK_END): Ende der Datei. <i>Distanz</i> sollte normalerweise negativ sein.</li>
     </ul>
-    <p>Lässt man <i>Startpunkt</i> weg, wird standardmäßig SEEK_END verwendet, wenn <em>Distanz</em> negativ ist, andernfalls SEEK_SET.</p></dd>
+    <p>Wenn <i>Startpunkt</i> weggelassen wird, wird standardmäßig SEEK_END verwendet, wenn <em>Distanz</em> negativ ist, andernfalls SEEK_SET.</p></dd>
 </dl>
 <p>Gibt bei Erfolg einen Wert ungleich 0 und bei Misserfolg eine 0 zurück.</p>
 </div>
@@ -204,18 +204,18 @@
   <p>Diese Eigenschaft sollte nur mit einer echten Datei verwendet werden. Wenn das File-Objekt von einem Handle erzeugt wurde, das auf ein nicht-suchendes Device wie Konsolenpuffer oder Pipe verweist, kann der Rückgabewert bedeutungslos sein, da solche Devices logischerweise kein "End of File" haben.</p></div>
 
 <div class="methodShort" id="Encoding"><h3>Encoding</h3>
-<p>Ermittelt oder setzt die Textcodierung des File-Objekts.</p>
-<pre class="Syntax">ErmittelteCodierung := FileObj.Encoding</pre>
-<pre class="Syntax">FileObj.Encoding := NeueCodierung</pre>
-  <p><em>NeueCodierung</em> kann ein numerischer Codepageidentifikator (siehe <a href="https://learn.microsoft.com/windows/win32/intl/code-page-identifiers">Microsoft Docs</a>) oder eine der folgenden Zeichenketten sein.</p>
-  <p><em>ErmittelteCodierung</em> ist eine der folgenden Zeichenketten:</p>
+<p>Ermittelt oder setzt die Textkodierung des File-Objekts.</p>
+<pre class="Syntax">ErmittelteKodierung := FileObj.Encoding</pre>
+<pre class="Syntax">FileObj.Encoding := NeueKodierung</pre>
+  <p><em>NeueKodierung</em> kann ein numerischer Codepageidentifikator (siehe <a href="https://learn.microsoft.com/windows/win32/intl/code-page-identifiers">Microsoft Docs</a>) oder eine der folgenden Zeichenketten sein.</p>
+  <p><em>ErmittelteKodierung</em> ist eine der folgenden Zeichenketten:</p>
   <ul>
 	<li><code class="no-highlight">UTF-8</code>: Unicode UTF-8, äquivalent zu CP65001.</li>
 	<li><code class="no-highlight">UTF-16</code>: Unicode UTF-16 mit Little-Endian-Byte-Order, äquivalent zu CP1200.</li>
 	<li><code>CP<i>nnn</i></code>: Eine Codepage mit dem numerischen Identifikator <i>nnn</i>.</li>
   </ul>
-  <p><em>ErmittelteCodierung</em> kann nie ein Wert mit dem Suffix <code>-RAW</code> sein, unabhängig davon, wie die Datei geöffnet wurde oder ob sie eine Byte-Order-Markierung (BOM) enthält. <em>NeueCodierung</em> bewirkt nicht, dass eine BOM hinzugefügt oder entfernt wird, da eine BOM normalerweise beim Erstellen der Datei hinzugefügt wird.</p>
-  <p>Das Setzen von <em>NeueCodierung</em> auf <code class="no-highlight">UTF-8-RAW</code> oder <code class="no-highlight">UTF-16-RAW</code> ist erlaubt, aber das Suffix <code>-RAW</code> wird ignoriert. Dies gilt nur für <code>FileObj.Encoding</code>, nicht für <a href="FileOpen.htm">FileOpen</a>.</p>
+  <p><em>ErmittelteKodierung</em> kann nie ein Wert mit dem Suffix <code>-RAW</code> sein, unabhängig davon, wie die Datei geöffnet wurde oder ob sie eine Byte-Order-Markierung (BOM) enthält. <em>NeueKodierung</em> bewirkt nicht, dass eine BOM hinzugefügt oder entfernt wird, da eine BOM normalerweise beim Erstellen der Datei hinzugefügt wird.</p>
+  <p>Das Setzen von <em>NeueKodierung</em> auf <code class="no-highlight">UTF-8-RAW</code> oder <code class="no-highlight">UTF-16-RAW</code> ist erlaubt, aber das Suffix <code>-RAW</code> wird ignoriert. Dies gilt nur für <code>FileObj.Encoding</code>, nicht für <a href="FileOpen.htm">FileOpen</a>.</p>
 </div>
 
 <div class="methodShort" id="Handle"><h3>Handle</h3>

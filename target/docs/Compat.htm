@@ -27,8 +27,8 @@
 </ul>
 
 <h2 id="Format">Unicode vs. ANSI</h2>
-<p class="note"><strong>Hinweis:</strong> Dieser Abschnitt baut auf Themen auf, die in anderen Teilen der Dokumentation behandelt werden: <a href="Concepts.htm#strings">Zeichenketten (Strings)</a>, <a href="Concepts.htm#string-encoding">Zeichenkettencodierung</a>.</p>
-<p>Innerhalb einer Zeichenkette (Textwert) ist der numerische Zeichencode und die Größe (in Byte) jedes einzelnen Zeichens von der <a href="Concepts.htm#string-encoding">Codierung</a> der Zeichenkette abhängig. Solche Details sind in der Regel nur für Skripte interessant, die folgende Aktionen durchführen:</p>
+<p class="note"><strong>Hinweis:</strong> Dieser Abschnitt baut auf Themen auf, die in anderen Teilen der Dokumentation behandelt werden: <a href="Concepts.htm#strings">Zeichenketten (Strings)</a>, <a href="Concepts.htm#string-encoding">Zeichenkettenkodierung</a>.</p>
+<p>Innerhalb einer Zeichenkette (Textwert) ist der numerische Zeichencode und die Größe (in Byte) jedes einzelnen Zeichens von der <a href="Concepts.htm#string-encoding">Kodierung</a> der Zeichenkette abhängig. Solche Details sind in der Regel nur für Skripte interessant, die folgende Aktionen durchführen:</p>
 <ul>
   <li>Zeichenketten via <a href="#DllCall">DllCall</a> an externe Funktionen übergeben.</li>
   <li>Zeichenketten via <a href="lib/PostMessage.htm">PostMessage</a> oder <a href="lib/SendMessage.htm">SendMessage</a> übergeben.</li>
@@ -36,12 +36,12 @@
   <li>Pufferspeicher via <a href="#Buffer">Buffer</a> reservieren, um darin eine bestimmte Anzahl von Zeichen zu speichern.</li>
 </ul>
 <p>AutoHotkey v2 verwendet von sich aus Unicode (UTF-16), aber einige externe Bibliotheken oder Fenstermeldungen benötigen ggf. ANSI-Zeichenketten.</p>
-<p><strong>ANSI:</strong> Jedes Zeichen ist <strong>ein Byte</strong> groß (8 Bits). Zeichencodes über 127 sind abhängig von den Spracheinstellungen Ihres Systems (oder von der Codepage, die bei der Codierung des Textes gewählt wurde, z.B. beim Schreiben in eine Datei).</p>
+<p><strong>ANSI:</strong> Jedes Zeichen ist <strong>ein Byte</strong> groß (8 Bits). Zeichencodes über 127 sind abhängig von den Spracheinstellungen Ihres Systems (oder von der Codepage, die bei der Kodierung des Textes gewählt wurde, z.B. beim Schreiben in eine Datei).</p>
 <p><strong>Unicode:</strong> Jedes Zeichen ist <strong>zwei Bytes</strong> groß (16 Bits). Zeichencodes sind durch das <a href="https://en.wikipedia.org/wiki/UTF-16">UTF-16-Format</a> definiert.</p>
 <p class="Indent"><em>Semantischer Hinweis</em>: Technisch gesehen sind einige Unicode-Zeichen durch <i>zwei</i> 16-Bit-Codeeinheiten vertreten, ugs. "Ersatzzeichenpaar" (surrogate pair). Ebenso enthalten einige <a href="https://learn.microsoft.com/windows/win32/intl/code-pages">ANSI-Codepages</a> (ugs. <a href="https://learn.microsoft.com/windows/win32/intl/double-byte-character-sets">Doppelbyte-Zeichensätze</a>) einige Doppelbyte-Zeichen. Aus praktischen Gründen werden diese jedoch fast immer als zwei einzelne Einheiten behandelt (der Einfachheit halber als "Zeichen" bezeichnet).</p>
 
 <h3 id="Buffer">Puffer</h3>
-<p>Achten Sie bei der Reservierung eines Pufferspeichers via <a href="lib/Buffer.htm">Buffer</a> darauf, dass Sie die korrekte Anzahl von <em>Bytes</em> für die jeweils benötigte Codierung angeben. Zum Beispiel:</p>
+<p>Achten Sie bei der Reservierung eines Pufferspeichers via <a href="lib/Buffer.htm">Buffer</a> darauf, dass Sie die korrekte Anzahl von <em>Bytes</em> für die jeweils benötigte Kodierung angeben. Zum Beispiel:</p>
 <pre>ansi_buf  := Buffer(Kapazität_in_Zeichen)
 utf16_buf := Buffer(Kapazität_in_Zeichen * 2)</pre>
 <p>Wenn eine ANSI- oder UTF-8-Zeichenkette mit <a href="lib/StrPut.htm">StrPut</a> in den Pufferspeicher geschrieben wird, sollten Sie keinesfalls <a href="lib/StrLen.htm">StrLen</a> zur Bestimmung der Puffergröße verwenden, da die ANSI- oder UTF-8-Länge von der nativen Länge (UTF-16) abweichen kann. Verwenden Sie stattdessen <a href="lib/StrPut.htm#ExEncoding">StrPut</a>, um die erforderliche Puffergröße zu berechnen. Zum Beispiel:</p>
@@ -52,7 +52,7 @@ StrPut(source_string, ansi_buf)</pre>
 <h3 id="DllCall">DllCall</h3>
 <p>Verwendet man den "Str"-Typ, handelt es sich um eine Zeichenkette im nativen Format des aktuellen Builds. Da einige Funktionen möglicherweise Zeichenketten in einem bestimmten Format benötigen oder zurückgeben müssen, stehen folgende Zeichenkettentypen zur Verfügung:</p>
 <table class="info">
-  <tr><th>&nbsp;</th><th class="center">Zeichengröße</th><th>C / Win32-Typen</th><th>Codierung</th></tr>
+  <tr><th>&nbsp;</th><th class="center">Zeichengröße</th><th>C / Win32-Typen</th><th>Kodierung</th></tr>
   <tr><td class="Syntax center">WStr</td><td class="center">16-Bit</td><td>wchar_t*, WCHAR*, LPWSTR, LPCWSTR</td><td>UTF-16</td></tr>
   <tr><td class="Syntax center">AStr</td><td class="center">8-Bit</td><td>char*, CHAR*, LPSTR, LPCSTR</td><td>ANSI (die Standard-ANSI-Codepage des Systems)</td></tr>
   <tr><td class="Syntax center">Str</td><td class="center">--</td><td>TCHAR*, LPTSTR, LPCTSTR</td><td>Äquivalent zu <b>WStr</b> in AutoHotkey v2.</td></tr>

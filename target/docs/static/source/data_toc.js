@@ -16,7 +16,7 @@ tocData = [
     ["Threads","misc/Threads.htm"],
     ["Editoren","misc/Editors.htm"],
     ["Debugging-Clients","AHKL_DBGPClients.htm"],
-    ["Compiler-Direktiven","misc/Ahk2ExeDirectives.htm"],
+    ["Compilerdirektiven","misc/Ahk2ExeDirectives.htm"],
     ["Objekte","Objects.htm"]
   ]],
   ["Häufig gestellte Fragen","FAQ.htm"],
@@ -33,7 +33,7 @@ tocData = [
   ["Aktuelle Änderungen","ChangeLog.htm"],
   ["Änderungen von v1.1 bis v2.0","v2-changes.htm"],
   ["Änderungen von v1.0 bis v1.1","v1-changes.htm"],
-  ["Skript-Beispiele","scripts/index.htm"],
+  ["Skriptbeispiele","scripts/index.htm"],
   ["Funktionsliste","lib/index.htm"],
   ["Laufwerk", "lib/Drive.htm",
   [
