@@ -257,7 +257,7 @@ F1 up::
     {
     case "F1":
         <em>; Ruft die aktuelle Geschwindigkeit ab, um sie später wiederherzustellen:</em>
-        DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "Ptr*", OrigMausGeschw, "UInt", 0)
+        DllCall("SystemParametersInfo", "UInt", SPI_GETMOUSESPEED, "UInt", 0, "Ptr*", &amp;OrigMausGeschw, "UInt", 0)
         <em>; Verringert nun die Geschwindigkeit des Mauszeigers im vorletzten Parameter (im Bereich von 1 bis 20, 10 ist Standard):</em>
         DllCall("SystemParametersInfo", "UInt", SPI_SETMOUSESPEED, "UInt", 0, "Ptr", 3, "UInt", 0)
         KeyWait "F1"  <em>; Verhindert, dass DllCall durch die Autowiederholung der Tastatur wiederholt aufgerufen wird.</em>
@@ -395,9 +395,9 @@ DllCall("DeleteObject", "Ptr", hBrush)  <em>; Gibt Speicher frei.</em></pre>
 SetzeSystemuhr(YYYYMMDDHHMISS)
 <em>; Setzt die Systemuhr auf ein bestimmtes Datum und eine bestimmte Uhrzeit.
 ; Der Aufrufer muss sicherstellen, dass der eingehende Parameter ein gültiger Zeitstempel ist
-; (lokale Zeit, nicht UTC). Gibt bei Erfolg ungleich 0 zurück.</em>
+; (Ortszeit, nicht UTC). Gibt bei Erfolg ungleich 0 zurück.</em>
 {
-    <em>; Konvertiert die im Parameter angegebene lokale Zeit in UTC für SetSystemTime().</em>
+    <em>; Konvertiert die im Parameter angegebene Ortszeit in UTC für SetSystemTime().</em>
     UTC_Delta := DateDiff(A_Now, A_NowUTC, "Seconds")  <em>; Sekunden sind genauer, um Rundungsfehler zu vermeiden.</em>
     UTC_Delta := Round(-UTC_Delta/60)  <em>; Rundet auf die nächste Minute für höhere Genauigkeit.</em>
     YYYYMMDDHHMISS := DateAdd(YYYYMMDDHHMISS, UTC_Delta, "Minutes")  <em>; Wendet den Offset für die Konvertierung zu UTC an.</em>

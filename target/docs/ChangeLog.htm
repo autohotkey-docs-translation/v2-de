@@ -15,8 +15,25 @@
 <p><a href="v2-changes.htm">Änderungen von v1.1 bis v2.0</a> behandelt die Unterschiede zwischen v1.1 und v2.0.</p>
 <p>Alle technischen Einzelheiten zu den Änderungen finden Sie auf <a href="https://github.com/AutoHotkey/AutoHotkey/tree/alpha">GitHub</a>.</p>
 
+<h2 id="v2.0.8">2.0.8 - 11. September 2023</h2>
+<p>Behoben: ByRef-Parameter weisen der VarRef des Aufrufers nicht mehr fälschlicherweise den Standardwert zu, wenn ungesetzt.</p>
+<p>Behoben: Einige Probleme bzgl. unterdrückter Alt/Strg/Umschalt/Win-Hotkeys, zum Beispiel:</p>
+<ul>
+  <li><code>*LCtrl::</code> hat LCtrl des aktiven Fensters blockiert, aber das Senden von Alt-Tastenkombinationen würde fehlschlagen, weil das System denkt, dass Ctrl unten ist, und daher WM_KEYDOWN statt WM_SYSKEYDOWN senden würde.</li>
+  <li><code>*LAlt::</code> hat das System dazu veranlasst, jedes vorherige <code>{LAlt DownR}</code> zu vergessen, so dass eine Neubelegung wie <code>LCtrl::LAlt</code> sich nicht korrekt verhalten würde, während LAlt physisch unten ist, auch wenn LAlt unterdrückt wurde.</li>
+  <li>Andere potenzielle Probleme, wo das systeminterne Low-Level-Tracking einer Modifikatortaste nicht mit dem logischen Status übereinstimmt.</li>
+</ul>
+<p>Behoben: Einige Probleme bzgl. Fortsetzungsbereiche:</p>
+<ul>
+  <li>Escapesequenzen in der Join-Option wurden doppelt übersetzt, was dazu führte, dass <code>````</code> zu einem statt zwei direkt geschriebenen <code>`</code> wurde, <code>``n</code> zu einem LF-Zeichen wurde, usw.</li>
+  <li><code>`"</code> oder <code>`'</code> erzeugten ein direkt geschriebenes umgekehrtes Häkchen und beendeten die Zeichenkette, anstatt ein direkt geschriebenes Anführungszeichen zu erzeugen, wenn der Fortsetzungsbereich in Anführungszeichen desselben Typs gesetzt ist und nicht die <code>`</code>-Option hat.</li>
+</ul>
+<p>Optimiert: Das automatische Escaping von Anführungszeichen und umgekehrten Häkchen in Fortsetzungsbereichen.</p>
+<p>Behoben: breakpoint_list (Debugger) gab Duplikate bei Zeilen zurück, die Fat-Arrow-Funktionen enthalten.</p>
+<p>Behoben: <code>+BackgroundDefault</code> konnte die BackColor-Eigenschaft von Gui nicht überschreiben.</p>
+
 <h2 id="v2.0.7">2.0.7 - 2. September 2023</h2>
-<p>Behoben: Bei MouseClickDrag kann nun X1 und Y1 weggelassen werden.</p>
+<p>Behoben: Bei MouseClickDrag können nun X1 und Y1 weggelassen werden.</p>
 <p>Behoben: Maus-AltTab-Hotkeys unterdrückten nicht die Ausführung eines Präfix-Hotkeys, z.B. <code>1::</code> für <code>1 &amp; WheelDown::AltTab</code>. (fehlerhaft seit v2.0.4)</p>
 <p>Behoben: Hook-Hotkeys erkannten keine Modifikatoren, die via SendInput nach unten gedrückt wurden.</p>
 <p>Behoben: A_AhkPath ist nun nicht mehr auf die Groß-/Kleinschreibung oder das Format der Befehlszeile angewiesen, die/das zum Starten des Prozesses verwendet wird.</p>
@@ -30,18 +47,18 @@
 <h2 id="v2.0.6">2.0.6 - 30. August 2023</h2>
 <p>Behoben: Mehrdeutigkeiten bei COM-Aufrufen, z.B. wenn <code>x.y</code> als <code>x.y()</code> fungiert.</p>
 <p>Behoben: Haltepunkte bei Kontrollanweisungen wurden "getroffen", wenn eine Fat-Arrow-Funktion in der Zeile darunter zurückkehrt.</p>
-<p>Behoben: <code>Default :</code> verbindet sich nicht mehr mit der Zeile darunter. Dies verhinderte, dass <code>Default :</code> am Ende eines Switch-Blocks verwendet werden konnte, und bewirkte, dass jede nachfolgende Zeile die Zeilennummer des Defaults erhielt.</p>
+<p>Behoben: <code>Default :</code> verbindet sich nicht mehr mit der Zeile darunter. Dies verhinderte die Verwendung von <code>Default :</code> am Ende eines Switch-Blocks und führte dazu, dass jede nachfolgende Zeile die Zeilennummer des Defaults erhielt.</p>
 <p>Optimiert: ProcessGetPath, ProcessSetPriority und ProcessClose durchlaufen nicht mehr alle Prozesse, wenn eine gültige PID angegeben ist, auch wenn der Zugriff auf den Prozess verweigert wird.</p>
 <p>Behoben: <code>LWin::Alt</code> konnte nicht zum Aktivieren einiger Alt-Tastenkombinationen verwendet werden.</p>
-<p>Behoben: TypeError, der von <code>x is y</code> ausgelöst wird, zeigt nun "Class" statt "Object" an.</p>
+<p>Behoben: TypeError, ausgelöst durch <code>x is y</code>, zeigt nun "Class" statt "Object" an.</p>
 <p>Behoben: FensterTitel unterstützt nun Kriterien länger als 1023 Zeichen.</p>
 <p>Behoben: Es gab Probleme, wenn <code>&amp;ref</code> auf verschiedene Aliase derselben Variable angewendet wurde.</p>
-<p>Behoben: Bestimmte Standardausdrücke von optionalen Parametern (mit Ausnahme einfacher direkt geschriebener Werte) verhinderten die Verwendung von Assume-Global/Assume-Static.</p>
+<p>Behoben: Bestimmte Standardausdrücke von optionalen Parametern (außer einfache direkt geschriebene Werte) verhinderten die Verwendung von Assume-Global/Assume-Static.</p>
 
 <h2 id="v2.0.5">2.0.5 - 12. August 2023</h2>
 <p>Behoben: Ein Speicherleck, das durch falsche Referenzzählung verursacht wurde, wenn ein Objekt via COM enumeriert wird. [PR# 325]</p>
 <p>Behoben: Interne Aufrufe von __Enum rufen nun nicht mehr __Call auf.</p>
-<p>Behoben: Fehlermeldungen bezüglich des Parameters #65535.</p>
+<p>Behoben: Fehlermeldungen bezüglich Parameter #65535.</p>
 <p>Behoben: Falsche IEnumVARIANT-Rückgabeanzahl.</p>
 <p>Behoben: Download löste OSError(0) aus, obwohl der Fehler ungleich Null sein sollte.</p>
 <p>Behoben: LV.Add/Insert/Modify verursachte einen Absturz, wenn die Mindestanzahl von Parametern übergeben wird.</p>
@@ -87,7 +104,7 @@
 <p>Behoben: PixelSearch macht X nun leer, wenn das Pixel nicht gefunden wird.</p>
 <p>Behoben: Ein Hotstring mit Escapesequenz führte dazu, dass die nächste Zeile übersprungen wurde.</p>
 <p>Behoben: FensterTitel ignorierte Zeichen 1, wenn "ahk_" bei Zeichen 2 ist.</p>
-<p>Behoben: Neubelegung nutzt nun den rechten Modifikator, der gerade unten ist. Zum Beispiel wird <code>+x::+y</code> nicht mehr RShift loslassen, um LShift zu drücken.</p>
+<p>Behoben: Neubelegung verwendet nun den rechten Modifikator, der gerade unten ist. Zum Beispiel wird <code>+x::+y</code> nicht mehr RShift loslassen, um LShift zu drücken.</p>
 <p>Geändert: Fehlermeldung für <code>a == b &amp;&amp; c()</code> und ähnliche Fälle, um Hinweise auf das Legacy-<code>=</code> zu vermeiden.</p>
 <p>Verbessert: Fehlermeldung für einige Fälle von unbeabsichtigter Zeilenfortsetzung.</p>
 <p>Behoben: Reservierte Wörter können nun als Methodennamen verwendet werden, wie dokumentiert.</p>
@@ -96,7 +113,7 @@
 <p>Behoben: SetFont erlaubt nun Leerzeichen am Anfang im Options-Parameter.</p>
 <p>Behoben: Senden von <code>{ASC nnnn}</code>.</p>
 <p>Behoben: <code>a.base := a</code> löst nun einen Fehler aus.</p>
-<p>Behoben: <code>x.y := unset</code> verursachte Abstürze oder undefiniertes Verhalten.</p>
+<p>Behoben: <code>x.y := unset</code> führte zu Abstürzen oder undefiniertem Verhalten.</p>
 <p>Behoben: GuiControl.Move() ist nun relativ zum Clientbereich der GUI, selbst wenn die GUI nicht übergeordnet ist.</p>
 <p>Behoben: Menu Add überschrieb Menüpunkte, die mit Menu Insert angefügt wurden.</p>
 <strong>Launcher</strong>
@@ -104,7 +121,7 @@
 <p>Behoben: Die Versionsauswahl-GUI verursachte einen Fehler, wenn Enter gedrückt wurde, ohne eine Version auszuwählen. [PR UX/#4]</p>
 <p>Fehler unterdrücken, wenn geprüft wird, ob eine fehlende Version heruntergeladen werden kann.</p>
 <p>Behoben: Die Aufforderung zum Herunterladen einer fehlenden Version zeigt nicht mehr das UAC-Schild an, wenn UAC deaktiviert ist.</p>
-<p>Behoben: Probleme mit der Interpretation von #Requires.</p>
+<p>Behoben: Probleme bei der Interpretation von #Requires.</p>
 <ul>
 <li>Unterstützung für das Weglassen des Präfixes "v".</li>
 <li>Unterstützung für die Operatoren (<code>&gt; &gt;= &lt; &lt;= =</code>).</li>
@@ -122,17 +139,17 @@
 <h2 id="v2.0.2">2.0.2 - 2. Januar 2023</h2>
 <p>Behoben: Kurze DllCall-Arg-Typen und undefiniertes Verhalten bei ungültigen Typen.</p>
 <p>Behoben: (Nicht-Zeichenketten-)Dateiversionsnummer bei AutoHotkey-Binärdateien.</p>
-<p>Behoben: Parametertyp-Fehler werden nun die richtige Parameternummer anzeigen.</p>
+<p>Behoben: Parametertypfehler zeigen nun die richtige Parameternummer an.</p>
 
 <h2 id="v2.0.1">2.0.1 - 1. Januar 2023</h2>
-<p>Behoben: Func.IsOptional(1) gab manchmal 0 zurück, wo es das nicht tun sollte.</p>
-<p>Behoben: GUI-Ereignishandler-Funktionen werden den Gui-Parameter nicht mehr weglassen, wenn die GUI ihr eigener Event-Sink ist.</p>
-<p>Behoben: COM-Fehler werden nicht mehr "(null)" anzeigen, wenn keine Beschreibung verfügbar ist.</p>
-<p>Behoben: ToolTips erschienen gelegentlich an der falschen Position.</p>
+<p>Behoben: Func.IsOptional(1) gab manchmal 0 zurück, wo es nicht sollte.</p>
+<p>Behoben: GUI-Ereignishandler-Funktionen lassen den Gui-Parameter nicht mehr weg, wenn die GUI ihr eigener Event-Sink ist.</p>
+<p>Behoben: COM-Fehler zeigen nicht mehr "(null)" an, wenn keine Beschreibung verfügbar ist.</p>
+<p>Behoben: ToolTips wurden manchmal an der falschen Stelle angezeigt.</p>
 <p>Behoben: __Enum(unset) erlaubt nun eine zweite Variable für Array, Match und Gui.</p>
-<p>Behoben: "#Include &lt;&gt;"-Fehlermeldungen werden nun "Script library" statt "Function library" anzeigen.</p>
-<p>Behoben: Neue Threads waren nicht in der Lage, eine Meldungsüberprüfung mittels Critical zu verhindern.</p>
-<p>Optimiert: Konvertierung von DllCall-Typnamen.</p>
+<p>Behoben: "#Include &lt;&gt;"-Fehlermeldungen zeigen nun "Script library" statt "Function library" an.</p>
+<p>Behoben: Neue Threads konnten eine Meldungsüberprüfung mit Critical nicht verhindern.</p>
+<p>Optimiert: Konvertierung von DllCall-Typennamen.</p>
 <p>Optimiert: Triviale, aber effektive Optimierungen der Codegröße.</p>
 
 <h2 id="Pre-Release">Pre-Release</h2>
