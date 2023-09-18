@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>A_HotkeyModifierTimeout - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die A_HotkeyModifierTimeout-Variable beeinflusst das Verhalten der Send-Funktion mit den Hotkey-Modifikatoren STRG, ALT, WIN und UMSCHALT." />
+<meta name="description" content="A_HotkeyModifierTimeout ist eine interne Variable, die das Verhalten der Send-Funktion mit den Hotkey-Modifikatoren STRG, ALT, WIN und UMSCHALT beeinflusst." />
 <meta name="ahk:equiv-v1" content="lib/_HotkeyModifierTimeout.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,17 +14,9 @@
 
 <h1>A_HotkeyModifierTimeout</h1>
 
-<p>Beeinflusst das Verhalten von <a href="Send.htm">Send</a> in Verbindung mit den <a href="../Hotkeys.htm">Hotkey</a>-Modifikatoren <kbd>Strg</kbd>, <kbd>Alt</kbd>, <kbd>Win</kbd> und <kbd>Umschalt</kbd>.</p>
-
-<p>Die interne Variable <strong>A_HotkeyModifierTimeout</strong> legt fest, wie lange nach dem Drücken eines Hotkeys davon ausgegangen wird, dass dessen Modifikatortasten noch nach unten gedrückt sind. Dies wird von <a href="Send.htm">Send</a> verwendet, um zu bestimmen, ob die Modifikatortasten wieder nach unten gedrückt werden sollen, nachdem sie vorübergehend losgelassen wurden.</p>
-<dl>
-  <dt>Wert</dt>
-  <dd>
-    <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die Länge des Intervalls in Millisekunden. Dieser Wert kann -1 sein, um die Modifikatoren nie das Zeitlimit überschreiten zu lassen (sie sind nach der Send-Aktion dauerhaft im gedrückten Zustand), oder 0, um die Modifikatoren immer das Zeitlimit überschreiten zu lassen (sie sind danach nie im gedrückten Zustand).</p>
-    <p>Der Standardwert ist 50.</p>
-  </dd>
-</dl>
+<p><em>A_HotkeyModifierTimeout</em> ist eine <a href="../Concepts.htm#built-in-variables">interne Variable</a>, die das Verhalten von <a href="Send.htm">Send</a> mit den <a href="../Hotkeys.htm">Hotkey</a>-Modifikatoren <kbd>Strg</kbd>, <kbd>Alt</kbd>, <kbd>Win</kbd> und <kbd>Umschalt</kbd> beeinflusst. Konkret heißt das: Sie legt fest, wie lange nach dem Drücken eines Hotkeys davon ausgegangen wird, dass dessen Modifikatortasten noch gedrückt gehalten sind. Dies wird von <a href="Send.htm">Send</a> verwendet, um zu bestimmen, ob die Modifikatortasten wieder nach unten gedrückt werden, nachdem sie vorübergehend losgelassen wurden.</p>
+<p><em>A_HotkeyModifierTimeout</em> kann verwendet werden, um einen <a href="../Concepts.htm#numbers">Integer</a> abzurufen oder zu setzen, der die Länge des Intervalls in Millisekunden repräsentiert. Wenn -1, wird das Zeitlimit nie überschritten (Modifikatortasten sind nach dem Send immer im gedrückten Zustand). Wenn 0, wird das Zeitlimit immer überschritten (Modifikatortasten sind danach nie im gedrückten Zustand).</p>
+<p>Die Standardeinstellung ist 50 (ms).</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Diese Variable hat keinen Effekt, wenn:</p>
@@ -35,9 +27,9 @@
 <p>Am folgenden Beispiel wird gezeigt, wie diese Variable funktioniert: <code>^!a::Send "abc"</code>.</p>
 <p>Bevor die <a href="Send.htm">Send</a>-Funktion ihre Ausführung beginnt, lässt sie <kbd>Strg</kbd> und <kbd>Alt</kbd> los, damit die Zeichen richtig gesendet werden. Nachdem die Funktion die Tasten gesendet hat, weiß sie nicht, ob sie <kbd>Strg</kbd> und <kbd>Alt</kbd> sicher wieder in den gedrückten Zustand versetzen kann (falls der Benutzer diese Tasten weiterhin gedrückt hält). Wenn die aktuell verstrichene Zeit unter dem Zeitlimit liegt, geht Send davon aus, dass der Benutzer noch keine Gelegenheit hatte, die Modifikatortasten loszulassen, und drückt sie wieder nach unten, entsprechend ihrem physischen Status. Andernfalls werden die Modifikatortasten nicht wieder nach unten gedrückt, d.h. der Benutzer muss die Modifikatortasten loslassen und erneut drücken, um dieselbe oder eine andere Taste zu modifizieren.</p>
 <p>Das Zeitlimit sollte kürzer sein als die Zeit, die der Benutzer üblicherweise zum Gedrückthalten der Modifikatoren eines Hotkeys benötigt, bevor er sie wieder loslässt. Andernfalls könnte es passieren, dass die Modifikatoren wieder in den gedrückten Zustand versetzt werden (hängen bleiben), auch dann, wenn der Benutzer sie nicht physisch gedrückt hält.</p>
-<p>Greifen Sie auf eine der folgenden Möglichkeiten zurück, um die Notwendigkeit dieser Variable auf ein Minimum zu reduzieren oder vollständig zu entfernen:</p>
+<p>Sie können die Notwendigkeit dieser Variable mit einer der folgenden Maßnahmen verringern oder eliminieren:</p>
 <ul>
-  <li>Installieren Sie den Tastatur-Hook durch Aufrufen von <a href="InstallKeybdHook.htm">InstallKeybdHook</a>.</li>
+  <li>Installieren Sie den Tastatur-Hook durch Aufruf von <a href="InstallKeybdHook.htm">InstallKeybdHook</a>.</li>
   <li>Verwenden Sie <a href="Send.htm#SendInput">SendInput</a> oder <a href="Send.htm#SendPlay">SendPlay</a> anstelle von <a href="Send.htm#SendEvent">SendEvent</a>.</li>
   <li>Wenn Sie die traditionelle <a href="Send.htm#SendEvent">SendEvent</a>-Methode verwenden, setzen Sie den ersten Parameter von <a href="SetKeyDelay.htm">SetKeyDelay</a> auf 0 oder -1, um die Tastendrücke schneller zu senden.</li>
 </ul>

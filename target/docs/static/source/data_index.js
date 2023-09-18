@@ -1244,7 +1244,7 @@ indexData = [
   ["WinWaitActive","lib/WinWaitActive.htm",2],
   ["WinWaitClose","lib/WinWaitClose.htm",2],
   ["WinWaitNotActive","lib/WinWaitActive.htm",2],
-  ["WM_* (Fenstermeldungen)","misc/SendMessageList.htm"],
+  ["WM_* (Windows-Meldungen)","misc/SendMessageList.htm"],
   ["WM_COPYDATA","lib/OnMessage.htm#ExSendString"],
   ["working directory","lib/SetWorkingDir.htm"],["Arbeitsverzeichnis","lib/SetWorkingDir.htm"],
   ["wParam","lib/SendMessage.htm"],

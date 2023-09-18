@@ -23,39 +23,39 @@
   <dt>Funktion</dt>
   <dd>
     <p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Ein Funktionsobjekt, das automatisch jedes Mal aufgerufen werden soll, wenn <em>Adresse</em> aufgerufen wird. Die Funktion erhält auch die Parameter, die an <em>Adresse</em> übergeben wurden.</p>
-    <p>Ein <a href="../Functions.htm#closures">Closure</a> oder <a href="../misc/Functor.htm#BoundFunc">Bound-Funktion</a> kann verwendet werden, um zwischen mehreren Rückrufen zu unterscheiden, die alle die gleiche Skriptfunktion aufrufen.</p>
-    <p>Der Rückruf reserviert für sich selbst eine Referenz zum Funktionsobjekt und gibt sie frei, wenn das Skript <a href="#CallbackFree">CallbackFree</a> aufruft.</p>
+    <p>Ein Funktionsobjekt, das jedes Mal automatisch aufgerufen wird, wenn <em>Adresse</em> aufgerufen wird. Die Funktion empfängt auch die Parameter, die an <em>Adresse</em> übergeben wurden.</p>
+    <p>Ein <a href="../Functions.htm#closures">Closure</a> oder <a href="../misc/Functor.htm#BoundFunc">Bound-Funktion</a> kann verwendet werden, um zwischen mehreren Rückrufen zu unterscheiden, die alle dieselbe Skriptfunktion aufrufen.</p>
+    <p>Der Rückruf reserviert für sich selbst eine Referenz zum Funktionsobjekt und gibt diese frei, wenn das Skript <a href="#CallbackFree">CallbackFree</a> aufruft.</p>
   </dd>
 
   <dt>Optionen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Wenn leer oder weggelassen, wird jedes Mal, wenn <em>Funktion</em> aufgerufen wird, ein neuer <a href="../misc/Threads.htm">Thread</a> gestartet, und die Standardaufrufkonvention verwendet. Außerdem werden die Parameter einzeln an <em>Funktion</em> übergeben. Andernfalls geben Sie eine oder mehrere der folgenden Optionen an. Trennen Sie alle Optionen jeweils durch ein Leerzeichen (z.B. <code>"C Fast"</code>).</p>
-    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass bei jedem Aufruf von <em>Funktion</em> ein neuer <a href="../misc/Threads.htm">Thread</a> gestartet wird. Trotz der daraus resultierenden besseren Performanz sollte diese Option nicht verwendet werden, wenn der Thread, von dem aus <em>Adresse</em> aufgerufen wird, variiert (z.B. wenn der Rückruf durch eine eingehende Meldung ausgelöst wurde). Der Grund dafür ist, dass <em>Funktion</em> in der Lage sein wird, globale Einstellungen wie <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> eines Threads zu ändern, der zum Zeitpunkt des Aufrufs aktiv war. Weitere Informationen finden Sie unter <a href="#Threads">Bemerkungen</a>.</p>
-    <p><strong>CDecl</strong> oder <strong>C</strong>: Macht <em>Adresse</em> konform zur "C"-Aufrufkonvention. Dies wird normalerweise weggelassen, da die Standardaufrufkonvention für Rückrufe weitaus gebräuchlicher ist. 64-Bit-Versionen von AutoHotkey, die die x64-Aufrufkonvention verwenden, ignorieren diese Option.</p>
-    <p><strong>&amp;:</strong> Bewirkt, dass die Parameter nicht einzeln, sondern als Parameterliste in Form einer Adresse (ein einzelner Integer) an <em>Funktion</em> übergeben wird. Parameterwerte können mithilfe von <a href="NumGet.htm">NumGet</a> abgerufen werden. Wenn man die standardmäßige 32-Bit-Aufrufkonvention verwendet, muss <em>ParamAnzahl</em> die Größe der Parameterliste als DWORDs spezifizieren (die Anzahl der Bytes geteilt durch 4).</p>
+    <p id="Fast"><strong>Fast</strong> oder <strong>F</strong>: Verhindert, dass bei jedem Aufruf von <em>Funktion</em> ein neuer <a href="../misc/Threads.htm">Thread</a> gestartet wird. Trotz der daraus resultierenden besseren Performanz sollte diese Option nicht verwendet werden, wenn der Thread, von dem aus <em>Adresse</em> aufgerufen wird, variiert (z.B. wenn der Rückruf durch eine eingehende Meldung ausgelöst wurde). Der Grund dafür ist, dass <em>Funktion</em> globale Einstellungen wie <a href="../Variables.htm#LastError">A_LastError</a> und das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> für jeden Thread ändern kann, der zum Zeitpunkt des Aufrufs gerade läuft. Weitere Informationen finden Sie unter <a href="#Threads">Bemerkungen</a>.</p>
+    <p><strong>CDecl</strong> oder <strong>C</strong>: Macht <em>Adresse</em> konform zur "C"-Aufrufkonvention. Dies wird normalerweise weggelassen, da die Standardaufrufkonvention für Rückrufe weitaus gebräuchlicher ist. Diese Option wird von den 64-Bit-Versionen von AutoHotkey, die die x64-Aufrufkonvention verwenden, ignoriert.</p>
+    <p><strong>&amp;:</strong> Bewirkt, dass die Parameter nicht einzeln, sondern als Parameterliste in Form einer Adresse (ein einzelner Integer) an <em>Funktion</em> übergeben werden. Parameterwerte können mit <a href="NumGet.htm">NumGet</a> abgerufen werden. Wenn die reguläre 32-Bit-Aufrufkonvention verwendet wird, muss <em>ParamAnzahl</em> die Größe der Parameterliste in DWORDs angeben (die Anzahl der Bytes geteilt durch 4).</p>
   </dd>
 
   <dt>ParamAnzahl</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn weggelassen, wird standardmäßig <a href="Func.htm#MinParams"><i>Funktion</i>.MinParam</a> verwendet, was üblicherweise der Anzahl von Pflichtparametern entspricht, die in der <a href="../Functions.htm#define">Definition</a> von <em>Funktion</em> angegeben sind. Andernfalls geben Sie die Anzahl der Parameter an, die der Aufrufer von <em>Adresse</em> übergeben wird. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p>
+    <p>Wenn weggelassen, wird standardmäßig <a href="Func.htm#MinParams"><i>Funktion</i>.MinParam</a> verwendet, was üblicherweise der Anzahl der Pflichtparameter in der <a href="../Functions.htm#define">Definition</a> von <em>Funktion</em> entspricht. Andernfalls geben Sie die Anzahl der Parameter an, die der Aufrufer von <em>Adresse</em> übergeben wird. In beiden Fällen muss sichergestellt werden, dass der Aufrufer genau diese Anzahl von Parametern übergibt.</p>
   </dd>
 
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>CallbackCreate gibt eine Maschinencode-Adresse zurück. Diese Adresse wird üblicherweise via <a href="DllCall.htm">DllCall</a> an eine externe Funktion übergeben oder via <a href="NumPut.htm">NumPut</a> in eine Struktur geschrieben, kann aber auch direkt von DllCall aufgerufen werden. Übergibt man die Adresse an <a href="#CallbackFree">CallbackFree</a>, wird der Rückruf gelöscht.</p>
+<p>CallbackCreate gibt eine Maschinencode-Adresse zurück. Diese Adresse wird üblicherweise via <a href="DllCall.htm">DllCall</a> an eine externe Funktion übergeben oder via <a href="NumPut.htm">NumPut</a> in eine Struktur geschrieben, kann aber auch direkt von DllCall aufgerufen werden. Wenn die Adresse an <a href="#CallbackFree">CallbackFree</a> übergeben wird, wird der Rückruf gelöscht.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
-<p>Diese Funktion scheitert und löst eine Ausnahme unter folgenden Bedingungen aus:</p>
+<p>Diese Funktion schlägt fehl und löst eine Ausnahme aus, wenn eine der folgenden Bedingungen zutrifft:</p>
 <ul>
   <li><em>Funktion</em> ist kein Objekt oder hat weder eine <code>MinParams</code>-Eigenschaft noch eine <code>Call</code>-Methode.</li>
   <li><em>Funktion</em> hat eine <code>MinParams</code>-Eigenschaft, die die Anzahl der vom Rückruf bereitgestellten Parameter überschreitet.</li>
   <li><em>ParamAnzahl</em> ist negativ.</li>
-  <li><em>ParamAnzahl</em> wird weggelassen und: 1) <em>Funktion</em> hat keine <code>MinParams</code>-Eigenschaft; oder 2) die <code>&amp;</code>-Option wird in Verbindung mit der Standard-32-Bit-Aufrufkonvention verwendet.</li>
+  <li><em>ParamAnzahl</em> wird weggelassen und: 1) <em>Funktion</em> hat keine <code>MinParams</code>-Eigenschaft; oder 2) die <code>&amp;</code>-Option wird mit der Standard-32-Bit-Aufrufkonvention verwendet.</li>
 </ul>
 
 <a id="The_Callback_Functions_Parameters"></a>
@@ -85,9 +85,9 @@ wParam := wParam &lt;&lt; 32 &gt;&gt; 32</pre>
 <pre>MeineZkette := StrGet(MeinParameter)</pre>
 <p>Wenn ein eingehender Parameter die Adresse einer Struktur ist, können die einzelnen Elemente durch Befolgen der Schritte in <a href="DllCall.htm#struct">DllCall-Strukturen</a> extrahiert werden.</p>
 
-<p id="Indirect"><strong>Parameter via Adresse abrufen:</strong> Wenn die <code>&amp;</code>-Option verwendet wird, erhält <em>Funktion</em> die <i>Adresse</i> des ersten Rückrufparameters. Zum Beispiel:</p>
+<p id="Indirect"><strong>Parameter via Adresse empfangen:</strong> Wenn die <code>&amp;</code>-Option verwendet wird, empfängt <em>Funktion</em> die <i>Adresse</i> des ersten Rückrufparameters. Zum Beispiel:</p>
 <pre>
-Rückruf := CallbackCreate(DieFunk, "F&amp;", 3)  <em>; Größe der Parameterliste muss bei 32-Bit angegeben werden.</em>
+Rückruf := CallbackCreate(DieFunk, "F&amp;", 3)  <em>; Größe der Parameterliste muss für 32-Bit angegeben werden.</em>
 DllCall(Rückruf, "float", 10.5, "int64", 42)
 DieFunk(params) {
     MsgBox <a href="NumGet.htm">NumGet</a>(params, 0, "float") ", " NumGet(params, A_PtrSize, "int64")
@@ -106,11 +106,11 @@ DieFunk(params) {
 <h2 id="CallbackFree">CallbackFree</h2>
 <p>Löscht einen Rückruf und gibt seine Referenz zum Funktionsobjekt frei.</p>
 <pre class="Syntax"><span class="func">CallbackFree</span>(Adresse)</pre>
-<p>Jedes Mal, wenn CallbackCreate verwendet wird, wird eine kleine Menge an Speicher reserviert (32 oder 48 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch freigibt, wenn das Skript beendet wird, kann jedes Skript, das Speicher für eine kleine <em>feste</em> Anzahl von Rückrufen reserviert hat, damit leben, den Speicher nicht explizit freigegeben zu haben.</p>
-<p>Wenn das vom Rückruf gehaltene Funktionsobjekt jedoch dynamischer Natur ist (wie z.B. <a href="../Functions.htm#closures">Closure</a> oder <a href="../misc/Functor.htm#BoundFunc">Bound-Funktion</a>), kann die Freigabe des Rückrufs besonders dann wichtig sein, wenn es nicht mehr benötigt wird; andernfalls wird das Funktionsobjekt nicht freigegeben.</p>
+<p>Jedes Mal, wenn CallbackCreate verwendet wird, wird eine kleine Menge an Speicher reserviert (32 oder 48 Bytes plus System-Overhead). Da das Betriebssystem diesen Speicher automatisch freigibt, wenn das Skript beendet wird, kann jedes Skript, das Speicher für eine kleine <em>feste</em> Anzahl von Rückrufen reserviert hat, ohne explizite Speicherfreigabe auskommen.</p>
+<p>Wenn jedoch das vom Rückruf gehaltene Funktionsobjekt dynamischer Natur ist (wie z.B. <a href="../Functions.htm#closures">Closure</a> oder <a href="../misc/Functor.htm#BoundFunc">Bound-Funktion</a>), kann die Freigabe des Rückrufs besonders dann wichtig sein, wenn er nicht mehr benötigt wird; andernfalls wird das Funktionsobjekt nicht freigegeben.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort-Rückruffunktion</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Liste von Fenstermeldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
+<p><a href="DllCall.htm">DllCall</a>, <a href="OnMessage.htm">OnMessage</a>, <a href="OnExit.htm">OnExit</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="Sort.htm#callback">Sort-Rückruffunktion</a>, <a href="Critical.htm">Critical</a>, <a href="PostMessage.htm">PostMessage</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="../Functions.htm">Funktionen</a>, <a href="../misc/SendMessageList.htm">Windows-Meldungen</a>, <a href="../misc/Threads.htm">Threads</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExWinList">
@@ -140,12 +140,12 @@ EnumWindowsProc(hwnd, lParam)
 TextHintergrundPinsel := DllCall("CreateSolidBrush", "UInt", TextHintergrundFarbe)
 
 MeineGui := Gui()
-Text := MeineGui.Add("Text",, "Hier ein Text mit einer`nbenutzerdefinierter Hintergrundfarbe.")
+Text := MeineGui.Add("Text",, "Hier ein Text mit`nbenutzerdefinierter Hintergrundfarbe.")
 
 <em>; 64-Bit-Skripte müssen SetWindowLongPtr statt SetWindowLong aufrufen:</em>
 SetWindowLong := A_PtrSize=8 ? "SetWindowLongPtr" : "SetWindowLong"
 
-WindowProcNeu := CallbackCreate(WindowProc)  <em>; Vermeide den Fast-Modus beim Setzen der Unterklasse.</em>
+WindowProcNeu := CallbackCreate(WindowProc)  <em>; Schnellen Modus beim Setzen der Unterklasse vermeiden.</em>
 WindowProcAlt := DllCall(SetWindowLong, "Ptr", MeineGui.Hwnd, "Int", -4  <em>; -4 ist GWL_WNDPROC</em>
     , "Ptr", WindowProcNeu, "Ptr") <em>; Rückgabewert muss auf "Ptr" oder "UPtr" statt auf "Int" gesetzt werden.</em>
 

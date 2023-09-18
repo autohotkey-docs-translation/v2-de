@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Buffer-Objekt - Definition &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Das Buffer-Objekt beansprucht einen Bereich des Speichers für erweiterte Techniken wie DllCall, Strukturen, StrPut und Schreiben/Lesen von unbearbeiteten Daten einer Datei." />
+<meta name="description" content="Das Buffer-Objekt beansprucht einen Bereich des Speichers für erweiterte Techniken wie DllCall, Strukturen, StrPut und rohe Datei-Ein-/Ausgabe." />
 <meta name="ahk:equiv-v1" content="lib/VarSetCapacity.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,8 +15,8 @@
 <h1>Buffer-Objekt</h1>
 <pre class="NoIndent">class Buffer extends Object</pre>
 
-<p>Beansprucht einen Bereich des Speichers für erweiterte Techniken wie DllCall, Strukturen, StrPut und Schreiben/Lesen von unbearbeiteten Daten einer Datei.</p>
-<p>Buffer-Objekte werden typischerweise durch den Aufruf von <a href="#Call">Buffer()</a> erzeugt oder via <a href="FileRead.htm">FileRead</a> mit der Option "RAW" zurückgegeben.</p>
+<p>Beansprucht einen Bereich des Speichers für erweiterte Techniken wie DllCall, Strukturen, StrPut und rohe Datei-Ein-/Ausgabe.</p>
+<p>Buffer-Objekte werden typischerweise durch Aufruf von <a href="#Call">Buffer()</a> erzeugt oder via <a href="FileRead.htm">FileRead</a> mit der Option "RAW" zurückgegeben.</p>
 <pre>BufferObj := Buffer(ByteAnzahl)</pre>
 <p><a href="ClipboardAll.htm">ClipboardAll</a> gibt einen Untertyp des Buffer-Objekts zurück, auch ClipboardAll genannt.</p>
 <pre>class ClipboardAll extends Buffer</pre>
@@ -40,7 +40,7 @@
   <li><a href="#Properties">Eigenschaften</a>:
     <ul>
       <li><a href="#Ptr">Ptr</a>: Ruft die aktuelle Adresse des Pufferspeichers ab.</li>
-      <li><a href="#Size">Size</a>: Ermittelt oder bestimmt die Größe des Pufferspeichers (in Bytes).</li>
+      <li><a href="#Size">Size</a>: Ermittelt oder setzt die Größe des Pufferspeichers (in Bytes).</li>
     </ul>
   </li>
   <li><a href="#Related">Siehe auch</a></li>
@@ -48,8 +48,8 @@
 </ul>
 
 <h2 id="like">Buffer-ähnliche Objekte</h2>
-<p>Einige interne Funktionen akzeptieren ein Buffer-Objekt anstelle einer Adresse - im Abschnitt <a href="#Related">Siehe auch</a> finden Sie die entsprechenden Links. Obwohl diese Funktionen auch ein beliebiges Objekt mit einer <a href="#Ptr">Ptr</a>- und <a href="#Size">Size</a>-Eigenschaft akzeptieren, sind diese für das native Buffer-Objekt optimiert.</p>
-<p>In den meisten Fällen ist die Übergabe eines Buffer-Objekts um einiges sicherer als die Übergabe einer Adresse, da die Funktion die <a href="#Size">Puffergröße</a> lesen kann, um zu verhindern, dass sie eventuell auf einen Speicherort außerhalb des Pufferspeichers zugreift. Die einzige Ausnahme ist <a href="DllCall.htm">DllCall</a>, wenn es Funktionen außerhalb des Programms aufruft; in solchen Fällen ist es eventuell notwendig, die <a href="#Size">Puffergröße</a> explizit an die Funktion zu übergeben.</p>
+<p>Einige interne Funktionen akzeptieren ein Buffer-Objekt anstelle einer Adresse - im Abschnitt <a href="#Related">Siehe auch</a> finden Sie die entsprechenden Links. Diese Funktionen akzeptieren auch andere Objekte mit einer <a href="#Ptr">Ptr</a>- und <a href="#Size">Size</a>-Eigenschaft, sind aber grundsätzlich für das native Buffer-Objekt optimiert.</p>
+<p>In den meisten Fällen ist die Übergabe eines Buffer-Objekts wesentlich sicherer als die Übergabe einer Adresse, da die Funktion durch Lesen der <a href="#Size">Puffergröße</a> verhindern kann, dass sie eventuell auf einen Speicherort außerhalb des Pufferspeichers zugreift. Anders verhält es sich mit <a href="DllCall.htm">DllCall</a>, wenn es Funktionen außerhalb des Programms aufruft, dann kann es erforderlich sein, die <a href="#Size">Puffergröße</a> explizit an die Funktion zu übergeben.</p>
 
 <h2 id="StaticMethods">Statische Methoden</h2>
 <div class="methodShort" id="Call"><h3>Call</h3>
@@ -65,11 +65,11 @@
   <dt>FüllByte</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Geben Sie eine Zahl im Bereich von 0 bis 255 an, um jedes Byte im Pufferspeicher mit dieser Zahl füllen.</p>
-    <p>Dieser Parameter sollte in der Regel weggelassen werden, wenn der Pufferspeicher ohne vorheriges Lesen beschrieben wird, da dies ein Zeitaufwand im Verhältnis zur Anzahl der Bytes ist. Wenn weggelassen, wird der Pufferspeicher nicht initialisiert; der Wert jedes Bytes ist willkürlich.</p>
+    <p>Geben Sie eine Zahl im Bereich von 0 bis 255 an, um jedes Byte im Pufferspeicher mit dieser Zahl zu füllen.</p>
+    <p>Dies sollte in der Regel weggelassen werden, wenn in den Pufferspeicher geschrieben wird, ohne ihn vorher zu lesen, da dies je nach Anzahl der Bytes die Performanz beeinträchtigt. Wenn weggelassen, wird der Pufferspeicher nicht initialisiert, d.h. jeder Byte enthält einen willkürlichen Wert.</p>
   </dd>
 </dl>
-<p>Es wird ein <a href="Error.htm#MemoryError">MemoryError</a> ausgelöst, wenn der Speicher nicht reserviert werden konnte, z.B. weil <em>ByteAnzahl</em> unerwartet groß ist oder das System über zu wenig virtuellen Speicher verfügt.</p>
+<p>Es wird ein <a href="Error.htm#MemoryError">MemoryError</a> ausgelöst, wenn der Speicher nicht reserviert werden konnte, z.B. weil <em>ByteAnzahl</em> unerwartet groß ist oder das System nicht über genügend virtuellen Speicher verfügt.</p>
 <p>Parameter werden durch <a href="#__New">__New</a> definiert.</p>
 </div>
 
@@ -77,10 +77,10 @@
 <div class="methodShort" id="__New"><h3>__New</h3>
 <p>Reserviert den Pufferspeicher und füllt ihn optional mit Zahlen.</p>
 <pre class="Syntax">BufferObj.<span class="func">__New</span>(<span class="optional">ByteAnzahl, FüllByte</span>)</pre>
-<p>Diese Methode existiert zur Unterstützung von <a href="#Call">Call</a> und wird in der Regel nicht direkt aufgerufen. Siehe <a href="../Objects.htm#Custom_NewDelete">Konstruktion und Destruktion</a>.</p>
-<p>Geben Sie <em>ByteAnzahl</em> an, um den Pufferspeicher zu reservieren, neu zu reservieren oder freizugeben. Dies ist das gleiche wie, als würde man <a href="#Size">Size</a> etwas zuweisen.</p>
+<p>Diese Methode existiert zur Unterstützung von <a href="#Call">Call</a> und wird normalerweise nicht direkt aufgerufen. Siehe <a href="../Objects.htm#Custom_NewDelete">Konstruktion und Destruktion</a>.</p>
+<p>Geben Sie <em>ByteAnzahl</em> an, um den Pufferspeicher zu reservieren, neu zu reservieren oder freizugeben. Dies ist dasselbe wie, als würde man <a href="#Size">Size</a> etwas zuweisen.</p>
 <p>Geben Sie <em>FüllByte</em> an, um den Pufferspeicher mit dem angegebenen numerischen Byte-Wert zu füllen, was zur Folge hat, dass ein bereits vorhandener Inhalt überschrieben wird.</p>
-<p>Wenn beide Parameter weggelassen werden, ist diese Methode wirkungslos.</p>
+<p>Wenn beide Parameter weggelassen werden, hat diese Methode keine Wirkung.</p>
 </div>
 
 <h2 id="Properties">Eigenschaften</h2>
@@ -88,16 +88,16 @@
 <p>Ruft die aktuelle Adresse des Pufferspeichers ab.</p>
 <pre class="Syntax">Ptr := BufferObj.Ptr</pre>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Jede von dieser Eigenschaft zurückgegebene Adresse wird ungültig, wenn der Pufferspeicher freigegeben oder neu reserviert wird. Ungültige Adressen dürfen nicht verwendet werden. Der Pufferspeicher wird erst freigegeben, wenn die <a href="../Objects.htm#Reference_Counting">Referenzanzahl</a> des Buffer-Objekts auf 0 ist, allerdings wird dieser Pufferspeicher neu reserviert, wenn seine <a href="#Size">Größe</a> geändert wird.</p>
+<p>Jede von dieser Eigenschaft zurückgegebene Adresse wird ungültig, wenn der Pufferspeicher freigegeben oder neu reserviert wird. Ungültige Adressen dürfen nicht verwendet werden. Der Pufferspeicher wird erst freigegeben, wenn die <a href="../Objects.htm#Reference_Counting">Referenzanzahl</a> des Buffer-Objekts auf 0 ist, aber er wird neu reserviert, wenn seine <a href="#Size">Größe</a> geändert wird.</p>
 </div>
 
 <div class="methodShort" id="Size"><h3>Size</h3>
-<p>Ermittelt oder bestimmt die Größe des Pufferspeichers (in Bytes).</p>
+<p>Ermittelt oder setzt die Größe des Pufferspeichers (in Bytes).</p>
 <pre class="Syntax">ByteAnzahl := BufferObj.Size</pre>
 <pre class="Syntax">BufferObj.Size := ByteAnzahl</pre>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Die Adresse des Pufferspeichers ändert sich in der Regel, wenn seine Größe geändert wird. Wenn die Größe verringert wird, werden die Daten im Pufferspeicher gekürzt; die restlichen Bytes bleiben erhalten. Wenn die Größe erhöht wird, werden alle Daten beibehalten und die Werte aller neuen Bytes willkürlich gesetzt (sie werden aus Performanzgründen nicht initialisiert).</p>
-<p>Es wird ein <a href="Error.htm#MemoryError">MemoryError</a> ausgelöst, wenn der Speicher nicht reserviert werden konnte, z.B. weil <em>ByteAnzahl</em> unerwartet groß ist oder das System über zu wenig virtuellen Speicher verfügt.</p>
+<p>Die Adresse des Pufferspeichers ändert sich typischerweise, wenn seine Größe geändert wird. Wenn die Größe verringert wird, werden die Daten im Pufferspeicher gekürzt; die restlichen Bytes bleiben erhalten. Wenn die Größe erhöht wird, bleiben alle Daten erhalten und die Werte aller neuen Bytes werden willkürlich gesetzt (sie werden aus Performanzgründen nicht initialisiert).</p>
+<p>Es wird ein <a href="Error.htm#MemoryError">MemoryError</a> ausgelöst, wenn der Speicher nicht reserviert werden konnte, z.B. weil <em>ByteAnzahl</em> unerwartet groß ist oder das System nicht über genügend virtuellen Speicher verfügt.</p>
 <p>Diese Eigenschaft gibt immer genau den Wert zurück, den sie entweder via <a href="#__New">__New</a> oder durch eine vorherige Zuweisung zugewiesen bekommen hat.</p>
 </div>
 
@@ -106,7 +106,7 @@
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExString">
-<p><a class="ex_number" href="#ExString"></a> Verwenden Sie ein Buffer-Objekt, um eine Zeichenkette von einer via <a href="DllCall.htm">DllCall</a> aufgerufenen externen Funktion abzurufen.</p>
+<p><a class="ex_number" href="#ExString"></a> Verwendet ein Buffer-Objekt, um eine Zeichenkette von einer externen Funktion über <a href="DllCall.htm">DllCall</a> zu empfangen.</p>
 <pre>
 max_chars := 11
 
@@ -125,7 +125,7 @@ bufA := Buffer(max_chars)
 <em>; ANSI-Zeichenkette via wsprintfA() in den Pufferspeicher schreiben.</em>
 DllCall("wsprintfA", "Ptr", bufA, "AStr", "0x%08x", "UInt", 4919, "CDecl")
 
-<em>; Zeichenkette aus bufA lesen (konvertiert in das native Format) und anzeigen.</em>
+<em>; Zeichenkette aus bufA lesen (konvertiert ins native Format) und anzeigen.</em>
 MsgBox StrGet(bufA, "CP0")
 </pre>
 </div>
