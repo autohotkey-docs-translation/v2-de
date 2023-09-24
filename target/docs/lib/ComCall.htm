@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ComCall - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die ComCall-Funktion ruft eine native COM-Interface-Methode über ihre Indexnummer auf." />
+<meta name="description" content="Die ComCall-Funktion ruft eine native COM-Interface-Methode per Index auf." />
 <meta name="ahk:equiv-v1" content="index.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +14,7 @@
 
 <h1>ComCall</h1>
 
-<p>Ruft eine native COM-Interface-Methode über ihre Indexnummer auf.</p>
+<p>Ruft eine native COM-Interface-Methode per Index auf.</p>
 
 <pre class="Syntax">Ergebnis := <span class="func">ComCall</span>(Index, ComObj <span class="optional">, Typ1, Arg1, Typ2, Arg2, RückgabeTyp</span>)</pre>
 <h2 id="Parameters">Parameter</h2>
@@ -24,17 +24,17 @@
   <dd>
       <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
       <p>Die nullbasierte Indexnummer der Methode innerhalb der virtuellen Funktionstabelle.</p>
-      <p><em>Index</em> entspricht der Position der Methode innerhalb der ursprünglichen Interface-Definition. Die Microsoft-Dokumentation listet Methoden grundsätzlich in alphabetischer Reihenfolge auf und ist demzufolge nicht zum Ermitteln der Indexnummer geeignet. Um die richtige Indexnummer zu ermitteln, müssen Sie die ursprüngliche Interface-Definition lokalisieren. Dies könnte z.B. in einer Header-Datei oder einer Typenbibliothek sein.</p>
-      <p>Es ist wichtig, Methoden zu berücksichtigen, die von übergeordneten Interfaces geerbt wurden. Da alle COM-Interfaces letztlich von <a href="https://learn.microsoft.com/windows/win32/api/unknwn/nn-unknwn-iunknown">IUnknown</a> abgeleitet sind, sind die ersten drei Methoden immer QueryInterface (0), AddRef (1) und Release (2). Zum Beispiel ist <em>IShellItem2</em> eine Erweiterung von <em>IShellItem</em>, die bei Index 3 beginnt und 5 Methoden enthält, demzufolge ist die erste Methode von <em>IShellItem2</em> bei Index 8.</p>
-      <p class="note"><strong>Tipp:</strong> COM-Interfaces, die von Microsoft bereitgestellt werden, finden Sie im Internet oder Windows SDK unter "<em>IInterfaceName</em><b>Vtbl</b>" - zum Beispiel "IUnknownVtbl". Die Microsoft-eigenen Interface-Definitionen werden von dieser Plain-C-Definition der virtuellen Funktionstabelle des Interfaces begleitet, die alle Methoden explizit in der richtigen Reihenfolge auflistet.</p>
+      <p><em>Index</em> entspricht der Position der Methode innerhalb der ursprünglichen Interface-Definition. Die Microsoft-Dokumentation listet Methoden grundsätzlich in alphabetischer Reihenfolge auf und eignet sich daher nicht zur Ermittlung der Indexnummer. Um die richtige Indexnummer zu ermitteln, muss die ursprüngliche Interface-Definition lokalisiert werden. Dies kann z.B. in einer Header-Datei oder einer Typbibliothek sein.</p>
+      <p>Es ist wichtig, Methoden zu berücksichtigen, die von übergeordneten Interfaces geerbt wurden. Da alle COM-Interfaces letztlich von <a href="https://learn.microsoft.com/windows/win32/api/unknwn/nn-unknwn-iunknown">IUnknown</a> abgeleitet sind, sind die ersten drei Methoden immer QueryInterface (0), AddRef (1) und Release (2). Zum Beispiel ist <em>IShellItem2</em> eine Erweiterung von <em>IShellItem</em>, die bei Index 3 beginnt und 5 Methoden enthält, daher ist die erste Methode von <em>IShellItem2</em> bei Index 8.</p>
+      <p class="note"><strong>Tipp:</strong> Die von Microsoft definierten COM-Interfaces finden Sie im Internet oder Windows SDK unter "<em>IInterfaceName</em><b>Vtbl</b>" - zum Beispiel "IUnknownVtbl". Die Microsoft-eigenen Interface-Definitionen werden von dieser Plain-C-Definition der virtuellen Funktionstabelle des Interfaces begleitet, die alle Methoden explizit auflistet, in korrekter Reihenfolge.</p>
       <p>Die Übergabe einer ungültigen Indexnummer kann zu undefiniertem Verhalten führen, inklusive (aber nicht beschränkt auf) Programmterminierung.</p>
   </dd>
   
   <dt>ComObj</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#numbers">Integer</a>, <a href="ComValue.htm">ComValue</a> oder <a href="Object.htm">Objekt</a></p>
-      <p>Das gewünschte COM-Objekt; also ein COM-Interface-Pointer. Der Pointer-Wert kann direkt übergeben oder innerhalb eines Objekts mit der <code>Ptr</code>-Eigenschaft gekapselt werden, wie z.B. ein <a href="ComValue.htm">ComValue</a> mit dem Variantentyp VT_UNKNOWN.</p>
-      <p>Der Interface-Pointer dient zum Lokalisieren der Adresse der virtuellen Funktion, die die Interface-Methode implementiert, und wird auch als Parameter übergeben. Diesen Parameter findet man grundsätzlich nicht in Sprachen, die von sich aus Interfaces unterstützen, allerdings wird er in der C-Style-"Vtbl"-Definition angezeigt.</p>
+      <p>Das gewünschte COM-Objekt; also ein COM-Interface-Pointer. Der Pointer-Wert kann direkt übergeben werden oder innerhalb eines Objekts mit der <code>Ptr</code>-Eigenschaft gekapselt sein, wie z.B. ein <a href="ComValue.htm">ComValue</a> mit dem Variantentyp VT_UNKNOWN.</p>
+      <p>Der Interface-Pointer dient zur Lokalisierung der Adresse der virtuellen Funktion, die die Interface-Methode implementiert, und wird auch als Parameter übergeben. Dieser Parameter ist grundsätzlich nicht explizit in Sprachen enthalten, die Interfaces nativ unterstützen, wird aber in der C-Style-Definition "Vtbl" angezeigt.</p>
       <p>Die Übergabe eines ungültigen Pointers kann zu undefiniertem Verhalten führen, inklusive (aber nicht beschränkt auf) Programmterminierung.</p>
   </dd>
 
@@ -47,10 +47,10 @@
   <dt>RückgabeTyp</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Wenn weggelassen, wird standardmäßig <a href="DllCall.htm#HRESULT">HRESULT</a> verwendet, was der häufigste Rückgabetyp für COM-Interface-Methoden ist. Jedes Ergebnis, das auf einen Fehler hinweist, führt dazu, dass ein <a href="Error.htm#OSError">OSError</a> ausgelöst wird; daher darf der Rückgabetyp nur weggelassen werden, wenn der eigentliche Rückgabetyp HRESULT ist.</p>
-      <p>Wenn die Methode vom Typ ist, der keinen Wert zurückgibt (der Rückgabetyp <code>void</code> in C), können Sie "Int" oder einen anderen numerischen Typ ohne Suffix (außer HRESULT) angeben und den Rückgabewert ignorieren. Da der Inhalt des Rückgabewertregisters in solchen Fällen willkürlich ist, wird eventuell eine Ausnahme ausgelöst, wenn <em>RückgabeTyp</em> weggelassen wird.</p>
+      <p>Wenn weggelassen, wird standardmäßig <a href="DllCall.htm#HRESULT">HRESULT</a> verwendet, was der häufigste Rückgabetyp für COM-Interface-Methoden ist. Jedes Ergebnis, das auf einen Fehler hinweist, bewirkt, dass ein <a href="Error.htm#OSError">OSError</a> ausgelöst wird, daher darf der Rückgabetyp nur weggelassen werden, wenn der tatsächliche Rückgabetyp HRESULT ist.</p>
+      <p>Wenn die Methode vom Typ ist, der keinen Wert zurückgibt (der Rückgabetyp <code>void</code> in C), können Sie "Int" oder einen anderen numerischen Typ ohne Suffix (außer HRESULT) angeben und den Rückgabewert ignorieren. Da der Inhalt des Rückgabewertregisters in diesem Fall willkürlich ist, kann durch Weglassen von <em>RückgabeTyp</em> eine Ausnahme ausgelöst werden.</p>
       <p>Andernfalls geben Sie einen der Argumenttypen aus der <a href="DllCall.htm#types">DllCall-Typentabelle</a> an. Das <a href="DllCall.htm#asterisk">Sternchen-Suffix</a> wird ebenfalls unterstützt.</p>
-      <p id="cdecl">Obwohl ComCall das Schlüsselwort <em>Cdecl</em> gemäß <a href="DllCall.htm#cdecl">DllCall</a> unterstützt, wird es in der Regel nicht von COM-Interface-Methoden verwendet.</p>
+      <p id="cdecl">Obwohl ComCall das Schlüsselwort <em>Cdecl</em> gemäß <a href="DllCall.htm#cdecl">DllCall</a> unterstützt, wird es grundsätzlich nicht von COM-Interface-Methoden verwendet.</p>
   </dd>
 
 </dl>
@@ -77,7 +77,7 @@
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExTaskbar">
-<p><a class="ex_number" href="#ExTaskbar"></a> Entfernt für 3 Sekunden das aktive Fenster aus der Taskleiste. Vergleichen Sie dies mit dem <a href="DllCall.htm#ExTaskbar">äquivalenten DllCall-Beispiel</a>.</p>
+<p><a class="ex_number" href="#ExTaskbar"></a> Entfernt das aktive Fenster für 3 Sekunden aus der Taskleiste. Äquivalent zum <a href="DllCall.htm#ExTaskbar">DllCall-Beispiel</a>.</p>
 <pre><em>/*
   Methoden in der <a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nn-shobjidl_core-itaskbarlist">ITaskbarList</a>-VTable:
     IUnknown:
@@ -94,7 +94,7 @@
 IID_ITaskbarList  := "{56FDF342-FD6D-11d0-958A-006097C9A090}"
 CLSID_TaskbarList := "{56FDF344-FD6D-11d0-958A-006097C9A090}"
 
-<em>; Erstellt das TaskbarList-Objekt.</em>
+<em>; Das TaskbarList-Objekt erstellen.</em>
 tbl := ComObject(CLSID_TaskbarList, IID_ITaskbarList)
 
 activeHwnd := WinExist("A")
@@ -104,14 +104,14 @@ ComCall(5, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.c
 Sleep 3000
 ComCall(4, tbl, "ptr", activeHwnd)  <em>; tbl.<a href="https://learn.microsoft.com/windows/win32/api/shobjidl_core/nf-shobjidl_core-itaskbarlist-addtab">AddTab</a>(activeHwnd)</em>
 
-<em>; Wenn mit dem Objekt fertig, ersetze einfach alle Referenzen mit
-; einem anderen Wert (oder wenn es sich um eine lokale Variable handelt, einfach return):</em>
+<em>; Wenn das Objekt nicht mehr benötigt wird, einfach alle Referenzen mit
+; einem anderen Wert ersetzen (oder return bei einer lokalen Variable):</em>
 tbl := ""
 </pre>
 </div>
 
 <div class="ex" id="ExTaskbarClass">
-<p><a class="ex_number" href="#ExTaskbarClass"></a> Demonstriert einige Techniken zum Wrappen von COM-Interfaces. Äquivalent zum vorherigen Beispiel.</p>
+<p><a class="ex_number" href="#ExTaskbarClass"></a> Zeigt einige Techniken zum Wrappen von COM-Interfaces. Äquivalent zum vorherigen Beispiel.</p>
 <pre>
 tbl := TaskbarList()
 
@@ -130,20 +130,20 @@ class TaskbarList {
     
     <em>; Wird beim Start aufgerufen, um die Klasse zu initialisieren.</em>
     static __new() {
-        <em>; Ermittelt das Basisobjekt für alle Instanzen der TaskbarList.</em>
+        <em>; Basisobjekt für alle Instanzen von TaskbarList abrufen.</em>
         proto := this.Prototype
         
-        <em>; Bound-Funktionen können verwendet werden, um Parameter vorab zu definieren,
-        ; was die Methoden benutzerfreundlicher macht, ohne dass Wrapper-Funktionen erforderlich sind.
+        <em>; Mit Bound-Funktionen können Parameter vordefiniert werden, wodurch die
+        ; Methoden besser nutzbar werden, ohne Hilfe von Wrapper-Funktionen.
         ; HrInit selbst hat keine Parameter, also nur den Index binden,
-        ; und der Aufrufer wird implizit 'this' bereitstellen.</em>
+        ; und der Aufrufer wird implizit 'this' übergeben.</em>
         proto.HrInit := ComCall.Bind(3)
         
-        <em>; Lassen Sie einen Parameter leer, damit der Aufrufer einen Wert bereitstellen kann.
-        ; In diesem Fall ist der leere Parameter 'this' (normalerweise versteckt).</em>
+        <em>; Parameter leer lassen, um den Aufrufer einen Wert übergeben zu lassen.
+        ; In diesem Fall ist der leere Parameter 'this' (i.d.R. versteckt).</em>
         proto.AddTab := ComCall.Bind(4,, "ptr")
         
-        <em>; Ein Object- oder Map-Objekt kann verwendet werden, um Wiederholungen zu reduzieren.</em>
+        <em>; Mit Object oder Map können Wiederholungen reduziert werden.</em>
         for name, args in Map(
             "DeleteTab", [5,,"ptr"],
             "ActivateTab", [6,,"ptr"],
@@ -156,7 +156,7 @@ class TaskbarList {
     __new() {
         this.comobj := ComObject(TaskbarList.CLSID, TaskbarList.IID)
         this.ptr := this.comobj.ptr
-        <em>; Initialisierung über ITaskbarList anfordern.</em>
+        <em>; Initialisierung via ITaskbarList anfordern.</em>
         this.HrInit()
     }
 }

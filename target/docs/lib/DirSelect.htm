@@ -23,8 +23,8 @@
   <dt>StartOrdner</dt>
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-      <p>Wenn leer oder weggelassen, beginnt die Navigation standardmäßig im Benutzerordner "Eigene Dokumente" (oder eventuell Arbeitsplatz/Computer). Ein <a href="../misc/CLSID-List.htm">CLSID</a>-Ordner wie <code>"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}"</code> (Arbeitsplatz/Computer) kann angegeben werden, um die Navigation in einem bestimmten Spezialordner zu beginnen.</p>
-      <p>Andernfalls wird dieser Parameter hauptsächlich verwendet, um ein Sternchen einzufügen und direkt danach den absoluten Pfadnamen des Laufwerks oder Ordners anzugeben, der vorab ausgewählt sein soll. Zum Beispiel würde <code>"*C:\"</code> bewirken, dass das C-Laufwerk zu Beginn ausgewählt ist. <code>"*C:\Mein Ordner"</code> würde bewirken, dass genau dieser Ordner zu Beginn ausgewählt ist.</p>
+      <p>Wenn leer oder weggelassen, beginnt die Navigation standardmäßig im Ordner "Dokumente" des Benutzers oder evtl. "Dieser PC" (ehemals Arbeitsplatz oder Computer). Ein <a href="../misc/CLSID-List.htm">CLSID</a>-Ordner wie <code>"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}"</code> (Dieser PC) kann angegeben werden, um die Navigation in einem bestimmten Spezialordner zu beginnen.</p>
+      <p>Andernfalls wird dieser Parameter hauptsächlich verwendet, um ein Sternchen einzufügen und direkt danach den absoluten Pfadnamen des Laufwerks oder Ordners anzugeben, der vorab ausgewählt sein soll. Zum Beispiel würde <code>"*C:\"</code> vorab das C-Laufwerk auswählen und <code>"*C:\Mein Ordner"</code> vorab diesen konkreten Ordner auswählen.</p>
       <p>Das Sternchen bewirkt, dass der Benutzer vom Startordner aus nach oben (näher zum Stammverzeichnis) navigieren darf. Ohne Sternchen wäre der Benutzer gezwungen, einen Ordner innerhalb von <em>StartOrdner</em> (oder <em>StartOrdner</em> selbst) auszuwählen. Das Weglassen des Sternchens hat z.B. den Vorteil, dass <em>StartOrdner</em> zu Beginn im aufgeklappten Zustand angezeigt wird, was dem Benutzer das Anklicken des ersten Pluszeichens erspart.</p>
       <p>Wenn das Sternchen vorhanden ist, kann die Aufwärtsnavigation optional auf einen anderen Ordner als den Desktop beschränkt werden. Stellen Sie dem Sternchen einfach den absoluten Pfad des obersten Ordners voran, gefolgt von genau einem Leer- oder Tabulatorzeichen. Zum Beispiel würde <code>"C:\Mein Ordner *C:\Mein Ordner\Projekte"</code> dem Benutzer verbieten, höher als C:\Mein Ordner zu navigieren (allerdings wäre C:\Mein Ordner\Projekte vorab ausgewählt).</p>
     </dd>
@@ -33,11 +33,11 @@
   <dd>
       <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
       <p>Wenn weggelassen, wird standardmäßig 1 verwendet. Andernfalls geben Sie eine der folgenden Zahlen an:</p>
-      <p><strong>0:</strong> Keine der folgenden Optionen ist wirksam (in Windows 2000 könnte dennoch die Schaltfläche "Neuer Ordner" angezeigt werden).</p>
+      <p><strong>0:</strong> Keine der folgenden Optionen ist wirksam.</p>
       <p><strong>1:</strong> Zeigt eine Schaltfläche an, die der Benutzer zum Erstellen neuer Ordner verwenden kann.</p>
       <p><strong>Addieren Sie 2</strong> zur obigen Zahl, um ein Eingabefeld anzuzeigen, das der Benutzer zum Eintragen eines Ordnernamens verwenden kann. Wenn dieser Parameter z.B. 3 ist, wird sowohl ein Eingabefeld als auch die Schaltfläche "Neuer Ordner" angezeigt.</p>
-      <p id="NewDialog"><strong>Addieren Sie 4</strong> zur obigen Zahl, um die Eigenschaft BIF_NEWDIALOGSTYLE zu entfernen. Dadurch wird sichergestellt, dass DirSelect auch in einer vorinstallierten Umgebung wie WinPE oder BartPE funktioniert, aber verhindert, dass die Schaltfläche "Neuer Ordner" vorhanden ist.</p>
-      <p>Wenn der Benutzer den Namen eines ungültigen Ordners in das Eingabefeld einträgt, wird <em>AusgewählterOrdner</em> auf einen Wert gesetzt, der nicht den eingetragenen Text, sondern den im Navigationsbereich ausgewählten Ordner repräsentiert.</p>
+      <p id="NewDialog"><strong>Addieren Sie 4</strong> zur obigen Zahl, um die Eigenschaft BIF_NEWDIALOGSTYLE zu entfernen. Dadurch wird sichergestellt, dass DirSelect auch in einer vorinstallierten Umgebung wie WinPE oder BartPE funktioniert, verhindert aber, dass die Schaltfläche "Neuer Ordner" angezeigt wird.</p>
+      <p>Wenn der Benutzer einen ungültigen Ordnernamen in das Eingabefeld einträgt, wird <em>AusgewählterOrdner</em> auf den im Navigationsbereich ausgewählten Ordner gesetzt, nicht auf den vom Benutzer eingetragenen Text.</p>
   </dd>
 
   <dt>Anzeigetext</dt>
@@ -50,9 +50,9 @@
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt den vollständigen Pfad und Namen des vom Benutzer ausgewählten Ordners zurück. Wenn der Benutzer das Dialogfenster abbricht (bzw. keinen Ordner auswählen möchte), wird eine leere Zeichenkette zurückgegeben. Wenn der Benutzer ein Root-Verzeichnis auswählt (z.B. C:\), endet der Rückgabewert mit einem umgekehrten Schrägstrich. Falls das unerwünscht ist, kann der Schrägstrich wie folgt entfernt werden:</p>
+<p>Diese Funktion gibt den vollständigen Pfad und Namen des vom Benutzer ausgewählten Ordners zurück. Wenn der Benutzer das Dialogfenster abbricht (also keinen Ordner auswählen möchte), wird eine leere Zeichenkette zurückgegeben. Wenn der Benutzer ein Stammverzeichnis auswählt (z.B. C:\), endet der Rückgabewert mit einem umgekehrten Schrägstrich. Falls das unerwünscht ist, kann der Schrägstrich wie folgt entfernt werden:</p>
 <pre>Ordner := RegExReplace(DirSelect(), "\\$")  <em>; Entfernt den umgekehrten Schrägstrich am Ende, falls vorhanden.</em></pre>
-<p>Es wird auch eine leere Zeichenkette zurückgegeben, wenn das Betriebssystem sich weigert, das Dialogfenster anzuzeigen, aber dieses Problem tritt nur sehr selten auf.</p>
+<p>Eine leere Zeichenkette wird auch zurückgegeben, wenn das Betriebssystem sich weigert, das Dialogfenster anzuzeigen, was jedoch sehr selten vorkommt.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Ein typisches Ordnerauswahlfenster sieht wie folgt aus:</p>
@@ -73,8 +73,8 @@ else
 </div>
 
 <div class="ex" id="ExCLSID">
-<p><a class="ex_number" href="#ExCLSID"></a> Ein <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel. Ermöglicht dem Benutzer die Auswahl eines Ordners im "Dieser PC"-Verzeichnis.</p>
-<pre>AusgewählterOrdner := DirSelect("::{20D04FE0-3AEA-1069-A2D8-08002B30309D}")  <em>; Dieser PC.</em></pre>
+<p><a class="ex_number" href="#ExCLSID"></a> Ein <a href="../misc/CLSID-List.htm">CLSID</a>-Beispiel. Ermöglicht dem Benutzer die Auswahl eines Ordners in Dieser PC (ehemals Arbeitsplatz oder Computer).</p>
+<pre>AusgewählterOrdner := DirSelect("::{20D04FE0-3AEA-1069-A2D8-08002B30309D}")</pre>
 </div>
 
 </body>

@@ -17,6 +17,7 @@
 <ul>
   <li><a href="#intro">Einführung und einfache Beispiele</a></li>
   <li><a href="#param">Parameter</a></li>
+  <li><a href="#ByRef">ByRef-Parameter</a></li>
   <li><a href="#optional">Optionale Parameter</a>
     <ul>
       <li><a href="#unset">Ungesetzte Parameter</a></li>
@@ -67,7 +68,13 @@ Addieren 2, 3  <em>; Klammern sind unnötig, wenn dies am Zeilenanfang steht.</e
 
 <h2 id="param">Parameter</h2>
 <p>Beim Definieren einer Funktion werden ihre Parameter in runden Klammern rechts neben ihrem Namen aufgelistet (zwischen dem Namen und der runden Startklammer sind keine Leerzeichen erlaubt). Wenn die Funktion keine Parameter akzeptiert, kann der Inhalt zwischen den runden Klammern leer gelassen werden, z.B. <code>ErmittleAktuellenZeitstempel()</code>.</p>
-<p id="ByRef"><strong>ByRef-Parameter:</strong> Innerhalb der Funktion werden Parameter grundsätzlich als <a href="#Local">lokale Variablen</a> behandelt, es sei denn, sie werden wie im folgenden Beispiel als <em>ByRef</em> markiert:</p>
+<p>Bekannte Einschränkung:</p>
+<ul>
+  <li>Wenn ein Parameter in einem Funktionsaufruf eine Variable enthält (z.B. <code>Var</code> oder <code>++Var</code> oder <code>Var*=2</code>), können andere Parameter links oder rechts davon diese Variable ändern, bevor sie an die Funktion übergeben wird. Zum Beispiel würde <code>MeineFunk(Var, Var++)</code> unerwartet 1 und 0 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, da das erste <em>Var</em> erst bei Ausführung des Funktionsaufrufs dereferenziert wird. Dieses Verhalten ist nicht intuitiv und könnte sich in einer zukünftigen Version ändern.</li>
+</ul>
+
+<h2 id="ByRef">ByRef-Parameter</h2>
+<p>Innerhalb der Funktion werden Parameter grundsätzlich als <a href="#Local">lokale Variablen</a> behandelt, es sei denn, sie werden wie im folgenden Beispiel als <em>ByRef</em> markiert:</p>
 <pre>a := 1, b := 2
 Tauschen(&amp;a, &amp;b)
 MsgBox a ',' b
@@ -91,8 +98,9 @@ Tauschen(&amp;Links, &amp;Rechts)
 <p>Bekannte Einschränkungen:</p>
 <ul>
   <li>Es ist nicht möglich, eine VarRef für eine Objekteigenschaft (z.B. <code>foo.bar</code>), <a href="lib/A_Clipboard.htm">A_Clipboard</a> oder eine andere <a href="Variables.htm#BuiltIn">interne Variable</a> zu konstruieren, sodass diese nicht via <em>ByRef</em> übergeben werden können.</li>
-  <li>Wenn ein Parameter in einem Funktionsaufruf eine Variable enthält (z.B. <code>Var</code> oder <code>++Var</code> oder <code>Var*=2</code>), können andere Parameter links oder rechts davon diese Variable ändern, bevor sie an die Funktion übergeben wird. Zum Beispiel würde <code>MeineFunk(Var, Var++)</code> unerwartet 1 und 0 als Parameter übergeben, wenn <em>Var</em> zu Beginn 0 ist, da das erste <em>Var</em> erst bei Ausführung des Funktionsaufrufs dereferenziert wird. Dieses Verhalten ist nicht intuitiv und könnte sich in einer zukünftigen Version ändern.</li>
+  <li id="NoIsByRef">Wenn der Parameter optional ist, kann nicht festgestellt werden, ob die vom Parameter referenzierte Variable eine neu erstellte lokale Variable oder eine vom Aufrufer übergebene Variable ist. Eine Alternative besteht darin, einen Nicht-ByRef-Parameter zu verwenden, ihm aber eine <a href="Concepts.htm#variable-references">VarRef</a> zu übergeben und ihn von der Funktion <a href="Variables.htm#deref">explizit dereferenzieren</a> zu lassen oder ihn an den ByRef-Parameter einer anderen Funktion zu übergeben (ohne den <code>&amp;</code>-Operator zu verwenden).</li>
 </ul>
+
 <h2 id="optional">Optionale Parameter</h2>
 <p>Beim Definieren einer Funktion können beliebig viele Parameter als optional gekennzeichnet werden.</p>
 <p>Fügen Sie <code>:=</code> an, gefolgt von einer direkt geschriebenen Zahl, einer in Anführungszeichen gesetzten Zeichenkette wie "fox" oder "", oder einem Ausdruck, der jedes Mal ausgewertet werden soll, wenn der Parameter mit seinem Standardwert initialisiert werden muss. Zum Beispiel würde <code>X:=[]</code> jedes Mal ein neues Array erzeugen.</p>

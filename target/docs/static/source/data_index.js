@@ -345,7 +345,7 @@ indexData = [
   ["close a window","lib/WinClose.htm"],["Schließen eines Fensters","lib/WinClose.htm"],
   ["Close-Methode (File)","lib/File.htm#Close",7],
   ["Closure","Functions.htm#closures",6],
-  ["CLSID-Liste (Arbeitsplatz, etc.)","misc/CLSID-List.htm"],
+  ["CLSID-Liste (Papierkorb usw.)","misc/CLSID-List.htm"],
   ["Koaleszenz-Operator","Variables.htm#or-maybe"],
   ["color names, RGB/HTML","misc/Colors.htm"],["Farbnamen, RGB/HTML","misc/Colors.htm"],
   ["color of pixels","lib/PixelSearch.htm"],["Farben von Pixeln","lib/PixelSearch.htm"],
