@@ -62,7 +62,7 @@
 <td>
   <p>Eine Zeichenkette wie z.B. <code>"Blau"</code> oder <code>MeineVar</code>, oder eine <a href="../Concepts.htm#variable-references">VarRef</a> wie z.B. <code>&amp;MeineVar</code>. Wenn die aufgerufene Funktion die Zeichenkette ändert und das Argument eine reine Variable oder eine VarRef ist, wird der Inhalt der Variable aktualisiert. Zum Beispiel würde der folgende Aufruf den Inhalt von <em>MeineVar</em> in Großbuchstaben umwandeln: <code>DllCall("CharUpper", "Str", <i>MeineVar</i>)</code>.</p>
   <p>Wenn die Funktion eine Zeichenkette zurückgibt, die länger ist als der Eingabewert des Parameters (oder wenn der Parameter nur für die Ausgabe bestimmt ist), wird die folgende Vorgehensweise empfohlen: 1) Erstellen Sie ein <a href="Buffer.htm">Buffer</a>, 2) übergeben Sie es mit dem <a href="#ptr">Ptr</a>-Typ, und 3) rufen Sie die Zeichenkette nach Abschluss der Funktion mit <a href="StrGet.htm">StrGet</a> ab, wie im <a href="#ExWsprintf">wsprintf-Beispiel</a> gezeigt.</p>
-  <p>Andernfalls sollten Sie vor dem Funktionsaufruf sicherstellen, dass die Variable groß genug ist. Rufen Sie hierfür <code><a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>(MeineVar, 123)</code> auf, wobei 123 die Anzahl der 16-Bit-Einheiten (umgangssprachlich auch Zeichen genannt) ist, die <em>MeineVar</em> maximal enthalten soll. Wenn die Variable bei Return nicht null-terminiert ist, wird eine Fehlermeldung angezeigt und das Programm beendet, da wahrscheinlich der Speicher durch einen Pufferüberlauf korrumpiert wurde. Dies deutet typischerweise darauf hin, dass die Kapazität der Variable unzureichend war.</p>
+  <p>Andernfalls sollten Sie vor dem Funktionsaufruf sicherstellen, dass die Variable groß genug ist. Rufen Sie hierfür <code><a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>(MeineVar, 123)</code> auf, wobei 123 die Anzahl der 16-Bit-Einheiten (umgangssprachlich auch Zeichen genannt) ist, die <em>MeineVar</em> maximal enthalten soll. Wenn die Variable bei Return nicht nullterminiert ist, wird eine Fehlermeldung angezeigt und das Programm beendet, da wahrscheinlich der Speicher durch einen Pufferüberlauf korrumpiert wurde. Dies deutet typischerweise darauf hin, dass die Kapazität der Variable unzureichend war.</p>
   <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der nach der Auswertung eine Zahl ergibt (z.B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ein <a href="Error.htm#TypeError">TypeError</a> ausgelöst.</p>
   <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine <a href="../Concepts.htm#variable-references">VarRef</a> übergeben wurde. Dies kann für Funktionen verwendet werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher reserviert und erwartet, dass der Aufrufer ihn wieder freigibt (z.B. durch Aufruf von <a href="https://learn.microsoft.com/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code>Ptr*</code>-Argumenttyp verwendet werden.</p>
   <p class="note"><strong>Hinweis:</strong> Wenn Sie eine Zeichenkette an eine Funktion übergeben, müssen Sie darauf achten, welchen <a href="../Compat.htm#DllCall"><i>Typ</i> von Zeichenkette</a> die Funktion erwartet.</p></td>
@@ -207,7 +207,7 @@ Ergebnis := DllCall("CharLower", "<strong><u>Str</u></strong>", DllCall("CharUpp
 <div class="ex" id="ExMessageBox">
 <p><a class="ex_number" href="#ExMessageBox"></a> Ruft die Windows-API-Funktion "MessageBox" auf und meldet, welche Schaltfläche der Benutzer gedrückt hat.</p>
 <pre>WelcheSchaltfl := DllCall("MessageBox", "Int", 0, "Str", "Ja oder Nein drücken", "Str", "Titel der Box", "Int", 4)
-MsgBox "Sie haben die Schaltfläche #%WelcheSchaltfl% gedrückt."</pre>
+MsgBox "Sie haben die Schaltfläche Nr. %WelcheSchaltfl% gedrückt."</pre>
 </div>
 
 <div class="ex" id="ExWallpaper">
@@ -278,7 +278,7 @@ ScrollbalkenÜberwachen()
     try FokusHwnd := ControlGetFocus("A")
     if !FokusHwnd  <em>; Kein Steuerelement fokussiert.</em>
         return
-    <em>; Zeigt die vertikale oder horizontale Position des Scrollbalkens in einem Tooltip an:</em>
+    <em>; Vertikale oder horizontale Position des Scrollbalkens in einem Tooltip anzeigen:</em>
     ToolTip DllCall("GetScrollPos", "Ptr", FokusHwnd, "Int", 1)  <em>;  Letzter Parameter kann 1 für SB_VERT und 0 für SB_HORZ sein.</em>
 }</pre>
 </div>
@@ -419,7 +419,7 @@ SetzeSystemuhr(YYYYMMDDHHMISS)
 <p>Weitere Strukturbeispiele:</p>
 <ul>
   <li>Das <a href="../scripts/index.htm#WinLIRC">WinLIRC-Client-Skript</a> zeigt, wie mit DllCall eine Netzwerkverbindung zu einem TCP/IP-Server aufgebaut werden kann und Daten von diesem empfangen werden können.</li>
-  <li>Das Betriebssystem stellt Standard-Dialogfenster bereit, die der Benutzer zum Auswählen einer Schriftart, einer Farbe oder eines Symbols verwenden kann. Solche Dialogfenster verwenden Strukturen und können via DllCall in Kombination mit <a href="https://learn.microsoft.com/previous-versions/windows/desktop/legacy/ms646914(v=vs.85)">comdlg32\ChooseFont</a>, <a href="https://learn.microsoft.com/previous-versions/windows/desktop/legacy/ms646912(v=vs.85)">comdlg32\ChooseColor</a> bzw. <a href="https://learn.microsoft.com/windows/win32/api/shlobj_core/nf-shlobj_core-pickicondlg">shell32\PickIconDlg</a> angezeigt werden. Suchen Sie im Forum nach Beispielen.</li>
+  <li>Das Betriebssystem stellt Standarddialogfenster bereit, die der Benutzer zum Auswählen einer Schriftart, einer Farbe oder eines Symbols verwenden kann. Solche Dialogfenster verwenden Strukturen und können via DllCall in Kombination mit <a href="https://learn.microsoft.com/previous-versions/windows/desktop/legacy/ms646914(v=vs.85)">comdlg32\ChooseFont</a>, <a href="https://learn.microsoft.com/previous-versions/windows/desktop/legacy/ms646912(v=vs.85)">comdlg32\ChooseColor</a> bzw. <a href="https://learn.microsoft.com/windows/win32/api/shlobj_core/nf-shlobj_core-pickicondlg">shell32\PickIconDlg</a> angezeigt werden. Suchen Sie im Forum nach Beispielen.</li>
 </ul>
 </div>
 

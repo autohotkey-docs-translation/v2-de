@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>IsSet / IsSetRef - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Der IsSet-Operator und die IsSetRef-Funktion geben eine Nummer ungleich 0 zurück, wenn einer bestimmten Variable ein Wert zugewiesen wurde." />
+<meta name="description" content="Der IsSet-Operator und die IsSetRef-Funktion geben eine Zahl ungleich 0 zurück, wenn einer bestimmten Variable ein Wert zugewiesen wurde." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -15,8 +15,8 @@
 
 <p>Gibt eine Zahl ungleich 0 zurück, wenn einer bestimmten Variable ein Wert zugewiesen wurde.</p>
 
-<pre class="Syntax">Boolesch := <span class="func">IsSet</span>(Var)</pre>
-<pre class="Syntax">Boolesch := <span class="func">IsSetRef</span>(&amp;Ref)</pre>
+<pre class="Syntax">Boolesch := <span class="func">IsSet</span>(Var)
+Boolesch := <span class="func">IsSetRef</span>(&amp;Ref)</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -29,7 +29,7 @@
   <dt>&amp;Ref</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#variable-references">VarRef</a></p>
-    <p>Eine indirekte Referenz, die auf die Variable verweist. Diese wird normalerweise nicht direkt übergeben, wie in <code>IsSetRef(&amp;MeineVar)</code>, sondern indirekt, z.B. um einen Parameter, der eine VarRef <em>enthält</em>, vor der <a href="../Variables.htm#deref">Dereferenzierung</a> zu prüfen. </p>
+    <p>Eine indirekte Referenz, die auf die Variable verweist. Dies wird normalerweise nicht direkt übergeben, wie in <code>IsSetRef(&amp;MeineVar)</code>, sondern indirekt, z.B. um einen Parameter, der eine VarRef <em>enthält</em>, vor der <a href="../Variables.htm#deref">Dereferenzierung</a> zu prüfen. </p>
   </dd>
 
 </dl>
@@ -42,9 +42,9 @@
 <p>Verwenden Sie IsSet, um eine Variable direkt zu prüfen, wie in <code>IsSet(MeineGlobaleVar)</code>.</p>
 <p>Verwenden Sie IsSetRef, um eine <a href="../Concepts.htm#variable-references">VarRef</a> zu prüfen, die typischerweise in einer Variable enthalten ist, wie im Beispiel unten.</p>
 <p>Eine Variable ohne zugewiesenen Wert wird auch als <a href="../Concepts.htm#uninitialized-variables">uninitialisierte Variable</a> bezeichnet. Der Versuch, eine uninitialisierte Variable zu lesen, führt dazu, dass eine Ausnahme ausgelöst wird. IsSet kann verwendet werden, um dies zu vermeiden, z.B. um eine globale oder statische Variable bei der ersten Verwendung zu initialisieren.</p>
-<p class="note"><strong>Hinweis:</strong> <a href="../Functions.htm#InitStatic">Statische Initialisierungen</a> wie z.B. <code>static mein_statisches_array := []</code> werden nur einmal ausgewertet, nämlich dann, wenn sie das erste Mal während der Skriptausführung erreicht werden, so dass IsSet in der Regel nicht verwendet werden muss.</p>
-<p>Obwohl IsSet die gleiche Syntax wie ein Funktionsaufruf verwendet, handelt es sich bei IsSet eher um einen Operator als um eine Funktion. Das Schlüsselwort <em>IsSet</em> ist für die hier gezeigte Verwendung reserviert und kann nicht zu einer Variable oder Funktion umdefiniert werden. IsSet kann nicht indirekt aufgerufen werden, da jeder Versuch, eine uninitialisierte Variable zu übergeben, einen Fehler auslösen würde.</p>
-<p>IsSetRef kann auch verwendet werden, um eine bestimmte Variable zu prüfen, indem sie mit dem <a href="../Variables.htm#ref">Referenzoperator</a> verwendet wird. Wenn Sie es auf diese Weise verwenden, beachten Sie, dass zuvor die <a href="../Functions.htm#Global">Deklaration der Variable</a> erfolgen muss, falls sie global ist. Das <code>&amp;</code> in <code>IsSetRef(&amp;MeineVar)</code> würde z.B. dazu führen, dass <em>MeineVar</em> standardmäßig in eine lokale Variable aufgelöst wird, wenn es innerhalb einer Assume-Local-Funktion verwendet wird, die die Deklaration <code>global MeineVar</code> nicht enthält.</p>
+<p class="note"><strong>Hinweis:</strong> <a href="../Functions.htm#InitStatic">Statische Initialisierungen</a> wie z.B. <code>static mein_statisches_array := []</code> werden nur einmal ausgewertet (wenn sie erstmalig während der Skriptausführung erreicht werden) und erfordern daher normalerweise nicht die Verwendung von IsSet.</p>
+<p>Obwohl IsSet dieselbe Syntax wie ein Funktionsaufruf verwendet, ist IsSet eher ein Operator als eine Funktion. Das Schlüsselwort <em>IsSet</em> ist für die hier gezeigte Verwendung reserviert und kann nicht in eine Variable oder Funktion umdefiniert werden. IsSet kann nicht indirekt aufgerufen werden, da jeder Versuch, eine uninitialisierte Variable zu übergeben, einen Fehler auslösen würde.</p>
+<p>IsSetRef kann auch verwendet werden, um eine bestimmte Variable zu prüfen, indem sie mit dem <a href="../Variables.htm#ref">Referenzoperator</a> verwendet wird. In diesem Fall ist zu beachten, dass vorher die <a href="../Functions.htm#Global">Variable deklariert</a> werden muss, wenn sie global ist. Zum Beispiel bewirkt das <code>&amp;</code> in <code>IsSetRef(&amp;MeineVar)</code>, dass <em>MeineVar</em> standardmäßig in eine lokale Variable aufgelöst wird, wenn es innerhalb einer Assume-Local-Funktion verwendet wird, die nicht die Deklaration <code>global MeineVar</code> enthält.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../Functions.htm#ByRef">ByRef-Parameter</a></p>
@@ -53,8 +53,8 @@
 <p><a class="ex_number" href="#ExBasic"></a> Zeigt verschiedene Verwendungen von IsSet und IsSetRef.</p>
 <pre>
 Loop 2
-    if !IsSet(MeineVar)  <em>; Ist dies die erste "Nutzung" von MeineVar?</em>
-        MeineVar := A_Index  <em>; Bei "Erstnutzung" initialisieren.</em>
+    if !IsSet(MeineVar)  <em>; Wird MeineVar erstmalig "verwendet"?</em>
+        MeineVar := A_Index  <em>; Initialisieren.</em>
 MsgBox Funktion1(&amp;MeineVar)
 MsgBox Funktion2(&amp;MeineVar)
 

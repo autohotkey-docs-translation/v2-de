@@ -22,7 +22,7 @@
   <dt>SchlüsselName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der vollständige Name des Registry-Schlüssels, z.B. <code>"HKLM\Software\BeliebigeAnwendung"</code>.</p>
+    <p>Der vollständige Name des Registry-Schlüssels, z.B. <code>"HKLM\Software\BeliebigeApp"</code>.</p>
     <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC) beginnen.</p>
     <p>Um auf eine <a href="#remote">Remote-Registry</a> zuzugreifen, stellen Sie den Computernamen und einen umgekehrten Schrägstrich voran, z.B. <code>"\\workstation01\HKLM"</code>.</p>
   </dd>
@@ -42,7 +42,7 @@
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Eine Registry-Schleife ist nützlich, wenn mehrere Werte oder Unterschlüssel in der Registry nacheinander abgearbeitet werden sollen. Die Werte und Unterschlüssel werden in umgekehrter Reihenfolge abgerufen (von unten nach oben), so dass <a href="RegDelete.htm">RegDelete</a> und <a href="RegDeleteKey.htm">RegDeleteKey</a> innerhalb der Schleife verwendet werden können, ohne die Schleife zu unterbrechen.</p>
+<p>Eine Registry-Schleife ist nützlich, wenn mehrere Werte oder Unterschlüssel in der Registry nacheinander abgearbeitet werden sollen. Die Werte und Unterschlüssel werden in umgekehrter Reihenfolge (von unten nach oben) abgerufen, so dass <a href="RegDelete.htm">RegDelete</a> und <a href="RegDeleteKey.htm">RegDeleteKey</a> innerhalb der Schleife verwendet werden können, ohne die Schleife zu unterbrechen.</p>
 <p id="vars">Die folgenden Variablen sind nur in einer Registry-Schleife von Bedeutung. Wenn eine innere Registry-Schleife von einer äußeren Registry-Schleife umschlossen ist, hat das Element der innersten Schleife Vorrang:</p>
 <table class="info">
   <tr>
@@ -86,14 +86,14 @@
   </tr>
   <tr>
     <td><code><a href="RegDeleteKey.htm">RegDeleteKey</a></code></td>
-    <td>Löscht das aktuelle Element, wenn es ein Schlüssel ist. Wenn das aktuelle Element ein Wert ist, wird der Schlüssel, der diesen Wert <em>enthält</em>, gelöscht, inklusive aller Unterschlüssel und Werte.</td>
+    <td>Löscht das aktuelle Element, wenn es ein Schlüssel ist. Wenn das aktuelle Element ein Wert ist, löscht der Schlüssel, der diesen Wert <em>enthält</em>, inklusive aller Unterschlüssel und Werte.</td>
   </tr>
   <tr>
     <td><code>RegCreateKey</code></td>
-    <td>Bezieht sich auf einen Schlüssel wie oben bei RegDeleteKey beschrieben. Wenn der Schlüssel während der Schleife gelöscht wird, kann er mit RegCreateKey neu erstellt werden. Andernfalls prüft RegCreateKey lediglich, ob das Skript Schreibzugriff auf den Schlüssel hat.</td>
+    <td>Arbeitet mit einem Schlüssel wie oben bei RegDeleteKey beschrieben. Wenn der Schlüssel während der Schleife gelöscht wird, kann er mit RegCreateKey neu erstellt werden. Andernfalls prüft RegCreateKey lediglich, ob das Skript Schreibzugriff auf den Schlüssel hat.</td>
   </tr>
 </table>
-<p id="remote">Beim Zugriff auf eine Remote-Registry (über den <em>SchlüsselName</em>-Parameter, wie oben beschrieben) gelten folgende Hinweise:</p>
+<p id="remote">Beim Zugriff auf eine Remote-Registry (über den <em>SchlüsselName</em>-Parameter, wie oben beschrieben) müssen Sie Folgendes beachten:</p>
 <ul>
   <li>Auf dem Zielcomputer muss der Dienst "Remote Registry" laufen.</li>
   <li>Der Zugriff auf eine Remote-Registry kann fehlschlagen, wenn sich der Zielcomputer nicht in derselben Domäne wie Ihr Computer befindet oder wenn der Benutzername auf einem der beiden Computer nicht über ausreichende Berechtigungen verfügt (siehe unten für mögliche Übergangslösungen).</li>
@@ -102,7 +102,7 @@
 </ul>
 <p id="otb">Der One True Brace (OTB) Style wird unterstützt, d.h. Sie können je nach Bedarf die geschweifte Startklammer am Zeilenende positionieren. Zum Beispiel: <code>Loop Reg "HKLM\Software\AutoHotkey", "V" {</code>.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (die in jeder Schleifenvariante verwendet werden kann).</p>
-<p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung erfolgen, die ausgeführt wird, wenn keine Registry-Elemente des angegebenen Typs gefunden wurden (oder anders gesagt, wenn die Schleife null Iterationen hatte).</p>
+<p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung angegeben werden, die ausgeführt wird, wenn keine Registry-Elemente des angegebenen Typs gefunden wurden (d.h. wenn die Schleife null Wiederholungen hatte).</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="RegRead.htm">RegRead</a>, <a href="RegWrite.htm">RegWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a>, <a href="SetRegView.htm">SetRegView</a></p>
@@ -110,7 +110,7 @@
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Ruft die Inhalte eines bestimmten Registry-Unterschlüssels nacheinander ab.</p>
-<pre>Loop Reg, "HKEY_LOCAL_MACHINE\Software\BeliebigeAnwendung"
+<pre>Loop Reg, "HKEY_LOCAL_MACHINE\Software\BeliebigeApp"
     MsgBox A_LoopRegName</pre>
 </div>
 
@@ -122,7 +122,7 @@
 
 <div class="ex" id="ExTest">
 <p><a class="ex_number" href="#ExTest"></a> Ein funktionierendes Testskript.</p>
-<pre>Loop Reg, "HKCU\Software\Microsoft\Windows", "R KV"  <em>; Ruft Schlüssel und Werte rekursiv ab.</em>
+<pre>Loop Reg, "HKCU\Software\Microsoft\Windows", "R KV"  <em>; Schlüssel und Werte rekursiv abrufen.</em>
 {
     if A_LoopRegType = "key"
         Wert := ""
@@ -147,24 +147,25 @@ RegSuche(Ziel)
 {
     Loop Reg, "HKEY_LOCAL_MACHINE", "KVR"
     {
-        if !RegEintragUntersuchen()  <em>; Suche stoppen.</em>
+        if !RegElementPrüfen()  <em>; Suche stoppen.</em>
             return
     }
     Loop Reg, "HKEY_USERS", "KVR"
     {
-        if !RegEintragUntersuchen()  <em>; Suche stoppen.</em>
+        if !RegElementPrüfen()  <em>; Suche stoppen.</em>
             return
     }
     Loop Reg, "HKEY_CURRENT_CONFIG", "KVR"
     {
-        if !RegEintragUntersuchen()  <em>; Suche stoppen.</em>
+        if !RegElementPrüfen()  <em>; Suche stoppen.</em>
             return
     }
-    <em>; Hinweis: Ich glaube nicht, dass man zusätzlich noch HKEY_CURRENT_USER durchsuchen muss,
-    ; wenn man HKEY_USERS durchsucht.  Des Weiteren ist HKEY_CLASSES_ROOT eine Kombination aus
-    ; HKEY_LOCAL_MACHINE und HKEY_CURRENT_USER, daher ist es unnötig, alle drei zu durchsuchen.</em>
+    <em>; Hinweis: Ich glaube nicht, dass HKEY_CURRENT_USER durchsucht werden muss,
+    ; wenn HKEY_USERS durchsucht wird. Ebenso bietet HKEY_CLASSES_ROOT eine
+    ; kombinierte Ansicht der Schlüssel von HKEY_LOCAL_MACHINE und
+    ; HKEY_CURRENT_USER, so dass eine Suche in allen dreien unnötig ist.</em>
 
-    RegEintragUntersuchen()
+    RegElementPrüfen()
     {
         if A_LoopRegType = "KEY"  <em>; Dies entfernen, um auch Schlüsselnamen zu prüfen.</em>
             return true
@@ -176,7 +177,7 @@ RegSuche(Ziel)
         {
             Ergebnis := MsgBox(
             (
-            "Der folgende Treffer wurde gefunden:
+            "Die folgende Übereinstimmung wurde gefunden:
             " A_LoopRegKey "\" A_LoopRegName "
             Wert = " RegWert "
             

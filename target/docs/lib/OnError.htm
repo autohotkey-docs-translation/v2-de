@@ -25,16 +25,16 @@
     <p>Eine Funktion, die aufgerufen werden soll.</p>
     <p>Die Rückruffunktion akzeptiert zwei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
     <pre class="NoIndent">MeinRückruf(ThrowWert, Modus) { ...</pre>
-    <p>Obwohl die Namen, die Sie den Parametern geben, nicht wichtig sind, werden ihnen die folgenden Werte der Reihe nach zugewiesen:</p>
+    <p>Es spielt keine Rolle, welche Namen Sie den Parametern geben, allerdings werden ihnen die folgenden Werte nacheinander zugewiesen:</p>
     <ol>
-      <li>Der via Throw ausgelöste Wert, was üblicherweise ein <a href="Error.htm">Error-Objekt</a> ist.</li>
+      <li>Der geworfene Wert, was üblicherweise ein <a href="Error.htm">Error-Objekt</a> ist.</li>
       <li>Der Fehlermodus: Return, Exit oder ExitApp. Einzelheiten finden Sie in der <a href="#Error_Modes">unteren Tabelle</a>.</li>
     </ol>
-    <p>Sie können einen oder mehrere Parameter am Ende der Parameterliste der Rückruffunktion weglassen, wenn Sie die entsprechenden Informationen nicht benötigen, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>.</p>
+    <p>Es können beliebig viele Parameter am Ende der Parameterliste der Rückruffunktion weggelassen werden, wenn die entsprechenden Informationen nicht benötigt werden, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>.</p>
     <p>Die Rückruffunktion kann einen der folgenden Werte zurückgeben (andere Werte sind für zukünftige Zwecke reserviert und sollten vermieden werden):</p>
     <ul>
       <li><code>0</code>, <code>""</code> oder kein Return: Fehlerbehandlung normal fortsetzen lassen.</li>
-      <li><code>1</code>: Standard-Fehlerdialogfenster und alle verbleibenden Rückruffunktionen unterdrücken.</li>
+      <li><code>1</code>: Das reguläre Fehlerdialogfenster und alle verbleibenden Rückruffunktionen unterdrücken.</li>
       <li><code>-1</code>: Wie oben, aber wenn <em>Modus</em> (der zweite Parameter) das Wort Return enthält, darf die Ausführung des aktuellen Threads fortgesetzt werden.</li>
     </ul>
   </dd>
@@ -60,15 +60,15 @@
   </tr>
   <tr>
     <td>Return</td>
-    <td>Der Throw-Wert ist ein fortsetzbarer Laufzeitfehler. Der Thread wird fortgesetzt, wenn die Rückruffunktion -1 zurückgibt; andernfalls wird der Thread beendet.</td>
+    <td>Der geworfene Wert ist ein fortsetzbarer Laufzeitfehler. Der Thread wird fortgesetzt, wenn die Rückruffunktion -1 zurückgibt, andernfalls wird der Thread beendet.</td>
   </tr>
   <tr>
     <td>Exit</td>
-    <td>Der Throw-Wert ist ein nicht-fortsetzbarer Laufzeitfehler oder ein vom Skript <a href="Throw.htm">geworfener</a> Wert. Der Thread wird beendet.</td>
+    <td>Der geworfene Wert ist ein nicht-fortsetzbarer Laufzeitfehler oder ein vom Skript <a href="Throw.htm">geworfener</a> Wert. Der Thread wird beendet.</td>
   </tr>
   <tr>
     <td>ExitApp</td>
-    <td>Der Throw-Wert ist ein kritischer Laufzeitfehler, z.B. eine von DllCall erkannte Datenbeschädigung. Das Programm wird beendet.</td>
+    <td>Der geworfene Wert ist ein kritischer Laufzeitfehler, z.B. eine von DllCall erkannte Datenbeschädigung. Das Programm wird beendet.</td>
   </tr>
 </table>
 
@@ -96,17 +96,17 @@ FehlerProtokollieren(Exception, Modus) {
 <div class="ex" id="ExAccumulator">
 <p><a class="ex_number" href="#ExAccumulator"></a> Verwenden Sie OnError, um alternative Fehlerbehandlungsmethoden zu implementieren. Einschränkung: OnError ist unwirksam, während <a href="Try.htm">Try</a> aktiv ist.</p>
 <pre>
-AccumulateErrors()
+MehrereFehlerAkkumulieren()
 {
-    local ea := ErrorAccumulator()
+    local ea := FehlerAkkumulator()
     ea.Start()
     return ea
 }
 
-class ErrorAccumulator
+class FehlerAkkumulator
 {
     Errors := []                        <em>; Array für akkumulierte Fehler.</em>
-    _cb := AccumulateError.Bind(this.Errors)
+    _cb := FehlerAkkumulieren.Bind(this.Errors)
     Start() =&gt; OnError(this._cb, -1)    <em>; Unsere cb vor allen anderen registrieren.</em>
     Stop() =&gt; OnError(this._cb, 0)      <em>; Unsere cb deregistrieren.</em>
     Last =&gt; this.Errors[-1]             <em>; Aktuellster Fehler.</em>
@@ -115,8 +115,8 @@ class ErrorAccumulator
     __delete() =&gt; this.Stop()           <em>; Zum Binden an Gültigkeitsbereich der Funktion.</em>
 }
 
-<em>; Nachfolgend die OnError-Rückruffunktion. 'errors' wird ein Wert via Bind() übergeben.</em>
-AccumulateError(errors, e, mode)
+<em>; Nachfolgend die OnError-Rückruffunktion. 'errors' bekommt einen Wert via Bind() zugewiesen.</em>
+FehlerAkkumulieren(errors, e, mode)
 {
     if mode != "Return" <em>; Nicht fortsetzbar.</em>
         return
@@ -135,9 +135,9 @@ AccumulateError(errors, e, mode)
 FensterNeuanordnen()
 {
     <em>; Beginnen, Fehler in 'err' zu akkumulieren.</em>
-    local err := AccumulateErrors()
+    local err := MehrereFehlerAkkumulieren()
 
-    <em>; Einige Dinge tun, die fehlschlagen könnten...</em>
+    <em>; Einige Dinge tun, die fehlschlagen können...</em>
     MonitorGetWorkArea , &amp;Links, &amp;Oben, &amp;Rechts, &amp;Unten
     Breite := (Rechts-Links)//2, Höhe := Unten-Oben
     WinMove Links, Oben, Breite, Höhe, A_ScriptFullPath
@@ -145,7 +145,7 @@ FensterNeuanordnen()
 
     <em>; Prüfen, ob Fehler aufgetreten sind.</em>
     if err.Count
-        MsgBox err.Count " Fehler; letzter Fehler auf Zeile #" err.Last.Line
+        MsgBox err.Count " Fehler; letzter Fehler auf Zeile Nr. " err.Last.Line
     else
         MsgBox "Keine Fehler"
 
@@ -157,7 +157,7 @@ FensterNeuanordnen()
 
 <em>; Testfunktion aufrufen, die Fehler unterdrückt und akkumuliert.</em>
 FensterNeuanordnen()
-<em>; Andere Funktion aufrufen, um zu zeigen, dass normales Fehlerverhalten wiederhergestellt wird.</em>
+<em>; Andere Funktion aufrufen, um zu zeigen, dass normales Fehlerverhalten wiederhergestellt ist.</em>
 WinMove 0, 0, 0, 0, "Nicht-existierendes Fenster"
 </pre>
 </div>

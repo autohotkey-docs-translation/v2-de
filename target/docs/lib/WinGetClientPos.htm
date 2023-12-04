@@ -16,26 +16,28 @@
 
 <p>Ruft die Position und Größe des Clientbereichs eines bestimmten Fensters ab.</p>
 
-<pre class="Syntax"><span class="func">WinGetClientPos</span> <span class="optional">&amp;X, &amp;Y, &amp;Breite, &amp;Höhe, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
+<pre class="Syntax"><span class="func">WinGetClientPos</span> <span class="optional">&amp;AusX, &amp;AusY, &amp;AusBreite, &amp;AusHöhe, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>&amp;X, &amp;Y</dt>
+  <dt>&amp;AusX, &amp;AusY</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#variable-references">VarRef</a></p>
-    <p>Referenzen, die auf Ausgabevariablen verweisen, in denen die X- und Y-Koordinate der oberen linken Ecke des Clientbereichs gespeichert werden sollen. Wenn weggelassen, wird der entsprechende Wert nicht gespeichert.</p>
+    <p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie Referenzen an, die auf Ausgabevariablen verweisen, in denen die X- und Y-Koordinate der oberen linken Ecke des Clientbereichs gespeichert werden sollen.</p>
   </dd>
 
-  <dt>&amp;Breite, &amp;Höhe</dt>
+  <dt>&amp;AusBreite, &amp;AusHöhe</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#variable-references">VarRef</a></p>
-    <p>Referenzen, die auf Ausgabevariablen verweisen, in denen die Breite und Höhe des Clientbereichs gespeichert werden sollen. Wenn weggelassen, wird der entsprechende Wert nicht gespeichert.</p>
+    <p>Wenn weggelassen, wird der zugehörige Wert nicht gespeichert. Andernfalls geben Sie Referenzen an, die auf Ausgabevariablen verweisen, in denen die Breite und Höhe des Clientbereichs gespeichert werden sollen.</p>
   </dd>
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+    <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 
 </dl>
@@ -44,8 +46,11 @@
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Der Clientbereich ist der Teil des Fensters, der Steuerelemente enthalten kann. Dieser Bereich umfasst alles, außer Fensterleiste, Menüleiste (sofern es sich um die Standardversion handelt) und Rahmen. Die Position und Größe des Clientbereichs haben den Vorteil, dass sie weniger abhängig von der Version oder vom Design des Betriebssystems sind, als es bei <a href="WinGetPos.htm">WinGetPos</a> der Fall ist.</p>
-<p>Die Rückgabewerte eines minimierten Fensters variieren eventuell je nach Betriebssystem und Konfiguration, aber in der Regel haben die X- und Y-Koordinate einen Wert von -32000 und Breite und Höhe einen Wert von 0.</p>
+<p>Der Clientbereich ist der Teil des Fensters, der Steuerelemente enthalten kann. Das ist der Bereich ohne Titelleiste, Standardmenüleiste und Rahmen. Die Position und Größe des Clientbereichs sind weniger abhängig von Version und Design des Betriebssystems als die Werte, die von <a href="WinGetPos.htm">WinGetPos</a> zurückgegeben werden.</p>
+<p>Wenn <em>FensterTitel</em> <code>"Program Manager"</code> ist, wird die Größe des Desktops abgerufen, was meist der aktuellen Bildschirmauflösung entspricht.</p>
+<p>Ein minimiertes Fenster hat immer noch eine Position und Größe. Die Werte, die in diesem Fall zurückgegeben werden, können je nach Betriebssystem und Konfiguration variieren, sind aber in der Regel -32000 für die X- und Y-Koordinate und 0 für die Breite und Höhe.</p>
+<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann der Name des Fensters und des Steuerelements unter dem Mauszeiger abgerufen werden.</p>
+<p>Auf Systemen mit mehreren Bildschirmen, die unterschiedliche DPI-Einstellungen haben, kann die zurückgegebene Position und Größe aufgrund der <a href="../misc/DPIScaling.htm">OS-DPI-Skalierung</a> anders ausfallen als erwartet.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="WinGetPos.htm">WinGetPos</a>, <a href="WinMove.htm">WinMove</a>, <a href="ControlGetPos.htm">ControlGetPos</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="ControlGetText.htm">ControlGetText</a></p>
@@ -54,7 +59,7 @@
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Ermittelt und meldet die Position und Größe des Clientbereichs des Taschenrechners.</p>
 <pre>WinGetClientPos &amp;X, &amp;Y, &amp;W, &amp;H, "Rechner"
-MsgBox "Der Clientbereich des Rechners befindet sich auf " X "," Y " und hat eine Größe von " W "x" H</pre>
+MsgBox "Der Clientbereich des Rechners befindet sich auf " X "," Y " und hat die Größe " W "x" H</pre>
 </div>
 
 <div class="ex" id="ExA">
@@ -68,7 +73,7 @@ MsgBox "Der Clientbereich des aktiven Fensters befindet sich auf " X "," Y</pre>
 <pre>if WinExist("Unbenannt - Editor")
 {
     WinGetClientPos &amp;Xpos, &amp;Ypos <em>; Verwendet das von WinExist gefundene Fenster.</em>
-    MsgBox "Der Clientbereich des Editors befindet sich auf " Xpos "," Ypos
+    MsgBox "Der Clientbereich von Notepad befindet sich auf " Xpos "," Ypos
 }</pre>
 </div>
 

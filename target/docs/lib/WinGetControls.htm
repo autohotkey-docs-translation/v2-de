@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>WinGetControls - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die WinGetControls-Funktion gibt die Namen aller Steuerelemente in einem bestimmten Fenster zurück." />
+<meta name="description" content="Die WinGetControls-Funktion gibt ein Array von Namen (ClassNNs) aller Steuerelemente in einem bestimmten Fenster zurück." />
 <meta name="ahk:equiv-v1" content="lib/WinGet.htm#ControlList" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,31 +14,32 @@
 
 <h1>WinGetControls</h1>
 
-<p>Gibt die Namen aller Steuerelemente in einem bestimmten Fenster zurück.</p>
+<p>Gibt ein Array von Namen (ClassNNs) aller Steuerelemente in einem bestimmten Fenster zurück.</p>
 
-<pre class="Syntax">Steuerelemente := <span class="func">WinGetControls</span>(<span class="optional">FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
+<pre class="Syntax">ClassNNs := <span class="func">WinGetControls</span>(<span class="optional">FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
     <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
     <dd>
-        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+        <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+        <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
     </dd>
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#objects">Array</a> von <a href="../Concepts.htm#strings">Zeichenketten</a></p>
-<p>Diese Funktion gibt ein Array zurück, das die Namen aller Steuerelemente im angegebenen Fenster enthält. Jeder Name des Steuerelements besteht aus dessen Klassenname und Sequenznummer (ClassNN-Bezeichnung), wie in Windows Spy angezeigt.</p>
-<p>Wenn zum Beispiel der Rückgabewert in eine Variable namens <code>Steuerelemente</code> gespeichert wird und zwei Steuerelemente vorhanden sind, enthält <code>Steuerelemente[1]</code> den Namen des ersten Steuerelements, <code>Steuerelemente[2]</code> den Namen des zweiten Steuerelements und <code>Steuerelemente.<a href="Array.htm#Length">Length</a></code> gibt die Zahl 2 zurück.</p>
+<p>Typ: <a href="Array.htm">Array</a></p>
+<p>Diese Funktion gibt ein Array von Namen aller Steuerelemente in einem bestimmten Fenster zurück. Jeder Name besteht aus dem Klassennamen des Steuerelements, unmittelbar gefolgt von seiner Sequenznummer (ClassNN), wie vom internen Tool "Window Spy" angezeigt.</p>
+<p>Wenn zum Beispiel der Rückgabewert in eine Variable namens <code>ClassNNs</code> gespeichert wird und zwei Steuerelemente vorhanden sind, gibt <code>ClassNNs[1]</code> den Namen des ersten Steuerelements, <code>ClassNNs[2]</code> den Namen des zweiten Steuerelements und <code>ClassNNs.<a href="Array.htm#Length">Length</a></code> die Zahl 2 zurück.</p>
 <p>Steuerelemente werden nach ihrer Z-Reihenfolge sortiert, was üblicherweise der Navigation via <kbd>Tab</kbd> entspricht, sofern vom Fenster unterstützt.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die ID des Fensters oder Steuerelements, das sich unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ID des Fensters oder Steuerelements unter dem Mauszeiger abgerufen werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="WinGetControlsHwnd.htm">WinGetControlsHwnd</a>, <a href="Win.htm">Win-Funktionen</a>, <a href="Control.htm">Control-Funktionen</a></p>
@@ -46,9 +47,9 @@
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
 <p><a class="ex_number" href="#ExBasic"></a> Extrahiert die einzelnen Steuerelementnamen aus der Steuerelementliste des aktiven Fensters.</p>
-<pre>for n, ctrl in WinGetControls("A")
+<pre>for N, Strlmnt in WinGetControls("A")
 {
-    Ergebnis := MsgBox("Steuerelement #" n " ist '" ctrl "'. Weiter?",, 4)
+    Ergebnis := MsgBox("Steuerelement Nr. " N " ist '" Strlmnt "'. Weiter?",, 4)
     if (Ergebnis = "No")
         break
 }</pre>
@@ -56,15 +57,15 @@
 
 <div class="ex" id="ExRealTime">
 <p><a class="ex_number" href="#ExRealTime"></a> Zeigt in Echtzeit die Steuerelementliste des aktiven Fensters an.</p>
-<pre>SetTimer überwacheAktivesFenster, 200
+<pre>SetTimer AktivesFensterBeobachten, 200
 
-überwacheAktivesFenster()
+AktivesFensterBeobachten()
 {
     try
     {
-        Steuerelemente := WinGetControls("A")
+        Strlmnte := WinGetControls("A")
         StrlmntListe := ""
-        for ClassNN in Steuerelemente
+        for ClassNN in Strlmnte
             StrlmntListe .= ClassNN . "`n"
         if (StrlmntListe = "")
             ToolTip "Das aktive Fenster hat keine Steuerelemente."

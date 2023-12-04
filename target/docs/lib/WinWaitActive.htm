@@ -22,11 +22,13 @@
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+    <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 
-  <dt>Zeitlimit</dt>
+  <dt>Timeout</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#numbers">Float</a></p>
     <p>Wenn weggelassen, wird die Funktion unendlich lang warten. Andernfalls geben Sie die maximale Wartezeit in Sekunden an. Um auf einen Bruchteil einer Sekunde zu warten, geben Sie eine Floating-Point-Zahl an, z.B. 0.25, um maximal 250 Millisekunden zu warten.</p>
@@ -36,17 +38,17 @@
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>WinWaitActive gibt die <a href="../misc/WinTitle.htm#ahk_id">HWND-Nummer (eindeutige ID)</a> des aktiven Fensters zurück, wenn es mit den Kriterien übereinstimmt, oder eine 0, wenn die Funktion das Zeitlimit überschritten hat.</p>
-<p>WinWaitNotActive gibt eine 1 zurück, wenn das aktive Fenster nicht mit den Kriterien übereinstimmt, oder eine 0, wenn die Funktion das Zeitlimit überschritten hat.</p>
+<p>WinWaitActive gibt die <a href="../misc/WinTitle.htm#ahk_id">HWND-Nummer (eindeutige ID)</a> des aktiven Fensters zurück, wenn es den Kriterien entspricht, oder 0, wenn die Funktion das Zeitlimit überschritten hat.</p>
+<p>WinWaitNotActive gibt 1 zurück, wenn das aktive Fenster nicht den Kriterien entspricht, oder 0, wenn die Funktion das Zeitlimit überschritten hat.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Die Funktion hört bereits auf zu warten, wenn ein aktives Fenster gefunden wird, und nicht erst, wenn <em>Zeitlimit</em> abgelaufen ist. In diesem Fall wird sofort die Skriptausführung fortgesetzt.</p>
 <p>Da <code>"A"</code> mit dem jeweils aktiven Fenster übereinstimmt, wartet <code>WinWaitNotActive "A"</code> normalerweise unendlich lang. Um stattdessen zu warten, bis ein anderes Fenster aktiv wird, geben Sie wie folgt dessen eindeutige ID an:</p>
 <pre>WinWaitNotActive WinExist("A")</pre>
-<p>Sowohl WinWaitActive als auch WinWaitNotActive werden das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> aktualisieren, wenn zu Beginn der Funktion ein passendes Fenster aktiv ist oder wenn eines aktiv wird, während die Funktion wartet.</p>
+<p>Sowohl WinWaitActive als auch WinWaitNotActive werden das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> aktualisieren, wenn zu Beginn der Funktion ein passendes Fenster aktiv ist oder wenn eines aktiv wird, während die Funktion wartet.</p>
 <p>Während die Funktion wartet, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-<p>Wenn ein anderer <a href="../misc/Threads.htm">Thread</a> die Inhalte von Variablen, die die Funktion als Parameter verwendet, zwischendurch ändert, wird die Funktion diese Änderung ignorieren, d.h. die Funktion verwendet weiterhin den Titel und Text, die ursprünglich in den Variablen vorhanden waren, als die Funktion zum ersten Mal zu warten begann.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<p>Wenn ein anderer <a href="../misc/Threads.htm">Thread</a> den Inhalt der Variablen ändert, die für die Parameter dieser Funktion verwendet wurden, sieht die Funktion die Änderung nicht, d.h. die Funktion verwendet weiterhin den Titel und Text, die ursprünglich in den Variablen vorhanden waren, als die Funktion zu warten begann.</p>
+
 <h2 id="Related">Siehe auch</h2>
 <p><a href="WinWait.htm">WinWait</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="WinExist.htm">WinExist</a>, <a href="WinActive.htm">WinActive</a>, <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a></p>
 <h2 id="Examples">Beispiele</h2>

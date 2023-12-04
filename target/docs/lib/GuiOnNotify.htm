@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>OnNotify (GUI) - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die OnNotify-Methode eines GuiControl-Objekts registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn eine Steuerelementbenachrichtigung via WM_NOTIFY-Meldung empfangen wird." />
+<meta name="description" content="Die OnNotify-Methode eines GuiControl-Objekts registriert eine Funktion oder Methode, die aufgerufen wird, wenn eine Steuerelement­benachrichtigung via WM_NOTIFY-Meldung empfangen wird." />
 <meta name="ahk:equiv-v1" content="lib/GuiControl.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +13,7 @@
 <body>
 
 <h1>OnNotify</h1>
-<p>Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn eine Steuerelementbenachrichtigung via <a href="https://learn.microsoft.com/windows/win32/controls/wm-notify">WM_NOTIFY</a>-Meldung empfangen wird.</p>
+<p>Registriert eine Funktion oder Methode, die aufgerufen wird, wenn eine Steuerelement­benachrichtigung via <a href="#WM_NOTIFY">WM_NOTIFY</a>-Meldung empfangen wird.</p>
 <pre class="Syntax"><a href="GuiControl.htm">GuiCtrl</a>.<span class="func">OnNotify</span>(NachrichtCode, Rückruf <span class="optional">, HinzufügenEntfernen</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
@@ -27,15 +27,25 @@
   <dt>Rückruf</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Eine Funktion, Methode oder ein Objekt, das aufgerufen werden soll, wenn das Ereignis ausgelöst wird.</p>
-    <p>Wenn die GUI ein Event-Sink hat (also wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode sein, die zu einem Event-Sink gehört.</p>
-    <p>Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
+    <p>Eine Funktion, eine Methode oder ein Objekt, die/das aufgerufen wird, wenn das Ereignis ausgelöst wird.</p>
+    <p>Wenn die GUI ein Event-Sink hat (d.h. wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode im Event-Sink sein. Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
+    <p id="Callback_Parameters">Die Rückruffunktion akzeptiert zwei Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(GuiCtrl, lParam) { ...</pre>
+    <p>Es spielt keine Rolle, welche Namen Sie den Parametern geben, allerdings werden ihnen die folgenden Werte nacheinander zugewiesen:</p>
+    <ol>
+      <li>Das <a href="GuiControl.htm">GuiControl-Objekt</a> des aktuellen GUI-Steuerelements.</li>
+      <li>Die Adresse einer Benachrichtigungsstruktur, die von <a href="https://learn.microsoft.com/windows/win32/api/richedit/ns-richedit-nmhdr">NMHDR</a> abgeleitet ist. Die Art der Struktur hängt vom Typ des Steuerelements und des Benachrichtigungscodes ab. Wenn die Struktur zusätzliche Informationen über die Benachrichtigung enthält, kann die Rückruffunktion diese mit <a href="NumGet.htm">NumGet</a> und/oder <a href="StrGet.htm">StrGet</a> abrufen.</li>
+    </ol>
+    <p>Es können beliebig viele Parameter am Ende der Parameterliste der Rückruffunktion weggelassen werden, wenn die entsprechenden Informationen nicht benötigt werden, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>.</p>
+    <p>Die <a href="GuiOnEvent.htm#Callback_Parameters">OnEvent-Hinweise</a> bezüglich <code>this</code> und Bound-Funktionen gelten auch für OnNotify.</p>
+    <p id="Callback_Return_Value">Wenn mehrere Rückruffunktionen für ein Ereignis registriert sind, kann eine Rückruffunktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Rückruffunktionen aufgerufen werden.</p>
+    <p>Der Rückgabewert der Rückruffunktion kann je nach Benachrichtigung eine zusätzliche Bedeutung haben. Zum Beispiel verhindert die ListView-Benachrichtigung <a href="https://learn.microsoft.com/windows/win32/controls/lvn-beginlabeledit">LVN_BEGINLABELEDIT</a> (-175 oder -105), dass der Benutzer die Beschriftung editieren kann, wenn die Rückruffunktion TRUE (1) zurückgibt.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn weggelassen, wird standardmäßig 1 verwendet (die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
+    <p>Wenn weggelassen, wird standardmäßig 1 verwendet. Andernfalls geben Sie eine der folgenden Zahlen an:</p>
     <ul>
       <li>1 = Die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
       <li>-1 = Die Rückruffunktion vor anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
@@ -45,23 +55,13 @@
 </dl>
 
 <h2 id="WM_NOTIFY">WM_NOTIFY</h2>
-<p>Bestimmte Typen von Steuerelementen senden eine <a href="https://learn.microsoft.com/windows/win32/controls/wm-notify">WM_NOTIFY</a>-Meldung, wann immer ein interessantes Ereignis auftritt oder das Steuerelement bestimmte Informationen über das Programm benötigt. Der <em>lParam</em>-Parameter von dieser Meldung enthält einen Pointer, der auf eine Struktur mit Informationen über die Benachrichtigung verweist. Die Art der Struktur ist abhängig vom Benachrichtigungscode und vom Typ des Steuerelements, das die Benachrichtigung ausgelöst hat, aber immer basierend auf <a href="https://learn.microsoft.com/windows/win32/api/richedit/ns-richedit-nmhdr">NMHDR</a>.</p>
-<p>Welche Benachrichtigungen es genau gibt (falls vorhanden), welche Art von Struktur sie bereitstellen und wie sie den Rückgabewert interpretieren, entnehmen Sie bitte der Dokumentation des Steuerelements. <a href="https://learn.microsoft.com/windows/win32/controls/individual-control-info">Control Library (Microsoft Docs)</a> enthält Links zu typischen Windows-Steuerelementen. Die Benachrichtigungscodes (Nummern) sind in der Windows SDK zu finden, oder via Suchmaschine.</p>
-<p>AutoHotkey nutzt die Felder <em>IdFrom</em> und <em>HwndFrom</em>, um zu ermitteln, welches Steuerelement die Benachrichtigung gesendet hat, um sie anschließend an das entsprechende Objekt senden zu können. Das <em>code</em>-Feld enthält den Benachrichtigungscode. Da diese nur benutzt werden, um die Rückruffunktion in Übereinstimmung mit <em>GuiControl</em> und <em>NachrichtCode</em> zu registrieren, sind sie für das Skript kaum nützlich.</p>
-
-<h2 id="Callback_Parameters">Parameter der Rückruffunktion</h2>
-<p>Die <a href="GuiOnEvent.htm#Callback_Parameters">OnEvent-Hinweise</a> bezüglich <code>this</code> und Bound-Funktionen gelten auch für OnNotify.</p>
-<p>Die Rückruffunktion akzeptiert zwei Parameter:</p>
-<pre class="Syntax"><i>Rückruf</i>(GuiControl, lParam)</pre>
-<p>Wie bereits erwähnt, ist <em>lParam</em> die Adresse einer Benachrichtigungsstruktur, die von <a href="https://learn.microsoft.com/windows/win32/api/richedit/ns-richedit-nmhdr">NMHDR</a> abstammt. Dessen genaue Bedeutung ist vom Typ des Steuerelements und Benachrichtigungscode abhängig. Wenn die Struktur zusätzliche Informationen über die Benachrichtigung enthält, kann die Rückruffunktion diese via <a href="NumGet.htm">NumGet</a> und/oder <a href="StrGet.htm">StrGet</a> abrufen.</p>
-
-<h2 id="Callback_Return_Value">Rückgabewert der Rückruffunktion</h2>
-<p>Wenn mehrere Rückruffunktionen für ein Ereignis registriert sind, kann eine Rückruffunktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Rückruffunktionen aufgerufen werden.</p>
-<p>Der Rückgabewert kann je nach Benachrichtigung eine zusätzliche Bedeutung haben. Zum Beispiel könnte die ListView-Benachrichtigung <a href="https://learn.microsoft.com/windows/win32/controls/lvn-beginlabeledit">LVN_BEGINLABELEDIT</a> (-175 oder-105) das Editieren der Beschriftung verbieten, wenn die Rückruffunktion TRUE (1) zurückgeben würde.</p>
+<p>Bestimmte Steuerelemente senden eine <a href="https://learn.microsoft.com/windows/win32/controls/wm-notify">WM_NOTIFY</a>-Meldung, wann immer ein interessantes Ereignis eintritt oder das Steuerelement Informationen vom Programm benötigt. Der <em>lParam</em>-Parameter dieser Meldung enthält einen Pointer, der auf eine Struktur mit Informationen über die Benachrichtigung verweist. Die Art der Struktur ist abhängig vom Benachrichtigungscode und vom Typ des Steuerelements, das die Benachrichtigung ausgelöst hat, basiert aber immer auf <a href="https://learn.microsoft.com/windows/win32/api/richedit/ns-richedit-nmhdr">NMHDR</a>.</p>
+<p>Welche Benachrichtigungen es genau gibt (falls vorhanden), welche Art von Struktur sie bereitstellen und wie sie den Rückgabewert interpretieren, entnehmen Sie bitte der Dokumentation des Steuerelements. <a href="https://learn.microsoft.com/windows/win32/controls/individual-control-info">Control Library (Microsoft Docs)</a> enthält Links zu jedem der gängigen Windows-Steuerelemente. Die Benachrichtigungscodes (Nummern) können im Windows SDK oder durch Suchen im Internet gefunden werden.</p>
+<p>AutoHotkey verwendet die Felder <em>IdFrom</em> und <em>HwndFrom</em>, um das Steuerelement zu identifizieren, das die Benachrichtigung gesendet hat, und sendet diese dann an das entsprechende Objekt. Das <em>code</em>-Feld enthält den Benachrichtigungscode. Da diese mit <em>GuiCtrl</em> und <em>NachrichtCode</em> übereinstimmen müssen, die zur Registrierung der Rückruffunktion verwendet werden, sind sie für das Skript nur von geringem Nutzen.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p>Folgende <a href="GuiOnEvent.htm">OnEvent</a>-Hinweise gelten auch für OnNotify: <a href="GuiOnEvent.htm#Threads">Threads</a>, <a href="GuiOnEvent.htm#Destroying_the_GUI">GUI zerstören</a>.</p>
-<p><a href="GuiOnCommand.htm">OnCommand</a> kann Benachrichtigungen überwachen, die als WM_COMMAND-Meldung gesendet wurden.</p>
+<p><a href="GuiOnCommand.htm">OnCommand</a> kann für Benachrichtigungen verwendet werden, die als WM_COMMAND-Meldung gesendet wurden.</p>
 
 </body>
 </html>

@@ -14,7 +14,7 @@
 
 <h1>WinGetStyle / WinGetExStyle</h1>
 
-<p>Gibt den Style bzw. erweiterten Style eines bestimmten Fensters zurück.</p>
+<p>Gibt den Style oder erweiterten Style eines bestimmten Fensters zurück.</p>
 
 <pre class="Syntax">Style := <span class="func">WinGetStyle</span>(<span class="optional">FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)
 ExStyle := <span class="func">WinGetExStyle</span>(<span class="optional">FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
@@ -23,14 +23,16 @@ ExStyle := <span class="func">WinGetExStyle</span>(<span class="optional">Fenste
 <dl>
     <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
     <dd>
-        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+        <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+        <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
     </dd>
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Diese Funktionen geben entweder den Style oder erweiterten Style des angegebenen Fensters zurück. Wenn keine passenden Fenster gefunden werden, wird eine leere Zeichenkette zurückgegeben.</p>
+<p>Diese Funktionen geben den Style bzw. erweiterten Style des angegebenen Fensters zurück. Wenn kein Fenster gefunden wurde, wird eine leere Zeichenkette zurückgegeben.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte.</p>
@@ -38,21 +40,20 @@ ExStyle := <span class="func">WinGetExStyle</span>(<span class="optional">Fenste
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Weitere Styles finden Sie unter <a href="../misc/Styles.htm">Fenster- und Steuerelement-Styles</a>.</p>
 <p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ID des Fensters unter dem Mauszeiger abgerufen werden.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="WinSetStyle.htm">WinSetStyle / WinSetExStyle</a>, <a href="ControlGetStyle.htm">ControlGetStyle / ControlGetExStyle</a>, <a href="../misc/Styles.htm">Styles-Tabelle</a>, <a href="Win.htm">Win-Funktionen</a>, <a href="Control.htm">Control-Funktionen</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExStyle">
-<p><a class="ex_number" href="#ExStyle"></a> Stellt fest, ob ein Fenster den WS_DISABLED-Style hat.</p>
+<p><a class="ex_number" href="#ExStyle"></a> Prüft, ob ein Fenster den WS_DISABLED-Style hat.</p>
 <pre>Style := WinGetStyle("Mein Fenstertitel")
 if (Style &amp; 0x8000000)  <em>; 0x8000000 ist WS_DISABLED.</em>
-    MsgBox "Mit dem Fenster kann nicht interagiert werden."</pre>
+    MsgBox "Das Fenster ist deaktiviert."</pre>
 </div>
 
 <div class="ex" id="ExExStyle">
-<p><a class="ex_number" href="#ExExStyle"></a> Stellt fest, ob ein Fenster den WS_EX_TOPMOST-Style hat (immer im Vordergrund).</p>
+<p><a class="ex_number" href="#ExExStyle"></a> Prüft, ob ein Fenster den WS_EX_TOPMOST-Style hat (immer im Vordergrund).</p>
 <pre>ExStyle := WinGetExStyle("Mein Fenstertitel")
 if (ExStyle &amp; 0x8)  <em>; 0x8 ist WS_EX_TOPMOST.</em>
     MsgBox "Das Fenster ist immer im Vordergrund."</pre>

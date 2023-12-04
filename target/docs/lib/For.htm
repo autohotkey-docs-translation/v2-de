@@ -19,15 +19,14 @@
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>Wert1</dt>
-  <dt>Wert2</dt>
+  <dt>Wert1, Wert2</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#variables">Variable</a></p>
-    <p>Die Variablen, in denen die Rückgabewerte vom Enumerator zu Beginn jeder Iteration (Wiederholung) gespeichert werden sollen. Die Beschaffenheit dieser Werte wird vom Enumerator definiert, der via <em>Ausdruck</em> ermittelt wird. Diese Variablen können nicht <a href="../Language.htm#dynamic-variables">dynamisch</a> sein.</p>
-    <p>Wenn die Schleife unterbrochen wird oder das Ende erreicht, werden die vorherigen Werte von diesen Variablen wiederhergestellt. Wenn eine Schleifenvariable ein <a href="../Functions.htm#ByRef">ByRef-Parameter</a> ist, bleibt die Zielvariable von der Schleife unbeeinflusst. <a href="../Functions.htm#closures">Closures</a>, die die Variable referenzieren (falls lokal), sind ebenfalls unbeeinflusst und sehen nur den Wert, den sie außerhalb der Schleife hatte.</p>
-    <p class="warning"><strong>Hinweis:</strong> Selbst wenn sie innerhalb des Schleifenkörpers definiert ist, kann eine verschachtelte Funktion, die auf eine Schleifenvariable verweist, den Wert der aktuellen Iteration nicht sehen oder ändern. Übergeben Sie stattdessen die Variable explizit oder <a href="Func.htm#Bind">binden</a> Sie ihren Wert an einen Parameter.</p>
+    <p>Die Variablen, in denen die vom Enumerator zurückgegebenen Werte zu Beginn jeder Wiederholung gespeichert werden sollen. Der Typ dieser Werte wird durch den Enumerator definiert, der via <em>Ausdruck</em> ermittelt wird. <a href="../Language.htm#dynamic-variables">Dynamische Variablen</a> können nicht verwendet werden.</p>
+    <p>Wenn die Schleife unterbrochen wird oder ihr Ende erreicht hat, werden diese Variablen auf ihre vorherigen Werte zurückgesetzt. Wenn eine Schleifenvariable ein <a href="../Functions.htm#ByRef">ByRef-Parameter</a> ist, wird die Zielvariable durch die Schleife nicht beeinflusst. <a href="../Functions.htm#closures">Closures</a>, die die Variable referenzieren (falls lokal), sind ebenfalls nicht betroffen und sehen nur den Wert, den die Variable außerhalb der Schleife hatte.</p>
+    <p class="warning"><strong>Hinweis:</strong> Eine verschachtelte Funktion, die auf eine Schleifenvariable verweist, kann den Wert der aktuellen Wiederholung weder sehen noch ändern, selbst wenn sie innerhalb des Schleifenkörpers definiert ist. Stattdessen sollte die Variable explizit übergeben oder ihr Wert an einen Parameter <a href="Func.htm#Bind">gebunden</a> werden.</p>
     <p>Es werden bis zu 19 Variablen unterstützt, sofern vom Enumerator unterstützt.</p>
-    <p>Variablen können weggelassen werden. Zum Beispiel ruft <code>for , Wert in meinMap</code> den Enumerator von <em>meinMap</em> nur mit seinem zweiten Parameter auf und lässt den ersten Parameter weg. Wenn der Enumerator benutzerdefiniert ist und der Parameter ein Pflichtparameter ist, wird wie üblich eine Ausnahme ausgelöst. Die an <a href="../Objects.htm#__Enum">__Enum</a> übergebene Parameteranzahl ist 0, wenn keine Variablen oder Kommas vorhanden sind; andernfalls ist sie 1 plus die Anzahl der vorhandenen Kommas.</p>
+    <p>Variablen können weggelassen werden. Zum Beispiel bewirkt <code>for , Wert in meinMap</code>, dass der Enumerator von <em>meinMap</em> nur mit seinem zweiten Parameter aufgerufen wird. Wenn der Enumerator benutzerdefiniert ist und der Parameter ein Pflichtparameter ist, wird wie üblich eine Ausnahme ausgelöst. Die Anzahl der an <a href="../Objects.htm#__Enum">__Enum</a> übergebenen Parameter ist 0, wenn keine Variablen oder Kommas vorhanden sind, andernfalls 1 plus die Anzahl der vorhandenen Kommas.</p>
   </dd>
 
   <dt>Ausdruck</dt>
@@ -39,12 +38,12 @@
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die Parameterliste kann optional mit runden Klammern umschlossen werden. Zum Beispiel: <code>for (Wert in MeinArray)</code></p>
-<p>Das Enumerieren läuft wie folgt ab:</p>
+<p>Die Parameterliste kann optional in runde Klammern gesetzt werden. Zum Beispiel: <code>for (Wert in MeinArray)</code></p>
+<p>Die Enumeration läuft wie folgt ab:</p>
 <ul>
-  <li>Vor Beginn der Schleife wird <i>Ausdruck</i> ausgewertet, um das Zielobjekt zu bestimmen.</li>
-  <li>Die <code>__Enum</code>-Methode des Objekts wird aufgerufen, um ein <a href="Enumerator.htm"><i>Enumerator</i></a>-Objekt abzurufen. Wenn es keine derartige Methode gibt, wird das Objekt selbst als Enumerator-Objekt vermutet.</li>
-  <li>Zu Beginn jeder Iteration wird der Enumerator <a href="Enumerator.htm#Call">aufgerufen</a>, um den nächsten Wert oder das nächste Wertepaar abzurufen. Wenn der Enumerator False (0 oder eine leere Zeichenkette) zurückgibt, wird die Schleife terminiert.</li>
+  <li>Vor Beginn der Schleife wird <i>Ausdruck</i> ausgewertet, um das Zielobjekt zu ermitteln.</li>
+  <li>Die <code>__Enum</code>-Methode des Objekts wird aufgerufen, um ein <a href="Enumerator.htm"><i>Enumerator</i></a>-Objekt abzurufen. Wenn keine solche Methode existiert, wird das Objekt selbst als Enumerator-Objekt vermutet.</li>
+  <li>Zu Beginn jeder Wiederholung wird der Enumerator <a href="Enumerator.htm#Call">aufgerufen</a>, um den nächsten Wert oder das nächste Wertepaar abzurufen. Wenn der Enumerator False (0 oder eine leere Zeichenkette) zurückgibt, wird die Schleife terminiert.</li>
 </ul>
 <p>Das folgende Beispiel zeigt die ungefähre Funktionsweise einer For-Schleife:</p>
 <pre>_enum := <i>Ausdruck</i>
@@ -54,14 +53,14 @@ while _enum(&amp;Wert1, &amp;Wert2)
     ...
 }
 </pre>
-<p>Im Code oben wird eine Ausnahme ausgelöst, wenn <em>Ausdruck</em> oder __Enum einen Wert zurückgibt, der nicht aufgerufen werden kann.</p>
-<p>Beim Enumerieren von Eigenschaften, Methoden oder Arrayelementen sollte man grundsätzlich darauf verzichten, Elemente dieser Art einzufügen oder zu entfernen. Würde man dies tun, kann es vorkommen, dass einige Elemente übersprungen oder mehrfach enumeriert werden. Eine Möglichkeit, dies zu umgehen, wäre es, eine Liste mit Elementen zu erstellen, die entfernt werden sollen, und danach eine zweite Schleife zu verwenden, um die Elemente nach dem ersten Schleifendurchlauf zu entfernen.</p>
+<p>Im obigen Code wird eine Ausnahme ausgelöst, wenn <em>Ausdruck</em> oder __Enum einen Wert zurückgibt, der nicht aufgerufen werden kann.</p>
+<p>Beim Enumerieren von Eigenschaften, Methoden oder Arrayelementen ist es generell unsicher, Elemente dieser Art einzufügen oder zu entfernen. Würde man dies tun, könnte es passieren, dass einige Elemente übersprungen oder mehrfach enumeriert werden. Um das zu umgehen, können Sie z.B. eine Liste der zu entfernenden Elemente erstellen und dann nach Abschluss der ersten Schleife eine zweite Schleife verwenden, um die Elemente zu entfernen.</p>
 <p>Nach einer For-Schleife folgt üblicherweise ein <a href="Block.htm">Block</a>, eine Sammlung von Anweisungen, die den <em>Körper</em> der Schleife bilden. Für eine Schleife mit nur einer einzigen Anweisung ist jedoch kein Block erforderlich (ein "if" und dessen "else" werden in diesem Fall als Einzelanweisung behandelt). Der One True Brace (OTB) Style wird unterstützt, d.h. Sie können je nach Bedarf die geschweifte Startklammer am Zeilenende positionieren. Zum Beispiel: <code>for x, y in z {</code>.</p>
 <p>Wie bei allen Schleifen können <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und <a href="../Variables.htm#Index">A_Index</a> verwendet werden.</p>
-<p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung erfolgen, die ausgeführt wird, wenn die Schleife null Iterationen hatte.</p>
+<p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung angegeben werden, die ausgeführt wird, wenn die Schleife null Wiederholungen hatte.</p>
 
 <h2 id="COM_Objects">COM-Objekte</h2>
-<p>Da <i>Wert1</i> und <i>Wert2</i> direkt an den Enumerator übergeben werden, hängen die zugewiesenen Werte davon ab, welche Art von Objekt enumeriert wird. Handelt es sich um ein COM-Objekt, enthält <i>Wert1</i> den Rückgabewert von <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nf-oaidl-ienumvariant-next">IEnumVARIANT::Next()</a> und <i>Wert2</i> eine Zahl, die seinen <a href="https://learn.microsoft.com/openspecs/windows_protocols/ms-oaut/3fe7db9f-5803-4dc4-9d14-5425d3f5461f">Variantentyp</a> repräsentiert. Wenn es zum Beispiel mit einem <a href="https://learn.microsoft.com/previous-versions/x4k5wbx4(v=vs.85)">Scripting.Dictionary</a>-Objekt verwendet wird, enthält jedes <i>Wert1</i> einen Schlüssel aus dem Dictionary und <i>Wert2</i> eine 8 für Zeichenketten und eine 3 für Integer. Auf der <a href="ComObjType.htm">ComObjType</a>-Seite finden Sie eine Auflistung aller Typennummern.</p>
+<p>Da <i>Wert1</i> und <i>Wert2</i> direkt an den Enumerator übergeben werden, hängen die zugewiesenen Werte davon ab, welche Art von Objekt enumeriert wird. Handelt es sich um ein COM-Objekt, enthält <i>Wert1</i> den Rückgabewert von <a href="https://learn.microsoft.com/windows/win32/api/oaidl/nf-oaidl-ienumvariant-next">IEnumVARIANT::Next()</a> und <i>Wert2</i> eine Zahl, die seinen <a href="https://learn.microsoft.com/openspecs/windows_protocols/ms-oaut/3fe7db9f-5803-4dc4-9d14-5425d3f5461f">Variantentyp</a> repräsentiert. Zum Beispiel wird bei Verwendung eines <a href="https://learn.microsoft.com/previous-versions/x4k5wbx4(v=vs.85)">Scripting.Dictionary</a>-Objekts jedes <i>Wert1</i> einen Schlüssel aus dem Dictionary enthalten und <i>Wert2</i> typischerweise 8 für Zeichenketten und 3 für Integer sein. Eine Auflistung aller Typennummern finden Sie unter <a href="ComObjType.htm">ComObjType</a>.</p>
 <p>Beim Enumerieren eines <a href="ComObjArray.htm">SafeArrays</a> enthält <i>Wert1</i> das aktuelle Element und <i>Wert2</i> seinen Variantentyp.</p>
 
 <h2 id="Related">Siehe auch</h2>
@@ -88,7 +87,7 @@ MsgBox windows</pre>
 </div>
 
 <div class="ex" id="ExFibF">
-<p><a class="ex_number" href="#ExFibF"></a> Definiert einen Enumerator als <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a>. Gibt unendlich lang die Zahlen der Fibonacci-Folge zurück, bis die Schleife unterbrochen wird.</p>
+<p><a class="ex_number" href="#ExFibF"></a> Definiert einen Enumerator als <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a>. Gibt Zahlen der Fibonacci-Folge zurück, entweder unendlich lang oder bis zum Abbruch der Schleife.</p>
 <pre>for n in FibF()
     if MsgBox("#" A_Index " = " n "`nWeiter?",, "y/n") = "No"
         break

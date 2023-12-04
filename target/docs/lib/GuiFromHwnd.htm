@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>GuiFromHwnd - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die GuiFromHwnd-Funktion ruft das Gui-Objekt eines GUI-Fensters ab, das zu einer bestimmten HWND-Nummer gehört." />
+<meta name="description" content="Die GuiFromHwnd-Funktion ruft das Gui-Objekt eines GUI-Fensters über dessen Fensterhandle ab." />
 <meta name="ahk:equiv-v1" content="lib/Gui.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,38 +14,38 @@
 
 <h1>GuiFromHwnd</h1>
 
-<p>Ruft das <a href="Gui.htm">Gui-Objekt</a> eines GUI-Fensters ab, das zu einer bestimmten HWND-Nummer gehört.</p>
-<pre class="Syntax">GuiObj := <span class="func">GuiFromHwnd</span>(Hwnd <span class="optional">, ÜbergeordnetesFenster</span>)</pre>
+<p>Ruft das <a href="Gui.htm">Gui-Objekt</a> eines GUI-Fensters über dessen Fensterhandle ab.</p>
+<pre class="Syntax">GuiObj := <span class="func">GuiFromHwnd</span>(Hwnd <span class="optional">, ElternfensterSuchen</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
   <dt>Hwnd</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die HWND-Nummer (Fenster-Handle) eines GUI-Steuerelements, das zuvor vom Skript erstellt wurde, oder, wenn <em>ÜbergeordnetesFenster</em> True ist, ein beliebiges untergeordnetes Fenster eines vom Skript erstellten GUI-Steuerelements.</p>
+    <p>Das Fensterhandle (HWND) eines GUI-Fensters, das zuvor vom Skript erstellt wurde, oder, wenn <em>ElternfensterSuchen</em> True ist, das Fensterhandle eines Unterfensters des GUI-Fensters, das vom Skript erstellt wurde.</p>
   </dd>
-  <dt>ÜbergeordnetesFenster</dt>
+  <dt>ElternfensterSuchen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#boolean">Boolesch</a></p>
-    <p>Wenn dieser Parameter True ist und <em>Hwnd</em> ein untergeordnetes Fenster identifiziert, das keine GUI ist, wird die Funktion das nächstgelegene übergeordnete Fenster, das eine GUI ist, suchen und abrufen. Andernfalls gibt die Funktion eine leere Zeichenkette zurück, wenn <em>Hwnd</em> nicht direkt ein GUI-Fenster identifiziert.</p>
+    <p>Wenn dieser Parameter True ist und <em>Hwnd</em> ein Unterfenster identifiziert, das keine GUI ist, versucht die Funktion das nächste Elternfenster abzurufen, das eine GUI ist. Andernfalls gibt die Funktion eine leere Zeichenkette zurück, wenn <em>Hwnd</em> nicht direkt ein GUI-Fenster identifiziert.</p>
   </dd>
 </dl>
   
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>Typ: <a href="Gui.htm">Gui</a> oder <a href="../Concepts.htm#nothing">Zeichenkette (leer)</a></p>
-<p>Diese Funktion gibt das <a href="Gui.htm">Gui-Objekt</a> zurück, das mit der angegebenen HWND-Nummer verknüpft ist, oder eine leere Zeichenkette, wenn es kein Objekt gibt oder die HWND-Nummer ungültig ist.</p>
+<p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#nothing">Zeichenkette (leer)</a></p>
+<p>Diese Funktion gibt das <a href="Gui.htm">Gui-Objekt</a> zurück, das mit dem angegebenen Fensterhandle verknüpft ist, oder eine leere Zeichenkette, wenn das zugehörige Objekt nicht gefunden wurde oder das Fensterhandle ungültig ist.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Zum Beispiel kann die HWND-Nummer eines GUI-Fensters an eine <a href="OnMessage.htm">OnMessage</a>-Funktion übergeben oder über <a href="Gui.htm#Hwnd">Gui.Hwnd</a>, <a href="WinExist.htm">WinExist</a> oder eine andere Methode abgerufen werden.</p>
+<p>Das Fensterhandle eines GUI-Fensters kann z.B. an eine <a href="OnMessage.htm">OnMessage</a>-Funktion übergeben oder z.B. mit <a href="Gui.htm#Hwnd">Gui.Hwnd</a> oder <a href="WinExist.htm">WinExist</a> abgerufen werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Gui.htm#Call">Gui()</a>, <a href="Gui.htm">Gui-Objekt</a>, <a href="GuiControl.htm">GuiControl-Objekt</a>, <a href="GuiCtrlFromHwnd.htm">GuiCtrlFromHwnd</a>, <a href="GuiControls.htm">Steuerelemente</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="Menu.htm">Menu-Objekt</a>, <a href="Control.htm">Control-Funktionen</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="FileSelect.htm">FileSelect</a>, <a href="DirSelect.htm">DirSelect</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExBasic">
-<p><a class="ex_number" href="#ExBasic"></a> Ruft das Gui-Objekt über die HWND-Nummer des gerade erstellten GUI-Fensters ab und meldet dessen Titel.</p>
+<p><a class="ex_number" href="#ExBasic"></a> Ruft das Gui-Objekt über das Fensterhandle des gerade erstellten GUI-Fensters ab und meldet dessen Titel.</p>
 <pre>MeineGui := Gui(, "Fenstertitel")
-MeineGui.Add("Text",, "Beliebiger Text.")
+MeineGui.Add("Text",, "Beliebiger Anzeigetext.")
 MeineGui.Show()
 
 MsgBox(GuiFromHwnd(MeineGui.Hwnd).Title)</pre>

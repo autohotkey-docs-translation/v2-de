@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>Scripts - Definition &amp; Verwendung | AutoHotkey v2</title>
+<title>Skripte - Definition &amp; Verwendung | AutoHotkey v2</title>
 <meta name="description" content="Erfahren Sie mehr über Skripte im Allgemeinen, das Aufteilen langer Zeilen, das Kompilieren eines Skripts, das Übergeben von Befehlszeilenparametern, die Codepage und das Debuggen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,37 +22,37 @@
 <h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#intro">Einführung</a></li>
-  <li><a href="#auto">Startphase des Skripts (der Auto-Execute-Thread)</a>: Unmittelbar nach dem Start des Skripts Aktionen durchführen und Standardeinstellungen ändern.</li>
+  <li><a href="#auto">Startphase des Skripts (der Auto-Execute-Thread)</a>: Ausführen von Aktionen unmittelbar nach dem Start des Skripts und Ändern von Standardeinstellungen.</li>
   <li><a href="#continuation">Eine lange Zeile in mehrere kurze Zeilen aufteilen</a>: Dies kann zur besseren Lesbarkeit und Wartbarkeit des Skripts beitragen.</li>
   <li><a href="#lib">Skriptbibliotheksordner</a></li>
   <li><a href="#ahk2exe">Ein Skript in eine EXE-Datei umwandeln (Ahk2Exe)</a>: Ein .ahk-Skript in eine .exe-Datei umwandeln, die auf jedem PC ausgeführt werden kann.</li>
   <li><a href="#cmd">Befehlszeilenparameter an ein Skript übergeben</a>: Die Variable A_Args enthält die eingehenden Parameter.</li>
-  <li><a href="#cp">Skriptdatei-Codepage</a>: Sichere Verwendung von ASCII-fremde Zeichen in Skripten.</li>
+  <li><a href="#cp">Skriptdateicodepage</a>: Sichere Verwendung von ASCII-fremde Zeichen in Skripten.</li>
   <li><a href="#debug">Ein Skript debuggen</a>: Wie man Fehler in einem Skript findet, das sich falsch verhält.</li>
 </ul>
 <h2 id="intro">Einführung</h2>
-<p>Jedes Skript ist eine reine Textdatei mit mehreren Zeilen, die das Programm (AutoHotkey.exe) ausführen soll. Solche Skripte können <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten oder nur aus diesen bestehen. Falls keine Hotkeys und Hotstrings vorhanden sind, wird ein Skript, sobald es gestartet wird, seine Funktionen von oben nach unten und der Reihe nach ausführen.</p>
+<p>Jedes Skript ist eine reine Textdatei mit mehreren Zeilen, die das Programm (AutoHotkey.exe) ausführen soll. Solche Skripte können <a href="Hotkeys.htm">Hotkeys</a> und <a href="Hotstrings.htm">Hotstrings</a> enthalten oder nur aus diesen bestehen. Ohne Hotkeys und Hotstrings führt ein Skript jedoch seine Funktionen beim Start der Reihe nach von oben nach unten aus.</p>
 <p>Das Programm lädt das Skript zeilenweise in den Speicher. Während des Ladevorgangs wird das Skript <a href="misc/Performance.htm">optimiert</a> und auf seine Gültigkeit überprüft. Stößt das Programm auf einen Syntaxfehler, wird dieser angezeigt. Solche Fehler müssen korrigiert werden, bevor das Skript ausgeführt werden kann.</p>
 
 <h2 id="auto">Startphase des Skripts (der Auto-Execute-Thread)</h2>
-<p>Nachdem das Skript geladen wurde, beginnt der <em>Auto-Execute-Thread</em> die Ausführung bei der Zeile ganz oben im Skript, bis ihm befohlen wird, zu stoppen, z.B. via <a href="lib/Return.htm">Return</a>, <a href="lib/ExitApp.htm">ExitApp</a> oder <a href="lib/Exit.htm">Exit</a>. Das physische Ende des Skripts fungiert auch als <a href="lib/Exit.htm">Exit</a>.</p>
-<p id="persistent">Das Skript wird nach Abschluss der Startphase automatisch terminiert, wenn es keine <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, sichtbare <a href="lib/Gui.htm">GUIs</a>, aktive <a href="lib/SetTimer.htm">Timer</a>, <a href="lib/OnClipboardChange.htm">Überwachungen der Zwischenablage</a> und <a href="lib/InputHook.htm">InputHooks</a> hat und die <a href="lib/Persistent.htm">Persistent</a>-Funktion nicht aufgerufen hat. Andernfalls läuft das Skript im Leerlauf weiter, wo es nur noch auf Ereignisse wie Hotkeys, Hotstrings, <a href="lib/GuiOnEvent.htm">GUI-Ereignisse</a>, <a href="lib/Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="lib/SetTimer.htm">Timer</a> reagieren kann. Ändern sich diese Bedingungen nach Abschluss der Startphase des Skripts (zum Beispiel beim Deaktivieren des letzten Timers), könnte sich das Skript schließen, sobald der letzte laufende Thread endet oder das letzte GUI-Fenster geschlossen wird.</p>
-<p>Jedes Mal, wenn ein neuer <a href="misc/Threads.htm">Thread</a> gestartet wird (sei es via <a href="Hotkeys.htm">Hotkey</a>, <a href="Hotstrings.htm">Hotstring</a>, <a href="lib/SetTimer.htm">Timer</a> oder aufgrund eines anderen Ereignisses), werden die folgenden Einstellungen aus dem Auto-Execute-Thread kopiert. Wenn diese nicht via Auto-Execute-Thread gesetzt sind, werden die vordefinierten Standardwerte verwendet (welche das sind, finden Sie auf den folgenden Seiten): <a href="lib/CoordMode.htm">CoordMode</a>, <a href="lib/Critical.htm">Critical</a>, <a href="lib/DetectHiddenText.htm">DetectHiddenText</a>, <a href="lib/DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="lib/FileEncoding.htm">FileEncoding</a>, <a href="lib/ListLines.htm">ListLines</a>, <a href="lib/SendLevel.htm">SendLevel</a>, <a href="lib/SendMode.htm">SendMode</a>, <a href="lib/SetControlDelay.htm">SetControlDelay</a>, <a href="lib/SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>, <a href="lib/SetKeyDelay.htm">SetKeyDelay</a>, <a href="lib/SetMouseDelay.htm">SetMouseDelay</a>, <a href="lib/SetRegView.htm">SetRegView</a>, <a href="lib/SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a>, <a href="lib/SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="lib/SetWinDelay.htm">SetWinDelay</a>, und <a href="lib/Thread.htm">Thread</a>.</p>
-<p>Jedem <a href="misc/Threads.htm">Thread</a> ist eine eigene Sammlung von den oben genannten Einstellungen zugewiesen; das Ändern dieser Einstellungen hat keinen Einfluss auf andere Threads.</p>
-<p>Die "Standardeinstellung" für eine der oben genannten Funktionen bezieht sich in der Regel auf die aktuelle Einstellung des Auto-Execute-Threads, die vorerst mit der programmdefinierten Standardeinstellung übereinstimmt.</p>
-<p>Traditionell wird der Anfang des Skripts als <em>automatischer Ausführungsbereich</em> bezeichnet. Der Auto-Execute-Thread ist hingegen nicht nur auf den Anfang des Skripts beschränkt. Alle Funktionen, die im Auto-Execute-Thread aufgerufen werden, können auch Einfluss auf die Standardeinstellungen haben. Da Direktiven und Funktions-, Hotkey-, Hotstring- und Klassendefinitionen bei der Ausführung übersprungen werden, ist es möglich, Code für die Startphase in jeder Datei zu platzieren. Zum Beispiel könnte man eine globale Variable, die von einer Gruppe von Hotkeys verwendet wird, oberhalb (oder sogar unterhalb) dieser Hotkeys initialisieren, anstatt sie am Anfang des Skripts zu platzieren.</p>
+<p>Nach dem Laden des Skripts beginnt der <em>Auto-Execute-Thread</em> mit der Ausführung der obersten Zeile des Skripts, bis er z.B. durch <a href="lib/Return.htm">Return</a>, <a href="lib/ExitApp.htm">ExitApp</a> oder <a href="lib/Exit.htm">Exit</a> zum Stoppen gebracht wird. Das physische Ende des Skripts fungiert ebenfalls als <a href="lib/Exit.htm">Exit</a>.</p>
+<p id="persistent">Das Skript wird nach Abschluss der Startphase automatisch terminiert, wenn es keine <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, sichtbare <a href="lib/Gui.htm">GUIs</a>, aktive <a href="lib/SetTimer.htm">Timer</a>, <a href="lib/OnClipboardChange.htm">Überwachungen der Zwischenablage</a> und <a href="lib/InputHook.htm">InputHooks</a> hat und die <a href="lib/Persistent.htm">Persistent</a>-Funktion nicht aufgerufen hat. Andernfalls läuft das Skript im Leerlauf weiter und reagiert auf Ereignisse wie <a href="Hotkeys.htm">Hotkeys</a>, <a href="Hotstrings.htm">Hotstrings</a>, <a href="lib/GuiOnEvent.htm">GUI-Ereignisse</a>, <a href="lib/Menu.htm">benutzerdefinierte Menüpunkte</a> und <a href="lib/SetTimer.htm">Timer</a>. Ändern sich diese Bedingungen nach Abschluss der Startphase des Skripts (z.B. beim Deaktivieren des letzten Timers), könnte sich das Skript beenden, sobald der letzte laufende Thread endet oder das letzte GUI-Fenster geschlossen wird.</p>
+<p>Jedes Mal, wenn ein neuer <a href="misc/Threads.htm">Thread</a> gestartet wird (sei es durch einen <a href="Hotkeys.htm">Hotkey</a>, einen <a href="Hotstrings.htm">Hotstring</a>, einen <a href="lib/SetTimer.htm">Timer</a> oder ein anderes Ereignis), werden die folgenden Einstellungen vom Auto-Execute-Thread übernommen. Wenn diese nicht via Auto-Execute-Thread gesetzt sind, werden die vordefinierten Standardwerte verwendet (welche das sind, finden Sie auf den folgenden Seiten): <a href="lib/CoordMode.htm">CoordMode</a>, <a href="lib/Critical.htm">Critical</a>, <a href="lib/DetectHiddenText.htm">DetectHiddenText</a>, <a href="lib/DetectHiddenWindows.htm">DetectHiddenWindows</a>, <a href="lib/FileEncoding.htm">FileEncoding</a>, <a href="lib/ListLines.htm">ListLines</a>, <a href="lib/SendLevel.htm">SendLevel</a>, <a href="lib/SendMode.htm">SendMode</a>, <a href="lib/SetControlDelay.htm">SetControlDelay</a>, <a href="lib/SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>, <a href="lib/SetKeyDelay.htm">SetKeyDelay</a>, <a href="lib/SetMouseDelay.htm">SetMouseDelay</a>, <a href="lib/SetRegView.htm">SetRegView</a>, <a href="lib/SetStoreCapsLockMode.htm">SetStoreCapsLockMode</a>, <a href="lib/SetTitleMatchMode.htm">SetTitleMatchMode</a>, <a href="lib/SetWinDelay.htm">SetWinDelay</a>, und <a href="lib/Thread.htm">Thread</a>.</p>
+<p>Jeder <a href="misc/Threads.htm">Thread</a> hat seine eigene Sammlung der obigen Einstellungen, folglich wirken sich Änderungen an diesen Einstellungen nicht auf andere Threads aus.</p>
+<p>Die "Standardeinstellung" für eine der oben genannten Funktionen bezieht sich in der Regel auf die aktuelle Einstellung des Auto-Execute-Threads, die zunächst mit der programmdefinierten Standardeinstellung übereinstimmt.</p>
+<p>Traditionell wird der Anfang des Skripts als <em>automatischer Ausführungsbereich</em> bezeichnet. Der Auto-Execute-Thread ist jedoch nicht nur auf den Anfang des Skripts beschränkt. Alle im Auto-Execute-Thread aufgerufenen Funktionen können die Standardeinstellungen beeinflussen. Da Direktiven und Funktions-, Hotkey-, Hotstring- und Klassendefinitionen während der Ausführung übersprungen werden, ist es möglich, den Startcode überall in einer Datei zu platzieren. Zum Beispiel kann eine globale Variable für eine Gruppe von Hotkeys direkt über (oder sogar unter) diesen Hotkeys initialisiert werden, anstatt am Anfang des Skripts.</p>
 
 <h2 id="continuation">Eine lange Zeile in mehrere kurze Zeilen aufteilen</h2>
 <p>Lange Zeilen können in mehrere kurze Zeilen aufgeteilt werden, um die Lesbarkeit und Wartbarkeit des Skripts zu verbessern. Dies hat keinen negativen Einfluss auf die Ausführungsgeschwindigkeit des Skripts, da solche Zeilen bereits beim Start des Skripts im Speicher zusammengeführt werden.</p>
-<p>Es gibt drei Methoden, die in der Regel kombiniert eingesetzt werden können:</p>
+<p>Es gibt drei Methoden, die grundsätzlich zusammen verwendet werden können:</p>
 <ul>
-  <li><a href="#continuation-line">Fortsetzungsoperator</a>: Beginnen oder enden Sie eine Zeile mit einem Ausdrucksoperator, um sie mit der vorherigen bzw. nächsten Zeile zu verbinden.</li>
+  <li><a href="#continuation-line">Fortsetzungsoperator</a>: Eine Zeile mit einem Ausdrucksoperator beginnen oder beenden, um sie mit der vorherigen bzw. nächsten Zeile zu verbinden.</li>
   <li><a href="#continuation-expr">Fortsetzung durch Umschließen</a>: Ein Teilausdruck, der mit (), [] oder {} umschlossen ist, kann in den meisten Fällen automatisch mehrere Zeilen umspannen.</li>
-  <li><a href="#continuation-section">Fortsetzungsbereich</a>: Markieren Sie eine Gruppe von Zeilen, die zusammengeführt werden sollen, inklusive Optionen, wie z.B. welcher Text (oder Code) zwischen den Zeilen eingefügt werden soll.</li>
+  <li><a href="#continuation-section">Fortsetzungsbereich</a>: Eine Gruppe von Zeilen markieren, die zusammengeführt werden sollen, inklusive Optionen, z.B. welcher Text (oder Code) zwischen den Zeilen eingefügt werden soll.</li>
 </ul>
-<p id="continuation-line"><strong>Fortsetzungsoperator:</strong> Eine Zeile, die mit einem Komma oder mit einem beliebigen <a href="Variables.htm#Operators">Ausdrucksoperator</a> (außer ++ und --) beginnt, wird automatisch mit der darüber liegenden Zeile zusammengeführt. Analog dazu wird eine Zeile, die mit einem Ausdrucksoperator endet, automatisch mit der darunter liegenden Zeile zusammengeführt. Im folgenden Beispiel wird die zweite Zeile an die erste angefügt, da sie mit einem Komma beginnt:</p>
+<p id="continuation-line"><strong>Fortsetzungsoperator:</strong> Eine Zeile, die mit einem Komma oder einem anderen <a href="Variables.htm#Operators">Ausdrucksoperator</a> (außer ++ und --) beginnt, wird automatisch mit der Zeile direkt darüber zusammengeführt. Ebenso wird eine Zeile, die mit einem Ausdrucksoperator endet, automatisch mit der Zeile darunter zusammengeführt. Im folgenden Beispiel wird die zweite Zeile an die erste angefügt, da sie mit einem Komma beginnt:</p>
 <pre>FileAppend "Das ist der Text, der angefügt wird.`n"   <em>; Kommentar hier möglich.</em>
-    <strong>,</strong> A_ProgramFiles "\BeliebigeAnwendung\Log-Datei.txt"  <em>; Kommentar.</em></pre>
+    <strong>,</strong> A_ProgramFiles "\BeliebigeApp\Log-Datei.txt"  <em>; Kommentar.</em></pre>
 <p>Ebenso werden die Zeilen im nächsten Beispiel zu einer einzelnen Zeile zusammengeführt, da die letzten beiden mit "and" oder "or" beginnen:</p>
 <pre>if Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau"   <em>; Kommentar.</em>
     <strong>or</strong> Farbe = "Schwarz" or Farbe = "Grau" or Farbe = "Weiß"   <em>; Kommentar.</em>
@@ -61,9 +61,9 @@
 <pre>ProduktIstVerfügbar := (Farbe = "Rot")
     <strong>?</strong> false  <em>; Rote Produkte sind nicht verfügbar, daher ist der folgende Funktionsaufruf irrelevant.</em>
     <strong>:</strong> ProduktIstInFarbeVerfügbar(Produkt, Farbe)</pre>
-<p>Die folgenden Beispiele sind äquivalent zu den oben genannten:</p>
+<p>Die folgenden Beispiele sind äquivalent zu den obigen:</p>
 <pre>FileAppend "Das ist der Text, der angefügt wird.`n"<strong>,</strong>   <em>; Kommentar hier möglich.</em>
-    A_ProgramFiles "\BeliebigeAnwendung\Log-Datei.txt"  <em>; Kommentar.</em>
+    A_ProgramFiles "\BeliebigeApp\Log-Datei.txt"  <em>; Kommentar.</em>
 
 if Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau" <strong>or</strong>   <em>; Kommentar.</em>
     Farbe = "Schwarz" or Farbe = "Grau" or Farbe = "Weiß") <strong>and</strong>   <em>; Kommentar.</em>
@@ -72,9 +72,9 @@ if Farbe = "Rot" or Farbe = "Grün" or Farbe = "Blau" <strong>or</strong>   <em>
 ProduktIstVerfügbar := (Farbe = "Rot") <strong>?</strong>
     false <strong>:</strong> <em>; Rote Produkte sind nicht verfügbar, daher ist der folgende Funktionsaufruf irrelevant.</em>
     ProduktIstInFarbeVerfügbar(Produkt, Farbe)</pre>
-<p>Obwohl die Einrückungen in den obigen Beispielen optional sind, können sie die Lesbarkeit verbessern, da sie die Zusammengehörigkeit der Zeilen verdeutlichen. In den Beispielen oben können leere Zeilen oder <a href="Language.htm#comments">Kommentare</a> zwischen oder am Ende jeder Zeile eingefügt werden.</p>
+<p>Obwohl die Einrückungen in den obigen Beispielen optional sind, können sie die Lesbarkeit verbessern, da sie die Zusammengehörigkeit der Zeilen verdeutlichen. In den obigen Beispielen können leere Zeilen oder <a href="Language.htm#comments">Kommentare</a> zwischen oder am Ende jeder Zeile eingefügt werden.</p>
 <p>Ein Fortsetzungsoperator kann nicht mit einem automatisch-ersetzenden Hotstring oder einer Direktive außer <a href="lib/_HotIf.htm">#HotIf</a> verwendet werden.</p>
-<p id="continuation-expr"><strong>Fortsetzung durch Umschließen:</strong> Enthält eine Zeile einen Ausdruck oder eine Funktions-/Eigenschaftsdefinition mit einer nicht geschlossenen Klammer <code>(</code>/<code>[</code>/<code>{</code>, wird sie mit nachfolgenden Zeilen verbunden, bis sich die Anzahl der Start- und Endklammern ausgleicht. Das heißt, dass ein Teilausdruck, der mit runden, eckigen oder geschweiften Klammern umschlossen ist, in den meisten Fällen automatisch mehrere Zeilen umspannen kann. Zum Beispiel:</p>
+<p id="continuation-expr"><strong>Fortsetzung durch Umschließen:</strong> Enthält eine Zeile einen Ausdruck oder eine Funktions-/Eigenschaftsdefinition mit einem ungeschlossenen <code>(</code>/<code>[</code>/<code>{</code>, wird sie mit nachfolgenden Zeilen verbunden, bis die Anzahl der Start- und Endklammern ausgeglichen ist. Mit anderen Worten, ein Teilausdruck, der mit runden, eckigen oder geschweiften Klammern umschlossen ist, kann in den meisten Fällen automatisch mehrere Zeilen umspannen. Zum Beispiel:</p>
 <pre>
 meinArray := [
   "Element 1",
@@ -87,34 +87,34 @@ MsgBox(
     )
 </pre>
 <p>Fortsetzungsausdrücke können beide Arten von <a href="Language.htm#comments">Kommentaren</a> enthalten.</p>
-<p>Fortsetzungsausdrücke können normale <a href="#continuation-section">Fortsetzungsbereiche</a> enthalten. Wenn also, wie bei jeder Zeile mit einem Ausdruck, eine Zeile mit einer runden Startklammer (<code>(</code>) beginnt, die nicht mit einem Escapezeichen versehen ist, wird sie als Anfang eines Fortsetzungsbereichs betrachtet, sofern auf derselben Zeile keine runde Endklammer (<code>)</code>) erfolgt.</p>
-<p>Mit dieser Methode allein ist es nicht möglich, in Anführungszeichen gesetzte Zeichenketten auf mehrere Zeilen zu strecken. Allerdings siehe oben.</p>
+<p>Fortsetzungsausdrücke können normale <a href="#continuation-section">Fortsetzungsbereiche</a> enthalten. Wenn also eine Zeile mit einer escapezeichenlosen runden Startklammer (<code>(</code>) beginnt, wird dies als Beginn eines Fortsetzungsbereichs interpretiert, es sei denn, es folgt in derselben Zeile eine runde Endklammer (<code>)</code>).</p>
+<p>In Anführungszeichen gesetzte Zeichenketten können sich nicht über mehrere Zeilen erstrecken, wenn nur diese Methode verwendet wird. Siehe jedoch oben.</p>
 <p>Fortsetzung durch Umschließen kann mit einem Fortsetzungsoperator kombiniert werden. Zum Beispiel:</p>
 <pre>meinArray :=  <em>; Der Zuweisungsoperator bewirkt eine Fortsetzung.</em>
-[  <em>; Klammern umschließen die folgenden zwei Zeilen.</em>
+[  <em>; Eckige Klammern umschließen die folgenden zwei Zeilen.</em>
   "Element 1",
   "Element 2",
 ]</pre>
-<p>Eine geschweifte Klammer (<code>{</code>) am Ende einer Zeile bewirkt keine Fortsetzung, wenn das Programm feststellt, dass sie als Anfang eines Blocks (<a href="lib/Block.htm#otb">OTB-Style</a>) und nicht als Anfang eines <a href="Language.htm#object-literal">direkt geschriebenen Objekts</a> interpretiert werden soll. Im Einzelnen (in absteigender Prioritätsreihenfolge):</p>
+<p>Eine geschweifte Klammer (<code>{</code>) am Ende einer Zeile bewirkt keine Fortsetzung, wenn das Programm entschieden hat, dass sie als Beginn eines Blocks (<a href="lib/Block.htm#otb">OTB-Style</a>) und nicht als Beginn eines <a href="Language.htm#object-literal">direkt geschriebenen Objekts</a> interpretiert werden soll. Konkret heißt das (in absteigender Priorität):</p>
 <ul>
-  <li>Eine geschweifte Klammer wird niemals als Anfang eines Blocks interpretiert, wenn sie eine nicht geschlossene Klammer <code>(</code>/<code>[</code>/<code>{</code> davor hat, da dies zu einem ungültigen Ausdruck führen würde. Zum Beispiel wäre die geschweifte Klammer in <code>If ({</code> der Beginn eines direkt geschriebenen Objekts.</li>
-  <li>Es ist nicht erlaubt, nach den Klammern <code>)</code> oder <code>]</code> ein direkt geschriebenes Objekt zu beginnen. Wenn also die geschweifte Klammer nach diesen Symbolen erfolgt (ohne Leerraumzeichen), wird sie als Anfang eines Blocks interpretiert (z.B. für eine Funktions- oder Eigenschaftsdefinition).</li>
-  <li>Bei <a href="Language.htm#control-flow">Kontrollanweisungen</a>, die einen Körper benötigen (und daher OTB unterstützen), kann die geschweifte Klammer nur dann der Anfang eines direkt geschriebenen Objekts sein, wenn sie ein Operator davor hat, wie z.B. <code>:= {</code> oder <code>for x <strong>in</strong> {</code>. Das heißt im Endeffekt, dass die geschweifte Klammer in <code>Loop {</code> immer einen Block beginnen würde und <code>If {</code> und <code>While {</code> immer falsch wären.</li>
+  <li>Eine geschweifte Klammer wird niemals als Beginn eines Blocks interpretiert, wenn ihr ein ungeschlossenes <code>(</code>/<code>[</code>/<code>{</code> vorangestellt ist, da dies zu einem ungültigen Ausdruck führen würde. Zum Beispiel wäre die geschweifte Klammer in <code>If ({</code> der Beginn eines direkt geschriebenen Objekts.</li>
+  <li>Ein direkt geschriebenes Objekt darf nicht auf <code>)</code> oder <code>]</code> folgen, d.h. wenn der geschweiften Klammer eines dieser Symbole vorangestellt ist (ohne Leerraumzeichen), wird dies als Beginn eines Blocks interpretiert (z.B. für eine Funktions- oder Eigenschaftsdefinition).</li>
+  <li>Bei <a href="Language.htm#control-flow">Kontrollanweisungen</a>, die einen Körper benötigen (und daher OTB unterstützen), kann die geschweifte Klammer nur dann der Beginn eines direkt geschriebenen Objekts sein, wenn ihr ein Operator vorangestellt ist, wie z.B. in <code>:= {</code> oder <code>for x <strong>in</strong> {</code>. Konkret heißt das, dass die geschweifte Klammer in <code>Loop {</code> immer einen Block beginnt und dass <code>If {</code> und <code>While {</code> als Fehler gewertet wird.</li>
 </ul>
-<p>Eine geschweifte Klammer kann ohne Probleme verwendet werden, um Funktionsaufrufe, Ausdrücke oder Kontrollanweisungen, die keinen Körper benötigen, auf der nächsten Zeile fortzusetzen. Zum Beispiel:</p>
+<p>Eine geschweifte Klammer kann problemlos für eine Zeilenfortsetzung bei Funktionsaufrufen, Ausdrücken oder Kontrollanweisungen verwendet werden, die keinen Körper benötigen. Zum Beispiel:</p>
 <pre>meineFn() {
     return {
         key: "wert"
     }
 }</pre>
-<p id="continuation-section"><strong>Fortsetzungsbereich:</strong> Diese Methode sollte verwendet werden, wenn sehr viele Zeilen zusammengeführt werden müssen oder wenn die Zeilen nicht für die anderen Methoden geeignet sind. Diese Methode kann sowohl bei <a href="Hotstrings.htm">automatisch-ersetzenden Hotstrings</a> als auch bei beliebigen <a href="Variables.htm#Expressions">Ausdrücken</a> angewendet werden. Zum Beispiel:</p>
+<p id="continuation-section"><strong>Fortsetzungsbereich:</strong> Diese Methode sollte verwendet werden, wenn sehr viele Zeilen zusammengeführt werden müssen oder wenn die Zeilen nicht für die anderen Methoden geeignet sind. Obwohl diese Methode besonders für <a href="Hotstrings.htm">automatisch-ersetzende Hotstrings</a> nützlich ist, kann sie auch für einen <a href="Variables.htm#Expressions">Ausdruck</a> verwendet werden. Zum Beispiel:</p>
 <pre><em>; BEISPIEL #1:</em>
 Var := "
 (
 Eine Textzeile.
-Standardmäßig wird das CR-Zeichen (Enter) zwischen der vorherigen und dieser Zeile gespeichert.
-	Diese Zeile wird mit einem Tabulator eingerückt; Standardmäßig wird dieser Tabulator auch gespeichert.
-Zusätzlich werden "Anführungszeichen" bei Bedarf <a href="#continuation_quotes">automatisch mit einem Escapezeichen versehen</a>.
+Standardmäßig wird der Zeilenumbruch (Enter) zwischen der vorherigen und dieser Zeile gespeichert.
+	Diese Zeile ist mit einem Tabulatorzeichen eingerückt; standardmäßig wird es auch gespeichert.
+Zusätzlich werden "Anführungszeichen" ggf. <a href="#continuation_quotes">automatisch mit einem Escapezeichen versehen</a>.
 )"
 
 <em>; BEISPIEL #2:</em>
@@ -123,18 +123,18 @@ FileAppend "
 Zeile 1 des Textes.
 Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
 )", A_Desktop "\Meine Datei.txt"</pre>
-<p>In den obigen Beispielen sind mehrere Zeilen in runde Klammern eingeschlossen. Dies nennt sich <em>Fortsetzungsbereich</em>. Beachten Sie, dass jeglicher Code nach der runden Endklammer auch mit den anderen Zeilen verbunden ist (ohne Trennzeichen), allerdings sind die Start- und Endklammern nicht enthalten.</p>
+<p>In den obigen Beispielen sind mehrere Zeilen in runde Klammern eingeschlossen. Dies nennt sich <em>Fortsetzungsbereich</em>. Beachten Sie, dass jeglicher Code nach der runden Endklammer auch mit den anderen Zeilen verbunden wird (ohne Separator), allerdings sind die Start- und Endklammern nicht enthalten.</p>
 <p>Wenn die Zeile über dem Fortsetzungsbereich mit einem <a href="Concepts.htm#names">Namenszeichen</a> endet und der Bereich nicht innerhalb eines Anführungszeichens beginnt, wird automatisch ein einzelnes Leerzeichen eingefügt, um den Namen vom Inhalt des Fortsetzungsbereichs zu trennen.</p>
-<p id="continuation_quotes">Anführungszeichen werden automatisch mit einem Escapezeichen versehen (also als direkt geschriebene Zeichen interpretiert), wenn der Fortsetzungsbereich innerhalb einer in Anführungszeichen gesetzte Zeichenkette beginnt, wie in den Beispielen oben. Andernfalls verhalten sich Anführungszeichen wie gewohnt, d.h. Fortsetzungsbereiche können Ausdrücke mit in Anführungszeichen gesetzte Zeichenketten enthalten.</p>
-<p id="continuation_defaults">Standardmäßig werden Leer- und Tabulatorzeichen am Anfang weggelassen, abhängig von der Einrückung der ersten Zeile innerhalb des Fortsetzungsbereiches. Enthält die erste Zeile eine Mischung aus Leer- und Tabulatorzeichen, wird nur der erste Zeichentyp als Einrückung behandelt. Wenn jede Zeile weniger eingerückt ist als die erste Zeile oder mit den falschen Zeichen eingerückt ist, werden alle Leerraumzeichen am Anfang auf dieser Zeile beibehalten. </p>
-<p>Das Standardverhalten eines Fortsetzungsbereichs kann überschrieben werden, indem eine oder mehrere der folgenden Optionen rechts von der runden Startklammer eingefügt werden. Mehrere Optionen müssen mit Leerzeichen voneinander getrennt werden. Zum Beispiel: <code>( LTrim Join|</code>.</p>
+<p id="continuation_quotes">Anführungszeichen werden automatisch mit einem Escapezeichen versehen (also als direkt geschriebene Zeichen interpretiert), wenn der Fortsetzungsbereich innerhalb einer in Anführungszeichen gesetzten Zeichenkette beginnt, wie in den Beispielen oben. Andernfalls verhalten sich Anführungszeichen wie gewohnt, d.h. Fortsetzungsbereiche können Ausdrücke mit in Anführungszeichen gesetzten Zeichenketten enthalten.</p>
+<p id="continuation_defaults">Standardmäßig werden Leer- und Tabulatorzeichen am Anfang weggelassen, abhängig von der Einrückung der ersten Zeile innerhalb des Fortsetzungsbereichs. Wenn die erste Zeile eine Mischung aus Leer- und Tabulatorzeichen enthält, wird nur der erste Zeichentyp als Einrückung behandelt. Wenn eine Zeile weniger eingerückt ist als die erste Zeile oder mit den falschen Zeichen eingerückt ist, bleiben alle Leerraumzeichen am Anfang dieser Zeile erhalten. </p>
+<p>Das Standardverhalten eines Fortsetzungsbereichs kann überschrieben werden, indem eine oder mehrere der folgenden Optionen rechts von der runden Startklammer eingefügt werden. Mehrere Optionen müssen mit Leerzeichen voneinander getrennt werden. Zum Beispiel: <code class="no-highlight">( LTrim Join|</code>.</p>
 <p id="Join"><strong>Join</strong><em>Zkette</em>: Gibt an, wie die Zeilen verbunden werden sollen. Wenn diese Option nicht verwendet wird, endet jede Zeile außer der letzten mit einem LF-Zeichen (`n). Wenn <em>Zkette</em> weggelassen wird, werden die Zeilen direkt miteinander verbunden, ohne Zeichen dazwischen. Andernfalls geben Sie für <em>Zkette</em> eine Zeichenkette von bis zu 15 Zeichen an. Zum Beispiel bewirkt <code>Join`s</code>, dass nach jeder Zeile außer der letzten ein Leerzeichen eingefügt wird. Weitere Beispiele sind <code>Join`r`n</code>, das ein CR-LF-Paar zwischen den Zeilen einfügt, und <code>Join|</code>, das einen Vertikalstrich zwischen den Zeilen einfügt. Um die letzte Zeile des Fortsetzungsbereichs ebenfalls mit <em>Zkette</em> enden zu lassen, fügen Sie direkt über der runden Endklammer des Bereichs eine Leerzeile ein.</p>
-<p id="LTrim"><strong>LTrim:</strong> Entfernt alle Leer- und Tabulatorzeichen am Anfang jeder Zeile. Dies ist normalerweise aufgrund des <a href="#continuation_defaults">"intelligenten" Standardverhaltens</a> nicht notwendig.</p>
-<p id="LTrim0"><strong>LTrim0</strong> (LTrim und eine 0): Verhindert, dass Leer- und Tabulatorzeichen am Anfang jeder Zeile automatisch entfernt werden.</p>
+<p id="LTrim"><strong>LTrim:</strong> Entfernt alle Leer- und Tabulatorzeichen am Anfang jeder Zeile. Dies ist normalerweise wegen des <a href="#continuation_defaults">"intelligenten" Standardverhaltens</a> nicht notwendig.</p>
+<p id="LTrim0"><strong>LTrim0</strong> (LTrim und eine 0): Verhindert das automatische Entfernen von Leer- und Tabulatorzeichen am Anfang jeder Zeile.</p>
 <p id="RTrim0"><strong>RTrim0</strong> (RTrim gefolgt von 0): Verhindert das automatische Entfernen von Leer- und Tabulatorzeichen am Ende jeder Zeile.</p>
-<p id="CommentOption"><strong>Comments</strong> (oder <strong>Comment</strong> oder <strong>Com</strong> oder <strong>C</strong>): Ermöglicht <a href="Language.htm#comments">Semikolon-Kommentare</a> innerhalb des Fortsetzungsbereichs (aber nicht <code>/*..*/</code>). Solche Kommentare (sowie links stehende Leer- und Tabulatorzeichen) werden im zusammengefügten Ergebnis entfernt, anstatt als direkt geschriebener Text behandelt zu werden. Jeder Kommentar kann auf der rechten Seite einer Zeile oder auf einer neuen Zeile stehen.</p>
+<p id="CommentOption"><strong>Comments</strong> (oder <strong>Comment</strong> oder <strong>Com</strong> oder <strong>C</strong>): Erlaubt <a href="Language.htm#comments">Semikolon-Kommentare</a> innerhalb des Fortsetzungsbereichs (aber nicht <code>/*..*/</code>). Solche Kommentare (sowie links stehende Leer- und Tabulatorzeichen) werden im zusammengefügten Ergebnis entfernt, anstatt als direkt geschriebener Text behandelt zu werden. Jeder Kommentar kann auf der rechten Seite einer Zeile oder auf einer neuen Zeile stehen.</p>
 <p id="accent"><strong>`</strong> (Akzent/umgekehrtes Häkchen): Behandelt jedes umgekehrte Häkchen als direkt geschriebenen Text, nicht als <a href="misc/EscapeChar.htm">Escapezeichen</a>. Dies verhindert auch die Übersetzung von explizit angegebenen Escapesequenzen wie <code>`r</code> und <code>`t</code>.</p>
-<p id="non-continuation"><strong>(</strong> oder <strong>)</strong>: Eine runde Start- oder Endklammer auf der rechten Seite der initialen runden Startklammer (außer als Parameter der <a href="#Join">Join</a>-Option) bewirkt, dass die Zeile nicht als Beginn eines Fortsetzungsbereichs, sondern als Ausdruck interpretiert wird. Dadurch können Ausdrücke wie <code>(x.y)[z]()</code> am Anfang einer Zeile verwendet werden und <a href="#continuation-expr">mehrzeilige Ausdrücke</a> mit einer Zeile wie <code>((</code> oder <code>(MeineFunk(</code> beginnen.</p>
+<p id="non-continuation"><strong>(</strong> oder <strong>)</strong>: Eine runde Start- oder Endklammer rechts von der ersten runden Startklammer (außer als Parameter der <a href="#Join">Join</a>-Option) bewirkt, dass die Zeile als Ausdruck neu interpretiert wird, nicht als Beginn eines Fortsetzungsbereichs. Dies erlaubt es, Ausdrücke wie <code>(x.y)[z]()</code> am Anfang einer Zeile zu verwenden und <a href="#continuation-expr">mehrzeilige Ausdrücke</a> mit einer Zeile wie <code>((</code> oder <code>(MeineFunk(</code> zu beginnen.</p>
 
 <h3 id="continuation-remarks">Bemerkungen</h3>
 <p><a href="misc/EscapeChar.htm">Escapesequenzen</a> wie `n (LF) und `t (Tabulator) werden innerhalb des Fortsetzungsbereichs unterstützt, es sei denn, die <a href="#accent">Akzent-Option (`)</a> wird verwendet.</p>
@@ -150,17 +150,17 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
 <p>Die stückweise Konstruktion eines Fortsetzungsbereichs via <a href="lib/_Include.htm">#Include</a> wird nicht unterstützt.</p>
 
 <h2 id="lib">Skriptbibliotheksordner</h2>
-<p>Die Bibliotheksordner sind vordefinierte Standorte für gemeinsam verwendete Skripte, die von anderen Skripten mit Hilfe von <a href="lib/_Include.htm">#Include</a> verwendet werden können. Ein Bibliotheksskript enthält typischerweise eine Funktion oder Klasse, die für die Verwendung und Wiederverwendung konzipiert ist. Das Platzieren von Bibliotheksskripten an einen dieser Standorte erleichtert das Schreiben von Skripten, die mit anderen gemeinsam verwendet werden können und über mehrere Konfigurationen hinweg funktionieren. Die Standorte für Bibliotheken sind:</p>
+<p>Bibliotheksordner sind vordefinierte Orte für gemeinsam genutzte Skripte, die andere Skripte mittels <a href="lib/_Include.htm">#Include</a> verwenden können. Ein Bibliotheksskript enthält typischerweise eine Funktion oder Klasse, die zur Verwendung und Wiederverwendung vorgesehen ist. Das Platzieren von Bibliotheksskripten an einen dieser Orte erleichtert das Schreiben von Skripten, die mit anderen geteilt werden und über mehrere Konfigurationen hinweg funktionieren können. Die Orte für Bibliotheken sind:</p>
 <pre><a href="Variables.htm#ScriptDir">A_ScriptDir</a> "\Lib\"  <em>; Lokale Bibliothek.</em>
 <a href="Variables.htm#MyDocuments">A_MyDocuments</a> "\AutoHotkey\Lib\"  <em>; Benutzerbibliothek.</em>
 "Verzeichnis-der-aktuell-laufenden-AutoHotkey.exe\Lib\"  <em>; Standardbibliothek.</em></pre>
 <p>Die Bibliotheksordner werden in der oben gezeigten Reihenfolge durchsucht.</p>
-<p>Wenn ein Skript beispielsweise die Zeile <code>#Include &lt;MeineBibl&gt;</code> enthält, sucht das Programm nach einer Datei namens "MeineBibl.ahk" in der lokalen Bibliothek. Wenn sie dort nicht ist, wird die Benutzerbibliothek und dann die Standardbibliothek durchsucht. Wenn sie dort auch nicht gefunden wurde und enthält der Name der Bibliothek einen Unterstrich (z.B. <code>MeinPräfix_MeineFunk</code>), wird das Programm die Suche wiederholen, aber nur mit dem Präfix (z.B. <code>MeinPräfix.ahk</code>).</p>
-<p>Obwohl eine Bibliotheksdatei gemäß Konvention grundsätzlich nur eine einzelne Funktion oder Klasse mit demselben Namen wie die Datei enthält, kann sie auch private Funktionen enthalten, die nur von ihr aufgerufen werden. Allerdings sollten solche Funktionen eindeutige Namen haben, da sie sich im globalen Namensraum befinden, d.h. sie können von überall im Skript aufgerufen werden.</p>
+<p>Wenn ein Skript beispielsweise die Zeile <code>#Include &lt;MeineBibl&gt;</code> enthält, sucht das Programm in der lokalen Bibliothek nach einer Datei mit dem Namen "MeineBibl.ahk". Wenn sie dort nicht ist, wird die Benutzerbibliothek und dann die Standardbibliothek durchsucht. Wenn sie auch dort nicht gefunden wird und enthält der Bibliotheksname einen Unterstrich (z.B. <code>MeinPräfix_MeineFunk</code>), wiederholt das Programm die Suche mit nur dem Präfix (z.B. <code>MeinPräfix.ahk</code>).</p>
+<p>Obwohl eine Bibliotheksdatei konventionsgemäß in der Regel nur eine einzelne Funktion oder Klasse mit demselben Namen wie die Datei enthält, kann sie auch private Funktionen enthalten, die nur von ihr aufgerufen werden. Allerdings sollten solche Funktionen eindeutige Namen haben, da sie sich im globalen Namensraum befinden, d.h. sie können von überall im Skript aufgerufen werden.</p>
 
 <h2 id="ahk2exe">Ein Skript in eine EXE-Datei umwandeln (Ahk2Exe)</h2>
-<p>Im Lieferumfang des Programms ist ein Skriptcompiler enthalten (von fincs bereitgestellt und von TAC109 um Features erweitert).</p>
-<p>Ein kompiliertes Skript ist eine eigenständige EXE-Datei, d.h. das Skript kann ohne AutoHotkey.exe gestartet werden. Der Kompiliervorgang erstellt eine EXE-Datei und fügt ihr Folgendes hinzu: der AutoHotkey-Interpreter, das Skript, via <a href="lib/_Include.htm">#Include</a> definierte Dateien und via <a href="lib/FileInstall.htm">FileInstall</a> definierte Dateien. Zusätzliche Dateien können mittels <a href="misc/Ahk2ExeDirectives.htm">Compilerdirektiven</a> inkludiert werden.</p>
+<p>Es gibt einen Skriptcompiler (von fincs bereitgestellt und von TAC109 um Features erweitert) als separaten automatischen Download.</p>
+<p>Ein kompiliertes Skript ist eine eigenständige EXE-Datei, d.h. das Skript kann ohne AutoHotkey.exe gestartet werden. Der Kompiliervorgang erstellt eine EXE-Datei und fügt ihr Folgendes hinzu: Den AutoHotkey-Interpreter, das Skript, alle <a href="lib/_Include.htm">zu inkludierenden</a> Dateien und alle via <a href="lib/FileInstall.htm">FileInstall</a> zu integrierenden Dateien. Zusätzliche Dateien können mittels <a href="misc/Ahk2ExeDirectives.htm">Compilerdirektiven</a> inkludiert werden.</p>
 <p>Für v1.1- und v2-Skripte wird derselbe Compiler verwendet. Der Compiler unterscheidet Skriptversionen durch Überprüfung der Hauptversion der bereitgestellten Basisdatei.</p>
 <h3 id="ahk2exe-toc">Compilerthemen</h3>
 <ul>
@@ -205,11 +205,11 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
       </tr>
       <tr id="SlashBase">
         <td>/base <i>Dateiname</i></td>
-        <td>Die zu verwendende Basisdatei (eine BIN- oder EXE-Datei). Die Hauptversion der verwendeten Basisdatei muss mit der Version des zu kompilierenden Skripts übereinstimmen. Standardmäßig wird der zuletzt in der GUI-Oberfläche gespeicherte Basisdateiname oder eine im Skript vorkommende <a href="misc/Ahk2ExeDirectives.htm#Bin">Base</a>-Compilerdirektive verwendet.</td>
+        <td>Die zu verwendende Basisdatei (eine BIN- oder EXE-Datei). Die Hauptversion der verwendeten Basisdatei muss mit der Version des zu kompilierenden Skripts übereinstimmen. Standardmäßig wird der zuletzt in der GUI-Oberfläche gespeicherte Basisdateiname oder eine <a href="misc/Ahk2ExeDirectives.htm#Bin">Base</a>-Compilerdirektive im Skript verwendet.</td>
       </tr>
       <tr id="SlashResourceID">
         <td>/resourceid <i>Name</i></td>
-        <td>Weist eine untypische Ressourcen-ID zu, die für das Hauptskript bei Kompilierungen verwendet wird, die eine <a href="#SlashBase">EXE-Basisdatei</a> verwenden (siehe <a href="Program.htm#embedded-scripts">Eingebettete Skripte</a>). Numerische Ressourcen-IDs müssen aus einem Rautezeichen (#) gefolgt von einer Dezimalzahl bestehen. Standardmäßig wird #1 oder eine im Skript vorkommende <a href="misc/Ahk2ExeDirectives.htm#ResourceID">ResourceID</a>-Compilerdirektive verwendet.</td>
+        <td>Weist eine untypische Ressourcen-ID zu, die für das Hauptskript bei Kompilierungen verwendet wird, die eine <a href="#SlashBase">EXE-Basisdatei</a> verwenden (siehe <a href="Program.htm#embedded-scripts">Eingebettete Skripte</a>). Numerische Ressourcen-IDs müssen aus einem Rautezeichen (#) gefolgt von einer Dezimalzahl bestehen. Standardmäßig wird #1 oder eine <a href="misc/Ahk2ExeDirectives.htm#ResourceID">ResourceID</a>-Compilerdirektive im Skript verwendet.</td>
       </tr>
       <tr id="SlashCp">
         <td>/cp <i>Codepage</i></td>
@@ -225,7 +225,7 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
       </tr>
       <tr id="SlashGuiSilent">
         <td>/silent [verbose]</td>
-        <td>Deaktiviert alle Mitteilungsfenster und gibt stattdessen die Fehler in die Standardfehlerausgabe (stderr) aus; oder in die Standardausgabe (stdout), wenn stderr fehlschlägt. Sonstige Meldungen werden ebenfalls in stdout ausgegeben. Geben Sie optional das Wort <code>verbose</code> an, um zusätzlich noch Statusmeldungen in stdout auszugeben.</td>
+        <td>Deaktiviert alle Mitteilungsfenster und gibt stattdessen die Fehler in die Standardfehlerausgabe (stderr) aus; oder in die Standardausgabe (stdout), wenn stderr fehlschlägt. Sonstige Meldungen werden ebenfalls in stdout ausgegeben. Geben Sie optional das Wort <code>verbose</code> an, um Statusmeldungen ebenfalls in stdout auszugeben.</td>
       </tr>
       <tr id="SlashAhk">
         <td class="warning"><strong>Veraltet:</strong><br>/ahk <i>Dateiname</i></td>
@@ -248,16 +248,16 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
 <ul>
   <li>Parameter, die Leerzeichen enthalten, müssen in doppelte Anführungszeichen gesetzt werden.</li>
   <li>Die Performanz des Skripts kann in der Regel nicht durch das Kompilieren verbessert werden.</li>
-  <li><a href="lib/_NoTrayIcon.htm">#NoTrayIcon</a> und <a href="Variables.htm#AllowMainWindow">A_AllowMainWindow</a> beeinflussen das Verhalten von kompilierten Skripts.</li>
+  <li><a href="lib/_NoTrayIcon.htm">#NoTrayIcon</a> und <a href="Variables.htm#AllowMainWindow">A_AllowMainWindow</a> beeinflussen das Verhalten kompilierter Skripte.</li>
   <li>Die interne Variable <a href="Variables.htm#IsCompiled">A_IsCompiled</a> enthält 1, wenn das Skript in kompilierter Form ausgeführt wird, andernfalls 0.</li>
   <li>Wenn Parameter an Ahk2Exe übergeben wurden, wird eine Meldung in die Standardausgabe (stdout) geschrieben, ob der Kompiliervorgang erfolgreich war oder nicht. Obwohl die Meldung nicht in der Eingabeaufforderung angezeigt wird, kann sie mit Mitteln wie dem Weiterleiten der Ausgabe an eine Datei "abgefangen" werden. </li>
-  <li>Im Falle eines Fehlers gibt Ahk2Exe einen Exitcode zurück, der die Art des Fehlers spezifiziert. Solche Fehlercodes finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/ErrorCodes.md">GitHub (ErrorCodes.md)</a>.</li>
+  <li>Im Falle eines Fehlers gibt Ahk2Exe einen Exitcode zurück, der die Art des Fehlers spezifiziert. Diese Fehlercodes finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe/blob/master/ErrorCodes.md">GitHub (ErrorCodes.md)</a>.</li>
 </ul>
 <p>Den Quellcode sowie neuere Versionen des Compilers finden Sie auf <a href="https://github.com/AutoHotkey/Ahk2Exe">GitHub</a>.</p>
 
 <h3 id="ahk2exe-base">Ausführbare Basisdatei</h3>
 <p>Jede EXE-Datei eines kompilierten Skripts basiert auf einer ausführbaren Datei, die den Interpreter implementiert. Die Basisdateien im Compiler-Verzeichnis haben die Endung ".bin"; diese Dateien sind Versionen des Interpreters, die nicht die Möglichkeit bieten, externe Skriptdateien zu laden. Stattdessen wird das Programm nach einer Win32-Ressource (RCDATA) namens "&gt;AUTOHOTKEY SCRIPT&lt;" suchen und diese laden, oder fehlschlagen, wenn sie nicht gefunden wird.</p>
-<p>Die Standard-AutoHotkey-EXE-Datei können auch als Basis für ein kompiliertes Skript verwendet werden, indem eine Win32-Ressource (RCDATA) mit der ID 1 eingebettet wird. (Weitere Skripte können mit der <a href="misc/Ahk2ExeDirectives.htm#AddResource">AddResource</a>-Compilerdirektive hinzugefügt werden.) Dadurch kann die EXE-Datei eines kompilierten Skripts zusammen mit der Befehlszeilenoption <a href="#SlashScript">/script</a> verwenden werden, um anstelle des eingebetteten Hauptskripts andere Skripte auszuführen. Weitere Informationen finden Sie unter <a href="Program.htm#embedded-scripts">Eingebettete Skripte</a>.</p>
+<p>Die Standard-AutoHotkey-EXE-Dateien können auch als Basis für ein kompiliertes Skript verwendet werden, indem eine Win32-Ressource (RCDATA) mit der ID 1 eingebettet wird. (Weitere Skripte können mit der <a href="misc/Ahk2ExeDirectives.htm#AddResource">AddResource</a>-Compilerdirektive hinzugefügt werden.) Auf diese Weise kann die EXE-Datei eines kompilierten Skripts zusammen mit der Befehlszeilenoption <a href="#SlashScript">/script</a> verwendet werden, um ein anderes Skript als das eingebettete Hauptskript auszuführen. Weitere Informationen finden Sie unter <a href="Program.htm#embedded-scripts">Eingebettete Skripte</a>.</p>
 
 <h3 id="CompilerDirectives">Skriptcompilerdirektiven</h3>
 <p>Skriptcompilerdirektiven ermöglichen es dem Benutzer, genau anzugeben, wie ein Skript kompiliert werden soll. Einige der Features sind:</p>
@@ -276,7 +276,7 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
 <p><strong>Hinweis:</strong> Die Komprimierung einer EXE-Datei verhindert, dass der Quellcode des Skripts einfach mit einem Texteditor wie Notepad oder PE-Resource-Editor eingesehen werden kann, aber sie verhindert nicht, dass der Quellcode mit speziell dafür entwickelten Tools extrahiert werden kann.</p>
 
 <h3 id="information">Hintergrundinformationen</h3>
- <p>Die folgende Ordnerstruktur wird unterstützt, wobei sich die aktuell ausgeführte Version von <code>Ahk2Exe.exe</code> im ersten, unten gezeigten \Compiler-Verzeichnis befindet:</p>
+ <p>Es wird die folgende Ordnerstruktur unterstützt, wobei sich die standardmäßig verwendete Version von <code>Ahk2Exe.exe</code> im ersten \Compiler-Verzeichnis befindet, wie unten gezeigt:</p>
 <pre class="no-highlight">\AutoHotkey 
    AutoHotkeyA32.exe 
    AutoHotkeyU32.exe
@@ -313,14 +313,14 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
   </tr>
   <tr id="SlashR">
     <td>/restart</td>
-    <td>Gibt an, dass das Skript neu gestartet werden soll und dass eine ältere Instanz des Skripts, sofern möglich, geschlossen werden soll (diese Option wird auch intern von der <a href="lib/Reload.htm">Reload</a>-Funktion verwendet).</td>
+    <td>Gibt an, dass das Skript neu gestartet werden soll und dass eine ältere Instanz des Skripts, wenn möglich, geschlossen werden soll (diese Option wird auch intern von der <a href="lib/Reload.htm">Reload</a>-Funktion verwendet).</td>
     <td>Ja</td>
   </tr>
   <tr id="ErrorStdOut">
     <td>/ErrorStdOut<br><br>/ErrorStdOut=<em>Kodierung</em></td>
     <td>
       <p>Sendet alle Syntaxfehler, die den Start eines Skripts verhindern, an die Standardfehlerausgabe (stderr), anstatt ein Dialogfenster anzuzeigen. Einzelheiten finden Sie unter <a href="lib/_ErrorStdOut.htm">#ErrorStdOut</a>.</p>
-      <p>Es kann optional eine <a href="lib/FileEncoding.htm">Kodierung</a> angegeben werden. <code>/ErrorStdOut=UTF-8</code> beispielsweise kodiert Meldungen als UTF-8, bevor sie in die Standardfehlerausgabe geschrieben werden.</p>
+      <p>Es kann optional eine <a href="lib/FileEncoding.htm">Kodierung</a> angegeben werden. Zum Beispiel bewirkt <code class="no-highlight">/ErrorStdOut=UTF-8</code>, dass Meldungen als UTF-8 kodiert werden, bevor sie in die Standardfehlerausgabe (stderr) geschrieben werden.</p>
     </td>
     <td>Nein</td>
   </tr>
@@ -340,8 +340,8 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
     <td>/Validate</td>
     <td>
       <p>AutoHotkey lädt das Skript und beendet es dann, bevor es ausgeführt wird.</p>
-      <p>Standardmäßig werden Ladezeitfehler und Warnungen wie üblich angezeigt. Mit der <a href="#ErrorStdOut">/ErrorStdOut</a>-Option können jegliche Fehlermeldungen unterdrückt oder abgefangen werden.</p>
-      <p>Der Prozess-Exitcode ist 0, wenn das Skript erfolgreich geladen wurde, oder ungleich 0, wenn ein Fehler auftrat.</p>
+      <p>Standardmäßig werden Ladezeitfehler und Warnungen wie üblich angezeigt. Mit der <a href="#ErrorStdOut">/ErrorStdOut</a>-Option können alle Fehlermeldungen unterdrückt oder abgefangen werden.</p>
+      <p>Der Prozess-Exitcode ist 0, wenn das Skript erfolgreich geladen wurde, oder ungleich 0, wenn ein Fehler aufgetreten ist.</p>
     </td>
     <td>Nein</td>
   </tr>
@@ -349,7 +349,7 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
     <td>/iLib <em>"AusgabeDatei"</em></td>
     <td>
       <p><strong>Veraltet:</strong> Verwenden Sie stattdessen <a href="#validate">/validate</a>.</p>
-      <p>AutoHotkey lädt das Skript, ohne es auszuführen. In früheren Versionen von AutoHotkey wurden Dateinamen von automatisch eingebundenen Dateien in die mit <em>AusgabeDatei</em> angegebene Datei geschrieben, formatiert als #Include-Direktiven.</p>
+      <p>AutoHotkey lädt das Skript, ohne es auszuführen. In früheren Versionen von AutoHotkey wurden Dateinamen von automatisch inkludierten Dateien in die via <em>AusgabeDatei</em> angegebene Datei geschrieben, formatiert als #Include-Direktiven.</p>
       <p>Wenn die Ausgabedatei bereits existiert, wird sie überschrieben. <em>AusgabeDatei</em> kann <code>*</code> sein, um die Ausgabe in die Standardausgabe (stdout) zu schreiben.</p>
       <p>Wenn das Skript Syntaxfehler enthält, kann die Ausgabedatei leer sein. Der Exitcode des Prozesses kann verwendet werden, um diesen Zustand zu erkennen; im Falle eines Syntaxfehlers ist der Exitcode 2. Mit der /ErrorStdOut-Option kann die Fehlermeldung unterdrückt oder abgefangen werden.</p>
     </td>
@@ -375,20 +375,20 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
   </tr>
 </table>
 
-<p id="defaultfile"><strong>Skriptdateiname:</strong> Dies kann weggelassen werden, wenn keine <em>Skriptparameter</em> vorhanden sind. Wenn weggelassen, wird standardmäßig der Pfad und Name der <a href="Variables.htm#AhkPath">AutoHotkey-EXE-Datei</a> verwendet, wobei ".exe" mit ".ahk" ersetzt wird. Wenn Sie beispielsweise AutoHotkey.exe in MeinSkript.exe umbenennen, versucht das Programm, MeinSkript.ahk zu laden. Starten Sie AutoHotkey32.exe ohne Parameter, versucht das Programm, AutoHotkey32.ahk zu laden.</p>
+<p id="defaultfile"><strong>Skriptdateiname:</strong> Dies kann weggelassen werden, wenn keine <em>Skriptparameter</em> vorhanden sind. Wenn weggelassen, wird standardmäßig der Pfad und Name der <a href="Variables.htm#AhkPath">AutoHotkey-EXE</a> verwendet, wobei ".exe" mit ".ahk" ersetzt wird. Wenn Sie z.B. AutoHotkey.exe in MeinSkript.exe umbenennen, wird das Programm versuchen, MeinSkript.ahk zu laden. Wenn Sie AutoHotkey32.exe ohne Parameter starten, wird das Programm versuchen, AutoHotkey32.ahk zu laden.</p>
 <p id="stdin">Geben Sie ein Sternchen (*) als Dateinamen an, um den Text des Skripts aus der Standardeingabe (stdin) zu lesen. Dies hat folgende Auswirkungen:</p>
 <ul>
-  <li>Das <a href="Variables.htm#InitialWorkingDir">anfängliche Arbeitsverzeichnis</a> wird als <a href="Variables.htm#ScriptDir">A_ScriptDir</a> verwendet und dient dazu, den <a href="#lib">lokalen Lib-Ordner</a> zu lokalisieren.</li>
+  <li>Das <a href="Variables.htm#InitialWorkingDir">anfängliche Arbeitsverzeichnis</a> wird als <a href="Variables.htm#ScriptDir">A_ScriptDir</a> verwendet und dient zur Lokalisierung des <a href="#lib">lokalen Lib-Ordners</a>.</li>
   <li><a href="Variables.htm#ScriptName">A_ScriptName</a> und <a href="Variables.htm#ScriptFullPath">A_ScriptFullPath</a> enthalten beide "*".</li>
   <li><a href="lib/_SingleInstance.htm">#SingleInstance</a> ist standardmäßig ausgeschaltet.</li>
 </ul>
-<p>Ein Beispiel dazu finden Sie unter <a href="lib/Run.htm#ExecScript">ExecScript()</a>.</p>
+<p>Siehe das Beispiel <a href="lib/Run.htm#ExecScript">SkriptAusführen()</a>.</p>
 <p>Wenn die aktuelle EXE-Datei <a href="Program.htm#embedded-scripts">eingebettete Skripte</a> enthält, kann für diesen Parameter ein Sternchen gefolgt vom Ressourcennamen oder der ID eines eingebetteten Skripts angegeben werden. Bei kompilierten Skripten (also wenn ein eingebettetes Skript mit der ID #1 existiert) muss diesem Parameter die Befehlszeilenoption <code>/script</code> vorangestellt werden.</p>
 <p><strong>Skriptparameter:</strong> Eine oder mehrere Zeichenketten, die an das Skript übergeben werden sollen, jeweils durch mindestens ein Leerzeichen voneinander getrennt. Jeder Parameter, der Leerzeichen enthält, muss in Anführungszeichen gesetzt werden. Wenn Sie eine leere Zeichenkette als Parameter übergeben wollen, geben Sie zwei aufeinanderfolgende Anführungszeichen an. Um ein direkt geschriebenes Anführungszeichen zu übergeben, stellen Sie diesem einen umgekehrten Schrägstrich voran (\"). Folglich wird jeder Schrägstrich am Ende in einem in Anführungszeichen gesetzten Parameter (z.B. "C:\Meine Dokumente<span class="red">\"</span>) wie ein direkt geschriebenes Anführungszeichen behandelt (d.h. das Skript erkennt die Zeichenkette C:\Meine Dokumente<span class="red">"</span>). Mit <code>A_Args[1] := <a href="lib/StrReplace.htm">StrReplace</a>(A_Args[1], '"')</code> können solche Anführungszeichen entfernt werden.</p>
-<p id="cmd_args">Eingehende Parameter, sofern vorhanden, werden als Array in die interne Variable <strong>A_Args</strong> gespeichert, und können mithilfe der <a href="Objects.htm#Usage_Simple_Arrays">Array-Syntax</a> abgerufen werden. <code>A_Args[1]</code> enthält den ersten Parameter. Das folgende Beispiel beendet das Skript, wenn zu wenig Parameter übergeben wurden:</p>
+<p id="cmd_args">Eingehende Parameter werden, sofern vorhanden, als Array in die interne Variable <strong>A_Args</strong> gespeichert und können mit der <a href="Objects.htm#Usage_Simple_Arrays">Arraysyntax</a> abgerufen werden. <code>A_Args[1]</code> enthält den ersten Parameter. Das folgende Beispiel beendet das Skript, wenn zu wenig Parameter übergeben wurden:</p>
 <pre>if A_Args.Length &lt; 3
 {
-    MsgBox "Das Skript benötigt mindestens 3 eingehende Parameter, aber es sind nur " A_Args.Length " angekommen."
+    MsgBox "Das Skript benötigt mindestens 3 Parameter, hat aber nur " A_Args.Length " empfangen."
     ExitApp
 }</pre>
 <p>Wenn die Anzahl der Parameter, die an das Skript übergeben werden, variiert (z.B. wenn der Benutzer mit dem Mauszeiger mehrere Dateien auf ein Skript zieht und ablegt), kann das folgende Beispiel verwendet werden, um sie einzeln zu extrahieren:</p>
@@ -413,7 +413,7 @@ Zeile 2 des Textes. Standardmäßig ist ein LF-Zeichen (`n) zwischen den Zeilen.
   <li>In allen anderen Fällen wird UTF-8 verwendet (dieses Standardverhalten unterscheidet sich von AutoHotkey v1).</li>
 </ul>
 <p>Beachten Sie, dass dies nur für Skriptdateien gelten, die von AutoHotkey geladen wurden, nicht für die Datei-Ein-/Ausgabe im Skript selbst. <a href="lib/FileEncoding.htm">FileEncoding</a> bestimmt die Standardkodierung für Dateien, die vom Skript gelesen oder geschrieben werden, während <a href="lib/IniRead.htm">IniRead</a> und <a href="lib/IniWrite.htm">IniWrite</a> immer in UTF-16 oder ANSI arbeiten.</p>
-<p>Da der gesamte Text (wo nötig) in das <a href="Compat.htm#Format">native Zeichenkettenformat</a> umgewandelt wird, werden Zeichen, die ungültig sind oder in der nativen Codepage nicht existieren, mit einem Platzhalter ersetzt: '�'. Das passiert nur, wenn in der Skriptdatei Kodierungsfehler auftreten oder wenn die Codepages, die zum Speichern oder Laden der Datei verwendet werden, nicht übereinstimmen.</p>
+<p>Da der gesamte Text (wo nötig) in das <a href="Compat.htm#Format">native Zeichenkettenformat</a> umgewandelt wird, werden Zeichen, die ungültig sind oder in der nativen Codepage nicht existieren, mit einem Platzhalter ersetzt: '�'. Dies geschieht nur, wenn Kodierungsfehler in der Skriptdatei auftreten oder wenn die zum Speichern oder Laden der Datei verwendeten Codepages nicht übereinstimmen.</p>
 <p>Mit <a href="lib/RegWrite.htm">RegWrite</a> kann die Standardkodierung für Skripte festgelegt werden, die aus dem Explorer heraus gestartet werden (z.B. durch Doppelklick auf eine Datei):</p>
 <pre><em>; Entkommentieren Sie die entsprechende Zeile unten oder lassen Sie sie alle
 ; kommentiert, um den Standard des aktuellen Builds wiederherzustellen:
@@ -437,7 +437,7 @@ else            <em>; Nur für den aktuellen Benutzer setzen.</em>
 Pause</pre>
 <p>Sobald das Skript diese zwei Zeilen erreicht, zeigt es den aktuellen Inhalt aller Variablen zur Überprüfung an. Wenn Sie bereit sind fortzufahren, entpausieren Sie das Skript via Datei- oder Tray-Menü. Das Skript wird dann bis zum nächsten "Haltepunkt" (falls vorhanden) fortgesetzt.</p>
 <p>Generell empfiehlt es sich, diese "Haltepunkte" an Stellen einzufügen, wo das aktive Fenster für das Skript irrelevant ist, wie z.B. unmittelbar vor einer WinActivate-Funktion. Auf diese Weise kann das Skript seine Ausführung ordnungsgemäß fortsetzen, sobald Sie es entpausieren.</p>
-<p>Die folgenden Funktionen sind auch für das Debuggen geeignet: <a href="lib/ListLines.htm">ListLines</a>, <a href="lib/KeyHistory.htm">KeyHistory</a> und <a href="lib/OutputDebug.htm">OutputDebug</a>.</p>
+<p>Die folgenden Funktionen eignen sich ebenfalls zum Debuggen: <a href="lib/ListLines.htm">ListLines</a>, <a href="lib/KeyHistory.htm">KeyHistory</a> und <a href="lib/OutputDebug.htm">OutputDebug</a>.</p>
 <p>Häufig auftretende Fehler wie Tippfehler und fehlende "globale" Deklarationen können durch das <a href="lib/_Warn.htm">Einschalten von Warnungen</a> erkannt werden.</p>
 <h3 id="idebug">Interaktives Debuggen</h3>
 <p>Interaktives Debuggen ist mit einem unterstützten <a href="AHKL_DBGPClients.htm">DBGp-Client</a> möglich. Üblicherweise sind folgende Aktionen möglich:</p>

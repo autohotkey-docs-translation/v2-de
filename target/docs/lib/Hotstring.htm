@@ -17,10 +17,8 @@
 
 <pre class="Syntax"><span class="func">Hotstring</span> Zkette <span class="optional">, Ersatz, OnOffToggle</span>
 <span class="func">Hotstring</span> <a href="#NewOptions">NeueOptionen</a>
-AlterWert := <span class="func">Hotstring</span>("<a href="#EndChars">EndChars</a>" <span class="optional">, NeuerWert</span>)
-AlterWert := <span class="func">Hotstring</span>("<a href="#MouseReset">MouseReset</a>" <span class="optional">, NeuerWert</span>)
-<span class="func">Hotstring</span> "Reset"
-</pre>
+<span class="func">Hotstring</span> <a href="#SubFunctions">Unterfunktion</a> <span class="optional">, Wert1</span></pre>
+
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -28,19 +26,23 @@ AlterWert := <span class="func">Hotstring</span>("<a href="#MouseReset">MouseRes
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Eine Zeichenkette, mit der der Hotstring ausgelöst werden soll, inklusive der davor befindlichen <a href="../Hotstrings.htm">üblichen Doppelpunkte</a> und <a href="../Hotstrings.htm#Options">Optionszeichen</a>. Zum Beispiel <code>"::bzw"</code> oder <code>":*:]d"</code>.</p>
-    <p><em>Zkette</em> kann einem vorhandenen Hotstring entsprechen, unter Berücksichtigung der <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität (C)</a>, <a href="../Hotstrings.htm#Question">Wort-Sensitivität (?)</a>, Aktivierungskriterien (die durch <a href="_HotIf.htm">#HotIf</a> oder <a href="HotIf.htm">HotIf</a> gesetzt sind) und der auslösenden Zeichenkette. Sofern der Groß-/Kleinschreibung-Sensitivitätsmodus nicht als Standardoption bestimmt ist, würde <code>"::bzw"</code> beispielsweise mit <code>"::BZW"</code> übereinstimmen, während <code>":C:bzw"</code> nie mit <code>":C:BZW"</code> übereinstimmen würde. Die <code>C</code>- und <code>?</code>-Optionen können in <em>Zkette</em> enthalten sein oder mit der <a href="_Hotstring.htm">#Hotstring</a>-Direktive oder durch einen vorherigen Aufruf <a href="#NewOptions">dieser Funktion</a> als Standardoptionen bestimmt werden.</p>
+    <p><em>Zkette</em> kann einem existierenden Hotstring entsprechen, unter Berücksichtigung der <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität (C)</a>, <a href="../Hotstrings.htm#Question">Wort-Sensitivität (?)</a>, Aktivierungskriterien (gesetzt durch <a href="_HotIf.htm">#HotIf</a> oder <a href="HotIf.htm">HotIf</a>) und der auslösenden Zeichenkette. Zum Beispiel stimmen <code>"::bzw"</code> und <code>"::BZW"</code> überein, es sei denn, der Groß-/Kleinschreibung-Sensitivitätsmodus ist als Standardoption festgelegt, während <code>":C:bzw"</code> und <code>":C:BZW"</code> nie übereinstimmen. Die Optionen <code>C</code> und <code>?</code> können in <em>Zkette</em> enthalten sein oder mit der <a href="_Hotstring.htm">#Hotstring</a>-Direktive oder durch vorherige Verwendung von <em>NeueOptionen</em> als Standardoptionen festgelegt werden.</p>
     <p>Wenn der Hotstring bereits existiert, werden alle Optionen, die in <em>Zkette</em> angegeben sind, in Kraft gesetzt, während alle anderen Optionen unverändert bleiben. Da Hotstrings mit <code>C</code> oder <code>?</code> getrennt von anderen Hotstrings behandelt werden, ist es nicht möglich, diese Optionen hinzuzufügen oder zu entfernen. Deaktivieren Sie stattdessen den existierenden Hotstring und erstellen Sie einen neuen.</p>
-    <p>Jeder neu erstellte Hotstring -- entweder via Hotstring-Funktion oder <a href="../Hotstrings.htm">Zweifach-Doppelpunkt-Syntax</a> -- erhält einen fest zugewiesenen Namen bestehend aus seinem Auslöser und der Sequenz der Optionszeichen ist, wie von <a href="../Hotstrings.htm#ThisHotkey">ThisHotkey</a> widergespiegelt. Dieser Name ändert sich auch dann nicht, wenn die Hotstring-Funktion später mit anderen Optionszeichen auf den Hotstring zugreift.</p>
+    <p>Jeder neu erstellte Hotstring - entweder via Hotstring-Funktion oder <a href="../Hotstrings.htm">Zweifach-Doppelpunkt-Syntax</a> - erhält einen festen Namen, der sich aus der auslösenden Zeichenkette und der Sequenz von Optionszeichen zusammensetzt, widergespiegelt durch <a href="../Hotstrings.htm#ThisHotkey">ThisHotkey</a>. Dieser Name ändert sich auch dann nicht, wenn die Hotstring-Funktion später mit anderen Optionszeichen auf den Hotstring zugreift.</p>
   </dd>
 
   <dt>Ersatz</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Der Ersatztext, oder eine <a href="../Functions.htm">Funktion</a> oder ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das (als neuer <a href="../misc/Threads.htm">Thread</a>) aufgerufen werden soll, wenn der Hotstring ausgelöst wird.</p>
-    <p>Wenn <em>Ersatz</em> eine Funktion ist, wird sie einen Parameter akzeptieren - den <a href="../Hotstrings.htm#ThisHotkey">Namen</a> des Hotstrings. Hotstrings, die via <a href="../Hotstrings.htm">Zweifach-Doppelpunkt-Syntax</a> definiert wurden, verwenden automatisch den Parameternamen <code>ThisHotkey</code>. Hotstrings können auch ohne die Hotstring-Funktion <a href="../Hotstrings.htm#Function">mit einem Funktionsnamen versehen werden</a>.</p>
-    <p>Alle Zeichenketten werden als Ersatztext behandelt. Um einen Hotstring eine Funktion aufrufen zu lassen, wenn er ausgelöst wird, übergeben Sie die Funktion per Referenz. Beachten Sie, dass nach der Neuzuweisung der Funktion eines Hotstrings seine ursprüngliche Funktion nur dann wiederhergestellt werden kann, wenn ihm <a href="../Hotstrings.htm#Function">ein Name gegeben wurde</a>.</p>
-    <p>Dieser Parameter kann weggelassen werden, wenn der Hotstring bereits existiert, um zu bewirken, dass der Ersatz des Hotstrings nicht geändert wird. Dies ist z.B. nützlich, um nur die Optionen des Hotstrings zu ändern oder um den Hotstring ein- oder auszuschalten.</p>
-    <p class="note"><strong>Hinweis:</strong> Wenn dieser Parameter angegeben ist, aber der Hotstring durch eine frühere Verwendung dieser Funktion deaktiviert wurde, bleibt der Hotstring deaktiviert. Um das zu verhindern, fügen Sie das Wort <code>"On"</code> in <em>OnOffToggle</em> ein.</p>
+    <p>Wenn weggelassen und <em>Zkette</em> bereits als Hotstring existiert, bleibt sein Ersatz unverändert. Dies ist z.B. nützlich, um nur die Optionen des Hotstrings zu ändern oder um den Hotstring ein- oder auszuschalten. Andernfalls geben Sie den Ersatztext oder eine Rückruffunktion an.</p>
+    <p>Wenn <em>Ersatz</em> eine Funktion ist, wird sie beim Auslösen des Hotstrings aufgerufen (als neuer <a href="../misc/Threads.htm">Thread</a>).</p>
+    <p>Die Rückruffunktion akzeptiert einen Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(HotstringName) { ...</pre>
+    <p>Es spielt keine Rolle, welchen Namen Sie dem Parameter geben, allerdings wird ihm als Wert der <a href="../Hotstrings.htm#ThisHotkey">Hotstring-Name</a> zugewiesen.</p>
+    <p>Der Parameter der Rückruffunktion kann weggelassen werden, wenn die entsprechende Information nicht benötigt wird, aber dann muss ein Sternchen angegeben werden, z.B. <code>MeinRückruf(*)</code>.</p>
+    <p>Hotstrings, die mit der <a href="../Hotstrings.htm">Zweifach-Doppelpunkt-Syntax</a> definiert wurden, verwenden automatisch den Parameternamen <code>ThisHotkey</code>. Es ist auch möglich, Hotstrings <a href="../Hotstrings.htm#Function">einen Funktionsnamen zuzuweisen</a>, ohne die Hotstring-Funktion zu verwenden.</p>
+    <p>Nach einer Neuzuweisung der Funktion eines Hotstrings kann die ursprüngliche Funktion nur wiederhergestellt werden, wenn ihm <a href="../Hotstrings.htm#Function">ein Name gegeben wurde</a>.</p>
+    <p class="note"><strong>Hinweis:</strong> Wenn dieser Parameter angegeben ist, aber der Hotstring durch eine frühere Verwendung dieser Funktion deaktiviert wurde, bleibt der Hotstring deaktiviert. Um das zu verhindern, geben Sie <code>"On"</code> für <em>OnOffToggle</em> an.</p>
   </dd>
 
   <dt>OnOffToggle</dt>
@@ -52,7 +54,49 @@ AlterWert := <span class="func">Hotstring</span>("<a href="#MouseReset">MouseRes
     <p><strong>Toggle</strong> oder <strong>-1</strong>: Schaltet den Hotstring auf den entgegengesetzten Zustand (aktiviert oder deaktiviert).</p>
   </dd>
 
+  <dt>NeueOptionen</dt>
+  <dd id="NewOptions">
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Um neue Standardoptionen für danach erstellte Hotstrings festzulegen, übergeben Sie die Optionen ohne Doppelpunkte am Anfang oder Ende an die Hotstring-Funktion. Zum Beispiel: <code>Hotstring "T"</code>.</p>
+    <p>Das Einschalten der <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität (C)</a> oder der <a href="../Hotstrings.htm#Question">Wort-Sensitivität (?)</a> wirkt sich auch darauf aus, welche existierenden Hotstrings von nachträglichen Aufrufen der Hotstring-Funktion gefunden werden. Zum Beispiel wird <code>Hotstring ":T:btw"</code> standardmäßig <code>::BTW</code> finden, aber nicht, wenn <code>Hotstring "C"</code> oder <code><a href="_Hotstring.htm">#Hotstring</a> C</code> wirksam ist. Um das rückgängig zu machen oder zu überschreiben, übergeben Sie eine Option, die die andere Option automatisch ausschließt; <code>C0</code> und <code>C1</code> beispielsweise würden <code>C</code> überschreiben.</p>
+  </dd>
+
+  <dt>Unterfunktion, Wert1</dt>
+  <dd>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
+    <p>Diese Parameter sind voneinander abhängig und können wie folgt verwendet werden.</p>
+  </dd>
+
 </dl>
+
+<h2 id="SubFunctions">Unterfunktionen</h2>
+<p>Geben Sie für <em>Unterfunktion</em> Folgendes an:</p>
+<ul>
+  <li><a href="#EndChars">EndChars</a>: Ermittelt oder ändert den Satz von Endungszeichen.</li>
+  <li><a href="#MouseReset">MouseReset</a>: Bestimmt, ob Mausklicks den Hotstring-Erkenner zurücksetzen dürfen.</li>
+  <li><a href="#Reset">Reset</a>: Setzt den Hotstring-Erkenner sofort zurück.</li>
+</ul>
+
+<h3 id="EndChars">EndChars</h3>
+<p>Ermittelt oder modifiziert einen Satz von Zeichen, die vom Hotstring-Erkenner als <a href="../Hotstrings.htm#EndChars">Endungszeichen</a> verwendet werden.</p>
+<pre class="Syntax">AlterWert := <span class="func">Hotstring</span>("EndChars" <span class="optional">, NeuerWert</span>)</pre>
+<p>Zum Beispiel:</p>
+<pre>vorher_zeichen := Hotstring("EndChars", "-()[]{}':;`"/\,.?!`n`s`t")
+MsgBox "Der vorherige Wert war: " vorher_zeichen</pre>
+<p><a href="#EndChars">#Hotstring EndChars</a> wirkt sich auch auf diese Einstellung aus.</p>
+<p>Es ist derzeit nicht möglich, für jeden Hotstring einen anderen Satz von Endungszeichen anzugeben.</p>
+
+<h3 id="MouseReset">MouseReset</h3>
+<p>Ermittelt oder modifiziert die globale Einstellung, die bestimmt, ob Mausklicks den Hotstring-Erkenner zurücksetzen dürfen, wie <a href="../Hotstrings.htm#NoMouse">hier</a> beschrieben.</p>
+<pre class="Syntax">AlterWert := <span class="func">Hotstring</span>("MouseReset" <span class="optional">, NeuerWert</span>)</pre>
+<p><em>NeuerWert</em> sollte 1 (true) sein, um die Erkennung von Mausklicks und das Zurücksetzen des Hotstring-Erkenners zu aktivieren, oder 0 (false), um es zu deaktivieren. Der Rückgabewert ist die Einstellung, welche vor dem Aufruf der Funktion wirksam war.</p>
+<p>Der <a href="InstallMouseHook.htm">Maus</a>-Hook wird bei dieser Funktion je nach Bedarf automatisch installiert oder entfernt.</p>
+<p><a href="_Hotstring.htm">#Hotstring NoMouse</a> wirkt sich auch auf diese Einstellung aus und entspricht der Angabe von <code>False</code> für <em>NeuerWert</em>.</p>
+
+<h3 id="Reset">Reset</h3>
+<p>Setzt den Hotstring-Erkenner sofort zurück.</p>
+<pre class="Syntax"><span class="func">Hotstring</span> "Reset"</pre>
+<p>Mit anderen Worten, das Skript wartet auf einen völlig neuen Hotstring und verwirft alles, was Sie zuvor eingegeben haben.</p>
 
 <h2 id="Errors">Fehlerbehandlung</h2>
 <p>Diese Funktion löst eine Ausnahme aus, wenn die Parameter ungültig sind oder eine Speicherreservierung fehlschlägt.</p>
@@ -60,14 +104,14 @@ AlterWert := <span class="func">Hotstring</span>("<a href="#MouseReset">MouseRes
 <pre>try
     Hotstring "::bzw"
 catch TargetError
-    MsgBox "Der Hotstring ist nicht vorhanden oder hat keine Varianten für die aktuellen IfWin-Kriterien."</pre>
+    MsgBox "Der Hotstring existiert nicht oder hat keine Varianten mit den aktuellen HotIf-Kriterien."</pre>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die <a href="HotIf.htm">aktuelle Einstellung von HotIf</a> bestimmt die <a href="#variant">Variante</a> eines Hotstrings, auf die sich die Hotstring-Funktion beziehen wird.</p>
-<p>Wenn das Skript <a href="Suspend.htm">suspendiert</a> ist, werden neu hinzugefügte/aktivierte Hotstrings ebenfalls suspendiert, bis die Suspension wieder aufgehoben wird (es sei denn, sie sind davor geschützt, wie im <a href="Suspend.htm">Suspend</a>-Abschnitt beschrieben).</p>
+<p>Die <a href="HotIf.htm">aktuelle HotIf-Einstellung</a> bestimmt die <a href="#variant">Variante</a> eines Hotstrings, mit der die Hotstring-Funktion arbeiten wird.</p>
+<p>Wenn das Skript <a href="Suspend.htm">suspendiert</a> ist und neue Hotstrings hinzugefügt oder aktiviert werden, werden diese ebenfalls suspendiert, bis die Suspension wieder aufgehoben wird (es sei denn, sie sind davor geschützt, wie im <a href="Suspend.htm">Suspend</a>-Abschnitt beschrieben).</p>
 <p>Die <a href="InstallKeybdHook.htm">Tastatur</a>- und/oder <a href="InstallMouseHook.htm">Maus</a>-Hooks werden bei dieser Funktion je nach Bedarf automatisch installiert oder entfernt.</p>
 <p>Diese Funktion kann Hotstrings anderer Skripte nicht direkt aktivieren oder deaktivieren.</p>
-<p>Sobald ein Skript mindestens einen Hotstring hat, wird es persistent; das heißt, dass <a href="ExitApp.htm">ExitApp</a> anstelle von <a href="Exit.htm">Exit</a> verwendet werden sollte, um dieses Skript zu terminieren. Hotstring-Skripte sind außerdem automatisch <a href="_SingleInstance.htm">#SingleInstance</a>, es sei denn, <code>#SingleInstance, Off</code> wurde angegeben.</p>
+<p>Sobald ein Skript mindestens einen Hotstring hat, wird es <a href="../Scripts.htm#persistent">persistent</a>; das heißt, dass <a href="ExitApp.htm">ExitApp</a> anstelle von <a href="Exit.htm">Exit</a> verwendet werden sollte, um dieses Skript zu terminieren.</p>
 
 <h2 id="variant">Hotstring-Varianten (-Duplikate)</h2>
 <p>Ein bestimmter Hotstring kann mehr als einmal erstellt werden, wenn für jede Definition ein anderes <a href="HotIf.htm">HotIf</a>-Kriterium, eine andere <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität</a> (<code>C</code> vs. <code>C0</code>/<code>C1</code>) oder <a href="../Hotstrings.htm#Question">Wort-Sensitivität</a> (<code>?</code>) angegeben wird. Diese werden als <em>Hotstring-Varianten</em> bezeichnet. Zum Beispiel:</p>
@@ -78,30 +122,7 @@ Hotstring "::btw", "back to work"
 HotIfWinActive
 Hotstring "::btw", "by the way"</pre>
 <p>Wenn mehr als eine Variante eines Hotstrings zum Auslösen geeignet ist, wird nur die zuerst erstellte Variante ausgelöst.</p>
-<p>Siehe <a href="_HotIf.htm#general-remarks">Bemerkungen zu #HotIf</a>, um mehr über IfWin zu erfahren.</p>
-
-<h2 id="EndChars">EndChars</h2>
-<pre class="Syntax">AlterWert := <span class="func">Hotstring</span>("EndChars" <span class="optional">, NeuerWert</span>)</pre>
-<p>Ermittelt oder modifiziert einen Satz von Zeichen, die vom Hotstring-Erkenner als <a href="../Hotstrings.htm#EndChars">Endungszeichen</a> verwendet werden. Zum Beispiel:</p>
-<pre>vorher_zeichen := Hotstring("EndChars", "-()[]{}':;`"/\,.?!`n`s`t")
-MsgBox "Der vorherige Wert war: " vorher_zeichen</pre>
-<p><a href="#EndChars">#Hotstring EndChars</a> wirkt sich auch auf diese Einstellung aus.</p>
-<p>Es ist derzeit nicht möglich, für jeden Hotstring einen anderen Satz von Endungszeichen anzugeben.</p>
-
-<h2 id="MouseReset">MouseReset</h2>
-<pre class="Syntax">AlterWert := <span class="func">Hotstring</span>("MouseReset" <span class="optional">, NeuerWert</span>)</pre>
-<p>Ermittelt oder modifiziert die globale Einstellung, die bestimmt, ob Mausklicks den Hotstring-Erkenner zurücksetzen dürfen, wie <a href="../Hotstrings.htm#NoMouse">hier</a> beschrieben. <em>NeuerWert</em> sollte 1 (true) sein, um die Erkennung von Mausklicks und das Zurücksetzen des Hotstring-Erkenners zu aktivieren, oder 0 (false), um es zu deaktivieren. Der Rückgabewert ist die Einstellung, welche vor dem Aufruf der Funktion wirksam war.</p>
-<p>Der <a href="InstallMouseHook.htm">Maus</a>-Hook wird bei dieser Funktion je nach Bedarf automatisch installiert oder entfernt.</p>
-<p><a href="_Hotstring.htm">#Hotstring NoMouse</a> wirkt sich auch auf diese Einstellung aus und entspricht der Angabe von <code>False</code> für <em>NeuerWert</em>.</p>
-
-<h2 id="Reset">Reset</h2>
-<pre class="Syntax"><span class="func">Hotstring</span> "Reset"</pre>
-<p>Setzt den Hotstring-Erkenner sofort zurück. Mit anderen Worten, das Skript wartet auf einen völlig neuen Hotstring und verwirft alles, was Sie zuvor eingegeben haben.</p>
-
-<h2 id="NewOptions">Standardoptionen setzen</h2>
-<pre class="Syntax"><span class="func">Hotstring</span> NeueOptionen</pre>
-<p>Um neue Standardoptionen für danach erstellte Hotstrings festzulegen, übergeben Sie die Optionen ohne Doppelpunkte am Anfang oder Ende an die Hotstring-Funktion. Zum Beispiel: <code>Hotstring "T"</code>.</p>
-<p>Das Einschalten der <a href="../Hotstrings.htm#C">Groß-/Kleinschreibung-Sensitivität (C)</a> oder der <a href="../Hotstrings.htm#Question">Wort-Sensitivität (?)</a> wirkt sich auch darauf aus, welche existierenden Hotstrings von nachträglichen Aufrufen der Hotstring-Funktion gefunden werden. Zum Beispiel wird <code>Hotstring ":T:btw"</code> standardmäßig <code>::BTW</code> finden, aber nicht, wenn <code>Hotstring "C"</code> oder <code><a href="_Hotstring.htm">#Hotstring</a> C</code> wirksam ist. Um das rückgängig zu machen oder zu überschreiben, übergeben Sie eine Option, die die andere Option automatisch ausschließt; <code>C0</code> und <code>C1</code> beispielsweise würden <code>C</code> überschreiben.</p>
+<p>Weitere Informationen finden Sie unter <a href="HotIf.htm">HotIf</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../Hotstrings.htm">Hotstrings</a>, <a href="_HotIf.htm">#HotIf</a>, <a href="../Variables.htm#ThisHotkey">A_ThisHotkey</a>, <a href="_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>, <a href="Suspend.htm">Suspend</a>, <a href="../misc/Threads.htm">Threads</a>, <a href="Thread.htm">Thread</a>, <a href="Critical.htm">Critical</a></p>
@@ -109,12 +130,12 @@ MsgBox "Der vorherige Wert war: " vorher_zeichen</pre>
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExHelper">
-<p><a class="ex_number" href="#ExHelper"></a> Hotstring Helper. Das folgende Skript könnte nützlich sein, wenn Sie viel mit Hotstrings arbeiten. Es basiert auf das v1-Skript von Andreas Borutta. Drücken Sie <kbd>Win</kbd>+<kbd>H</kbd> (oder einen anderen Hotkey Ihrer Wahl), um den aktuell markierten Text zu einem Hotstring zu machen. Wenn Sie in einem Textverarbeitungsprogramm zum Beispiel "beziehungsweise" markieren und <kbd>Win</kbd>+<kbd>H</kbd> drücken, wird das Skript Sie auffordern, eine Abkürzung für diesen Text zu bestimmen (z.B. bzw), dann den neuen Hotstring in das Skript einfügen und ihn anschließend aktivieren.</p>
+<p><a class="ex_number" href="#ExHelper"></a> Hotstring Helper. Das folgende Skript könnte nützlich sein, wenn Sie viel mit Hotstrings arbeiten. Es basiert auf dem v1-Skript von Andreas Borutta. Drücken Sie <kbd>Win</kbd>+<kbd>H</kbd> (oder einen anderen Hotkey Ihrer Wahl), um den aktuell markierten Text zu einem Hotstring zu machen. Wenn Sie z.B. in einem Textverarbeitungsprogramm "beziehungsweise" markieren und <kbd>Win</kbd>+<kbd>H</kbd> drücken, wird das Skript Sie auffordern, eine Abkürzung für diesen Text einzugeben (z.B. bzw), und dann den neuen Hotstring in das Skript einfügen und aktivieren.</p>
 <pre>#h::  <em>; Hotkey: WIN+H</em>
 {
     <em>; Ruft den aktuell markierten Text ab. Es wird die Zwischenablage statt
-    ; EditGetSelectedText benutzt, um das Skript für mehr Texteditoren
-    ; funktionsfähig zu machen.  Speichert die aktuelle Zwischenablage und
+    ; EditGetSelectedText verwendet, um das Skript für mehr Texteditoren
+    ; funktionsfähig zu machen. Speichert die aktuelle Zwischenablage und
     ; stellt sie später wieder her (allerdings funktioniert das nur mit
     ; reinem Text):</em>
     ClipboardAlt := A_Clipboard
@@ -122,7 +143,7 @@ MsgBox "Der vorherige Wert war: " vorher_zeichen</pre>
     Send "^c"
     if !ClipWait(1)  <em>; ClipWait hat das Zeitlimit überschritten.</em>
     {
-        A_Clipboard := ClipboardAlt <em>; Frühere Zwischenablage vor dem Return wiederherstellen.</em>
+        A_Clipboard := ClipboardAlt <em>; Den vorherigen Inhalt der Zwischenablage vor dem Return wiederherstellen.</em>
         return
     }
     <em>; Ersetze CRLF und/oder LF mit `n für einen Hotstring im Raw-Modus:

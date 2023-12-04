@@ -24,7 +24,7 @@
   <dt>Wert</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Der Wert, der geschrieben werden soll. Lange Textwerte können via <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a> in mehrere kurze Zeilen aufgeteilt werden, um die Übersichtlichkeit und Wartbarkeit eines Skripts zu verbessern.</p>
+    <p>Der zu schreibende Wert. Lange Textwerte können via <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a> in mehrere kurze Zeilen aufgeteilt werden, um die Übersichtlichkeit und Wartbarkeit eines Skripts zu verbessern.</p>
   </dd>
 
   <dt>WertTyp</dt>
@@ -37,10 +37,10 @@
   <dt>SchlüsselName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der vollständige Name des Registry-Schlüssels, z.B. <code>"HKLM\Software\BeliebigeAnwendung"</code>.</p>
+    <p>Der vollständige Name des Registry-Schlüssels, z.B. <code>"HKLM\Software\BeliebigeApp"</code>.</p>
     <p>Der Name muss entweder mit HKEY_LOCAL_MACHINE (oder HKLM), HKEY_USERS (oder HKU), HKEY_CURRENT_USER (oder HKCU), HKEY_CLASSES_ROOT (oder HKCR) oder HKEY_CURRENT_CONFIG (oder HKCC) beginnen.</p>
     <p>Um auf eine <a href="LoopReg.htm#remote">Remote-Registry</a> zuzugreifen, stellen Sie den Computernamen und einen umgekehrten Schrägstrich voran, z.B. <code>"\\workstation01\HKLM"</code>.</p>
-    <p><em>SchlüsselName</em> kann nur weggelassen werden, wenn eine <a href="LoopReg.htm">Registry-Schleife</a> läuft - in diesem Fall wird standardmäßig der Schlüssel des aktuellen Schleifenelements verwendet. Wenn das Element ein Unterschlüssel ist, wird standardmäßig der vollständige Name dieses Unterschlüssels benutzt. Wenn das Element ein Wert ist, gilt für <em>WertTyp</em> und <em>WertName</em> standardmäßig der Typ und Name dieses Wertes, was aber überschrieben werden kann.</p>
+    <p><em>SchlüsselName</em> kann nur weggelassen werden, wenn eine <a href="LoopReg.htm">Registry-Schleife</a> läuft - in diesem Fall wird standardmäßig der Schlüssel des aktuellen Schleifenelements verwendet. Wenn das Element ein Unterschlüssel ist, wird standardmäßig der vollständige Name dieses Unterschlüssels verwendet. Wenn das Element ein Wert ist, verwenden <em>WertTyp</em> und <em>WertName</em> standardmäßig den Typ bzw. den Namen dieses Wertes, können aber überschrieben werden.</p>
   </dd>
 
   <dt>WertName</dt>
@@ -56,14 +56,14 @@
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Wenn <em>SchlüsselName</em> einen nicht-existierenden Unterschlüssel spezifiziert, wird RegWrite versuchen, ihn zu erstellen (zusammen mit seinen übergeordneten Schlüsseln, falls nötig). RegWrite kann etwas direkt in einen Root-Schlüssel schreiben. Es gibt aber Betriebssysteme, die sich weigern, etwas in die oberste Ebene von HKEY_CURRENT_USER zu schreiben.</p>
+<p>Wenn <em>SchlüsselName</em> einen nicht-existierenden Unterschlüssel angibt, versucht RegWrite, ihn zu erstellen (einschließlich seiner Elternelemente, falls nötig). Obwohl RegWrite direkt in einen Root-Schlüssel schreiben kann, weigern sich einige Betriebssysteme, in die oberste Ebene von HKEY_CURRENT_USER zu schreiben.</p>
 <p>Mit <a href="RegCreateKey.htm">RegCreateKey</a> kann ein Schlüssel erstellt werden, ohne dass Werte in den Schlüssel geschrieben werden.</p>
 <p>Wenn <em>WertTyp</em> REG_DWORD ist, muss für <em>Wert</em> eine Zahl zwischen -2147483648 und 4294967295 (0xFFFFFFFF) angegeben werden. REG_DWORD-Werte sind in der Registry immer positive Dezimalzahlen. Um einen REG_DWORD-Wert als negative Zahl mit Mitteln wie <a href="RegRead.htm">RegRead</a> zu lesen, wandeln Sie ihn mit <code>AusgabeVar := AusgabeVar &lt;&lt; 32 &gt;&gt; 32</code> o.ä. in einen vorzeichenfähigen 32-Bit-Integer um.</p>
 <p>Wenn ein REG_BINARY-Schlüssel geschrieben wird, muss eine Zeichenkette aus hexadezimalen Zeichen angegeben werden, wie z.B. 01A9FF77 für den REG_BINARY-Wert 01,a9,ff,77.</p>
 <p>Wenn ein REG_MULTI_SZ-Schlüssel geschrieben wird, müssen alle Komponenten mit einem LF-Zeichen (`n) voneinander getrennt werden. Die letzte Komponente darf ebenfalls mit einem LF-Zeichen enden. Leere Komponenten sind nicht erlaubt. Mit anderen Worten, vermeiden Sie zwei aufeinanderfolgende LF-Zeichen (`n`n), um zu verhindern, dass ein unerwartet kurzer Wert in die Registry geschrieben wird.</p>
 <p>Mit der <a href="LoopReg.htm">Registry-Schleife</a> können mehrere Registry-Schlüssel und -Werte abgerufen und bearbeitet werden.</p>
 <p>In den Bemerkungen zur <a href="LoopReg.htm#remote">Registry-Schleife</a> finden Sie Informationen darüber, wie auf die Registry eines Remote-Computers zugegriffen werden kann.</p>
-<p>Um Einträge aus den 64-Bit-Bereichen der Registry in einem 32-Bit-Skript zu lesen und zu schreiben oder umgekehrt, verwenden Sie <a href="SetRegView.htm">SetRegView</a>.</p>
+<p>Um Einträge in den 64-Bit-Bereichen der Registry mit einem 32-Bit-Skript (oder umgekehrt) zu lesen und zu schreiben, verwenden Sie <a href="SetRegView.htm">SetRegView</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="RegCreateKey.htm">RegCreateKey</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a>, <a href="RegRead.htm">RegRead</a>, <a href="LoopReg.htm">Registry-Schleife</a>, <a href="SetRegView.htm">SetRegView</a>, <a href="IniWrite.htm">IniWrite</a></p>

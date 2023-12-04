@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>OnCommand (GUI) - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die OnCommand-Methode eines GuiControl-Objekts registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn eine Steuerelementbenachrichtigung via WM_COMMAND-Meldung empfangen wird." />
+<meta name="description" content="Die OnCommand-Methode eines GuiControl-Objekts registriert eine Funktion oder Methode, die aufgerufen wird, wenn eine Steuerelement­benachrichtigung via WM_COMMAND-Meldung empfangen wird." />
 <meta name="ahk:equiv-v1" content="lib/GuiControl.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +13,7 @@
 <body>
 
 <h1>OnCommand</h1>
-<p>Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn eine Steuerelementbenachrichtigung via <a href="https://learn.microsoft.com/windows/win32/menurc/wm-command">WM_COMMAND</a>-Meldung empfangen wird.</p>
+<p>Registriert eine Funktion oder Methode, die aufgerufen wird, wenn eine Steuerelement­benachrichtigung via <a href="#WM_COMMAND">WM_COMMAND</a>-Meldung empfangen wird.</p>
 <pre class="Syntax"><a href="GuiControl.htm">GuiCtrl</a>.<span class="func">OnCommand</span>(NachrichtCode, Rückruf <span class="optional">, HinzufügenEntfernen</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
@@ -27,15 +27,21 @@
   <dt>Rückruf</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Eine Funktion, Methode oder ein Objekt, das aufgerufen werden soll, wenn das Ereignis ausgelöst wird.</p>
-    <p>Wenn die GUI ein Event-Sink hat (also wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode sein, die zu einem Event-Sink gehört.</p>
-    <p>Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
+    <p>Eine Funktion, eine Methode oder ein Objekt, die/das aufgerufen wird, wenn das Ereignis ausgelöst wird.</p>
+    <p>Wenn die GUI ein Event-Sink hat (d.h. wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode im Event-Sink sein. Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
+    <p id="Callback_Parameters">Die Rückruffunktion akzeptiert einen Parameter und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(GuiCtrl) { ...</pre>
+    <p>Es spielt keine Rolle, welchen Namen Sie dem Parameter geben, allerdings wird ihm als Wert das <a href="GuiControl.htm">GuiControl-Objekt</a> des aktuellen GUI-Steuerelements zugewiesen.</p>
+    <p>Der Parameter der Rückruffunktion kann weggelassen werden, wenn die entsprechende Information nicht benötigt wird, aber dann muss ein Sternchen angegeben werden, z.B. <code>MeinRückruf(*)</code>.</p>
+    <p>Die <a href="GuiOnEvent.htm#Callback_Parameters">OnEvent-Hinweise</a> bezüglich <code>this</code> und Bound-Funktionen gelten auch für OnCommand.</p>
+    <p id="Callback_Return_Value">Wenn mehrere Rückruffunktionen für ein Ereignis registriert sind, kann eine Rückruffunktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Rückruffunktionen aufgerufen werden.</p>
+    <p>Der Rückgabewert der Rückruffunktion wird vom GUI-Steuerelement ignoriert.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn weggelassen, wird standardmäßig 1 verwendet (die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
+    <p>Wenn weggelassen, wird standardmäßig 1 verwendet. Andernfalls geben Sie eine der folgenden Zahlen an:</p>
     <ul>
       <li>1 = Die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
       <li>-1 = Die Rückruffunktion vor anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
@@ -45,22 +51,13 @@
 </dl>
 
 <h2 id="WM_COMMAND">WM_COMMAND</h2>
-<p>Bestimmte Typen von Steuerelementen senden eine <a href="https://learn.microsoft.com/windows/win32/menurc/wm-command">WM_COMMAND</a>-Meldung, wann immer ein interessantes Ereignis auftritt. Das sind in der Regel die Standardsteuerelemente von Windows, die schon sehr lange im Einsatz sind; neuere Steuerelemente benutzen die WM_NOTIFY-Meldung (siehe <a href="GuiOnNotify.htm">OnNotify</a>). Häufig benutzte Benachrichtigungscodes wurden in Ereignisse umgewandelt, die ein Skript mit <a href="GuiOnEvent.htm">OnEvent</a> überwachen kann.</p>
-<p>Die Parameter der Meldung enthalten die Steuerelement-ID, HWND-Nummer und den Benachrichtigungscode, die AutoHotkey nutzt, um die Benachrichtigung an die entsprechende Rückruffunktion zu senden. Es gibt keine zusätzlichen Parameter.</p>
-<p>Welche Benachrichtigungen es genau gibt (falls vorhanden), entnehmen Sie bitte der Dokumentation des Steuerelements. <a href="https://learn.microsoft.com/windows/win32/controls/individual-control-info">Control Library (Microsoft Docs)</a> enthält Links zu typischen Windows-Steuerelementen (allerdings benutzen nur ein Paar von denen WM_COMMAND). Die Benachrichtigungscodes (Nummern) sind in der Windows SDK zu finden, oder via Suchmaschine.</p>
-
-<h2 id="Callback_Parameters">Parameter der Rückruffunktion</h2>
-<p>Die <a href="GuiOnEvent.htm#Callback_Parameters">OnEvent-Hinweise</a> bezüglich <code>this</code> und Bound-Funktionen gelten auch für OnCommand.</p>
-<p>Die Rückruffunktion akzeptiert einen Parameter:</p>
-<pre class="Syntax"><i>Rückruf</i>(GuiControl)</pre>
-
-<h2 id="Callback_Return_Value">Rückgabewert der Rückruffunktion</h2>
-<p>Wenn mehrere Rückruffunktionen für ein Ereignis registriert sind, kann eine Rückruffunktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Rückruffunktionen aufgerufen werden.</p>
-<p>Das Steuerelement ignoriert diesen Rückgabewert.</p>
+<p>Bestimmte Steuerelemente senden eine <a href="https://learn.microsoft.com/windows/win32/menurc/wm-command">WM_COMMAND</a>-Meldung, wann immer ein interessantes Ereignis eintritt. In der Regel sind das Windows-Steuerelemente, die es schon lange gibt, da neuere Steuerelemente die WM_NOTIFY-Meldung verwenden (siehe <a href="GuiOnNotify.htm">OnNotify</a>). Häufig verwendete Benachrichtigungscodes wurden in Ereignisse übersetzt, die ein Skript mit <a href="GuiOnEvent.htm">OnEvent</a> überwachen kann.</p>
+<p>Die Parameter der Meldung enthalten die Steuerelement-ID, das Fensterhandle (HWND) und den Benachrichtigungscode, die AutoHotkey verwendet, um die Benachrichtigung an die entsprechende Rückruffunktion zu senden. Es gibt keine weiteren Parameter.</p>
+<p>Welche Benachrichtigungen es genau gibt (falls vorhanden), entnehmen Sie bitte der Dokumentation des Steuerelements. <a href="https://learn.microsoft.com/windows/win32/controls/individual-control-info">Control Library (Microsoft Docs)</a> enthält Links zu jedem der gängigen Windows-Steuerelemente (allerdings verwenden nur wenige von ihnen WM_COMMAND). Die Benachrichtigungscodes (Nummern) können im Windows SDK oder durch Suchen im Internet gefunden werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p>Folgende <a href="GuiOnEvent.htm">OnEvent</a>-Hinweise gelten auch für OnCommand: <a href="GuiOnEvent.htm#Threads">Threads</a>, <a href="GuiOnEvent.htm#Destroying_the_GUI">GUI zerstören</a>.</p>
-<p><a href="GuiOnNotify.htm">OnNotify</a> kann Benachrichtigungen überwachen, die als WM_NOTIFY-Meldung gesendet wurden.</p>
+<p><a href="GuiOnNotify.htm">OnNotify</a> kann für Benachrichtigungen verwendet werden, die als WM_NOTIFY-Meldung gesendet wurden.</p>
 
 </body>
 </html>

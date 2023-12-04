@@ -22,7 +22,7 @@
   <dt>LeisteText</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Wenn leer oder weggelassen, wartet die Funktion, bis die Statusleiste leer wird. Andernfalls geben Sie den Text oder ein Teil des Textes an, auf dessen Erscheinen die Funktion warten soll. Der Text ist Groß-/Kleinschreibung-sensitiv. Das Übereinstimmungsverhalten wird durch <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt, ähnlich wie bei <em>FensterTitel</em> unten.</p>
+    <p>Wenn leer oder weggelassen, wartet die Funktion, bis die Statusleiste leer ist. Andernfalls geben Sie den Text oder einen Teil des Textes an, auf dessen Erscheinen die Funktion warten soll. Der Text ist Groß-/Kleinschreibung-sensitiv. Das Übereinstimmungsverhalten wird durch <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> bestimmt, ähnlich wie bei <em>FensterTitel</em> unten.</p>
     <p>Um stattdessen auf eine <em>Änderung</em> des Leistentextes zu warten, führen Sie <a href="StatusBarGetText.htm">StatusBarGetText</a> wiederholt mit einer Schleife aus oder verwenden Sie das RegEx-Beispiel am Ende dieser Seite.</p>
   </dd>
   
@@ -40,8 +40,10 @@
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+    <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 
   <dt>Intervall</dt>
@@ -57,19 +59,14 @@
 <p>Diese Funktion gibt 1 (true) zurück, wenn eine Übereinstimmung gefunden wurde, oder 0 (false), wenn die Funktion das Zeitlimit überschritten hat.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
-<p>Es wird in folgenden Fällen eine Ausnahme ausgelöst:</p>
-<ul>
-  <li><a href="Error.htm#TargetError">TargetError</a>: Das Zielfenster konnte nicht gefunden werden oder enthält keine reguläre Statusleiste.</li>
-  <li><a href="Error.htm#OSError">OSError</a>: Es gab ein Problem beim Senden der SB_GETPARTS-Meldung, oder es erfolgte keine Antwort innerhalb von 2000&nbsp;ms.</li>
-  <li><a href="Error.htm#OSError">OSError</a>: Es konnte kein Speicher innerhalb des Prozesses, dem die Statusleiste gehört, reserviert werden.</li>
-</ul>
+<p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Zielfenster nicht gefunden werden konnte oder keine reguläre Statusleiste enthält.</p>
+<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn es ein Problem beim Senden der SB_GETPARTS-Meldung gab oder keine Antwort innerhalb von 2000&nbsp;ms erfolgte, oder wenn kein Speicher innerhalb des Prozesses, dem die Statusleiste gehört, reserviert werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Diese Funktion versucht, die erste <em>reguläre</em> Statusleiste eines Fensters zu lesen (allgemeines Microsoft-Steuerelement: msctls_statusbar32). Einige Programme verwenden eigene Statusleisten oder spezielle Versionen des MS-Steuerelements - in diesem Fall werden solche Leisten nicht unterstützt.</p>
 <p>Anstatt <a href="StatusBarGetText.htm">StatusBarGetText</a> wiederholt mit einer Schleife auszuführen, ist es in der Regel effizienter, StatusBarWait zu verwenden, da es Optimierungen enthält, die den Overhead durch mehrfache Aufrufe von <a href="StatusBarGetText.htm">StatusBarGetText</a> vermeiden.</p>
-<p>StatusBarWait ermittelt das Zielfenster, bevor es damit beginnt, auf eine Übereinstimmung zu warten. Falls dieses Zielfenster geschlossen wird, hört die Funktion auf zu warten, auch dann, wenn ein anderes Fenster mit dem gleichen <em>FensterTitel</em> und <em>FensterText</em> vorhanden ist.</p>
+<p>StatusBarWait ermittelt das Zielfenster, bevor es damit beginnt, auf eine Übereinstimmung zu warten. Wenn dieses Zielfenster geschlossen wird, hört die Funktion auf zu warten, auch dann, wenn ein anderes Fenster mit demselben <em>FensterTitel</em> und <em>FensterText</em> existiert.</p>
 <p>Während die Funktion wartet, können neue <a href="../misc/Threads.htm">Threads</a> via <a href="../Hotkeys.htm">Hotkeys</a>, <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> oder <a href="SetTimer.htm">Timer</a> gestartet werden.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="StatusBarGetText.htm">StatusBarGetText</a>, <a href="WinGetTitle.htm">WinGetTitle</a>, <a href="WinGetText.htm">WinGetText</a>, <a href="ControlGetText.htm">ControlGetText</a></p>
@@ -82,9 +79,9 @@
     Send "{tab 2}!o*.txt{enter}"  <em>; Das Suchmuster in das Suchfenster schreiben.</em>
     Sleep 400  <em>; Der Statusleiste Zeit geben, auf "wird durchsucht" zu wechseln.</em>
     if StatusBarWait("gefunden", 30)
-        MsgBox "Die Suche wurde erfolgreich durchgeführt."
+        MsgBox "Die Suche war erfolgreich."
     else
-        MsgBox "Die Funktion hat die Zeit überschritten."
+        MsgBox "Die Funktion hat das Zeitlimit überschritten."
 }</pre>
 </div>
 

@@ -29,14 +29,14 @@
   <dt>Komponente</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn leer oder weggelassen, wird ein Interface, das vom Gerät selbst implementiert wurde, abgerufen. Andernfalls geben Sie den Anzeigenamen und/oder die Indexnummer der Komponente an, z.B. <code>1</code>, <code>"Line in"</code> oder <code>"Line in:2"</code>.</p>
+    <p>Wenn leer oder weggelassen, wird ein Interface abgerufen, das vom Gerät selbst implementiert wurde. Andernfalls geben Sie den Anzeigenamen und/oder die Indexnummer der Komponente an, z.B. <code>1</code>, <code>"Line in"</code> oder <code>"Line in:2"</code>.</p>
     <p>Weitere Informationen finden Sie unter <a href="Sound.htm#component">Komponente (Sound-Funktionen)</a>.</p>
   </dd>
 
   <dt>Gerät</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn leer oder weggelassen, wird standardmäßig das als Standard festgelegte Wiedergabegerät des Systems verwendet (was nicht unbedingt Gerät 1 ist). Andernfalls geben Sie den Anzeigenamen und/oder die Indexnummer des Geräts an, z.B. <code>1</code>, <code>"Lautsprecher"</code>, <code>"Lautsprecher:2"</code> oder <code>"Lautsprecher (Beispiel HD Audio)"</code>.</p>
+    <p>Wenn leer oder weggelassen, wird standardmäßig das Standardwiedergabegerät des Systems verwendet (was nicht unbedingt Gerät 1 ist). Andernfalls geben Sie den Anzeigenamen und/oder die Indexnummer des Geräts an, z.B. <code>1</code>, <code>"Lautsprecher"</code>, <code>"Lautsprecher:2"</code> oder <code>"Lautsprecher (Beispiel HD Audio)"</code>.</p>
     <p>Weitere Informationen finden Sie unter <a href="Sound.htm#device">Gerät (Sound-Funktionen)</a>.</p>
   </dd>
 
@@ -44,27 +44,21 @@
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Bei Erfolg ist der Rückgabewert ein Interface-Pointer.</p>
+<p>Bei Erfolg wird ein Interface-Pointer zurückgegeben.</p>
 <p>Wenn das Interface nicht unterstützt wird, wird 0 zurückgegeben.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
-<p>Bei Misserfolg kann eine der folgenden Ausnahmen ausgelöst werden:</p>
-<table class="info">
-  <tr><th abbr="Klasse">Error-Klasse</th><th>Message</th></tr>
-  <tr><td rowspan="2"><a href="Error.htm#TargetError">TargetError</a></td><td>Device not found (Gerät nicht gefunden)</td></tr>
-  <tr> <td>Component not found (Komponente nicht gefunden)</td></tr>
-  <tr><td><a href="Error.htm#OSError">OSError</a></td><td><em>Vom System generiert.</em></td></tr>
-</table>
+<p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Gerät oder die Komponente nicht gefunden werden konnte. Andernfalls wird bei Misserfolg ein <a href="Error.htm#OSError">OSError</a> ausgelöst.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Das Interface wird aus einer der folgenden Quellen abgerufen:</p>
+<p>Das Interface wird von einer der folgenden Quellen abgerufen:</p>
 <ul>
   <li>Wenn <em>Komponente</em> weggelassen wird, wird <a href="https://learn.microsoft.com/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdevice-activate">IMMDevice::Activate</a> aufgerufen, um das Interface abzurufen.</li>
   <li><a href="https://learn.microsoft.com/windows/win32/api/unknwn/nf-unknwn-iunknown-queryinterface(q)">QueryInterface</a> wird für den via <em>Komponente</em> identifizierten Konnektor aufgerufen. Wenn dieser Aufruf erfolgreich war, wird der Interface-Pointer zurückgegeben. Dies kann verwendet werden, um das <a href="https://learn.microsoft.com/windows/win32/api/devicetopology/nn-devicetopology-ipart">IPart</a>- oder <a href="https://learn.microsoft.com/windows/win32/api/devicetopology/nn-devicetopology-iconnector">IConnector</a>-Interface des Konnektors abzurufen.</li>
-  <li><a href="https://learn.microsoft.com/windows/win32/api/devicetopology/nf-devicetopology-ipart-activate">IPart::Activate</a> wird für jede Untereinheit aufgerufen, die eindeutig für die angegebene <em>Komponente</em> ist. <em>IID</em> kann beispielsweise <code>"{7FB7B48F-531D-44A2-BCB3-5AD5A134B3DC}"</code> sein, um das IAudioVolumeLevel-Interface abzurufen, das Zugriff auf Lautstärkeregler pro Kanal bietet.</li>
+  <li><a href="https://learn.microsoft.com/windows/win32/api/devicetopology/nf-devicetopology-ipart-activate">IPart::Activate</a> wird für jede Untereinheit aufgerufen, die für die angegebene <em>Komponente</em> eindeutig ist. Zum Beispiel kann <em>IID</em> <code>"{7FB7B48F-531D-44A2-BCB3-5AD5A134B3DC}"</code> sein, um das IAudioVolumeLevel-Interface abzurufen, das Zugriff auf Lautstärkeregler pro Kanal bietet.</li>
 </ul>
 <p>Sobald der Interface-Pointer abgerufen wurde, kann <a href="ComCall.htm">ComCall</a> verwendet werden, um seine Methoden aufzurufen. Die korrekte Indexnummer einer Methode finden Sie in den Windows SDK-Header-Dateien.</p>
-<p>Der Interface-Pointer muss via <a href="ObjAddRef.htm">ObjRelease</a> freigegeben werden, wenn er nicht länger benötigt wird. Um das zu bewerkstelligen, "wrappen" Sie den Pointer mit <a href="ComValue.htm">ComValue</a>. Der gewrappte Wert (ein Objekt) kann direkt an <a href="ComCall.htm">ComCall</a> übergeben werden.</p>
+<p>Der Interface-Pointer muss durch Übergabe an <a href="ObjAddRef.htm">ObjRelease</a> freigegeben werden, wenn er nicht mehr benötigt wird. Um das zu bewerkstelligen, "wrappen" Sie den Pointer mit <a href="ComValue.htm">ComValue</a>. Der gewrappte Wert (ein Objekt) kann direkt an <a href="ComCall.htm">ComCall</a> übergeben werden.</p>
 <pre>Interface := ComValue(13, InterfacePtr)</pre>
 
 <h2 id="Related">Siehe auch</h2>

@@ -14,7 +14,7 @@
 
 <h1>WinSetStyle / WinSetExStyle</h1>
 
-<p>Ändert den Style bzw. erweiterten Style eines bestimmten Fensters.</p>
+<p>Ändert den Style oder erweiterten Style eines bestimmten Fensters.</p>
 
 <pre class="Syntax"><span class="func">WinSetStyle</span> Wert <span class="optional">, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>
 <span class="func">WinSetExStyle</span> Wert <span class="optional">, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
@@ -24,8 +24,8 @@
     <dt>Wert</dt>
     <dd>
         <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Verwenden Sie einen positiven Integer, um den Style des Fensters vollständig zu überschreiben bzw. direkt auf <em>Wert</em> zu setzen.</p>
-        <p>Um Styles hinzuzufügen, zu entfernen oder umzuschalten, übergeben Sie eine numerische Zeichenkette, die entweder mit einem Pluszeichen (+), Minuszeichen (-) oder Zirkumflex (^) beginnt. Der neue Style-Wert wird wie folgt berechnet (wobei <em>AktuellerStyle</em> mit <a href="WinGetStyle.htm">WinGetStyle</a> oder <a href="WinGetStyle.htm">WinGetExStyle</a> abgerufen werden kann):</p>
+        <p>Geben Sie einen positiven Integer an, um den Style des Fensters vollständig zu überschreiben bzw. direkt auf <em>Wert</em> zu setzen.</p>
+        <p>Um Styles hinzuzufügen, zu entfernen oder umzuschalten, geben Sie eine numerische Zeichenkette an, die entweder mit einem Pluszeichen (+), Minuszeichen (-) oder Zirkumflex (^) beginnt. Der neue Style-Wert wird wie folgt berechnet (wobei <em>AktuellerStyle</em> mit <a href="WinGetStyle.htm">WinGetStyle</a> oder <a href="WinGetStyle.htm">WinGetExStyle</a> abgerufen werden kann):</p>
         <table class="info">
             <tr>
                 <th>Operation</th>
@@ -34,13 +34,13 @@
                 <th>Formel</th>
             </tr>
             <tr>
-                <td>Add</td>
+                <td>Hinzufügen</td>
                 <td>+</td>
                 <td><code>"+0x80"</code></td>
                 <td><code>NeuerStyle := AktuellerStyle | Wert</code></td>
             </tr>
             <tr>
-                <td>Remove</td>
+                <td>Entfernen</td>
                 <td>-</td>
                 <td><code>"-0x80"</code></td>
                 <td><code>NeuerStyle := AktuellerStyle &amp; ~Wert</code></td>
@@ -57,8 +57,10 @@
     </dd>
     <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
     <dd>
-        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+        <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+        <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
     </dd>
 </dl>
 
@@ -68,9 +70,8 @@
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Weitere Styles finden Sie unter <a href="../misc/Styles.htm">Fenster- und Steuerelement-Styles</a>.</p>
-<p>Nach dem Durchführen einiger Style-Änderungen an ein sichtbares Fenster ist es wahrscheinlich notwendig, das Fenster via <a href="WinRedraw.htm">WinRedraw</a> neu zu zeichnen.</p>
+<p>Nachdem einige Style-Änderungen an einem sichtbaren Fenster vorgenommen wurden, muss das Fenster eventuell mit <a href="WinRedraw.htm">WinRedraw</a> neu gezeichnet werden.</p>
 <p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ID des Fensters unter dem Mauszeiger abgerufen werden.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="WinGetStyle.htm">WinGetStyle / WinGetExStyle</a>, <a href="ControlSetStyle.htm">ControlSetStyle / ControlSetExStyle</a>, <a href="../misc/Styles.htm">Styles-Tabelle</a>, <a href="Win.htm">Win-Funktionen</a>, <a href="Control.htm">Control-Funktionen</a></p>
@@ -82,7 +83,7 @@
 </div>
 
 <div class="ex" id="ExExStyle">
-<p><a class="ex_number" href="#ExExStyle"></a> Schaltet das WS_EX_TOOLWINDOW-Attribut um, das Notepad in der Alt-Tab-Liste hinzufügt/entfernt.</p>
+<p><a class="ex_number" href="#ExExStyle"></a> Schaltet das WS_EX_TOOLWINDOW-Attribut um, wodurch Notepad in der Alt-Tab-Liste hinzugefügt/entfernt wird.</p>
 <pre>WinSetExStyle "^0x80", "ahk_class Notepad"</pre>
 </div>
 

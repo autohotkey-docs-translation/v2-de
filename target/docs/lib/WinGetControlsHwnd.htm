@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>WinGetControlsHwnd - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die WinGetControlsHwnd-Funktion gibt die eindeutigen ID-Nummern aller Steuerelemente in einem bestimmten Fenster zurück." />
+<meta name="description" content="Die WinGetControlsHwnd-Funktion gibt ein Array von eindeutigen ID-Nummern (HWNDs) aller Steuerelemente in einem bestimmten Fenster zurück." />
 <meta name="ahk:equiv-v1" content="lib/WinGet.htm#ControlListHwnd" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,31 +14,32 @@
 
 <h1>WinGetControlsHwnd</h1>
 
-<p>Gibt die eindeutigen ID-Nummern aller Steuerelemente in einem bestimmten Fenster zurück.</p>
+<p>Gibt ein Array von eindeutigen ID-Nummern (HWNDs) aller Steuerelemente in einem bestimmten Fenster zurück.</p>
 
-<pre class="Syntax">Steuerelemente := <span class="func">WinGetControlsHwnd</span>(<span class="optional">FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
+<pre class="Syntax">HWNDs := <span class="func">WinGetControlsHwnd</span>(<span class="optional">FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
     <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
     <dd>
-        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+        <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+        <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+        <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+        <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
     </dd>
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#objects">Array</a> mit <a href="../Concepts.htm#numbers">Integern</a></p>
-<p>Diese Funktion gibt ein Array zurück, das die <a href="../misc/WinTitle.htm#ahk_id">HWND-Nummern (eindeutige IDs)</a> aller Steuerelemente im angegebenen Fenster enthält.</p>
-<p>Wenn zum Beispiel der Rückgabewert in eine Variable namens <code>Steuerelemente</code> gespeichert wird und zwei Steuerelemente vorhanden sind, enthält <code>Steuerelemente[1]</code> die ID des ersten Steuerelements, <code>Steuerelemente[2]</code> die ID des zweiten Steuerelements und <code>Steuerelemente.<a href="Array.htm#Length">Length</a></code> gibt die Zahl 2 zurück.</p>
+<p>Typ: <a href="Array.htm">Array</a></p>
+<p>Diese Funktion gibt ein Array von eindeutigen ID-Nummern aller Steuerelemente in einem bestimmten Fenster zurück. Jede Nummer ist ein <a href="../misc/WinTitle.htm#ahk_id">Fensterhandle (HWND)</a>.</p>
+<p>Wenn zum Beispiel der Rückgabewert in eine Variable namens <code>HWNDs</code> gespeichert wird und zwei Steuerelemente vorhanden sind, gibt <code>HWNDs[1]</code> die ID des ersten Steuerelements, <code>HWNDs[2]</code> die ID des zweiten Steuerelements und <code>HWNDs.<a href="Array.htm#Length">Length</a></code> die Zahl 2 zurück.</p>
 <p>Steuerelemente werden nach ihrer Z-Reihenfolge sortiert, was üblicherweise der Navigation via <kbd>Tab</kbd> entspricht, sofern vom Fenster unterstützt.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Die ID des Fensters oder Steuerelements, das sich unter dem Mauszeiger befindet, kann mit <a href="MouseGetPos.htm">MouseGetPos</a> abgerufen werden.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
+<p>Mit <a href="MouseGetPos.htm">MouseGetPos</a> kann die ID des Fensters oder Steuerelements unter dem Mauszeiger abgerufen werden.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="WinGetControls.htm">WinGetControls</a>, <a href="Win.htm">Win-Funktionen</a>, <a href="Control.htm">Control-Funktionen</a></p>

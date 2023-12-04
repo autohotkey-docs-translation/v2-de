@@ -124,8 +124,8 @@ tocData = [
     ["IniRead","lib/IniRead.htm"],
     ["IniWrite","lib/IniWrite.htm"],
     ["Lange Pfade","misc/LongPaths.htm"],
-    ["Loop Files (und Ordner)","lib/LoopFiles.htm"],
-    ["Loop Read (Dateiinhalte)","lib/LoopRead.htm"],
+    ["Loop Files (Dateien & Ordner)","lib/LoopFiles.htm"],
+    ["Loop Read (Dateiinhalt)","lib/LoopRead.htm"],
     ["SetWorkingDir","lib/SetWorkingDir.htm"],
     ["SplitPath","lib/SplitPath.htm"]
   ]],
@@ -144,9 +144,9 @@ tocData = [
     ["Schleifenanweisungen","Language.htm#loop-statement",
     [
       ["Loop","lib/Loop.htm"],
-      ["Loop Files (und Ordner)","lib/LoopFiles.htm"],
+      ["Loop Files (Dateien & Ordner)","lib/LoopFiles.htm"],
       ["Loop Parse (Zeichenketten)","lib/LoopParse.htm"],
-      ["Loop Read (Dateiinhalte)","lib/LoopRead.htm"],
+      ["Loop Read (Dateiinhalt)","lib/LoopRead.htm"],
       ["Loop Reg (Registry)","lib/LoopReg.htm"],
       ["While","lib/While.htm"],
       ["For","lib/For.htm"],

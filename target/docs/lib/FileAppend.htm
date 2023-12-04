@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>FileAppend - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die FileAppend-Funktion schreibt Text oder binäre Daten an das Ende einer Datei (und erstellt sie erst, falls notwendig)." />
+<meta name="description" content="Die FileAppend-Funktion schreibt Text oder Binärdaten an das Ende einer Datei (und erstellt sie vorher, wenn nötig)." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>FileAppend</h1>
 
-<p>Schreibt Text oder binäre Daten an das Ende einer Datei (und erstellt sie erst, falls notwendig).</p>
+<p>Schreibt Text oder Binärdaten an das Ende einer Datei (und erstellt sie vorher, wenn nötig).</p>
 
 <pre class="Syntax"><span class="func">FileAppend</span> Text <span class="optional">, DateiName, Optionen</span></pre>
 <h2 id="Parameters">Parameter</h2>
@@ -23,7 +23,7 @@
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
     <p>Wenn leer oder weggelassen, wird <em>DateiName</em> als leere Datei erstellt (wenn die Datei bereits existiert, wird nur ihr Änderungsdatum aktualisiert). Andernfalls geben Sie den Text oder rohe Binärdaten an, der/die an das Ende der Datei angefügt werden soll(en). Der Text kann LF-Zeichen (`n) enthalten, um neue Zeilen zu beginnen. Außerdem kann via <a href="../Scripts.htm#continuation">Fortsetzungsbereich</a> eine lange Zeile in mehrere kurze Zeilen aufgeteilt werden.</p>
-    <p>Es ist möglich, ein <a href="Buffer.htm">Buffer</a>-ähnliches Objekt zu übergeben, um rohe Binärdaten anzufügen. Beim Erstellen einer Datei wird nur eine Byte-Order-Markierung (BOM) geschrieben, wenn "UTF-8" oder "UTF-16" in <em>Optionen</em> angegeben wurde. Die <a href="../Variables.htm#FileEncoding">Standardkodierung</a> wird ignoriert und die im Objekt enthaltenen Daten werden unverändert geschrieben, unabhängig von <em>Optionen</em>. Es kann ein beliebiges Objekt mit einer <a href="Buffer.htm#Ptr">Ptr</a>- und <a href="Buffer.htm#Size">Size</a>-Eigenschaft verwendet werden.</p>
+    <p>Es kann ein <a href="Buffer.htm">Buffer</a>-ähnliches Objekt übergeben werden, um rohe Binärdaten anzufügen. Beim Erstellen einer Datei wird nur eine Byte-Order-Markierung (BOM) geschrieben, wenn "UTF-8" oder "UTF-16" in <em>Optionen</em> angegeben wurde. Die <a href="../Variables.htm#FileEncoding">Standardkodierung</a> wird ignoriert, und die im Objekt enthaltenen Daten werden unverändert geschrieben, unabhängig von <em>Optionen</em>. Es kann ein beliebiges Objekt mit einer <a href="Buffer.htm#Ptr">Ptr</a>- und <a href="Buffer.htm#Size">Size</a>-Eigenschaft verwendet werden.</p>
   </dd>
 
   <dt>DateiName</dt>
@@ -32,19 +32,19 @@
     <p>Wenn weggelassen, wird die Ausgabedatei der innersten umschlossenen <a href="LoopRead.htm">dateilesenden Schleife</a> verwendet (falls vorhanden). Andernfalls geben Sie den Namen der Datei an, an die der Text oder die rohen Binärdaten angefügt werden soll(en). Wenn kein absoluter Pfad angegeben ist, wird die Datei im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet. Das Zielverzeichnis muss bereits existieren.</p>
     <p id="stdout"><strong>Standardausgabe (stdout):</strong> Geben Sie ein Sternchen (*) für <em>DateiName</em> an, um <em>Text</em> zur Standardausgabe (stdout) zu senden. Diese Art von Text kann auf eine Datei umgeleitet, an eine EXE-Datei weitergeleitet oder von <a href="_ErrorStdOut.htm">umfangreichen Texteditoren</a> abgefangen werden. Zum Beispiel könnte man folgendes in der Eingabeaufforderung schreiben:</p>
       <pre class="no-highlight">"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Skript.ahk" &gt;"Fehlerprotokoll.txt"</pre>
-    <p>Allerdings wird ein zur Standardausgabe gesendeter Text nicht in der Eingabeaufforderung angezeigt, von der aus die Zeile gestartet wurde. Dies kann umgangen werden, indem 1) das Skript mit der <a href="../misc/Ahk2ExeDirectives.htm#ConsoleApp">Ahk2Exe-ConsoleApp-Direktive</a> kompiliert, oder 2) die Ausgabe des Skripts via Piping an einen anderen Befehl oder an ein anderes Programm weitergeleitet wird. Zum Beispiel:</p>
+    <p>Allerdings wird ein zur Standardausgabe gesendeter Text nicht in der Eingabeaufforderung angezeigt, von der aus die Zeile gestartet wurde. Dies kann umgangen werden, indem 1) das Skript mit der <a href="../misc/Ahk2ExeDirectives.htm#ConsoleApp">Ahk2Exe-ConsoleApp-Direktive</a> kompiliert wird, oder 2) die Ausgabe des Skripts via Piping an einen anderen Befehl oder an ein anderes Programm weitergeleitet wird. Zum Beispiel:</p>
       <pre class="no-highlight">"%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Skript.ahk" |more</pre>
       <pre class="no-highlight">For /F "tokens=*" %L in ('""%ProgramFiles%\AutoHotkey\AutoHotkey.exe" "Mein Skript.ahk""') do @Echo %L</pre>
-    <p>Zwei Sternchen (**) in <em>DateiName</em> bewirken, dass <em>Text</em> zur Standardfehlerausgabe (stderr) gesendet wird.</p>
+    <p>Geben Sie zwei Sternchen (**) für <em>DateiName</em> an, um <em>Text</em> zur Standardfehlerausgabe (stderr) zu senden.</p>
     </dd>
 
   <dt>Optionen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Beliebig viele der folgenden Zeichenketten. Trennen Sie alle Optionen jeweils durch ein Leer- oder Tabulatorzeichen. Zum Beispiel: <code>"`n UTF-8"</code></p>
-    <p><strong>Kodierung:</strong> Geben Sie einen beliebigen Kodierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (außer die leere Zeichenkette), um diese Kodierung zu benutzen, falls die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Wenn weggelassen, wird standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet (es sei denn, <em>Text</em> ist ein Objekt, dann wird keine Byte-Order-Markierung geschrieben).</p>
-    <p><strong>RAW:</strong> Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um <em>Text</em> unverändert und ohne jegliche Umwandlungen in die Datei zu schreiben. Diese Option überschreibt jede zuvor festgelegte Kodierung und umgekehrt. Wenn <em>Text</em> kein Objekt ist, ist die Datengröße immer ein Vielfaches von 2 Bytes, weil UTF-16 Zeichenketten verwendet werden.</p>
-    <p><strong>`n</strong> (ein LF-Zeichen): Fügt vor jedem LF-Zeichen (`n) ein CR-Zeichen (`r) ein, sofern noch nicht vorhanden. Mit anderen Worten wird `n in `r`n übersetzt. Diese Übersetzung hat in der Regel keinen Einfluss auf die Performanz. Wenn diese Option nicht verwendet wird, werden die Zeilenenden innerhalb von <em>Text</em> nicht geändert.</p>
+    <p><strong>Kodierung:</strong> Geben Sie einen beliebigen Kodierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (mit Ausnahme der leeren Zeichenkette), um diese Kodierung zu verwenden, wenn die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Wenn weggelassen, wird standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet (es sei denn, <em>Text</em> ist ein Objekt, dann wird keine Byte-Order-Markierung geschrieben).</p>
+    <p><strong>RAW:</strong> Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um <em>Text</em> unverändert und ohne Umwandlung in die Datei zu schreiben. Diese Option überschreibt jede vorher festgelegte Kodierung und umgekehrt. Wenn <em>Text</em> kein Objekt ist, ist die Datengröße immer ein Vielfaches von 2 Bytes, da UTF-16-Zeichenketten verwendet werden.</p>
+    <p><strong>`n</strong> (ein LF-Zeichen): Fügt vor jedem LF-Zeichen (`n) ein CR-Zeichen (`r) ein, falls noch nicht vorhanden. Mit anderen Worten wird `n in `r`n übersetzt. Diese Übersetzung hat typischerweise keinen Einfluss auf die Performanz. Wenn diese Option nicht verwendet wird, bleiben Zeilenenden in <em>Text</em> unverändert.</p>
   </dd>
 
 </dl>
@@ -56,7 +56,7 @@
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Um eine existierende Datei zu überschreiben, löschen Sie diese mit <a href="FileDelete.htm">FileDelete</a>, bevor Sie FileAppend verwenden.</p>
 <p>Die Zieldatei wird automatisch geschlossen, nachdem der Text angefügt wurde (außer wenn FileAppend im Einzelparameter-Modus innerhalb einer <a href="LoopRead.htm">dateilesenden/-schreibenden Schleife</a> verwendet wird).</p>
-<p><a href="FileOpen.htm">FileOpen</a> im Anfügemodus bietet mehr Kontrolle als FileAppend und lässt die Datei geöffnet, anstatt sie jedes Mal neu zu öffnen und zu schließen. Sobald eine Datei im Anfügemodus geöffnet ist, kann die Zeichenkette mit <code>File.<a href="File.htm#Write">Write</a>(Zeichenkette)</code> angefügt werden. File-Objekte unterstützen auch binäre Ein-/Ausgabe via <a href="File.htm#RawWrite">RawWrite</a>/<a href="File.htm#RawRead">RawRead</a> oder <a href="File.htm#WriteNum">Write<i>Num</i></a>/<a href="File.htm#ReadNum">Read<i>Num</i></a>.</p>
+<p><a href="FileOpen.htm">FileOpen</a> im Anfügemodus bietet mehr Kontrolle als FileAppend und lässt die Datei geöffnet, anstatt sie jedes Mal neu zu öffnen und zu schließen. Sobald eine Datei im Anfügemodus geöffnet ist, kann mit <code>File.<a href="File.htm#Write">Write</a>(Zeichenkette)</code> die Zeichenkette angefügt werden. File-Objekte unterstützen auch binäre Ein-/Ausgabe via <a href="File.htm#RawWrite">RawWrite</a>/<a href="File.htm#RawRead">RawRead</a> oder <a href="File.htm#WriteNum">Write<i>Num</i></a>/<a href="File.htm#ReadNum">Read<i>Num</i></a>.</p>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="File.htm">File-Objekt</a>, <a href="FileRead.htm">FileRead</a>, <a href="LoopRead.htm">dateilesende Schleife</a>, <a href="IniWrite.htm">IniWrite</a>, <a href="FileDelete.htm">FileDelete</a>, <a href="OutputDebug.htm">OutputDebug</a>, <a href="../Scripts.htm#continuation">Fortsetzungsbereiche</a></p>
 <h2 id="Examples">Beispiele</h2>
@@ -88,7 +88,7 @@ username
 password
 binary
 cd htdocs
-put " VarMitNamenDerZielDatei "
+put " VarMitZieldateiname "
 delete EineAndereDatei.htm
 rename AlteDateiName.htm NeueDateiName.htm
 ls -l

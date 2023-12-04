@@ -29,44 +29,44 @@
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Beliebig viele der folgenden Zeichenketten. Trennen Sie alle Optionen jeweils durch ein Leer- oder Tabulatorzeichen. Zum Beispiel: <code>"`n m5000 UTF-8"</code></p>
-    <p><strong>Kodierung:</strong> Geben Sie einen beliebigen Kodierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (außer die leere Zeichenkette), um diese Kodierung zu benutzen, falls die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Wenn weggelassen, wird standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet.</p>
-    <p><strong>RAW:</strong> Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um den Inhalt der Datei als <a href="#Binary">rohe Binärdaten</a> zu lesen und ein <a href="Buffer.htm">Buffer</a>-Objekt anstelle einer Zeichenkette zurückzugeben. Diese Option überschreibt jede zuvor festgelegte Kodierung und umgekehrt.</p>
+    <p><strong>Kodierung:</strong> Geben Sie einen beliebigen Kodierungsnamen an, der von <a href="FileEncoding.htm">FileEncoding</a> unterstützt wird (mit Ausnahme der leeren Zeichenkette), um diese Kodierung zu verwenden, wenn die Datei keine UTF-8- oder UTF-16-Byte-Order-Markierung hat. Wenn weggelassen, wird standardmäßig <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> verwendet.</p>
+    <p><strong>RAW:</strong> Geben Sie das Wort RAW an (nicht Groß-/Kleinschreibung-sensitiv), um den Inhalt der Datei als <a href="#Binary">rohe Binärdaten</a> zu lesen und ein <a href="Buffer.htm">Buffer</a>-Objekt anstelle einer Zeichenkette zurückzugeben. Diese Option überschreibt jede vorher festgelegte Kodierung und umgekehrt.</p>
     <p><strong>m1024:</strong> Wenn diese Option weggelassen wird, wird die gesamte Datei geladen, es sei denn, der Speicher reicht nicht aus, dann wird eine Fehlermeldung angezeigt und der Thread beendet (kann aber mit <a href="Try.htm">Try</a> umgangen werden). Andernfalls ersetzen Sie 1024 mit einer dezimalen oder hexadezimalen Anzahl von Bytes. Wenn die Datei die angegebene Größe überschreitet, wird nur ihr beginnender Teil geladen.</p>
     <p class="note"><strong>Hinweis:</strong> Dies kann dazu führen, dass die letzte Zeile mit einem einzelnen CR-Zeichen (`r) statt mit dem CR-LF-Paar (`r`n) endet.</p>
-    <p><strong>`n</strong> (ein LF-Zeichen): Ersetzt alle CR-LF-Paare (`r`n) mit einem LF-Zeichen (`n). Diese Übersetzung verringert jedoch die Performanz und ist normalerweise nicht erforderlich. Zum Beispiel wäre ein Text, der `r`n enthält, bereits im richtigen Format, um in ein <a href="StrReplace.htm">Gui-Edit-Steuerelement</a> eingefügt zu werden. Die folgende <a href="LoopParse.htm">parsende Schleife</a> wird korrekt funktionieren, egal ob eine Zeile mit `r`n oder `n endet: <code>Loop Parse, MeineDateiInhalt, "`n", "`r"</code>.</p>
+    <p><strong>`n</strong> (ein LF-Zeichen): Ersetzt alle CR-LF-Paare (`r`n) mit einem LF-Zeichen (`n). Diese Übersetzung verringert jedoch die Performanz und ist normalerweise nicht erforderlich. Zum Beispiel wäre ein Text, der `r`n enthält, bereits im richtigen Format, um in ein <a href="StrReplace.htm">Gui-Edit-Steuerelement</a> eingefügt zu werden. Die folgende <a href="LoopParse.htm">parsende Schleife</a> wird korrekt funktionieren, egal ob eine Zeile mit `r`n oder nur mit `n endet: <code>Loop Parse, MeineDateiInhalt, "`n", "`r"</code>.</p>
   </dd>
   
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="Buffer.htm">Buffer</a></p>
-<p>Diese Funktion gibt den Inhalt der angegebenen Datei zurück. Der Rückgabewert ist ein Buffer-Objekt, wenn die RAW-Option aktiv ist und die Datei geöffnet werden kann, andernfalls ist es eine Zeichenkette. Wenn die Datei nicht existiert oder aus irgendeinem anderen Grund nicht geöffnet werden kann, wird eine leere Zeichenkette zurückgegeben.</p>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+<p>Diese Funktion gibt den Inhalt der angegebenen Datei zurück. Der Rückgabewert ist ein <a href="Buffer.htm">Buffer-Objekt</a>, wenn die RAW-Option aktiv ist und die Datei geöffnet werden kann, andernfalls eine Zeichenkette. Wenn die Datei nicht existiert oder aus einem anderen Grund nicht geöffnet werden kann, wird eine leere Zeichenkette zurückgegeben.</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn die Datei aufgrund eines Problems nicht geöffnet oder gelesen werden konnte.</p>
-<p>Eine Datei größer als 4 GB führt dazu, dass ein <a href="Error.htm#MemoryError">MemoryError</a> ausgelöst wird, es sei denn, die *m-Option ist vorhanden, dann wird nur der beginnende Teil der Datei geladen. Ein MemoryError wird auch ausgelöst, wenn das Programm unfähig ist, genügend Speicher für die angeforderte Datenmenge zu reservieren.</p>
+<p>Eine Datei größer als 4 GB führt dazu, dass ein <a href="Error.htm#MemoryError">MemoryError</a> ausgelöst wird, es sei denn, die *m-Option ist vorhanden, dann wird nur der beginnende Teil der Datei geladen. Ein MemoryError wird auch ausgelöst, wenn das Programm nicht genügend Speicher für die angeforderte Datenmenge reservieren kann.</p>
 <p><a href="../Variables.htm#LastError">A_LastError</a> wird auf das Ergebnis der Systemfunktion GetLastError() gesetzt.</p>
 
 <h2 id="Binary">Lesen von Binärdaten</h2>
-<p>Bei Benutzung der <code>RAW</code>-Option ist der Rückgabewert ein <a href="Buffer.htm">Buffer</a>-Objekt, das den rohen, unbearbeiteten Inhalt der Datei enthält. Die <a href="Buffer.htm#Size">Size</a>-Eigenschaft des Objekts gibt die Anzahl der gelesenen Bytes zurück. <a href="NumGet.htm">NumGet</a> oder <a href="StrGet.htm">StrGet</a> kann verwendet werden, um die Daten aus dem Pufferspeicher abzurufen. Zum Beispiel:</p>
+<p>Wenn die <code>RAW</code>-Option verwendet wird, ist der Rückgabewert ein <a href="Buffer.htm">Buffer</a>-Objekt, das den rohen, unveränderten Inhalt der Datei enthält. Die <a href="Buffer.htm#Size">Size</a>-Eigenschaft des Objekts gibt die Anzahl der gelesenen Bytes zurück. Mit <a href="NumGet.htm">NumGet</a> oder <a href="StrGet.htm">StrGet</a> können die Daten aus dem Pufferspeicher abgerufen werden. Zum Beispiel:</p>
 <pre>buf := FileRead(A_AhkPath, "RAW")
-if StrGet(buf, 2, "cp0") == "MZ"  <em>; Scheinbar eine EXE-Datei...</em>
+if StrGet(buf, 2, "cp0") == "MZ"  <em>; Scheint eine EXE-Datei zu sein...</em>
 {
-    <em>; Computertyp im COFF-Dateiheader abrufen.</em>
-    computer := NumGet(buf, NumGet(buf, 0x3C, "uint") + 4, "ushort")
-    computer := computer=0x8664 ? "x64" : computer=0x014C ? "x86" : "unbekannt"
-    <em>; Computertyp und Dateigröße anzeigen.</em>
-    MsgBox "Diese " machine "-EXE-Datei ist " buf.Size " Bytes groß."
+    <em>; Architekturtyp aus dem COFF-Dateiheader abrufen.</em>
+    arch := NumGet(buf, NumGet(buf, 0x3C, "uint") + 4, "ushort")
+    arch := arch=0x8664 ? "x64-" : arch=0x014C ? "x86-" : "unbekannte "
+    <em>; Architekturtyp und Dateigröße anzeigen.</em>
+    MsgBox "Diese " arch "EXE-Datei ist " buf.Size " Bytes groß."
 }
 buf := ""</pre>
-<p>Diese Option ist in der Regel zum Lesen von binären Daten erforderlich, weil standardmäßig alle gelesenen Bytes aus der Datei als Text interpretiert werden und von der Kodierung der Quelldatei (wie in den Optionen angegeben oder via <a href="../Variables.htm#FileEncoding">A_FileEncoding</a>) in die <a href="../Compat.htm#Format">native Kodierung</a> des Skripts, UTF-16, umgewandelt sein könnte. Wenn die Daten kein UTF-16-Text sind, ändert diese Umwandlung die Daten auf unerwünschte Weise.</p>
-<p>Ein weiteres Beispiel für die RAW-Option ist <a href="ClipboardAll.htm#ExFile">ClipboardAll-Beispiel #2</a>.</p>
-<p>Mit <a href="FileOpen.htm">FileOpen</a> in Verbindung mit <a href="File.htm#RawRead">File.RawRead</a> oder <a href="File.htm#ReadNum">File.Read<i>Num</i></a> können binäre Daten erfasst werden, ohne die komplette Datei in den Speicher einlesen zu müssen.</p>
+<p>Diese Option ist in der Regel zum Lesen von binären Daten erforderlich, da standardmäßig alle aus der Datei gelesenen Bytes als Text interpretiert werden und möglicherweise von der Kodierung der Quelldatei (wie in den Optionen oder durch <a href="../Variables.htm#FileEncoding">A_FileEncoding</a> angegeben) in die <a href="../Compat.htm#Format">native Kodierung</a> des Skripts (UTF-16) umgewandelt sind. Wenn es sich bei den Daten nicht um UTF-16-Text handelt, kann diese Umwandlung zu unerwarteten Ergebnissen führen.</p>
+<p>Eine weitere Demonstration der RAW-Option finden Sie unter <a href="ClipboardAll.htm#ExFile">ClipboardAll-Beispiel #2</a>.</p>
+<p>Mit <a href="FileOpen.htm">FileOpen</a> und <a href="File.htm#RawRead">File.RawRead</a> oder <a href="File.htm#ReadNum">File.Read<i>Num</i></a> können Binärdaten gelesen werden, ohne erst die komplette Datei in den Speicher zu lesen.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>FileRead ist deutlich performanter als eine <a href="LoopRead.htm">dateilesende Schleife</a>, wenn es darum geht, alles oder einen großen Teil einer Datei in den Speicher zu laden.</p>
 <p>Wenn Sie befürchten, dass die Datei zu viel Speicher verbraucht, prüfen Sie zunächst ihre Größe mit <a href="FileGetSize.htm">FileGetSize</a>.</p>
-<p>Die <a href="FileOpen.htm">FileOpen</a>-Funktion bietet eine weitaus fortschrittlichere Funktionalität als FileRead. Sie kann zum Beispiel Daten an einer bestimmten Stelle in der Datei lesen oder schreiben, ohne zuerst die gesamte Datei in den Arbeitsspeicher lesen zu müssen. Eine Liste aller Features finden Sie unter <a href="File.htm">File-Objekt</a>.</p>
+<p><a href="FileOpen.htm">FileOpen</a> bietet weitaus mehr Funktionalität als FileRead, z.B. kann sie Daten an einer bestimmten Stelle in der Datei lesen oder schreiben, ohne erst die gesamte Datei in den Speicher zu lesen. Eine Liste aller Features finden Sie unter <a href="File.htm">File-Objekt</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="FileEncoding.htm">FileEncoding</a>, <a href="FileOpen.htm">FileOpen</a>/<a href="File.htm">File-Objekt</a>, <a href="LoopRead.htm">dateilesende Schleife</a>, <a href="FileGetSize.htm">FileGetSize</a>, <a href="FileAppend.htm">FileAppend</a>, <a href="IniRead.htm">IniRead</a>, <a href="Sort.htm">Sort</a>, <a href="Download.htm">Download</a></p>
@@ -80,10 +80,10 @@ buf := ""</pre>
 <div class="ex" id="ExSort">
 <p><a class="ex_number" href="#ExSort"></a> Sortiert schnell den Inhalt einer Datei.</p>
 <pre>
-Inhalt := FileRead("C:\Adressenliste.txt")
+Inhalt := FileRead("C:\Adressliste.txt")
 Inhalt := Sort(Inhalt)
-FileDelete "C:\Adressenliste (alphabetisch).txt"
-FileAppend Inhalt, "C:\Adressenliste (alphabetisch).txt"
+FileDelete "C:\Adressliste (alphabetisch).txt"
+FileAppend Inhalt, "C:\Adressliste (alphabetisch).txt"
 Inhalt := "" <em>; Speicher freigeben.</em>
 </pre>
 </div>

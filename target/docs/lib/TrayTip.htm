@@ -44,13 +44,19 @@
   <dt>Optionen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn leer oder weggelassen, wird standardmäßig 0 verwendet (kein Symbol). Andernfalls geben Sie entweder einen Integer (eine Kombination via Addition oder bitweises OR) oder eine Zeichenkette mit beliebig vielen Optionen (nicht Groß-/Kleinschreibung-sensitiv) an, die durch mindestens ein Leer- oder Tabulatorzeichen voneinander getrennt sind. Eine oder mehrere numerische Optionen können auch in der Zeichenkette enthalten sein.</p>
+    <p>Wenn leer oder weggelassen, wird standardmäßig 0 verwendet. Andernfalls geben Sie entweder einen Integer (eine Kombination via Addition oder bitweises ODER) oder eine Zeichenkette mit beliebig vielen Optionen an (nicht Groß-/Kleinschreibung-sensitiv), die durch mindestens ein Leer- oder Tabulatorzeichen voneinander getrennt sind. Die Zeichenkette kann auch beliebig viele numerische Optionen enthalten.</p>
     <table class="info">
       <tr>
         <th class="sized1">Funktion</th>
         <th class="sized2 right">Dez</th>
         <th class="sized2 right">Hex</th>
         <th>Zkette</th>
+      </tr>
+      <tr>
+        <td>Kein Symbol</td>
+        <td class="right">0</td>
+        <td class="right">0x0</td>
+        <td>N/A</td>
       </tr>
       <tr>
         <td>Infosymbol</td>
@@ -90,16 +96,16 @@
       </tr>
     </table>
     <p>Das Symbol wird auch nicht angezeigt, wenn kein Titel angegeben ist (dies gilt nicht für die Popupbenachrichtigungen in Windows 10 und höher).</p>
-    <p>In Windows 10 und höher wird grundsätzlich das kleine Tray-Symbol angezeigt, selbst wenn die "Tray-Symbol"-Option (4) weggelassen wird, außerdem kann diese Option dazu führen, dass der Name des Programms im Infobereich angezeigt wird.</p>
+    <p>In Windows 10 und höher wird das kleine Tray-Symbol grundsätzlich angezeigt, selbst wenn die "Tray-Symbol"-Option (4) weggelassen wird, außerdem kann diese Option dazu führen, dass der Name des Programms in der Benachrichtigung angezeigt wird.</p>
     </dd>
 
 </dl>
 
-<h2 id="To_Hide_the_Window">Wie das Fenster versteckt werden kann</h2>
-<p>Um eine Sprechblase zu verstecken, lassen Sie sowohl <em>Text</em> als auch <em>Titel</em> weg. Zum Beispiel:</p>
+<h2 id="Hiding_the_Traytip">Traytip verstecken</h2>
+<p>Um den Traytip zu verstecken, lassen Sie alle Parameter weg (oder zumindest den <em>Text</em>- und <em>Titel</em>-Parameter). Zum Beispiel:</p>
 <pre>TrayTip</pre>
-<p>Um eine Popupbenachrichtigung in Windows 10 und höher zu verstecken, entfernen Sie vorübergehend das <a href="../Program.htm#tray-icon">Tray-Symbol</a>. Zum Beispiel:</p>
-<pre>TrayTip "#1", "Das erste TrayTip"
+<p>Um den Traytip in Windows 10 zu verstecken, entfernen Sie vorübergehend das <a href="../Program.htm#tray-icon">Tray-Symbol</a> (was nicht immer funktioniert, zumindest einem Bericht zufolge). Zum Beispiel:</p>
+<pre>TrayTip "#1", "Der erste Traytip"
 Sleep 3000   <em>; 3 Sekunden lang anzeigen lassen.</em>
 TrayTipVerstecken
 TrayTip "#2", "Die zweite Benachrichtigung."
@@ -115,13 +121,12 @@ TrayTipVerstecken() {
     }
 }
 </pre>
-<p>Möglicherweise funktioniert diese Methode nicht immer, zumindest einem Bericht zufolge.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>In Windows 10 sieht ein typischer Traytip wie folgt aus:</p>
 <img src="../static/dlg_traytip.png" alt="TrayTip" />
 <p id="Windows10"><strong>Windows 10 und höher</strong> ersetzen standardmäßig alle Sprechblasenfenster mit Popupbenachrichtigungen (was aber mit einer Gruppenrichtlinie überschrieben werden kann). Wenn TrayTip mehrmals aufgerufen wird, werden die Benachrichtigungen in eine "Warteschlange" eingereiht und nacheinander abgearbeitet, anstatt sich gegenseitig zu ersetzen.</p>
-<p>TrayTip funktioniert nicht, wenn das <a href="../Program.htm#tray-icon">Tray-Symbol</a> des Skripts deaktiviert ist (via <a href="_NoTrayIcon.htm">#NoTrayIcon</a> oder <code><a href="../Variables.htm#IconHidden">A_IconHidden</a> := true</code>). TrayTip funktioniert auch nicht, wenn der folgende REG_DWORD-Wert existiert und auf 0 gesetzt wurde:</p>
+<p>TrayTip funktioniert nicht, wenn das Skript kein <a href="../Program.htm#tray-icon">Tray-Symbol</a> hat (via <a href="_NoTrayIcon.htm">#NoTrayIcon</a> oder <code><a href="../Variables.htm#IconHidden">A_IconHidden</a> := true</code>). TrayTip funktioniert auch nicht, wenn der folgende REG_DWORD-Wert existiert und auf 0 gesetzt wurde:</p>
 <pre>HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced &gt;&gt; EnableBalloonTips</pre>
 <p>Erwähnenswert ist noch, dass ein Tooltip angezeigt wird, wenn der Mauszeiger über das <a href="../Program.htm#tray-icon">Tray-Symbol</a> des Skripts bewegt wird. Der Inhalt des Tooltips kann wie folgt geändert werden: <code><a href="../Variables.htm#IconTip">A_IconTip</a> := "Mein neuer Text"</code>.</p>
 
@@ -135,7 +140,10 @@ TrayTipVerstecken() {
 </div>
 
 <div class="ex" id="ExDisplayTime">
-<p><a class="ex_number" href="#ExDisplayTime"></a> Ermöglicht eine genauere Kontrolle der Anzeigedauer, ohne Sleep verwenden zu müssen (was den aktuellen Thread anhalten würde). Für Windows 10 und höher kann die TrayTipVerstecken-Funktion mit der <a href="#Hide">oben</a> definierten ersetzt werden.</p>
+<p><a class="ex_number" href="#ExDisplayTime"></a> Ermöglicht eine genauere Kontrolle der Anzeigedauer, ohne Sleep verwenden zu müssen (was den aktuellen Thread anhalten würde).</p>
+<pre>TrayTip "Wird 5 Sekunden lang angezeigt.", "Zeitgesteuerter Traytip"
+SetTimer () =&gt; TrayTip(), -5000</pre>
+<p>Folgendes bewirkt dasselbe, erlaubt Ihnen aber (für Windows 10), die TrayTipVerstecken-Funktion mit der <a href="#Hide">oben</a> definierten zu ersetzen.</p>
 <pre>TrayTip "Wird 5 Sekunden lang angezeigt.", "Zeitgesteuerter Traytip"
 SetTimer TrayTipVerstecken, -5000
 
@@ -152,7 +160,7 @@ TrayTipErneuern  <em>; Direkt aufrufen, um sofortigen Start zu erzwingen.</em>
 
 TrayTipErneuern()
 {
-    TrayTip "Dies ist ein permanenter TrayTip.", "Erneuerter Traytip", "Mute"
+    TrayTip "Dies ist ein permanenter Traytip.", "Erneuerter Traytip", "Mute"
 }</pre>
 </div>
 

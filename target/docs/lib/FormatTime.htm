@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>FormatTime - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die FormatTime-Funktion wandelt einen YYYYMMDDHH24MISS-Zeitstempel in ein bestimmtes Datums-/Zeitformat um." />
+<meta name="description" content="Die FormatTime-Funktion transformiert einen YYYYMMDDHH24MISS-Zeitstempel in ein bestimmtes Datums-/Zeitformat." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -16,7 +16,7 @@
 
 <h1>FormatTime</h1>
 
-<p>Wandelt einen <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Zeitstempel in ein bestimmtes Datums-/Zeitformat um.</p>
+<p>Transformiert einen <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Zeitstempel in ein bestimmtes Datums-/Zeitformat.</p>
 
 <pre class="Syntax">Zkette := <span class="func">FormatTime</span>(<span class="optional">YYYYMMDDHH24MISS, Format</span>)</pre>
 <h2 id="Parameters">Parameter</h2>
@@ -40,8 +40,8 @@
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
 <p>Diese Funktion gibt die transformierte Version des angegebenen Zeitstempels zurück.</p>
-<p>Enthält <em>YYYYMMDDHH24MISS</em> einen ungültigen Datums- und/oder Zeitbereich (z.B. der 29. Februar eines Nicht-Schaltjahrs), wird der entsprechende Bereich im Rückgabewert weggelassen. Obwohl nur Jahre zwischen 1601 und 9999 unterstützt werden, kann eine formatierte Zeit auch für die Jahre vor 1601 erzeugt werden, solange die Zeitkomponente gültig ist.</p>
-<p>Enthält <em>Format</em> mehr als 2000 Zeichen, wird eine leere Zeichenkette zurückgegeben.</p>
+<p>Wenn <em>YYYYMMDDHH24MISS</em> eine ungültige Datums- (YYYYMMDD) und/oder Zeitkomponente (HH24MISS) enthält (z.B. der 29. Februar eines Nicht-Schaltjahrs), wird das Datum und/oder die Zeit im Rückgabewert weggelassen. Obwohl nur Jahre zwischen 1601 und 9999 unterstützt werden, kann eine formatierte Zeit auch für die Jahre vor 1601 erzeugt werden, solange die Zeitkomponente gültig ist.</p>
+<p>Wenn <em>Format</em> mehr als 2000 Zeichen enthält, wird eine leere Zeichenkette zurückgegeben.</p>
 
 <h2 id="Date_Formats">Datumsformate (Groß-/Kleinschreibung-sensitiv)</h2>
 <table class="info">
@@ -223,7 +223,7 @@
 <p>Nicht-alphanumerische Zeichen wie Leerzeichen, Tabulatoren, LF-Zeichen (`n), Schrägstriche, Doppelpunkte, Kommas und andere Satzzeichen müssen hingegen nicht in einfache Anführungszeichen gesetzt werden. Eine Ausnahme bildet das einfache Anführungszeichen selbst: Um es darzustellen, sind vier aufeinanderfolgende einfache Anführungszeichen ('''') erforderlich, oder nur zwei, wenn das Anführungszeichen bereits von einem äußeren Anführungszeichenpaar umschlossen ist.</p>
 <p>Wenn <em>Format</em> sowohl Datums- als auch Zeitelemente enthält, dürfen diese nicht vermischt werden. Mit anderen Worten, die Elemente müssen so angeordnet werden, dass die resultierende Zeichenkette in zwei Hälften geteilt werden kann: Eine Zeithälfte und eine Datumshälfte. Zum Beispiel würde die Formatzeichenkette "hh yyyy mm" nicht das erwartete Ergebnis liefern, weil sich ein Datumselement zwischen zwei Zeitelementen befindet.</p>
 <p>Wenn <em>Format</em> einen numerischen Monatstag (d oder dd) gefolgt von einem vollständigen Monatsnamen (MMMM) enthält, wird der Genitiv des Monatsnamens verwendet (sofern die Sprache einen Genitiv hat).</p>
-<p>Mit <a href="DateAdd.htm">DateAdd</a> und <a href="DateDiff.htm">DateDiff</a> können beliebige Datum- und Zeitwerte addiert, subtrahiert und verglichen werden.</p>
+<p>Mit <a href="DateAdd.htm">DateAdd</a> und <a href="DateDiff.htm">DateDiff</a> können beliebige Datums- und Zeitwerte addiert, subtrahiert und verglichen werden.</p>
 <h2 id="Related">Siehe auch</h2>
 <p>Wenn Sie stattdessen den <em><em>umgekehrten</em></em> Weg gehen wollen, also die Umwandlung einer formatierten Zeichenkette in das <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a>-Format, schauen Sie sich den folgenden Forumsbeitrag an: <a href="https://www.autohotkey.com/forum/topic20405.html">www.autohotkey.com/forum/topic20405.html</a></p>
 <p>Siehe auch: <a href="GuiControls.htm#DateTime">DateTime-Steuerelement</a>, <a href="Format.htm">Format</a>, <a href="../Variables.htm#date">interne Datums- und Zeitvariablen</a>, <a href="FileGetTime.htm">FileGetTime</a></p>
@@ -251,7 +251,7 @@ MsgBox "Datum und Uhrzeit ist nach dem Formatieren " ZeitZkette
 MsgBox FormatTime(200504, "'Monatsname': MMMM`n'Tagesname': dddd")
 
 JahrWoche := FormatTime(20050101, "YWeek")
-MsgBox "Der 1. Januar 2005 hat das folgende Jahr und die Wochennummer nach ISO: " JahrWoche</pre>
+MsgBox "Der 1. Jan. 2005 liegt in folgender ISO-Jahr-Kalenderwoche: " JahrWoche</pre>
 </div>
 
 <div class="ex" id="ExFileTime">
@@ -261,7 +261,7 @@ if DateiName = "" <em>; Der Benutzer hat keine Datei ausgewählt.</em>
     return
 DateiZeit := FileGetTime(DateiName)
 DateiZeit := FormatTime(DateiZeit)   <em>; Durch Weglassen des letzten Parameters wird die Uhrzeit und das lange Datum abgerufen.</em>
-MsgBox "Die ausgewählte Datei wurde zuletzt am " DateiZeit " modifiziert."</pre>
+MsgBox "Die ausgewählte Datei wurde zuletzt am " DateiZeit " geändert."</pre>
 </div>
 
 <div class="ex" id="ExFormatSec">

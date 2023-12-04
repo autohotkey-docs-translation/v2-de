@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Error-Objekt | AutoHotkey v2</title>
-<meta name="description" content="Error-Objekte, die bei Misserfolg vom internen Code ausgelöst werden." />
+<meta name="description" content="Error-Objekte, die der interne Code bei Misserfolg via Throw auslöst." />
 <meta name="ahk:equiv-v1" content="index.htm" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,47 +15,47 @@
 <h1>Error-Objekt</h1>
 <pre class="NoIndent">class Error extends Object</pre>
 
-<p>Error-Objekte werden von internem Code <a href="Throw.htm">ausgelöst</a>, wenn ein Laufzeitfehler auftritt, aber sie können auch explizit vom Skript ausgelöst werden.</p>
+<p>Error-Objekte werden vom internen Code via <a href="Throw.htm">Throw</a> ausgelöst, wenn ein Laufzeitfehler auftritt, können aber auch explizit vom Skript ausgelöst werden.</p>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
 <ul>
   <li><a href="#Standard_Properties">Standardeigenschaften</a></li>
   <li><a href="#new">Error()</a></li>
-  <li><a href="#error-types">Error-Typen</a></li>
+  <li><a href="#error-types">Fehlertypen</a></li>
   <li><a href="#Related">Siehe auch</a></li>
 </ul>
 
 <h2 id="Standard_Properties">Standardeigenschaften</h2>
 <p id="Message"><strong>Message:</strong> Eine Fehlermeldung.</p>
-<p id="What"><strong>What:</strong> Was die Ausnahme ausgelöst hat. Enthält normalerweise den Namen einer Funktion, aber ist leer bei Ausnahmen, die aufgrund eines Fehlers in einem Ausdruck ausgelöst werden (z.B. wenn ein mathematischer Operator für einen nicht-numerischen Wert verwendet wird).</p>
-<p id="Extra"><strong>Extra:</strong> Ein Zeichenkettenwert, der sich auf den Fehler bezieht, falls vorhanden. Wenn dieser Wert in eine nicht-leere Zeichenkette umgewandelt werden kann, wird im Standard-Fehlerdialogfenster eine Zeile mit "Specifically:" gefolgt von dieser Zeichenkette angezeigt.</p>
-<p id="File"><strong>File:</strong> Der vollständige Pfad der Skriptdatei, die die Zeile enthält, in der der Fehler aufgetreten ist bzw. in der das Error-Objekt konstruiert wurde.</p>
-<p id="Line"><strong>Line:</strong> Die Nummer der Zeile, in der der Fehler aufgetreten ist bzw. in der das Error-Objekt konstruiert wurde.</p>
-<p id="Stack"><strong>Stack:</strong> Eine Zeichenkette, die den Aufrufstapel zum Zeitpunkt der Erstellung des Error-Objekts repräsentiert. Jede Zeile kann wie folgt formatiert sein:</p>
+<p id="What"><strong>What:</strong> Was die Ausnahme ausgelöst hat. Enthält normalerweise den Namen einer Funktion, ist aber leer bei Ausnahmen, die durch einen Fehler in einem Ausdruck ausgelöst wurden (z.B. wenn ein mathematischer Operator für einen nicht-numerischen Wert verwendet wird).</p>
+<p id="Extra"><strong>Extra:</strong> Ein Zeichenkettenwert, der sich auf den Fehler bezieht, falls vorhanden. Wenn dieser Wert in eine nicht-leere Zeichenkette umgewandelt werden kann, wird im regulären Fehlerdialogfenster eine Zeile mit "Specifically:" gefolgt von dieser Zeichenkette angezeigt.</p>
+<p id="File"><strong>File:</strong> Der vollständige Pfad der Skriptdatei, die die Zeile enthält, in der der Fehler auftrat oder das Error-Objekt konstruiert wurde.</p>
+<p id="Line"><strong>Line:</strong> Die Nummer der Zeile, in der der Fehler auftrat oder das Error-Objekt konstruiert wurde.</p>
+<p id="Stack"><strong>Stack:</strong> Eine Zeichenkette, die den Aufrufstapel zum Zeitpunkt der Konstruktion des Error-Objekts repräsentiert. Jede Zeile kann wie folgt formatiert sein:</p>
 <dl>
   <dt><code><i>File</i> (<i>Line</i>) : [<i>What</i>] <i>Quellcode</i>`r`n</code></dt>
-  <dd>Repräsentiert einen Aufruf der <em>What</em>-Funktion. <em>File</em> und <em>Line</em> kennzeichnen die aktuelle Skriptzeile in dieser Stapeltiefe. <em>Quellcode</em> ist eine Annäherung an den Quellcode in dieser Zeile, wie er in <a href="ListLines.htm">ListLines</a> angezeigt werden würde.</dd>
+  <dd>Repräsentiert einen Aufruf der <em>What</em>-Funktion. <em>File</em> und <em>Line</em> geben die aktuelle Skriptzeile in dieser Stapeltiefe an. <em>Quellcode</em> ist die ungefähre Darstellung des tatsächlichen Quellcodes in dieser Zeile, wie in <a href="ListLines.htm">ListLines</a> angezeigt.</dd>
   <dt><code>&gt; <i>What</i>`r`n</code></dt>
   <dd>Repräsentiert den Start eines Threads, typischerweise die direkte Ursache für den Funktionsaufruf darüber.</dd>
   <dt><code>... <i>N</i> more</code></dt>
-  <dd>Weist darauf hin, dass der Stack-Trace gekürzt wurde und dass es <em>n</em> weitere Stack-Einträge gibt, die nicht angezeigt werden. Aktuell kann die <code>Stack</code>-Eigenschaft nicht mehr als 2047 Zeichen umfassen.</dd>
+  <dd>Gibt an, dass der Stacktrace gekürzt wurde und dass <em>n</em> weitere Stackeinträge nicht angezeigt werden. Aktuell kann die <code>Stack</code>-Eigenschaft 2047 Zeichen nicht überschreiten.</dd>
 </dl>
 
-<p class="warning"><strong>Hinweis:</strong> Das Standardfehlerfenster erfordert, dass <em>Message</em>, <em>Extra</em>, <em>File</em> und <em>Line</em> <a href="Object.htm">eigene Werteigenschaften</a> sind.</p>
+<p class="warning"><strong>Hinweis:</strong> Das reguläre Fehlerdialogfenster erfordert, dass <em>Message</em>, <em>Extra</em>, <em>File</em> und <em>Line</em> <a href="Object.htm">eigene Werteigenschaften</a> sind.</p>
 
 <h2 id="new">Error()</h2>
 <p>Erstellt ein Error-Objekt.</p>
 <pre class="Syntax">NewError := <span class="func"><i>Error</i>.New</span>(Message <span class="optional">, What, Extra</span>)</pre>
-<p><em><strong>Error</strong></em> kann mit einer der unter <a href="#error-types">Error-Typen</a> aufgeführten Unterklassen ersetzt werden, allerdings akzeptieren einige Unterklassen andere Parameter.</p>
+<p><em><strong>Error</strong></em> kann mit einer der unter <a href="#error-types">Fehlertypen</a> aufgeführten Unterklassen ersetzt werden, wobei einige Unterklassen andere Parameter akzeptieren.</p>
 <p>Die Parameter entsprechen direkt den oben beschriebenen Eigenschaften, können aber bei Error-Unterklassen, die die Methode __New überschreiben, abweichen.</p>
 <p><em>Message</em> und <em>Extra</em> werden in Zeichenketten umgewandelt. Diese werden in einem Fehlerdialogfenster angezeigt, wenn die Ausnahme ausgelöst, aber nicht abgefangen wurde.</p>
-<p><em>What</em> kennzeichnet die Quelle des Fehlers. Es kann eine beliebige Zeichenkette sein, sollte aber ein negativer Integer oder der Name einer laufenden Funktion sein. Die Angabe von -1 kennzeichnet die aktuelle Funktion, -2 kennzeichnet die Funktion, die sie aufgerufen hat, usw. Wenn das Skript <a href="../Scripts.htm#ahk2exe">kompiliert</a> ist oder der Wert keinen gültigen Stack-Frame identifiziert, wird der Wert lediglich in eine Zeichenkette umgewandelt und an <code>NewError.What</code> zugewiesen. Andernfalls wird der identifizierte Stack-Frame wie folgt verwendet, um die anderen Eigenschaften zu bestimmen:</p>
+<p><em>What</em> gibt die Quelle des Fehlers an. Dies kann eine beliebige Zeichenkette sein, sollte aber besser ein negativer Integer oder der Name einer laufenden Funktion sein. Die Angabe von -1 gibt die aktuelle Funktion an, -2 die Funktion, die sie aufgerufen hat, und so weiter. Wenn das Skript <a href="../Scripts.htm#ahk2exe">kompiliert</a> ist oder der Wert keinen gültigen Stack-Frame identifiziert, wird der Wert lediglich in eine Zeichenkette umgewandelt und <code>NewError.What</code> zugewiesen. Andernfalls wird der identifizierte Stack-Frame wie folgt verwendet, um die anderen Eigenschaften zu ermitteln:</p>
 <ul>
   <li><code>NewError.What</code> enthält den Namen der Funktion.</li>
-  <li><code>NewError.Line</code> und <code>NewError.File</code> kennzeichnen die Zeile, die die Funktion <em>aufgerufen</em> hat.</li>
-  <li><code>NewError.Stack</code> enthält einen partiellen Stack-Trace, mit dem angegebenen Stack-Frame ganz oben.</li>
+  <li><code>NewError.Line</code> und <code>NewError.File</code> geben die Zeile an, die die Funktion <em>aufgerufen</em> hat.</li>
+  <li><code>NewError.Stack</code> enthält einen partiellen Stacktrace, mit dem angegebenen Stackframe ganz oben.</li>
 </ul>
-<p>Die Verwendung des <em>What</em>-Parameters ermöglicht einer komplexen Funktion, Hilfsfunktionen zu verwenden, um ihre Arbeit oder Parametervalidierung auszuführen, während diese internen Details aus allen gemeldeten Fehlerinformationen weggelassen werden. Zum Beispiel:</p>
+<p>Die Verwendung des <em>What</em>-Parameters gibt einer komplexen Funktion die Möglichkeit, Hilfsfunktionen zu verwenden, um ihre Arbeit oder Parametervalidierung auszuführen, während diese internen Details aus allen gemeldeten Fehlerinformationen weggelassen werden. Zum Beispiel:</p>
 <pre>MeineFunktion(a, b) {
     CheckArg "a", a
     CheckArg "b", b
@@ -67,7 +67,7 @@
 }
 
 try
-    MeineFunktion(1, -1)  <em>; err.Line kennzeichnet diese Zeile.</em>
+    MeineFunktion(1, -1)  <em>; err.Line gibt diese Zeile an.</em>
 catch ValueError as err
     MsgBox Format("{1}: {2}.`n`nFile:`t{3}`nLine:`t{4}`nWhat:`t{5}`nStack:`n{6}"
         , type(err), err.Message, err.File, err.Line, err.What, err.Stack)</pre>
@@ -77,31 +77,31 @@ catch as e
     MsgBox(Type(e) "in " e.What ", das auf Zeile " e.Line " aufgerufen wurde.")
 
 EineFunktion() {
-    throw Error("Fehlschlag", -1)
+    throw Error("Fehler", -1)
 }</pre>
 
-<h2 id="error-types">Error-Typen</h2>
+<h2 id="error-types">Fehlertypen</h2>
 
 <p>Die folgenden Unterklassen von <strong>Error</strong> sind vordefiniert:</p>
 <ul>
   <li id="MemoryError"><strong>MemoryError:</strong> Eine Speicherreservierung ist fehlgeschlagen.</li>
-  <li id="OSError"><strong>OSError:</strong> Ein codeinterner Funktionsaufruf an eine Win32-Funktion ist fehlgeschlagen. <strong>Message</strong> enthält einen Fehlercode und eine Beschreibung, die beide vom Betriebssystem generiert wurden. Ein OSError hat eine zusätzliche <strong>Number</strong>-Eigenschaft, die den Fehlercode enthält. Der Aufruf von <code>OSError(Code)</code> mit einem numerischen <em>Code</em> setzt <em>Number</em> und <em>Message</em> basierend auf dem angegebenen OS-definierten Fehlercode. Wenn <em>Code</em> weggelassen wird, wird standardmäßig <code>A_LastError</code> verwendet.</li>
-  <li id="TargetError"><strong>TargetError:</strong> Eine Funktion ist fehlgeschlagen, weil ihr Ziel nicht gefunden werden konnte. <strong>Message</strong> gibt an, um welche Art von Ziel es sich handelt, z.B. um ein Fenster, ein Steuerelement, ein Menü oder eine Statusleiste.</li>
+  <li id="OSError"><strong>OSError:</strong> Ein interner Win32-Funktionsaufruf ist fehlgeschlagen. <strong>Message</strong> enthält einen Fehlercode und eine Beschreibung, die beide vom Betriebssystem generiert wurden. OSErrors haben zusätzlich die <strong>Number</strong>-Eigenschaft, die den Fehlercode enthält. Der Aufruf von <code>OSError(Code)</code>, wobei <em>Code</em> numerisch ist, setzt <em>Number</em> und <em>Message</em> gemäß dem angegebenen systemdefinierten Fehlercode. Wenn <em>Code</em> weggelassen wird, wird standardmäßig <a href="../Variables.htm#LastError">A_LastError</a> verwendet. Zum Beispiel gibt <code>OSError(5).Message</code> "(5) Zugriff verweigert" zurück.</li>
+  <li id="TargetError"><strong>TargetError:</strong> Eine Funktion ist fehlgeschlagen, weil ihr Ziel nicht gefunden werden konnte. <strong>Message</strong> gibt an, um welche Art von Ziel es sich handelt, z.B. ein Fenster, ein Steuerelement, ein Menü oder eine Statusleiste.</li>
   <li id="TimeoutError"><strong>TimeoutError:</strong> <a href="SendMessage.htm">SendMessage</a> hat das Zeitlimit überschritten.</li>
-  <li id="TypeError"><strong>TypeError:</strong> Ein unerwarteter Typ wurde für einen Eingabewert einer Funktion, einer Eigenschaftszuweisung oder einer anderen Operation verwendet. <strong>Message</strong> gibt in der Regel an, welcher Typ erwartet wird und welcher Typ tatsächlich vorliegt, und <strong>Extra</strong> enthält eine Zeichenkette, die den betroffenen Wert widerspiegelt.</li>
-  <li id="UnsetError"><strong>UnsetError:</strong> Es wurde versucht, den Wert einer Variable, einer Eigenschaft oder eines Elements zu lesen, obwohl keiner vorhanden war.<ul>
+  <li id="TypeError"><strong>TypeError:</strong> Ein unerwarteter Typ wurde als Eingabe einer Funktion, einer Eigenschaftszuweisung oder einer anderen Operation verwendet. <strong>Message</strong> gibt den erwarteten und tatsächlichen Typ an, und <strong>Extra</strong> enthält eine Zeichenkette, die den fehlerhaften Wert repräsentiert.</li>
+  <li id="UnsetError"><strong>UnsetError:</strong> Es wurde versucht, den Wert einer Variable, einer Eigenschaft oder eines Elements zu lesen, obwohl keiner existiert.<ul>
     <li id="MemberError"><strong>MemberError</strong><ul>
       <li id="PropertyError"><strong>PropertyError</strong></li>
       <li id="MethodError"><strong>MethodError</strong></li>
     </ul></li>
     <li id="UnsetItemError"><strong>UnsetItemError</strong></li>
   </ul></li>
-  <li id="ValueError"><strong>ValueError:</strong> Ein unerwarteter Wert wurde für einen Eingabewert einer Funktion, einer Eigenschaftszuweisung oder einer anderen Operation verwendet. <strong>Message</strong> gibt in der Regel an, welche Erwartung gebrochen wurde, und <strong>Extra</strong> enthält eine Zeichenkette, die den betroffenen Wert widerspiegelt.<ul>
+  <li id="ValueError"><strong>ValueError:</strong> Ein unerwarteter Wert wurde als Eingabe einer Funktion, einer Eigenschaftszuweisung oder einer anderen Operation verwendet. <strong>Message</strong> gibt normalerweise an, welche Erwartung verletzt wurde, und <strong>Extra</strong> enthält eine Zeichenkette, die den fehlerhaften Wert repräsentiert.<ul>
     <li id="IndexError"><strong>IndexError:</strong> Der Index-Parameter der <a href="../Objects.htm#__Item">__Item-Eigenschaft</a> eines Objekts war ungültig oder lag außerhalb des Bereichs.</li>
   </ul></li>
   <li id="ZeroDivisionError"><strong>ZeroDivisionError:</strong> Es wurde versucht, in einem Ausdruck oder mit der Mod-Funktion durch Null zu dividieren.</li>
 </ul>
-<p>Fehler werden auch über die Error-Basisklasse ausgelöst.</p>
+<p>Fehler werden auch unter Verwendung der Basis-Error-Klasse ausgelöst.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Throw.htm">Throw</a>, <a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Finally.htm">Finally</a>, <a href="OnError.htm">OnError</a></p>

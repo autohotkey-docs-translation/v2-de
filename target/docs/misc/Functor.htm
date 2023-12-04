@@ -15,7 +15,7 @@
 
 <p>"Funktionsobjekt" bedeutet in der Regel folgendes:</p>
 <ul>
-  <li>Ein <a href="../lib/Func.htm">Func</a>- oder <a href="../Functions.htm">Closure</a>-Objekt, das eine tatsächliche <a href="../Functions.htm#closures">Funktion</a> repräsentiert; entweder eine interne oder im Skript definierte Funktion.</li>
+  <li>Ein <a href="../lib/Func.htm">Func</a>- oder <a href="../Functions.htm">Closure</a>-Objekt, das eine tatsächliche <a href="../Functions.htm#closures">Funktion</a> repräsentiert; entweder eine interne Funktion oder im Skript definierte Funktion.</li>
   <li>Ein benutzerdefiniertes Objekt, das wie eine Funktion aufgerufen werden kann. Dies wird manchmal als "Funktor" bezeichnet.</li>
   <li>Jedes andere Objekt, das wie eine Funktion aufgerufen werden kann, wie z.B. ein <a href="#BoundFunc">BoundFunc-Objekt</a> oder ein JavaScript-Funktionsobjekt, zurückgegeben von einer COM-Methode.</li>
 </ul>
@@ -37,10 +37,10 @@
   <li><a href="../lib/SetTimer.htm">SetTimer</a></li>
   <li><a href="../lib/Sort.htm">Sort</a></li>
 </ul>
-<p id="HasCall">Um zu ermitteln, ob ein Objekt aufrufbar zu sein scheint, verwenden Sie eine der folgenden Vorgehensweisen:</p>
+<p id="HasCall">Um zu prüfen, ob ein Objekt potenziell aufrufbar ist, verwenden Sie eine der folgenden Möglichkeiten:</p>
 <ul>
-  <li><code>Wert.HasMethod()</code> funktioniert standardmäßig mit allen AutoHotkey-Werten und -Objekten, und lässt zu, dass HasMethod bei einigen Objekten oder Klassen überschrieben werden kann. Bei COM-Objekten wird diese Vorgehensweise in der Regel fehlschlagen (eine Ausnahme auslösen oder das falsche Ergebnis erzeugen), es sei denn, das COM-Objekt ist tatsächlich ein AutoHotkey-Objekt aus einem anderen Prozess.</li>
-  <li><code>HasMethod(Wert)</code> funktioniert mit allen AutoHotkey-Werten und -Objekten und kann nicht überschrieben werden, gibt aber False zurück, wenn die Existenz einer <em>Call</em>-Methode nicht bestimmt werden kann. Es wird eine Ausnahme ausgelöst, wenn <em>Wert</em> ein <a href="../lib/ComObject.htm">ComObject</a> ist.</li>
+  <li><code>Wert.HasMethod()</code> funktioniert standardmäßig mit allen AutoHotkey-Werten und -Objekten, lässt aber zu, dass HasMethod bei einigen Objekten oder Klassen überschrieben werden kann. Bei COM-Objekten wird dies in der Regel fehlschlagen (eine Ausnahme auslösen oder das falsche Ergebnis erzeugen), es sei denn, das COM-Objekt ist tatsächlich ein AutoHotkey-Objekt aus einem anderen Prozess.</li>
+  <li><code>HasMethod(Wert)</code> funktioniert mit allen AutoHotkey-Werten und -Objekten und kann nicht überschrieben werden, gibt aber False zurück, wenn die Existenz einer <em>Call</em>-Methode nicht ermittelt werden kann. Es wird eine Ausnahme ausgelöst, wenn <em>Wert</em> ein <a href="../lib/ComObject.htm">ComObject</a> ist.</li>
 </ul>
 
 <h2 id="User-Defined">Benutzerdefiniert</h2>
@@ -54,7 +54,7 @@
     <em>;...</em>
 }
 </pre>
-<p>Dies gilt für <em>Instanzen</em> von <em>MeineKlasseName</em>, wie z.B. das von <code>MeineKlasseName()</code> zurückgegebene Objekt. Das Ersetzen von <code>Call</code> mit <code>static Call</code> würde stattdessen das überschreiben, was passiert, wenn <em>MeineKlasseName</em> selbst aufgerufen wird.</p>
+<p>Dies gilt für <em>Instanzen</em> von <em>MeineKlasseName</em>, wie z.B. das von <code>MeineKlasseName()</code> zurückgegebene Objekt. Das Ersetzen von <code>Call</code> mit <code>static Call</code> würde stattdessen überschreiben, was passiert, wenn <em>MeineKlasseName</em> selbst aufgerufen wird.</p>
 <h3 id="User-Defined-Examples">Beispiele</h3>
 <p>Das folgende Beispiel definiert ein aufrufbares Funktionsarray, das beim Aufruf jedes seiner Elemente der Reihe nach aufruft.</p>
 <pre>class FunkArrayTyp extends Array {
@@ -90,29 +90,29 @@ Zwei(param1, param2) {
 <p>Verhält sich wie eine Funktion, übergibt aber nur vordefinierte Parameter an eine andere Funktion.</p>
 <p>BoundFunc-Objekte können auf zwei Arten erzeugt werden:</p>
 <ul>
-  <li>Durch Aufrufen der <a href="../lib/Func.htm#Bind">Func.Bind</a>-Methode, die Parameterwerte an eine Funktion bindet.</li>
-  <li>Durch Aufrufen der <a href="../lib/ObjBindMethod.htm">ObjBindMethod</a>-Funktion, die Parameterwerte und Methodennamen an ein Zielobjekt bindet.</li>
+  <li>Durch Aufruf der <a href="../lib/Func.htm#Bind">Func.Bind</a>-Methode, die Parameterwerte an eine Funktion bindet.</li>
+  <li>Durch Aufruf der <a href="../lib/ObjBindMethod.htm">ObjBindMethod</a>-Funktion, die Parameterwerte und einen Methodennamen an ein Zielobjekt bindet.</li>
 </ul>
-<p>Das folgende Beispiel zeigt, wie BoundFunc-Objekte aufgerufen werden können. Wenn das BoundFunc-Objekt aufgerufen wird, ruft es die Funktion oder Methode auf, an der es gebunden wurde, und übergibt eine Kombination aus gebundenen Parametern und Parametern des Aufrufers. Ungebundene Parameterpositionen werden Positionen aus der Parameterliste des Aufrufers zugewiesen, von links nach rechts. Zum Beispiel:</p>
-<pre>fn := EchteFn.Bind(1)  <em>; Nur mit ersten Parameter verbinden</em>
+<p>Das folgende Beispiel zeigt, wie BoundFunc-Objekte aufgerufen werden können. Wenn das BoundFunc-Objekt aufgerufen wird, ruft es die Funktion oder Methode auf, an die es gebunden wurde, und übergibt eine Kombination aus gebundenen Parametern und Parametern des Aufrufers. Ungebundene Parameterpositionen werden Positionen aus der Parameterliste des Aufrufers zugewiesen, von links nach rechts. Zum Beispiel:</p>
+<pre>fn := EchteFn.Bind(1)  <em>; Nur ersten Parameter binden</em>
 fn(2)      <em>; Zeigt "1, 2"</em>
 fn.Call(3) <em>; Zeigt "1, 3"</em>
 
-fn := EchteFn.Bind( , 1)  <em>; Nur mit zweiten Parameter verbinden</em>
-fn(2)      <em>; Zeigt "2, 1"</em>
+fn := EchteFn.Bind( , 1)  <em>; Nur zweiten Parameter binden</em>
+fn(2, 0)   <em>; Zeigt "2, 1, 0"</em>
 fn.Call(3) <em>; Zeigt "3, 1"</em>
 fn(, 4)    <em>; Fehler: 'a' wurde weggelassen</em>
 
-EchteFn(a, b, c:="c") {
-    MsgBox a ", " b
+EchteFn(a, b, c?) {
+    MsgBox a ", " b (IsSet(c) ? ", " c : "")
 }</pre>
-<p><a href="../lib/ObjBindMethod.htm">ObjBindMethod</a> kann verwendet werden, um eine Methode mit einem Objekt zu verbinden, wenn es nicht möglich ist, eine Referenz zu der Methode selbst abzurufen. Zum Beispiel:</p>
+<p>Mit <a href="../lib/ObjBindMethod.htm">ObjBindMethod</a> kann eine Methode gebunden werden, auch dann, wenn der Abruf einer Referenz zur Methode selbst nicht möglich ist. Zum Beispiel:</p>
 <pre>Shell := ComObject("Shell.Application")
 RunBox := ObjBindMethod(Shell, "FileRun")
 <em>; Ausführen-Dialogfenster öffnen.</em>
 RunBox</pre>
 <p>Ein komplexeres Beispiel finden Sie unter <a href="../lib/SetTimer.htm#ExampleClass">SetTimer</a>.</p>
-<p>Andere Eigenschaften und Methoden werden von <a href="../lib/Func.htm">Func</a> geerbt, allerdings spiegeln sie nicht die Eigenschaften der Zielfunktion oder -methode wider (die nicht als Funktion implementiert sein muss). Das BoundFunc-Objekt fungiert als anonyme variadische Funktion ohne weitere Formalparameter, ähnlich der <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a> unten:</p>
+<p>Andere Eigenschaften und Methoden werden von <a href="../lib/Func.htm">Func</a> geerbt, spiegeln aber nicht die Eigenschaften der Zielfunktion oder -methode wider (die nicht als Funktion implementiert sein muss). Das BoundFunc-Objekt fungiert als anonyme variadische Funktion ohne weitere formale Parameter, ähnlich der <a href="../Variables.htm#fat-arrow">Fat-Arrow-Funktion</a> unten:</p>
 <pre>Func_Bind(fn, bound_args*) {
     return (args*) =&gt; (args.InsertAt(1, bound_args*), fn(args*))
 }</pre>

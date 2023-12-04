@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>OnEvent (GUI) - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die OnEvent-Methode eines Gui- oder GuiControl-Objekts registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn ein bestimmtes Ereignis von einem GUI-Fenster oder -Steuerelement ausgelöst wird." />
+<meta name="description" content="Die OnEvent-Methode eines Gui- oder GuiControl-Objekts registriert eine Funktion oder Methode, die aufgerufen wird, wenn ein bestimmtes Ereignis durch ein GUI-Fenster oder -Steuerelement ausgelöst wird." />
 <meta name="ahk:equiv-v1" content="lib/Gui.htm#Labels" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,30 +13,30 @@
 <body>
 
 <h1>OnEvent</h1>
-<p>Registriert eine Funktion oder Methode, die aufgerufen werden soll, wenn das angegebene Ereignis von einem GUI-Fenster oder -Steuerelement ausgelöst wird.</p>
-<pre class="Syntax"><a href="Gui.htm">Gui</a>.<span class="func">OnEvent</span>(Ereignisname, Rückruf <span class="optional">, HinzufügenEntfernen</span>)
-<a href="GuiControl.htm">GuiCtrl</a>.<span class="func">OnEvent</span>(Ereignisname, Rückruf <span class="optional">, HinzufügenEntfernen</span>)</pre>
+<p>Registriert eine Funktion oder Methode, die aufgerufen wird, wenn ein bestimmtes Ereignis durch ein GUI-Fenster oder -Steuerelement ausgelöst wird.</p>
+<pre class="Syntax"><a href="Gui.htm">Gui</a>.<span class="func">OnEvent</span>(EreignisName, Rückruf <span class="optional">, HinzufügenEntfernen</span>)
+<a href="GuiControl.htm">GuiCtrl</a>.<span class="func">OnEvent</span>(EreignisName, Rückruf <span class="optional">, HinzufügenEntfernen</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
-  <dt>Ereignisname</dt>
+  <dt>EreignisName</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Der Name eines Ereignisses. Siehe <a href="#Events">Ereignisse</a> weiter unten.</p>
+    <p>Der Name des Ereignisses. Siehe <a href="#Events">Ereignisse</a> weiter unten.</p>
   </dd>
   
   <dt>Rückruf</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
-    <p>Eine Funktion, Methode oder ein Objekt, das aufgerufen werden soll, wenn das Ereignis ausgelöst wird.</p>
-    <p>Wenn die GUI ein Event-Sink hat (also wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode sein, die zu einem Event-Sink gehört.</p>
-    <p>Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
+    <p>Eine Funktion, eine Methode oder ein Objekt, die/das aufgerufen wird, wenn das Ereignis ausgelöst wird.</p>
+    <p>Wenn die GUI ein Event-Sink hat (d.h. wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode im Event-Sink sein. Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
+    <p>Informationen zu den Parametern, dem Rückgabewert, der Namensgebung und mehr finden Sie in den folgenden Abschnitten.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Wenn weggelassen, wird standardmäßig 1 verwendet (die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen). Andernfalls geben Sie eine der folgenden Zahlen an:</p>
+    <p>Wenn weggelassen, wird standardmäßig 1 verwendet. Andernfalls geben Sie eine der folgenden Zahlen an:</p>
     <ul>
       <li>1 = Die Rückruffunktion nach anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
       <li>-1 = Die Rückruffunktion vor anderen zuvor registrierten Rückruffunktionen aufrufen.</li>
@@ -46,66 +46,66 @@
 </dl>
 
 <h2 id="Callback_Parameters">Parameter der Rückruffunktion</h2>
-<p>Wenn die Rückruffunktion eine via Name registrierte Methode ist, dann erhält ihr versteckter <a href="../Objects.htm#Custom_Classes_method"><em>this</em>-Parameter</a> ohne Umschweife das Event-Sink-Objekt (also das Objekt, zu dem die Methode gehört). Dieser Parameter wird in den Parameterlisten dieser Dokumentation nicht angezeigt.</p>
-<p>Da <em>Rückruf</em> ein Objekt sein kann, kann man auch ein <a href="../misc/Functor.htm#BoundFunc">BoundFunc-Objekt</a> angeben, das zusätzliche Parameter am Anfang der Parameterliste einfügt und dann eine andere Funktion aufruft. Diese allgemeine Vorgehensweise betrifft nicht nur OnEvent, daher wird sie für den Rest dieser Dokumentation ignoriert.</p>
-<p>Der erste explizite Parameter der Rückruffunktion ist das <a href="Gui.htm">Gui</a>- oder <a href="GuiControl.htm">GuiControl</a>-Objekt, das das Ereignis ausgelöst hat. Es gibt aber eine Ausnahme: Dieser Parameter wird weggelassen, wenn eine Gui <a href="Gui.htm#EventObj">ihre eigenen Ereignisse behandelt</a>, da <code>this</code> bereits eine Referenz zur Gui enthält.</p>
-<p>Viele Ereignisse akzeptieren zusätzliche Parameter, die unten beschrieben werden.</p>
-<p>Wie bei allen dynamisch aufgerufenen Methoden oder Funktionen können Sie einen oder mehrere Parameter am Ende der Parameterliste der Rückruffunktion weglassen, wenn Sie die entsprechenden Informationen nicht benötigen, aber dann muss als letzter Parameter ein Sternchen angegeben werden. Wenn ein Ereignis mehr Parameter hat als von der Rückruffunktion deklariert, werden sie einfach ignoriert (es sei denn, die Rückruffunktion ist <a href="../Functions.htm#Variadic">variadisch</a>).</p>
-<p>Die Rückruffunktion kann mehr Parameter deklarieren als das Ereignis bereitstellt, wenn (und nur wenn) die zusätzlichen Parameter als optional deklariert sind. Allerdings sind optionale Parameter nicht empfohlen, da zukünftige Versionen des Programms ein Ereignis mit zusätzlichen Parametern ausstatten könnte; in diesem Fall würden die optionalen Parameter ihre Standardwerte nicht mehr erhalten.</p>
+<p>Wenn die Rückruffunktion eine via Name registrierte Methode ist, bekommt ihr versteckter <a href="../Objects.htm#Custom_Classes_method"><em>this</em>-Parameter</a> direkt das Event-Sink-Objekt zugewiesen (also das Objekt, zu dem die Methode gehört). Dieser Parameter wird in den Parameterlisten dieser Dokumentation nicht angezeigt.</p>
+<p>Da <em>Rückruf</em> ein Objekt sein kann, ist es auch möglich, ein <a href="../misc/Functor.htm#BoundFunc">BoundFunc-Objekt</a> anzugeben, das zusätzliche Parameter am Anfang der Parameterliste einfügt und dann eine andere Funktion aufruft. Es handelt sich hierbei um eine allgemeine Technik, die nicht spezifisch für OnEvent ist, weshalb sie im Rest dieser Dokumentation grundsätzlich ignoriert wird.</p>
+<p>Der erste explizite Parameter der Rückruffunktion ist das <a href="Gui.htm">Gui</a>- oder <a href="GuiControl.htm">GuiControl</a>-Objekt, das das Ereignis ausgelöst hat. Die einzige Ausnahme ist, dass dieser Parameter weggelassen wird, wenn eine Gui <a href="Gui.htm#EventObj">ihre eigenen Ereignisse behandelt</a>, da <code>this</code> bereits eine Referenz enthält, die auf die Gui verweist.</p>
+<p>Viele Ereignisse akzeptieren zusätzliche Parameter.</p>
+<p>Wie bei allen dynamisch aufgerufenen Methoden oder Funktionen können Sie einen oder mehrere Parameter am Ende der Parameterliste der Rückruffunktion weglassen, wenn Sie die entsprechenden Informationen nicht benötigen, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>. Wenn ein Ereignis mehr Parameter hat als von der Rückruffunktion deklariert, werden diese einfach ignoriert (es sei denn, die Rückruffunktion ist <a href="../Functions.htm#Variadic">variadisch</a>).</p>
+<p>Die Rückruffunktion kann mehr Parameter deklarieren als das Ereignis bereitstellt, wenn (und nur wenn) die zusätzlichen Parameter als optional deklariert sind. Die Verwendung von optionalen Parametern wird jedoch nicht empfohlen, da zukünftige Versionen des Programms ein Ereignis mit zusätzlichen Parametern erweitern können; in diesem Fall würden die optionalen Parameter nicht mehr ihre Standardwerte erhalten.</p>
 
 <h2 id="Callback_Return_Value">Rückgabewert der Rückruffunktion</h2>
 <p>Wenn mehrere Rückruffunktionen für ein Ereignis registriert sind, kann eine Rückruffunktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Rückruffunktionen aufgerufen werden.</p>
-<p>Der Rückgabewert kann bei bestimmten Ereignissen eine zusätzliche Bedeutung haben. Zum Beispiel könnte eine <a href="#Close">Close</a>-Rückruffunktion eine Nummer ungleich 0 zurückgeben (z.B. <code>true</code>), um das Schließen des GUI-Fensters zu verhindern.</p>
+<p>Der Rückgabewert kann je nach Ereignis eine zusätzliche Bedeutung haben. Zum Beispiel kann eine <a href="#Close">Close</a>-Rückruffunktion eine Zahl ungleich 0 zurückgeben (z.B. <code>true</code>), um die Schließung des GUI-Fensters zu verhindern.</p>
 
 <h2 id="Callback_Name">Name der Rückruffunktion</h2>
-<p>Gemäß der Konvention und der Übersichtlichkeit enthält jede Syntax unten einen Funktionsnamen in Form von <code><i>Objekttyp</i>_<i>Ereignisname</i></code>. Skripte müssen dieser Konvention nicht nachkommen und können beliebige gültige Funktionsnamen benutzen.</p>
+<p>Konventionsgemäß wird die Syntax jedes Ereignisses unten mit einem Funktionsnamen in Form von <code><i>ObjektTyp</i>_<i>EreignisName</i></code> angezeigt. Dies dient der Übersichtlichkeit. Skripte müssen sich nicht an diese Konvention halten und können beliebige gültige Funktionsnamen verwenden.</p>
 
 <h2 id="Threads">Threads</h2>
-<p>Jede Ereignis-Rückruffunktion wird in einem neuen <a href="../misc/Threads.htm">Thread</a> aufgerufen, daher starten Einstellungen wie <a href="SendMode.htm">SendMode</a> mit ihren Standardwerten. Diese Standardwerte können während der <a href="../Scripts.htm#auto">Startphase des Skripts</a> geändert werden.</p>
-<p>Jedes Mal, wenn ein GUI-<a href="../misc/Threads.htm">Thread</a> gestartet wird, ist das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> dieses Threads zunächst das GUI-Fenster selbst. Dies ermöglicht Ihnen, <em>FensterTitel</em> und <em>FensterText</em> bei Fenster- und Steuerelementbefehlen wie <a href="WinGetStyle.htm">WinGetStyle</a>, <a href="WinSetTransparent.htm">WinSetTransparent</a> und <a href="ControlGetFocus.htm">ControlGetFocus</a> wegzulassen, um mit dem GUI-Fenster selbst zu arbeiten (sogar wenn es versteckt ist).</p>
-<p>Jedes Ereignis ist, sofern nicht anders angegeben, pro Objekt auf einen einzelnen Thread limitiert. Während ein Thread eines Ereignisses läuft, kann dasselbe Ereignis keine neuen Threads starten - es wird in der Regel einfach verworfen. Um das zu verhindern, geben Sie <a href="Critical.htm">Critical</a> in der ersten Zeile der Rückruffunktion an (allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a>, wie z.B. das Drücken eines Hotkeys, gepuffert/verzögert).</p>
+<p>Jede Ereignis-Rückruffunktion wird in einem neuen <a href="../misc/Threads.htm">Thread</a> aufgerufen und verwendet daher vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können während der <a href="../Scripts.htm#auto">Startphase des Skripts</a> geändert werden.</p>
+<p>Jedes Mal, wenn ein GUI-<a href="../misc/Threads.htm">Thread</a> gestartet wird, ist das <a href="../misc/WinTitle.htm#LastFoundWindow">zuletzt gefundene Fenster</a> dieses Threads zunächst das GUI-Fenster selbst. Dies ermöglicht Ihnen, <em>FensterTitel</em> und <em>FensterText</em> bei Fenster- und Steuerelementfunktionen wie <a href="WinGetStyle.htm">WinGetStyle</a>, <a href="WinSetTransparent.htm">WinSetTransparent</a> und <a href="ControlGetFocus.htm">ControlGetFocus</a> wegzulassen, um mit dem GUI-Fenster selbst zu arbeiten (sogar wenn es versteckt ist).</p>
+<p>Sofern nicht anders angegeben, ist jedes Ereignis auf jeweils einen Thread pro Objekt beschränkt. Wenn ein Ereignis ausgelöst wird, bevor ein vorheriger Thread, der durch dieses Ereignis gestartet wurde, fertig ist, wird es normalerweise verworfen. Um das zu verhindern, geben Sie <a href="Critical.htm">Critical</a> in der ersten Zeile der Rückruffunktion an (allerdings werden dadurch auch andere <a href="../misc/Threads.htm">Threads</a>, wie z.B. das Drücken eines Hotkeys, gepuffert/verzögert).</p>
 
 <h2 id="Destroying_the_GUI">GUI zerstören</h2>
-<p>Wenn ein GUI zerstört wird, werden alle Ereignis-Rückruffunktionen freigegeben. Wenn demzufolge die GUI beim Senden eines Ereignisses zerstört wird, werden nachfolgende Ereignis-Rückruffunktionen nicht aufgerufen. Aus Gründen der Übersichtlichkeit sollten Rückruffunktionen <a href="#Callback_Return_Value">einen nicht-leeren Wert zurückgeben</a>, nachdem die GUI zerstört wurde.</p>
+<p>Wenn eine GUI zerstört wird, werden alle Ereignis-Rückruffunktionen freigegeben. Wenn also die GUI beim Senden eines Ereignisses zerstört wird, werden nachfolgende Ereignis-Rückruffunktionen nicht aufgerufen. Aus Gründen der Übersichtlichkeit sollten Rückruffunktionen <a href="#Callback_Return_Value">einen nicht-leeren Wert zurückgeben</a>, nachdem die GUI zerstört wurde.</p>
 
 <h2 id="Events">Ereignisse</h2>
-<p>Die folgenden Ereignisse werden von <a href="Gui.htm">Gui</a>-Objekte unterstützt:</p>
+<p>Die folgenden Ereignisse werden von <a href="Gui.htm">Gui</a>-Objekten unterstützt:</p>
 <table class="info">
   <tr><th>Ereignis</th><th>Auslösende Aktion</th></tr>
   <tr><td><a href="#Close">Close</a></td><td>Das Fenster wurde geschlossen.</td></tr>
-  <tr><td><a href="#ContextMenu">ContextMenu</a></td><td>Der Benutzer hat einen Rechtsklick innerhalb des Fensters gemacht, oder hat <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt.</td></tr>
-  <tr><td><a href="#DropFiles">DropFiles</a></td><td>Dateien/Ordner wurde auf das Fenster gezogen und abgelegt.</td></tr>
-  <tr><td><a href="#Escape">Esc</a></td><td>Der Benutzer hat <kbd>Esc</kbd> drückt, während das GUI-Fenster aktiv war.</td></tr>
+  <tr><td><a href="#ContextMenu">ContextMenu</a></td><td>Der Benutzer hat einen Rechtsklick innerhalb des Fensters gemacht oder <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt.</td></tr>
+  <tr><td><a href="#DropFiles">DropFiles</a></td><td>Dateien/Ordner wurden auf das Fenster gezogen und abgelegt.</td></tr>
+  <tr><td><a href="#Escape">Escape</a></td><td>Der Benutzer hat <kbd>Esc</kbd> gedrückt, während das GUI-Fenster aktiv war.</td></tr>
   <tr><td><a href="#Size">Size</a></td><td>Das Fenster wurde kleiner/größer gemacht, minimiert, maximiert oder wiederhergestellt.</td></tr>
 </table>
-<p>Die folgenden Ereignisse werden von <a href="GuiControl.htm">GuiControl</a>-Objekte unterstützt, abhängig vom Typ des Steuerelements:</p>
+<p>Die folgenden Ereignisse werden von <a href="GuiControl.htm">GuiControl</a>-Objekten unterstützt, abhängig vom Typ des Steuerelements:</p>
 <table class="info">
   <tr><th>Ereignis</th><th>Auslösende Aktion</th></tr>
-  <tr><td><a href="#Change">Change</a></td><td>Der Wert des Steuerelements wurde geändert.</td></tr>
-  <tr><td><a href="#Click">Click</a></td><td>Das Steuerelement wird angeklickt.</td></tr>
-  <tr><td><a href="#DoubleClick">DoubleClick</a></td><td>Das Steuerelement wird doppelt angeklickt.</td></tr>
-  <tr><td><a href="#ColClick">ColClick</a></td><td>Eine der Spaltenüberschriften in der ListView wurde angeklickt.</td></tr>
-  <tr><td><a href="#Ctrl-ContextMenu">ContextMenu</a></td><td>Der Benutzer hat einen Rechtsklick auf das Steuerelement gemacht, oder <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt, während das Steuerelement fokussiert war.</td></tr>
+  <tr><td><a href="#Change">Change</a></td><td>Der Wert des Steuerelements hat sich geändert.</td></tr>
+  <tr><td><a href="#Click">Click</a></td><td>Das Steuerelement wurde angeklickt.</td></tr>
+  <tr><td><a href="#DoubleClick">DoubleClick</a></td><td>Das Steuerelement wurde doppelt angeklickt.</td></tr>
+  <tr><td><a href="#ColClick">ColClick</a></td><td>Eine Spaltenüberschrift in der ListView wurde angeklickt.</td></tr>
+  <tr><td><a href="#Ctrl-ContextMenu">ContextMenu</a></td><td>Der Benutzer hat einen Rechtsklick auf das Steuerelement gemacht oder <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt, während das Steuerelement fokussiert war.</td></tr>
   <tr><td><a href="#Focus">Focus</a></td><td>Das Steuerelement hat den Tastaturfokus erhalten.</td></tr>
   <tr><td><a href="#LoseFocus">LoseFocus</a></td><td>Das Steuerelement hat den Tastaturfokus verloren.</td></tr>
-  <tr><td><a href="#ItemCheck">ItemCheck</a></td><td>Ein Häkchen wurde bei einem ListView- oder TreeView-Element gesetzt oder entfernt.</td></tr>
-  <tr><td><a href="#ItemEdit">ItemEdit</a></td><td>Die Beschriftung eines Listview- oder TreeView-Elements wird vom Benutzer editiert.</td></tr>
+  <tr><td><a href="#ItemCheck">ItemCheck</a></td><td>Ein Häkchen wurde bei einer ListView-Zeile oder einem TreeView-Element gesetzt oder entfernt.</td></tr>
+  <tr><td><a href="#ItemEdit">ItemEdit</a></td><td>Die Beschriftung einer Listview-Zeile oder eines TreeView-Elements wird vom Benutzer editiert.</td></tr>
   <tr><td><a href="#ItemExpand">ItemExpand</a></td><td>Ein TreeView-Element wurde auf- oder zugeklappt.</td></tr>
-  <tr><td><a href="#ItemFocus">ItemFocus</a></td><td>Ein anderes ListView-Element wurde fokussiert.</td></tr>
-  <tr><td><a href="#ItemSelect">ItemSelect</a></td><td>Ein ListView- oder TreeView-Element wurde ausgewählt, oder ein ListView-Element wurde abgewählt.</td></tr>
+  <tr><td><a href="#ItemFocus">ItemFocus</a></td><td>Eine andere ListView-Zeile wurde fokussiert.</td></tr>
+  <tr><td><a href="#ItemSelect">ItemSelect</a></td><td>Eine ListView-Zeile oder ein TreeView-Element wurde ausgewählt oder eine ListView-Zeile wurde abgewählt.</td></tr>
 </table>
 
 <h2 id="Window_Events">Fensterereignisse</h2>
 
 <h3 id="Close">Close</h3>
-<p>Startet, wenn der Benutzer oder ein anderes Programm versucht das Fenster zu schließen, z.B. X-Schaltfläche in der Titelleiste drücken, "Schließen" im Systemmenü auswählen oder <a href="WinClose.htm">WinClose</a> aufrufen.</p>
+<p>Wird gestartet, wenn der Benutzer oder ein anderes Programm versucht, das Fenster zu schließen, z.B. durch Drücken der X-Schaltfläche in der Titelleiste, Auswählen des Systemmenüpunkts "Schließen" oder Aufrufen von <a href="WinClose.htm">WinClose</a>.</p>
 <pre class="Syntax">Gui_<span class="func">Close</span>(GuiObj)</pre>
-<p>Standardmäßig wird das Fenster automatisch versteckt, sobald die Rückruffunktion ausgeführt wurde, oder wenn keine Rückruffunktionen registriert sind. Eine Rückruffunktion kann das verhindern, indem sie 1 (oder <code>True</code>) zurückgibt; dadurch wird auch verhindert, dass die restlichen Rückruffunktionen aufgerufen werden. Die Rückruffunktion kann das Fenster via <a href="Gui.htm#Hide">Gui.Hide</a> sofort verstecken, oder das Fenster via <a href="Gui.htm#Destroy">Gui.Destroy</a> zerstören.</p>
-<p>Das folgende Beispiel zeigt, wie man eine GUI dazu bringen kann, den Benutzer zu fragen, ob das Fenster geschlossen werden soll:</p>
+<p>Standardmäßig wird das Fenster automatisch versteckt, wenn die Rückruffunktion endet oder wenn keine Rückruffunktionen registriert wurden. Eine Rückruffunktion kann dies verhindern, indem sie 1 (oder <code>True</code>) zurückgibt, wodurch auch verhindert wird, dass die restlichen Rückruffunktionen aufgerufen werden. Die Rückruffunktion kann das Fenster sofort mit <a href="Gui.htm#Hide">GuiObj.Hide</a> verstecken oder mit <a href="Gui.htm#Destroy">GuiObj.Destroy</a> zerstören.</p>
+<p>Das folgende Beispiel zeigt eine GUI, die den Benutzer fragt, ob das Fenster geschlossen werden soll:</p>
 <pre>MeineGui := Gui()
 MeineGui.AddText("", "Drücken Sie Alt+F4 oder die X-Schaltfläche in der Titelleiste.")
 MeineGui.OnEvent("Close", MeineGui_Close)
-MeineGui_Close(thisGui) {  <em>; Dieser Parameter ist optional.</em>
+MeineGui_Close(thisGui) {  <em>; Dieser Parameter muss nicht deklariert werden.</em>
     if MsgBox("Wollen Sie die GUI wirklich schließen?",, "y/n") = "No"
         return true  <em>; true = 1</em>
 }
@@ -115,38 +115,41 @@ MeineGui.Show</pre>
 <p>Wird gestartet, wenn der Benutzer mit der rechten Maustaste irgendwo im Fenster klickt (außer Titelleiste und Menüleiste). Das Ereignis wird auch gestartet, wenn der Benutzer <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> drückt.</p>
 <pre class="Syntax">Gui_<span class="func">ContextMenu</span>(GuiObj, GuiCtrlObj, Element, IstRechtklick, X, Y)</pre>
 <dl><dt>GuiCtrlObj</dt><dd>
-    <p>Typ: <a href="GuiControl.htm">GuiControl</a> oder <a href="../Concepts.htm#nothing">Zeichenkette (leer)</a></p>
-    <p>Das Objekt des Steuerelements, welches das Ereignis empfangen hat (leer, wenn dies nicht der Fall ist).</p></dd>
+    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#nothing">Zeichenkette (leer)</a></p>
+    <p>Das <a href="GuiControl.htm">GuiControl-Objekt</a> des Steuerelements, das das Ereignis empfangen hat (andernfalls leer).</p></dd>
   <dt>Element</dt><dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Falls ListBox, ListView oder TreeView das Ziel des Kontextmenüs ist (via <em>GuiCtrlObj</em> feststellbar), wird <em>Element</em> einen Wert enthalten, der ein Element innerhalb des Steuerelements repräsentiert.</p>
-    <p><a href="GuiControls.htm#ListBox">ListBox</a>: Die Nummer der aktuell fokussierten Zeile. Beachten Sie, dass eine normale ListBox ein Element nicht fokussiert, wenn es via Rechtsklick angeklickt wird, daher muss es nicht unbedingt das angeklickte Element sein.</p>
-    <p><a href="ListView.htm">ListView</a> und <a href="TreeView.htm">TreeView</a>: Bei Rechtsklick enthält <em>Element</em> die ID bzw. Zeilennummer des angeklickten Elements (0, wenn der Benutzer etwas anderes als ein Element angeklickt hat). Beim Drücken der MENÜ-Taste oder UMSCHALT+F10 enthält <em>Element</em> die ID oder Zeilennummer des ausgewählten Elements.</p></dd>
+    <p>Bei einer ListBox, ListView oder TreeView (ermittelbar via <em>GuiCtrlObj</em>) gibt <em>Element</em> an, auf welchem Listeneintrag, welcher Zeile oder welchem Element der Versuch unternommen wurde, das Kontextmenü zu öffnen.</p>
+    <p><a href="GuiControls.htm#ListBox">ListBox</a>: Die Positionsnummer des aktuell fokussierten Listeneintrags. Beachten Sie, dass in einer normalen ListBox ein Listeneintrag nicht fokussiert wird, wenn er mit der rechten Maustaste angeklickt wird, so dass diese Nummer nicht unbedingt den angeklickten Listeneintrag repräsentiert.</p>
+    <p><a href="ListView.htm">ListView</a> und <a href="TreeView.htm">TreeView</a>: Bei Rechtsklick wird <em>Element</em> auf die Zeilennummer oder ID des angeklickten Elements gesetzt (oder 0, wenn der Benutzer etwas anderes als ein Element anklickt). Bei <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> wird <em>Element</em> auf die Zeilennummer oder ID des ausgewählten Elements gesetzt.</p></dd>
   <dt>IstRechtsklick</dt><dd>
     <p>Typ: <a href="../Concepts.htm#boolean">Integer (boolesch)</a></p>
-    <p><code>True</code>, wenn der Benutzer die rechte Maustaste gedrückt hat.<br>
-    <code>False</code>, wenn der Benutzer <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt hat.</p></dd>
+    <p>Einer der folgenden Werte:</p>
+    <ul>
+      <li>1 (true) = Der Benutzer hat die rechte Maustaste gedrückt.</li>
+      <li>0 (false) = Der Benutzer hat <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt.</li>
+    </ul></dd>
   <dt>X, Y</dt><dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die X- und Y-Koordinate der Position, wo das Menü angezeigt werden soll (z.B. <code>MeinKontextmenü.<a href="Menu.htm#Show">Show</a> X, Y</code>). Die Koordinaten sind relativ zur linken oberen Ecke des Fenster-Clientbereichs.</p></dd>
+    <p>Die X- und Y-Koordinate der Position, auf der das Kontextmenü angezeigt werden soll (z.B. <code>MeinKontextmenü.<a href="Menu.htm#Show">Show</a> X, Y</code>). Die Koordinaten sind relativ zur linken oberen Ecke des Clientbereichs des Fensters.</p></dd>
 </dl>
-<p>Das ContextMenu-Ereignis kann, im Gegensatz zu vielen anderen GUI-Ereignissen, mehrere <a href="../misc/Threads.htm">Threads</a> zur selben Zeit offen haben.</p>
-<p>Jedes Steuerelement kann sein eigenes ContextMenu-Ereignis via Rückruffunktion steuern, das Vorrang vor anderen Rückruffunktionen hat. Steuerelementspezifische Rückruffunktionen haben keinen <em>GuiObj</em>-Parameter, aber alle anderen Parameter bleiben gleich.</p>
-<p>Hinweis: <a href="GuiControls.htm#Edit">Edit</a> und <a href="GuiControls.htm#MonthCal">MonthCal</a> haben ein eigenes Kontextmenü, demzufolge wird ein Rechtsklick in solchen Steuerelementen kein ContextMenu-Ereignis auslösen können.</p>
+<p>Im Gegensatz zu den meisten anderen GUI-Ereignissen können mehrere ContextMenu-<a href="../misc/Threads.htm">Threads</a> zur selben Zeit aktiv sein.</p>
+<p>Für jedes Steuerelement kann eine eigene ContextMenu-Rückruffunktion registriert werden, die vor allen anderen Rückruffunktionen, die für das Gui-Objekt registriert sind, aufgerufen wird. Steuerelementspezifische Rückruffunktionen haben keinen <em>GuiObj</em>-Parameter, aber alle anderen Parameter sind dieselben.</p>
+<p>Hinweis: Da <a href="GuiControls.htm#Edit">Edit</a> und <a href="GuiControls.htm#MonthCal">MonthCal</a> über ein eigenes Kontextmenü verfügen, kann in solchen Steuerelementen kein GuiContextMenu-Ereignis via Rechtsklick gestartet werden.</p>
 
 <h3 id="DropFiles">DropFiles</h3>
-<p>Startet immer dann, wenn Dateien/Ordner während eines Ziehen-und-Ablegen-Vorgangs auf das Fenster abgelegt werden (wenn diese Rückruffunktion aber bereits ausgeführt wird, werden Ablege-Ereignisse ignoriert).</p>
+<p>Wird gestartet, wenn Dateien/Ordner während eines Ziehen-und-Ablegen-Vorgangs auf das Fenster abgelegt werden (wenn diese Rückruffunktion aber bereits läuft, werden Ablege-Ereignisse ignoriert).</p>
 <pre class="Syntax">Gui_<span class="func">DropFiles</span>(GuiObj, GuiCtrlObj, DateiArray, X, Y)</pre>
 <dl>
   <dt>GuiCtrlObj</dt>
   <dd>
-    <p>Typ: <a href="GuiControl.htm">GuiControl</a> oder <a href="../Concepts.htm#nothing">Zeichenkette (leer)</a></p>
-    <p>Das Objekt des Steuerelements, wo die Dateien abgelegt wurden (leer, wenn dies nicht der Fall ist).</p></dd>
+    <p>Typ: <a href="../Concepts.htm#objects">Objekt</a> oder <a href="../Concepts.htm#nothing">Zeichenkette (leer)</a></p>
+    <p>Das <a href="GuiControl.htm">GuiControl-Objekt</a> des Steuerelements, auf dem die Dateien abgelegt wurden (andernfalls leer).</p></dd>
 
   <dt>DateiArray</dt>
   <dd>
-    <p>Typ: <a href="Array.htm">Array</a> von <a href="../Concepts.htm#strings">Zeichenketten</a></p>
-    <p>Ein Array mit Dateinamen, wo <code>DateiArray[1]</code> die erste Datei ist und <code>DateiArray.Length</code> die Anzahl der Dateien zurückgibt. Mit einer <a href="For.htm">For-Schleife</a> kann man die Dateien einzeln durchgehen:</p>
+    <p>Typ: <a href="Array.htm">Array</a></p>
+    <p>Ein Array von Dateinamen, wobei <code>DateiArray[1]</code> die erste Datei ist und <code>DateiArray.Length</code> die Anzahl der Dateien zurückgibt. Mit einer <a href="For.htm">For-Schleife</a> können die Dateien einzeln durchgegangen werden:</p>
 <pre>Gui_DropFiles(GuiObj, GuiCtrlObj, DateiArray, X, Y) {
     for i, AbgelegteDatei in DateiArray
         MsgBox "Datei " i " ist:`n" AbgelegteDatei
@@ -155,14 +158,14 @@ MeineGui.Show</pre>
   <dt>X, Y</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die X- und Y-Koordinate der Position, wo die Dateien abgelegt wurden (die Koordinaten sind relativ zur oberen linken Ecke des Fensters).</p>
+    <p>Die X- und Y-Koordinate der Position, auf der die Dateien abgelegt wurden, relativ zur linken oberen Ecke des Clientbereichs des Fensters.</p>
   </dd>
 </dl>
 
-<h3 id="Escape">Esc</h3>
+<h3 id="Escape">Escape</h3>
 <p>Wird gestartet, wenn der Benutzer <kbd>Esc</kbd> drückt, während das GUI-Fenster aktiv ist.</p>
 <pre class="Syntax">Gui_<span class="func">Escape</span>(GuiObj)</pre>
-<p>Standardmäßig hat das Drücken von <kbd>Esc</kbd> keine Wirkung. Bekannte Einschränkung: Wenn die Interaktion mit dem ersten Steuerelement im Fenster deaktiviert ist (möglicherweise abhängig vom Typ des Steuerelements), wird das Escape-Ereignis nicht gestartet. Es gibt eventuell noch andere Faktoren, die diesen Effekt hervorrufen.</p>
+<p>Standardmäßig hat das Drücken von <kbd>Esc</kbd> keinen Effekt. Bekannte Einschränkung: Wenn die Interaktion mit dem ersten Steuerelement im Fenster verboten ist (möglicherweise abhängig vom Typ des Steuerelements), wird das Escape-Ereignis nicht gestartet. Es gibt eventuell noch andere Faktoren, die diesen Effekt hervorrufen.</p>
 
 <h3 id="Size">Size</h3>
 <p>Wird gestartet, wenn das Fenster kleiner/größer gemacht, minimiert, maximiert oder wiederhergestellt wird.</p>
@@ -176,18 +179,18 @@ MeineGui.Show</pre>
       <li>1 = Das Fenster ist maximiert.</li>
       <li>-1 = Das Fenster ist minimiert.</li>
     </ul>
-    <p>Beachten Sie, dass ein maximiertes Fenster größer/kleiner gemacht werden kann, ohne es wiederherstellen bzw. dessen Maximierung umkehren zu müssen, daher spiegelt ein Wert von 1 nicht unbedingt die Tatsache wider, dass dieses Ereignis ausgelöst wurde, weil der Benutzer das Fenster maximiert haben könnte.</p></dd>
+    <p>Beachten Sie, dass die Größe eines maximierten Fensters auch ohne Wiederherstellung oder Entmaximierung geändert werden kann, so dass ein Wert von 1 nicht unbedingt bedeutet, dass dieses Ereignis als Reaktion auf die Maximierung des Fensters durch den Benutzer ausgelöst wurde.</p></dd>
   <dt>Breite, Höhe</dt><dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die neue Breite und Höhe des Fenster-Clientbereichs (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen).</p></dd>
+    <p>Die neue Breite und Höhe des Clientbereichs des Fensters (das ist der Bereich ohne Titelleiste, Menüleiste und Rahmen).</p></dd>
 </dl>
-<p>Ein Skript kann mit dem Size-Ereignis die Steuerelemente neu positionieren und größer/kleiner machen, wenn der Benutzer die Größe des Fensters ändern sollte.</p>
-<p>Wenn man das Fenster größer/kleiner macht (auch via Skript), wird das Size-Ereignis nicht sofort ausgelöst. Wenn der aktuelle Thread <a href="Thread.htm#Interrupt">nicht unterbrochen werden kann</a>, wird das Size-Ereignis (und alle anderen Fensterereignisse) erst ausgelöst, wenn der Thread unterbrechbar ist. Das folgende Beispiel zeigt, wie das Size-Ereignis sofort ausgelöst werden kann, nachdem das Skript die Größe des Fensters geändert hat:</p>
+<p>Ein Skript kann das Size-Ereignis verwenden, um Steuerelemente neu zu positionieren und größer/kleiner zu machen, wenn der Benutzer die Größe des Fensters ändert.</p>
+<p>Beim Ändern der Fenstergröße (auch via Skript) kann es vorkommen, dass das Size-Ereignis nicht sofort ausgelöst wird. Wie jedes Fensterereignis wird das Size-Ereignis erst ausgelöst, wenn der aktuelle Thread <a href="Thread.htm#Interrupt">unterbrechbar</a> wird. Gehen Sie wie folgt vor, um sicherzustellen, dass das Size-Ereignis beim Ändern der Fenstergröße sofort ausgelöst wird:</p>
 <pre><a href="Critical.htm#Off">Critical</a> "Off"  <em>; Selbst wenn Critical "On" nie verwendet wurde.</em>
 <a href="Sleep.htm">Sleep</a> -1</pre>
-<p><a href="Gui.htm#Show">Gui.Show</a> führt automatisch ein <code>Sleep -1</code> aus, demzufolge könnte man in diesem Fall das Sleep weglassen.</p>
+<p><a href="Gui.htm#Show">Gui.Show</a> macht automatisch ein <code>Sleep -1</code>, demzufolge muss in diesem Fall kein Sleep aufgerufen werden.</p>
 
-<h2 id="Control_Events">Steuerelement-Ereignisse</h2>
+<h2 id="Control_Events">Steuerelementereignisse</h2>
 
 <h3 id="Change">Change</h3>
 <p>Wird ausgelöst, wenn sich der Wert des Steuerelements ändert.</p>
@@ -196,8 +199,8 @@ MeineGui.Show</pre>
   <dt>Info</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Bei <a href="GuiControls.htm#Slider">Slider</a>-Steuerelementen ist <em>Info</em> ein numerischer Wert, der kennzeichnet, wie der Schieberegler verschoben wurde. Siehe <a href="GuiControls.htm#slider-change">Erkennen von Änderungen (Slider)</a>, um mehr zu erfahren.</p>
-    <p>Bei alle anderen Steuerelementen hat <em>Info</em> derzeit keine Bedeutung.</p>
+    <p><a href="GuiControls.htm#Slider">Slider</a>: Ein numerischer Wert, der angibt, wie sich der Schieberegler verschoben hat. Weitere Informationen finden Sie unter <a href="GuiControls.htm#slider-change">Erkennen von Änderungen</a>.</p>
+    <p>Bei allen anderen Steuerelementen hat <em>Info</em> zur Zeit keine Bedeutung.</p>
   </dd>
 </dl>
 <p>Mit <a href="GuiControl.htm#Value">GuiCtrlObj.Value</a> kann der neue Wert des Steuerelements abgerufen werden.</p>
@@ -211,19 +214,19 @@ Link_<span class="func">Click</span>(GuiCtrlObj, Info, Href)</pre>
   <dt>Info</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>ListView: Die Zeilennummer des angeklickten Elements, oder 0, wenn der Mauszeiger sich nicht über ein Element befindet.</p>
-    <p>TreeView: Die ID des angeklickten Elements, oder 0, wenn der Mauszeiger sich nicht über ein Element befindet.</p>
-    <p>Link: Das ID-Attribut des Links (eine Zeichenkette), falls er einen hat, andernfalls die Indexnummer des Links (ein Integer).</p>
-    <p>StatusBar: Die Nummer des angeklickten Segments (allerdings kann es vorkommen, dass die Segmentnummer eine sehr große Zahl ist, wenn der Benutzer den rechts befindlichen Größenziehpunkt an bestimmten Stellen anklickt).</p>
-    <p>Bei alle anderen Steuerelementen hat <em>Info</em> derzeit keine Bedeutung.</p>
+    <p><a href="GuiControls.htm#ListView">ListView</a>: Die Zeilennummer der angeklickten Zeile, oder 0, wenn sich der Mauszeiger nicht über einer Zeile befindet.</p>
+    <p><a href="GuiControls.htm#TreeView">TreeView</a>: Die ID des angeklickten Elements, oder 0, wenn sich der Mauszeiger nicht über einem Element befindet.</p>
+    <p><a href="GuiControls.htm#Link">Link</a>: Das ID-Attribut des Links (eine Zeichenkette), falls vorhanden, andernfalls der Index des Links (ein Integer).</p>
+    <p><a href="GuiControls.htm#StatusBar">StatusBar</a>: Die Nummer des angeklickten Segments (allerdings kann die Nummer ein sehr großer Integer sein, wenn der Benutzer in der Nähe des Größenziehpunkts auf der rechten Seite der Leiste klickt).</p>
+    <p>Bei allen anderen Steuerelementen hat <em>Info</em> zur Zeit keine Bedeutung.</p>
   </dd>
   <dt>Href</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Link: Das HREF-Attribut des Links. Beachten Sie, dass wenn ein Click-Ereignis-Rückruffunktion registriert ist, das HREF-Attribut nicht automatisch ausgeführt wird.</p>
+    <p><a href="GuiControls.htm#Link">Link</a>: Das HREF-Attribut des Links. Beachten Sie, dass das HREF-Attribut nicht automatisch ausgeführt wird, wenn eine Click-Ereignis-Rückruffunktion registriert ist.</p>
   </dd>
 </dl>
-<p>Betrifft: <a href="GuiControls.htm#Text">Text</a>, <a href="GuiControls.htm#Pic">Pic</a>, <a href="GuiControls.htm#Button">Button</a>, <a href="GuiControls.htm#Checkbox">CheckBox</a>, <a href="GuiControls.htm#Radio">Radio</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm#Link">Link</a>, <a href="GuiControls.htm#StatusBar">StatusBar</a>.</p>
+<p>Betrifft: <a href="GuiControls.htm#Text">Text</a>, <a href="GuiControls.htm#Pic">Pic</a>, <a href="GuiControls.htm#Button">Button</a>, <a href="GuiControls.htm#CheckBox">CheckBox</a>, <a href="GuiControls.htm#Radio">Radio</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm#Link">Link</a>, <a href="GuiControls.htm#StatusBar">StatusBar</a>.</p>
 
 <h3 id="DoubleClick">DoubleClick</h3>
 <p>Wird ausgelöst, wenn das Steuerelement doppelt angeklickt wird.</p>
@@ -232,50 +235,50 @@ Link_<span class="func">Click</span>(GuiCtrlObj, Info, Href)</pre>
   <dt>Info</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>ListView, TreeView und StatusBar: Das gleiche wie bei dem <a href="#Click">Click</a>-Ereignis.</p>
-    <p>ListBox: Die Position des fokussierten Elements. Ein Doppelklick auf die leere Fläche unterhalb des letzten Elements führt üblicherweise dazu, dass das letzte Element fokussiert wird und das aktuelle Element ausgewählt bleibt.</p>
+    <p><a href="GuiControls.htm#ListView">ListView</a>, <a href="GuiControls.htm#TreeView">TreeView</a> und <a href="GuiControls.htm#StatusBar">StatusBar</a>: Dasselbe wie beim <a href="#Click">Click</a>-Ereignis.</p>
+    <p><a href="GuiControls.htm#ListBox">ListBox</a>: Die Positionsnummer des aktuell fokussierten Listeneintrags. Ein Doppelklick auf den leeren Bereich unter dem letzten Listeneintrag führt normalerweise dazu, dass der letzte Listeneintrag fokussiert wird und die aktuelle Auswahl unverändert bleibt.</p>
   </dd>
 </dl>
-<p>Betrifft: <a href="GuiControls.htm#Text">Text</a>, <a href="GuiControls.htm#Pic">Pic</a>, <a href="GuiControls.htm#Button">Button</a>, <a href="GuiControls.htm#Checkbox">CheckBox</a>, <a href="GuiControls.htm#Radio">Radio</a>, <a href="GuiControls.htm#ComboBox">ComboBox</a>, <a href="GuiControls.htm#ListBox">ListBox</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm#StatusBar">StatusBar</a>.</p>
+<p>Betrifft: <a href="GuiControls.htm#Text">Text</a>, <a href="GuiControls.htm#Pic">Pic</a>, <a href="GuiControls.htm#Button">Button</a>, <a href="GuiControls.htm#CheckBox">CheckBox</a>, <a href="GuiControls.htm#Radio">Radio</a>, <a href="GuiControls.htm#ComboBox">ComboBox</a>, <a href="GuiControls.htm#ListBox">ListBox</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm#StatusBar">StatusBar</a>.</p>
 
 <h3 id="ColClick">ColClick</h3>
-<p>Wird ausgelöst, wenn eine der Spaltenüberschriften in der ListView angeklickt wird.</p>
+<p>Wird ausgelöst, wenn eine Spaltenüberschrift in der ListView angeklickt wird.</p>
 <pre class="Syntax">Ctrl_<span class="func">ColClick</span>(GuiCtrlObj, Info)</pre>
 <dl>
   <dt>Info</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>Die Spaltennummer, die angeklickt wurde, beginnend bei 1. Das ist die Spaltennummer, die der Spalte ursprünglich bei ihrer Erstellung zugewiesen wurde, d.h. die Nummer spiegelt nicht das Ziehen und Ablegen von Spalten durch den Benutzer wider.</p>
+    <p>Die 1-basierte Spaltennummer, die angeklickt wurde. Dies ist die Nummer, die der Spalte ursprünglich bei ihrer Erstellung zugewiesen wurde, d.h. die Nummer spiegelt nicht das Ziehen und Ablegen von Spalten durch den Benutzer wider.</p>
   </dd>
 </dl>
 <p>Betrifft: <a href="ListView.htm">ListView</a>.</p>
 
 <h3 id="Ctrl-ContextMenu">ContextMenu</h3>
-<p>Wird ausgelöst, wenn der Benutzer einen Rechtsklick auf das Steuerelement gemacht hat, oder <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt hat, während das Steuerelement fokussiert war.</p>
+<p>Wird ausgelöst, wenn der Benutzer einen Rechtsklick auf das Steuerelement gemacht oder <kbd>Menü</kbd> oder <kbd>Umschalt</kbd>+<kbd>F10</kbd> gedrückt hat, während das Steuerelement fokussiert war.</p>
 <pre class="Syntax">Ctrl_<span class="func">ContextMenu</span>(GuiCtrlObj, Element, IstRechtklick, X, Y)</pre>
-<p>Siehe <a href="#ContextMenu">ContextMenu</a>, um mehr zu erfahren.</p>
-<p>Betrifft: Alle Steuerelemente außer Edit und MonthCal (und das Edit-Steuerelement innerhalb einer ComboBox) - diese haben ein eigenes Kontextmenü.</p>
+<p>Weitere Informationen finden Sie unter <a href="#ContextMenu">ContextMenu</a>.</p>
+<p>Betrifft: Alle Steuerelemente außer <a href="GuiControls.htm#Edit">Edit</a> und <a href="GuiControls.htm#MonthCal">MonthCal</a> (und das Eingabefeld einer <a href="GuiControls.htm#ComboBox">ComboBox</a>) - diese verfügen über ein eigenes Kontextmenü.</p>
 
 <span id="LoseFocus"></span><h3 id="Focus">Focus / LoseFocus</h3>
-<p>Wird ausgelöst, wenn das Steuerelement den Tastaturfokus bekommt oder verliert.</p>
+<p>Wird ausgelöst, wenn das Steuerelement den Tastaturfokus erhält oder verliert.</p>
 <pre class="Syntax">Ctrl_<span class="func">Focus</span>(GuiCtrlObj, Info)
 Ctrl_<span class="func">LoseFocus</span>(GuiCtrlObj, Info)</pre>
 <dl>
   <dt>Info</dt>
   <dd><p>Reserviert.</p></dd>
 </dl>
-<p>Betrifft: <a href="GuiControls.htm#Button">Button</a>, <a href="GuiControls.htm#Checkbox">CheckBox</a>, <a href="GuiControls.htm#Radio">Radio</a>, <a href="GuiControls.htm#DDL">DDL</a>, <a href="GuiControls.htm#ComboBox">ComboBox</a>, <a href="GuiControls.htm#ListBox">ListBox</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm#Edit">Edit</a>, <a href="GuiControls.htm#DateTime">DateTime</a>.</p>
+<p>Betrifft: <a href="GuiControls.htm#Button">Button</a>, <a href="GuiControls.htm#CheckBox">CheckBox</a>, <a href="GuiControls.htm#Radio">Radio</a>, <a href="GuiControls.htm#DDL">DDL</a>, <a href="GuiControls.htm#ComboBox">ComboBox</a>, <a href="GuiControls.htm#ListBox">ListBox</a>, <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>, <a href="GuiControls.htm#Edit">Edit</a>, <a href="GuiControls.htm#DateTime">DateTime</a>.</p>
 <p>Nicht unterstützt: <a href="GuiControls.htm#Hotkey">Hotkey</a>, <a href="GuiControls.htm#Slider">Slider</a>, <a href="GuiControls.htm#Tab">Tab</a> und <a href="GuiControls.htm#Link">Link</a>. Beachten Sie, dass <a href="GuiControls.htm#Text">Text</a>-, <a href="GuiControls.htm#Pic">Pic</a>-, <a href="GuiControls.htm#MonthCal">MonthCal</a>-, <a href="GuiControls.htm#UpDown">UpDown</a>- und <a href="GuiControls.htm#StatusBar">StatusBar</a>-Steuerelemente keinen Tastaturfokus akzeptieren.</p>
 
 <h3 id="ItemCheck">ItemCheck</h3>
-<p>Wird ausgelöst, wenn ein Häkchen bei einem ListView- oder TreeView-Element gesetzt oder entfernt wird.</p>
+<p>Wird ausgelöst, wenn ein Häkchen bei einer ListView-Zeile oder einem TreeView-Element gesetzt oder entfernt wird.</p>
 <pre class="Syntax">Ctrl_<span class="func">ItemCheck</span>(GuiCtrlObj, Element, HäkchenGesetzt)</pre>
 <p>Betrifft: <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>.</p>
 
 <h3 id="ItemEdit">ItemEdit</h3>
-<p>Wird ausgelöst, wenn die Beschriftung eines Listview- oder TreeView-Elements vom Benutzer editiert wird.</p>
+<p>Wird ausgelöst, wenn die Beschriftung einer Listview-Zeile oder eines TreeView-Elements vom Benutzer editiert wird.</p>
 <pre class="Syntax">Ctrl_<span class="func">ItemEdit</span>(GuiCtrlObj, Element)</pre>
-<p>Die Beschriftung eines Elements kann nur editiert werden, wenn <code>-ReadOnly</code> in den Optionen des Steuerelements angegeben wurde.</p>
+<p>Die Beschriftung kann nur editiert werden, wenn <code>-ReadOnly</code> in den Optionen des Steuerelements angegeben wurde.</p>
 <p>Betrifft: <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>.</p>
 
 <h3 id="ItemExpand">ItemExpand</h3>
@@ -284,16 +287,16 @@ Ctrl_<span class="func">LoseFocus</span>(GuiCtrlObj, Info)</pre>
 <p>Betrifft: <a href="TreeView.htm">TreeView</a>.</p>
 
 <h3 id="ItemFocus">ItemFocus</h3>
-<p>Wird ausgelöst, wenn ein anderes ListView-Element fokussiert wird.</p>
+<p>Wird ausgelöst, wenn eine andere ListView-Zeile fokussiert wird.</p>
 <pre class="Syntax">Ctrl_<span class="func">ItemFocus</span>(GuiCtrlObj, Element)</pre>
 <p>Betrifft: <a href="ListView.htm">ListView</a>.</p>
 
 <h3 id="ItemSelect">ItemSelect</h3>
-<p>Wird ausgelöst, wenn ein ListView- oder TreeView-Element ausgewählt, oder ein ListView-Element abgewählt wird.</p>
+<p>Wird ausgelöst, wenn eine ListView-Zeile oder ein TreeView-Element ausgewählt oder eine ListView-Zeile abgewählt wird.</p>
 <pre class="Syntax">ListView_<span class="func">ItemSelect</span>(GuiCtrlObj, Element, Ausgewählt)
 TreeView_<span class="func">ItemSelect</span>(GuiCtrlObj, Element)</pre>
 <p>Betrifft: <a href="ListView.htm">ListView</a>, <a href="TreeView.htm">TreeView</a>.</p>
-<p>ListView: Dieses Ereignis wird bei jedem Element ausgelöst, dass ab- oder ausgewählt wird, daher kann es bei einer einzigen Nutzeraktion mehrmals ausgelöst werden.</p>
+<p>ListView: Dieses Ereignis wird ausgelöst, wenn eine Zeile ab- oder ausgewählt wird, folglich kann das Ereignis mehrmals durch eine einzige Benutzeraktion ausgelöst werden.</p>
 
 
 <h2 id="Other_Events">Andere Ereignisse</h2>

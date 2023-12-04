@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>SetTimer - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die SetTimer-Funktion ruft automatisch eine Funktion in periodischen Zeitabständen auf." />
+<meta name="description" content="Die SetTimer-Funktion registriert eine Funktion, die automatisch und wiederholt in einem bestimmten Zeitintervall aufgerufen wird." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 
 <h1>SetTimer</h1>
 
-<p>Ruft automatisch eine Funktion in periodischen Zeitabständen auf.</p>
+<p>Registriert eine Funktion, die automatisch und wiederholt in einem bestimmten Zeitintervall aufgerufen wird.</p>
 
 <pre class="Syntax"><span class="func">SetTimer</span> <span class="optional">Funktion, Periode, Priorität</span></pre>
 <h2 id="Parameters">Parameter</h2>
@@ -23,9 +23,9 @@
   <dd>
     <p>Typ: <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
     <p>Ein Funktionsobjekt, das aufgerufen werden soll.</p>
-    <p>Eine <a href="../Concepts.htm#references-to-objects">Referenz</a> zum Funktionsobjekt wird in der Timer-Liste des Skripts aufbewahrt, die erst freigegeben wird, wenn der Timer gelöscht wird. Dies geschieht automatisch für <a href="#once">einmalig laufende</a> Timer oder kann durch Aufruf von SetTimer mit einer <em>Periode</em> von 0 erzwungen werden.</p>
-    <p id="OmitCallback">Wenn <em>Funktion</em> weggelassen wird, wird SetTimer mit dem Timer arbeiten, der den aktuellen Thread gestartet hat, sofern vorhanden. Zum Beispiel könnte <code>SetTimer , 0</code> innerhalb einer Timer-Funktion verwendet werden, um den Timer zum Löschen zu markieren. <code>SetTimer , 1000</code> wiederum würde die <em>Periode</em> des aktuellen Timers aktualisieren.</p>
-    <p class="warning"><strong>Hinweis:</strong> Die Übergabe einer leeren Variable oder eines Ausdrucks, der einen leeren Wert ergibt, wird als Fehler eingestuft. Dieser Parameter muss entweder einen nicht-leeren Wert enthalten oder ganz weggelassen werden.</p>
+    <p>Das Skript hinterlegt in seiner Liste von Timern eine <a href="../Concepts.htm#references-to-objects">Referenz</a> zum Funktionsobjekt, die erst freigegeben wird, wenn der Timer gelöscht wird. Dies geschieht automatisch für <a href="#once">einmalig laufende</a> Timer oder kann durch Aufruf von SetTimer mit einer <em>Periode</em> von 0 erzwungen werden.</p>
+    <p id="OmitCallback">Wenn <em>Funktion</em> weggelassen wird, wird SetTimer mit dem Timer arbeiten, der den aktuellen Thread gestartet hat, sofern vorhanden. Zum Beispiel kann <code>SetTimer , 0</code> innerhalb einer Timer-Funktion verwendet werden, um den Timer zum Löschen zu markieren, während <code>SetTimer , 1000</code> die <em>Periode</em> des aktuellen Timers aktualisiert.</p>
+    <p class="warning"><strong>Hinweis:</strong> Die Übergabe einer leeren Variable oder eines Ausdrucks, der einen leeren Wert zurückgibt, wird als Fehler gewertet. Dieser Parameter muss entweder einen nicht-leeren Wert enthalten oder ganz weggelassen werden.</p>
   </dd>
 
   <dt>Periode</dt>
@@ -33,9 +33,9 @@
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>Wenn weggelassen und der Timer nicht existiert, wird er mit einer Periode von 250 erstellt. Wenn weggelassen und der Timer bereits existiert, wird er auf seine frühere Periode <a href="#reset">zurückgesetzt</a>, sofern keine <em>Priorität</em> angegeben ist. Andernfalls wird der Absolutwert dieses Parameters als <a href="#Precision">ungefähre</a> Zeit in Millisekunden verwendet, die ablaufen muss, bevor der Timer ausgeführt wird. Der Timer wird automatisch <a href="#reset">zurückgesetzt</a>. Er kann so eingestellt werden, dass er sich automatisch wiederholt oder nur einmal ausgeführt wird:</p>
     <ul>
-      <li>Wenn <em>Periode</em> größer als 0 ist, wird der Timer sich solange wiederholen, bis er explizit im Skript deaktiviert wird.</li>
-      <li id="once">Wenn <em>Periode</em> kleiner als 0 ist, wird der Timer nur einmal laufen. Zum Beispiel bewirkt -100, dass <em>Funktion</em> nach 100&nbsp;ms einmal aufgerufen wird und dann der Timer gelöscht wird, als wäre <code>SetTimer <i>Funktion</i>, 0</code> verwendet worden.</li>
-      <li>Wenn <em>Periode</em> 0 ist, wird der Timer zum Löschen markiert. Wenn ein von diesem Timer gestarteter Thread noch läuft, wird der Timer nach Beendigung des Threads gelöscht (es sei denn, er wurde reaktiviert); andernfalls wird er sofort gelöscht. In jedem Fall wird die vorherige <em>Periode</em> und <em>Priorität</em> des Timers verworfen.</li>
+      <li>Wenn <em>Periode</em> größer als 0 ist, wiederholt sich der Timer automatisch, bis er im Skript explizit deaktiviert wird.</li>
+      <li id="once">Wenn <em>Periode</em> kleiner als 0 ist, wird der Timer nur einmal ausgeführt. Zum Beispiel bewirkt -100, dass <em>Funktion</em> nach 100&nbsp;ms einmal aufgerufen wird und dann der Timer gelöscht wird, als wäre <code>SetTimer <i>Funktion</i>, 0</code> verwendet worden.</li>
+      <li>Wenn <em>Periode</em> 0 ist, wird der Timer zum Löschen markiert. Wenn ein Thread, der von diesem Timer gestartet wurde, noch läuft, wird der Timer nach Beendigung des Threads gelöscht (es sei denn, er wurde reaktiviert), andernfalls wird er sofort gelöscht. In jedem Fall wird die vorherige <em>Periode</em> und <em>Priorität</em> des Timers verworfen.</li>
     </ul>
     <p>Der Absolutwert von <em>Periode</em> darf nicht größer als 4294967295&nbsp;ms (49,7 Tage) sein.</p>
   </dd>
@@ -44,7 +44,7 @@
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>Wenn weggelassen, wird standardmäßig 0 verwendet. Andernfalls geben Sie einen Integer zwischen -2147483648 und 2147483647 (oder einen <a href="../Variables.htm#Expressions">Ausdruck</a>) an, um die Thread-Priorität des Timers zu bestimmen. Einzelheiten finden Sie unter <a href="../misc/Threads.htm">Threads</a>.</p>
-    <p>Um die Priorität eines vorhandenen Timers zu ändern, ohne ihn anderweitig zu beeinflussen, müssen Sie <em>Periode</em> weglassen.</p>
+    <p>Um die Priorität eines existierenden Timers zu ändern, ohne ihn anderweitig zu beeinflussen, lassen Sie <em>Periode</em> weg.</p>
   </dd>
 
 </dl>
@@ -52,24 +52,24 @@
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Timer sind nützlich, weil sie asynchron laufen, d.h. sie werden in einem bestimmten Intervall (Frequenz) ausgeführt, egal ob das Skript gerade auf ein Fenster wartet, ein Dialogfenster anzeigt oder mit einer anderen Aufgabe beschäftigt ist. Timer können u.a. verwendet werden, um eine Aktion während der Abwesenheit des Benutzers auszuführen (in Verbindung mit <a href="../Variables.htm#TimeIdle">A_TimeIdle</a>) oder um unerwünschte Fenster sofort wieder zu schließen, wenn sie erscheinen.</p>
 <p>Timer erzeugen nur die Illusion, als könne das Skript mehr als eine Aufgabe gleichzeitig ausführen. In Wirklichkeit werden zeitgesteuerte Funktionen genauso wie andere Threads behandelt: Sie können andere Threads, wie z.B. <a href="../Hotkeys.htm">Hotkey-Subroutinen</a>, unterbrechen oder von ihnen unterbrochen werden. Einzelheiten finden Sie unter <a href="../misc/Threads.htm">Threads</a>.</p>
-<p>Jedes Mal, wenn ein Timer erstellt oder mit einer neuen Periode aktualisiert wird, wird seine Funktion nicht sofort aufgerufen; seine Periode muss zuerst ablaufen. Wenn die erste Ausführung des Timers sofort erfolgen soll, rufen Sie die Funktion des Timers direkt auf (dabei wird allerdings kein neuer Thread gestartet, wie es der Timer selbst tut, d.h. Einstellungen wie <a href="SendMode.htm">SendMode</a> verwenden zunächst nicht ihre Standardwerte).</p>
-<p id="reset"><strong>Zurücksetzen:</strong> Wenn SetTimer auf einen bereits existierenden Timer angewendet wird, wird der Timer zurückgesetzt (es sei denn, es wurde <em>Priorität</em> angegeben und <em>Periode</em> weggelassen) d.h. seine Periode muss einmal komplett ablaufen, bevor seine Funktion erneut aufgerufen wird.</p>
+<p>Jedes Mal, wenn ein Timer erstellt oder mit einer neuen Periode aktualisiert wird, wird seine Funktion nicht sofort aufgerufen; seine Periode muss zuerst ablaufen. Wenn die erste Ausführung des Timers sofort erfolgen soll, rufen Sie seine Funktion direkt auf (dabei wird allerdings kein neuer Thread gestartet, wie es der Timer selbst tut, d.h. Einstellungen wie <a href="SendMode.htm">SendMode</a> verwenden zunächst nicht ihre Standardwerte).</p>
+<p id="reset"><strong>Zurücksetzen:</strong> Wenn SetTimer auf einen bereits existierenden Timer angewendet wird, wird der Timer zurückgesetzt (es sei denn, es wurde <em>Priorität</em> angegeben und <em>Periode</em> weggelassen), d.h. seine Periode muss einmal komplett ablaufen, bevor seine Funktion erneut aufgerufen wird.</p>
 <p id="Precision"><strong>Genauigkeit des Timers:</strong> Durch die Granularität (Ungenauigkeit) der Zeiterfassung im Betriebssystem wird <em>Periode</em> möglicherweise auf das nächstmögliche Vielfache von 10 oder 15.6 Millisekunden aufgerundet (abhängig vom Typ der installierten Hardware und Treiber). Eine kürzere Verzögerung kann mit Loop+Sleep erreicht werden, wie bei <a href="Sleep.htm#ExShorterSleep">DllCall+timeBeginPeriod+Sleep</a> gezeigt.</p>
 <p id="Reliability"><strong>Zuverlässigkeit:</strong> Es ist möglich, dass ein Timer nicht zum erwarteten Zeitpunkt ausgeführt wird, wenn die folgenden Bedingungen zutreffen:</p>
 <ol>
   <li>Andere Anwendungen belasten die CPU ziemlich stark.</li>
   <li>Die Funktion des Timers läuft noch nach erneutem Ablauf der Timer-Periode.</li>
   <li>Es gibt zu viele konkurrierende Timer.</li>
-  <li>Der Timer wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, dazu zählen andere zeitgesteuerte Funktionen, <a href="../Hotkeys.htm">Hotkey-Subroutinen</a> oder <a href="Menu.htm">benutzerdefinierte Menüpunkte</a> (kann mit <a href="Critical.htm">Critical</a> verhindert werden). Wenn dies der Fall ist und der unterbrechende Thread lange Zeit zum Beenden braucht, wird der unterbrochene Timer für die Dauer der Unterbrechung deaktiviert. Alle anderen Timer laufen jedoch weiter, indem sie den <a href="../misc/Threads.htm">Thread</a> unterbrechen, der den ersten Timer unterbrochen hat.</li>
+  <li>Der Timer wurde von einem anderen <a href="../misc/Threads.htm">Thread</a> unterbrochen, z.B. von einer anderen zeitgesteuerten Funktion, einer <a href="../Hotkeys.htm">Hotkey-Subroutine</a> oder einem <a href="Menu.htm">benutzerdefinierten Menüpunkt</a> (dies kann mit <a href="Critical.htm">Critical</a> verhindert werden). Wenn dies der Fall ist und der unterbrechende Thread lange Zeit zum Beenden braucht, wird der unterbrochene Timer für die Dauer der Unterbrechung deaktiviert. Alle anderen Timer laufen jedoch weiter, indem sie den <a href="../misc/Threads.htm">Thread</a> unterbrechen, der den ersten Timer unterbrochen hat.</li>
   <li>Das Skript ist durch <a href="Critical.htm">Critical</a> oder <a href="Thread.htm">Thread Interrupt/Priority</a> unterbrechungsfrei. Während dieser Zeit werden Timer nicht ausgeführt. Später, wenn das Skript wieder unterbrechbar ist, wird jeder überfällige Timer einmal so schnell wie möglich ausgeführt und dann wie geplant fortgesetzt.</li>
 </ol>
 <p>Obwohl Timer auch laufen, wenn das Skript <a href="Suspend.htm">suspendiert</a> ist, werden sie nicht ausgeführt, wenn <a href="Thread.htm#NoTimers">Thread NoTimers</a> für den <a href="../misc/Threads.htm">aktuellen Thread</a> wirksam ist oder wenn ein beliebiger Thread <a href="Pause.htm">pausiert</a> wird. Außerdem werden sie nicht ausgeführt, wenn der Benutzer durch eines der Menüs des Skripts navigiert (z.B. das <a href="../Program.htm#tray-icon">Tray-Symbol</a>-Menü oder eine Menüleiste).</p>
-<p>Da Timer vorübergehend die aktuelle Aktivität des Skripts unterbrechen, sollten ihre Funktionen kurzgehalten werden (so dass sie schnell zum Ende kommen), wann immer eine lange Unterbrechung unerwünscht ist.</p>
+<p>Da Timer die laufende Skriptaktivität vorübergehend unterbrechen, sollten ihre Funktionen kurz gehalten werden (so dass sie schnell zum Abschluss kommen), wenn eine lange Unterbrechung unerwünscht ist.</p>
 <p id="otherremarks"><strong>Sonstige Bemerkungen:</strong> Ein temporärer Timer deaktiviert sich oft selbst durch seine eigene Funktion (siehe Beispiele weiter unten).</p>
-<p>Jede via SetTimer gestartete Funktion verwendet vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können während der <a href="../Scripts.htm#auto">Startphase des Skripts</a> geändert werden.</p>
+<p>Jede via SetTimer aufgerufene Funktion verwendet vorerst die Standardwerte von Einstellungen wie <a href="SendMode.htm">SendMode</a>. Diese Standardwerte können während der <a href="../Scripts.htm#auto">Startphase des Skripts</a> geändert werden.</p>
 <p>Wenn die <a href="../Hotkeys.htm">Hotkey</a>-Reaktionszeit von entscheidender Bedeutung ist (z.B. in Videospielen) und Timer im Skript enthalten sind, deren Funktionen länger als 5&nbsp;ms zum Ausführen benötigen, verwenden Sie die folgende Funktion, um eine mögliche Verzögerung von 15&nbsp;ms zu vermeiden. Eine solche Verzögerung würde sonst auftreten, wenn ein Hotkey genau dann gedrückt wird, wenn sich ein Timer-Thread in seiner unterbrechungsfreien Phase befindet:</p>
 <pre><a href="Thread.htm">Thread</a> "Interrupt", 0  <em>; Macht alle Threads jederzeit unterbrechbar.</em></pre>
-<p>Deaktiviert man einen Timer, während seine Funktion noch läuft, wird diese Funktion bis zu ihrem Ende fortgesetzt.</p>
+<p>Wenn ein Timer deaktiviert wird, während seine Funktion gerade läuft, wird diese Funktion fertig ausgeführt.</p>
 <p><a href="KeyHistory.htm">KeyHistory</a> zeigt an, wie viele Timer es gibt und wie viele gerade aktiv sind.</p>
 
 <h2 id="Related">Siehe auch</h2>
@@ -97,7 +97,7 @@ Alarm1()
         return
     <em>; Andernfalls:</em>
     SetTimer , 0  <em>; d.h. der Timer deaktiviert sich selbst.</em>
-    MsgBox "Die Video-Konvertierung wurde abgeschlossen."
+    MsgBox "Die Videokonvertierung wurde abgeschlossen."
 }</pre>
 </div>
 
@@ -106,7 +106,7 @@ Alarm1()
 <pre>#c::
 TasteWinC(ThisHotkey)  <em>; Das ist ein <a href="../Hotkeys.htm#Function">benannter Funktions-Hotkey</a>.</em>
 {
-    static winc_anzahl := 0
+    static winc_eingaben := 0
     if winc_eingaben &gt; 0 <em>; SetTimer bereits gestartet, also stattdessen den Tastendruck protokollieren.</em>
     {
         winc_eingaben += 1
@@ -159,12 +159,12 @@ class SecondCounter {
     }
     Start() {
         SetTimer this.timer, this.interval
-        ToolTip "Counter gestartet"
+        ToolTip "Zähler gestartet"
     }
     Stop() {
         <em>; Um den Timer zu deaktivieren, dasselbe Objekt erneut übergeben:</em>
         SetTimer this.timer, 0
-        ToolTip "Counter bei " this.count " gestoppt"
+        ToolTip "Zähler ist bei " this.count " gestoppt"
     }
     <em>; In diesem Beispiel ruft der Timer diese Methode auf:</em>
     Tick() {
@@ -173,9 +173,9 @@ class SecondCounter {
 }</pre>
 <p>Tipps zum obigen Beispiel:</p>
 <ul>
-  <li>Wir können auch <code>this.timer := this.Tick.<a href="Func.htm#Bind">Bind</a>(this)</code> verwenden. Wenn <code>this.timer</code> aufgerufen wird, wird es tatsächlich <code><i>tick_function</i>.<a href="Func.htm#Call">Call</a>(this)</code> automatisch aufrufen, wobei <i>tick_function</i> das Funktionsobjekt ist, das diese Methode implementiert. <a href="ObjBindMethod.htm">ObjBindMethod</a> hingegen erzeugt ein Objekt, das <code>this.Tick()</code> automatisch aufruft.</li>
-  <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt anstelle von <code>this.timer</code> verwenden. Allerdings kann ObjBindMethod auch nützlich sein, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen wie Hotkeys, Menüpunkte, GUI-Steuerelemente aufgerufen werden sollen.</li>
-  <li>Beim Modifizieren des Timers, oder Löschen des Timers innerhalb einer Funktion/Methode, die von dem Timer aufgerufen wurde, kann man den <a href="#OmitCallback"><em>Funktion</em>-Parameter einfach weglassen</a>. Dadurch entfällt in einigen Fällen die Notwendigkeit, das ursprüngliche Objekt, welches an SetTimer übergeben wurde, zu behalten.</li>
+  <li>Wir können auch <code>this.timer := this.Tick.<a href="Func.htm#Bind">Bind</a>(this)</code> verwenden. Wenn <code>this.timer</code> aufgerufen wird, wird es eigentlich <code><i>tick_function</i>.<a href="Func.htm#Call">Call</a>(this)</code> indirekt aufrufen, wobei <i>tick_function</i> das Funktionsobjekt ist, das diese Methode implementiert. <a href="ObjBindMethod.htm">ObjBindMethod</a> hingegen erzeugt ein Objekt, das <code>this.Tick()</code> indirekt aufruft.</li>
+  <li>Wenn wir <em>Tick</em> in <em>Call</em> umbenennen, können wir <code>this</code> direkt anstelle von <code>this.timer</code> verwenden. Allerdings ist ObjBindMethod nützlich, wenn das Objekt mehrere Methoden hat, die von verschiedenen Ereignisquellen aufgerufen werden sollen, z.B. Hotkeys, Menüpunkte, GUI-Steuerelemente, usw.</li>
+  <li>Wenn der Timer von einer Funktion/Methode aus geändert oder gelöscht wird, die vom Timer aufgerufen wurde, ist es möglicherweise einfacher, <a href="#OmitCallback">den <em>Funktion</em>-Parameter wegzulassen</a>. In einigen Fällen wird dadurch die Notwendigkeit vermieden, das ursprünglich an SetTimer übergebene Objekt beizubehalten.</li>
 </ul>
 </div>
 

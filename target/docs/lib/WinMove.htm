@@ -32,21 +32,22 @@
 
   <dt>FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</dt>
   <dd>
-    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a></p>
-    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden). Versteckte Textelemente werden erkannt, wenn <a href="DetectHiddenText.htm">DetectHiddenText</a> eingeschaltet wurde. Fenster, deren Titel oder Texte <em>AusnahmeTitel</em> bzw. <em>AusnahmeText</em> enthalten, werden ignoriert.</p>
+    <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a>, <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#objects">Objekt</a></p>
+    <p>Wenn jeder dieser Parameter leer ist oder weggelassen wird, wird das <a href="../misc/WinTitle.htm#LastFoundWindow">Zuletzt Gefundene Fenster</a> verwendet. Andernfalls geben Sie für <em>FensterTitel</em> einen <a href="../misc/WinTitle.htm">Fenstertitel oder andere Kriterien</a> zur Identifizierung des Zielfensters und/oder für <em>FensterText</em> eine Teilzeichenkette aus einem Textelement des Zielfensters an (Textelemente können mit dem internen Tool "Window Spy" in Erfahrung gebracht werden).</p>
+    <p><em>AusnahmeTitel</em> und <em>AusnahmeText</em> können verwendet werden, um ein oder mehrere Fenster anhand ihres Titels oder Textes auszuschließen. Ihre Angabe ähnelt der von <em>FensterTitel</em> und <em>FensterText</em>, außer dass <em>AusnahmeTitel</em> keine anderen Kriterien als den Fenstertitel erkennt.</p>
+    <p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Standardmäßig werden versteckte Fenster nicht erkannt und versteckte Textelemente erkannt, was mit <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> und <a href="DetectHiddenText.htm">DetectHiddenText</a> geändert werden kann. Standardmäßig kann ein Fenstertitel den angegebenen <em>FensterTitel</em> oder <em>AusnahmeTitel</em> an beliebiger Stelle enthalten, um eine Übereinstimmung zu sein, was mit <a href="SetTitleMatchMode.htm">SetTitleMatchMode</a> geändert werden kann.</p>
   </dd>
 </dl>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster nicht gefunden werden konnte.</p>
-<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn ein codeinterner Funktionsaufruf einen Fehler meldet. Es kann jedoch auch ein Erfolg gemeldet werden, wenn sich das Fenster nicht bewegt hat, z.B. wenn das Fenster seine eigene Bewegung einschränkt.</p>
+<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn ein codeinterner Funktionsaufruf einen Fehler meldet. Es kann jedoch auch Erfolg gemeldet werden, wenn sich das Fenster nicht bewegt hat, z.B. wenn das Fenster seine eigene Bewegung einschränkt.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Wenn <em>Breite</em> oder <em>Höhe</em> gering (oder negativ) ist, werden die meisten Fenster mit einer Titelleiste in der Regel nicht kleiner als 112 x 27 Pixel gemacht (einige Fenstertypen können jedoch eine andere Mindestgröße haben). Wenn <em>Breite</em> oder <em>Höhe</em> hoch ist, werden die meisten Fenster nicht größer als etwa 12 Pixel über die Dimensionen des Desktops gemacht.</p>
 <p>Negative X- und Y-Koordinaten sind erlaubt, um Multi-Bildschirm-Systeme zu unterstützen und um Fenster über den Bildschirmrand hinaus zu verschieben.</p>
 <p>Obwohl WinMove minimierte Fenster nicht verschieben kann, kann es versteckte Fenster verschieben, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 <p>Die Geschwindigkeit von WinMove wird durch <a href="SetWinDelay.htm">SetWinDelay</a> beeinflusst.</p>
-<p>Fenstertitel und -texte sind Groß-/Kleinschreibung-sensitiv. Versteckte Fenster werden nur erkannt, wenn <a href="DetectHiddenWindows.htm">DetectHiddenWindows</a> eingeschaltet ist.</p>
 
 <p>Auf Systemen mit mehreren Bildschirmen, die unterschiedliche DPI-Einstellungen haben, kann die endgültige Position und Größe des Fensters aufgrund der <a href="../misc/DPIScaling.htm">OS-DPI-Skalierung</a> von den gewünschten Werten abweichen.</p>
 
@@ -66,16 +67,16 @@ WinMove 0, 0 <em>; Verwendet das von WinWait gefundene Fenster.</em></pre>
 <pre>MeineGui := Gui("ToolWindow -Sysmenu Disabled", "Die Zwischenablage enthält:")
 MeineGui.Add("Text",, A_Clipboard)
 MeineGui.Show("w400 h300")
-WinMove 0, 0,,, MeineGui.Title <em>; Verschiebt das Splash-Fenster in die linke obere Ecke.</em>
-MsgBox "Drücken Sie OK, um das MeineGui-Fenster zu schließen"
-MeineGui.Destroy</pre>
+WinMove 0, 0,,, MeineGui
+MsgBox "Drücken Sie OK, um das Popup-Fenster zu schließen"
+MeineGui.Destroy()</pre>
 </div>
 
 <div class="ex" id="ExCenter">
 <p><a class="ex_number" href="#ExCenter"></a> Zentriert ein Fenster auf dem Bildschirm.</p>
-<pre>ZentriereFenster("ahk_class Notepad")
+<pre>FensterZentrieren("ahk_class Notepad")
 
-ZentriereFenster(FensterTitel)
+FensterZentrieren(FensterTitel)
 {
     WinGetPos ,, &amp;Breite, &amp;Höhe, FensterTitel
     WinMove (A_ScreenWidth/2)-(Breite/2), (A_ScreenHeight/2)-(Höhe/2),,, FensterTitel

@@ -49,7 +49,7 @@
   </tr>
   <tr id="opt_x">
     <td class="center bold">x</td>
-    <td>Bewirkt, dass alle Leerraumzeichen im Suchmuster ignoriert werden, es sei denn, sie sind mit einem Escapezeichen versehen oder befinden sich in einer Zeichenklasse. Die Zeichen `n und `t werden ignoriert, da sie, sobald sie PCRE erreichen, bereits rohe/normale Leerraumzeichen sind (\n und \t werden hingegen nicht ignoriert, da sie PCRE-Escapesequenzen sind). Die "x"-Option ignoriert außerdem Zeichenketten (außerhalb einer Zeichenklasse), die mit einer nicht-escapezeichenversehenen Raute (#) beginnen und mit einem Zeilenumbruch enden. Dies macht es möglich, Kommentare in ein komplexes Suchmuster einzufügen. Beachten Sie aber, dass dies nur für Datenzeichen gilt; spezielle Zeichensequenzen, wie z.B. (?(, das ein bedingtes Teilsuchmuster einleitet, dürfen keine Leerraumzeichen enthalten.</td>
+    <td>Bewirkt, dass alle Leerraumzeichen im Suchmuster ignoriert werden, es sei denn, sie sind mit einem Escapezeichen versehen oder befinden sich in einer Zeichenklasse. Die Zeichen `n und `t werden ignoriert, da sie, sobald sie PCRE erreichen, bereits rohe/normale Leerraumzeichen sind (\n und \t werden hingegen nicht ignoriert, da sie PCRE-Escapesequenzen sind). Die "x"-Option ignoriert außerdem Zeichenketten (außerhalb einer Zeichenklasse), die mit einer escapezeichenlosen Raute (#) beginnen und mit einem Zeilenumbruch enden. Dies macht es möglich, Kommentare in ein komplexes Suchmuster einzufügen. Beachten Sie aber, dass dies nur für Datenzeichen gilt; spezielle Zeichensequenzen, wie z.B. (?(, das ein bedingtes Teilsuchmuster einleitet, dürfen keine Leerraumzeichen enthalten.</td>
   </tr>
   <tr id="opt_A">
     <td class="center bold">A</td>
@@ -69,7 +69,7 @@
   </tr>
   <tr id="opt_extra">
     <td class="center bold">X</td>
-    <td>PCRE_EXTRA. Aktiviert PCRE-Features, die mit Perl inkompatibel sind. Aktuell gibt es nur ein einziges Feature dieser Art - es bewirkt, dass jeder umgekehrter Schrägstrich, gefolgt von einem Buchstaben ohne spezielle Funktion, dazu führt, dass eine Ausnahme ausgelöst wird. Diese Option hilft, ungenutzte PCRE-Escapesequenzen für zukünftige Zwecke zu reservieren. Ohne diese Option wird der umgekehrte Schrägstrich vor einem Buchstaben ohne spezielle Funktion einfach ignoriert (z.B. werden sowohl \g als auch g als normales g erkannt). Unabhängiger von dieser Option werden umgekehrte Schrägstriche vor nicht-alphabetischen Zeichen ohne spezielle Funktion immer ignoriert (z.B. werden sowohl \/ als auch / als normaler Schrägstrich erkannt).</td>
+    <td>PCRE_EXTRA. Aktiviert PCRE-Features, die mit Perl inkompatibel sind. Zur Zeit gibt es nur ein solches Feature - es bewirkt, dass jeder umgekehrte Schrägstrich, gefolgt von einem Buchstaben ohne spezielle Funktion, eine Ausnahme auslösen lässt. Diese Option hilft, ungenutzte PCRE-Escapesequenzen für zukünftige Zwecke zu reservieren. Ohne diese Option wird der umgekehrte Schrägstrich vor einem Buchstaben ohne spezielle Funktion einfach ignoriert (z.B. werden sowohl \g als auch g als normales g erkannt). Unabhängiger von dieser Option werden umgekehrte Schrägstriche vor nicht-alphabetischen Zeichen ohne spezielle Funktion immer ignoriert (z.B. werden sowohl \/ als auch / als normaler Schrägstrich erkannt).</td>
   </tr>
   <tr id="Study">
     <td class="center bold">S</td>
@@ -81,9 +81,9 @@
   </tr>
   <tr id="NEWLINE_ANY">
     <td class="center bold">`a</td>
-    <td><p>Aktiviert die Erkennung von zusätzlichen Zeilenumbruchsmarkierungen. Standardmäßig werden nur `r`n, `n und `r erkannt. Wenn diese Option aktiviert ist, werden zusätzlich `v/VT/vertical tab/chr(0xB), `f/FF/formfeed/chr(0xC), NEL/next-line/chr(0x85), LS/line separator/chr(0x2028) und PS/paragraph separator/chr(0x2029) erkannt.</p>
+    <td><p>Aktiviert die Erkennung zusätzlicher Zeilenumbruchsmarkierungen. Standardmäßig werden nur `r`n, `n und `r erkannt. Wenn diese Option aktiviert ist, werden zusätzlich `v/VT/vertical tab/chr(0xB), `f/FF/formfeed/chr(0xC), NEL/next-line/chr(0x85), LS/line separator/chr(0x2028) und PS/paragraph separator/chr(0x2029) erkannt.</p>
       <p>Die Optionen `a, `n und `r beeinflussen das Verhalten von <a href="#anchor">Ankern (^ und $)</a> und <a href="#dot">Punkt-Platzhaltern</a>.</p>
-      <p>`a aktiviert zudem (*BSR_UNICODE), was dazu führt, dass \R beliebige Arten von Zeilenumbrüchen findet. \R wird standardmäßig `n, `r und `r`n finden; dieses Verhalten kann durch Kombinieren folgender Optionen wiederhergestellt werden: `a)(*BSR_ANYCRLF)</p>
+      <p>`a aktiviert zudem (*BSR_UNICODE), was dazu führt, dass \R beliebige Arten von Zeilenumbrüchen findet. \R findet standardmäßig `n, `r und `r`n; dieses Verhalten kann durch Kombination der folgenden Optionen wiederhergestellt werden: `a)(*BSR_ANYCRLF)</p>
     </td>
   </tr>
   <tr id="opt_esc_n">
@@ -170,18 +170,18 @@
 	    <ul>
 	      <li>Die Reihenfolge der Auswertung festlegen. Zum Beispiel findet <span class="regex">(Sun|Mon|Tues|Wednes|Thurs|Fri|Satur)day</span> den englischen Namen jedes Tages.</li>
 	      <li><strong>*</strong>, <strong>?</strong>, <strong>+</strong> oder <strong>{min,max}</strong> auf <em>mehrere</em> Zeichen anwenden, nicht nur auf eines. Zum Beispiel findet <span class="regex">(abc)+</span> 1 oder mehr Vorkommen der Zeichenkette "abc", wie z.B. in <span class="subj">abcabc</span>123, aber nicht in ab123 oder bc123.</li>
-          <li id="capture">Ein Teilsuchmuster erfassen, wie den Punkt-Stern-Platzhalter in <span class="regex">abc<span class="red">(.*)</span>xyz</span>. Die <a href="../lib/RegExMatch.htm">RegExMatch-Funktion</a> speichert in diesem Fall die Teilzeichenkette, die von jedem Teilsuchmuster gefunden wird, in das <a href="../lib/RegExMatch.htm#MatchObject">Ausgabe-Array</a>. Die <a href="../lib/RegExReplace.htm">RegExReplace-Funktion</a> hingegen kann mittels <a href="../lib/RegExReplace.htm#BackRef">Rückreferenzen</a> wie $1 die Teilzeichenkette, die von jedem Teilsuchmuster gefunden wird, wieder in das Ergebnis einfügen. Um die Klammern ohne den Nebeneffekt der Erfassung eines Teilsuchmusters zu verwenden, geben Sie <strong>?:</strong> für die ersten beiden Zeichen innerhalb der Klammern an, z.B. <span class="regex">(<span class="red">?:</span>.*)</span></li>
+          <li id="capture">Ein Teilsuchmuster erfassen, wie den Punkt-Stern-Platzhalter in <span class="regex">abc<span class="red">(.*)</span>xyz</span>. Zum Beispiel speichert <a href="../lib/RegExMatch.htm">RegExMatch</a> jede Teilzeichenkette, die mit einem Teilsuchmuster übereinstimmt, in das <a href="../lib/RegExMatch.htm#MatchObject">Ausgabe-Array</a>. In ähnlicher Weise erlaubt <a href="../lib/RegExReplace.htm">RegExReplace</a>, jede Teilzeichenkette, die mit einem Teilsuchmuster übereinstimmt, über <a href="../lib/RegExReplace.htm#BackRef">Rückreferenzen</a> wie $1 wieder in das Ergebnis einzufügen. Um die Klammern ohne den Nebeneffekt der Erfassung eines Teilsuchmusters zu verwenden, geben Sie <strong>?:</strong> für die ersten beiden Zeichen innerhalb der Klammern an, z.B. <span class="regex">(<span class="red">?:</span>.*)</span></li>
 	      <li><a href="#Options">Optionen</a> spontan ändern. Zum Beispiel aktiviert <span class="regex">(?im)</span> die Optionen "nicht-Groß-/Kleinschreibung-sensitiv" und "mehrzeilig" für den restlichen Teil des Suchmusters (oder Teilsuchmusters). <span class="regex">(?-im)</span> hingegen deaktiviert beide Optionen. Es werden alle Optionen außer DPS`r`n`a unterstützt.</li>
 	    </ul></td>
   </tr>
 	<tr>
 	  <td class="center bold">\t<br>\r<br>usw.</td>
 	  <td><p>Diese Escapesequenzen repräsentieren Sonderzeichen. Die gebräuchlichsten sind <strong>\t</strong> (Tabulator), <strong>\r</strong> (CR) und <strong>\n</strong> (LF). In AutoHotkey kann in solchen Fällen optional ein Akzent (`) anstelle des umgekehrten Schrägstrichs verwendet werden. Escapesequenzen in Form von <strong>\xhh</strong> werden ebenfalls unterstützt, wobei <em>hh</em> der Hexadezimalcode eines ANSI-Zeichens zwischen 00 und FF ist.</p>
-      <p><strong>\R</strong> findet <code>`r`n</code>, <code>`n</code> und <code>`r</code> (innerhalb einer <a href="#class">Zeichenklasse</a> wird \R lediglich als normales "R" behandelt).</p></td>
+      <p><strong>\R</strong> findet <code>`r`n</code>, <code>`n</code> und <code>`r</code> (innerhalb einer <a href="#class">Zeichenklasse</a> wird \R einfach wie ein normales "R" behandelt).</p></td>
   </tr>
   <tr id="slashP">
     <td class="center bold">\p{xx}<br>\P{xx}<br>\X</td>
-    <td><p>Unicode-Eigenschaften. <strong>\p{xx}</strong> findet ein Zeichen mit der xx-Eigenschaft, während <strong>\P{xx}</strong> ein beliebiges Zeichen <i>ohne</i> die xx-Eigenschaft findet. Zum Beispiel findet <span class="regex">\pL</span> einen beliebigen Buchstaben und <span class="regex">\p{Lu}</span> einen beliebigen Großbuchstaben. <strong>\X</strong> findet eine beliebige Anzahl von Zeichen, die eine erweiterte Unicode-Sequenz bilden.</p>
+    <td><p>Unicode-Eigenschaften. <strong>\p{xx}</strong> findet ein Zeichen mit der xx-Eigenschaft, während <strong>\P{xx}</strong> ein beliebiges Zeichen <i>ohne</i> die xx-Eigenschaft findet. Zum Beispiel findet <span class="regex">\pL</span> einen Buchstaben und <span class="regex">\p{Lu}</span> einen Großbuchstaben. <strong>\X</strong> findet eine beliebige Anzahl von Zeichen, die eine erweiterte Unicode-Sequenz bilden.</p>
     <p>Eine vollständige Liste aller unterstützten Eigenschaftsnamen und weitere Einzelheiten finden Sie unter <a href="http://www.pcre.org/pcre.txt">www.pcre.org/pcre.txt</a> mit Suchbegriffen wie "\p{xx}".</p></td>
   </tr>
   <tr id="UCP">

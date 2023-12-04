@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>PostMessage / SendMessage Tutorial | AutoHotkey v2</title>
-<meta name="description" content="Erfahren Sie, wie man die PostMessage- oder SendMessage-Funktion nutzen kann, um Meldungen an ein Fenster oder an den darin enthaltenen Steuerelementen zu senden." />
+<meta name="description" content="Erfahren Sie, wie mit den Funktionen PostMessage oder SendMessage Meldungen an ein Fenster oder Steuerelement gesendet werden können." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,15 +13,15 @@
 <body>
 <h1>PostMessage / SendMessage Tutorial <span class="headnote">von Rajat</span></h1>
 
-<p>Diese Seite beschreibt, wie mit den Befehlen <a href="../lib/PostMessage.htm">PostMessage</a> oder <a href="../lib/SendMessage.htm">SendMessage</a> Meldungen an ein Fenster oder Steuerelement gesendet werden können, und beantwortet einige Fragen wie:</p>
+<p>Diese Seite beschreibt, wie mit <a href="../lib/PostMessage.htm">PostMessage</a> oder <a href="../lib/SendMessage.htm">SendMessage</a> Meldungen an ein Fenster oder Steuerelement gesendet werden können, und beantwortet einige Fragen wie:</p>
 <ul>
   <li>"Wie kann ich eine Schaltfläche auf einem minimierten Fenster drücken?"</li>
-  <li>"Wie kann ich einen Menüpunkt auswählen, falls <a href="../lib/MenuSelect.htm">MenuSelect</a> nicht funktioniert?!"</li>
+  <li>"Wie kann ich einen Menüpunkt auswählen, wenn <a href="../lib/MenuSelect.htm">MenuSelect</a> nicht funktioniert?!"</li>
   <li>"Das Aussehen dieses Fensters kann vom Benutzer geändert werden ... wie sende ich einen Befehl, der immer funktioniert?"</li>
   <li>"und was ist mit <strong>versteckten</strong> Fenstern?!"</li>
 </ul>
 <p>Anforderungen: Winspector Spy (<a href="https://www.softpedia.com/get/Security/Security-Related/Winspector.shtml">kann hier gefunden werden</a>)</p>
-<p>Gehen wir das erste Beispiel an: <a href="../lib/MenuSelect.htm">MenuSelect</a> funktioniert nicht mit der Menüleiste innerhalb des Outlook-Fensters "Neue Nachricht". Das heißt, dass dieser Code nicht funktionieren wird:</p>
+<p>Beginnen wir mit dem ersten Beispiel: <a href="../lib/MenuSelect.htm">MenuSelect</a> funktioniert nicht mit der Menüleiste innerhalb des Outlook-Fensters "Neue Nachricht". Das heißt, dass dieser Code nicht funktionieren wird:</p>
 <pre>MenuSelect "Neue Nachricht",, "E&amp;infügen", "&amp;Bild..."</pre>
 <p>Aber <a href="../lib/PostMessage.htm">PostMessage</a> könnte diese Aufgabe erledigen:</p>
 <pre>PostMessage 0x0111, 40239, 0, , "Neue Nachricht"</pre>
@@ -36,10 +36,10 @@
   <li>Kehren Sie zum Winspector Spy-Fenster zurück und drücken Sie die Ampel-Schaltfläche, um die Überwachung zu pausieren.</li>
   <li>Klappen Sie die angesammelten WM_COMMAND-Meldungen auf (andere ignorieren, falls vorhanden).</li>
   <li>Gesucht ist (üblicherweise) eine Code-0-Meldung. Manchmal gibt es WM_COMMAND-Meldungen wie 'win activated' oder 'win destroyed', die Sie getrost ignorieren können. Irgendwo werden Sie eine Meldung finden, die 'Control ID: 40239' enthält ... Das war's!</li>
-  <li>Fügen Sie es nun in die obige Funktion ein. So einfach ist das! Das ist der wParam-Wert.</li>
+  <li>Fügen Sie nun diesen Wert in die obige Funktion ein. So einfach ist das! Das ist der wParam-Wert.</li>
 </ol>
 <p>Für das nächste Beispiel habe ich Paint genommen, weil das wahrscheinlich jeder hat. Nehmen wir mal an, dass Sie in dieser Anwendung ein Symbol in der Symbolleiste per AutoHotkey auswählen müssen, wie z.B. die Farbauswahl.</p>
-<p>Was werden Sie tun? Wahrscheinlich auf die Symbolleistenschaltfläche klicken, oder? Aber Symbolleisten können verschoben und versteckt werden! Das gilt auch für Paint. Wenn der Zielbenutzer dies getan hat, wird Ihr Skript an dieser Stelle fehlschlagen. Die folgende Funktion würde weiterhin funktionieren:</p>
+<p>Was werden Sie tun? Wahrscheinlich auf die Symbolleistenschaltfläche klicken, oder? Aber Symbolleisten können verschoben und versteckt werden! Das gilt auch für Paint. Wenn der Zielbenutzer dies getan hat, wird Ihr Skript an dieser Stelle fehlschlagen. Aber die folgende Funktion wird immer funktionieren:</p>
 <pre>PostMessage 0x0111, 639,,, "Unbenannt - Paint"</pre>
 <p><a href="../lib/PostMessage.htm">PostMessage</a> hat auch den Vorteil, dass das Fenster im Hintergrund sein kann, während beim Senden von Mausklicks das Fenster aktiv sein muss.</p>
 <p>Hier einige weitere Beispiele. Hinweis: Ich benutze WinXP Pro (SP1) ... Wenn Sie ein anderes System verwenden, können Ihre Parameter abweichen (gilt nur für Windows-Anwendungen wie Wordpad und Notepad, bei anderen sollten sich die Parameter nicht ändern):</p>
@@ -75,12 +75,12 @@ AlleAhkSkripteNeuladen(ThisHotkey)
 <ul>
   <li>Der obige Hinweis, dass es sich bei dem System um XP handelt und dass die Meldungswerte je nach System variieren, dient nur als Warnung. Wenn Sie eine Meldung finden, die auf Ihrem System funktioniert, können Sie davon ausgehen, dass diese Meldung auch auf anderen Systemen funktioniert, sofern die Softwareversion identisch ist. Außerdem behalten die meisten Anwendungen ihre Meldungswerte, auch wenn sich ihre Version ändert (z.B. Windows Media Player und Winamp).</li>
   <li>Wenn Sie den Filter in Winspector Spy so eingestellt haben, dass nur WM_COMMAND angezeigt wird, Sie aber weiterhin mit Meldungen überschwemmt werden, rechtsklicken Sie auf diese Meldung und wählen Sie hide (msg name) aus. Sie möchten sicher keine Meldungen sehen, die ohne Ihr Zutun mit der Zielsoftware interagieren.</li>
-  <li>Der nach rechts gerichtete Pfeil in Winspector Spy zeigt die Meldungswerte und der nach links gerichtete, unscharfe Pfeil die Rückgabewerte an. Standardmäßig kann ein 0-Wert als 'kein Fehler' angesehen werden.</li>
+  <li>Der nach rechts gerichtete Pfeil in Winspector Spy zeigt die Meldungswerte und der nach links gerichtete, unscharfe Pfeil die Rückgabewerte an. Standardmäßig kann ein 0-Wert als 'kein Fehler' verstanden werden.</li>
   <li>Um eine Meldung an ein verstecktes Fenster zu senden, müssen Sie folgendes in Ihr Skript einfügen: <code>DetectHiddenWindows True</code></li>
 </ul>
 <p>Hinweis: Es gibt Anwendungen, bei denen diese Technik nicht funktioniert. Ich hatte gemischte Erfahrungen mit VB- und Delphi-Anwendungen. Diese Technik sollte am besten für Anwendungen verwendet werden, die mit C oder C++ programmiert wurden. Bei VB-Anwendungen ist der "LParam" der gleichnamigen Funktion jedes Mal ein anderer. Bei einigen Delphi-Anwendungen kann es vorkommen, dass die GUI überhaupt kein WM_COMMAND verwendet. Die GUI verwendet wahrscheinlich Mauspositionen und Mausklicks.</p>
 <p>Finden Sie es selbst heraus.... und teilen Sie Ihre Erfahrungen mit der AutoHotkey-Community. Feedback ist willkommen!</p>
-<p>Diese Einführung ist nicht für totale Anfänger gedacht (nichts für ungut), da diese Funktionen als erweiterte Features betrachtet werden. Wenn Sie also nach dem Lesen nichts verstanden haben, vergessen Sie es bitte.</p>
+<p>Diese Einführung ist nicht für blutige Anfänger gedacht (nichts für ungut), da es sich bei diesen Funktionen um fortgeschrittene Features handelt. Wenn Sie also nach dem Lesen nichts verstanden haben, vergessen Sie es bitte.</p>
 <p>-Rajat</p>
 </body>
 </html>

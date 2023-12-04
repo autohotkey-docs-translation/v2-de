@@ -29,12 +29,12 @@
   <dd>
       <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
       <p>Wenn leer oder weggelassen, wird jedes Zeichen in der Eingabezeichenkette als einzelne Teilzeichenkette behandelt.</p>
-      <p id="CSV">Wenn dieser Parameter <code>"CSV"</code> ist, geht die Schleife davon aus, dass die Zeichenkette kommagetrennte Werte enthält (Comma-Separated Values). Das folgende Beispiel ist eine CSV-Zeile, die mit MS Excel erstellt wurde:</p>
+      <p id="CSV">Wenn dieser Parameter <code>"CSV"</code> ist, wird zum Parsen der Zeichenkette das Standardformat für kommagetrennte Werte (Comma-Separated Values) verwendet. Das folgende Beispiel ist eine CSV-Zeile, die mit MS Excel erstellt wurde:</p>
 <pre class="no-highlight">"Erstes Feld",ZweitesFeld,"Das Wort ""Spezial"" in direkt geschriebenen Anführungszeichen",,"Letztes Feld, mit direkt geschriebenem Komma"</pre>
       <p>Andernfalls geben Sie ein oder mehrere Zeichen an (Groß-/Kleinschreibung-sensitiv), die jeweils zur Abgrenzung der Teilzeichenketten verwendet werden.</p>
       <p>Die Trennzeichen selbst werden nicht als Teil der Teilzeichenkette betrachtet. Wenn sich zwischen zwei Trennzeichen in der Eingabezeichenkette nichts befindet, wird die entsprechende Teilzeichenkette leer sein.</p>
-      <p>Zum Beispiel: <code>','</code> (ein Komma) würde die Zeichenkette jeweils bei einem Komma teilen. Im Vergleich dazu würde <code>A_Space A_Tab</code> eine neue Teilzeichenkette erstellen, wann immer ein Leer- oder Tabulatorzeichen in der Zeichenkette gefunden wird.</p>
-      <p>Um eine Zeichenkette anstelle eines Zeichens als Trennung zu verwenden, verwenden Sie zunächst <a href="StrReplace.htm">StrReplace</a>, um alle Vorkommen der Zeichenkette mit einem einzelnen Zeichen zu ersetzen, das nie im Text verwendet wird. Zum Beispiel: <code>¢¤¥¦§©ª«®µ¶</code>. Das folgende Beispiel zeigt, wie die Zeichenkette &lt;br&gt; als Trennung verwendet werden kann:</p>
+      <p>Zum Beispiel: <code>','</code> (ein Komma) würde die Zeichenkette an jedem Komma teilen, während <code>A_Space A_Tab</code> eine neue Teilzeichenkette an jedem Leer- oder Tabulatorzeichen in der Eingabezeichenkette beginnen würde.</p>
+      <p>Um eine Zeichenkette anstelle eines Zeichens als Trennung zu verwenden, verwenden Sie zunächst <a href="StrReplace.htm">StrReplace</a>, um alle Vorkommen der Zeichenkette mit einem einzelnen Zeichen zu ersetzen, das nie im Text vorkommt, wie zum Beispiel: <code>¢¤¥¦§©ª«®µ¶</code>. Das folgende Beispiel zeigt, wie die Zeichenkette &lt;br&gt; als Trennung verwendet werden kann:</p>
       <pre>NeueHTML := StrReplace(HTMLZkette, "&lt;br&gt;", "¢")
 Loop Parse, NeueHTML, "¢" <em>; Die Zeichenkette via Cent-Symbol parsen.</em>
 {
@@ -45,20 +45,20 @@ Loop Parse, NeueHTML, "¢" <em>; Die Zeichenkette via Cent-Symbol parsen.</em>
   <dt>ZuEntfernendeZeichen</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-    <p>Wenn leer oder weggelassen, werden keine Zeichen entfernt. Andernfalls geben Sie eine Liste von Zeichen an (Groß-/Kleinschreibung-sensitiv), die am Anfang und Ende jeder Teilzeichenkette entfernt werden sollen. Wenn <em>ZuEntfernendeZeichen</em> beispielsweise <code>A_Space A_Tab</code> wäre, wird bei jeder abgerufenen Teilzeichenkette Leer- oder Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) entfernt.</p>
+    <p>Wenn leer oder weggelassen, werden keine Zeichen entfernt. Andernfalls geben Sie eine Liste von Zeichen an (Groß-/Kleinschreibung-sensitiv), die am Anfang und Ende jeder Teilzeichenkette entfernt werden sollen. Wenn <em>ZuEntfernendeZeichen</em> z.B. <code>A_Space A_Tab</code> ist, werden Leer- und Tabulatorzeichen am Anfang und Ende (aber nicht in der Mitte) jeder abgerufenen Teilzeichenkette entfernt.</p>
     <p>Wenn <em>Trennzeichen</em> leer ist, gibt <em>ZuEntfernendeZeichen</em> die Zeichen an, die ignoriert werden sollen (die Schleife wird diese nicht sehen).</p>
   </dd>
 
 </dl>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Eine parsende Schleife ist nützlich, wenn alle Felder in einer Zeichenkette nacheinander abgearbeitet werden sollen. Eine parsende Schleife verbraucht weniger Speicher als <a href="StrSplit.htm">StrSplit</a> (obwohl in beiden Fällen die Speichernutzung temporär ist) und ist in den meisten Fällen leichter zu verwenden.</p>
+<p>Eine parsende Schleife ist nützlich, wenn alle Felder in einer Zeichenkette nacheinander abgearbeitet werden sollen. Eine parsende Schleife verbraucht weniger Speicher als <a href="StrSplit.htm">StrSplit</a> (obwohl in beiden Fällen der Speicherverbrauch nur temporär ist) und ist in den meisten Fällen einfacher zu benutzen.</p>
 <p id="LoopField">Die interne Variable <strong>A_LoopField</strong> ist nur in einer parsenden Schleife von Bedeutung. Sie enthält den Inhalt der aktuellen Teilzeichenkette (Feld). Wenn eine innere parsende Schleife von einer äußeren parsenden Schleife umschlossen ist, hat das Feld der innersten Schleife Vorrang.</p>
 <p>Es gibt keine interne Variable namens A_LoopDelimiter, allerdings zeigt das Beispiel ganz unten, wie man herausfindet, welches Trennzeichen für jedes Feld verwendet wurde.</p>
-<p>Die Zeichenkette oder ihre Felder können eine unbegrenzte Größe haben.</p>
-<p>Mit der <a href="Sort.htm">Sort</a>-Funktion können die Felder vor dem Parsen neu angeordnet werden.</p>
+<p>Die Zeichenkette oder ihre Felder können unbegrenzt groß sein.</p>
+<p>Mit der <a href="Sort.htm">Sort</a>-Funktion können die Felder vor dem Parsen neu sortiert werden.</p>
 <p>Auf der <a href="Loop.htm">Loop</a>-Seite finden Sie Informationen zu <a href="Block.htm">Blöcken</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a> und A_Index (die in jeder Schleifenvariante verwendet werden kann).</p>
-<p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung erfolgen, die ausgeführt wird, wenn die Schleife null Iterationen hatte. Beachten Sie, dass die Schleife immer mindestens eine Iteration hat, es sei denn, <em>Zkette</em> ist leer oder <em>Trennzeichen</em> wird weggelassen und alle Zeichen in <em>Zkette</em> sind in <em>ZuEntfernendeZeichen</em> enthalten.</p>
+<p>Nach der Schleife kann optional eine <a href="Else.htm">Else</a>-Anweisung angegeben werden, die ausgeführt wird, wenn die Schleife null Wiederholungen hatte. Beachten Sie, dass die Schleife immer mindestens eine Wiederholung hat, es sei denn, <em>Zkette</em> ist leer oder <em>Trennzeichen</em> wird weggelassen und alle Zeichen in <em>Zkette</em> sind in <em>ZuEntfernendeZeichen</em> enthalten.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="StrSplit.htm">StrSplit</a>, <a href="LoopRead.htm">dateilesende Schleife</a>, <a href="Loop.htm">Loop</a>, <a href="Break.htm">Break</a>, <a href="Continue.htm">Continue</a>, <a href="Block.htm">Blöcke</a>, <a href="Sort.htm">Sort</a>, <a href="FileSetAttrib.htm">FileSetAttrib</a>, <a href="FileSetTime.htm">FileSetTime</a></p>
@@ -69,7 +69,7 @@ Loop Parse, NeueHTML, "¢" <em>; Die Zeichenkette via Cent-Symbol parsen.</em>
 <pre>Farben := "rot,grün,blau"
 Loop parse, Farben, ","
 {
-    MsgBox "Farbnummer " A_Index " ist " A_LoopField
+    MsgBox "Farbe Nr. " A_Index " ist " A_LoopField
 }</pre>
 </div>
 
@@ -77,7 +77,7 @@ Loop parse, Farben, ","
 <p><a class="ex_number" href="#ExFileRead"></a> Liest den Inhalt einer Variable zeilenweise aus (ähnlich einer <a href="LoopRead.htm">dateilesenden Schleife</a>). Mit <a href="FileRead.htm">FileRead</a> kann eine Datei in eine Variable geladen werden.</p>
 <pre>Loop parse, DateiInhalt, "`n", "`r"  <em>; Durch Angabe von `n vor `r können sowohl Windows- als auch Unix-Dateien geparst werden.</em>
 {
-    Ergebnis := MsgBox("Zeilennummer " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
+    Ergebnis := MsgBox("Zeile Nr. " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
 }
 until Ergebnis = "No"</pre>
 </div>
@@ -86,7 +86,7 @@ until Ergebnis = "No"</pre>
 <p><a class="ex_number" href="#ExClipboard"></a> Dies ist dasselbe wie das Beispiel oben, aber für die <a href="A_Clipboard.htm">Zwischenablage</a>. Es ist nützlich, wenn sich in der Zwischenablage Dateien befinden, die z.B. aus einem geöffneten Explorer-Fenster kopiert wurden (das Programm wandelt solche Dateien automatisch in ihre Dateinamen um).</p>
 <pre>Loop parse, A_Clipboard, "`n", "`r"
 {
-    Ergebnis := MsgBox("Dateinummer " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
+    Ergebnis := MsgBox("Datei Nr. " A_Index " ist " A_LoopField ".`n`nWeiter?",, "y/n")
 }
 until Ergebnis = "No"</pre>
 </div>

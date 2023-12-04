@@ -32,20 +32,20 @@
             <li>High (oder H)</li>
             <li>Realtime (oder R)</li>
         </ul>
-        <p>Beachten Sie, dass Prozesse, der nicht darauf abgestimmt ist, in Echtzeit (Realtime) zu laufen, die Systemstabilität reduzieren könnten, wenn sie auf diese Stufe gesetzt werden.</p>
+        <p>Beachten Sie, dass jeder Prozess, der nicht für eine Ausführung in Echtzeit (Realtime) ausgelegt ist, die Systemstabilität beeinträchtigen kann, wenn er auf diese Prioritätsstufe gesetzt wird.</p>
     </dd>
     <dt>PIDOderName</dt>
     <dd>
         <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
         <p>Wenn weggelassen, wird der Prozess des Skripts selbst verwendet. Andernfalls geben Sie entweder eine Nummer (die PID) oder einen Prozessnamen an:</p>
-        <p><strong>PID (Prozess-ID):</strong> Eine Nummer zur eindeutigen Identifizierung eines Prozesses (die Gültigkeit dieser Nummer ist an die Lebensdauer des Prozesses gebunden). Mit der <a href="Run.htm">Run</a>-Funktion kann die PID eines neu gestarteten Prozesses ermittelt werden. Im Vergleich dazu kann mit <a href="WinGetPID.htm">WinGetPID</a> die PID eines Fensters ermittelt werden. Mit <a href="ProcessExist.htm">ProcessExist</a> kann auch eine PID abgerufen werden.</p>
+        <p><strong>PID (Prozess-ID):</strong> Eine Nummer zur eindeutigen Identifizierung eines Prozesses (die Gültigkeit dieser Nummer ist an die Lebensdauer des Prozesses gebunden). Mit <a href="Run.htm">Run</a> kann die PID eines neuen Prozesses, der gestartet wurde, ermittelt werden. Mit <a href="WinGetPID.htm">WinGetPID</a> kann die PID eines Fensters ermittelt werden. <a href="ProcessExist.htm">ProcessExist</a> kann ebenfalls verwendet werden, um eine PID zu ermitteln.</p>
         <p><strong>Name:</strong> Der Name eines Prozesses (ohne Pfad), den üblicherweise auch seine EXE-Datei hat, z.B. notepad.exe oder winword.exe. Da ein Name mit mehreren laufenden Prozessen übereinstimmen kann, wird nur der erste Prozess berücksichtigt. Der Name ist nicht Groß-/Kleinschreibung-sensitiv.</p>
     </dd>
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>Diese Funktion gibt die <a href="../misc/WinTitle.htm#ahk_pid">Prozess-ID (PID)</a> des angegebenen Prozesses zurück. Wenn ein passender Prozess nicht gefunden wird oder nicht manipuliert werden kann, wird 0 zurückgegeben.</p>
+<p>Diese Funktion gibt die <a href="../misc/WinTitle.htm#ahk_pid">Prozess-ID (PID)</a> des angegebenen Prozesses zurück. Wenn kein Prozess gefunden wurde oder nicht manipuliert werden kann, wird 0 zurückgegeben.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Die aktuelle Prioritätsstufe eines Prozesses kann im Windows-Task-Manager eingesehen werden.</p>
@@ -59,7 +59,7 @@
 <p><a class="ex_number" href="#ExBasic"></a> Startet Notepad, setzt seine Priorität auf Hoch und meldet seine aktuelle PID.</p>
 <pre>Run "notepad.exe", , , &amp;NeuePID
 ProcessSetPriority "High", NeuePID
-MsgBox "Die neu gestartete Notepad-PID ist " NeuePID</pre>
+MsgBox "Die neue Notepad-PID ist " NeuePID</pre>
 </div>
 
 <div class="ex" id="ExHotkey">
@@ -71,18 +71,18 @@ MsgBox "Die neu gestartete Notepad-PID ist " NeuePID</pre>
     MeineGui := Gui(, "Priorität setzen")
     MeineGui.Add("Text",, "
     (
-        Drücke ESCAPE zum Abbrechen, oder klicke doppelt auf einen
-        neuen Prioritätslevel für das folgende Fenster:
+        Drücke ESCAPE zum Abbrechen oder doppelklicke auf eine
+        neue Prioritätsstufe für das folgende Fenster:
     )")
     MeineGui.Add("Text", "wp", aktiver_titel)
     LB := MeineGui.Add("ListBox", "r5 Choose1", ["Normal","High","Low","BelowNormal","AboveNormal"])
-    LB.OnEvent("DoubleClick", SetzePriorität)
-    MeineGui.Add("Button", "default", "OK").OnEvent("Click", SetzePriorität)
+    LB.OnEvent("DoubleClick", PrioritätSetzen)
+    MeineGui.Add("Button", "default", "OK").OnEvent("Click", PrioritätSetzen)
     MeineGui.OnEvent("Escape", (*) =&gt; MeineGui.Destroy())
     MeineGui.OnEvent("Close", (*) =&gt; MeineGui.Destroy())
     MeineGui.Show()
 
-    SetzePriorität(*)
+    PrioritätSetzen(*)
     {
         MeineGui.Destroy()
         if ProcessSetPriority(LB.Text, aktive_pid)

@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>DriveEject / DriveRetract - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die Funktionen DriveEject und DriveRetract öffnen bzw. schließen ein bestimmtes CD- oder DVD-Laufwerk, oder werfen einen Wechseldatenträger aus." />
+<meta name="description" content="Die Funktionen DriveEject und DriveRetract öffnen bzw. schließen ein bestimmtes CD- oder DVD-Laufwerk. DriveEject kann auch einen Wechseldatenträger auswerfen." />
 <meta name="ahk:equiv-v1" content="lib/Drive.htm#Eject" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +14,7 @@
 
 <h1>DriveEject / DriveRetract</h1>
 
-<p>Öffnet oder schließt ein bestimmtes CD- oder DVD-Laufwerk, oder wirft einen Wechseldatenträger aus.</p>
+<p>Öffnet oder schließt ein bestimmtes CD- oder DVD-Laufwerk. DriveEject kann auch einen Wechseldatenträger auswerfen.</p>
 
 <pre class="Syntax"><span class="func">DriveEject</span> <span class="optional">Laufwerk</span>
 <span class="func">DriveRetract</span> <span class="optional">Laufwerk</span></pre>
@@ -25,21 +25,20 @@
   
     <dd>
         <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Der Laufwerksbuchstabe, optional gefolgt von einem Doppelpunkt oder einem Doppelpunkt und umgekehrtem Schrägstrich. Zum Beispiel <code>D</code>, <code class="no-highlight">D:</code> oder <code>D:\</code>.</p>
-        <p>Dieser Parameter kann auch ein Gerätepfad im Format <code>\\?\Volume{...}</code> sein. Solche Pfade können durch Ausführen von <a href="https://learn.microsoft.com/windows-server/administration/windows-commands/mountvol">mountvol</a> über die Befehlszeile ermittelt werden. In diesem Fall muss dem Laufwerk kein Laufwerksbuchstabe zugewiesen sein.</p>
-        <p>Wenn weggelassen, wird standardmäßig das erste CD/DVD-Laufwerk verwendet, welches durch iteratives Durchlaufen von A bis Z ermittelt wird. Es wird eine Ausnahme ausgelöst, wenn kein Laufwerk gefunden wird.</p>
+        <p>Wenn weggelassen, wird standardmäßig das erste CD- oder DVD-Laufwerk verwendet, das beim Iterieren von A bis Z gefunden wurde (es wird eine Ausnahme ausgelöst, wenn keines gefunden wurde). Andernfalls geben Sie einen Laufwerksbuchstaben an, optional gefolgt von einem Doppelpunkt oder einem Doppelpunkt und umgekehrtem Schrägstrich. Zum Beispiel <code>"D"</code>, <code>"D:"</code> oder <code>"D:\"</code>.</p>
+        <p>Dies kann auch ein Gerätepfad im Format <code>"\\?\Volume{...}"</code> sein, der durch Ausführen von <a href="https://learn.microsoft.com/windows-server/administration/windows-commands/mountvol">mountvol</a> in der Befehlszeile ermittelt werden kann. In diesem Fall muss dem Laufwerk kein Laufwerksbuchstabe zugewiesen sein.</p>
     </dd>
 </dl>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Bei Misserfolg wird eine Ausnahme ausgelöst, sofern dieser erkannt wurde.</p>
-<p>Diese Funktionen werden eventuell nicht funktionieren, wenn das angegebene Laufwerk ein Netzwerklaufwerk ist, oder ein Laufwerk, bei dem die Option "Auswerfen" im Explorer fehlt. Die hierbei verwendeten Systemfunktionen melden nicht immer Fehler; es könnte also eine Ausnahme ausgelöst werden oder auch nicht.</p>
+<p>Diese Funktionen funktionieren wahrscheinlich nicht bei Netzlaufwerken oder Laufwerken, bei denen die Option "Auswerfen" im Explorer fehlt. Die intern verwendeten Systemfunktionen melden nicht immer Misserfolg, d.h. es kann eine Ausnahme ausgelöst werden oder auch nicht.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Während diese Funktion das Laufwerk ein- oder ausfährt, wartet das Skript.</p>
-<p>Es ist möglich, den vorherigen Zustand des Laufwerks zu ermitteln. Messen Sie einfach die Zeit, die die Funktion zum Ausführen benötigt wie <a href="#ExToggle">im Beispiel unten</a>.</p>
-<p>Das Auswerfen eines Wechseldatenträgers entspricht grundsätzlich der Verwendung des Kontextmenüpunkts "Auswerfen" im Explorer, mit dem Unterschied, dass keine Warnung angezeigt wird, wenn Dateien in Benutzung sind. Im Gegensatz zum Menüpunkt "Hardware sicher entfernen" wird hierbei nur der durch <em>Laufwerk</em> identifizierte Datenträger, nicht das gesamte Gerät, abgemeldet.</p>
-<p>DriveEject und DriveRetract entsprechen den Kontrollcodes <a href="https://learn.microsoft.com/windows-hardware/drivers/ddi/ntddstor/ni-ntddstor-ioctl_storage_eject_media">IOCTL_STORAGE_EJECT_MEDIA</a> und <a href="https://learn.microsoft.com/windows-hardware/drivers/ddi/ntddstor/ni-ntddstor-ioctl_storage_load_media">IOCTL_STORAGE_LOAD_MEDIA</a>, die sich neben CD/DVD auch auf andere Laufwerkstypen, wie z.B. Bandlaufwerke, auswirken können.</p>
+<p>Während diese Funktion das Laufwerk öffnet oder schließt, wartet das Skript.</p>
+<p>Es ist möglich, den vorherigen Zustand des Laufwerks zu ermitteln. Messen Sie einfach die Zeit, die die Funktion zum Ausführen benötigt, wie <a href="#ExToggle">im Beispiel unten</a>.</p>
+<p>Das Auswerfen eines Wechseldatenträgers entspricht grundsätzlich der Verwendung der Kontextmenüoption "Auswerfen" im Explorer, außer dass keine Warnung angezeigt wird, wenn Dateien in Benutzung sind. Im Gegensatz zur Option "Hardware sicher entfernen" wird dies nur das via <em>Laufwerk</em> identifizierte Volume dismounten, nicht das gesamte Gerät.</p>
+<p>DriveEject und DriveRetract entsprechen den Kontrollcodes <a href="https://learn.microsoft.com/windows-hardware/drivers/ddi/ntddstor/ni-ntddstor-ioctl_storage_eject_media">IOCTL_STORAGE_EJECT_MEDIA</a> und <a href="https://learn.microsoft.com/windows-hardware/drivers/ddi/ntddstor/ni-ntddstor-ioctl_storage_load_media">IOCTL_STORAGE_LOAD_MEDIA</a>, die auch einen Effekt auf andere Laufwerkstypen als CD/DVD, z.B. Bandlaufwerke, haben können.</p>
 
 
 <h2 id="Related">Siehe auch</h2>
@@ -65,15 +64,15 @@
         DriveEject(A_LoopField)
 }
 else
-    MsgBox "Keine Wechseldatenträger gefunden."</pre>
+    MsgBox "Kein Wechseldatenträger gefunden."</pre>
 </div>
 
 <div class="ex" id="ExToggle">
-<p><a class="ex_number" href="#ExToggle"></a> Definiert einen Hotkey, der das Laufwerk jeweils in den entgegengesetzten Zustand (offen oder geschlossen) schaltet, basierend auf der Zeit, die die Funktion zum Ausführen benötigt.</p>
+<p><a class="ex_number" href="#ExToggle"></a> Definiert einen Hotkey, der das Laufwerk in den entgegengesetzten Zustand (offen oder geschlossen) schaltet, abhängig von der Ausführungsdauer der Funktion.</p>
 <pre>#c::
 {
     DriveEject
-    <em>; Wenn die Funktion schnell ausgeführt wurde, war das Laufwerk wahrscheinlich schon ausgefahren.
+    <em>; Wurde die Funktion schnell ausgeführt, war das Laufwerk vmtl. schon offen.
     ; In diesem Fall kann es geschlossen werden:</em>
     if (A_TimeSinceThisHotkey &lt; 1000)  <em>; Passen Sie den Wert an, falls nötig.</em>
         DriveRetract
