@@ -221,7 +221,7 @@
 <li><code>base</code> ist eine vordefinierte Eigenschaft, die das unmittelbare Basisobjekt des Objekts abruft oder setzt (wie <a href="lib/Any.htm#GetBase">ObjGetBase</a>/<a href="lib/Object.htm#SetBase">ObjSetBase</a>). Es ist nur ein normaler, nicht reservierter Eigenschaftsname.</li>
 <li>Der indirekte Aufruf von <code>super.x</code> löst einen Fehler aus, wenn die Superklasse keine Definition von x hat, während <code>base.x</code> früher ignoriert wurde (auch wenn es eine Zuweisung war).</li>
 </ul>
-<p>Wenn Fn ein Objekt ist, ruft <code>Fn()</code> (früher als <code>%Fn%()</code> geschrieben) jetzt <code>Fn.Call()</code> anstelle von <code>Fn.()</code> auf (was jetzt nur noch als <code>Fn.%""%()</code> geschrieben werden kann). Funktionen unterstützen nicht mehr die namenlose Methode.</p>
+<p>Der Aufruf eines benutzerdefinierten Objekts ohne explizite Angabe eines Methodennamens bewirkt nun den Aufruf der "Call"-Methode anstelle der ""-Methode. Zum Beispiel bewirkte <code>%Fn%()</code> früher den Aufruf von <code>Fn.()</code>, während der v2-Ausdruck <code>Fn()</code> den Aufruf von <code>Fn.Call()</code> bewirkt. <a href="lib/Func.htm">Func</a>-Objekte implementieren nicht mehr die namenlose Methode. Es ist nicht mehr zulässig, den Methodennamen in einem Methodenaufruf wegzulassen, aber <code>Fn.%""%()</code> funktioniert anstelle von <code>Fn.()</code>.</p>
 <p><code>this.Method()</code> ruft <code>Fn.Call(this)</code> (wobei <em>Fn</em> das Funktionsobjekt ist, das die Methode implementiert) statt <code>Fn[this]()</code> auf (was in v1 zu einem Aufruf von <code>Fn.__Call(this)</code> führen würde, es sei denn, <code>Fn[this]</code> enthält eine Funktion). Funktionsobjekte sollten eine <em>Call</em>-Methode implementieren, nicht <em>__Call</em>, das nur für explizite Methodenaufrufe vorgesehen ist.</p>
 <p><code><i>Klassenname</i>()</code> (ehemals <code>new <i>Klassenname</i>()</code>) scheitert nun bei der Erstellung des Objekts, wenn die <em>__New</em>-Methode definiert ist, aber nicht aufgerufen werden konnte (z.B. weil die Parameteranzahl falsch ist), oder wenn Parameter übergeben wurden, aber <em>__New</em> nicht definiert ist.</p>
 <p>Objekte, die innerhalb eines Ausdrucks erstellt oder von einer Funktion zurückgegeben werden, werden nun zurückgehalten, bis die Auswertung des Ausdrucks abgeschlossen ist, und dann freigegeben. Dies verbessert die Performanz geringfügig und ermöglicht die Verwendung temporärer Objekte für die Speicherverwaltung innerhalb eines Ausdrucks, ohne zu befürchten, dass die Objekte vorzeitig freigegeben werden.</p>
@@ -793,7 +793,7 @@ Loop Reg SchlüsselName [, Modus]
 Bool   := ControlGetChecked(...)
 Bool   := ControlGetEnabled(...)
 Bool   := ControlGetVisible(...)
-Int   := ControlGetIndex(...)  <em>; Für Tab, LB, CB, DDL</em>
+Int    := ControlGetIndex(...)  <em>; Für Tab, LB, CB, DDL</em>
 Zkette := ControlGetChoice(...)
 Arr    := ControlGetItems(...)
 Int    := ControlGetStyle(...)
@@ -808,7 +808,7 @@ Int    := ControlGetHwnd(...)
           ControlSetExStyle(Wert, ...)
           ControlShowDropDown(...)
           ControlHideDropDown(...)
-         ControlChooseIndex(Index, ...)  <em>; Deckt auch Tab ab</em>
+          ControlChooseIndex(Index, ...)  <em>; Deckt auch Tab ab</em>
 Index  := ControlChooseString(Zkette, ...)
 
 Index  := ControlFindItem(Zkette, ...)
@@ -878,7 +878,7 @@ PID    := ProcessWaitClose(PID_oder_Name [, Timeout])
 </pre>
 <p><a href="lib/ProcessExist.htm">ProcessExist</a>, <a href="lib/ProcessClose.htm">ProcessClose</a>, <a href="lib/ProcessWait.htm">ProcessWait</a> und <a href="lib/ProcessWaitClose.htm">ProcessWaitClose</a> setzen keinen ErrorLevel mehr; sie geben stattdessen die PID zurück.</p>
 <p>Keine der anderen Funktionen setzt ErrorLevel. Stattdessen lösen sie bei Misserfolg eine Ausnahme aus. In den meisten Fällen ist ein Misserfolg darauf zurückzuführen, dass das Zielfenster oder -steuerelement nicht gefunden wurde.</p>
-<p>HWND-Nummern und Styles werden immer als reiner Integer zurückgegeben, nicht als hexadezimale Zeichenketten.</p>
+<p>HWND-Nummern und Styles werden immer als reine Integer zurückgegeben, nicht als hexadezimale Zeichenketten.</p>
 <p><a href="lib/ControlChooseIndex.htm">ControlChooseIndex</a> akzeptiert 0, um alle Elemente abzuwählen. Es ersetzt "Control Choose", unterstützt aber auch Tab-Steuerelemente.</p>
 <p>"ControlGet Tab" wurde mit <a href="lib/ControlGetIndex.htm">ControlGetIndex</a> zusammengeführt, das auch mit ListBox, ComboBox und DDL funktioniert. Bei Tab-Steuerelementen gibt es 0 zurück, wenn kein Tab ausgewählt ist (selten, aber möglich). <a href="lib/ControlChooseIndex.htm">ControlChooseIndex</a> erlaubt keine 0 für Tab-Steuerelemente, da Anwendungen in der Regel nicht damit umgehen können.</p>
 <p><a href="lib/ControlGetItems.htm">ControlGetItems</a> ersetzt "ControlGet List" für ListBox und ComboBox. Es gibt ein Array zurück.</p>
