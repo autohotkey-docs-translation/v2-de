@@ -333,6 +333,7 @@ indexData = [
   ["class ... extends","Objects.htm#Custom_Classes",5],
   ["class name of a window","misc/WinTitle.htm#ahk_class"],["Klassenname eines Fensters","misc/WinTitle.htm#ahk_class"],
   ["Class-Objekt","lib/Class.htm"],
+  ["classes, built-in","ObjList.htm"],["Klassen, intern","ObjList.htm"],
   ["ClassNN (eines Steuerelements)","lib/ControlGetClassNN.htm"],
   ["ClassNN-Eigenschaft (Gui.Control)","lib/GuiControl.htm#ClassNN",7],
   ["Clear-Methode (Map)","lib/Map.htm#Clear",7],
@@ -634,6 +635,7 @@ indexData = [
   ["GroupDeactivate","lib/GroupDeactivate.htm",2],
   ["Gui","lib/Gui.htm",6],
   ["Gui","lib/Gui.htm#Call",2],
+  ["Gui-Steuerelement-Optionen","lib/Gui.htm#Add"],
   ["Gui-Steuerelemente","lib/GuiControls.htm"],
   ["Gui-Ereignisse","lib/GuiOnEvent.htm"],
   ["Gui-Eigenschaft (Gui.Control)","lib/GuiControl.htm#Gui",7],
@@ -1275,5 +1277,6 @@ indexData = [
   ["WS_* (GUI-Styles)","misc/Styles.htm"],
   ["XButton","KeyList.htm#mouse-advanced"],
   ["YYYYMMDDHH24MISS","lib/FileSetTime.htm#YYYYMMDD"],
-  ["ZeroDivisionError","lib/Error.htm#ZeroDivisionError",6]
+  ["ZeroDivisionError","lib/Error.htm#ZeroDivisionError",6],
+  ["ZIP-Dateien (ihr Inhalt kopieren)","lib/FileCopyDir.htm"]
 ];

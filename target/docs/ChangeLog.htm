@@ -15,6 +15,25 @@
 <p><a href="v2-changes.htm">Änderungen von v1.1 bis v2.0</a> behandelt die Unterschiede zwischen v1.1 und v2.0.</p>
 <p>Alle technischen Einzelheiten zu den Änderungen finden Sie auf <a href="https://github.com/AutoHotkey/AutoHotkey/tree/alpha">GitHub</a>.</p>
 
+<h2 id="v2.0.12">2.0.12 - 23. März 2024</h2>
+<p>Behoben: Gui GetPos/GetClientPos bei einer Gui mit einem übergeordneten Fenster oder +DPIScale.</p>
+<p>Behoben: Until verhinderte die Rekursion von Unterordnern in Dateischleifen.</p>
+<p>Behoben: DllCall löst nun eine Ausnahme beim UStr-Argumenttyp aus.</p>
+<p>Behoben: Ein Speicherleck, das bei jedem Regex-Callout auftrat.</p>
+<p>Behoben: Send löste fälschlicherweise einen Modifikator aufgrund einer Race Condition aus. Zum Beispiel löste <code>~LAlt::Send "{Blind}x"</code> gelegentlich LAlt aus, wenn ein anderer Tastatur-Hook als der eigene Hook des Skripts installiert war.</p>
+<p>Behoben: Der Symbol-Lader bevorzugt nun eine höhere Bittiefe, wenn mehrere Bitmaps gleicher Größe vorhanden sind.</p>
+<p>Behoben: SendInput konnte LCtrl nicht loslassen, wenn es bereits RAlt losgelassen hatte und das Layout kein AltGr hatte.</p>
+<p>Behoben: Taste-Oben-Hotkeys werden nicht mehr ausgelöst, wenn die Taste nach einer Modifikatoränderung wiederholt gedrückt wird. Zum Beispiel sollte <code>F1::Send "{Ctrl down}"</code> die Ausführung von <code>F1 up::</code> erlauben, wenn die Taste losgelassen wird, obwohl Ctrl unten ist, aber erlaubte es nicht nach einer Tastenwiederholung.</p>
+<p>Behoben: Eine Fehlermeldung bezog sich auf #HotIf statt auf #IfWin. [PR #327]</p>
+<p>Behoben: OwnProps übersprang fälschlicherweise Eigenschaften mit optionalen Parametern.</p>
+<p>Behoben: Inkonsistentes Verhalten von geklonten dynamischen Eigenschaften.</p>
+<ul>
+  <li>OwnProps, das keine geklonten Eigenschaften mit Pflichtparametern überspringt.</li>
+  <li>Parameter, die nicht rekursiv an parameterlose Eigenschaften übergeben werden (d.h. damit <code>a.b[c]</code> als <code>(a.b)[c]</code> ausgewertet werden kann).</li>
+</ul>
+<p>Behoben: SysGetIPAddresses verursacht keinen kritischen Fehler mehr, wenn das Netzwerk-Subsystem nicht funktionsfähig ist, z.B. im abgesicherten Modus von Windows.</p>
+<p>Geändert: ControlGetFocus gibt nun 0 zurück, wenn der Fokus nicht ermittelt werden kann, z.B. wenn ein Konsolenfenster aktiv ist.</p>
+
 <h2 id="v2.0.11">2.0.11 - 23. Dezember 2023</h2>
 <p>Hinzufügt: Workaround für das erste angezeigte Menü, das in Windows 10 keine Tastatureingaben akzeptierte.</p>
 <p>Behoben: Die <a href="lib/Gui.htm#Add">Add-Methode (Gui)</a> unterstützt nun die ShortDate-Option für DateTime-Steuerelemente.</p>
@@ -40,11 +59,11 @@
 
 <h2 id="v2.0.8">2.0.8 - 11. September 2023</h2>
 <p>Behoben: ByRef-Parameter weisen der VarRef des Aufrufers nicht mehr fälschlicherweise den Standardwert zu, wenn ungesetzt.</p>
-<p>Behoben: Einige Probleme bzgl. unterdrückter Alt/Strg/Umschalt/Win-Hotkeys, zum Beispiel:</p>
+<p>Behoben: Einige Probleme mit unterdrückten Alt/Strg/Umschalt/Win-Hotkeys, wie zum Beispiel:</p>
 <ul>
-  <li><code>*LCtrl::</code> hat LCtrl des aktiven Fensters blockiert, aber das Senden von Alt-Tastenkombinationen würde fehlschlagen, weil das System denkt, dass Ctrl unten ist, und daher WM_KEYDOWN statt WM_SYSKEYDOWN senden würde.</li>
-  <li><code>*LAlt::</code> hat das System dazu veranlasst, jedes vorherige <code>{LAlt DownR}</code> zu vergessen, so dass eine Neubelegung wie <code>LCtrl::LAlt</code> sich nicht korrekt verhalten würde, während LAlt physisch unten ist, auch wenn LAlt unterdrückt wurde.</li>
-  <li>Andere potenzielle Probleme, wo das systeminterne Low-Level-Tracking einer Modifikatortaste nicht mit dem logischen Status übereinstimmt.</li>
+  <li><code>*LCtrl::</code> blockierte LCtrl vom aktiven Fenster, aber das Senden von Alt-Tastenkombinationen würde fehlschlagen, weil das System denkt, dass Ctrl unten ist, und daher WM_KEYDOWN statt WM_SYSKEYDOWN senden würde.</li>
+  <li><code>*LAlt::</code> hat das System dazu veranlasst, alle vorherigen <code>{LAlt DownR}</code> zu vergessen, sodass sich eine Neubelegung wie z.B. <code>LCtrl::LAlt</code> nicht korrekt verhält, wenn LAlt physisch unten ist, auch wenn LAlt unterdrückt wurde.</li>
+  <li>Andere potenzielle Probleme, bei denen das Low-Level-Tracking einer Modifikatortaste durch das System nicht mit dem logischen Zustand übereinstimmt.</li>
 </ul>
 <p>Behoben: Einige Probleme bzgl. Fortsetzungsbereiche:</p>
 <ul>
@@ -58,7 +77,7 @@
 <h2 id="v2.0.7">2.0.7 - 2. September 2023</h2>
 <p>Behoben: Bei MouseClickDrag können nun X1 und Y1 weggelassen werden.</p>
 <p>Behoben: Maus-AltTab-Hotkeys unterdrückten nicht die Ausführung eines Präfix-Hotkeys, z.B. <code>1::</code> für <code>1 &amp; WheelDown::AltTab</code>. (fehlerhaft seit v2.0.4)</p>
-<p>Behoben: Hook-Hotkeys erkannten keine Modifikatoren, die via SendInput nach unten gedrückt wurden.</p>
+<p>Behoben: Hook-Hotkeys erkannten keine Modifikatoren, die mit SendInput nach unten gedrückt wurden.</p>
 <p>Behoben: A_AhkPath ist nun nicht mehr auf die Groß-/Kleinschreibung oder das Format der Befehlszeile angewiesen, die/das zum Starten des Prozesses verwendet wird.</p>
 <p>Behoben: Heap-Korruption bei einer Fenstersuche mit Gruppen. (fehlerhaft seit v2.0.6)</p>
 <p><strong>Launcher</strong></p>

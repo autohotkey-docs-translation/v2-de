@@ -305,7 +305,7 @@ anderesObj.test()</pre>
 <p>Deklarationen wie <code>static x.y := z</code> werden ebenfalls unterstützt, sofern vorher <code>x</code> in dieser Klasse definiert wurde. Zum Beispiel bewirkt <code>static x := {}, x.y := 42</code>, dass <code>x</code> deklariert und außerdem <code><i>KlasseName</i>.x.y</code> initialisiert wird. Da <a href="lib/Class.htm#Prototype">Prototype</a> implizit in jeder Klasse definiert ist, können mit <code>static Prototype.geteilterWert := 1</code> Werte gesetzt werden, die dynamisch von allen Instanzen der Klasse geerbt werden (bis sie durch eine Eigenschaft der Instanz selbst "überschrieben" werden).</p>
 
 <h4 id="Custom_Classes_class">Verschachtelte Klassen</h4>
-<p>Verschachtelte Klassendefinitionen ermöglichen es, ein Klassenobjekt mit einer statischen bzw. Klassenvariable der äußeren Klasse zu assoziieren, anstatt mit einer separaten globalen Variablen. Im obigen Beispiel konstruiert <code>class VerschachtelteKlasse</code> ein <a href="lib/Class.htm">Class</a>-Objekt und speichert es in <code>KlasseName.VerschachtelteKlasse</code>. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall kann mit <code>(<i>WelcheKlasse</i>.VerschachtelteKlasse)()</code> die entsprechende Klasse instanziiert werden).</p>
+<p>Verschachtelte Klassendefinitionen ermöglichen es, ein Klassenobjekt mit einer statischen bzw. Klassenvariable der äußeren Klasse zu assoziieren, anstatt mit einer separaten globalen Variablen. Im obigen Beispiel konstruiert <code>class VerschachtelteKlasse</code> ein <a href="lib/Class.htm">Class</a>-Objekt und speichert es in <code>KlasseName.VerschachtelteKlasse</code>. Unterklassen können <em>VerschachtelteKlasse</em> erben oder es mit ihrer eigenen verschachtelten Klasse überschreiben (in diesem Fall kann mit <code><i>WelcheKlasse</i>.VerschachtelteKlasse()</code> die entsprechende Klasse instanziiert werden).</p>
 <pre>
 class VerschachtelteKlasse
 {
@@ -313,7 +313,12 @@ class VerschachtelteKlasse
 }
 </pre>
 <p>Das Verschachteln einer Klasse impliziert keine besondere Beziehung zur äußeren Klasse. Weder wird die verschachtelte Klasse automatisch instanziiert, noch haben Instanzen der verschachtelten Klasse eine Verbindung zu einer Instanz der äußeren Klasse, es sei denn, das Skript stellt diese Verbindung explizit her.</p>
-<p>Aufgrund der Funktionsweise der Methoden bei <a href="lib/Object.htm">Objekten</a> übergibt <code><i>WelcheKlasse</i>.VerschachtelteKlasse()</code> jedoch implizit <em>WelcheKlasse</em> als ersten Parameter, äquivalent zu <code><i>WelcheKlasse</i>.VerschachtelteKlasse.Call(<i>WelcheKlasse</i>)</code>. Sofern <code>static Call()</code> nicht überschrieben ist, wird dieser Parameter automatisch an <a href="#Custom_NewDelete">__New</a> übergeben.</p>
+<p>Jede verschachtelte Klassendefinition erzeugt eine dynamische Eigenschaft mit <em>Get</em>- und <em>Call</em>-Akzessorfunktionen anstelle einer einfachen Werteigenschaft. Damit soll das folgende Verhalten unterstützt werden (wobei die Klasse X die verschachtelte Klasse Y enthält):</p>
+<ul>
+<li><code>X.Y()</code> übergibt X nicht an <code>X.Y.Call</code> und letztlich an <code>__New</code>, was sonst passieren würde, da dies das normale Verhalten für Funktionsobjekte ist, die als Methoden aufgerufen werden (so wie die verschachtelte Klasse hier verwendet wird).</li>
+<li><code>X.Y := 1</code> ist standardmäßig ein Fehler (die Eigenschaft ist schreibgeschützt).</li>
+<li>Die Klasse wird initialisiert, sobald sie das erste Mal referenziert oder aufgerufen wird.</li>
+</ul>
 
 <h4 id="Custom_Classes_method">Methoden</h4>
 <p>Methodendefinitionen sehen genauso aus wie Funktionsdefinitionen. Jede Methodendefinition erstellt ein <a href="lib/Func.htm">Func</a> mit einem versteckten ersten Parameter namens <code>this</code> und definiert eine Eigenschaft, die zum Aufrufen der Methode oder zum Abrufen ihres Funktionsobjekts verwendet wird.</p>
