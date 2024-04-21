@@ -781,7 +781,7 @@ MeineGui.Show()
 
 LeisteAnimieren(*)
 {
-    Loop Files, A_WinDir "\*.*"
+    Loop Files, A_WinDir "\*.*", "R"
     {
         if (A_Index &gt; 100)
             break
@@ -957,5 +957,39 @@ Gui_Size(thisGui, MinMax, Breite, Höhe)
     HauptEdit.Move(,, Breite-20, Höhe-20)
 }</pre>
 </div>
+
+<div class="ex" id="ExRefCycle">
+<p><a class="ex_number" href="#ExRefCycle"></a> Zeigt <a href="../Objects.htm#refs-problems">durch Referenzzyklen verursachte Probleme</a> auf.</p>
+<pre>
+; Klicken Sie auf Open oder doppelklicken Sie auf das Tray-Symbol, um eine
+; andere GUI anzuzeigen. Verwenden Sie die Menüpunkte, die ESC-Taste oder die
+; Schließen-Schaltfläche, um zu sehen, wie es reagiert.
+A_TrayMenu.Add("&amp;Open", RefZyklusGuiZeigen)
+Persistent
+
+RefZyklusGuiZeigen(*) {
+    static n := 0
+    g := Gui(, "GUI Nr. " (++n)), g.n := n
+    g.MenuBar := mb := MenuBar()   <em>; g -&gt; mb</em>
+    mb.Add("Gui", m := Menu())     <em>; mb -&gt; m</em>
+    m.Add("Hide", (*) =&gt; g.Hide()) <em>; (*) -&gt; g</em>
+    m.Add("Destroy", (*) =&gt; g.Destroy())
+    <em>; Für ein GUI-Ereignis kann der Rückruf-Parameter verwendet werden, um
+    ; einen Referenzzyklus zu vermeiden (die Verwendung desselben Namens
+    ; verhindert eine versehentliche Erfassung).
+    ; Allerdings unterbricht Hide() nicht die *anderen* Referenzzyklen.</em>
+    g.OnEvent("Escape", (g, *) =&gt; g.Hide())
+    <em>; Die Erfassung der Variablen kann zu unseren Gunsten ausfallen.</em>
+    g.OnEvent("Close", (*) =&gt; g := unset)
+    g.Show("w300 h200")
+    <em>; __Delete wird nicht aufgerufen aufgrund des Referenzzyklus:
+    ;   g -&gt; mb -&gt; m -&gt; (*) -&gt; g
+    ; es sei denn, g wird durch Auslösen des Close-Ereignisses ungesetzt gemacht
+    ; oder MenuBar und Ereignishandler werden durch Destroy freigegeben.</em>
+    g.__Delete := this =&gt; MsgBox("GUI Nr. " this.n " gelöscht")
+}
+</pre>
+</div>
+
 </body>
 </html>
