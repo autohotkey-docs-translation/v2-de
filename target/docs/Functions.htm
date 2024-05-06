@@ -358,7 +358,7 @@ außen()</pre>
 <p>Eine statische Funktion kann nicht auf andere verschachtelte Funktionen außerhalb ihres eigenen Körpers verweisen, es sei denn, diese sind explizit als statisch deklariert. Beachten Sie, dass eine nicht-statische verschachtelte Funktion (selbst wenn sie im <a href="#AssumeStatic">Assume-Static</a> ist) ein Closure werden kann, wenn sie einen Funktionsparameter referenziert.</p>
 
 <h3 id="closures">Closures</h3>
-<p>Ein <em>Closure</em> ist eine verschachtelte Funktion, die an einen Satz <em>freier Variablen</em> gebunden ist. Freie Variablen sind lokale Variablen der äußeren Funktion, die auch von verschachtelten Funktionen verwendet werden. Closures ermöglichen einer oder mehreren verschachtelten Funktionen, ihre Variablen mit der äußeren Funktion zu teilen, selbst nach Rückkehr der äußeren Funktion.</p>
+<p>Ein <em>Closure</em> ist eine verschachtelte Funktion, die an einen Satz <em id="free-vars">freier Variablen</em> gebunden ist. Freie Variablen sind lokale Variablen der äußeren Funktion, die auch von verschachtelten Funktionen verwendet werden. Closures ermöglichen einer oder mehreren verschachtelten Funktionen, ihre Variablen mit der äußeren Funktion zu teilen, selbst nach Rückkehr der äußeren Funktion.</p>
 <p>Um ein Closure zu erstellen, definieren Sie einfach eine verschachtelte Funktion, die auf die Variablen der äußeren Funktion verweist. Zum Beispiel:</p>
 <pre>
 Begrüßer_erstellen(f)
@@ -394,20 +394,22 @@ app_hotkey "#w", "ahk_class WordPadClass", "wordpad.exe"
 </pre>
 <p>Eine verschachtelte Funktion ist automatisch ein Closure, wenn sie alle nicht-statischen lokalen Variablen der äußeren Funktion erfasst. Die Variable, die zum Closure selbst gehört (z.B. <code>aktivieren</code>), ist ebenfalls eine nicht-statische lokale Variable, d.h. jede verschachtelte Funktion, die auf ein Closure verweist, ist automatisch ein Closure.</p>
 <p>Jeder Aufruf der äußeren Funktion erzeugt neue Closures, die sich von allen vorherigen Aufrufen unterscheiden.</p>
-<p id="circular-closure">Es wird davon abgeraten, eine Referenz zu einem Closure in eine der freien Variablen des Closure zu speichern, da dies einen <a href="Objects.htm#Circular_References">Zirkelbezug</a> erzeugt, der unterbrochen werden muss (z.B. durch Leeren der Variable), bevor das Closure freigegeben werden kann. Eine Closure kann jedoch bedenkenlos auf sich selbst und auf andere Closures über deren Originalvariablen verweisen, ohne einen Zirkelbezug zu erzeugen. Zum Beispiel:</p>
+<p id="circular-closure">Es wird davon abgeraten, eine Referenz zu einem Closure in eine der freien Variablen der äußeren Funktion zu speichern, da dies einen <a href="Objects.htm#refs-problems">Referenzzyklus</a> erzeugt, der unterbrochen werden muss (z.B. durch Leeren der Variable), bevor das Closure freigegeben werden kann. Ein Closure kann jedoch bedenkenlos auf sich selbst und auf andere Closures über deren Originalvariablen verweisen, ohne einen problematischen Referenzzyklus zu erzeugen. Zum Beispiel:</p>
 <pre>
 timertest() {
     x := "tack!"
     tick() {
         MsgBox x           <em>; x macht dies zu einem Closure.</em>
         SetTimer tick, 0   <em>; Originalvariable des Closure kann bedenkenlos verwendet werden.</em>
-        ; SetTimer t, 0    <em>; Das Erfassen von t würde einen Zirkelbezug erzeugen.</em>
+        ; SetTimer t, 0    <em>; Das Erfassen von t würde einen Referenzzyklus erzeugen.</em>
     }
     t := tick              <em>; Das ist okay, da t oben nicht erfasst wird.</em>
     SetTimer t, 1000
 }
 timertest()
 </pre>
+<p>Jedes Mal, wenn die äußere Funktion aufgerufen wird, werden alle ihre <a href="#free-vars">freien Variablen</a> als Gruppe im Speicher reserviert. Diese eine Gruppe freier Variablen ist mit allen Closures der Funktion verlinkt. Wenn die Originalvariable des Closure (<code>tick</code> im obigen Beispiel) von einem anderen Closure innerhalb derselben Funktion erfasst wird, ist ihre Lebensdauer an die Gruppe gebunden. Die Gruppe wird nur dann gelöscht, wenn es keine Referenzen auf eine ihrer Closures mehr gibt, außer denen in den Originalvariablen. Dadurch können sich Closures gegenseitig referenzieren, ohne einen <a href="Objects.htm#refs-problems">problematischen Referenzzyklus</a> zu verursachen.</p>
+<p>Closures, die nicht von anderen Closures erfasst werden, können vor der Gruppe gelöscht werden. Alle freien Variablen innerhalb der Gruppe, einschließlich der erfassten Closures, können nicht gelöscht werden, solange ein solches Closure existiert.</p>
 
 <h2 id="remarks">Return, Exit und allgemeine Bemerkungen</h2>
 <p>Wenn die Ausführung die geschweifte Endklammer der Funktion vor einem <a href="lib/Return.htm">Return</a> erreicht, endet die Funktion und gibt einen leeren Wert (eine leere Zeichenkette) zurück. Ein leerer Wert wird auch zurückgegeben, wenn die Funktion den Parameter von <a href="lib/Return.htm">Return</a> explizit weglässt.</p>

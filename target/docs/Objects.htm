@@ -549,10 +549,10 @@ parent.child := child  <em>; parent: 2, child: 2</em></pre>
 <p>Ein Zyklus ist häufig weniger offensichtlich und kann mehrere Objekte umfassen. <a href="lib/Gui.htm#ExRefCycle">RefZyklusGuiZeigen</a> zeigt zum Beispiel einen Zyklus, der Gui, MenuBar, Menu und Closures beinhaltet. Die Verwendung eines separaten Objekts zur Behandlung von GUI-Ereignissen ist ebenfalls anfällig für Zyklen, wenn das Handler-Objekt eine Referenz auf die GUI hat.</p>
 <p>Nichtzyklische Referenzen auf ein Objekt können ebenfalls Probleme verursachen. Zum Beispiel bewirken Objekte, die von internen Funktionen wie SetTimer oder OnMessage abhängig sind, in der Regel, dass das Programm eine indirekte Referenz auf das Objekt hält. Dies würde verhindern, dass das Objekt gelöscht wird, was bedeutet, dass es __New und __Delete nicht verwenden kann, um den Timer oder die Meldungsüberwachung zu verwalten.</p>
 <p>Im Folgenden werden einige Strategien vorgestellt, die zur Lösung der oben beschriebenen Probleme beitragen können.</p>
-<p id="ref-avoid-cycles"><strong>Zyklen vermeiden</strong>: Wenn Referenzzyklen ein Problem darstellen, sollten sie nicht erstellt werden. Zum Beispiel würde entweder <code>parent.child</code> oder <code>child.parent</code> nicht gesetzt werden. Dies ist oft nicht praktikabel, da verwandte Objekte in irgendeiner Weise aufeinander verweisen müssen.</p>
+<p id="ref-avoid-cycles"><strong>Zyklen vermeiden:</strong> Wenn Referenzzyklen ein Problem darstellen, sollten sie nicht erstellt werden. Zum Beispiel würde entweder <code>parent.child</code> oder <code>child.parent</code> nicht gesetzt werden. Dies ist oft nicht praktikabel, da verwandte Objekte in irgendeiner Weise aufeinander verweisen müssen.</p>
 <p>Vermeiden Sie bei der Definition von Ereignishandlern für <a href="lib/GuiOnEvent.htm">OnEvent (Gui)</a>, die Quell-Gui in einer Closure- oder Bound-Funktion zu erfassen, und verwenden Sie stattdessen den Gui- oder Gui.Control-Parameter. Dasselbe gilt für <a href="lib/Menu.htm#Add">Add (Menu)</a> und den Menü-Parameter des Callbacks, aber natürlich kann ein Menüpunkt, der auf eine Gui verweisen muss, diesen Ansatz nicht verwenden.</p>
 <p>In einigen Fällen kann das andere Objekt durch eine indirekte Methode abgerufen werden, die nicht auf einer gezählten Referenz beruht. Zum Beispiel können Sie eine HWND-Nummer speichern und <code>GuiFromHwnd(hwnd)</code> verwenden, um ein <a href="lib/Gui.htm">Gui</a>-Objekt abzurufen. Es ist nicht notwendig, eine Referenz aufrechtzuerhalten, um das Löschen zu verhindern, während das Fenster sichtbar ist, da die Gui dies selbst regelt.</p>
-<p id="ref-break-cycles"><strong>Zyklen unterbrechen</strong>: Wenn das Skript die Referenzzählung vermeiden kann und stattdessen die Lebensdauer des Objekts direkt verwaltet, muss es den Zyklus nur unterbrechen, wenn die Objekte gelöscht werden sollen:</p>
+<p id="ref-break-cycles"><strong>Zyklen unterbrechen:</strong> Wenn das Skript die Referenzzählung vermeiden kann und stattdessen die Lebensdauer des Objekts direkt verwaltet, muss es den Zyklus nur unterbrechen, wenn die Objekte gelöscht werden sollen:</p>
 <pre>child.parent := unset  <em>; parent: 1, child: 2</em>
 child := unset  <em>; parent: 1, child: 1</em>
 parent := unset  <em>; beide gelöscht</em></pre>
@@ -560,7 +560,7 @@ parent := unset  <em>; beide gelöscht</em></pre>
 <p>Ein Objekt, das diesem Muster folgt, muss dennoch alle Referenzzyklen unterbrechen, wenn es <em>entsorgt</em> wird, da sonst ein Teil des Speichers nicht freigegeben würde und __Delete für andere Objekte, die vom Objekt referenziert werden, nicht aufgerufen würde.</p>
 <p>Zyklen, die durch die Ereignishandler eines Gui-Objekts, durch MenuBar oder durch ein Event-Sink-Objekt verursacht werden, werden automatisch "unterbrochen", wenn <a href="lib/Gui.htm#Destroy">Destroy</a> aufgerufen wird, da es diese Objekte freigibt. (Dies wird im <a href="lib/Gui.htm#ExRefCycle">RefZyklusGuiZeigen-Beispiel</a> gezeigt.) Allerdings würde dies keine Zyklen unterbrechen, die durch neu hinzugefügte Eigenschaften verursacht werden, da Destroy diese nicht löscht.</p>
 <p>Ähnlich wie das Dispose-Muster hat <a href="lib/InputHook.htm">InputHook</a> eine Stop-Methode, die explizit aufgerufen werden muss und deshalb nicht auf __Delete angewiesen ist, um zu signalisieren, wann die Operation beendet werden soll. Während der Operation hält das Programm effektiv eine Referenz auf das Objekt, wodurch dessen Löschung verhindert wird, aber dies ist eher eine Stärke als eine Schwäche: Ereignisrückrufe können weiterhin aufgerufen werden und erhalten den InputHook als Parameter. Wenn die Operation beendet ist, wird die interne Referenz freigegeben und der InputHook gelöscht, wenn das Skript keine Referenz darauf hat.</p>
-<p id="ref-ptr"><strong>Pointer</strong>: Das Speichern von beliebig vielen Pointerwerten hat keinen Einfluss auf die Referenzanzahl des Objekts, da ein Pointer nur ein Integer ist. Ein mit <a href="#ObjPtr">ObjPtr</a> abgerufener Pointer kann verwendet werden, um eine Referenz zu erzeugen, indem er an <a href="#ObjFromPtr">ObjFromPtrAddRef</a> übergeben wird. Die AddRef-Version der Funktion muss verwendet werden, da die Referenzanzahl dekrementiert wird, wenn die temporäre Referenz automatisch freigegeben wird.</p>
+<p id="ref-ptr"><strong>Pointer:</strong> Das Speichern von beliebig vielen Pointerwerten hat keinen Einfluss auf die Referenzanzahl des Objekts, da ein Pointer nur ein Integer ist. Ein mit <a href="#ObjPtr">ObjPtr</a> abgerufener Pointer kann verwendet werden, um eine Referenz zu erzeugen, indem er an <a href="#ObjFromPtr">ObjFromPtrAddRef</a> übergeben wird. Die AddRef-Version der Funktion muss verwendet werden, da die Referenzanzahl dekrementiert wird, wenn die temporäre Referenz automatisch freigegeben wird.</p>
 <p>Nehmen wir zum Beispiel an, dass ein Objekt einige Eigenschaften jede Sekunde aktualisieren muss. Ein Timer hält eine Referenz auf die Rückruffunktion, die das Objekt als gebundenen Parameter hat. Normalerweise würde dies verhindern, dass das Objekt gelöscht wird, bevor der Timer gelöscht wird. Das Speichern eines Pointers anstelle einer Referenz ermöglicht das Löschen des Objekts unabhängig vom Timer, so dass es automatisch von __New und __Delete verwaltet werden kann.</p>
 <pre>a := EineKlasse()
 Sleep 5500  <em>; Den Timer 5 Mal laufen lassen.</em>
@@ -568,14 +568,14 @@ a := ""
 Sleep 3500  <em>; Exit temporär verhindern, um den Stop des Timers zu zeigen.</em>
 
 class EineKlasse {
-	__New() {
+    __New() {
         <em>; Das Closure muss gespeichert werden, damit der Timer später
         ; gelöscht werden kann. Jedes Mal, wenn die Methode aufgerufen
         ; werden muss, wird eine gezählte Referenz synthetisiert.</em>
         this.Timer := (p =&gt; ObjFromPtrAddRef(p).Update()).Bind(ObjPtr(this))
         SetTimer this.Timer, 1000
     }
-	__Delete() {
+    __Delete() {
         SetTimer this.Timer, 0
         <em>; Wenn dieses Objekt wirklich gelöscht wird, werden alle Eigen-
         ; schaften gelöscht und die folgende __Delete-Methode aufgerufen.
@@ -585,15 +585,15 @@ class EineKlasse {
     <em>; Dies soll nur zeigen, dass der Timer läuft.
     ; Theoretisch könnte diese Klasse auch einen anderen Zweck haben.</em>
     count := 0
-	Update() =&gt; ToolTip(++this.count)
+    Update() =&gt; ToolTip(++this.count)
 }</pre>
 <p>Ein Nachteil dieses Ansatzes ist, dass der Pointer nicht direkt als Objekt verwendbar ist und weder von <a href="lib/Type.htm">Type</a> noch vom <a href="AHKL_DBGPClients.htm">Debugger</a> als solches erkannt wird. Das Skript muss absolut sicher sein, dass der Pointer nach dem Löschen des Objekts nicht mehr verwendet wird, da dies ungültig ist und das Ergebnis undefiniert wäre.</p>
 <p>Wenn die Pointerreferenz an mehreren Stellen benötigt wird, kann es sinnvoll sein, sie zu kapseln. Zum Beispiel würde <code>b := ObjFromPtrAddRef.Bind(ObjPtr(this))</code> eine <a href="misc/Functor.htm#BoundFunc">BoundFunc</a> erzeugen, die aufgerufen werden kann (<code>b()</code>), um die Referenz abzurufen, während <code>((this, p) =&gt; ObjFromPtrAddRef(p)).Bind(ObjPtr(this))</code> als Eigenschafts-Getter verwendet werden kann (die Eigenschaft würde eine Referenz zurückgeben).</p>
-<p id="ref-uncounted"><strong>Ungezählte Referenzen</strong>: Wenn sich die Referenzanzahl des Objekts auf eine Referenz bezieht, sprechen wir von einer <em>gezählten Referenz</em>, andernfalls von einer <em>ungezählten Referenz</em>. Letzteres soll es dem Skript ermöglichen, eine Referenz zu speichern, die das Löschen des Objekts nicht verhindert.</p>
+<p id="ref-uncounted"><strong>Ungezählte Referenzen:</strong> Wenn sich die Referenzanzahl des Objekts auf eine Referenz bezieht, sprechen wir von einer <em>gezählten Referenz</em>, andernfalls von einer <em>ungezählten Referenz</em>. Letzteres soll es dem Skript ermöglichen, eine Referenz zu speichern, die das Löschen des Objekts nicht verhindert.</p>
 <p class="note"><strong>Hinweis:</strong> Hier geht es darum, wie sich die Referenzanzahl des Objekts gemäß Skriptlogik zu einer bestimmten Referenz verhält, nicht um die Art der Referenz selbst. Das Programm wird weiterhin versuchen, die Referenz automatisch zu einem bestimmten Zeitpunkt freizugeben, daher sind die Begriffe <em>schwache Referenz</em> und <em>starke Referenz</em> unpassend.</p>
-<p>Eine gezählte Referenz kann in eine ungezählte Referenz umgewandelt werden, indem die Referenzanzahl des Objekts einfach dekrementiert wird. Dies <strong>muss</strong> rückgängig gemacht werden, bevor die Referenz freigegeben wird, was wiederum geschehen <strong>muss</strong>, bevor das Objekt gelöscht wird. Da der Zweck einer ungezählten Referenz darin besteht, die Löschung des Objekts zu ermöglichen, ohne zuerst die Referenz manuell ungesetzt zu machen, muss die Anzahl in der Regel innerhalb der eigenen <a href="#Custom_NewDelete">__Delete</a>-Methode des Objekts korrigiert werden.</p>
+<p>Eine gezählte Referenz kann in eine ungezählte Referenz umgewandelt werden, indem die Referenzanzahl des Objekts einfach dekrementiert wird. Dies <u>muss</u> rückgängig gemacht werden, bevor die Referenz freigegeben wird, was wiederum geschehen <u>muss</u>, bevor das Objekt gelöscht wird. Da der Zweck einer ungezählten Referenz darin besteht, die Löschung des Objekts zu ermöglichen, ohne zuerst die Referenz manuell ungesetzt zu machen, muss die Anzahl in der Regel innerhalb der eigenen <a href="#Custom_NewDelete">__Delete</a>-Methode des Objekts korrigiert werden.</p>
 <p>Zum Beispiel können __New und __Delete aus dem vorherigen Beispiel durch die folgenden ersetzt werden.</p>
-<pre>	__New() {
+<pre>    __New() {
         <em>; Die BoundFunc muss gespeichert werden, damit der Timer später
         ; gelöscht werden kann.</em>
         SetTimer this.Timer := this.Update.Bind(this), 1000
@@ -601,7 +601,7 @@ class EineKlasse {
         ; zu kompensieren.</em>
         ObjRelease(ObjPtr(this))
     }
-	__Delete() {
+    __Delete() {
         <em>; Referenzanzahl inkrementieren, damit die Referenz innerhalb der
         ; BoundFunc sicher freigegeben werden kann.</em>
         ObjPtrAddRef(this)
