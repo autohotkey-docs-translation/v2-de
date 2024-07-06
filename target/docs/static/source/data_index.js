@@ -884,7 +884,7 @@ indexData = [
   ["ObjBindMethod","lib/ObjBindMethod.htm",2],
   ["Object","lib/Object.htm",6],
   ["Object","lib/Object.htm#Call",2],
-  ["object literal","Objects.htm#object-literal"],["direkt geschriebenes Objekt","Objects.htm#object-literal"],
+  ["object literal","Objects.htm#object-literal"],["Objektliteral","Objects.htm#object-literal"],
   ["Objects (general information)","Objects.htm"],["Objekte (allgemeine Information)","Objects.htm"],
   ["ObjFromPtr","Objects.htm#ObjFromPtr",2],
   ["ObjFromPtrAddRef","Objects.htm#ObjFromPtr",2],
