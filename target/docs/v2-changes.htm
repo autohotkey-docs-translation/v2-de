@@ -50,8 +50,9 @@
   </li>
   <li><a href="#library">Library</a>
     <ul>
-      <li><a href="#removed-details">Entfernte Befehle (Details)</a></li>
-      <li><a href="#modified-commandsfunctions">Geänderte Befehle/Funktionen</a></li>
+      <li><a href="#lib-removed">Entfernte Befehle, Funktionen &amp; Direktiven</a></li>
+      <li><a href="#lib-renamed">Umbenannte Befehle, Funktionen &amp; Direktiven</a></li>
+      <li><a href="#lib-modified">Geänderte Befehle, Funktionen &amp; Direktiven</a></li>
       <li><a href="#new-functions">Neue Funktionen</a></li>
       <li><a href="#new-directives">Neue Direktiven</a></li>
       <li><a href="#built-in-variables">Interne Variablen</a></li>
@@ -289,7 +290,7 @@ else
 <p>Smartes LTrim: Standardmäßig werden alle Leer- oder Tabulatorzeichen am Anfang der ersten Zeile unter den Fortsetzungsbereichsoptionen gezählt und dann diese Anzahl von Leer- oder Tabulatorzeichen aus jeder nachfolgenden Zeile entfernt. Wenn die erste Zeile eine Mischung aus Leer- und Tabulatorzeichen enthält, wird nur der erste Zeichentyp als Einrückung behandelt. Wenn eine Zeile weniger eingerückt ist als die erste Zeile oder mit den falschen Zeichen eingerückt ist, bleiben alle Leerraumzeichen am Anfang dieser Zeile erhalten.</p>
 <p>Anführungszeichen werden automatisch mit einem Escapezeichen versehen (also als direkt geschriebene Zeichen interpretiert), wenn der Fortsetzungsbereich innerhalb einer in Anführungszeichen gesetzten Zeichenkette beginnt. Dadurch wird verhindert, dass Anführungszeichen in mehrzeiligen Zeichenketten mit einem Escapezeichen versehen werden müssen (wenn das beginnende und endende Anführungszeichen außerhalb des Fortsetzungsbereichs liegen), während mehrzeilige Ausdrücke immer noch in Anführungszeichen gesetzte Zeichenketten enthalten können.</p>
 <p>Wenn die Zeile über dem Fortsetzungsbereich mit einem Namenszeichen endet und der Bereich nicht innerhalb eines Anführungszeichens beginnt, wird automatisch ein einzelnes Leerzeichen eingefügt, um den Namen vom Inhalt des Fortsetzungsbereichs zu trennen. Dadurch kann ein Fortsetzungsbereich für einen mehrzeiligen Ausdruck verwendet werden, dem ein <code>return</code>, Funktionsaufrufanweisungen usw. vorangestellt sind. Es stellt auch sicher, dass Variablennamen nicht mit anderen Tokens (oder Namen) verbunden werden, was zu ungültigen Ausdrücken führt.</p>
-<p>LF-Zeichen (<code>`n</code>) werden in Ausdrücken als Leerzeichen behandelt. Dies ermöglicht es, Ausdrücke unter Verwendung eines Fortsetzungsbereichs mit Standardoptionen (d.h. <code>Join</code> weglassen) mehrzeilig zu machen.</p>
+<p>Zeilenumbruchzeichen (<code>`n</code>) werden in Ausdrücken als Leerzeichen behandelt. Dies ermöglicht es, Ausdrücke unter Verwendung eines Fortsetzungsbereichs mit Standardoptionen (d.h. <code>Join</code> weglassen) mehrzeilig zu machen.</p>
 <p>Die Optionen <code>,</code> und <code>%</code> wurden entfernt, da diese Zeichen nicht mehr mit einem Escapezeichen versehen werden müssen.</p>
 <p>Wenn <code>(</code> oder <code>)</code> in den Optionen eines potenziellen Fortsetzungsbereichs erscheint (außer als Teil der <code>Join</code>-Option), wird die gesamte Zeile nicht als Beginn eines Fortsetzungsbereichs interpretiert. Mit anderen Worten, Zeilen wie <code>(x.y)()</code> und <code>(x=y) &amp;&amp; z()</code> werden als Ausdrücke interpretiert. Ein mehrzeiliger Ausdruck kann auch mit einer runden Startklammer am Anfang einer Zeile beginnen, vorausgesetzt, dass mindestens ein weiteres <code>(</code> oder <code>)</code> in der ersten physischen Zeile vorhanden ist. Zum Beispiel könnte der gesamte Ausdruck mit <code>((</code> und <code>))</code> umschlossen werden.</p>
 <p>Abgesehen vom obigen Fall wird beim Vorhandensein ungültiger Optionen ein Ladezeitfehler angezeigt, anstatt die ungültigen Optionen zu ignorieren.</p>
@@ -443,113 +444,391 @@ this.__set(name, args, value)</pre>
 <p>Eine Funktion/Methode kann einen Wert durch Deklaration des Parameters als ByRef (mit <code>&amp;</code>) oder durch explizite Dereferenzierung zuweisen.</p>
 <p>Zum Beispiel würde ein Parameter vom Typ <code>VT_BYREF|VT_BOOL</code> vorher ein ComObjRef-Objekt erhalten und einen Wert wie <code>pbCancel[] := true</code> oder <code>NumPut(-1, ComObjValue(pbCancel), "short")</code> zugewiesen bekommen. Nun kann der Parameter als <code>&amp;bCancel</code> definiert und zugewiesen werden, z.B. <code>bCancel := true</code>; oder als <code>pbCancel</code> definiert und zugewiesen werden, z.B. <code>%pbCancel% := true</code>.</p>
 <h2 id="library">Library</h2>
-<p>Entfernt:</p>
-<ul>
-<li>Asc() (verwenden Sie stattdessen <a href="lib/Ord.htm">Ord</a>)</li>
-<li>AutoTrim (verwenden Sie stattdessen <a href="lib/Trim.htm">Trim</a>)</li>
-<li>ComObjMissing() (schreiben Sie stattdessen zwei aufeinanderfolgende Kommas)</li>
-<li>ComObjUnwrap() (verwenden Sie stattdessen <a href="lib/ComObjValue.htm">ComObjValue</a> und ggf. <a href="lib/ObjAddRef.htm">ObjAddRef</a>)</li>
-<li>ComObjEnwrap() (verwenden Sie stattdessen <a href="lib/ComObjFromPtr.htm">ComObjFromPtr</a> und ggf. <a href="lib/ObjAddRef.htm">ObjAddRef</a>)</li>
-<li>ComObjError()</li>
-<li>ComObjXXX(), wobei XXX nichts anderes als eine der explizit definierten ComObj-Funktionen ist (verwenden Sie stattdessen <a href="lib/ComObjActive.htm">ComObjActive</a>, <a href="lib/ComValue.htm">ComValue</a> oder <a href="lib/ComObjFromPtr.htm">ComObjFromPtr</a>).</li>
-<li>ControlSendRaw (verwenden Sie stattdessen <code>ControlSend "{Raw}"</code> oder <a href="lib/ControlSend.htm">ControlSendText</a>)</li>
-<li>EnvDiv</li>
-<li>EnvMult</li>
-<li>EnvUpdate (es ist von sehr begrenztem Nutzen und kann mit einem einfachen <a href="lib/SendMessage.htm">SendMessage</a> ersetzt werden)</li>
-<li>Exception (verwenden Sie stattdessen <a href="lib/Error.htm">Error</a> oder eine geeignete Unterklasse)</li>
-<li>FileReadLine (verwenden Sie stattdessen eine <a href="lib/LoopFiles.htm">dateilesende Schleife</a> oder <a href="lib/FileOpen.htm">FileOpen</a>)</li>
-<li>Func (verwenden Sie stattdessen eine direkte Referenz wie <code>MeineFunk</code>)</li>
-<li>Gosub</li>
-<li>Gui, GuiControl, GuiControlGet (siehe <a href="#gui">Gui</a>)</li>
-<li>IfEqual</li>
-<li>IfExist</li>
-<li>IfGreater</li>
-<li>IfGreaterOrEqual</li>
-<li>IfInString</li>
-<li>IfLess</li>
-<li>IfLessOrEqual</li>
-<li>IfMsgBox (<a href="lib/MsgBox.htm">MsgBox</a> gibt nun den Namen der Schaltfläche zurück)</li>
-<li>IfNotEqual</li>
-<li>IfNotExist</li>
-<li>IfNotInString</li>
-<li>IfWinActive</li>
-<li>IfWinExist</li>
-<li>IfWinNotActive</li>
-<li>IfWinNotExist</li>
-<li>If between/is/in/contains (aber siehe <a href="#isXXX">isXXX</a>)</li>
-<li>Input (verwenden Sie stattdessen <a href="lib/InputHook.htm">InputHook</a>)</li>
-<li>IsByRef (siehe <a href="Functions.htm#NoIsByRef">ByRef-Einschränkungen</a>)</li>
-<li>IsFunc</li>
-<li>Menu (verwenden Sie stattdessen die <a href="lib/Menu.htm">Menu/MenuBar-Klasse</a>, <a href="lib/TraySetIcon.htm">TraySetIcon</a>, <a href="Variables.htm#IconTip">A_IconTip</a>, <a href="Variables.htm#IconHidden">A_IconHidden</a> und <a href="Variables.htm#AllowMainWindow">A_AllowMainWindow</a>)</li>
-<li>MenuGetHandle (verwenden Sie stattdessen <a href="lib/Menu.htm#Handle">Menu.Handle</a>)</li>
-<li>MenuGetName (es gibt keine Menünamen; <a href="lib/MenuFromHandle.htm">MenuFromHandle</a> ist der nächstbeste Ersatz)</li>
-<li>Progress (verwenden Sie stattdessen <a href="lib/Gui.htm">Gui</a>)</li>
-<li>SendRaw (verwenden Sie stattdessen <code>Send "{Raw}"</code> oder <a href="lib/Send.htm#SendText">SendText</a>)</li>
-<li>SetBatchLines (-1 ist nun das Standardverhalten)</li>
-<li>SetEnv</li>
-<li>SetFormat (<a href="lib/Format.htm">Format</a> kann zum Formatieren einer Zeichenkette verwendet werden)</li>
-<li>SoundGet/SoundSet (siehe <a href="#Sound">Sound-Funktionen</a>)</li>
-<li>SoundGetWaveVolume/SoundSetWaveVolume (etwas anderes Verhalten als SoundGet/SoundSet in Bezug auf die Balance, aber keines von beiden behält die Balance bei)</li>
-<li>SplashImage (verwenden Sie stattdessen <a href="lib/Gui.htm">Gui</a>)</li>
-<li>SplashTextOn/Off (verwenden Sie stattdessen <a href="lib/Gui.htm">Gui</a>)</li>
-<li>StringCaseSense (verwenden Sie stattdessen entsprechende Parameter)</li>
-<li>StringGetPos (verwenden Sie stattdessen <a href="lib/InStr.htm">InStr</a>)</li>
-<li>StringLeft<br>
-StringLen<br>
-StringMid<br>
-StringRight<br>
-StringTrimLeft<br>
-StringTrimRight -- verwenden Sie stattdessen <a href="lib/SubStr.htm">SubStr</a>.</li>
-<li>StringReplace (verwenden Sie stattdessen <a href="lib/StrReplace.htm">StrReplace</a>)</li>
-<li>StringSplit (verwenden Sie stattdessen <a href="lib/StrSplit.htm">StrSplit</a>)</li>
-<li>Transform</li>
-<li>VarSetCapacity (verwenden Sie stattdessen ein <a href="lib/Buffer.htm">Buffer-Objekt</a> für Binärdaten/Strukturen und <a href="lib/VarSetStrCapacity.htm">VarSetStrCapacity</a> für UTF-16-Zeichenketten)</li>
-<li>WinGetActiveStats</li>
-<li>WinGetActiveTitle</li>
-<li>#CommentFlag</li>
-<li>#Delimiter</li>
-<li>#DerefChar</li>
-<li>#EscapeChar</li>
-<li>#HotkeyInterval (verwenden Sie stattdessen <a href="Variables.htm#HotkeyInterval">A_HotkeyInterval</a>)</li>
-<li>#HotkeyModifierTimeout (verwenden Sie stattdessen <a href="lib/A_HotkeyModifierTimeout.htm">A_HotkeyModifierTimeout</a>)</li>
-<li>#IfWinActive, #IfWinExist, #IfWinNotActive, #IfWinNotExist (siehe <a href="lib/_HotIf.htm#optimization">#HotIf-Optimierung</a>)</li>
-<li>#InstallKeybdHook (verwenden Sie stattdessen die <a href="lib/InstallKeybdHook.htm">InstallKeybdHook</a>-Funktion)</li>
-<li>#InstallMouseHook (verwenden Sie stattdessen die <a href="lib/InstallMouseHook.htm">InstallMouseHook</a>-Funktion)</li>
-<li>#KeyHistory (verwenden Sie stattdessen <code>KeyHistory N</code>)</li>
-<li>#LTrim</li>
-<li>#MaxHotkeysPerInterval (verwenden Sie stattdessen <a href="lib/A_MaxHotkeysPerInterval.htm">A_MaxHotkeysPerInterval</a>)</li>
-<li>#MaxMem (die maximale Kapazität jeder Variable ist nun unbegrenzt)</li>
-<li>#MenuMaskKey (verwenden Sie stattdessen <a href="lib/A_MenuMaskKey.htm">A_MenuMaskKey</a>)</li>
-<li>#NoEnv (gilt jetzt immer)</li>
-</ul>
-<p>Umbenannt:</p>
-<ul>
-<li>ComObjCreate() → <a href="lib/ComObject.htm">ComObject</a>, das nun eine Klasse ist</li>
-<li>ComObjParameter() → <a href="lib/ComValue.htm">ComValue</a>, das nun eine Klasse ist</li>
-<li>DriveSpaceFree → <a href="lib/DriveGetSpaceFree.htm">DriveGetSpaceFree</a></li>
-<li>EnvAdd → <a href="lib/DateAdd.htm">DateAdd</a></li>
-<li>EnvSub → <a href="lib/DateDiff.htm">DateDiff</a></li>
-<li>FileCopyDir → <a href="lib/DirCopy.htm">DirCopy</a></li>
-<li>FileCreateDir → <a href="lib/DirCreate.htm">DirCreate</a></li>
-<li>FileMoveDir → <a href="lib/DirMove.htm">DirMove</a></li>
-<li>FileRemoveDir → <a href="lib/DirDelete.htm">DirDelete</a></li>
-<li>FileSelectFile → <a href="lib/FileSelect.htm">FileSelect</a></li>
-<li>FileSelectFolder → <a href="lib/DirSelect.htm">DirSelect</a></li>
-<li>#If → <a href="lib/_HotIf.htm">#HotIf</a></li>
-<li>#IfTimeout → <a href="lib/_HotIfTimeout.htm">HotIfTimeout</a></li>
-<li>StringLower → <a href="lib/StrLower.htm">StrLower</a> und <a href="lib/StrLower.htm">StrTitle</a></li>
-<li>StringUpper → <a href="lib/StrLower.htm">StrUpper</a> und <a href="lib/StrLower.htm">StrTitle</a></li>
-<li>UrlDownloadToFile → <a href="lib/Download.htm">Download</a></li>
-<li>WinMenuSelectItem → <a href="lib/MenuSelect.htm">MenuSelect</a></li>
-<li>LV-, TV- und SB-Funktionen → Methoden von <a href="lib/GuiControl.htm">GuiControl</a></li>
-<li>File.__Handle → <a href="lib/File.htm#Handle">File.Handle</a></li>
-</ul>
-<h3 id="removed-details">Entfernte Befehle (Details)</h3>
-<p>Eine vollständige Liste finden Sie oben.</p>
-<p id="EnvUpdate">EnvUpdate wurde entfernt, kann aber wie folgt mit einem einfachen SendMessage-Aufruf ersetzt werden:</p>
-<pre>SendMessage(0x1A, 0, StrPtr("Environment"), 0xFFFF)</pre>
-<p id="StringCaseSense">StringCaseSense wurde entfernt, also ist <code>!=</code> immer nicht-Groß-/Kleinschreibung-sensitiv (allerdings wurde <code>!==</code> für "Groß-/Kleinschreibung-sensitiv ungleich" hinzugefügt). Sowohl <code>=</code> als auch <code>!=</code> ignorieren nur die Groß-/Kleinschreibung bei ASCII-Zeichen. <a href="lib/StrCompare.htm">StrCompare</a> wurde hinzugefügt, um Zeichenketten in jedem Modus zu vergleichen. Verschiedene String-Funktionen haben jetzt einen <em>GroßKleinSensitiv</em>-Parameter, mit dem die Groß-/Kleinschreibung-Sensitivität oder der Locale-Modus angegeben werden kann.</p>
-<h3 id="modified-commandsfunctions">Geänderte Befehle/Funktionen</h3>
+<span id="removed-details"></span><h3 id="lib-removed">Entfernte Befehle, Funktionen &amp; Direktiven</h3>
+<table class="info">
+  <tr>
+    <th style="width:13em">Entfernt</th>
+    <th>Hinweis</th>
+  </tr>
+  <tr>
+    <td>Asc()</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Ord.htm">Ord</a>.</td>
+  </tr>
+  <tr>
+    <td>AutoTrim</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Trim.htm">Trim</a>.</td>
+  </tr>
+  <tr>
+    <td>ComObjMissing()</td>
+    <td>Schreiben Sie stattdessen zwei aufeinanderfolgende Kommas.</td>
+  </tr>
+  <tr>
+    <td>ComObjUnwrap()</td>
+    <td>Verwenden Sie stattdessen <a href="lib/ComObjValue.htm">ComObjValue</a> und ggf. <a href="lib/ObjAddRef.htm">ObjAddRef</a>.</td>
+  </tr>
+  <tr>
+    <td>ComObjEnwrap()</td>
+    <td>Verwenden Sie stattdessen <a href="lib/ComObjFromPtr.htm">ComObjFromPtr</a> und ggf. <a href="lib/ObjAddRef.htm">ObjAddRef</a>.</td>
+  </tr>
+  <tr>
+    <td>ComObjError()</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>ComObjXXX()</td>
+    <td>Wenn XXX nichts anderes als eine der explizit definierten ComObj-Funktionen ist, verwenden Sie stattdessen <a href="lib/ComObjActive.htm">ComObjActive</a>, <a href="lib/ComValue.htm">ComValue</a> oder <a href="lib/ComObjFromPtr.htm">ComObjFromPtr</a>.</td>
+  </tr>
+  <tr>
+    <td>ControlSendRaw</td>
+    <td>Verwenden Sie stattdessen <code>ControlSend "{Raw}"</code> oder <a href="lib/ControlSend.htm">ControlSendText</a>.</td>
+  </tr>
+  <tr>
+    <td>EnvDiv</td>
+    <td>Verwenden Sie stattdessen <a href="Variables.htm#MulDiv"><code>/</code></a> oder <a href="Variables.htm#AssignOp"><code>/=</code></a>, z.B. <code>a /= b</code>.</td>
+  </tr>
+  <tr>
+    <td>EnvMult</td>
+    <td>Verwenden Sie stattdessen <a href="Variables.htm#MulDiv"><code>*</code></a> oder <a href="Variables.htm#AssignOp"><code>*=</code></a>, z.B. <code>a *= b</code>.</td>
+  </tr>
+  <tr id="EnvUpdate">
+    <td>EnvUpdate</td>
+    <td>Es ist von sehr begrenztem Nutzen und kann wie folgt mit einem einfachen <a href="lib/SendMessage.htm">SendMessage</a> ersetzt werden: <code>SendMessage(0x1A, 0, StrPtr("Environment"), 0xFFFF)</code>.</td>
+  </tr>
+  <tr>
+    <td>Exception</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Error.htm">Error</a> oder eine geeignete Unterklasse.</td>
+  </tr>
+  <tr>
+    <td>FileReadLine</td>
+    <td>Verwenden Sie stattdessen eine <a href="lib/LoopFiles.htm">dateilesende Schleife</a> oder <a href="lib/FileOpen.htm">FileOpen</a>.</td>
+  </tr>
+  <tr>
+    <td>Func</td>
+    <td>Verwenden Sie stattdessen eine direkte Referenz wie <code>MeineFunk</code>.</td>
+  </tr>
+  <tr>
+    <td>Gosub</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Gui<br>GuiControl<br>GuiControlGet</td>
+    <td>Siehe <a href="#gui">Gui</a> weiter unten.</td>
+  </tr>
+  <tr>
+    <td>IfEqual</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="Variables.htm#equal"><code>=</code></a>, z.B. <code>if a = b</code>.</td>
+  </tr>
+  <tr>
+    <td>IfExist</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/FileExist.htm">FileExist</a>, z.B. <code>if FileExist(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>IfGreater</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="Variables.htm#compare"><code>&gt;</code></a>, z.B. <code>if a &gt; b</code>.</td>
+  </tr>
+  <tr>
+    <td>IfGreaterOrEqual</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="Variables.htm#compare"><code>&gt;=</code></a>, z.B. <code>if a &gt;= b</code>.</td>
+  </tr>
+  <tr>
+    <td>IfInString</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/InStr.htm">InStr</a>, z.B. <code>if InStr(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>IfLess</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="Variables.htm#compare"><code>&lt;</code></a>, z.B. <code>if a &lt; b</code>.</td>
+  </tr>
+  <tr>
+    <td>IfLessOrEqual</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="Variables.htm#compare"><code>&lt;=</code></a>, z.B. <code>if a &lt;= b</code>.</td>
+  </tr>
+  <tr>
+    <td>IfMsgBox</td>
+    <td><a href="lib/MsgBox.htm">MsgBox</a> gibt nun den Namen der Schaltfläche zurück.</td>
+  </tr>
+  <tr>
+    <td>IfNotEqual</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="Variables.htm#equal"><code>!=</code></a>, z.B. <code>if a != b</code>.</td>
+  </tr>
+  <tr>
+    <td>IfNotExist</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/FileExist.htm">FileExist</a>, z.B. <code>if not FileExist(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>IfNotInString</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/InStr.htm">InStr</a>, z.B. <code>if not InStr(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>IfWinActive</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/WinActive.htm">WinActive</a>, z.B. <code>if WinActive(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>IfWinExist</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/WinExist.htm">WinExist</a>, z.B. <code>if WinExist(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>IfWinNotActive</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/WinActive.htm">WinActive</a>, z.B. <code>if not WinActive(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>IfWinNotExist</td>
+    <td>Verwenden Sie stattdessen <a href="lib/If.htm">If</a> und <a href="lib/WinExist.htm">WinExist</a>, z.B. <code>if not WinExist(...)</code>.</td>
+  </tr>
+  <tr>
+    <td>If between</td>
+    <td>Siehe <a href="lib/If.htm#ExIfBetween">If-Beispiel #5</a>.</td>
+  </tr>
+  <tr>
+    <td>If in/contains</td>
+    <td>Siehe <a href="lib/If.htm#ExIfInContains">If-Beispiel #6</a>.</td>
+  </tr>
+  <tr>
+    <td>If is</td>
+    <td>Siehe <a href="#isXXX">isXXX</a> weiter unten.</td>
+  </tr>
+  <tr>
+    <td>Input</td>
+    <td>Verwenden Sie stattdessen <a href="lib/InputHook.htm">InputHook</a>.</td>
+  </tr>
+  <tr>
+    <td>IsByRef</td>
+    <td>Siehe <a href="Functions.htm#NoIsByRef">ByRef-Einschränkungen</a>.</td>
+  </tr>
+  <tr>
+    <td>IsFunc</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Menu</td>
+    <td>Verwenden Sie stattdessen die <a href="lib/Menu.htm">Menu/MenuBar-Klasse</a>, <a href="lib/TraySetIcon.htm">TraySetIcon</a>, <a href="Variables.htm#IconTip">A_IconTip</a>, <a href="Variables.htm#IconHidden">A_IconHidden</a> und <a href="Variables.htm#AllowMainWindow">A_AllowMainWindow</a>.</td>
+  </tr>
+  <tr>
+    <td>MenuGetHandle</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Menu.htm#Handle">Menu.Handle</a>.</td>
+  </tr>
+  <tr>
+    <td>MenuGetName</td>
+    <td>Es gibt keine Menünamen; <a href="lib/MenuFromHandle.htm">MenuFromHandle</a> ist der nächstbeste Ersatz.</td>
+  </tr>
+  <tr>
+    <td>Progress</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Gui.htm">Gui</a>.</td>
+  </tr>
+  <tr>
+    <td>SendRaw</td>
+    <td>Verwenden Sie stattdessen <code>Send "{Raw}"</code> oder <a href="lib/Send.htm#SendText">SendText</a>.</td>
+  </tr>
+  <tr>
+    <td>SetBatchLines</td>
+    <td>-1 ist nun das Standardverhalten.</td>
+  </tr>
+  <tr>
+    <td>SetEnv</td>
+    <td>Verwenden Sie stattdessen <a href="Variables.htm#AssignOp"><code>:=</code></a>.</td>
+  </tr>
+  <tr>
+    <td>SetFormat</td>
+    <td><a href="lib/Format.htm">Format</a> kann zum Formatieren einer Zeichenkette verwendet werden.</td>
+  </tr>
+  <tr>
+    <td>SoundGet<br>SoundSet</td>
+    <td>Siehe <a href="#Sound">Sound-Funktionen</a> weiter unten.</td>
+  </tr>
+  <tr>
+    <td>SoundGetWaveVolume<br>SoundSetWaveVolume</td>
+    <td>Sie verhalten sich etwas anders als SoundGet und SoundSet in Bezug auf die Balance, aber keines von beiden behält die Balance bei.</td>
+  </tr>
+  <tr>
+    <td>SplashImage</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Gui.htm">Gui</a>.</td>
+  </tr>
+  <tr>
+    <td>SplashTextOn/Off</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Gui.htm">Gui</a>.</td>
+  </tr>
+  <tr id="StringCaseSense">
+    <td>StringCaseSense</td>
+    <td><code>!=</code> ist immer nicht-Groß-/Kleinschreibung-sensitiv (allerdings wurde <code>!==</code> für "Groß-/Kleinschreibung-sensitiv ungleich" hinzugefügt). Sowohl <code>=</code> als auch <code>!=</code> ignorieren nur die Groß-/Kleinschreibung bei ASCII-Zeichen. <a href="lib/StrCompare.htm">StrCompare</a> wurde hinzugefügt, um Zeichenketten in jedem Modus zu vergleichen. Verschiedene String-Funktionen haben jetzt einen <em>GroßKleinSensitiv</em>-Parameter, mit dem die Groß-/Kleinschreibung-Sensitivität oder der Locale-Modus angegeben werden kann.</td>
+  </tr>
+  <tr>
+    <td>StringGetPos</td>
+    <td>Verwenden Sie stattdessen <a href="lib/InStr.htm">InStr</a>.</td>
+  </tr>
+  <tr>
+    <td>StringLeft<br>StringLen<br>StringMid<br>StringRight<br>StringTrimLeft<br>StringTrimRight</td>
+    <td>Verwenden Sie stattdessen <a href="lib/SubStr.htm">SubStr</a>.</td>
+  </tr>
+  <tr>
+    <td>StringReplace</td>
+    <td>Verwenden Sie stattdessen <a href="lib/StrReplace.htm">StrReplace</a>.</td>
+  </tr>
+  <tr>
+    <td>StringSplit</td>
+    <td>Verwenden Sie stattdessen <a href="lib/StrSplit.htm">StrSplit</a>.</td>
+  </tr>
+  <tr>
+    <td>Transform</td>
+    <td>Verwenden Sie stattdessen <a href="lib/Math.htm">mathematische Funktionen</a> und <a href="Variables.htm#Operators">Operatoren</a>. Für Transform Deref siehe <a href="lib/RegExMatch.htm#ExDeref">RegExMatch-Beispiel #8</a>. Für Transform HTML siehe <a href="scripts/index.htm#HTML_Entities_Encoding">Kodierung von HTML-Entitäten</a>.</td>
+  </tr>
+  <tr>
+    <td>VarSetCapacity</td>
+    <td>Verwenden Sie stattdessen ein <a href="lib/Buffer.htm">Buffer-Objekt</a> für Binärdaten/Strukturen und <a href="lib/VarSetStrCapacity.htm">VarSetStrCapacity</a> für UTF-16-Zeichenketten.</td>
+  </tr>
+  <tr>
+    <td>WinGetActiveStats</td>
+    <td>Verwenden Sie stattdessen <a href="lib/WinGetTitle.htm">WinGetTitle</a> und <a href="lib/WinGetPos.htm">WinGetPos</a>.</td>
+  </tr>
+  <tr>
+    <td>WinGetActiveTitle</td>
+    <td>Verwenden Sie stattdessen <a href="lib/WinGetTitle.htm">WinGetTitle</a>, z.B. <code>WinGetTitle "A"</code>.</td>
+  </tr>
+  <tr>
+    <td>#CommentFlag</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>#Delimiter</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>#DerefChar</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>#EscapeChar</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>#HotkeyInterval</td>
+    <td>Verwenden Sie stattdessen <a href="Variables.htm#HotkeyInterval">A_HotkeyInterval</a>.</td>
+  </tr>
+  <tr>
+    <td>#HotkeyModifierTimeout</td>
+    <td>Verwenden Sie stattdessen <a href="lib/A_HotkeyModifierTimeout.htm">A_HotkeyModifierTimeout</a>.</td>
+  </tr>
+  <tr>
+    <td>#IfWinActive<br>#IfWinExist<br>#IfWinNotActive<br>#IfWinNotExist</td>
+    <td>Siehe <a href="lib/_HotIf.htm#optimization">#HotIf-Optimierung</a>.</td>
+  </tr>
+  <tr>
+    <td>#InstallKeybdHook</td>
+    <td>Verwenden Sie stattdessen <a href="lib/InstallKeybdHook.htm">InstallKeybdHook</a>.</td>
+  </tr>
+  <tr>
+    <td>#InstallMouseHook</td>
+    <td>Verwenden Sie stattdessen <a href="lib/InstallMouseHook.htm">InstallMouseHook</a>.</td>
+  </tr>
+  <tr>
+    <td>#KeyHistory</td>
+    <td>Verwenden Sie stattdessen <code>KeyHistory N</code>.</td>
+  </tr>
+  <tr>
+    <td>#LTrim</td>
+    <td>Verwenden Sie bei Bedarf stattdessen die <a href="Scripts.htm#LTrim">LTrim</a>-Option.</td>
+  </tr>
+  <tr>
+    <td>#MaxHotkeysPerInterval</td>
+    <td>Verwenden Sie stattdessen <a href="lib/A_MaxHotkeysPerInterval.htm">A_MaxHotkeysPerInterval</a>.</td>
+  </tr>
+  <tr>
+    <td>#MaxMem</td>
+    <td>Die maximale Kapazität jeder Variable ist nun unbegrenzt.</td>
+  </tr>
+  <tr>
+    <td>#MenuMaskKey</td>
+    <td>Verwenden Sie stattdessen <a href="lib/A_MenuMaskKey.htm">A_MenuMaskKey</a>.</td>
+  </tr>
+  <tr>
+    <td>#NoEnv</td>
+    <td>Es ist nun das Standardverhalten.</td>
+  </tr>
+</table>
+
+<h3 id="lib-renamed">Umbenannte Befehle, Funktionen &amp; Direktiven</h3>
+<table class="info">
+  <tr>
+    <th style="width:13em">v1-Name</th>
+    <th>v2-Name</th>
+  </tr>
+  <tr>
+    <td>ComObjCreate()</td>
+    <td><a href="lib/ComObject.htm">ComObject</a>, das nun eine Klasse ist</td>
+  </tr>
+  <tr>
+    <td>ComObjParameter()</td>
+    <td><a href="lib/ComValue.htm">ComValue</a>, das nun eine Klasse ist</td>
+  </tr>
+  <tr>
+    <td>DriveSpaceFree</td>
+    <td><a href="lib/DriveGetSpaceFree.htm">DriveGetSpaceFree</a></td>
+  </tr>
+  <tr>
+    <td>EnvAdd</td>
+    <td><a href="lib/DateAdd.htm">DateAdd</a></td>
+  </tr>
+  <tr>
+    <td>EnvSub</td>
+    <td><a href="lib/DateDiff.htm">DateDiff</a></td>
+  </tr>
+  <tr>
+    <td>FileCopyDir</td>
+    <td><a href="lib/DirCopy.htm">DirCopy</a></td>
+  </tr>
+  <tr>
+    <td>FileCreateDir</td>
+    <td><a href="lib/DirCreate.htm">DirCreate</a></td>
+  </tr>
+  <tr>
+    <td>FileMoveDir</td>
+    <td><a href="lib/DirMove.htm">DirMove</a></td>
+  </tr>
+  <tr>
+    <td>FileRemoveDir</td>
+    <td><a href="lib/DirDelete.htm">DirDelete</a></td>
+  </tr>
+  <tr>
+    <td>FileSelectFile</td>
+    <td><a href="lib/FileSelect.htm">FileSelect</a></td>
+  </tr>
+  <tr>
+    <td>FileSelectFolder</td>
+    <td><a href="lib/DirSelect.htm">DirSelect</a></td>
+  </tr>
+  <tr>
+    <td>#If</td>
+    <td><a href="lib/_HotIf.htm">#HotIf</a></td>
+  </tr>
+  <tr>
+    <td>#IfTimeout</td>
+    <td><a href="lib/_HotIfTimeout.htm">HotIfTimeout</a></td>
+  </tr>
+  <tr>
+    <td>StringLower</td>
+    <td><a href="lib/StrLower.htm">StrLower</a> und <a href="lib/StrLower.htm">StrTitle</a></td>
+  </tr>
+  <tr>
+    <td>StringUpper</td>
+    <td><a href="lib/StrLower.htm">StrUpper</a> und <a href="lib/StrLower.htm">StrTitle</a></td>
+  </tr>
+  <tr>
+    <td>UrlDownloadToFile</td>
+    <td><a href="lib/Download.htm">Download</a></td>
+  </tr>
+  <tr>
+    <td>WinMenuSelectItem</td>
+    <td><a href="lib/MenuSelect.htm">MenuSelect</a></td>
+  </tr>
+  <tr>
+    <td>LV-, TV- und SB-Funktionen</td>
+    <td>Methoden von <a href="lib/GuiControl.htm">GuiControl</a></td>
+  </tr>
+  <tr>
+    <td>File.__Handle</td>
+    <td><a href="lib/File.htm#Handle">File.Handle</a></td>
+  </tr>
+</table>
+
+<span id="modified-commandsfunctions"></span><h3 id="lib-modified">Geänderte Befehle, Funktionen &amp; Direktiven</h3>
 <p class="note">Die Überschrift soll nicht suggerieren, dass es Befehle in v2 gibt. Es gibt nur Funktionen. Die Überschrift bezieht sich auf beide Versionen.</p>
 <p><a href="lib/BlockInput.htm">BlockInput</a> wird nicht mehr kurzzeitig deaktiviert, wenn ein Alt-Ereignis mit der SendEvent-Methode gesendet wird. Dies war ursprünglich notwendig, um einen Bug in einigen Versionen von Windows XP zu umgehen, der BlockInput dazu veranlasste, das künstliche Alt-Ereignis zu blockieren.</p>
 <p><code>Chr(0)</code> gibt eine Zeichenkette mit der Länge 1 zurück, da eine binäre Null enthalten ist. Dies beruht auf der verbesserten Unterstützung für binäre Nullen in Zeichenketten.</p>

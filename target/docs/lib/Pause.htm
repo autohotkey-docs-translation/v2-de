@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>Pause - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die Pause-Funktion pausiert den aktuellen Thread des Skripts." />
+<meta name="description" content="Die Pause-Funktion pausiert den aktuellen Thread des Skripts oder setzt den Pausezustand des darunter liegenden Threads." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
@@ -13,19 +13,19 @@
 
 <h1>Pause</h1>
 
-<p>Pausiert den <a href="../misc/Threads.htm">aktuellen Thread</a> des Skripts.</p>
+<p>Pausiert den <a href="../misc/Threads.htm">aktuellen Thread</a> des Skripts oder setzt den Pausezustand des darunter liegenden Threads.</p>
 
 <pre class="Syntax">
-<span class="func">Pause</span> <span class="optional">NeuerZustand</span>
+<span class="func">Pause</span> <span class="optional">ThreadDarunterZustand</span>
 </pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>NeuerZustand</dt>
+  <dt>ThreadDarunterZustand</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>Wenn weggelassen, wird der <a href="../misc/Threads.htm">aktuelle Thread</a> pausiert. Andernfalls geben Sie einen der folgenden Werte an:</p>
-    <p><code>1</code> oder <code>True</code>: Markiert den Thread unterhalb des aktuellen Threads als pausiert, so dass der Thread, wenn er wieder aufgenommen wird, die laufenden Funktion (falls vorhanden) beendet und dann in einen pausierten Zustand übergeht. Wenn es keinen Thread unterhalb des aktuellen Threads gibt, wird das Skript selbst pausiert, was die Ausführung von <a href="SetTimer.htm">Timern</a> verhindert (dieser Effekt entspricht der Auswahl des Menüpunkts "Pause Script", während das Skript keine Threads hat).</p>
+    <p><code>1</code> oder <code>True</code>: Markiert den darunter liegenden Thread als pausiert. Der aktuelle Thread wird nicht pausiert und läuft weiter. Wenn der aktuelle Thread endet, wird der darunter liegende Thread jede unterbrochene Funktion, die der darunter liegende Thread ausführen sollte, fortsetzen. Sobald der darunter liegende Thread die Funktion (falls vorhanden) fertig ausgeführt hat, geht er in einen Pausezustand über. Wenn es keinen Thread unterhalb des aktuellen Threads gibt, wird das Skript selbst pausiert, was die Ausführung von <a href="SetTimer.htm">Timern</a> verhindert (dieser Effekt entspricht der Auswahl des Menüpunkts "Pause Script", während das Skript keine Threads hat).</p>
     <p><code>0</code> oder <code>False</code>: Entpausiert den darunter liegenden Thread.</p>
     <p><code>-1</code>: Schaltet den Pausezustand des darunter liegenden Threads um.</p>
   </dd>
@@ -34,8 +34,8 @@
 
 <h2 id="Remarks">Bemerkungen</h2>
 <p>Standardmäßig kann das Skript auch über das <a href="../Program.htm#tray-icon">Tray-Symbol</a> oder das <a href="../Program.htm#main-window">Hauptfenster</a> pausiert werden.</p>
-<p>Im Gegensatz zu <a href="Suspend.htm">Suspend</a>, das <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> deaktiviert, wird beim Einschalten von Pause der Thread eingefroren (den <a href="../misc/Threads.htm">aktuellen Thread</a>, wenn <em>NeuerZustand</em> weggelassen wurde, andernfalls den darunter liegenden Thread). Als Nebeneffekt werden alle unterbrochenen Threads darunter inaktiv.</p>
-<p>Wann immer ein Thread pausiert wird, wird die Ausführung von <a href="SetTimer.htm">Timern</a> verhindert. Allerdings können explizit gestartete Threads wie <a href="../Hotkeys.htm">Hotkeys</a> und <a href="Menu.htm">Menüpunkte</a> weiterhin gestartet werden; aber wenn ihre <a href="../misc/Threads.htm">Threads</a> zum Ende kommen, wird der darunter liegende Thread weiterhin pausiert sein. Mit anderen Worten, jeder Thread kann unabhängig von den anderen pausiert werden.</p>
+<p>Im Gegensatz zu <a href="Suspend.htm">Suspend</a>, das <a href="../Hotkeys.htm">Hotkeys</a> und <a href="../Hotstrings.htm">Hotstrings</a> deaktiviert, wird beim Einschalten von Pause der Thread eingefroren (den <a href="../misc/Threads.htm">aktuellen Thread</a>, wenn <em>ThreadDarunterZustand</em> weggelassen wurde, andernfalls den darunter liegenden Thread). Als Nebeneffekt werden alle unterbrochenen Threads darunter inaktiv, bis der aktuelle Thread entpausiert und fertig ausgeführt wird.</p>
+<p>Wann immer ein Thread oder das Skript selbst pausiert wird, wird die Ausführung von <a href="SetTimer.htm">Timern</a> verhindert. Explizit gestartete Threads wie <a href="../Hotkeys.htm">Hotkeys</a> und <a href="Menu.htm">Menüpunkte</a> können hingegen noch gestartet werden, aber sobald ihre <a href="../misc/Threads.htm">Threads</a> enden, bleibt der Thread darunter pausiert. Mit anderen Worten, jeder Thread kann unabhängig von den anderen pausiert werden.</p>
 <p>Das <a href="../Program.htm#tray-icon">Tray-Symbol</a> ändert sich in <img src="../static/ahk16_pause.png" alt="ein grünes Symbol mit einem Pausezeichen" style="vertical-align:-.2em;"> (oder in <img src="../static/ahk16_pause_suspend.png" alt="ein grünes Symbol mit transparentem Pausezeichen" style="vertical-align:-.2em;">, wenn das Skript zusätzlich <a href="Suspend.htm">suspendiert</a> ist), wenn der <a href="../misc/Threads.htm">aktuelle Thread</a> des Skripts in einem pausierten Zustand ist. Diese Symboländerung lässt sich vermeiden, indem das Symbol mit <code><a href="TraySetIcon.htm">TraySetIcon</a>(,, true)</code> eingefroren wird.</p>
 <p>Mit <a href="Thread.htm#NoTimers">Thread NoTimers</a> können <a href="SetTimer.htm">Timer</a> ohne Pausieren des Skripts deaktiviert werden.</p>
 <p>Ein Skript wird immer angehalten (aber nicht offiziell pausiert), wenn ein <a href="Menu.htm">Menü</a> irgendeiner Art (Tray-Menü, Menüleiste, GUI-Kontextmenü usw.) angezeigt wird.</p>
