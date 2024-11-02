@@ -3,16 +3,20 @@ SetWorkingDir(A_ScriptDir "\..")
 FileEncoding("UTF-8-RAW")
 
 SplitPath(A_WorkingDir, &parentName)
-LastSaveTime := FileGetTime(parentName "-omegat.tmx")
+if FileExist(parentName "-omegat.tmx")
+    LastSaveTime := FileGetTime(parentName "-omegat.tmx")
 TotalProcessedFiles := 0
 Loop Files, "target\docs\*.htm", "R"
 {
     ; Get number of processed files to determine whether only one or all documents was created:
     
-    ModifyTime := FileGetTime(A_LoopFileFullPath)
-    DiffTime := DateDiff(LastSaveTime, ModifyTime, "seconds")
-    if (DiffTime <= 0)
-        TotalProcessedFiles++
+    if IsSet(LastSaveTime)
+    {
+        ModifyTime := FileGetTime(A_LoopFileFullPath)
+        DiffTime := DateDiff(LastSaveTime, ModifyTime, "seconds")
+        if (DiffTime <= 0)
+            TotalProcessedFiles++
+    }
     
     ; read content
     
@@ -69,12 +73,10 @@ ErrorCount := CopyFilesAndFolders(A_ScriptDir "\target\*.*", "target", true)
 if (ErrorCount != 0)
     MsgBox(ErrorCount " files/folders could not be copied.")
 
-; clean up v2/index.html
+; Skip the rest below if the working directory is not a real OmegaT project:
 
-; FileRead, content, % "target\index.html"
-; content := RegExReplace(content, "<script src=""/cdn-cgi/apps/head/.*?.js""></script>")
-; content := RegExReplace(content, "<script defer src=.*?></script>")
-; FileOpen("target\index.html", "w").Write(content).Close()
+if not IsSet(LastSaveTime)
+    ExitApp
 
 ; create search index
 
@@ -96,7 +98,7 @@ FileMove("target\docs\static\ga4.excluded", "target\docs\static\ga4.js")
 ; compress chm into zip file
 
 SmartZip("target\AutoHotkey.chm", "temp.zip")
-FileMove("temp.zip", "AutoHotkey2Help_DE.zip", 1)
+FileMove("temp.zip", "AutoHotkeyHelp_DE.zip", 1)
 
 ; delete chm files
 
@@ -142,7 +144,7 @@ SmartZip(s, o, t := 4)
             Loop
             {
                 oObject := "", oObject := oShell.NameSpace(sObjectLongName) ; This doesn't affect the copyhere above.
-                if oObject.ParseName(OutFileName)
+                try if oObject.ParseName(OutFileName)
                     break
             }
         }
