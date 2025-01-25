@@ -1207,7 +1207,7 @@ indexData = [
   ["Wheel hotkeys for mouse","Hotkeys.htm#Wheel"],["Mausrad-Hotkeys","Hotkeys.htm#Wheel"],
   ["Wheel, simulating rotation","lib/Click.htm"],["Mausraddrehung simulieren","lib/Click.htm"],
   ["While","lib/While.htm",3,"E"],
-  ["wildcards (for files & folders)","lib/LoopFiles.htm"],["Platzhalter (für Dateien & Ordner)","lib/LoopFiles.htm"],
+  ["wildcards (for files & folders)","lib/LoopFiles.htm#wildcards"],["Platzhalter (für Dateien & Ordner)","lib/LoopFiles.htm#wildcards"],
   ["Win-Funktionen","lib/Win.htm"],
   ["WinActivate","lib/WinActivate.htm",2],
   ["WinActivateBottom","lib/WinActivateBottom.htm",2],

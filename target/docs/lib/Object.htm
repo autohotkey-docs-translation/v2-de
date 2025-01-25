@@ -29,7 +29,7 @@
   <li><a href="#Methods">Methoden</a>:
     <ul>
       <li><a href="#Clone">Clone</a>: Gibt eine flache Kopie eines Objekts zurück.</li>
-      <li><a href="#DefineProp">DefineProp</a>: Definiert eine neue eigene Eigenschaft.</li>
+      <li><a href="#DefineProp">DefineProp</a>: Definiert oder modifiziert eine eigene Eigenschaft.</li>
       <li><a href="#DeleteProp">DeleteProp</a>: Entfernt eine eigene Eigenschaft aus einem Objekt.</li>
       <li><a href="#GetOwnPropDesc">GetOwnPropDesc</a>: Gibt einen Deskriptor für eine bestimmte eigene Eigenschaft zurück, der mit DefineProp kompatibel ist.</li>
       <li><a href="#HasOwnProp">HasOwnProp</a>: Gibt 1 (true) zurück, wenn ein Objekt eine Eigenschaft mit einem bestimmten Namen besitzt.</li>
@@ -71,7 +71,7 @@ Obj := Object.<span class="func">Call</span>()</pre>
 </div>
 
 <div class="methodShort" id="DefineProp"><h3>DefineProp</h3>
-<p>Definiert eine neue eigene Eigenschaft.</p>
+<p>Definiert oder modifiziert eine eigene Eigenschaft.</p>
 <pre class="Syntax">Obj := Obj.<span class="func">DefineProp</span>(Name, Deskriptor)</pre>
 <h4 id="DefineProp_Parameters">Parameter</h4>
 <dl>
@@ -83,10 +83,11 @@ Obj := Object.<span class="func">Call</span>()</pre>
   <dt>Deskriptor</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
-    <p>Ein Objekt mit einer der folgenden eigenen Eigenschaften, oder mit <em>Get</em> und <em>Set</em>:</p>
+    <p>Um eine dynamische Eigenschaft zu definieren oder zu modifizieren, geben Sie ein Objekt mit beliebig vielen der folgenden eigenen Eigenschaften an:</p>
     <p><strong>Get:</strong> Ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Wert der Eigenschaft abgerufen wird.</p>
     <p><strong>Set:</strong> Ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn der Eigenschaft ein Wert zugewiesen wird. Der zweite Parameter ist der Wert, der zugewiesen wird.</p>
     <p><strong>Call:</strong> Ein <a href="../misc/Functor.htm">Funktionsobjekt</a>, das aufgerufen wird, wenn die Eigenschaft aufgerufen wird.</p>
+    <p>Um eine Werteigenschaft zu definieren, geben Sie ein Objekt mit der folgenden eigenen Eigenschaft an:</p>
     <p><strong>Value:</strong> Ein beliebiger Wert, der der Eigenschaft zugewiesen wird.</p>
   </dd>
 </dl>
@@ -94,8 +95,9 @@ Obj := Object.<span class="func">Call</span>()</pre>
 <p>Typ: <a href="../Concepts.htm#objects">Objekt</a></p>
 <p>Diese Methode gibt das Zielobjekt zurück.</p>
 <h4 id="DefineProp_Remarks">Bemerkungen</h4>
-<p>Diese Methode kann verwendet werden, um eine Werteigenschaft in eine dynamische Eigenschaft umzuwandeln oder umgekehrt, aber es ist nicht möglich, sowohl einen Wert als auch Akzessorfunktionen anzugeben.</p>
-<p>Wenn eine der Akzessorfunktionen weggelassen wird, wird das Verhalten von einem Basisobjekt geerbt.</p>
+<p>Die Definition einer Werteigenschaft überschreibt alle existierenden Wert- oder Akzessorfunktionen.</p>
+<p>Die Definition einer dynamischen Eigenschaft überschreibt alle existierenden Werte, behält aber alle existierenden Akzessorfunktionen bei, die nicht durch den Deskriptor spezifiziert sind.</p>
+<p>Fehlt einer dynamischen Eigenschaft eine der Akzessorfunktionen, wird das Verhalten von einem Basisobjekt geerbt.</p>
 <ul>
   <li>Eine geerbte Werteigenschaft entspricht einem Satz von Akzessorfunktionen, die den Wert zurückgeben oder aufrufen, oder speichert einen neuen Wert in <code>this</code>. Beachten Sie, dass ein neuer Wert alle dynamischen Eigenschaften in <code>this</code> selbst und alle geerbten Akzessorfunktionen überschreiben würde.</li>
   <li>Wenn kein <em>Set</em> oder Wert definiert ist oder geerbt wurde, wird der Versuch, die Eigenschaft zu setzen, eine Ausnahme auslösen.</li>
