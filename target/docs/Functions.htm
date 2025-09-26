@@ -240,15 +240,15 @@ MsgBox Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p>Um andernfalls innerhalb einer Funktion auf eine bestehende globale Variable zu verweisen (oder eine neue zu erstellen), muss die Variable vor ihrer Verwendung als global deklariert werden. Zum Beispiel:</p>
 <pre>DatenVerzSetzen(Verz)
 {
-    <strong>global</strong> LogDateiName
+    global LogDateiName
     LogDateiName := Verz . "\Meine.log"
-    <strong>global</strong> DatenVerz := Verz  <em>; Deklaration mit Zuweisung (siehe <a href="#DeclareInit">unten</a>).</em>
+    global DatenVerz := Verz  <em>; Deklaration mit Zuweisung (siehe <a href="#DeclareInit">unten</a>).</em>
 }
 </pre>
 <p id="AssumeGlobal"><strong>Assume-Global-Modus:</strong> Wenn eine Funktion viele globale Variablen verwenden oder erstellen muss, kann die Funktion so definiert werden, dass sie alle ihre Variablen (außer ihren Parametern) global behandelt. Dazu muss in ihrer ersten Zeile das Wort "global" stehen. Zum Beispiel:</p>
 <pre>StandardwerteSetzen()
 {
-    <strong>global</strong>
+    global
     GlobaleVar := 33  <em>; Speichert 33 in eine globale Variable und erstellt vorher sie bei Bedarf.</em>
     local x, y:=0, z  <em>; Lokale Variablen müssen in diesem Modus deklariert werden, sonst werden sie global behandelt.</em>
 }</pre>
@@ -257,7 +257,7 @@ MsgBox Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p>Statische Variablen sind immer implizit lokal, unterscheiden sich aber von lokalen Variablen, da ihre Werte zwischen den Aufrufen gespeichert werden. Zum Beispiel:</p>
 <pre>InDateiLoggen(ZuLoggenderText)
 {
-    <strong>static</strong> GeloggteZeilen := 0
+    static GeloggteZeilen := 0
     GeloggteZeilen += 1  <em>; Behält einen Zähler lokal aufrecht (sein Wert wird zwischen den Aufrufen gespeichert).</em>
     global LogDateiName
     FileAppend GeloggteZeilen ": " ZuLoggenderText "`n", LogDateiName
@@ -267,7 +267,7 @@ MsgBox Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <p id="AssumeStatic"><strong>Assume-Static-Modus:</strong> Eine Funktion kann so definiert werden, dass sie alle ihre undeklarierten lokalen Variablen (außer ihren Parametern) statisch behandelt. Dazu muss in ihrer ersten Zeile das Wort "static" stehen. Zum Beispiel:</p>
 <pre>VomStatischenArrayAbrufen(ElementNummer)
 {
-    <strong>static</strong>
+    static
     static ErsterAufruf := true  <em>; Jede Initialisierung einer statischen Deklaration wird nur einmal ausgeführt.</em>
     if ErsterAufruf  <em>; Erstellt ein statisches Array beim ersten Aufruf, danach nicht mehr.</em>
     {
@@ -285,7 +285,7 @@ MsgBox Verbinden("`n", <b class="blue">TeilZketten*</b>)</pre>
 <pre>global LogDateiName, MaxVersuche := 5
 static GesamtVersuche := 0, VorherErgebnis</pre>
 <p id="DeclareInit">Es ist möglich, eine Variable bei ihrer Deklaration zu initialisieren. Fügen Sie einfach nach dem Variablennamen eine Zuweisung an. Im Gegensatz zu <a href="#InitStatic">statischen Initialisierungen</a> werden lokale und globale Initialisierungen bei jedem Funktionsaufruf ausgeführt. Mit anderen Worten, eine Zeile wie <code>local x := 0</code> hat den gleichen Effekt wie, als würde man zwei einzelne Zeilen schreiben: <code>local x</code>, gefolgt von <code>x := 0</code>. Es kann ein beliebiger <a href="Variables.htm#AssignOp">Zuweisungsoperator</a> verwendet werden, allerdings erfordert eine Verbundzuweisung wie <code>global Trefferanzahl += 1</code>, dass der Variable zuvor ein Wert zugewiesen wurde.</p>
-<p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> sofort beim Start des Skripts verarbeitet werden, kann eine Variable nicht bedingt unter Nutzung einer <a href="lib/If.htm">IF-Anweisung</a> deklariert werden. Mit anderen Worten, eine Deklaration innerhalb eines IF- oder ELSE-<a href="lib/Block.htm">Blocks</a> wird bedingungslos für die gesamte Funktion wirksam (aber alle in der Deklaration enthaltenen Initialisierungen sind immer noch bedingt). Eine dynamische Deklaration wie <code>global Array%i%</code> ist nicht möglich, da alle nicht-dynamischen Referenzen zu Variablen wie <code>Array1</code> oder <code>Array99</code> bereits in Adressen aufgelöst worden wären.</p>
+<p>Da die Wörter <em>local</em>, <em>global</em> und <em>static</em> sofort beim Start des Skripts verarbeitet werden, kann eine Variable nicht bedingt unter Nutzung einer <a href="lib/If.htm">IF-Anweisung</a> deklariert werden. Mit anderen Worten, eine Deklaration innerhalb eines IF- oder ELSE-<a href="lib/Block.htm">Blocks</a> wird bedingungslos für die gesamte Funktion wirksam (aber alle in der Deklaration enthaltenen Initialisierungen sind immer noch bedingt). Eine dynamische Deklaration wie <code>global MeinArray%i%</code> ist nicht möglich, da alle nicht-dynamischen Referenzen zu Variablen wie <code>MeinArray1</code> oder <code>MeinArray99</code> bereits in Adressen aufgelöst worden wären.</p>
 
 <h2 id="DynCall">Funktionen dynamisch aufrufen</h2>
 <p>Obwohl ein Funktionsaufrufausdruck normalerweise mit einem direkt geschriebenen Funktionsnamen beginnt, kann das Ziel des Aufrufs ein beliebiger Ausdruck sein, der ein <a href="misc/Functor.htm">Funktionsobjekt</a> erzeugt. Im Ausdruck <code>GetKeyState("Shift")</code> ist <em>GetKeyState</em> eigentlich eine Variablenreferenz, obwohl sie üblicherweise auf eine schreibgeschützte Variable verweist, die eine interne Funktion enthält.</p>
@@ -307,7 +307,7 @@ static GesamtVersuche := 0, VorherErgebnis</pre>
 <p>Im Beispiel oben wird die FindeFarbe()-Funktion nie aufgerufen, wenn die <em>FarbeName</em>-Variable leer ist, weil die Auswertung der linken Seite von <em>AND</em> <em>False</em> ergibt, wodurch die rechte Seite nicht mehr in der Lage wäre, das Endergebnis auf <em>True</em> zu bringen.</p>
 <p>Dieses Verhalten führt dazu, dass die Nebeneffekte einer Funktion (wie z.B. die Änderung des Inhalts einer globalen Variable) nie auftreten werden, wenn diese Funktion auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen wird.</p>
 <p>Beachten Sie auch, dass die Kurzschlussauswertung verschachtelte <em>AND</em>s und <em>OR</em>s stufenweise abarbeitet. Wenn z.B. <em>FarbeName</em> im folgenden Ausdruck leer ist, wird nur der Vergleich ganz links durchgeführt, weil die linke Seite dann ausreichen würde, um das Endergebnis zweifelsfrei zu bestimmen:</p>
-<pre>if (FarbeName = "" <u>OR</u> FindeFarbe(FarbeName, Region1) <u>OR</u> FindeFarbe(FarbeName, Region2))
+<pre>if (FarbeName = "" OR FindeFarbe(FarbeName, Region1) OR FindeFarbe(FarbeName, Region2))
     break   <em>; Nichts zu suchen oder Übereinstimmung gefunden.</em></pre>
 <p>Wie die Beispiele oben zeigen, sollten umfangreiche (zeitaufwendige) Funktionen in der Regel auf der rechten Seite von <em>AND</em> oder <em>OR</em> aufgerufen werden, um die Performanz zu erhöhen. Diese Technik kann auch verwendet werden, um den Aufruf einer Funktion zu verhindern, wenn ihr ein Wert übergeben wurde, den sie für unpassend hält (z.B. eine leere Zeichenkette).</p>
 <p>Der <a href="Variables.htm#ternary">ternäre Bedingungsoperator (?:)</a> wendet auch die Kurzschlussauswertung an, indem er nur die gewinnende Abzweigung auswertet.</p>

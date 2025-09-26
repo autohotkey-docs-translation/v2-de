@@ -14,19 +14,24 @@
 <h1>DPI-Skalierung</h1>
 
 <p>DPI-Skalierung ist eine Funktion, die entweder vom Betriebssystem oder von der Applikation ausgeführt wird, um die sichtbare Größe des Inhalts proportional zur DPI-Einstellung (Dots Per Inch, dt. Punkte pro Zoll) des Bildschirms zu vergrößern. Grundsätzlich ermöglicht diese Funktion, dass Inhalte auf Systemen mit unterschiedlichen Bildschirmauflösungen in der gleichen physischen Größe dargestellt werden oder zumindest auf sehr hochauflösenden Bildschirmen benutzbar sind. Manchmal erhöht ein Benutzer die DPI-Einstellung, um Inhalte größer zu machen und besser lesen zu können.</p>
-<p><a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> gibt die DPI-Einstellung des primären Bildschirms zurück.</p>
+<p><a href="../Variables.htm#ScreenDPI">A_ScreenDPI</a> gibt üblicherweise die DPI-Einstellung zurück, die der primäre Bildschirm zum Zeitpunkt des Skriptstarts hatte. Dies wird als "System-DPI" bezeichnet, obwohl Prozesse, die zu unterschiedlichen Zeitpunkten gestartet werden, unterschiedliche Werte aufweisen können.</p>
 <p>Es gibt zwei verschiedene DPI-Skalierungen, die etwas mit AutoHotkey zu tun haben: Gui-DPI-Skalierung und OS-DPI-Skalierung.</p>
 
 <h2 id="Gui_DPI_Scaling">Gui-DPI-Skalierung</h2>
 <p>Standardmäßig führen die Gui- und GuiControl-Methoden/Eigenschaften eine automatische Skalierung durch, so dass GUI-Skripte mit hartkodierten Positionen, Größen und Abständen auf Bildschirmen mit hohem DPI-Wert angemessen skaliert werden. Wenn dies negative Auswirkungen auf das Skript hat oder das Skript die Skalierung selbst vornimmt, kann die automatische Skalierung deaktiviert werden. Weitere Informationen finden Sie unter der Option <a href="../lib/Gui.htm#DPIScale">-DPIScale</a>.</p>
 
 <h2 id="OS_DPI_Scaling">OS-DPI-Skalierung</h2>
-<p>Bei Applikationen, die nicht DPI-sensitiv sind, führt das Betriebssystem automatisch eine Skalierung für Koordinaten durch, die an bestimmte Systemfunktionen übergeben und von diesen zurückgegeben werden. Diese Art der Skalierung wirkt sich unter AutoHotkey nur auf Systeme mit mehreren Bildschirmen aus, die unterschiedliche DPI-Einstellungen haben.</p>
+<p>Bei Applikationen, die nicht DPI-sensitiv sind, führt das Betriebssystem automatisch eine Skalierung für Koordinaten durch, die an bestimmte Systemfunktionen übergeben und von diesen zurückgegeben werden. Diese Art der Skalierung betrifft AutoHotkey in der Regel in zwei Szenarien:</p>
+<ul>
+  <li>Systeme mit mehreren Bildschirmen, wo nicht alle Bildschirme dieselbe Skalierung haben.</li>
+  <li>Immer dann, wenn die Bildschirmskalierungseinstellung von der Einstellung beim Programmstart abweicht.</li>
+</ul>
+<p>Welche Skalierung genau vorgenommen wird, hängt von drei Faktoren ab: 1) von der aufgerufenen Systemfunktion, 2) von der DPI-Sensitivität des Skripts und 3) ggf. von der DPI-Sensitivität des Zielfensters.</p>
 
 <h3 id="Per-Monitor_DPI_Awareness">Pro-Bildschirm-DPI-Sensitivität</h3>
 <p>In Windows 8.1 und höher können sekundäre Bildschirme unterschiedliche DPI-Einstellungen haben. Von "pro-Bildschirm-DPI-sensitiven" Applikationen wird erwartet, dass sie ihre Fenster entsprechend dem DPI-Wert des Bildschirms skalieren, auf dem sie sich gerade befinden, und sich dynamisch anpassen, wenn das Fenster zwischen den Bildschirmen hin- und hergeschoben wird.</p>
 <p>Bei Applikationen, die nicht pro-Bildschirm-DPI-sensitiv sind, führt das System eine Bitmap-Skalierung durch, damit die Fenster ihre Größe ändern können, wenn sie zwischen den Bildschirmen hin- und hergeschoben werden, und verbirgt dies vor der Applikation, indem die Koordinaten und Größen auf die globale DPI-Einstellung skaliert werden, die die Applikation erwartet. Auf einem 11-Zoll-4K-Bildschirm wäre z.B. eine GUI, die für die Darstellung auf 96 dpi (100&nbsp;%) ausgelegt ist, praktisch unbenutzbar, während eine Skalierung auf 200&nbsp;% sie benutzbar machen würde.</p>
-<p>AutoHotkey ist nicht für die Durchführung einer Pro-Bildschirm-Skalierung ausgelegt und wurde daher nicht als pro-Bildschirm-DPI-sensitiv gekennzeichnet. Dies ist z.B. vorteilhaft, wenn ein GUI-Fenster zwischen einem großen externen Bildschirm mit 100&nbsp;% DPI und einem kleineren Bildschirm mit 200&nbsp;% DPI hin- und hergeschoben wird. Die automatische Skalierung hat jedoch auch negative Auswirkungen.</p>
+<p>AutoHotkey v2.0 ist nicht für die Durchführung einer Pro-Bildschirm-Skalierung ausgelegt und wurde daher nicht als pro-Bildschirm-DPI-sensitiv gekennzeichnet. Dies ist z.B. vorteilhaft, wenn ein GUI-Fenster zwischen einem großen externen Bildschirm mit 100&nbsp;% DPI und einem kleineren Bildschirm mit 200&nbsp;% DPI hin- und hergeschoben wird. Die automatische Skalierung hat jedoch auch negative Auswirkungen.</p>
 <p>Damit die automatische Skalierung des Systems funktioniert, werden Koordinaten, die von Systemfunktionen wie <a href="https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-movewindow">MoveWindow</a> und <a href="https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-getwindowrect">GetWindowRect</a> akzeptiert oder zurückgegeben werden, automatisch skaliert. Wenn AutoHotkey diese Funktionen verwendet, um mit externen Fenstern zu arbeiten, führt dies oft zu unerwarteten Ergebnissen, wenn sich die Koordinaten nicht auf dem primären Bildschirm befinden. Erschwerend kommt hinzu, dass einige Funktionen die Koordinaten auf Basis des Bildschirms skalieren, auf dem das zuletzt aktive Fenster des Skripts angezeigt wurde.</p>
 
 <h2 id="Workarounds">Workarounds</h2>
@@ -34,10 +39,54 @@
 <p>Um die Pro-Bildschirm-DPI-Sensitivität zu aktivieren, rufen Sie die folgende Funktion auf, bevor Sie Funktionen verwenden, die normalerweise von der DPI-Skalierung betroffen sind:</p>
 <pre>DllCall("SetThreadDpiAwarenessContext", "ptr", -3, "ptr")</pre>
 <p>In Windows 10 Version 1703 und höher kann -3 mit -4 ersetzt werden, um den Modus "Per Monitor v2" zu aktivieren. Dies ermöglicht die Skalierung von Dialogfenstern, Menüs, Tooltips und einigem mehr. Allerdings wird dadurch auch der Nicht-Clientbereich (Titelleiste) skaliert, was wiederum dazu führen kann, dass der Clientbereich des Fensters zu klein wird, es sei denn, das Skript ist so konzipiert, dass es sich daran anpasst (z.B. durch Reaktion auf die <a href="https://learn.microsoft.com/windows/win32/hidpi/wm-dpichanged">WM_DPICHANGED-Meldung</a>). Dies lässt sich vermeiden, indem der Kontext vor der Erstellung der GUI auf -3 oder vor der Erstellung von Tooltips, Menüs oder Dialogfenstern auf -4 gesetzt wird.</p>
-<p>Die DPI-Sensitivität des Threads kann sich temporär ändern, während der Benutzer ein Fenster des Skripts verschiebt oder während das Skript ein Dialogfenster anzeigt. Daher ist es am sichersten, die DPI-Sensitivität unmittelbar vor der Verwendung der Funktionen, die darauf angewiesen sind, einzustellen.</p>
+
+<h3 id="New_Threads">Neue Threads</h3>
+<p>Wenn das System die <a href="https://learn.microsoft.com/windows/win32/winmsg/window-procedures">Fensterprozedur</a> für ein Fenster aufruft, wird der aktuelle DPI-Sensitivität-Kontext automatisch auf den Kontext gesetzt, der bei der Erstellung des Fensters verwendet wurde. Der Kontext für einen neuen <a href="Threads.htm">Skript-Thread</a> hängt also davon ab, ob er direkt aus der Meldungsschleife von AutoHotkey oder über eine Fensterprozedur gestartet wurde.</p>
+<ul>
+  <li>Unter normalen Bedingungen werden gepostete Meldungen direkt in der Meldungsschleife von AutoHotkey verarbeitet. Dadurch bleibt der bestehende Kontext erhalten. Dazu zählen die meisten Ereignisse, die neue Skript-Threads starten, wie z.B. Hotkeys, Hotstrings und Timer.</li>
+  <li>Skript-Threads, die gesendeten (nicht geposteten) Meldungen entsprechen, werden aus der Fensterprozedur heraus gestartet, weshalb der Kontext immer abhängig vom Zielfenster gesetzt wird.</li>
+  <li>Gepostete Meldungen werden üblicherweise an eine Fensterprozedur übergeben, wenn sie während einer modalen Meldungsschleife empfangen werden. Modale Meldungsschleifen werden unter anderem für modale Dialogfenster und Menüs sowie für Benutzeraktionen wie das Verschieben von Fenstern oder das Ziehen und Ablegen von Objekten verwendet.</li>
+  <li>Nicht-GUI-Ereignisse sind mit dem <a href="../Program.htm#main-window">Hauptfenster</a> des Skripts verknüpft und erhalten daher den standardmäßigen DPI-Sensitivität-Kontext des Programms. Dieser Kontext ist in der Regel im Manifest des Programms festgelegt, kann aber durch Kompatibilitätseinstellungen der Applikation überschrieben sein.</li>
+</ul>
+
+<h3 id="Mixed_Settings">Gemischte Einstellungen</h3>
+<p>Es wird erwartet, dass sich ein pro-Bildschirm-DPI-sensitives GUI-Fenster automatisch anpasst, wenn es eine <a href="https://learn.microsoft.com/windows/win32/hidpi/wm-dpichanged">WM_DPICHANGED-Meldung</a> erhält. AutoHotkey-v2.0-GUI-Fenster reagieren standardmäßig nicht auf diese Meldung. Wenn die korrekte Implementierung dieser Art von dynamischer Skalierung zu schwierig ist, wäre eine einfachere Alternative die temporäre Deaktivierung der Pro-Bildschirm-DPI-Sensitivität unmittelbar vor der Erstellung der GUI. Zum Beispiel:</p>
+<pre><em>; System-DPI-Sensitivität-Modus setzen (Standard in AutoHotkey v2.0):</em>
+try dac := DllCall("SetThreadDpiAwarenessContext", 'ptr', -2, 'ptr')
+<em>; GUI erstellen, die permanent "System-DPI-sensitiv" sein wird:</em>
+MeineGui := Gui()
+<em>; Vorherigen Modus für alle nachfolgenden Funktionsaufrufe wiederherstellen:</em>
+IsSet(dac) &amp;&amp; DllCall("SetThreadDpiAwarenessContext", 'ptr', dac, 'ptr')
+</pre>
+<p>Die zusätzlichen Zeilen sind wirkungslos, wenn das Betriebssystem SetThreadDpiAwarenessContext nicht unterstützt oder das Programm bereits im System-DPI-Sensitivität-Modus war.</p>
+<p>Wenn nur einige der GUI-Steuerelemente nicht gut skaliert werden, können die System-DPI-sensitiven (oder nicht-System-DPI-sensitiven) Steuerelemente in einem pro-Bildschirm-DPI-sensitiven Fenster gehostet werden. Ein gemischtes Hosting muss vor dem Erstellen des Fensters aktiviert werden (benötigt Windows 10 Version 1803 oder höher):</p>
+<pre><em>; GUI-Fenster erstellen, das sensitivschwächere Unterfenster hosten kann:</em>
+try dhb := DllCall("SetThreadDpiHostingBehavior", 'int', 1)
+MeineGui := Gui()
+IsSet(dhb) &amp;&amp; DllCall("SetThreadDpiHostingBehavior", 'int', dhb)
+
+<em>; "System-DPI-sensitives" Steuerelement hinzufügen:</em>
+try dac := DllCall("SetThreadDpiAwarenessContext", 'ptr', -2, 'ptr')
+MeineListView := MeineGui.AddListView()
+IsSet(dac) &amp;&amp; DllCall("SetThreadDpiAwarenessContext", 'ptr', dac, 'ptr')
+</pre>
 
 <h3 id="Compiled_Scripts">Kompilierte Skripte</h3>
-<p>Pro-Bildschirm-DPI-Sensitivität kann prozessübergreifend aktiviert werden, indem der Inhalt des <code>&lt;dpiAware&gt;</code>-Eintrags in der Manifest-Ressource des kompilierten Skripts von <code>true</code> (Standardeinstellung in der AutoHotkey-EXE-Datei) auf <code>true/pm</code> geändert wird.</p>
+<p>Pro-Bildschirm-DPI-Sensitivität kann prozessübergreifend durch Setzen der Elemente "dpiAware" und "dpiAwareness" im Manifest des kompilierten Skripts (eine eingebettete XML-Ressource) aktiviert werden. Einzelheiten über die ordnungsgemäße Verwendung und die Auswirkungen dieser Einstellungen finden Sie unter <a href="https://learn.microsoft.com/windows/win32/hidpi/setting-the-default-dpi-awareness-for-a-process#setting-default-awareness-with-the-application-manifest">Standardsensitivität mit dem Manifest der Applikation setzen</a>. Zum Beispiel enthält das Manifest von AutoHotkey v2.0.19 die folgenden Angaben:</p>
+<pre class="no-highlight">&lt;v3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"
+                 xmlns:ws2="http://schemas.microsoft.com/SMI/2016/WindowsSettings"&gt;
+  &lt;dpiAware&gt;true&lt;/dpiAware&gt;
+  &lt;ws2:longPathAware&gt;true&lt;/ws2:longPathAware&gt;
+&lt;/v3:windowsSettings&gt;</pre>
+<p>Wie in der Microsoft-Dokumentation erläutert, kann es sinnvoll sein, sowohl "dpiAware" als auch "dpiAwareness" einzufügen, die unterschiedlichen XML-Namensräumen angehören. Da "longPathAware" und "dpiAwareness" demselben Namensraum angehören, lässt sich die XML-Datei durch das Verschieben einiger Elemente optimieren. Die folgenden Angaben aktivieren die Pro-Bildschirm-DPI-Sensitivität (v2, falls verfügbar, andernfalls v1):</p>
+<pre class="no-highlight">&lt;v3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings"&gt;
+  &lt;dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"&gt;true/pm&lt;/dpiAware&gt;
+  &lt;dpiAwareness&gt;PerMonitorV2&lt;/dpiAwareness&gt;
+  &lt;longPathAware&gt;true&lt;/longPathAware&gt;
+&lt;/v3:windowsSettings&gt;</pre>
+
+<h3 id="Compatibility_Settings">Kompatibilitätseinstellungen</h3>
+<p>Die standardmäßige DPI-Sensitivität des Programms kann mit den Kompatibilitätseinstellungen überschrieben werden. Diese Einstellungen können in den Eigenschaften einer AutoHotkey-EXE-Datei, in den Eigenschaften einer Verknüpfungsdatei oder durch Setzen der Umgebungsvariable <code class="no-highlight">__COMPAT_LAYER</code> mit dem Schlüsselwort <code class="no-highlight">DpiUnaware</code> oder dem Schlüsselwort <code class="no-highlight">HighDpiAware</code> festgelegt werden. Diese Aktivierungsmethode der DPI-Sensitivität kann unerwünschte Nebenwirkungen haben. So kann es beispielsweise vorkommen, dass sich MsgBox-Fenster nicht automatisch anpassen, wenn sie von einem Bildschirm zum anderen verschoben werden.</p>
 
 </body>
 </html>

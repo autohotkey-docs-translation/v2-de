@@ -16,8 +16,8 @@
 <p>Liest einen Wert, eine Sektion oder eine Liste von Sektionsnamen aus einer INI-Datei im Standardformat.</p>
 
 <pre class="Syntax">Wert := <span class="func">IniRead</span>(DateiName, Sektion, Schlüssel <span class="optional">, Standardwert</span>)
-Sektion := <span class="func">IniRead</span>(DateiName, Sektion)
-SektionNamen := <span class="func">IniRead</span>(DateiName)</pre>
+Sektion := <span class="func">IniRead</span>(DateiName, Sektion <span class="optional">,, Standardwert</span>)
+SektionNamen := <span class="func">IniRead</span>(DateiName <span class="optional">,,, Standardwert</span>)</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
@@ -49,9 +49,13 @@ SektionNamen := <span class="func">IniRead</span>(DateiName)</pre>
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt den aktuellen Wert des angegebenen Schlüssels zurück. Wenn der Wert nicht abgerufen werden kann, wird der <em>Standardwert</em> zurückgegeben (sofern angegeben).</p>
-<p>Wenn der <em>Schlüssel</em>-Parameter weggelassen wird, gibt diese Funktion eine komplette Sektion zurück. Kommentare und Leerzeilen werden weggelassen. Es werden nur die ersten 65533 Zeichen der Sektion abgerufen.</p>
-<p>Wenn die Parameter <em>Schlüssel</em> und <em>Sektion</em> weggelassen werden, gibt diese Funktion eine Liste von Sektionsnamen zurück, die alle mit einem Zeilenvorschub (<code>`n</code>) voneinander getrennt sind.</p>
+<p>Diese Funktion gibt je nach Existenz der Parameter <em>Schlüssel</em> und <em>Sektion</em> einen anderen Wert zurück:</p>
+<ul>
+  <li>Wenn beide Parameter angegeben sind, gibt diese Funktion den aktuellen Wert des angegebenen Schlüssels zurück.</li>
+  <li>Wenn <em>Schlüssel</em> weggelassen wird, gibt diese Funktion eine komplette Sektion zurück. Kommentare und Leerzeilen werden weggelassen. Es werden nur die ersten 65533 Zeichen der Sektion abgerufen.</li>
+  <li>Wenn <em>Schlüssel</em> und <em>Sektion</em> weggelassen werden, gibt diese Funktion eine Liste von Sektionsnamen zurück, die alle mit einem Zeilenvorschub (<code class="no-highlight">`n</code>) voneinander getrennt sind.</li>
+</ul>
+<p>Wenn keiner dieser Werte nicht abgerufen werden kann, wird der <em>Standardwert</em> zurückgegeben (sofern angegeben).</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Bei Misserfolg wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, es sei denn, <em>Standardwert</em> wird verwendet.</p>
@@ -61,7 +65,7 @@ SektionNamen := <span class="func">IniRead</span>(DateiName)</pre>
 <p>Das Betriebssystem entfernt automatisch Leer- und Tabulatorzeichen am Anfang und Ende der abgerufenen Zeichenkette. Um das zu verhindern, umschließen Sie die Zeichenkette mit einfachen oder doppelten Anführungszeichen. Das äußerste Paar von einfachen oder doppelten Anführungszeichen wird ebenfalls entfernt, aber Leerzeichen innerhalb der Anführungszeichen bleiben erhalten.</p>
 <p>Werte länger als 65535 Zeichen führen wahrscheinlich zu inkonsistenten Ergebnissen.</p>
 <p>Eine typische INI-Datei sieht wie folgt aus:</p>
-<pre>[SektionName]
+<pre class="no-highlight">[SektionName]
 Schlüssel=Wert</pre>
 <p><b>Unicode:</b> IniRead und IniWrite verwenden die externen Funktionen <a href="https://learn.microsoft.com/windows/win32/api/winbase/nf-winbase-getprivateprofilestring">GetPrivateProfileString</a> und <a href="https://learn.microsoft.com/windows/win32/api/winbase/nf-winbase-writeprivateprofilestringa">WritePrivateProfileString</a>, um Werte zu lesen oder zu schreiben. Diese Funktionen unterstützen Unicode nur in UTF-16-Dateien; alle anderen Dateien verwenden die Standard-ANSI-Codepage des Systems.</p>
 <h2 id="Related">Siehe auch</h2>

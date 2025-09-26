@@ -315,7 +315,7 @@ anderesObj.test()</pre>
     KürzereEigenschaft =&gt; <i>Ausdruck zum Ermitteln des Eigenschaftswertes</i>
 }
 </pre>
-<p>Dies bewirkt, dass beim Laden des Skripts ein <a href="lib/Class.htm">Class</a>-Objekt konstruiert und in eine <a href="Functions.htm#Global">globale</a> Konstante (schreibgeschützte Variable) namens <i>KlasseName</i> gespeichert wird. Wenn <code>extends BasisklasseName</code> vorhanden ist, muss <i>BasisklasseName</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>KlasseName</i>.Prototype.__Class</code> gespeichert.</p>
+<p>Dies bewirkt, dass beim Laden des Skripts ein <a href="lib/Class.htm">Class</a>-Objekt konstruiert und in eine <a href="Functions.htm#Global">globale</a> Konstante (schreibgeschützte Variable) namens <i>KlasseName</i> gespeichert wird. Wenn <code class="no-highlight">extends BasisklasseName</code> vorhanden ist, muss <i>BasisklasseName</i> der vollständige Name einer anderen Klasse sein. Der vollständige Name jeder Klasse ist in <code><i>KlasseName</i>.Prototype.__Class</code> gespeichert.</p>
 <p>Da der Zugriff auf die Klasse selbst über eine Variable erfolgt, kann der Klassenname nicht verwendet werden, um im selben Kontext sowohl die Klasse zu referenzieren als auch eine separate Variable zu erstellen (um z.B. eine Instanz der Klasse zu enthalten). Zum Beispiel wird <code>box := Box()</code> nicht funktionieren, da sowohl <code>box</code> als auch <code>Box</code> in dasselbe aufgelöst werden. Der Versuch, eine Top-Level-Klasse (nicht verschachtelte Klasse) auf diese Weise neu zuzuweisen, führt zu einem Ladezeitfehler.</p>
 <p>In dieser Dokumentation bezieht sich das Wort "Klasse" in der Regel auf ein Klassenobjekt, das mit dem Schlüsselwort <code>class</code> erstellt wurde.</p>
 <p>Klassendefinitionen können Variablendeklarationen, Methodendefinitionen und Unterklassendefinitionen enthalten.</p>
@@ -347,7 +347,7 @@ class VerschachtelteKlasse
 <p>Das Verschachteln einer Klasse impliziert keine besondere Beziehung zur äußeren Klasse. Weder wird die verschachtelte Klasse automatisch instanziiert, noch haben Instanzen der verschachtelten Klasse eine Verbindung zu einer Instanz der äußeren Klasse, es sei denn, das Skript stellt diese Verbindung explizit her.</p>
 <p>Jede verschachtelte Klassendefinition erzeugt eine dynamische Eigenschaft mit <em>Get</em>- und <em>Call</em>-Akzessorfunktionen anstelle einer einfachen Werteigenschaft. Damit soll das folgende Verhalten unterstützt werden (wobei die Klasse X die verschachtelte Klasse Y enthält):</p>
 <ul>
-<li><code>X.Y()</code> übergibt X nicht an <code>X.Y.Call</code> und letztlich an <code>__New</code>, was sonst passieren würde, da dies das normale Verhalten für Funktionsobjekte ist, die als Methoden aufgerufen werden (so wie die verschachtelte Klasse hier verwendet wird).</li>
+<li><code>X.Y()</code> übergibt X nicht an <code>X.Y.Call</code> und letztlich an <code class="no-highlight">__New</code>, was sonst passieren würde, da dies das normale Verhalten für Funktionsobjekte ist, die als Methoden aufgerufen werden (so wie die verschachtelte Klasse hier verwendet wird).</li>
 <li><code>X.Y := 1</code> ist standardmäßig ein Fehler (die Eigenschaft ist schreibgeschützt).</li>
 <li>Die Klasse wird initialisiert, sobald sie das erste Mal referenziert oder aufgerufen wird.</li>
 </ul>
@@ -429,7 +429,7 @@ Methode()
 
 Env["PATH"] .= ";" A_ScriptDir  <em>; Betrifft nur dieses Skript und Unterprozesse.</em>
 MsgBox Env["PATH"]</pre>
-<p><code>__Item</code> ist quasi ein Standardeigenschaftsname (falls eine solche Eigenschaft definiert wurde):</p>
+<p><code class="no-highlight">__Item</code> ist quasi ein Standardeigenschaftsname (falls eine solche Eigenschaft definiert wurde):</p>
 <ul>
   <li><code><i>object</i>[<i>params</i>]</code> ist äquivalent zu <code><i>object</i>.__Item[<i>params</i>]</code>, wenn Parameter vorhanden sind.</li>
   <li><code><i>object</i>[]</code> ist äquivalent zu <code><i>object</i>.__Item</code>.</li>
@@ -445,7 +445,7 @@ MsgBox obj["base"]                  <em>; 10</em>
 <p class="note"><strong>Hinweis:</strong> Wenn ein expliziter Eigenschaftsname mit leeren eckigen Klammern kombiniert wird, wie in <code>obj.prop[]</code>, wird dies als zwei separate Operationen behandelt: Zuerst <code>obj.prop</code> abrufen und dann die Standardeigenschaft des Ergebnisses indirekt aufrufen. Dies ist Teil der Sprachsyntax und somit objektunabhängig.</p>
 
 <h3 id="Custom_NewDelete">Konstruktion und Destruktion</h3>
-<p>Jedes Mal, wenn ein Objekt mit der Standardimplementierung von <a href="lib/Class.htm#Call"><em>KlasseName</em>()</a> erstellt wird, wird die <code>__New</code>-Methode des neuen Objekts aufgerufen, um eine benutzerdefinierte Initialisierung zu ermöglichen. Alle Parameter, die an <code><i>KlasseName</i>()</code> übergeben werden, werden an <code>__New</code> weitergeleitet, so dass sie den ursprünglichen Inhalt des Objekts oder die Art und Weise, wie es konstruiert wird, beeinflussen können. Bei Zerstörung des Objekts wird <code>__Delete</code> aufgerufen. Zum Beispiel:</p>
+<p>Jedes Mal, wenn ein Objekt mit der Standardimplementierung von <a href="lib/Class.htm#Call"><em>KlasseName</em>()</a> erstellt wird, wird die __New-Methode des neuen Objekts aufgerufen, um eine benutzerdefinierte Initialisierung zu ermöglichen. Alle Parameter, die an <code><i>KlasseName</i>()</code> übergeben werden, werden an __New weitergeleitet, so dass sie den ursprünglichen Inhalt des Objekts oder die Art und Weise, wie es konstruiert wird, beeinflussen können. Bei Zerstörung des Objekts wird __Delete aufgerufen. Zum Beispiel:</p>
 <pre>m1 := GMem(0, 10)
 m2 := {base: GMem.Prototype}, m2.__New(0, 30)
 
@@ -520,8 +520,8 @@ class <i>KlasseName</i> {
 <p>Metafunktionen werden in den folgenden Fällen nicht aufgerufen:</p>
 <ul>
   <li><code>x[y]</code>: Die Verwendung von eckigen Klammern ohne Eigenschaftsnamen ruft indirekt nur die <a href="#__Item">__Item</a>-Eigenschaft auf.</li>
-  <li><code>x()</code>: Der Aufruf des Objekts selbst ruft indirekt nur die <code>Call</code>-Methode auf. Dies umfasst interne Aufrufe durch interne Funktionen wie <a href="lib/SetTimer.htm">SetTimer</a> und <a href="lib/Hotkey.htm">Hotkey</a>.</li>
-  <li>Interne Aufrufe von anderen Metafunktionen oder Doppel-Unterstrich-Methoden lösen <code>__Call</code> nicht aus.</li>
+  <li><code>x()</code>: Der Aufruf des Objekts selbst ruft indirekt nur die Call-Methode auf. Dies umfasst interne Aufrufe durch interne Funktionen wie <a href="lib/SetTimer.htm">SetTimer</a> und <a href="lib/Hotkey.htm">Hotkey</a>.</li>
+  <li>Interne Aufrufe von anderen Metafunktionen oder Doppel-Unterstrich-Methoden lösen <code class="no-highlight">__Call</code> nicht aus.</li>
 </ul>
 
 <h4 id="Dynamic_Properties">Dynamische Eigenschaften</h4>
@@ -569,7 +569,7 @@ c := ""             <em>; Bob wurde gelöscht...</em>
 </pre>
 <p>Temporäre Referenzen, die von Funktionen, Methoden oder Operatoren innerhalb eines Ausdrucks zurückgegeben werden, werden erst freigegeben, wenn die Auswertung dieses Ausdrucks abgeschlossen oder abgebrochen wurde. Im folgenden Beispiel wird das neue <a href="#GMem">GMem</a>-Objekt erst nach Abschluss von MsgBox freigegeben:</p>
 <pre>MsgBox <a href="lib/DllCall.htm">DllCall</a>("GlobalSize", "ptr", GMem(0, 20).ptr, "ptr")  <em>; 20</em></pre>
-<p class="note"><strong>Hinweis:</strong> In diesem Beispiel kann <code>.ptr</code> weggelassen werden, da der <a href="lib/DllCall.htm#ptr">Ptr</a>-Argumenttyp Objekte mit einer <code>Ptr</code>-Eigenschaft zulässt. Allerdings funktioniert das oben gezeigte Muster auch mit anderen Eigenschaftsnamen.</p>
+<p class="note"><strong>Hinweis:</strong> In diesem Beispiel kann <code>.ptr</code> weggelassen werden, da der <a href="lib/DllCall.htm#ptr">Ptr</a>-Argumenttyp Objekte mit einer Ptr-Eigenschaft zulässt. Allerdings funktioniert das oben gezeigte Muster auch mit anderen Eigenschaftsnamen.</p>
 <p>Um Code beim Freigeben der letzten Referenz zu einem Objekt auszuführen, implementieren Sie die <a href="#Custom_NewDelete">__Delete</a>-Metafunktion.</p>
 <h4 id="refs-problems">Probleme mit der Referenzzählung</h4>
 <p>Wenn man sich ausschließlich auf die Referenzzählung verlässt, gerät man manchmal in eine Zwickmühle: Ein Objekt ist so konzipiert, dass es seine Ressourcen bei seiner Löschung freigibt, aber es wird erst gelöscht, wenn seine Ressourcen zuvor freigegeben wurden. Dies ist insbesondere dann der Fall, wenn es sich bei diesen Ressourcen um andere Objekte oder Funktionen handelt, die - oft indirekt - eine Referenz auf das Objekt aufrechterhalten.</p>

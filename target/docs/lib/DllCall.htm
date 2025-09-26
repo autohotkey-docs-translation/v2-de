@@ -27,7 +27,7 @@
       <p>Wenn unter dem angegebenen Namen keine Funktion gefunden wird, wird automatisch ein W (Unicode) angefügt. Zum Beispiel ist <code>"MessageBox"</code> dasselbe wie <code>"MessageBoxW"</code>.</p>
       <p>Wenn die DLL <em>wiederholt</em> aufgerufen wird, ist es ratsam, <a href="#load">sie vorher zu laden</a>, um die Performanz drastisch zu erhöhen.</p>
       <p>Dieser Parameter kann auch ein reiner Integer sein, der als Adresse einer Funktion zum Aufrufen interpretiert wird. Quellen für solche Adressen sind u.a. <a href="#COM">COM</a> und <a href="CallbackCreate.htm">CallbackCreate</a>.</p>
-      <p>Wenn dieser Parameter ein Objekt ist, wird der Wert der <code>Ptr</code>-Eigenschaft des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird ein <a href="Error.htm#PropertyError">PropertyError</a> ausgelöst.</p>
+      <p>Wenn dieser Parameter ein Objekt ist, wird der Wert der <code class="no-highlight">Ptr</code>-Eigenschaft des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird ein <a href="Error.htm#PropertyError">PropertyError</a> ausgelöst.</p>
   </dd>
 
   <dt>Typ1, Arg1</dt>
@@ -64,7 +64,7 @@
   <p>Wenn die Funktion eine Zeichenkette zurückgibt, die länger ist als der Eingabewert des Parameters (oder wenn der Parameter nur für die Ausgabe bestimmt ist), wird die folgende Vorgehensweise empfohlen: 1) Erstellen Sie ein <a href="Buffer.htm">Buffer</a>, 2) übergeben Sie es mit dem <a href="#ptr">Ptr</a>-Typ, und 3) rufen Sie die Zeichenkette nach Abschluss der Funktion mit <a href="StrGet.htm">StrGet</a> ab, wie im <a href="#ExWsprintf">wsprintf-Beispiel</a> gezeigt.</p>
   <p>Andernfalls sollten Sie vor dem Funktionsaufruf sicherstellen, dass die Variable groß genug ist. Rufen Sie hierfür <code><a href="VarSetStrCapacity.htm">VarSetStrCapacity</a>(&amp;MeineVar, 123)</code> auf, wobei 123 die Anzahl der 16-Bit-Einheiten (umgangssprachlich auch Zeichen genannt) ist, die <em>MeineVar</em> maximal enthalten soll. Wenn die Variable bei Return nicht nullterminiert ist, wird eine Fehlermeldung angezeigt und das Programm beendet, da wahrscheinlich der Speicher durch einen Pufferüberlauf korrumpiert wurde. Dies deutet typischerweise darauf hin, dass die Kapazität der Variable unzureichend war.</p>
   <p>Ein <em>Str</em>-Argument darf kein <a href="../Variables.htm#Expressions">Ausdruck</a> sein, der nach der Auswertung eine Zahl ergibt (z.B. <code>i+1</code>). Ist dies der Fall, wird die Funktion nicht aufgerufen und ein <a href="Error.htm#TypeError">TypeError</a> ausgelöst.</p>
-  <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine <a href="../Concepts.htm#variable-references">VarRef</a> übergeben wurde. Dies kann für Funktionen verwendet werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher reserviert und erwartet, dass der Aufrufer ihn wieder freigibt (z.B. durch Aufruf von <a href="https://learn.microsoft.com/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code>Ptr*</code>-Argumenttyp verwendet werden.</p>
+  <p id="strp">Der selten verwendete <a href="#asterisk">Str*</a>-Argumenttyp übergibt die Adresse einer temporären Variable, die die Adresse der Zeichenkette enthält. Wenn die Funktion eine neue Adresse in die temporäre Variable schreibt, wird die neue Zeichenkette in die Variable des Skripts kopiert, sofern eine <a href="../Concepts.htm#variable-references">VarRef</a> übergeben wurde. Dies kann für Funktionen verwendet werden, die so etwas wie "TCHAR **" oder "LPTSTR *" erwarten. Wenn die Funktion jedoch Speicher reserviert und erwartet, dass der Aufrufer ihn wieder freigibt (z.B. durch Aufruf von <a href="https://learn.microsoft.com/windows/win32/api/combaseapi/nf-combaseapi-cotaskmemfree">CoTaskMemFree</a>), muss stattdessen der <code class="no-highlight">Ptr*</code>-Argumenttyp verwendet werden.</p>
   <p class="note"><strong>Hinweis:</strong> Wenn Sie eine Zeichenkette an eine Funktion übergeben, müssen Sie darauf achten, welchen <a href="../Compat.htm#DllCall"><i>Typ</i> von Zeichenkette</a> die Funktion erwartet.</p></td>
 </tr>
 <tr>
@@ -112,8 +112,8 @@ str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufe
 <tr id="ptr">
   <td>Ptr</td>
   <td><p>Ein <a href="../Variables.htm#PtrSize">pointergroßer</a> Integer, äquivalent zu Int oder Int64, je nachdem, ob die EXE-Datei, die das Skript ausführt, 32-Bit oder 64-Bit ist. <i>Ptr</i> sollte für Pointer verwendet werden, die auf Arrays oder Strukturen verweisen (wie RECT* oder LPPOINT), und für fast alle Handles (wie HWND, HBRUSH oder HBITMAP). Wenn der Parameter ein Pointer ist, der auf einen einzelnen numerischen Wert verweist, wie z.B. LPDWORD oder int*, sollte grundsätzlich das *- oder P-Suffix anstelle von "Ptr" verwendet werden.</p>
-  <p>Wenn ein Objekt an einen Ptr-Parameter übergeben wird, wird der Wert der <code>Ptr</code>-Eigenschaft des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird ein <a href="Error.htm#PropertyError">PropertyError</a> ausgelöst. Das Objekt ist typischerweise ein <a href="Buffer.htm">Buffer</a>.</p>
-  <p>Wenn ein Objekt an einen Ptr*-Parameter übergeben wird, wird der Wert der <code>Ptr</code>-Eigenschaft des Objekts vor dem Aufruf abgerufen und die Adresse einer temporären Variable, die diesen Wert enthält, an die Funktion übergeben. Nach Abschluss der Funktion wird der neue Wert wieder der <code>Ptr</code>-Eigenschaft des Objekts zugewiesen.</p>
+  <p>Wenn ein Objekt an einen Ptr-Parameter übergeben wird, wird der Wert der <code class="no-highlight">Ptr</code>-Eigenschaft des Objekts verwendet. Wenn diese Eigenschaft nicht existiert, wird ein <a href="Error.htm#PropertyError">PropertyError</a> ausgelöst. Das Objekt ist typischerweise ein <a href="Buffer.htm">Buffer</a>.</p>
+  <p>Wenn ein Objekt an einen Ptr*-Parameter übergeben wird, wird der Wert der <code class="no-highlight">Ptr</code>-Eigenschaft des Objekts vor dem Aufruf abgerufen und die Adresse einer temporären Variable, die diesen Wert enthält, an die Funktion übergeben. Nach Abschluss der Funktion wird der neue Wert wieder der <code class="no-highlight">Ptr</code>-Eigenschaft des Objekts zugewiesen.</p>
   <p><i>Ptr</i> kann auch mit dem *- oder P-Suffix verwendet werden; es sollte mit Funktionen verwendet werden, die einen Pointer via LPVOID* oder ähnliches zurückgeben.</p>
   <p><i>UPtr</i> ist ebenfalls gültig, allerdings mit den folgenden Einschränkungen:</p>
   <ul>
@@ -166,15 +166,15 @@ str := StrGet(buf, "cp0")  <em>; ANSI-Zeichenkette aus dem Pufferspeicher abrufe
 
 <h2 id="load">Performanz</h2>
 <p>Wenn die DLL wiederholt aufgerufen wird, ist es ratsam, sie vorher zu laden, um die Performanz drastisch zu erhöhen (<em>das ist für eine <a href="#std">Standard-DLL</a> wie User32 nicht notwendig, da sie immer allgegenwärtig ist</em>). Dadurch wird vermieden, dass DllCall jedes Mal LoadLibrary und FreeLibrary intern aufrufen muss. Zum Beispiel:</p>
-<pre>hModule := DllCall("<strong>LoadLibrary</strong>", "Str", "MeineFunktionen.dll", "Ptr")  <em>; Verhindert, dass DllCall die Bibliothek in der Schleife laden muss.</em>
+<pre>hModule := DllCall("LoadLibrary", "Str", "MeineFunktionen.dll", "Ptr")  <em>; Verhindert, dass DllCall die Bibliothek in der Schleife laden muss.</em>
 Loop Files, "C:\Meine Dokumente\*.*", "R"
     Ergebnis := DllCall("MeineFunktionen\DateiSichern", "Str", A_LoopFilePath)
-DllCall("<strong>FreeLibrary</strong>", "Ptr", hModule)  <em>; Um Speicherplatz zu sparen, kann die DLL nach Gebrauch wieder freigegeben werden.</em></pre>
+DllCall("FreeLibrary", "Ptr", hModule)  <em>; Um Speicherplatz zu sparen, kann die DLL nach Gebrauch wieder freigegeben werden.</em></pre>
 <p>Um die Performanz noch weiter zu erhöhen, kann die Adresse der Funktion im Voraus ermittelt werden. Zum Beispiel:</p>
 <pre><em>; Verwenden Sie in der folgenden Zeile LoadLibrary anstelle von GetModuleHandle, wenn die DLL noch nicht geladen ist.</em>
-<strong>MulDivProc</strong> := DllCall("GetProcAddress", "Ptr", DllCall("GetModuleHandle", "Str", "<strong>kernel32</strong>", "Ptr"), "AStr", "<strong>MulDiv</strong>", "Ptr")
+MulDivProc := DllCall("GetProcAddress", "Ptr", DllCall("GetModuleHandle", "Str", "kernel32", "Ptr"), "AStr", "MulDiv", "Ptr")
 Loop 500
-    DllCall(<strong>MulDivProc</strong>, "Int", 3, "Int", 4, "Int", 3)</pre>
+    DllCall(MulDivProc, "Int", 3, "Int", 4, "Int", 3)</pre>
 <p>Wenn der erste Parameter von DllCall eine direkt geschriebene Zeichenkette wie <code>"MulDiv"</code> ist und die DLL der entsprechenden Funktion normal vor dem Start des Skripts geladen wird, oder erfolgreich mit <a href="_DllLoad.htm">#DllLoad</a> geladen wurde, wird die Zeichenkette automatisch in eine Funktionsadresse aufgelöst. Diese interne Optimierung ist effizienter als das obige Beispiel.</p>
 <p>Übergibt man eine Zeichenkettenvariable an eine Funktion, die die Länge der Zeichenkette nicht ändert, kann die Performanz erhöht werden, indem man die Variable <a href="StrPtr.htm">per Adresse</a> (z.B. <code>StrPtr(MeineVar)</code>) statt als "<a href="#str">str</a>" übergibt (insbesondere dann, wenn die Zeichenkette sehr lang ist). Das folgende Beispiel wandelt alle Buchstaben einer Zeichenkette in Großbuchstaben um: <code>DllCall("CharUpper", "<strong>Ptr</strong>", StrPtr(MeineVar), "Ptr")</code>.</p>
 
@@ -216,7 +216,7 @@ MsgBox "Sie haben die Schaltfläche Nr. %WelcheSchaltfl% gedrückt."</pre>
 
 <div class="ex" id="ExWallpaper">
 <p><a class="ex_number" href="#ExWallpaper"></a> Ersetzt das Hintergrundbild des Desktops mit der angegebenen Bitmap-Datei (.bmp).</p>
-<pre>DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir <strong>.</strong> "\winnt.bmp", "UInt", 1)</pre>
+<pre>DllCall("SystemParametersInfo", "UInt", 0x14, "UInt", 0, "Str", A_WinDir . "\winnt.bmp", "UInt", 1)</pre>
 </div>
 
 <div class="ex" id="ExIsWindowVisible">
