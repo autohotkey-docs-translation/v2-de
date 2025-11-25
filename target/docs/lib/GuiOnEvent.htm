@@ -7,12 +7,13 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css">
+<link href="../static/dark.css" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" id="dark_css">
 <script src="../static/content.js" type="text/javascript"></script>
 <script src="../static/ga4.js" type="text/javascript"></script>
 </head>
 <body>
 
-<h1>OnEvent</h1>
+<h1>OnEvent (GUI)</h1>
 <p>Registriert eine Funktion oder Methode, die aufgerufen wird, wenn ein bestimmtes Ereignis durch ein GUI-Fenster oder -Steuerelement ausgelöst wird.</p>
 <pre class="Syntax"><a href="Gui.htm">Gui</a>.<span class="func">OnEvent</span>(EreignisName, Rückruf <span class="optional">, HinzufügenEntfernen</span>)
 <a href="GuiControl.htm">GuiCtrl</a>.<span class="func">OnEvent</span>(EreignisName, Rückruf <span class="optional">, HinzufügenEntfernen</span>)</pre>
@@ -24,13 +25,22 @@
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Der Name des Ereignisses. Siehe <a href="#Events">Ereignisse</a> weiter unten.</p>
   </dd>
-  
   <dt>Rückruf</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
     <p>Eine Funktion, eine Methode oder ein Objekt, die/das aufgerufen wird, wenn das Ereignis ausgelöst wird.</p>
     <p>Wenn die GUI ein Event-Sink hat (d.h. wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode im Event-Sink sein. Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
-    <p>Informationen zu den Parametern, dem Rückgabewert, der Namensgebung und mehr finden Sie in den folgenden Abschnitten.</p>
+    <p>Die Rückruffunktion akzeptiert je nach <a href="#Window_Events">Fensterereignis</a> oder <a href="#Control_Events">Steuerelementereignis</a> eine bestimmte Anzahl von Parametern und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <pre class="NoIndent">MeinRückruf(GuiOderCtrlObj, ...) { ...</pre>
+    <p>Es spielt keine Rolle, welche Namen Sie den Parametern geben, allerdings werden ihnen die folgenden Werte nacheinander zugewiesen:</p>
+    <ol>
+      <li>Das <a href="Gui.htm">Gui</a>- oder <a href="GuiControl.htm">GuiControl</a>-Objekt des GUI-Fensters bzw. -Steuerelements, das das Ereignis ausgelöst hat. Dieser Wert wird immer übergeben.</li>
+      <li>Null oder mehr zusätzliche Werte, abhängig vom <a href="#Window_Events">Fensterereignis</a> oder <a href="#Control_Events">Steuerelementereignis</a>. Im Falle des Fensterereignisses <a href="#Size">Size</a> wäre das z.B. <em>MinMax</em> (ob das Fenster minimiert oder maximiert ist), <em>Breite</em> (dessen neue Breite) und <em>Höhe</em> (dessen neue Höhe).</li>
+    </ol>
+    <p>Es können beliebig viele Parameter am Ende der Parameterliste der Rückruffunktion weggelassen werden, wenn die entsprechenden Informationen nicht benötigt werden, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>.</p>
+    <p id="Callback_Return_Value">Wenn mehrere Rückruffunktionen für ein Ereignis registriert sind, kann eine Rückruffunktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Rückruffunktionen aufgerufen werden.</p>
+    <p>Der Rückgabewert kann je nach Ereignis eine zusätzliche Bedeutung haben. Zum Beispiel kann eine <a href="#Close">Close</a>-Rückruffunktion eine Zahl ungleich 0 zurückgeben (z.B. <code>true</code>), um die Schließung des GUI-Fensters zu verhindern.</p>
+    <p>Weitere Informationen finden Sie in den folgenden Abschnitten.</p>
   </dd>
   
   <dt>HinzufügenEntfernen</dt>
@@ -52,10 +62,6 @@
 <p>Viele Ereignisse akzeptieren zusätzliche Parameter.</p>
 <p>Wie bei allen dynamisch aufgerufenen Methoden oder Funktionen können Sie einen oder mehrere Parameter am Ende der Parameterliste der Rückruffunktion weglassen, wenn Sie die entsprechenden Informationen nicht benötigen, aber dann muss als letzter Parameter ein Sternchen angegeben werden, z.B. <code>MeinRückruf(Param1, *)</code>. Wenn ein Ereignis mehr Parameter hat als von der Rückruffunktion deklariert, werden diese einfach ignoriert (es sei denn, die Rückruffunktion ist <a href="../Functions.htm#Variadic">variadisch</a>).</p>
 <p>Die Rückruffunktion kann mehr Parameter deklarieren als das Ereignis bereitstellt, wenn (und nur wenn) die zusätzlichen Parameter als optional deklariert sind. Die Verwendung von optionalen Parametern wird jedoch nicht empfohlen, da zukünftige Versionen des Programms ein Ereignis mit zusätzlichen Parametern erweitern können; in diesem Fall würden die optionalen Parameter nicht mehr ihre Standardwerte erhalten.</p>
-
-<h2 id="Callback_Return_Value">Rückgabewert der Rückruffunktion</h2>
-<p>Wenn mehrere Rückruffunktionen für ein Ereignis registriert sind, kann eine Rückruffunktion einen nicht-leeren Wert zurückgeben, um zu verhindern, dass die restlichen Rückruffunktionen aufgerufen werden.</p>
-<p>Der Rückgabewert kann je nach Ereignis eine zusätzliche Bedeutung haben. Zum Beispiel kann eine <a href="#Close">Close</a>-Rückruffunktion eine Zahl ungleich 0 zurückgeben (z.B. <code>true</code>), um die Schließung des GUI-Fensters zu verhindern.</p>
 
 <h2 id="Callback_Name">Name der Rückruffunktion</h2>
 <p>Konventionsgemäß wird die Syntax jedes Ereignisses unten mit einem Funktionsnamen in Form von <code class="no-highlight"><i>ObjektTyp</i>_<i>EreignisName</i></code> angezeigt. Dies dient der Übersichtlichkeit. Skripte müssen sich nicht an diese Konvention halten und können beliebige gültige Funktionsnamen verwenden.</p>

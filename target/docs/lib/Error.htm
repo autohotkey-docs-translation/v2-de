@@ -7,6 +7,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" type="text/css" />
+<link href="../static/dark.css" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" id="dark_css" />
 <script src="../static/content.js" type="text/javascript"></script>
 <script src="../static/ga4.js" type="text/javascript"></script>
 </head>
@@ -16,38 +17,44 @@
 <pre class="NoIndent">class Error extends Object</pre>
 
 <p>Error-Objekte werden vom internen Code via <a href="Throw.htm">Throw</a> ausgelöst, wenn ein Laufzeitfehler auftritt, können aber auch explizit vom Skript ausgelöst werden.</p>
+<p>Error-Objekte können mit <a href="#Call">Error()</a> erstellt und mit <a href="Catch.htm">Catch</a> abgerufen werden.</p>
+<p>"ErrorObj" wird hier stellvertretend für ein beliebiges Error-Objekt verwendet, da "Error" die Klasse selbst ist.</p>
+<p>Zusätzlich zu den von <a href="Object.htm">Object</a> geerbten Methoden und Eigenschaften haben Error-Objekte die folgenden vordefinierten Methoden und Eigenschaften.</p>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
-<ul>
-  <li><a href="#Standard_Properties">Standardeigenschaften</a></li>
-  <li><a href="#new">Error()</a></li>
-  <li><a href="#error-types">Fehlertypen</a></li>
-  <li><a href="#Related">Siehe auch</a></li>
+<ul class="indent">
+  <li><a href="#Static_Methods">Statische Methoden</a>:
+    <ul>
+      <li><a href="#Call">Call</a>: Erstellt ein Error-Objekt.</li>
+    </ul>
+  </li>
+  <li><a href="#Properties">Eigenschaften</a>:
+    <ul>
+      <li><a href="#Extra">Extra</a>: Ermittelt oder setzt eine Zeichenkette, die sich auf den Fehler bezieht.</li>
+      <li><a href="#File">File</a>: Ermittelt oder setzt den Pfad der Skriptdatei, die die Zeile enthält, in der der Fehler auftrat.</li>
+      <li><a href="#Line">Line</a>: Ermittelt oder setzt die Nummer der Zeile, in der der Fehler auftrat.</li>
+      <li><a href="#Message">Message</a>: Ermittelt oder setzt die Fehlermeldung.</li>
+      <li><a href="#Stack">Stack</a>: Ermittelt oder setzt den Aufrufstapel, als das Error-Objekt konstruiert wurde.</li>
+      <li><a href="#What">What</a>: Ermittelt oder setzt die Quelle, die die Ausnahme ausgelöst hat.</li>
+    </ul>
+  </li>
+  <li>Allgemein:
+    <ul>
+      <li><a href="#error-types">Fehlertypen</a></li>
+      <li><a href="#Remarks">Bemerkungen</a></li>
+      <li><a href="#Related">Siehe auch</a></li>
+    </ul>
+  </li>
 </ul>
 
-<h2 id="Standard_Properties">Standardeigenschaften</h2>
-<p id="Message"><strong>Message:</strong> Eine Fehlermeldung.</p>
-<p id="What"><strong>What:</strong> Was die Ausnahme ausgelöst hat. Enthält normalerweise den Namen einer Funktion, ist aber leer bei Ausnahmen, die durch einen Fehler in einem Ausdruck ausgelöst wurden (z.B. wenn ein mathematischer Operator für einen nicht-numerischen Wert verwendet wird).</p>
-<p id="Extra"><strong>Extra:</strong> Ein Zeichenkettenwert, der sich auf den Fehler bezieht, falls vorhanden. Wenn dieser Wert in eine nicht-leere Zeichenkette umgewandelt werden kann, wird im regulären Fehlerdialogfenster eine Zeile mit "Specifically:" gefolgt von dieser Zeichenkette angezeigt.</p>
-<p id="File"><strong>File:</strong> Der vollständige Pfad der Skriptdatei, die die Zeile enthält, in der der Fehler auftrat oder das Error-Objekt konstruiert wurde.</p>
-<p id="Line"><strong>Line:</strong> Die Nummer der Zeile, in der der Fehler auftrat oder das Error-Objekt konstruiert wurde.</p>
-<p id="Stack"><strong>Stack:</strong> Eine Zeichenkette, die den Aufrufstapel zum Zeitpunkt der Konstruktion des Error-Objekts repräsentiert. Jede Zeile kann wie folgt formatiert sein:</p>
-<dl>
-  <dt><code class="no-highlight"><i>File</i> (<i>Line</i>) : [<i>What</i>] <i>Quellcode</i>`r`n</code></dt>
-  <dd>Repräsentiert einen Aufruf der <em>What</em>-Funktion. <em>File</em> und <em>Line</em> geben die aktuelle Skriptzeile in dieser Stapeltiefe an. <em>Quellcode</em> ist die ungefähre Darstellung des tatsächlichen Quellcodes in dieser Zeile, wie in <a href="ListLines.htm">ListLines</a> angezeigt.</dd>
-  <dt><code class="no-highlight">&gt; <i>What</i>`r`n</code></dt>
-  <dd>Repräsentiert den Start eines Threads, typischerweise die direkte Ursache für den Funktionsaufruf darüber.</dd>
-  <dt><code class="no-highlight">... <i>N</i> more</code></dt>
-  <dd>Gibt an, dass der Stacktrace gekürzt wurde und dass <em>n</em> weitere Stackeinträge nicht angezeigt werden. Aktuell kann die <code class="no-highlight">Stack</code>-Eigenschaft 2047 Zeichen nicht überschreiten.</dd>
-</dl>
+<h2 id="Static_Methods">Statische Methoden</h2>
 
-<p class="warning"><strong>Hinweis:</strong> Das reguläre Fehlerdialogfenster erfordert, dass <em>Message</em>, <em>Extra</em>, <em>File</em> und <em>Line</em> <a href="Object.htm">eigene Werteigenschaften</a> sind.</p>
-
-<h2 id="new">Error()</h2>
+<div class="methodShort" id="Call"><span id="new"></span><h3>Call</h3>
 <p>Erstellt ein Error-Objekt.</p>
-<pre class="Syntax">NewError := <span class="func"><i>Error</i></span>(Message <span class="optional">, What, Extra</span>)</pre>
-<p><em><strong>Error</strong></em> kann mit einer der unter <a href="#error-types">Fehlertypen</a> aufgeführten Unterklassen ersetzt werden, wobei einige Unterklassen andere Parameter akzeptieren.</p>
-<p>Die Parameter entsprechen direkt den oben beschriebenen Eigenschaften, können aber bei Error-Unterklassen, die die Methode __New überschreiben, abweichen.</p>
+<pre class="Syntax">ErrorObj := <i>Error</i>(Message <span class="optional">, What, Extra</span>)
+ErrorObj := <i>Error</i>.<span class="func">Call</span>(Message <span class="optional">, What, Extra</span>)</pre>
+<p><em>Error</em> kann mit einer der unter <a href="#error-types">Fehlertypen</a> aufgeführten Unterklassen ersetzt werden, wobei einige Unterklassen andere Parameter akzeptieren.</p>
+<p>Die Parameter entsprechen direkt den Eigenschaften <a href="#Message">Message</a>, <a href="#What">What</a> und <a href="#Extra">Extra</a>, können aber bei Error-Unterklassen, die die Methode __New überschreiben, abweichen.</p>
 <p><em>Message</em> und <em>Extra</em> werden in Zeichenketten umgewandelt. Diese werden in einem Fehlerdialogfenster angezeigt, wenn die Ausnahme ausgelöst, aber nicht abgefangen wurde.</p>
 <p><em>What</em> gibt die Quelle des Fehlers an. Dies kann eine beliebige Zeichenkette sein, sollte aber besser ein negativer Integer oder der Name einer laufenden Funktion sein. Die Angabe von -1 gibt die aktuelle Funktion an, -2 die Funktion, die sie aufgerufen hat, und so weiter. Wenn das Skript <a href="../Scripts.htm#ahk2exe">kompiliert</a> ist oder der Wert keinen gültigen Stack-Frame identifiziert, wird der Wert lediglich in eine Zeichenkette umgewandelt und <code>NewError.What</code> zugewiesen. Andernfalls wird der identifizierte Stack-Frame wie folgt verwendet, um die anderen Eigenschaften zu ermitteln:</p>
 <ul>
@@ -79,6 +86,56 @@ catch as e
 EineFunktion() {
     throw Error("Fehler", -1)
 }</pre>
+</div>
+
+<span id="Standard_Properties"></span><h2 id="Properties">Eigenschaften</h2>
+
+<div class="methodShort" id="Extra"><h3>Extra</h3>
+<p>Ermittelt oder setzt eine Zeichenkette, die sich auf den Fehler bezieht.</p>
+<pre class="Syntax">AktuellesExtra := ErrorObj.<span class="func">Extra</span></pre>
+<pre class="Syntax">ErrorObj.<span class="func">Extra</span> := NeuesExtra</pre>
+<p>Das reguläre Fehlerdialogfenster zeigt eine Zeile mit "Specifically:" gefolgt von dieser Zeichenkette an.</p>
+</div>
+
+<div class="methodShort" id="File"><h3>File</h3>
+<p>Ermittelt oder setzt den vollständigen Pfad der Skriptdatei, die die Zeile enthält, in der der Fehler auftrat oder das Error-Objekt konstruiert wurde.</p>
+<pre class="Syntax">AktuelleDatei := ErrorObj.<span class="func">File</span></pre>
+<pre class="Syntax">ErrorObj.<span class="func">File</span> := NeueDatei</pre>
+</div>
+
+<div class="methodShort" id="Line"><h3>Line</h3>
+<p>Ermittelt oder setzt die Nummer der Zeile, in der der Fehler auftrat oder das Error-Objekt konstruiert wurde.</p>
+<pre class="Syntax">AktuelleZeile := ErrorObj.<span class="func">Line</span></pre>
+<pre class="Syntax">ErrorObj.<span class="func">Line</span> := NeueZeile</pre>
+</div>
+
+<div class="methodShort" id="Message"><h3>Message</h3>
+<p>Ermittelt oder setzt die Fehlermeldung.</p>
+<pre class="Syntax">AktuelleMeldung := ErrorObj.<span class="func">Message</span></pre>
+<pre class="Syntax">ErrorObj.<span class="func">Message</span> := NeueMeldung</pre>
+</div>
+
+<div class="methodShort" id="Stack"><h3>Stack</h3>
+<p>Ermittelt oder setzt eine Zeichenkette, die den Aufrufstapel zum Zeitpunkt der Konstruktion des Error-Objekts repräsentiert.</p>
+<pre class="Syntax">AktuellerStapel := ErrorObj.<span class="func">Stack</span></pre>
+<pre class="Syntax">ErrorObj.<span class="func">Stack</span> := NeuerStapel</pre>
+<p>Jede Zeile kann wie folgt formatiert sein:</p>
+<dl>
+  <dt><code class="no-highlight"><i>File</i> (<i>Line</i>) : [<i>What</i>] <i>Quellcode</i>`r`n</code></dt>
+  <dd>Repräsentiert einen Aufruf der <em>What</em>-Funktion. <em>File</em> und <em>Line</em> geben die aktuelle Skriptzeile in dieser Stapeltiefe an. <em>Quellcode</em> ist die ungefähre Darstellung des tatsächlichen Quellcodes in dieser Zeile, wie in <a href="ListLines.htm">ListLines</a> angezeigt.</dd>
+  <dt><code class="no-highlight">&gt; <i>What</i>`r`n</code></dt>
+  <dd>Repräsentiert den Start eines Threads, typischerweise die direkte Ursache für den Funktionsaufruf darüber.</dd>
+  <dt><code class="no-highlight">... <i>N</i> more</code></dt>
+  <dd>Gibt an, dass der Stacktrace gekürzt wurde und dass <em>n</em> weitere Stackeinträge nicht angezeigt werden. Aktuell kann die <code class="no-highlight">Stack</code>-Eigenschaft 2047 Zeichen nicht überschreiten.</dd>
+</dl>
+</div>
+
+<div class="methodShort" id="What"><h3>What</h3>
+<p>Ermittelt oder setzt die Quelle, die die Ausnahme ausgelöst hat.</p>
+<pre class="Syntax">AktuellesWas := ErrorObj.<span class="func">What</span></pre>
+<pre class="Syntax">ErrorObj.<span class="func">What</span> := NeuesWas</pre>
+<p>Enthält normalerweise den Namen einer Funktion, ist aber leer bei Ausnahmen, die durch einen Fehler in einem Ausdruck ausgelöst wurden (z.B. wenn ein mathematischer Operator für einen nicht-numerischen Wert verwendet wird).</p>
+</div>
 
 <h2 id="error-types">Fehlertypen</h2>
 
@@ -102,6 +159,9 @@ EineFunktion() {
   <li id="ZeroDivisionError"><strong>ZeroDivisionError:</strong> Es wurde versucht, in einem Ausdruck oder mit der Mod-Funktion durch Null zu dividieren.</li>
 </ul>
 <p>Fehler werden auch unter Verwendung der Basis-Error-Klasse ausgelöst.</p>
+
+<h2 id="Remarks">Bemerkungen</h2>
+<p>Das reguläre Fehlerdialogfenster erfordert, dass Message, Extra, File und Line <a href="Object.htm">eigene Werteigenschaften</a> sind.</p>
 
 <h2 id="Related">Siehe auch</h2>
 <p><a href="Throw.htm">Throw</a>, <a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Finally.htm">Finally</a>, <a href="OnError.htm">OnError</a></p>
