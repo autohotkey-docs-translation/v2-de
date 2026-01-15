@@ -56,12 +56,12 @@
 <p>ActiveX-Komponenten wie das MSIE-Browser-Steuerelement können wie folgt in ein GUI-Fenster eingebettet werden. Einzelheiten zu der hier verwendeten ActiveX-Komponente und ihren Methoden finden Sie unter <a href="https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752085(v=vs.85)">WebBrowser object (Microsoft Docs)</a> und <a href="https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752093(v=vs.85)">Navigate method (Microsoft Docs)</a>.</p>
 <pre>MeineGui := Gui()
 WB := MeineGui.Add("ActiveX", "w980 h640", "Shell.Explorer").Value  <em>; Der letzte Parameter ist der Name der ActiveX-Komponente.</em>
-WB.Navigate("https://www.autohotkey.com/docs/")  <em>; Nur für das Web-Browser-Steuerelement anwendbar.</em>
+WB.Navigate("https://example.com/")  <em>; Nur für das Web-Browser-Steuerelement anwendbar.</em>
 MeineGui.Show()</pre>
 <p>Nach der Erstellung des Steuerelements kann das ActiveX-Objekt via <a href="GuiControl.htm#Value">GuiControl.Value</a> abgerufen werden.</p>
 <p>Um die Ereignisse des Objekts zu verarbeiten, verwenden Sie <a href="ComObjConnect.htm">ComObjConnect</a> wie folgt. Einzelheiten zu dem hier verwendeten Ereignis finden Sie unter <a href="https://learn.microsoft.com/previous-versions/aa768334(v=vs.85)">NavigateComplete2 event (Microsoft Docs)</a>.</p>
 <pre>MeineGui := Gui()
-URL := MeineGui.Add("Edit", "w930 r1", "https://www.autohotkey.com/docs/")
+URL := MeineGui.Add("Edit", "w930 r1", "https://example.com/")
 MeineGui.Add("Button", "x+6 yp w44 Default", "Go").OnEvent("Click", ButtonLaden)
 WB := MeineGui.Add("ActiveX", "xm w980 h640", "Shell.Explorer").Value
 ComObjConnect(WB, WB_events)  <em>; WB-Ereignisse mit dem WB_events-Klassenobjekt verbinden.</em>
@@ -234,8 +234,30 @@ IPCtrlGetAddress(GuiCtrl)
 <p><strong>Right:</strong> Bewirkt, dass der Kalender auf der rechten statt linken Seite des Steuerelements aufgeklappt wird.</p>
 <p><strong>1:</strong> Fügen Sie die Zahl 1 in <em>Optionen</em> ein, um rechts vom Steuerelement ein UpDown-Steuerelement zum Ändern von Datum-Zeit-Werten bereitzustellen, das die Schaltfläche zum Aufklappen des Monatskalenders ersetzt. Funktioniert nicht mit der oben beschriebenen LongDate-Option.</p>
 <p id="ChooseNone"><strong>2:</strong> Fügen Sie die Zahl 2 in <em>Optionen</em> ein, um das Steuerelement mit einer CheckBox auszustatten, die der Benutzer ausschalten kann, um anzugeben, dass kein Datum und keine Uhrzeit ausgewählt ist. Diese Option kann nach der Erstellung des Steuerelements nicht mehr geändert werden.</p>
-<p><strong>Farben im aufklappbaren Kalender:</strong> Die Farben der Tageszahlen im aufklappbaren Kalender richten sich nach den Farben, die via <a href="Gui.htm#SetFont">Gui.SetFont</a> oder <a href="Gui.htm#OtherOptions">c-Option</a> festgelegt wurden. Um die Farben der anderen Bereiche des Kalenders zu ändern, gehen Sie wie folgt vor:</p>
-<pre><a href="SendMessage.htm">SendMessage</a> 0x1006, 4, 0xFFAA99, "SysDateTimePick321" <em>; 0x1006 ist DTM_SETMCCOLOR. 4 ist MCSC_MONTHBK (Hintergrundfarbe). Die Farbe muss im BGR- statt RGB-Format angegeben werden (Rot- und Blauanteile sind vertauscht).</em></pre>
+<p><strong>Farben im aufklappbaren Kalender:</strong> Um die Farben eines beliebigen Bereichs des aufklappbaren Kalenders zu ändern, verwenden Sie <a href="SendMessage.htm">SendMessage</a> wie in diesem Beispiel:</p>
+<pre>DTM_SETMCCOLOR    := 0x1006
+
+MCSC_BACKGROUND   := 0 <em>; Gesamthintergrund</em>
+MCSC_MONTHBK      := 4 <em>; Hintergrund des Monats</em>
+MCSC_TEXT         := 1 <em>; Text des Monats</em>
+MCSC_TITLEBK      := 2 <em>; Hintergrund des Titels</em>
+MCSC_TITLETEXT    := 3 <em>; Text des Titels</em>
+MCSC_TRAILINGTEXT := 5 <em>; Text der anderen Monate</em>
+
+HinterFarbe := 0xFFAA99 <em>; Neue Hintergrundfarbe des Kalenders (BGR, nicht RGB).</em>
+TextFarbe := 0x0066CC <em>; Neue Textfarbe des Kalenders (BGR, nicht RGB).</em>
+
+MeineGui := Gui()
+DT := MeineGui.Add("DateTime")
+DT.OnNotify(-754, DTN_DROPDOWN) <em>; Klassisches Design erzwingen.</em>
+SendMessage(DTM_SETMCCOLOR, MCSC_MONTHBK, HinterFarbe, DT)
+SendMessage(DTM_SETMCCOLOR, MCSC_TEXT, TextFarbe, DT)
+MeineGui.Show()
+
+DTN_DROPDOWN(DT, lParam) {
+    hCal := SendMessage(0x1008, 0, 0, DT) <em>; 0x1008 ist DTM_GETMONTHCAL.</em>
+    DllCall("UxTheme\SetWindowTheme", "Ptr", hCal, "WStr", "", "WStr", "")
+}</pre>
 
 <a id="DDL"></a><h2 id="DropDownList">DropDownList (oder DDL)</h2>
 <p>Eine aufklappbare Liste mit Auswahlmöglichkeiten. Geben Sie im letzten Parameter von <a href="Gui.htm#Add">Gui.Add</a> ein <a href="Array.htm">Array</a> in Form von <code>["Auswahl1", "Auswahl2", "Auswahl3"]</code> an.</p>
@@ -418,8 +440,24 @@ MeineGui.Show()</pre>
 <p><strong>4:</strong> Fügen Sie die Zahl 4 in <em>Optionen</em> ein, um die Kalenderwochen (1-53) auf der linken Seite jeder Tageszeile anzuzeigen. Die Wochennummerierung wird durch die lokalen Benutzereinstellungen des Betriebssystems bestimmt. Die drei möglichen Modi sind in der Dokumentation zu <a href="https://learn.microsoft.com/windows/win32/intl/locale-ifirstweekofyear">LOCALE_IFIRSTWEEKOFYEAR</a> beschrieben.</p>
 <p><strong>8:</strong> Fügen Sie die Zahl 8 in <em>Optionen</em> ein, um das Hervorheben des heutigen Datums im Steuerelement zu verhindern.</p>
 <p><strong>16:</strong> Fügen Sie die Zahl 16 in <em>Optionen</em> ein, um die Anzeige des heutigen Datums im unteren Bereich des Steuerelements zu verhindern.</p>
-<p><strong>Farben:</strong> Die Farben der Tageszahlen im Kalender richten sich nach den Farben, die via <a href="Gui.htm#SetFont">Gui.SetFont</a> oder <a href="Gui.htm#OtherOptions">c-Option</a> festgelegt wurden. Um die Farben der anderen Bereiche des Kalenders zu ändern, gehen Sie wie folgt vor:</p>
-<pre><a href="SendMessage.htm">SendMessage</a> 0x100A, 5, 0xFFAA99, "SysMonthCal321" <em>; 0x100A ist MCM_SETCOLOR. 5 ist MCSC_TITLETEXT (Farbe des Titeltextes). Die Farbe muss im BGR- statt RGB-Format angegeben werden (Rot- und Blauanteile sind vertauscht).</em></pre>
+<p><strong>Farben:</strong> Die Farben der Tageszahlen im Kalender richten sich nach den Farben, die via <a href="Gui.htm#SetFont">Gui.SetFont</a> oder <a href="Gui.htm#OtherOptions">c-Option</a> festgelegt wurden, sofern das Steuerelement das <a href="Gui.htm#Theme">klassische Design</a> hat. Um die Farben der anderen Bereiche des Kalenders zu ändern, verwenden Sie <a href="SendMessage.htm">SendMessage</a> wie in diesem Beispiel:</p>
+<pre>MCM_SETCOLOR      := 0x100A
+
+MCSC_BACKGROUND   := 0 <em>; Gesamthintergrund</em>
+MCSC_MONTHBK      := 4 <em>; Hintergrund des Monats</em>
+MCSC_TEXT         := 1 <em>; Text des Monats</em>
+MCSC_TITLEBK      := 2 <em>; Hintergrund des Titels</em>
+MCSC_TITLETEXT    := 3 <em>; Text des Titels</em>
+MCSC_TRAILINGTEXT := 5 <em>; Text der anderen Monate</em>
+
+TitelHinterFarbe := 0xFFAA99 <em>; Neue Hintergrundfarbe des Titels (BGR, nicht RGB).</em>
+TitelTextFarbe := 0x0066CC <em>; Neue Textfarbe des Titels (BGR, nicht RGB).</em>
+
+MeineGui := Gui()
+MC := MeineGui.Add("MonthCal", "-Theme")
+SendMessage(MCM_SETCOLOR, MCSC_TITLEBK, TitelHinterFarbe, MC)
+SendMessage(MCM_SETCOLOR, MCSC_TITLETEXT, TitelTextFarbe, MC)
+MeineGui.Show()</pre>
 
 <a id="Pic"></a><h2 id="Picture">Picture (oder Pic)</h2>
 <p>Ein Bereich zum Anzeigen eines Bildes (siehe weiter unten, welche Dateitypen unterstützt werden). Der letzte Parameter ist der Dateiname des Bildes. Wenn kein absoluter Pfad angegeben ist, wird das Bild im <a href="../Variables.htm#WorkingDir">A_WorkingDir</a>-Verzeichnis vermutet.</p>

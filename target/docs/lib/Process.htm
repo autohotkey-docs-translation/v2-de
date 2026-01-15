@@ -63,51 +63,31 @@
 <h2 id="Examples">Beispiele</h2>
 
 <div class="ex" id="ExList">
-<p><a class="ex_number" href="#ExList"></a> Zeigt eine Liste von allen laufenden Prozessen an, die via <a href="DllCall.htm">DllCall</a> abgerufen wurde.</p>
-<pre>d := "  |  "  <em>; Zeichenkette als Trennung</em>
-s := 4096  <em>; Größe der Pufferspeicher und Arrays (4 KB)</em>
+<p><a class="ex_number" href="#ExList"></a> Zeigt eine Liste von allen laufenden Prozessen an, die via <a href="DllCall.htm">DllCall</a> und <a href="https://learn.microsoft.com/windows/win32/api/psapi/nf-psapi-enumprocesses">EnumProcesses</a> abgerufen wurde.</p>
+<pre>MeineGui := Gui()
+LV := MeineGui.Add("ListView", "w1300 r25", ["#", "PID", "Name", "Pfad"])
+for Index, Proz in ProzessListeAbrufen()
+    LV.Add("", Index, Proz.PID, Proz.Name, Proz.Pfad)
+LV.ModifyCol()
+MeineGui.Title := LV.GetCount() " Prozesse"
+MeineGui.Show()
 
-SkriptPID := ProcessExist()  <em>; Die PID des laufenden Skripts.</em>
-<em>; Handle dieses Skripts mit PROCESS_QUERY_INFORMATION (0x0400) abrufen:</em>
-h := DllCall("OpenProcess", "UInt", 0x0400, "Int", false, "UInt", SkriptPID, "Ptr")
-<em>; Ein einstellbares Zugriffstoken mit diesem Prozess öffnen (TOKEN_ADJUST_PRIVILEGES = 32):</em>
-DllCall("Advapi32.dll\OpenProcessToken", "Ptr", h, "UInt", 32, "PtrP", &amp;t := 0)
-<em>; Die lokale eindeutige ID der Debug-Berechtigung abrufen:</em>
-DllCall("Advapi32.dll\LookupPrivilegeValue", "Ptr", 0, "Str", "SeDebugPrivilege", "Int64P", &amp;luid := 0)
-ti := Buffer(16, 0)  <em>; Struktur mit Berechtigungen</em>
-NumPut( "UInt", 1  <em>; Einen Eintrag in das Berechtigungen-Array einfügen ...</em>
-      , "Int64", luid
-      , "UInt", 2  <em>; Diese Berechtigung aktivieren: SE_PRIVILEGE_ENABLED = 2</em>
-      , ti)
-<em>; Die Berechtigungen dieses Prozesses mit dem neuen Zugriffstoken aktualisieren:</em>
-r := DllCall("Advapi32.dll\AdjustTokenPrivileges", "Ptr", t, "Int", false, "Ptr", ti, "UInt", 0, "Ptr", 0, "Ptr", 0)
-DllCall("CloseHandle", "Ptr", t)  <em>; Zugriffstoken-Handle schließen, um Speicher freizugeben.</em>
-DllCall("CloseHandle", "Ptr", h)  <em>; Prozess-Handle schließen, um Speicher freizugeben.</em>
-
-hModule := DllCall("LoadLibrary", "Str", "Psapi.dll")  <em>; Performanz durch Vorabladen der Bibliothek erhöhen.</em>
-a := Buffer(s)  <em>; Ein Array zum Speichern der Liste von Prozess-IDs:</em>
-c := 0  <em>; Zähler für die Prozess-IDs</em>
-l := ""
-DllCall("Psapi.dll\EnumProcesses", "Ptr", a, "UInt", s, "UIntP", &amp;r)
-Loop r // 4  <em>; Array für IDs als DWORDs (32 Bit) parsen:</em>
-{
-    id := NumGet(a, A_Index * 4, "UInt")
-    <em>; Prozess öffnen mit: PROCESS_VM_READ (0x0010) | PROCESS_QUERY_INFORMATION (0x0400)</em>
-    h := DllCall("OpenProcess", "UInt", 0x0010 | 0x0400, "Int", false, "UInt", id, "Ptr")
-    if !h
-        continue
-    n := Buffer(s, 0)  <em>; Ein Puffer zum Speichern des Basisnamens des Moduls:</em>
-    e := DllCall("Psapi.dll\GetModuleBaseName", "Ptr", h, "Ptr", 0, "Ptr", n, "UInt", s//2)
-    if !e    <em>; Fallback-Methode für 64-Bit-Prozesse, wenn im 32-Bit-Modus:</em>
-        e := DllCall("Psapi.dll\GetProcessImageFileName", "Ptr", h, "Ptr", n, "UInt", s//2)
-    SplitPath StrGet(n), &amp;n
-    DllCall("CloseHandle", "Ptr", h)  <em>; Prozess-Handle schließen, um Speicher freizugeben.</em>
-    if (n &amp;&amp; e)  <em>; Wenn Image ungleich Null ist, zur Liste hinzufügen:</em>
-        l .= n "`n", c++
-}
-DllCall("FreeLibrary", "Ptr", hModule)  <em>; Bibliothek entladen, um Speicher freizugeben.</em>
-<em>;l := Sort(l)  ; Entkommentiere diese Zeile, um die Liste alphabetisch zu sortieren.</em>
-MsgBox StrReplace(l, "`n", d), c " Prozesse", 0</pre>
+ProzessListeAbrufen(MaxProzesse := 1024) {
+    Arr := []  <em>; Array zum Speichern der Prozessinformationen</em>
+    DllCall("Psapi.dll\EnumProcesses"
+        , "Ptr", Puf := Buffer(MaxProzesse * 4)  <em>; Puffer zum Speichern aller PIDs</em>
+        , "UInt", Puf.Size
+        , "UIntP", &amp;ByteAnzahl := 0)  <em>; Anzahl der von DllCall zurückgegebenen Bytes</em>
+    Loop (ByteAnzahl // 4) {
+        PID := NumGet(Puf, (A_Index - 1) * 4, "UInt")
+        try Arr.Push({
+            Name: ProcessGetName(PID),
+            Pfad: ProcessGetPath(PID),
+            PID: PID
+        })
+    }
+    return Arr
+}</pre>
 </div>
 
 <div class="ex" id="ExListCOM">
