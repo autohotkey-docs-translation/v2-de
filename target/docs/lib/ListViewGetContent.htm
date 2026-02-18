@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ListViewGetContent - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die ListViewGetContent-Funktion gibt eine Liste bestimmter oder aller Elemente/Zeilen in einer ListView zurück." />
+<meta name="description" content="Die ListViewGetContent-Funktion gibt Inhaltsdaten von einem ListView-Steuerelement zurück, z.B. Zeilen, Spalten oder Zählwerte." />
 <meta name="ahk:equiv-v1" content="lib/ControlGet.htm#List" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,23 +15,23 @@
 
 <h1>ListViewGetContent</h1>
 
-<p>Gibt eine Liste bestimmter oder aller Elemente/Zeilen in einer ListView zurück.</p>
+<p>Gibt Inhaltsdaten von einem ListView-Steuerelement zurück, z.B. Zeilen, Spalten oder Zählwerte.</p>
 
-<pre class="Syntax">Liste := <span class="func">ListViewGetContent</span>(<span class="optional">Optionen, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
+<pre class="Syntax">Daten := <span class="func">ListViewGetContent</span>(<span class="optional">Optionen, Steuerelement, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span>)</pre>
 
 <h2 id="Parameters">Parameter</h2>
 <dl>
     <dt>Optionen</dt>
     <dd>
         <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-        <p>Gibt an, was abgerufen werden soll. Wenn leer oder weggelassen, wird der gesamte Text in der ListView abgerufen. Andernfalls geben Sie beliebig viele der folgenden Wörter an, jeweils getrennt durch ein Leer- oder Tabulatorzeichen:</p>
-        <p><strong>Selected:</strong> Gibt nur die markierten (hervorgehobenen) Zeilen zurück. Wenn keine vorhanden ist, ist der Rückgabewert leer.</p>
-        <p><strong>Focused:</strong> Gibt nur die fokussierte Zeile zurück. Wenn keine vorhanden ist, ist der Rückgabewert leer.</p>
-        <p id="ColN"><strong>Col</strong><em>N</em>: Gibt nur die <em>N</em>-te Spalte (Feld) zurück. Ersetzen Sie <em>N</em> mit einer beliebigen Zahl. Zum Beispiel gibt Col4 die vierte Spalte zurück.</p>
-        <p><strong>Count:</strong> Gibt eine einzelne Zahl zurück, die die Gesamtanzahl der Zeilen in der ListView repräsentiert.</p>
-        <p><strong>Count Selected:</strong> Gibt die Anzahl der markierten (hervorgehobenen) Zeilen zurück.</p>
-        <p><strong>Count Focused:</strong> Gibt die Zeilennummer (Position) der fokussierten Zeile zurück (andernfalls 0).</p>
-        <p><strong>Count Col:</strong> Gibt die Anzahl der Spalten in der ListView zurück (oder -1, wenn die Anzahl nicht ermittelt werden kann).</p>
+        <p>Geben Sie an, was abgerufen werden soll. Wenn leer oder weggelassen, werden alle Zeilen im Steuerelement zurückgegeben. Andernfalls geben Sie beliebig viele der folgenden Wörter an, jeweils getrennt durch ein Leer- oder Tabulatorzeichen:</p>
+        <p><strong>Selected:</strong> Gibt nur die markierten Zeilen zurück. Gibt es keine, wird <em>Daten</em> leer gemacht.</p>
+        <p><strong>Focused:</strong> Gibt nur die fokussierte Zeile zurück. Gibt es keine, wird <em>Daten</em> leer gemacht.</p>
+        <p id="ColN"><strong>Col</strong><em>N</em>: Gibt nur die <em>N</em>-te Spalte (Feld) zurück. Ersetzen Sie <em>N</em> mit einer beliebigen Spaltennummer. Zum Beispiel gibt Col4 die vierte Spalte zurück.</p>
+        <p><strong>Count:</strong> Gibt die Anzahl aller Zeilen im Steuerelement zurück.</p>
+        <p><strong>Count&nbsp;Selected:</strong> Gibt die Anzahl der markierten Zeilen zurück.</p>
+        <p><strong>Count&nbsp;Focused:</strong> Gibt die Zeilennummer (Position) der fokussierten Zeile zurück (oder 0, wenn es keine gibt).</p>
+        <p><strong>Count&nbsp;Col:</strong> Gibt die Anzahl aller Spalten im Steuerelement zurück (oder -1, wenn die Anzahl nicht ermittelt werden kann).</p>
     </dd>
     <dt>Steuerelement</dt>
     <dd>
@@ -48,26 +48,28 @@
 </dl>
 
 <h2 id="Return_Value">Rückgabewert</h2>
-<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt eine Liste von Elementen/Zeilen zurück. Innerhalb jeder Zeile endet jedes Feld (Spalte) außer dem letzten mit einem Tabulatorzeichen (`t). Um die Elemente/Zeilen einzeln durchzugehen, können Sie eine <a href="LoopParse.htm">parsende Schleife</a> verwenden, wie in <a href="#ExListView">Beispiel #1</a> gezeigt.</p>
+<p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>Diese Funktion gibt je nach Optionen entweder eine Liste von Zeilen oder einen Zählwert zurück.</p>
+<p>Wenn der Rückgabewert eine Liste von Zeilen ist, endet jede Zeile außer der letzten mit einem Zeilenvorschubzeichen (`n). Innerhalb jeder Zeile endet jedes Feld (Spalte) außer dem letzten mit einem Tabulatorzeichen (`t).</p>
 
 <h2 id="Error_Handling">Fehlerbehandlung</h2>
 <p>Es wird ein <a href="Error.htm#TargetError">TargetError</a> ausgelöst, wenn das Fenster oder Steuerelement nicht gefunden werden konnte.</p>
-<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn eine Meldung nicht an das Steuerelement gesendet werden konnte, oder wenn der Prozess, der die ListView besitzt, nicht geöffnet werden konnte, z.B. weil Benutzerrechte fehlen oder der Prozess gesperrt ist.</p>
+<p>Es wird ein <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn eine Meldung nicht an das Steuerelement gesendet werden konnte, oder wenn der Prozess, der das ListView-Steuerelement besitzt, nicht geöffnet werden konnte, z.B. weil Benutzerrechte fehlen oder der Prozess gesperrt ist.</p>
 <p>Es wird ein <a href="Error.htm#ValueError">ValueError</a> ausgelöst, wenn die <a href="#ColN">Col<em>N</em>-Option</a> eine nicht-existierende Spalte angibt.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Einige Anwendungen behandeln die Daten ihrer ListView vertraulich, so dass ihr Text nicht abgerufen werden kann. In solchen Fällen wird normalerweise keine Ausnahme ausgelöst, aber alle abgerufenen Felder sind leer.</p>
-<p>Es ist auch möglich, mit <a href="SendMessage.htm">SendMessage</a> die Spalten einer ListView kleiner/größer zu machen. Zum Beispiel:</p>
-<pre>SendMessage(0x101E, 0, 80, "SysListView321", FensterTitel)  <em>; 0x101E ist die Meldung LVM_SETCOLUMNWIDTH.</em></pre>
+<p>Diese Funktion ist für die Verwendung mit Steuerelementen in einem Nicht-GUI-Fenster vorgesehen, also einem Fenster, das nicht mit der <a href="Gui.htm#Call">Gui</a>-Funktion erstellt wurde. Sie funktioniert am besten mit den gängigen oder vordefinierten Steuerelementen von Microsoft. Einige Anwendungen verwenden jedoch benutzerdefinierte oder modifizierte Steuerelemente – in diesem Fall funktioniert die Funktion möglicherweise nicht wie erwartet. Für <a href="ListView.htm">GUI-ListView-Steuerelemente</a> ist es in der Regel sinnvoller, ihre <a href="ListView.htm#BuiltIn">internen Abrufmethoden</a> zu verwenden.</p>
+<p>Einige Anwendungen speichern ihre Steuerelementdaten privat, wodurch AutoHotkey keinen Text abrufen kann. In solchen Fällen wird normalerweise keine Ausnahme ausgelöst, aber der gesamte abgerufene Text wird leer sein.</p>
+<p>Es ist auch möglich, die Spalten in einem ListView-Steuerelement kleiner/größer zu machen. Verwenden Sie dazu <a href="SendMessage.htm">SendMessage</a> wie folgt:</p>
+<pre>SendMessage(0x101E, 0, 80, "SysListView321", FensterTitel)  <em>; 0x101E ist LVM_SETCOLUMNWIDTH.</em></pre>
 <p>Im obigen Beispiel steht 0 für die erste Spalte (1 für die zweite, 2 für die dritte und so weiter). 80 ist die neue Breite. Ersetzen Sie 80 mit -1, um die Spaltenbreite automatisch an den Inhalt anzupassen. Ersetzen Sie 80 mit -2, um dasselbe zu tun, aber unter Berücksichtigung der Überschriftsbreite.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="ControlGetItems.htm">ControlGetItems</a>, <a href="WinGetList.htm">WinGetList</a>, <a href="Control.htm">Control-Funktionen</a></p>
+<p><a href="ControlGetItems.htm">ControlGetItems</a>, <a href="WinGetList.htm">WinGetList</a>, <a href="ListView.htm">GUI-ListView-Steuerelement</a>, <a href="Control.htm">Control-Funktionen</a></p>
 
 <h2 id="Examples">Beispiele</h2>
 <div class="ex" id="ExListView">
-<p><a class="ex_number" href="#ExListView"></a> Extrahiert einzelne Zeilen und Felder aus einer ListView.</p>
+<p><a class="ex_number" href="#ExListView"></a> Extrahiert einzelne Zeilen und Felder aus einem ListView-Steuerelement in einem GUI- oder Nicht-GUI-Fenster.</p>
 <pre>Liste := ListViewGetContent("Selected", "SysListView321", FensterTitel)
 Loop Parse, Liste, "`n"  <em>; Zeilen sind mit Zeilenvorschüben (`n) voneinander getrennt.</em>
 {

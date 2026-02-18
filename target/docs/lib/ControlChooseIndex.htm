@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <title>ControlChooseIndex - Syntax &amp; Verwendung | AutoHotkey v2</title>
-<meta name="description" content="Die ControlChooseIndex-Funktion setzt die Auswahl in einem ListBox-, ComboBox- oder Tab-Steuerelement auf den N-ten Listeneintrag/Tab." />
+<meta name="description" content="Die ControlChooseIndex-Funktion selektiert per Positionsnummer einen Eintrag in einem Listenfeld, Kombinationsfeld oder einer Dropdownliste, oder eine Registerkarte in einem Registerkarten-Steuerelement." />
 <meta name="ahk:equiv-v1" content="lib/Control.htm#Choose" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,7 +15,7 @@
 
 <h1>ControlChooseIndex</h1>
 
-<p>Setzt die Auswahl in einem ListBox-, ComboBox- oder Tab-Steuerelement auf den N-ten Listeneintrag/Tab.</p>
+<p>Selektiert per Positionsnummer einen Eintrag in einem Listenfeld, Kombinationsfeld oder einer Dropdownliste, oder eine Registerkarte in einem Registerkarten-Steuerelement.</p>
 
 <pre class="Syntax"><span class="func">ControlChooseIndex</span> N, Steuerelement <span class="optional">, FensterTitel, FensterText, AusnahmeTitel, AusnahmeText</span></pre>
 
@@ -24,7 +24,8 @@
     <dt>N</dt>
     <dd>
         <p>Typ: <a href="../Concepts.htm#numbers">Integer</a></p>
-        <p>Die Indexnummer des Listeneintrags/Tabs, wobei 1 der erste Listeneintrag/Tab, 2 der zweite usw. ist. Um alle Listeneinträge in einer ListBox oder ComboBox abzuwählen, geben Sie 0 an.</p>
+        <p>Die Positionsnummer des Listeneintrags oder der Registerkarte, der/die ausgewählt werden soll, wobei 1 die erste Position, 2 die zweite und so weiter ist.</p>
+        <p>Geben Sie 0 an, um alle Listeneinträge abzuwählen. Für Registerkarten-Steuerelemente ist die Angabe von 0 ungültig und löst eine Ausnahme aus, da Nicht-GUI-Fenster in der Regel nicht damit umgehen können.</p>
     </dd>
     <dt>Steuerelement</dt>
     <dd>
@@ -45,13 +46,15 @@
 <p>Es wird ein <a href="Error.htm">Error</a> oder <a href="Error.htm#OSError">OSError</a> ausgelöst, wenn die Änderung nicht angewendet werden konnte.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Um alle Listeneinträge in einer <em>Mehrfachauswahl</em>-ListBox auszuwählen, gehen Sie wie folgt vor:</p>
-<pre class="NoIndent"><a href="PostMessage.htm">PostMessage</a>(0x0185, 1, -1, "ListBox1", FensterTitel)  <em>; Wählt alle ListBox-Einträge aus. 0x0185 ist LB_SETSEL.</em></pre>
-<p>Im Gegensatz zu <a href="GuiControl.htm#Choose">GuiControl.Choose()</a> löst diese Funktion ein <a href="GuiOnEvent.htm#Change">Change</a>- oder <a href="GuiOnEvent.htm#DoubleClick">DoubleClick</a>-Ereignis auslösen.</p>
+<p>Diese Funktion ist für die Verwendung mit Steuerelementen in einem Nicht-GUI-Fenster vorgesehen, also einem Fenster, das nicht mit der <a href="Gui.htm#Call">Gui</a>-Funktion erstellt wurde. Sie funktioniert am besten mit den gängigen oder vordefinierten Steuerelementen von Microsoft. Einige Anwendungen verwenden jedoch benutzerdefinierte oder modifizierte Steuerelemente – in diesem Fall funktioniert die Funktion möglicherweise nicht wie erwartet. Für <a href="GuiControls.htm">GUI-Steuerelemente</a> ist es in der Regel sinnvoller, <a href="GuiControl.htm#Choose">GuiControl.Choose</a> zu verwenden.</p>
+<p>Um alle Listeneinträge in einem <em>Mehrfachauswahl</em>-Listenfeld auszuwählen, verwenden Sie <code>PostMessage(0x0185, 1, -1, "ListBox1", FensterTitel)</code> (0x0185 ist <a href="https://learn.microsoft.com/windows/win32/controls/lb-setsel">LB_SETSEL</a>). Alternativ können Sie diese Funktion für jedes Element im Array aufrufen, das von <a href="ControlGetItems.htm">ControlGetItems</a> zurückgegeben wird:</p>
+<pre>for index, text in ControlGetItems("ListBox1", FensterTitel)
+    ControlChooseIndex(index, "ListBox1", FensterTitel)</pre>
+<p>Im Gegensatz zu <a href="GuiControl.htm#Choose">GuiControl.Choose</a> löst diese Funktion ein <a href="GuiOnEvent.htm#Change">Change</a>- oder <a href="GuiOnEvent.htm#DoubleClick">DoubleClick</a>-Ereignis aus.</p>
 <p>Um die Zuverlässigkeit zu erhöhen, erfolgt jedes Mal, nachdem diese Funktion verwendet wurde, automatisch eine Verzögerung. Diese Verzögerung kann mit <a href="SetControlDelay.htm">SetControlDelay</a> oder durch Zuweisung eines Wertes an <a href="../Variables.htm#ControlDelay">A_ControlDelay</a> geändert werden. Weitere Informationen finden Sie unter <a href="SetControlDelay.htm#Remarks">SetControlDelay-Bemerkungen</a>.</p>
 
 <h2 id="Related">Siehe auch</h2>
-<p><a href="ControlGetIndex.htm">ControlGetIndex</a>, <a href="ControlChooseString.htm">ControlChooseString</a>, <a href="GuiControl.htm#Choose">Choose-Methode (GuiControl-Objekt)</a>, <a href="Control.htm">Control-Funktionen</a></p>
+<p><a href="ControlGetIndex.htm">ControlGetIndex</a>, <a href="ControlChooseString.htm">ControlChooseString</a>, <a href="GuiControl.htm#Choose">GuiControl.Choose</a>, <a href="Control.htm">Control-Funktionen</a></p>
 
 </body>
 </html>

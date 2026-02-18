@@ -1158,8 +1158,9 @@ PID    := ProcessWaitClose(PID_oder_Name [, Timeout])
 <p><a href="lib/ProcessExist.htm">ProcessExist</a>, <a href="lib/ProcessClose.htm">ProcessClose</a>, <a href="lib/ProcessWait.htm">ProcessWait</a> und <a href="lib/ProcessWaitClose.htm">ProcessWaitClose</a> setzen keinen ErrorLevel mehr; sie geben stattdessen die PID zurück.</p>
 <p>Keine der anderen Funktionen setzt ErrorLevel. Stattdessen lösen sie bei Misserfolg eine Ausnahme aus. In den meisten Fällen ist ein Misserfolg darauf zurückzuführen, dass das Zielfenster oder -steuerelement nicht gefunden wurde.</p>
 <p>HWND-Nummern und Styles werden immer als reine Integer zurückgegeben, nicht als hexadezimale Zeichenketten.</p>
-<p><a href="lib/ControlChooseIndex.htm">ControlChooseIndex</a> akzeptiert 0, um alle Elemente abzuwählen. Es ersetzt "Control Choose", unterstützt aber auch Tab-Steuerelemente.</p>
-<p>"ControlGet Tab" wurde mit <a href="lib/ControlGetIndex.htm">ControlGetIndex</a> zusammengeführt, das auch mit ListBox, ComboBox und DDL funktioniert. Bei Tab-Steuerelementen gibt es 0 zurück, wenn kein Tab ausgewählt ist (selten, aber möglich). <a href="lib/ControlChooseIndex.htm">ControlChooseIndex</a> erlaubt keine 0 für Tab-Steuerelemente, da Anwendungen in der Regel nicht damit umgehen können.</p>
+<p><a href="lib/ControlChooseIndex.htm">ControlChooseIndex</a> akzeptiert 0, um alle Elemente abzuwählen. Es ersetzt "Control Choose" und "Control TabLeft/TabRight", unterstützt also auch Tab-Steuerelemente.</p>
+<p><a href="lib/ControlFindItem.htm">ControlFindItem</a> ersetzt "ControlGet FindString".</p>
+<p><a href="lib/ControlGetIndex.htm">ControlGetIndex</a> ersetzt "ControlGet Tab" und funktioniert auch mit ListBox, ComboBox und DDL. Bei Tab-Steuerelementen gibt es 0 zurück, wenn keine Registerkarte ausgewählt ist (selten, aber möglich). ControlChooseIndex erlaubt keine 0 für Tab-Steuerelemente, da Anwendungen in der Regel nicht damit umgehen können.</p>
 <p><a href="lib/ControlGetItems.htm">ControlGetItems</a> ersetzt "ControlGet List" für ListBox und ComboBox. Es gibt ein Array zurück.</p>
 <p><a href="lib/DriveEject.htm">DriveEject</a> und <a href="lib/DriveEject.htm">DriveRetract</a> verwenden jetzt DeviceIoControl anstelle von mciSendString. DriveEject kann dadurch Nicht-CD/DVD-Laufwerke auswerfen, die eine "Auswerfen"-Option im Explorer haben (d.h. Wechseldatenträger, aber keine externen Festplatten).</p>
 <p><a href="lib/ListViewGetContent.htm">ListViewGetContent</a> ersetzt "ControlGet List" für ListView und wird aktuell genauso verwendet wie früher.</p>
@@ -1175,7 +1176,7 @@ Name      := MonitorGetName([N])
 </pre>
 <h3 id="new-functions">Neue Funktionen</h3>
 <p><code>Buffer([ByteAnzahl, FüllByte])</code> (Aufruf der Buffer-Klasse) erzeugt und gibt ein <code>Buffer</code>-Objekt zurück, das einen Bereich im Speicher mit einer Größe von <em>ByteAnzahl</em> Bytes beansprucht, der nur initialisiert ist, wenn <em>FüllByte</em> angegeben ist. <code>BufferObj.Ptr</code> gibt die Adresse zurück. <code>BufferObj.Size</code> gibt die Größe in Bytes zurück oder setzt sie (und reserviert den Bereich des Speichers neu). Es kann ein beliebiges Objekt mit einer <em>Ptr</em>- und <em>Size</em>-Eigenschaft an <a href="lib/NumPut.htm">NumPut</a>, <a href="lib/NumGet.htm">NumGet</a>, <a href="lib/StrPut.htm">StrPut</a>, <a href="lib/StrGet.htm">StrGet</a>, <a href="lib/File.htm#RawRead">File.RawRead</a>, <a href="lib/File.htm#RawWrite">File.RawWrite</a> und <a href="lib/FileAppend.htm">FileAppend</a> übergeben werden. Es kann ein beliebiges Objekt mit einer <em>Ptr</em>-Eigenschaft an <a href="lib/DllCall.htm">DllCall</a>-Parametern vom Typ <code class="no-highlight">Ptr</code>, <a href="lib/SendMessage.htm">SendMessage</a> und <a href="lib/PostMessage.htm">PostMessage</a> übergeben werden.</p>
-<p><code>CaretGetPos([&amp;OutputVarX, &amp;OutputVarY])</code> ruft die aktuellen Koordinaten des Textcursors (Texteinfügemarke) ab. Dies stellt sicher, dass die X- und Y-Koordinate immer übereinstimmen und dass es kein Caching gibt, das zu unerwartetem Verhalten führt (z.B. wenn A_CaretX/Y einen Wert zurückgibt, der nicht im aktuellen Koordinatenmodus ist).</p>
+<p><code>CaretGetPos([&amp;OutputVarX, &amp;OutputVarY])</code> ruft die aktuellen Koordinaten der Einfügemarke ab. Dies stellt sicher, dass die X- und Y-Koordinate immer übereinstimmen und dass es kein Caching gibt, das zu unerwartetem Verhalten führt (z.B. wenn A_CaretX/Y einen Wert zurückgibt, der nicht im aktuellen Koordinatenmodus ist).</p>
 <p><code>ClipboardAll([Daten, Größe])</code> erstellt ein Objekt mit allem, was in der Zwischenablage enthalten ist (und akzeptiert optional Daten, die vorher aus der Zwischenablage abgerufen wurden, anstatt den aktuellen Inhalt der Zwischenablage zu verwenden). Die Methoden zum Lesen und Schreiben von Zwischenablagedateidaten sind unterschiedlich. Das Datenformat ist das gleiche, außer dass die Datengröße immer 32-Bit ist, so dass die Daten zwischen 32-Bit- und 64-Bit-Builds portierbar sind. Einzelheiten finden Sie in der v2-Dokumentation.</p>
 <p><code>ComCall(offset, comobj, ...)</code> ist äquivalent zu <code>DllCall(NumGet(NumGet(comobj.ptr) + offset * A_Index), "ptr", comobj.ptr, ...)</code>, aber standardmäßig mit dem Rückgabetyp <code class="no-highlight">HRESULT</code> anstelle von <code class="no-highlight">Int</code>.</p>
 <p><a href="lib/ComObject.htm">ComObject</a> (ehemals ComObjCreate) und <a href="lib/ComObjQuery.htm">ComObjQuery</a> geben jetzt ein Wrapper-Objekt zurück, auch dann, wenn eine IID angegeben ist. ComObjQuery erlaubt für den ersten Parameter ein beliebiges Objekt mit einer <em>Ptr</em>-Eigenschaft.</p>
@@ -1304,7 +1305,7 @@ Name      := MonitorGetName([N])
 <p><strong>Gui Menu</strong> → <a href="lib/Gui.htm#MenuBar">Gui.MenuBar</a> setzt oder gibt ein via <code>MenuBar()</code> erstelltes MenuBar-Objekt zurück.</p>
 <p><strong>Gui Cancel/Hide/Minimize/Maximize/Restore</strong> → gleichnamige Gui-Methoden.</p>
 <p><strong>Gui Flash</strong> → <a href="lib/Gui.htm#Flash">Gui.Flash()</a>, aber <code>false</code> statt <code class="no-highlight">Off</code> verwenden.</p>
-<p><strong>Gui Tab</strong> → <a href="lib/GuiControls.htm#Tab_UseTab">GuiControl.UseTab()</a>. Es kann weiterhin ein Tabname angegeben werden, wobei wie früher standardmäßig der Tab verwendet wird, dessen führender Namensteil mit der angegebenen Zeichenkette übereinstimmt. Übergeben Sie True im zweiten Parameter, um zu bewirken, dass die angegebene Zeichenkette eine exakte Übereinstimmung sein muss, aber im Gegensatz zum Exakt-Modus von v1 ist die Suche nicht Groß-/Kleinschreibung-sensitiv.</p>
+<p><strong>Gui Tab</strong> → <a href="lib/GuiControls.htm#Tab_UseTab">GuiControl.UseTab()</a>. Standardmäßig wird wie früher mit dem beginnenden Teil des Reiternamens abgeglichen. Übergeben Sie true im zweiten Parameter, um mit dem vollständigen Reiternamen abzugleichen, aber im Gegensatz zum Exakt-Modus von v1 erfolgt die Suche nicht Groß-/Kleinschreibung-sensitiv.</p>
 <h3 id="events">Ereignisse</h3>
 <p>Informationen darüber, welche GUI-Ereignisse und GUI-Steuerelement-Ereignisse explizit unterstützt werden, finden Sie unter <a href="lib/GuiOnEvent.htm#Events">Ereignisse (OnEvent)</a>.</p>
 <p>Das Size-Ereignis übergibt 0,-1 oder 1 (konsistent mit <a href="lib/WinGetMinMax.htm">WinGetMinMax</a>) statt 0, 1 oder 2.</p>
@@ -1318,7 +1319,7 @@ Name      := MonitorGetName([N])
 <p>ListView: Die Ereignisse Click, DoubleClick und ContextMenu (wenn ausgelöst durch einen Rechtsklick) melden nun das angeklickte Element (andernfalls 0), nicht das fokussierte Element.</p>
 <p>ListView: Das I-Ereignis wurde in mehrere benannte Ereignisse aufgeteilt, außer f (defokussiert), da es mit F (ItemFocus) erkannt werden kann.</p>
 <p>ListView: Das e-Ereignis (ItemEdit) wird ignoriert, wenn der Benutzer das Editieren abbricht.</p>
-<p>Slider: Das Change-Ereignis wird konsistenter ausgelöst als das g-Label von v1, d.h. es ignoriert nicht länger standardmäßig Änderungen durch das Mausrad. Einzelheiten finden Sie unter <a href="lib/GuiControls.htm#slider-change">Erkennen von Änderungen (Slider)</a>.</p>
+<p>Slider: Das Change-Ereignis wird konsistenter ausgelöst als das g-Label von v1, d.h. es ignoriert nicht länger standardmäßig Änderungen durch das Mausrad. Siehe das Ereignis <a href="lib/GuiOnEvent.htm#Change">Change</a> für weitere Details.</p>
 <p>Der BS_NOTIFY-Style wird jetzt bei Bedarf automatisch für Button-, CheckBox- und Radio-Steuerelemente hinzugefügt. Radio-Steuerelemente haben diesen Style standardmäßig nicht mehr.</p>
 <p>Focus (ehemals F) und LoseFocus (ehemals f) werden von mehr (aber nicht allen) Steuerelementtypen unterstützt.</p>
 <p>Im Gegensatz zu GuiControl, das das g-Label eines Edit-Steuerelements auslöst, wird beim Setzen des Textes eines Edit-Steuerelements mit Edit.Value oder Edit.Text das Change-Ereignis nicht ausgelöst.</p>
@@ -1343,7 +1344,7 @@ Gui GuiName: Default</p>
 <tr><td>ActiveX</td><td>.Value</td><td>.Text</td><td>Text ist versteckt. Siehe unten.</td></tr>
 <tr><td>Button</td><td colspan="2">.Text</td><td></td></tr>
 <tr><td>CheckBox</td><td>.Value</td><td>.Text</td><td></td></tr>
-<tr><td>ComboBox</td><td>.Text</td><td>ControlGetText()</td><td>Value statt Text verwenden, wenn AltSubmit verwendet wurde (aber Value gibt 0 zurück, wenn Text mit keinem Listenelement übereinstimmt). Text korrigiert die Groß-/Kleinschreibung, während ControlGetText den Inhalt des Eingabefeldes zurückgibt.</td></tr>
+<tr><td>ComboBox</td><td>.Text</td><td>ControlGetText()</td><td>Value statt Text verwenden, wenn AltSubmit verwendet wurde (aber Value gibt 0 zurück, wenn Text mit keinem Listenelement übereinstimmt). Text korrigiert die Groß-/Kleinschreibung, während ControlGetText den Inhalt des Eingabefelds zurückgibt.</td></tr>
 <tr><td>Custom</td><td colspan="2">.Text</td><td></td></tr>
 <tr><td>DateTime</td><td colspan="2">.Value</td><td></td></tr>
 <tr><td>DDL</td><td colspan="2">.Text</td><td>Value statt Text verwenden, wenn AltSubmit verwendet wurde.</td></tr>
@@ -1359,7 +1360,7 @@ Gui GuiName: Default</p>
 <tr><td>Radio</td><td>.Value</td><td>.Text</td><td></td></tr>
 <tr><td>Slider</td><td colspan="2">.Value</td><td></td></tr>
 <tr><td>StatusBar</td><td colspan="2">.Text</td><td></td></tr>
-<tr><td>Tab</td><td>.Text</td><td>ControlGetText()</td><td>Value statt Text verwenden, wenn AltSubmit verwendet wurde. Text gibt den Text des ausgewählten Tabs zurück, während ControlGetText den versteckten Text zurückgibt.</td></tr>
+<tr><td>Tab</td><td>.Text</td><td>ControlGetText()</td><td>Value statt Text verwenden, wenn AltSubmit verwendet wurde. Text gibt den Reiternamen der ausgewählten Registerkarte zurück, während ControlGetText den versteckten Text zurückgibt.</td></tr>
 <tr><td>Text</td><td colspan="2">.Text</td><td></td></tr>
 <tr><td>TreeView</td><td colspan="2">.Text</td><td>Text ist versteckt.</td></tr>
 <tr><td>UpDown</td><td colspan="2">.Value</td><td></td></tr>
