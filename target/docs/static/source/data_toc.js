@@ -384,6 +384,7 @@ tocData = [
   [
     ["Steuerelemente","lib/Control.htm",
     [
+      ["Identifikatoren","misc/ControlID.htm"],
       ["ControlAddItem","lib/ControlAddItem.htm"],
       ["ControlChooseIndex","lib/ControlChooseIndex.htm"],
       ["ControlChooseString","lib/ControlChooseString.htm"],

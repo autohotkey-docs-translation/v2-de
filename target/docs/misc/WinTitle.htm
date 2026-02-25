@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
 <head>
-<title>FensterTitel &amp; Zuletzt Gefundenes Fenster | AutoHotkey v2</title>
+<title>FensterTitel-Parameter &amp; Zuletzt Gefundenes Fenster | AutoHotkey v2</title>
 <meta name="description" content="Diese Seite listet Kriterien auf, die im FensterTitel-Parameter von internen Funktionen verwendet werden können, um das/die Zielfenster zu bestimmen." />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<h1><var>FensterTitel</var>-Parameter &amp; Zuletzt Gefundenes Fenster</h1>
+<h1>FensterTitel-Parameter &amp; Zuletzt Gefundenes Fenster</h1>
 <p>Verschiedene interne Funktionen haben einen <var>FensterTitel</var>-Parameter, der verwendet wird, um das/die Fenster zu identifizieren, mit dem/denen gearbeitet werden soll. Dieser Parameter kann der Titel des Fensters (teilweise oder vollständig) und/oder andere Kriterien sein, die auf dieser Seite beschrieben werden.</p>
 
 <h2 id="toc">Inhaltsverzeichnis</h2>
@@ -30,6 +30,7 @@
   </li>
   <li><a href="#multi">Mehrere Kriterien</a></li>
   <li><a href="#LastFoundWindow">Zuletzt Gefundenes Fenster</a></li>
+  <li><a href="#Related">Siehe auch</a></li>
 </ul>
 
 <a id="Matching"></a>
@@ -45,7 +46,7 @@
 
 <h2 id="ActiveWindow">A (Aktives Fenster)</h2>
 <p>Verwenden Sie den Buchstaben <code class="no-highlight">A</code> für <var>FensterTitel</var> und lassen Sie die anderen drei Fensterparameter (<em>FensterText</em>, <em>AusnahmeTitel</em> und <em>AusnahmeText</em>) weg, um mit dem aktiven Fenster zu arbeiten.</p>
-<p>Das folgende Beispiel ermittelt und meldet die HWND-Nummer (eindeutige ID) des aktiven Fensters:</p>
+<p>Das folgende Beispiel ermittelt und meldet die eindeutige ID (HWND) des aktiven Fensters:</p>
 <pre>MsgBox WinExist("A")</pre>
 <p>Das folgende Beispiel erstellt einen Hotkey, der gedrückt werden kann, um das aktive Fenster zu maximieren:</p>
 <pre>#Up::WinMaximize "A"  <em>; WIN+NACH-OBEN</em></pre>
@@ -64,25 +65,24 @@
 <pre>WinActivate "ahk_class ^ConsoleWindowClass$"</pre>
 
 <h3 id="ahk_id">ahk_id (Eindeutige ID / HWND)</h3>
-<p>Jedes Fenster oder Steuerelement hat eine eindeutige ID, auch bekannt als HWND (kurz für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel oder Text ändert.</p>
-<p>Verwenden Sie <code class="no-highlight">ahk_id <var>HWND</var></code> oder eine reine HWND-Nummer (als <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a> mit einer HWND-Eigenschaft) in <var>FensterTitel</var>, um ein Fenster oder ein Steuerelement über dessen eindeutige ID zu identifizieren.</p>
-<p>Wenn <code class="no-highlight">ahk_id <var>HWND</var></code> verwendet wird, beeinflusst <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a>, ob versteckte Top-Level-Fenster erkannt werden (während versteckte Steuerelemente immer erkannt werden). Wenn eine reine HWND-Nummer verwendet wird, werden versteckte Fenster immer erkannt, unabhängig von DetectHiddenWindows. <a href="../lib/WinWait.htm">WinWait</a> und <a href="../lib/WinWaitClose.htm">WinWaitClose</a> sind eine Ausnahme, wo sowohl <code class="no-highlight">ahk_id <var>HWND</var></code> als auch reine HWND-Nummern von DetectHiddenWindows beeinflusst werden.</p>
+<p>Verwenden Sie <code class="no-highlight">ahk_id <var>HWND</var></code> oder ein reines HWND (als <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Objects.htm">Objekt</a> mit einer Hwnd-Eigenschaft) in <var>FensterTitel</var>, um ein Fenster oder ein Steuerelement über dessen eindeutige ID zu identifizieren. Wenn das Objekt keine Hwnd-Eigenschaft hat oder der Wert der Eigenschaft kein Integer ist, wird ein <a href="../lib/Error.htm#PropertyError">PropertyError</a> bzw. <a href="../lib/Error.htm#TypeError">TypeError</a> ausgelöst.</p>
+<p>Jedes Fenster und Steuerelement hat eine eindeutige ID, auch bekannt als HWND (kurz für "Handle to Window"). Diese ID kann zur Identifizierung des Fensters oder Steuerelements verwendet werden, selbst wenn sich dessen Titel oder Text ändert. Die ID eines Fensters wird üblicherweise via <a href="../lib/WinExist.htm">WinExist</a> oder <a href="../lib/WinGetID.htm">WinGetID</a> abgerufen. Einzelheiten zur Identifizierung eines Steuerelements via HWND finden Sie unter <a href="ControlID.htm#HWND">Steuerelementidentifikatoren</a>.</p>
+<p>Ein HWND ist besonders nützlich, wenn Meldungen direkt an ein Fenster oder Steuerelement via <a href="../lib/PostMessage.htm">PostMessage</a> oder <a href="../lib/SendMessage.htm">SendMessage</a> gesendet werden, oder wenn native APIs mit <a href="../lib/DllCall.htm">DllCall</a> aufgerufen werden.</p>
+<p>Wenn <code class="no-highlight">ahk_id <var>HWND</var></code> verwendet wird, beeinflusst <a href="../lib/DetectHiddenWindows.htm">DetectHiddenWindows</a>, ob versteckte Top-Level-Fenster erkannt werden (während versteckte Steuerelemente immer erkannt werden). Wenn reine HWNDs verwendet werden, werden versteckte Fenster immer erkannt, unabhängig von DetectHiddenWindows. <a href="../lib/WinWait.htm">WinWait</a> und <a href="../lib/WinWaitClose.htm">WinWaitClose</a> sind eine Ausnahme, wo sowohl <code class="no-highlight">ahk_id <var>HWND</var></code> als auch reine HWNDs von DetectHiddenWindows beeinflusst werden.</p>
 <p><code class="no-highlight">ahk_id <var>HWND</var></code> kann mit anderen Kriterien kombiniert werden, die das angegebene Fenster zusätzlich erfüllen muss. Zum Beispiel gibt <code>WinExist("ahk_id " eineHWND " ahk_class " eineKlasse)</code> <var>eineHWND</var> zurück, wenn das Fenster "erkannt" wurde (gemäß DetectHiddenWindows) und dessen Fensterklasse mit der in <var>eineKlasse</var> enthaltenen Zeichenkette übereinstimmt.</p>
-<p>Die ID eines Fensters wird üblicherweise via <a href="../lib/WinExist.htm">WinExist</a> oder <a href="../lib/WinGetID.htm">WinGetID</a> abgerufen. Die ID eines Steuerelements wird üblicherweise via <a href="../lib/ControlGetHwnd.htm">ControlGetHwnd</a>, <a href="../lib/MouseGetPos.htm">MouseGetPos</a> oder <a href="../lib/DllCall.htm">DllCall</a> abgerufen. <a href="../lib/Gui.htm">Gui</a>- und <a href="../lib/GuiControl.htm">GuiControl</a>-Objekte haben eine <code class="no-highlight">Hwnd</code>-Eigenschaft und können daher direkt in einem <var>FensterTitel</var>-Parameter verwendet werden.</p>
 <p>Die folgenden Beispiele arbeiten mit einem Fenster mit einer eindeutigen ID, die in <var>VarMitID</var> gespeichert ist:</p>
 <pre><em>; Einen <a href="../Concepts.htm#numbers">Integer</a> übergeben.</em>
 WinActivate Integer(VarMitID)
 WinShow A_ScriptHwnd
 WinWaitNotActive WinExist("A")
 
-<em>; Ein <a href="../Objects.htm">Objekt</a> mit einer HWND-Eigenschaft übergeben.</em>
+<em>; Ein <a href="../Objects.htm">Objekt</a> mit einer Hwnd-Eigenschaft übergeben.</em>
 WinActivate {Hwnd: VarMitID}
 WinWaitClose meinGuiObjekt
 
 <em>; Das ahk_id-Präfix verwenden.</em>
 WinActivate "ahk_id " VarMitID
 </pre>
-<p>Wenn das Objekt keine HWND-Eigenschaft hat oder der Wert der Eigenschaft kein Integer ist, wird ein <a href="../lib/Error.htm#PropertyError">PropertyError</a> bzw. <a href="../lib/Error.htm#TypeError">TypeError</a> ausgelöst.</p>
 
 <h3 id="ahk_pid">ahk_pid (Prozess-ID)</h3>
 <p>Verwenden Sie <code class="no-highlight">ahk_pid <var>PID</var></code> in <var>FensterTitel</var>, um ein Fenster zu identifizieren, das zu einem bestimmten Prozess gehört. Der Prozessidentifikator (PID) wird üblicherweise via <a href="../lib/WinGetPID.htm">WinGetPID</a>, <a href="../lib/Run.htm">Run</a> oder <a href="../lib/Process.htm">Process-Funktionen</a> abgerufen. Die ID des Prozesses eines Fensters kann via Window Spy in Erfahrung gebracht werden.</p>
@@ -150,6 +150,9 @@ else
     WinActivate <em>; Verwendet das von WinExist gefundene Fenster.</em>
     WinMove 40, 40 <em>; Dasselbe wie oben.</em>
 }</pre>
+
+<h2 id="Related">Siehe auch</h2>
+<p><a href="ControlID.htm">StrlmntID-Parameter (Steuerelementidentifikatoren)</a></p>
 
 </body>
 </html>
