@@ -1222,6 +1222,7 @@ indexData = [
   ["WinClose","lib/WinClose.htm",2],
   ["window group","misc/WinTitle.htm#ahk_group"],["Fenstergruppe","misc/WinTitle.htm#ahk_group"],
   ["window messages","misc/SendMessageList.htm"],["Fenstermeldungen","misc/SendMessageList.htm"],
+  ["Window Spy","Program.htm#Window_Spy"],
   ["WinExist","lib/WinExist.htm",2],
   ["WinGetClass","lib/WinGetClass.htm",2],
   ["WinGetClientPos","lib/WinGetClientPos.htm",2],
