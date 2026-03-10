@@ -16,14 +16,12 @@
 
 <p>Bestimmt das Übereinstimmungsverhalten des <a href="../misc/WinTitle.htm"><em>FensterTitel</em>-Parameters</a> von internen Funktionen wie <a href="WinWait.htm">WinWait</a>.</p>
 
-<pre class="Syntax">
-<span class="func">SetTitleMatchMode</span> MatchModus
-<span class="func">SetTitleMatchMode</span> Geschw
-</pre>
+<pre class="Syntax">AlterVergleichModus := <span class="func">SetTitleMatchMode</span>(VergleichModus)
+AlteGeschw          := <span class="func">SetTitleMatchMode</span>(Geschw)</pre>
 <h2 id="Parameters">Parameter</h2>
 <dl>
 
-  <dt>MatchModus</dt>
+  <dt>VergleichModus</dt>
   <dd>
     <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
     <p>Geben Sie einen der folgenden Werte an:</p>
@@ -32,7 +30,7 @@
     <p><strong>3:</strong> Der Titel eines Fensters muss genau mit dem angegebenen <em>FensterTitel</em> übereinstimmen, um eine Übereinstimmung zu sein.</p>
     <p id="RegEx"><strong>RegEx:</strong> Erlaubt <a href="../misc/RegEx-QuickRef.htm">reguläre Ausdrücke</a> in <em>FensterTitel</em>, <em>FensterText</em>, <em>AusnahmeTitel</em> und <em>AusnahmeText</em>, z.B. <code><a href="WinActivate.htm">WinActivate</a> Unbenannt.*Editor</code>. RegEx gilt auch für <a href="../misc/WinTitle.htm#ahk_class">ahk_class</a> und <a href="../misc/WinTitle.htm#ahk_exe">ahk_exe</a>, z.B. würde <code>"ahk_class IEFrame"</code> nach einem Fenster suchen, dessen Klassenname irgendwo <em>IEFrame</em> enthält (weil reguläre Ausdrücke <em>überall</em> in der Zeichenkette eine Übereinstimmung finden können). Jede Komponente in <em>FensterTitel</em> muss separat behandelt werden, z.B. sind in <code>"i)^unbenannt ahk_class i)^editor$ ahk_pid " meinepid</code> die Komponenten <code class="no-highlight">i)^unbenannt</code> und <code class="no-highlight">i)^editor$</code> separate RegEx-Suchmuster, während <code>meinepid</code> immer numerisch verglichen wird (es ist kein RegEx-Suchmuster). Im Falle von <em>FensterText</em> wird jedes Textelement (also der Text jedes Steuerelements) separat mit dem RegEx abgeglichen, folglich ist eine Übereinstimmung mit mehr als einem Textelement nicht möglich.</p>
     <p>Die obigen Modi haben auf <em>AusnahmeTitel</em> dieselbe Wirkung wie auf <em>FensterTitel</em>. Zum Beispiel erfordert Modus 3, dass der Titel eines Fensters genau mit <em>AusnahmeTitel</em> übereinstimmt, damit dieses Fenster ignoriert wird.</p>
-    <p>Von den Modi hat <i>nur</i> der RegEx-Modus einen Effekt auf die Nicht-Titel-Fensterübereinstimmungskriterien <a href="../misc/WinTitle.htm#ahk_class">ahk_class</a> und <a href="../misc/WinTitle.htm#ahk_exe">ahk_exe</a>. Diese Übereinstimmungskriterien funktionieren in jedem der nummerierten Modi identisch.</p>
+    <p>Die nummerierten Modi (1-3) funktionieren <i>nur</i> mit dem Fenstertitel, während der RegEx-Modus sowohl mit dem Fenstertitel als auch mit den Werten der Kriterien <a href="../misc/WinTitle.htm#ahk_class">ahk_class</a> und <a href="../misc/WinTitle.htm#ahk_exe">ahk_exe</a> funktioniert. </p>
   </dd>
 
   <dt>Geschw</dt>
@@ -47,19 +45,19 @@
 
 <h2 id="Return_Value">Rückgabewert</h2>
 <p>Typ: <a href="../Concepts.htm#numbers">Integer</a> oder <a href="../Concepts.htm#strings">Zeichenkette</a></p>
-<p>Diese Funktion gibt den vorherigen Wert der Einstellung zurück, die geändert wurde (entweder <a href="../Variables.htm#TitleMatchMode">A_TitleMatchMode</a> oder <a href="../Variables.htm#TitleMatchModeSpeed">A_TitleMatchModeSpeed</a>).</p>
+<p>Diese Funktion gibt den vorherigen Wert der aktuell geänderten Einstellung zurück.</p>
 
 <h2 id="Remarks">Bemerkungen</h2>
-<p>Wenn SetTitleMatchMode nicht verwendet wird, ist der Übereinstimmungsmodus standardmäßig 2 und die Geschwindigkeit standardmäßig schnell.</p>
+<p>Der Vergleichsmodus ist standardmäßig 2 und die Geschwindigkeit standardmäßig schnell. Das heißt, dass der Titel eines Fensters den angegebenen <em>FensterTitel</em> an beliebiger Stelle enthalten kann, um eine Übereinstimmung zu sein, und dass der <em>FensterText</em>- und <em>AusnahmeText</em>-Vergleich performanter ist, aber mit einer geringeren Anzahl von Steuerelementtypen funktioniert.</p>
 <p>Diese Funktion beeinflusst das Verhalten von allen fensterspezifischen Funktionen, z.B. <a href="WinExist.htm">WinExist</a> und <a href="WinActivate.htm">WinActivate</a>. <a href="WinGetText.htm">WinGetText</a> und <a href="ControlGetText.htm">ControlGetText</a> werden auf die gleiche Weise beeinflusst, verwenden aber immer den langsamen Modus zum Abrufen von Text.</p>
-<p>Wenn eine <a href="../misc/WinTitle.htm#ahk_group">Fenstergruppe</a> verwendet wird, gilt der aktuelle Titelübereinstimmungsmodus für jede einzelne Regel in der Gruppe.</p>
+<p>Wenn eine <a href="../misc/WinTitle.htm#ahk_group">Fenstergruppe</a> verwendet wird, gilt der aktuelle Titelvergleichsmodus für jede einzelne Regel in der Gruppe.</p>
 <p>Generell sollte der langsame Modus nur dann verwendet werden, wenn das Zielfenster nicht eindeutig durch seinen Titel oder den im schnellen Modus ermittelten Text identifiziert werden kann. Der Grund dafür ist, dass der langsame Modus extrem langsam sein kann, wenn es Anwendungsfenster gibt, die beschäftigt sind oder "nicht reagieren".</p>
-<p><a href="../Program.htm#Window_Spy">Window Spy</a> verfügt über die Option <em>Slow TitleMatchMode</em> (langsamer Titelübereinstimmungsmodus), mit der leicht festgestellt werden kann, ob der langsame Modus erforderlich ist.</p>
+<p><a href="../Program.htm#Window_Spy">Window Spy</a> verfügt über die Option <em>Slow TitleMatchMode</em> (langsamer Titelvergleichsmodus), mit der leicht festgestellt werden kann, ob der langsame Modus erforderlich ist.</p>
 <p>Wenn Sie beide Attribute ändern möchten, führen Sie die Funktion zweimal aus. Zum Beispiel:</p>
 <pre>SetTitleMatchMode 2
 SetTitleMatchMode "Slow"</pre>
-<p>Die internen Variablen <strong>A_TitleMatchMode</strong> und <strong>A_TitleMatchModeSpeed</strong> enthalten die aktuellen Einstellungen.</p>
-<p>Egal welcher Übereinstimmungsmodus verwendet wird, <em>FensterTitel</em>, <em>FensterText</em>, <em>AusnahmeTitel</em> und <em>AusnahmeText</em> sind immer Groß-/Kleinschreibung-sensitiv. Die einzige Ausnahme ist die <a href="../misc/RegEx-QuickRef.htm#Options">i-Option</a> (nicht Groß-/Kleinschreibung-sensitiv) des RegEx-Modus, z.B. <code>"<strong>i)</strong>unbenannt - editor"</code>.</p>
+<p>Die internen Variablen <a href="../Variables.htm#TitleMatchMode">A_TitleMatchMode</a> und <a href="../Variables.htm#TitleMatchModeSpeed">A_TitleMatchModeSpeed</a> enthalten die aktuellen Einstellungen, und erlauben die Zuweisung eines neuen Wertes, ohne SetTitleMatchMode aufzurufen.</p>
+<p>Egal welcher Vergleichsmodus verwendet wird, <em>FensterTitel</em>, <em>FensterText</em>, <em>AusnahmeTitel</em> und <em>AusnahmeText</em> sind immer Groß-/Kleinschreibung-sensitiv. Die einzige Ausnahme ist die <a href="../misc/RegEx-QuickRef.htm#Options">i-Option</a> (nicht Groß-/Kleinschreibung-sensitiv) des RegEx-Modus, z.B. <code>"<strong>i)</strong>unbenannt - editor"</code>.</p>
 <p>Jeder neue <a href="../misc/Threads.htm">Thread</a> (z.B. ein <a href="../Hotkeys.htm">Hotkey</a>, ein <a href="Menu.htm">benutzerdefinierter Menüpunkt</a> oder eine <a href="SetTimer.htm">zeitgesteuerte</a> Subroutine) verwendet zunächst die Standardeinstellung der Funktion. Diese Standardeinstellung kann geändert werden, indem die Funktion während der <a href="../Scripts.htm#auto">Startphase des Skripts</a> verwendet wird.</p>
 <h2 id="Related">Siehe auch</h2>
 <p><a href="../misc/WinTitle.htm">FensterTitel-Parameter</a>, <a href="SetWinDelay.htm">SetWinDelay</a>, <a href="WinExist.htm">WinExist</a>, <a href="WinActivate.htm">WinActivate</a>, <a href="RegExMatch.htm">RegExMatch</a></p>

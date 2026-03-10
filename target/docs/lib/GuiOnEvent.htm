@@ -30,8 +30,9 @@
     <p>Typ: <a href="../Concepts.htm#strings">Zeichenkette</a> oder <a href="../misc/Functor.htm">Funktionsobjekt</a></p>
     <p>Eine Funktion, eine Methode oder ein Objekt, die/das aufgerufen wird, wenn das Ereignis ausgelöst wird.</p>
     <p>Wenn die GUI ein Event-Sink hat (d.h. wenn der <em>EreignisObj</em>-Parameter von <a href="Gui.htm#Call">Gui()</a> angegeben wurde), kann dieser Parameter der Name einer Methode im Event-Sink sein. Andernfalls muss dieser Parameter ein <a href="../misc/Functor.htm">Funktionsobjekt</a> sein.</p>
-    <p>Die Rückruffunktion akzeptiert je nach <a href="#Window_Events">Fensterereignis</a> oder <a href="#Control_Events">Steuerelementereignis</a> eine bestimmte Anzahl von Parametern und kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
+    <p>Der Rückruf akzeptiert je nach <a href="#Window_Events">Fensterereignis</a> oder <a href="#Control_Events">Steuerelementereignis</a> eine bestimmte Anzahl von Parametern. Eine Rückruffunktion kann wie folgt <a href="../Functions.htm#intro">definiert</a> werden:</p>
     <pre class="NoIndent">MeinRückruf(GuiOderCtrlObj, ...) { ...</pre>
+    <p class="note"><strong>Hinweis:</strong> Wenn die Rückruffunktion via <a href="../Objects.htm#Custom_Classes_method">Methodendefinition</a> erstellt wurde, verfügt sie über einen impliziten <code>this</code>-Parameter, der berücksichtigt werden muss.</p>
     <p>Es spielt keine Rolle, welche Namen Sie den Parametern geben, allerdings werden ihnen die folgenden Werte nacheinander zugewiesen:</p>
     <ol>
       <li>Das <a href="Gui.htm">Gui</a>- oder <a href="GuiControl.htm">GuiControl</a>-Objekt des GUI-Fensters bzw. -Steuerelements, das das Ereignis ausgelöst hat. Dieser Wert wird immer übergeben.</li>
@@ -328,6 +329,87 @@ Link_Click(Ctrl, ID, HREF)
         Run(HREF)
 }
 MeineGui.Show()</pre>
+</div>
+
+<div class="ex" id="ExEventSink">
+<p><a class="ex_number" href="#ExEventSink"></a> Zeigt zwei Wege, wie man Ereignisse mithilfe von Methoden statt Funktionen behandeln kann. Funktionsgleich mit dem <a href="#ExEventSinkThis">nächsten Beispiel</a>.</p>
+<pre>MeineGui := Gui("-DPIScale",, MeineGuiEreignisse)
+MeinEdit := MeineGui.AddEdit("vMeinEdit")
+MeinEdit.OnEvent("Focus", "StrlmntFokussiert")
+MeinEdit.OnEvent("LoseFocus", "StrlmntDefokussiert")
+MeineGui.SetFont("s30")
+MeinButton := MeineGui.AddButton("vMeinButton", "Schaltfläche")
+MeinButton.OnEvent("Focus", "StrlmntFokussiert")
+MeinButton.OnEvent("LoseFocus", "StrlmntDefokussiert")
+<em>; Wenn das Objekt nicht der Event-Sink der Gui ist, kann es auch wie unten erfolgen.
+; Bind ist notwendig, da jede Methode einen impliziten "this"-Parameter hat.</em>
+MeinButton.OnEvent("Click", MeineGuiEreignisse.ButtonGeklickt.Bind(MeineGuiEreignisse))
+MeineGui.Show()
+
+class MeineGuiEreignisse
+{
+    <em>; Statisch, da wir MeineGuiEreignisse statt MeineGuiEreignisse() verwenden.</em>
+    static MeldungFormat := "{1} wurde geklickt."
+    
+    static StrlmntFokussiert(Strlmnt, *)
+    {
+        Strlmnt.GetPos(&amp;X, &amp;Y, &amp;W)
+        ToolTip Strlmnt.Name " hat den Fokus", X + W, Y
+    }
+    
+    static StrlmntDefokussiert(Strlmnt, *)
+    {
+        ToolTip
+    }
+    
+    static ButtonGeklickt(Strlmnt, *)
+    {
+        ToolTip
+        MsgBox Format(this.MeldungFormat, Strlmnt.Text)
+    }
+}</pre>
+</div>
+
+<div class="ex" id="ExEventSinkThis">
+<p><a class="ex_number" href="#ExEventSinkThis"></a> Zeigt die Ereignisbehandlung innerhalb einer Gui-Unterklasse. Funktionsgleich mit dem <a href="#ExEventSink">vorherigen Beispiel</a>.</p>
+<pre>DemoGui().Show()  <em>; Erstellt eine DemoGui-Instanz und zeigt sie an.</em>
+
+class DemoGui extends Gui
+{
+    MeldungFormat := "{1} wurde geklickt."
+    
+    __New()
+    {
+        <em>; "this" als EventSink übergeben.</em>
+        super.__New("-DPIScale",, this)
+        
+        MeinEdit := this.AddEdit("vMeinEdit")
+        MeinEdit.OnEvent("Focus", "StrlmntFokussiert")
+        MeinEdit.OnEvent("LoseFocus", "StrlmntDefokussiert")
+        this.SetFont("s30")
+        MeinButton := this.AddButton("vMeinButton", "Schaltfläche")
+        MeinButton.OnEvent("Focus", "StrlmntFokussiert")
+        MeinButton.OnEvent("LoseFocus", "StrlmntDefokussiert")
+        MeinButton.OnEvent("Click", "ButtonGeklickt")
+    }
+    
+    StrlmntFokussiert(Strlmnt, *)
+    {
+        Strlmnt.GetPos(&amp;X, &amp;Y, &amp;W)
+        ToolTip Strlmnt.Name " hat den Fokus", X + W, Y
+    }
+    
+    StrlmntDefokussiert(Strlmnt, *)
+    {
+        ToolTip
+    }
+    
+    ButtonGeklickt(Strlmnt, *)
+    {
+        ToolTip
+        MsgBox Format(this.MeldungFormat, Strlmnt.Text)
+    }
+}</pre>
 </div>
 
 </body>
