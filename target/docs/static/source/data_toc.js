@@ -32,7 +32,6 @@ tocData = [
   ]],
   ["Aktuelle Änderungen","ChangeLog.htm"],
   ["Änderungen von v1.1 bis v2.0","v2-changes.htm"],
-  ["Änderungen von v1.0 bis v1.1","v1-changes.htm"],
   ["Skriptbeispiele","scripts/index.htm"],
   ["Funktionsliste","lib/index.htm"],
   ["Laufwerk", "lib/Drive.htm",

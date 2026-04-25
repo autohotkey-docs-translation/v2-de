@@ -31,7 +31,8 @@ function ctor_highlighter()
     var r_op = '(&(?:amp|lt|gt);|[\\-=,:!?.*/^+|~%(){}\\[\\]])|\\b(' + syn[4].join('|') + ')\\b'; // operators
     var r_op_assign = '(?:&lt;&lt;|<<|&gt;&gt;|>>|\\/\\/|\\^|&amp;|&|\\||\\.|\\/|\\*|-|\\+|:)='; // assignment operators
     var r_num = '(?:0(?:x|X)[0-9a-fA-F]*)|(?:(?:[0-9]+\\.?[0-9]*)|(?:\\.[0-9]+))(?:(?:e|E)(?:\\+|-)?[0-9]+)?'; // number
-    var r_char = 'A-Za-z0-9_\\u00A0-\\uFFFF'; // allowed chars
+    var r_char = 'A-Za-z0-9_\\u00A0-\\uFFFF'; // character
+    var r_name = '[' + r_char + ']+'; // vars, funcs, classes etc.
     var r_sct = '<(?:em|sct)\\d+></(?:em|sct)\\d+>'; // single-line comment
     var r_mct = '<mct\\d+></mct\\d+>'; // multi-line comment
     var r_cont = '<cont\\d+></cont\\d+>'; // continuation section
@@ -185,7 +186,7 @@ function ctor_highlighter()
     /** Searches for declarations, formats them and replaces them with placeholders. */
     function declarations(innerHTML)
     {
-      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(' + syn[5].join('|') + ')(?:(' + r_s + '+)([' + r_char + ']+.*))?' + r_suf, 'gim'), function(_, PRE, DEC, SPACE, VAL)
+      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(' + syn[5].join('|') + ')(?:(' + r_s + '+)(' + r_name + '.*))?' + r_suf, 'gim'), function(_, PRE, DEC, SPACE, VAL)
       {
         var repl = wrap(DEC, 'dec', 5);
         if (VAL)
@@ -193,7 +194,8 @@ function ctor_highlighter()
         return PRE + ph('dec', repl);
       });
       // class declarations:
-      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(class)(?:$|(' + r_s + '+)([' + r_char + ']+)(?:(' + r_s + '+)(extends)(' + r_s + '+)([' + r_char + ']+))?(?=(?=' + r_s + '*\\{)|' + r_suf + '))', 'gim'), function(_, PRE, CLASS, SPACE1, NAME1, SPACE2, EXTENDS, SPACE3, NAME2)
+      var r_class_name = r_name + '(?:\\.' + r_name + ')*';
+      innerHTML = innerHTML.replace(new RegExp(r_pre + '\\b(class)(?:$|(' + r_s + '+)(' + r_class_name + ')(?:(' + r_s + '+)(extends)(' + r_s + '+)(' + r_class_name + '))?(?=(?=' + r_s + '*\\{)|' + r_suf + '))', 'gim'), function(_, PRE, CLASS, SPACE1, NAME1, SPACE2, EXTENDS, SPACE3, NAME2)
       {
         var link = index_data[syn[5].dict['class']][1];
         var repl = wrap(CLASS, 'dec', link);
@@ -339,7 +341,7 @@ function ctor_highlighter()
     /** Searches for labels, formats them and replaces them with placeholders. */
     function labels(innerHTML)
     {
-      return innerHTML.replace(new RegExp('^(' + r_s + '*)([' + r_char + ']+?:)' + r_suf, 'gim'), function(_, PRE, LABEL)
+      return innerHTML.replace(new RegExp('^(' + r_s + '*)(' + r_name + '?:)' + r_suf, 'gim'), function(_, PRE, LABEL)
       {
         return PRE + ph('lab', wrap(LABEL, 'lab', null));
       });
@@ -374,7 +376,7 @@ function ctor_highlighter()
     /** Searches for methods, formats them and replaces them with placeholders. */
     function methods(innerHTML)
     {
-      return innerHTML.replace(new RegExp('\\.([' + r_char + ']+?)(?=\\()', 'g'), function(_, METHOD)
+      return innerHTML.replace(new RegExp('\\.(' + r_name + '?)(?=\\()', 'g'), function(_, METHOD)
       {
         return ph('met', wrap('.', 'opr', null) + wrap(METHOD, 'met', null));
       });
@@ -382,7 +384,7 @@ function ctor_highlighter()
     /** Searches for properties, formats them and replaces them with placeholders. */
     function properties(innerHTML)
     {
-      return innerHTML.replace(new RegExp('\\.([' + r_char + ']+?)\\b', 'g'), function(_, PROPERTY)
+      return innerHTML.replace(new RegExp('\\.(' + r_name + '?)\\b', 'g'), function(_, PROPERTY)
       {
         return ph('prp', wrap('.', 'opr', null) + wrap(PROPERTY, 'prp', null));
       });
@@ -415,7 +417,7 @@ function ctor_highlighter()
     function custom_functions(innerHTML)
     {
       var reserved_words = [].concat(syn[3], syn[4], syn[5]).join('|');
-      return innerHTML.replace(new RegExp('\\b([' + r_char + ']+)(?=\\()', 'g'), function(NAME)
+      return innerHTML.replace(new RegExp('\\b(' + r_name + ')(?=\\()', 'g'), function(NAME)
       {
         if (NAME.match(new RegExp('^(' + reserved_words + ')$', 'i')))
           return statements(NAME);
