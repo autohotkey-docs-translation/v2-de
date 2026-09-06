@@ -42,8 +42,8 @@ Loop Files, "target\docs\*.htm", "R"
 
     replace  := 
     ( Join`r`n
-    '<script src="' pre 'static/content.js" type="text/javascript"></script>
-    <script src="' pre 'static/ga4.js" type="text/javascript"></script>'
+    '<script src="' pre 'static/content.js" id="content_js"></script>
+    <script src="' pre 'static/ga4.js"></script>'
     )
 
     if not InStr(content, replace)
