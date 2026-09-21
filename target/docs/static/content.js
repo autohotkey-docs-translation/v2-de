@@ -427,7 +427,8 @@ function setupSiteHost() {
       viewer.frame.contentWindow.location.href = url;
       if (!prevent_focus) viewer.focus();
       cache.save();
-      if (site.onPhone) setTimeout(function() { host.sidebar.show(false); }, 200);
+      if (site.onPhone)
+        setTimeout(function() { host.sidebar.show(false); cache.save(); }, 200);
     };
     viewer.focus = function() {
       cache.update('lastFocusLocation', 'frame');
@@ -576,10 +577,9 @@ function setupSiteHost() {
     };
     tools.tool.home = new function() {
       const tool = this;
-      tool.link = location.protocol + '//' + location.host;
       tool.init = function() {
         tool.element = tools.element.querySelector('.home');
-        tool.element.firstChild.href = tool.link;
+        tool.element.firstChild.href = location.protocol + '//' + location.host;
       };
     };
     tools.tool.language = new function() {
@@ -593,12 +593,13 @@ function setupSiteHost() {
         if (!site.waitForDataDocs(tool.addDropdownItems)) return;
         if (!site.waitForDataTranslate(tool.addDropdownItems)) return;
         const lang = cache.docs_data.LANGUAGE;
+        const lang_items = cache.docs_data.TOOL_LANGUAGE_ITEMS;
         const button = tool.element.querySelector('button');
-        cache.docs_data.TOOL_LANGUAGE_ITEMS.forEach(function(item) {
+        lang_items.forEach(function(item) {
           const label = item[0], link = item[1], title = item[2];
           if (label === lang) {
             var button_title = title;
-            if (tool.dropdown.children.length)
+            if (lang_items.length > 1)
               button_title += '\n\n' + T('Click to change the language.');
             tools.setupDropdownItem(button, label, link, button_title);
             tool.link = link;
@@ -639,7 +640,7 @@ function setupSiteHost() {
           const label = item[0], link = item[1], title = item[2];
           if (label === ver) {
             var button_title = title;
-            if (tool.dropdown.children.length)
+            if (ver_items_all.length > 1)
               button_title += '\n\n' + T('Click to change the version.');
             tools.setupDropdownItem(button, label, link, button_title);
             tool.link = link;
@@ -1175,18 +1176,18 @@ function setupSiteHost() {
     };
     search.updateList = function() {
       const input = cache.update('search_input', search.edit.value);
-      const input_array = cache.update('search_input_array', convertInputToArray(input));
+      const input_array = cache.update('search_input_array', search.convertInputToArray(input));
       search.list.removeItems();
       search.edit.setMatchStateColor(null);
       if (!input_array) return;
       search.list.addItems(search.createList(input_array));
       search.list.selectItemByIndex(0);
       search.edit.setMatchStateColor(!!(search.list.items.length));
-      function convertInputToArray(input) {
-        input = input.toLowerCase().replace(/^ +| +$| +(?= )|\+/, ''); // Normalize whitespace.
-        if (input == '') return null;
-        return input.split(' ').filter(Boolean); // Split and remove undefined or empty strings.
-      };
+    };
+    search.convertInputToArray = function(input) {
+      input = input.toLowerCase().replace(/^ +| +$| +(?= )|\+/, ''); // Normalize whitespace.
+      if (input == '') return null;
+      return input.split(' ').filter(Boolean); // Split and remove undefined or empty strings.
     };
     search.createList = function(terms) {
       const list = [], PartialIndex = {}, RESULT_LIMIT = 50;
@@ -1905,17 +1906,18 @@ function setupEditListCombo(edit, list) {
   });
   // Select an item on click:
   list.addEventListener('click', function(e) {
-    if (!e.target.closest('a')) return;
+    const item = e.target.closest('a');
+    if (!item) return;
     e.preventDefault();
-    list.selectItemByIndex(e.target._index);
+    list.selectItemByIndex(item._index);
   });
   // Open an item on double-click or touch (for mobile):
   var touchmoved;
   list.addEventListener('dblclick', function(e) {
-    if (!e.target.closest('a')) return;
-    if (touchmoved) return;
+    const item = e.target.closest('a');
+    if (!item || touchmoved) return;
     e.preventDefault();
-    list.selected = e.target;
+    list.selected = item;
     host.viewer.openURL(list.selected.href, true);
   });
   list.addEventListener('touchmove', function(e) {
@@ -1926,8 +1928,8 @@ function setupEditListCombo(edit, list) {
   });
   // Show tooltip on mouseover if an item exceeds the length of its parent:
   list.addEventListener('mouseover', function(e) {
-    if (!e.target.closest('a')) return;
-    const item = e.target;
+    const item = e.target.closest('a');
+    if (!item) return;
     if (item.offsetWidth < item.scrollWidth && !item.title) {
       item.title = item.getDisplayText();
     }
