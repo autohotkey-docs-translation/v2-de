@@ -272,9 +272,10 @@ if MsgBox("Wiederholen oder Abbrechen?",, "R/C") = "Retry"
 <p>Wenn die <code class="no-highlight">Owner<i>HWND</i></code>-Option angegeben ist, hat sie Vorrang vor allen anderen Einstellungen. <i>HWND</i> kann das <a href="../misc/WinTitle.htm#ahk_id">HWND</a> eines beliebigen Fensters sein, auch das eines Fensters, das nicht zum Skript gehört.</p>
 <p><strong>Die Hilfe-Schaltfläche:</strong> Wenn die Hilfe-Schaltfläche-Option (16384) in <em>Optionen</em> vorhanden ist, funktioniert die Hilfe-Schaltfläche nur unter den folgenden Bedingungen:</p>
 <ol>
-  <li>Das Mitteilungsfenster wurde einem GUI-Fenster mittels <a href="Gui.htm#OwnDialogs">OwnDialogs-Option</a> untergeordnet.</li>
+  <li>Das Mitteilungsfenster ist entweder dem versteckten <a href="../Program.htm#main-window">Hauptfenster</a> des Skripts (via <a href="#OwnerOption">Owner-Option</a>) oder einem GUI-Fenster (via <a href="Gui.htm#OwnDialogs">OwnDialogs-Option</a>) untergeordnet.</li>
   <li>Das Skript überwacht die WM_HELP-Meldung (0x0053). Zum Beispiel: <code><a href="OnMessage.htm">OnMessage</a>(0x0053, WM_HELP)</code>. Dies bewirkt, dass die WM_HELP-Funktion aufgerufen wird, sobald der Benutzer die Hilfe-Schaltfläche drückt. Diese Funktion könnte z.B. ein anderes GUI-Fenster oder Mitteilungsfenster anzeigen, das Hilfestellungen für den Benutzer enthält.</li>
 </ol>
+<p>Siehe <a href="#ExHelpBtn">Beispiel #8</a> für eine Demonstration.</p>
 <p><strong>Die Schließen-Schaltfläche (in der Titelleiste des Mitteilungsfensters):</strong> Da das Mitteilungsfenster ein vom Betriebssystem bereitgestelltes Feature ist, hängt die Verfügbarkeit und das Verhalten der X-Schaltfläche davon ab, welche Schaltflächen vorhanden sind. Wenn nur die OK-Schaltfläche vorhanden ist, wäre das Drücken von X das gleiche wie, als hätte man OK gedrückt. Andernfalls ist die X-Schaltfläche deaktiviert, es sei denn, die Abbrechen-Schaltfläche ist vorhanden, dann wäre das Drücken von X das gleiche wie, als hätte man Abbrechen gedrückt.</p>
 <p id="max"><strong>Maximal 7 aktive Aufrufe:</strong> Der <a href="../misc/Threads.htm">Thread</a>, der ein Mitteilungsfenster anzeigt, kann normalerweise unterbrochen werden, damit der neue Thread sein eigenes Mitteilungsfenster anzeigen kann, bevor der vorherige Aufruf zurückkehrt. Es sind maximal 7 aktive MsgBox-Aufrufe erlaubt. Jeder Aufruf nach dem siebten löst einen <a href="Error.htm">Error</a> aus. Beachten Sie, dass ein MsgBox-Aufruf in einem unterbrochenen Thread nicht zum Aufrufer zurückkehrt, bis der Thread fortgesetzt wird.</p>
 
@@ -332,6 +333,31 @@ MsgBox "Der Initialwert ist: " var
 MsgBox "Das Ergebnis ist: " var * 2
 MsgBox <a href="Format.htm">Format</a>("Das Ergebnis ist: {1}", var * 2)
 </pre>
+</div>
+
+<div class="ex" id="ExHelpBtn">
+<p><a class="ex_number" href="#ExHelpBtn"></a> Zeigt, wie man die <a href="#Help">Hilfe-Schaltfläche</a> mithilfe der <a href="#OwnerOption">Owner-Option</a> oder der <a href="Gui.htm#OwnDialogs">Gui-OwnDialogs-Option</a> funktionsfähig macht.</p>
+<pre>OnMessage(0x0053, WM_HELP)
+MsgBox("Drücken Sie die Hilfe-Schaltfläche.", "Hilfe-Schaltfläche-Test", "0x4000 Owner" A_ScriptHwnd)
+WM_HELP(*)
+{
+    MsgBox "Hilfe-Schaltfläche gedrückt."
+}</pre>
+<pre>OnMessage(0x0053, WM_HELP)
+MeineGui := Gui()
+MeineGui.Add("Button",, "MsgBox anzeigen").OnEvent("Click", MsgBoxAnzeigen)
+MeineGui.Show()
+
+MsgBoxAnzeigen(*)
+{
+    MeineGui.Opt("+OwnDialogs")
+    MsgBox("Drücken Sie die Hilfe-Schaltfläche.", "Hilfe-Schaltfläche-Test", 0x4000)
+}
+
+WM_HELP(*)
+{
+    MsgBox "Hilfe-Schaltfläche gedrückt."
+}</pre>
 </div>
 </body>
 </html>

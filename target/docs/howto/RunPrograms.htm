@@ -28,36 +28,39 @@
 Run "notepad C:\Program Files\AutoHotkey\license.txt"
 </pre>
 <p class="note"><strong>Hinweis:</strong> Dieses Beispiel setzt voraus, dass AutoHotkey im Standardverzeichnis installiert ist. Andernfalls erscheint eine Fehlermeldung.</p>
-<p>Einfach, oder? Nehmen wir nun an, dass wir die Datei in WordPad statt in Notepad öffnen wollen.</p>
-<pre>Run "wordpad C:\Program Files\AutoHotkey\license.txt"</pre>
+<p>Einfach, oder? Nehmen wir nun an, dass wir die Datei im Microsoft-Browser statt in Notepad öffnen wollen.</p>
+<pre>Run "iexplore C:\Program Files\AutoHotkey\license.txt"</pre>
 <p>Führen Sie diesen Code aus, um zu sehen, was passiert.</p>
 <p>Okay, der neue Code funktioniert also nicht. Hoffentlich haben Sie die Fehlermeldung nicht gleich weggeklickt; Fehlermeldungen bzw. Fehlerdialogfenster gehören zum Programmieren dazu und enthalten oft sehr nützliche Informationen. Es liefert uns die folgenden Informationen:</p>
 <ul>
   <li>Zunächst das Offensichtliche: Das Programm konnte nicht gestartet werden.</li>
   <li>Das Dialogfenster zeigt "Action" und "Params", aber unsere gesamte Befehlszeile wird neben "Action" angezeigt, während "Params" leer ist. Mit anderen Worten, die Run-Funktion weiß nicht, wo der Programmname endet und wo die Parameter beginnen.</li>
-  <li>"Das System kann die angegebene Datei nicht finden" (in deutschsprachigen Systemen). Vielleicht konnte das System "wordpad" nicht finden, aber was es wirklich sagen will, ist, dass es keine solche Datei wie "wordpad C:\..." gibt.</li>
+  <li>"Das System kann die angegebene Datei nicht finden" (in deutschsprachigen Systemen). Vielleicht konnte das System "iexplore" nicht finden, aber was es wirklich sagen will, ist, dass es keine solche Datei wie "iexplore C:\..." gibt.</li>
 </ul>
-<p>Aber warum hat Notepad funktioniert? Nur "notepad" oder "wordpad" auszuführen, funktioniert, aber aus unterschiedlichen Gründen. Im Gegensatz zu notepad.exe kann wordpad.exe nicht durch Überprüfen aller Verzeichnisse in der PATH-Umgebungsvariable gefunden werden. Es kann durch eine andere Methode lokalisiert werden, aber dazu muss die Run-Funktion den Programmnamen von den Parametern trennen.</p>
+<p>Aber warum hat Notepad funktioniert? Nur "notepad" oder "iexplore" auszuführen, funktioniert, aber aus unterschiedlichen Gründen. Im Gegensatz zu notepad.exe kann iexplore.exe nicht durch Überprüfen aller Verzeichnisse in der PATH-Umgebungsvariable gefunden werden. Es kann durch eine andere Methode lokalisiert werden, aber dazu muss die Run-Funktion den Programmnamen von den Parametern trennen.</p>
 <p>Folglich benötigt die Run-Funktion in diesem Fall ein wenig Nachhilfe, wahlweise in einer oder allen der folgenden Formen:</p>
 <ul>
   <li>Explizit die Endung ".exe" verwenden.</li>
-  <li>Explizit den vollständigen Pfad von wordpad.exe verwenden.</li>
+  <li>Explizit den vollständigen Pfad von iexplore.exe verwenden.</li>
   <li>Den Programmnamen in Anführungszeichen setzen.</li>
 </ul>
-<p>Entscheiden wir uns zunächst für die einfachste Option:</p>
-<pre>Run "wordpad.exe C:\Program Files\AutoHotkey\license.txt"</pre>
-<p>WordPad startet nun, zeigt aber einen Fehler an: "C:\Program" wurde nicht gefunden.</p>
+<p>Entscheiden wir uns für die einfachste Option:</p>
+<pre>Run "iexplore.exe C:\Program Files\AutoHotkey\license.txt"</pre>
+<p>Der Microsoft-Browser wird nun erfolgreich gestartet und zeigt die Datei an.</p>
+<p>Allerdings gibt es einige Programme, die einen Pfad mit Leerzeichen nicht öffnen können. Zum Beispiel meldet der folgende Code, dass "C:\Program.png" nicht gefunden wurde:</p>
+<pre>Run "mspaint C:\Program Files\AutoHotkey\UX\inc\spy.ico"</pre>
+<p>Im nächsten Abschnitt erfahren Sie, wie man damit umgeht.</p>
 
 <h2 id="Quote_Marks_and_Spaces">Anführungszeichen und Leerzeichen</h2>
-<p>Bei der Übergabe von Befehlszeilenparametern an ein Programm ist es oft notwendig, jeden Parameter, der Leerzeichen enthält, in Anführungszeichen zu setzen. Bei Notepad war dies nicht notwendig, aber Notepad ist eine Ausnahme von der Grundregel. Ein naiver Lösungsversuch könnte sein, einfach mehr Anführungszeichen hinzuzufügen:</p>
-<pre>Run "wordpad.exe "C:\Program Files\AutoHotkey\license.txt""</pre>
+<p>Bei der Übergabe von Befehlszeilenparametern an ein Programm ist es oft notwendig, jeden Parameter, der Leerzeichen enthält, in Anführungszeichen zu setzen. Dies war bei "notepad" oder "iexplore" zwar nicht notwendig, aber das sind auch Ausnahmen von der Regel. Ein naiver Lösungsversuch könnte sein, einfach mehr Anführungszeichen hinzuzufügen:</p>
+<pre>Run "mspaint "C:\Program Files\AutoHotkey\UX\inc\spy.ico""</pre>
 <p>Dies wird aber nicht funktionieren, weil Anführungszeichen standardmäßig verwendet werden, um den Anfang und das Ende von direkt geschriebenem Text zu markieren. Wie können wir also so ein Anführungszeichen in die Befehlszeile einfügen, anstatt die Befehlszeile damit zu beenden?</p>
 <p><strong>Methode 1:</strong> Setzen Sie ein <code class="no-highlight">`</code> (umgekehrtes Häkchen, Akzentzeichen oder Gravis) vor jedes dieser Anführungszeichen. Dies wird als <a href="../misc/EscapeChar.htm">Escapesequenz</a> bezeichnet. Das Anführungszeichen wird dann in die Befehlszeile (also in die Zeichenkette, die an die Run-Funktion übergeben wird) eingefügt, während das umgekehrte Häkchen seinen Zweck erfüllt hat und daher wegfällt.</p>
-<pre>Run "wordpad.exe `"C:\Program Files\AutoHotkey\license.txt`""</pre>
+<pre>Run "mspaint `"C:\Program Files\AutoHotkey\UX\inc\spy.ico`""</pre>
 <p><strong>Methode 2:</strong> Umschließen Sie die Befehlszeile mit einfachen statt doppelten Anführungszeichen.</p>
-<pre>Run 'wordpad.exe "C:\Program Files\AutoHotkey\license.txt"'</pre>
+<pre>Run 'mspaint "C:\Program Files\AutoHotkey\UX\inc\spy.ico"'</pre>
 <p>Natürlich müssten in diesem Fall alle <em>direkt geschriebenen</em> einfachen Anführungszeichen (oder Apostrophe) im Text mit einem Escapezeichen versehen werden (<code class="no-highlight">`'</code>).</p>
-<p>Die Art und Weise, wie Sie den Code schreiben, beeinflusst, welche Anführungszeichen tatsächlich an die Run-Funktion übergeben werden. In den beiden obigen Beispielen wird der Run-Funktion die Zeichenkette <code class="no-highlight">wordpad.exe "C:\Program Files\AutoHotkey\license.txt"</code> übergeben. Die Run-Funktion teilt diese Zeichenkette entweder in <em>Programmname</em> und <em>Parameter</em> auf oder überlässt dies dem System. In beiden Fällen hängt es vom Zielprogramm ab, wie die restlichen Anführungszeichen interpretiert werden.</p>
+<p>Die Art und Weise, wie Sie den Code schreiben, beeinflusst, welche Anführungszeichen tatsächlich an die Run-Funktion übergeben werden. In den beiden obigen Beispielen wird der Run-Funktion die Zeichenkette <code class="no-highlight">mspaint "C:\Program Files\AutoHotkey\UX\inc\spy.ico"</code> übergeben. Die Run-Funktion teilt diese Zeichenkette entweder in <em>Programmname</em> und <em>Parameter</em> auf oder überlässt dies dem System. In beiden Fällen hängt es vom Zielprogramm ab, wie die restlichen Anführungszeichen interpretiert werden.</p>
 <p>Viele Programme behandeln ein Anführungszeichen als Teil des Parameters, wenn ihm ein umgekehrter Schrägstrich vorangestellt ist. Zum Beispiel könnte <code>Run 'meine.exe "A\" B'</code> einen Parameter mit dem Wert <code class="no-highlight">A" B</code> anstelle von zwei Parametern erzeugen. Dies liegt im Ermessen des Programms und kann meist durch Verdopplung des umgekehrten Schrägstrichs vermieden werden, wie in <code>Run 'meine.exe "A\\" B'</code>, das normalerweise zwei Parameter (<code class="no-highlight">A\</code> und <code class="no-highlight">B</code>) erzeugt.</p>
 <p>Die meisten Programme interpretieren Anführungszeichen als eine Art Schalter, der zwischen den Modi "Leerzeichen beendet den Parameter" und "Leerzeichen ist im Parameter enthalten" umschaltet. Mit anderen Worten, <code>Run 'meine.exe "A B"'</code> ist grundsätzlich äquivalent zu <code>Run 'meine.exe A" "B'</code>. Um Probleme mit Schrägstrichen zu vermeiden, gibt es auch die Möglichkeit, die <em>Leerzeichen</em> anstelle des gesamten Parameters in Anführungszeichen zu setzen, oder das Anführungszeichen vor dem Schrägstrich zu beenden, wie in <code>Run 'meine.exe "A"\ B'</code>.</p>
 
